@@ -46,7 +46,7 @@ float (entity thing) canairpush =
         #ifdef AIRFIST_DONT_PUSH_TEAMMATES
         if (!Teammate(self.team_no,thing.team_no)) //WARNING: using self
         #endif
-        
+
         return #TRUE;
 	}
     else if (thing.classname == "pipebomb")
@@ -70,7 +70,7 @@ float (entity thing) canairpush =
         return #TRUE;
     }
 
-    #ifdef PUSHABLE_ARMY    
+    #ifdef PUSHABLE_ARMY
     else if (thing.classname == "monster_army")
 		return #TRUE;
     #endif
@@ -80,9 +80,9 @@ float (entity thing) canairpush =
 		return #TRUE;
     #endif
 
-    #ifdef PUSHABLE_SCRAG    
+    #ifdef PUSHABLE_SCRAG
     else if (thing.classname == "monster_wizard")
-		return #TRUE;    
+		return #TRUE;
     #endif
 
 	// PZ - only tossable dets can be fisted, and only 50% of force
@@ -108,7 +108,7 @@ float (entity thing) canairpush =
 
         thing.avelocity = thing.avelocity * crandom();
 
-        return #TRUE;        
+        return #TRUE;
     }
 
 	return #FALSE;
@@ -224,7 +224,7 @@ void() launch_horn =
 		self.currentammo = self.ammo_cells = self.ammo_cells - #AIRFIST_CELLS_COST;
 	else
 		self.currentammo = self.ammo_cells = 0;
-  
+
 	if (self.waterlevel > 2) // if under water, change the variables
 	{
   		// reduced the range by %20
@@ -245,7 +245,7 @@ void() launch_horn =
 
 	    // You may find this code looks funny,  it is the same is doing
 		// a if( exp & exp & exp & exp) but this way is faster.
-		//   (read the QuakeC manual for reason). 
+		//   (read the QuakeC manual for reason).
 
 	    // only affect monsters and projectiles
 		//if (visible(e)) // must be visible AND // - OfN candamage
@@ -327,7 +327,7 @@ void() launch_horn =
 
 				if (delta_z < 100)
 					delta_z = 100;
-			}	
+			}
 
 			// calculate the velocity adjustment.
 			delta = normalize(delta);
@@ -372,12 +372,12 @@ void() launch_horn =
                 		     		 // If we havent the upgrade reduce push on players
                 	      		 	 if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE))
         	                       			 delta = delta * #AIRFIST_PUSH_REDUCTION;
-	
+
 		                	        // If the other player has aspect of hwguy reduce the push.
 		        	                if (e.cutf_items & #CUTF_HWGUY)
                 			                delta = delta * #AIRFIST_PUSH_HWGUY;
 			                }
-	
+
                 			if (e.classname == "detpack")
 		                        delta = delta * #AIRFIST_PUSH_DETPACK;
 
@@ -420,17 +420,17 @@ void() launch_horn =
 						}
 					}
 					else
-					{   
+					{
 						T_Damage(e, self, self, ldmg);
 					}
-				#else                
+				#else
 					// OfN - Impide cheat checks to kick ppl beeing airpushed
 					if (e.classname == "player")
 						makeImmune(e, time + 3);
 
 					T_Damage(e, self, self, ldmg);
 				#endif
-			
+
 			}
 		}
 		e = e.chain;
@@ -473,7 +473,7 @@ void() launch_horn =
    		// If self on the ground, raise me up so that the velocity will
 		// take affect.
 
-		// raise the bugger a bit 
+		// raise the bugger a bit
 		//setorigin(self, self.origin + '0 0 1'); // - OfN - And make them stuck in wall? :) nope..
 		self.flags = self.flags - #FL_ONGROUND;
 	}
@@ -481,6 +481,26 @@ void() launch_horn =
 	if (nearAWall)
 	{   // hit wall, Bounce based on the distance from the wall
 		recoil = recoil + (recoil * (1.0 - trace_fraction) * 3);
+	}
+
+	// if the player is carrying the flag, reduce recoil (phrosty)
+	// stops scouts from fisting across the map
+
+	local string no_noobs;
+	no_noobs = infokey(world, "no_fisting_noobs");
+
+	if (no_noobs == "on") {
+		local entity the_flag;
+		the_flag = find(world, classname, "item_tfgoal");
+
+		while(the_flag) {
+			if(the_flag.owner == self) {
+				recoil = recoil * #AIRFIST_FLAG_RECOIL_REDUCTION;
+				break;
+			}
+
+			the_flag = find(the_flag, classname, "item_tfgoal");
+		}
 	}
 
 	// If we haven't the upgrade, reduce recoil
