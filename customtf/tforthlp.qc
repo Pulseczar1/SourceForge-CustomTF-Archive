@@ -1,11 +1,11 @@
 /*======================================================
-	TFORTHLP.QC			CustomTeamFortress v3.1	
+	TFORTHLP.QC			CustomTeamFortress v3.1
 
 	(c) TeamFortress Software Pty Ltd 	29/2/97
 	(c) William Kerney			5/22/00
 	parts (c) Craig Hauser
 ========================================================
-Functions handling all the help displaying for TeamFortress. 
+Functions handling all the help displaying for TeamFortress.
 ========================================================*/
 // Prototypes
 // Help Functions
@@ -37,7 +37,7 @@ void() TeamFortress_MOTD =
 		if (self.show_hostile < time) {
 			//CenterPrint3(self,#MSG_INTRO,#MSG_INTRO2,#MSG_INTRO3);//,CP_MOTD);
             PrintProzacMOTD();
-			self.show_hostile = time + #MOTD_REFRESHRATE; //was 1 //.5?             
+			self.show_hostile = time + #MOTD_REFRESHRATE; //was 1 //.5?
 		}
 		self.menu_count = #MENU_REFRESH_RATE;
 		self.current_menu = #MENU_DEFAULT;
@@ -59,8 +59,9 @@ void() TeamFortress_MOTD =
 		#endif
 
 		// Set Default autozoom
-		if (#DEFAULT_AUTOZOOM == #OFF)
+		#if DEFAULT_AUTOZOOM == OFF
 			self.tfstate = self.tfstate | #TFSTATE_ZOOMOFF;
+		#endif
 
 		// Set their color to white, so they stand out from teams
 		if ((teamplay != 0) && (self.team_no == 0))
@@ -79,7 +80,7 @@ void() TeamFortress_MOTD =
 
         self.current_menu = #MENU_INTRO;
 		self.menu_count = #MENU_REFRESH_RATE;
-   
+
 		self.motd = #MOTD_FINISHED;
 
 		//WK CustomTF Commands
@@ -90,7 +91,7 @@ void() TeamFortress_MOTD =
         TeamFortress_Alias("holo", (#IMPULSE_HOLO), 0);
         TeamFortress_Alias("range", #IMPULSE_TESTRANGE, 0);
         //TeamFortress_Alias("debug", (#IMPULSE_DEBUG), 0); 193
-		
+
 
 		// check if player already has aliases
 	   	if (self.got_aliases == #TRUE)
@@ -117,7 +118,7 @@ void() TeamFortress_HelpMap =
         return;
 
     self.option2 = time + 1.25;
-    
+
     // OfN - Display settings
     PrintGameSettings(#FALSE);
 
@@ -134,19 +135,19 @@ void() TeamFortress_HelpMap =
 			return;
 		}
 	}
-    
+
     // sprint (self, #PRINT_HIGH, "There is no help for you.\n");
     sprint (self, #PRINT_HIGH, "There is no map-specific help.\n");
 };
 
 void() AliasTimer = {
-	
+
     if (!self.owner.is_connected)
     {
         dremove(self);
         return;
     }
-    
+
     local entity oself;
 	local float myheat;
 	myheat = self.heat = self.heat + 1;
@@ -174,7 +175,7 @@ void() AliasTimer = {
 		// Pipebombs
 		TeamFortress_Alias("detpipe", #TF_PB_DETONATE, 0);
 		TeamFortress_Alias("uncustom", #TF_UNCUSTOM, 0);
-        
+
 
         #ifdef ALIASES_TEST
         sprint(self,#PRINT_HIGH,"Finished alias pack number 1\n");
@@ -219,7 +220,7 @@ void() AliasTimer = {
 
         #ifdef ALIASES_TEST
         sprint(self,#PRINT_HIGH,"Starting alias pack number 3\n");
-        #endif        
+        #endif
 
 		//Taunts
 		TeamFortress_Alias("taunt1", #TF_TAUNT, 0);
@@ -241,7 +242,7 @@ void() AliasTimer = {
 		TeamFortress_Alias("randompc",(#TF_CHANGEPC + #PC_RANDOM), 0);
 
 		TeamFortress_Alias("showtf",#TF_SHOWTF, 0);
-		TeamFortress_Alias("maphelp", #TF_HELP_MAP, 0);	
+		TeamFortress_Alias("maphelp", #TF_HELP_MAP, 0);
         #ifdef COOP_MODE
         if (coop)
             TeamFortress_Alias("dropkey", #TF_DROPKEY, 0);
@@ -285,7 +286,7 @@ void() AliasTimer = {
         #endif
 	}
 	else if (myheat == 5) {
-		
+
         #ifdef ALIASES_TEST
         sprint(self,#PRINT_HIGH,"Starting alias pack number 5\n");
         #endif
@@ -294,7 +295,7 @@ void() AliasTimer = {
 		TeamFortress_Alias("lay", #TF_LAY, 0);
 		//CH allow dropitems
 		TeamFortress_Alias("dropitems", #TF_DROPITEMS, 0);
-        
+
         //TeamFortress_Alias("get", #TF_ADMIN_KICK_CYCLE, 0);
 		//TeamFortress_Alias("kick", #TF_ADMIN_KICK_PERSON, 0);
 		//TeamFortress_Alias("ban", #TF_ADMIN_BAN_PERSON, 0);
@@ -330,7 +331,7 @@ void() AliasTimer = {
 
 		//WK INTRO THUNDER
 		// OfN - now we have four :P
-        
+
         myheat = rint(random()*3);
 
         if (myheat == 0)

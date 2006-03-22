@@ -1,5 +1,5 @@
 /*======================================================
-	TFORT.QC			Custom TeamFortress v3.2	
+	TFORT.QC			Custom TeamFortress v3.2
 
 	(c) TeamFortress Software Pty Ltd 	29/2/97
 	(c) William Kerney			9/16/00
@@ -141,7 +141,7 @@ void() UseSpecialSkill =
 
 		if (self.money)
 			self.impulse = #TF_ENGINEER_BUILD;
-		else 
+		else
 		{
 			if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) //CH why not have the check here too, saves a keypress
 				self.impulse = #TF_ENGINEER_BUILD;
@@ -181,7 +181,7 @@ void() TeamFortress_ChangeClass =
 		if (TeamFortress_TeamIsCivilian(self.team_no))
 		{
 			sprint(self, #PRINT_HIGH, "You're a civilian. Learn to live with it.\n");
-			return;			
+			return;
 		}
 
 		if (!IsLegalClass(self.impulse - #TF_CHANGEPC))
@@ -207,7 +207,7 @@ void() TeamFortress_ChangeClass =
 	}
 
 	// players must join a team, if teamplay is on
-	if (teamplay && self.team_no == 0) 
+	if (teamplay && self.team_no == 0)
 	{
 		sprint(self, #PRINT_HIGH, "You must join a team first. \n");
 		return;
@@ -251,7 +251,7 @@ void() TeamFortress_ChangeClass =
 		RPrint("Non-player was in tfort.qc::changeclass()!\n");
 		return;
 	}
-	
+
     self.movetype = #MOVETYPE_WALK;
 	self.flags = #FL_CLIENT | #FL_ONGROUND;
 	self.waterlevel = 0;
@@ -261,7 +261,7 @@ void() TeamFortress_ChangeClass =
 	self.solid = #SOLID_SLIDEBOX;
 	// pausetime is set by teleporters to keep the player from moving a while
 	self.pausetime = 0;
-	
+
 	spot = SelectSpawnPoint ();
 
 #ifdef MAP_DEBUG
@@ -290,7 +290,7 @@ void() TeamFortress_ChangeClass =
 	setmodel (self, "progs/player.mdl");
 	modelindex_player = self.modelindex;
 
-	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);	
+	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);
 
 	self.view_ofs = '0 0 22';
 	player_stand1 ();
@@ -343,7 +343,7 @@ void() TeamFortress_ChangeClass =
 
 	//WK - Handle Custom Class
 	if (self.playerclass == #PC_CUSTOM) {
-		DropToCustomClassGen();	//Comatose state 
+		DropToCustomClassGen();	//Comatose state
 	}
 
 	ResetMenu();
@@ -478,7 +478,7 @@ void() TeamFortress_Inventory =
 		sprint(self, #PRINT_HIGH, ac);
 		if (self.lives == 1)
 			sprint(self, #PRINT_HIGH, " life.\n");
-		else 
+		else
 			sprint(self, #PRINT_HIGH, " lives.\n");
 
 	}
@@ -526,7 +526,7 @@ void() TeamFortress_Inventory =
 			sprint(self, #PRINT_HIGH, "Caltrop(");
 		else if (self.tp_grenades_1 == #GR_TYPE_BIO)
 			sprint(self, #PRINT_HIGH, "Biological(");
-		else 
+		else
 			sprint(self, #PRINT_HIGH, "BUG(");
 
 		ac = ftos(self.no_grenades_1);
@@ -569,7 +569,7 @@ void() TeamFortress_Inventory =
 			sprint(self, #PRINT_HIGH, "Frag(");
 		else if (self.tp_grenades_2 == #GR_TYPE_KRAC)
 			sprint(self, #PRINT_HIGH, "Krac(");
- 		else 
+ 		else
 			sprint(self, #PRINT_HIGH, "BUG(");
 
 		ac = ftos(self.no_grenades_2);
@@ -688,7 +688,7 @@ void() TeamFortress_Inventory =
 	}
 
 	// OfN - Display the health of any summons/army guys
-    if (self.job & #JOB_WARLOCK || self.job & #JOB_ARMY) 
+    if (self.job & #JOB_WARLOCK || self.job & #JOB_ARMY)
 	{
 		if (self.demon_one)
         {
@@ -753,7 +753,7 @@ void() TeamFortress_Inventory =
 			if (tg.real_owner == self)
 			{
 				ac = ftos(ceil(tg.health));
-				
+
                 if (!tg.dont_do_triggerwork || !(self.cutf_items & #CUTF_DOUBLESENTRY))
                     sprint (self, #PRINT_HIGH, "σεξτςω: ");
                 else
@@ -784,7 +784,7 @@ void() TeamFortress_Inventory =
 			{
 				ac = ftos(ceil(tg.health));
 
-                
+
                 if (!tg.dont_do_triggerwork || !(self.tf_items & #NIT_DOUBLETESLA))
                     sprint (self, #PRINT_HIGH, "τεσμα: ");
                 else
@@ -886,10 +886,10 @@ void() TeamFortress_Inventory =
 		    	ac = ftos(ceil(tg.maxammo_cells));
                 sprint (self, #PRINT_HIGH, ac);
                 sprint (self, #PRINT_HIGH, "γεμμσ");
-                
+
                 if (!(tg.tf_items & #NIT_TURRET))
                 {
-		    		sprint (self, #PRINT_HIGH, "\n");                    
+		    		sprint (self, #PRINT_HIGH, "\n");
                 }
                 else
                 {
@@ -946,7 +946,7 @@ void() TeamFortress_Inventory =
 			}
 			tg = find(tg, classname, "monster_demon1");
 		}
-		
+
 		tg = find(world, classname, "monster_army");
 		while (tg)
 		{
@@ -992,12 +992,12 @@ void() TeamFortress_Inventory =
 		//sprint (self, #PRINT_HIGH, ac);
 		sprint (self, #PRINT_HIGH, "\n");
 	}*/
-	
+
     /*if (self.job & #JOB_WARLOCK) // they can see that on warlock menu
 	{
 		ac = ftos (self.demon_blood);
 		sprint (self, #PRINT_HIGH, "Knife kills: ", ac, "\n");  // knife kills
-	}*/    
+	}*/
 
     //CH if you have boots, state percent of fuel
 	if (self.tf_items & #NIT_HOVER_BOOTS)
@@ -1049,7 +1049,7 @@ void() TeamFortress_Inventory =
         }
         else
             sprint(self,#PRINT_HIGH,"\nYou enjoy the AURA of ");
-        
+
         if (self.aura == #AURA_POWER)
             sprint(self,#PRINT_HIGH,"ποχες.");
         else if (self.aura == #AURA_RESIS)
@@ -1183,7 +1183,7 @@ void() TeamFortress_PrimeGrenade =
 			if (self.team_no == 2) team2nextspam = time + #SPAM_TIME;
             if (self.team_no == 3) team3nextspam = time + #SPAM_TIME;
 			if (self.team_no == 4) team4nextspam = time + #SPAM_TIME;
-			
+
 		} // OfN Removed spam control // enabled again
 		gtype = self.tp_grenades_1;
 		if (gtype == #GR_TYPE_CONCUSSION)
@@ -1238,7 +1238,7 @@ void() TeamFortress_PrimeGrenade =
 
 			self.no_grenades_1 = self.no_grenades_1 - 1;
 
-            // OfN 
+            // OfN
             //sound(self, #CHAN_MISC, "weapons/pinpull.wav", 1, #ATTN_IDLE);
 		}
 		else
@@ -1263,7 +1263,7 @@ void() TeamFortress_PrimeGrenade =
 			if (self.team_no == 2) team2nextspam = time + #SPAM_TIME + 1;
 			if (self.team_no == 3) team3nextspam = time + #SPAM_TIME + 1;
 			if (self.team_no == 4) team4nextspam = time + #SPAM_TIME + 1;
-			
+
 		} // OfN Removed spam control
 		gtype = self.tp_grenades_2;
 		if (gtype == #GR_TYPE_CONCUSSION)
@@ -1300,7 +1300,7 @@ void() TeamFortress_PrimeGrenade =
 		else
 			gs = "Grenade";
 
-        
+
 /*        if (gtype == #GR_TYPE_CONCUSSION)
 			gs = "Concussion grenade";
 		else if (gtype == #GR_TYPE_NAIL)
@@ -1339,7 +1339,7 @@ void() TeamFortress_PrimeGrenade =
 			sprint(self, #PRINT_HIGH, " seconds...\n");
 
 			//WK Limit Nail grenades to 2 - ofn and frag
-			
+
             if (self.no_grenades_2 > GetMaxGrens(self,2))
                 self.no_grenades_2 = GetMaxGrens(self,2);
 
@@ -1385,7 +1385,7 @@ void() TeamFortress_GrenadePrimed =
 
 		if (!self.think)
 			dremove(self);
-		
+
 		if (time > self.heat)
 			TeamFortress_ExplodePerson();
 
@@ -1415,7 +1415,7 @@ void() TeamFortress_GrenadePrimed =
 	newmis.movetype = #MOVETYPE_BOUNCE;
 	newmis.solid = #SOLID_BBOX;
 	newmis.classname = "grenade";
-    
+
 	// set grenade speed
 	makevectors (user.v_angle);
 
@@ -1525,13 +1525,13 @@ void() TeamFortress_GrenadePrimed =
 		newmis.think = FlareGrenadeExplode;
 		//newmis.skin  = 0;//TF_FLARE_OFF;
 		newmis.avelocity = '0 0 0';
-        
+
 
         makevectors (user.v_angle);
 	    newmis.velocity = v_forward;
         //newmis.velocity = aim(user, 10000);
     	newmis.velocity = newmis.velocity * 2000;
-        
+
 //        newmis.velocity = newmis.velocity * 4;
         //newmis.velocity_z = 0;
 		setmodel (newmis, "progs/flarefly.mdl");
@@ -1591,7 +1591,7 @@ void() TeamFortress_GrenadePrimed =
 		setmodel (newmis, "progs/hgren2.mdl");
 	}
 
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, user.origin);
 
     // OfN
@@ -1610,7 +1610,7 @@ void() TeamFortress_GrenadePrimed =
 
 	self = oldself;
 
-	// Remove primed grenade object	
+	// Remove primed grenade object
 	dremove(self);
 };
 
@@ -1692,11 +1692,12 @@ void(entity p) TeamFortress_SetSpeed =
 	// Check for any reason why they can't move at all
 	if (p.tfstate & #TFSTATE_CANT_MOVE)
 	{
-		if (#STOP_MOUSE_MOVEMENT == #ON)
-		{
+		#if STOP_MOUSE_MOVEMENT == ON
+
 			stuffcmd(p,"m_forward 0\n");
 			stuffcmd(p,"m_side 0\n");
-		}
+
+		#endif
 
 		p.velocity = '0 0 0';
 		stuffcmd(p,"cl_backspeed 0\n");
@@ -1705,14 +1706,15 @@ void(entity p) TeamFortress_SetSpeed =
 		p.maxspeed = 0;
 		return;
 	}
+	#if STOP_MOUSE_MOVEMENT == ON
 	else
 	{
-		if (#STOP_MOUSE_MOVEMENT == #ON)
-		{
+
 			stuffcmd(p,"m_forward 1\n");
 			stuffcmd(p,"m_side 0.8\n");
-		}
+
 	}
+	#endif
 
 	// First, get their max class speed
 	// WK We don't use this block much any more
@@ -1776,7 +1778,7 @@ void(entity p) TeamFortress_SetSpeed =
 		if (p.maxspeed > 170)
 			p.maxspeed = 170;
 	}
-	
+
 	if (p.tfstate & #TFSTATE_C4THROW)
 		p.maxspeed = p.maxspeed / 3;
 
@@ -1827,7 +1829,7 @@ void(entity p) TeamFortress_SetSpeed =
     // OfN - Finally, the psionic stuff
     if (p.tfstate & #TFSTATE_PSIONIZED)
         p.maxspeed = p.maxspeed * #PSIONIC_MOVEFACTOR;
-    
+
 	#ifdef QUAKE_WORLD
 		stuffcmd(p,"cl_backspeed 1000\n");
 		stuffcmd(p,"cl_forwardspeed 1000\n");
@@ -1849,7 +1851,7 @@ void(entity p) TeamFortress_SetSpeed =
 
 //=========================================================================
 // Set the max_health of a player based on his/her class
-void() TeamFortress_SetHealth = 
+void() TeamFortress_SetHealth =
 {
 	if ( self.playerclass == #PC_SCOUT )
 		self.max_health = #PC_SCOUT_MAXHEALTH;
@@ -1873,7 +1875,7 @@ void() TeamFortress_SetHealth =
 		self.max_health = #PC_ENGINEER_MAXHEALTH;
 	else if ( self.playerclass == #PC_UNDEFINED )
 	{
-		self.max_health = 1; 
+		self.max_health = 1;
 		self.takedamage = 0; // Prevent damage to #PC_UNDEFINED players
 	}
 
@@ -1912,7 +1914,7 @@ float(entity p) Return_Custom_Skins =
 };
 //=========================================================================
 // Set the skin of a player based on his/her class, if Classkin is on
-void(entity p) TeamFortress_SetSkin = 
+void(entity p) TeamFortress_SetSkin =
 {
 	//local string st;
 
@@ -2044,7 +2046,7 @@ void() TeamFortress_SetEquipment =
 		return;
 
 	kept_items = self.tf_items & (#IT_KEY1 | #IT_KEY2);
-	
+
 	if (self.playerclass != #PC_CUSTOM) { //WK -----v
 		self.items = 0;
 		self.current_weapon = 0;
@@ -2071,7 +2073,7 @@ void() TeamFortress_SetEquipment =
 		self.job = self.job - (self.job & (#JOB_ALL|#JOB_EXTRA1|#JOB_EXTRA2));
 	}
  //WK ------^
-		
+
 	self.hover_time = 0;
 	if (self.tf_items & #NIT_HOVER_BOOTS)
 		self.hover_time = #MAX_HOVER_FUEL; //10 secs of hovering or so
@@ -2099,7 +2101,7 @@ void() TeamFortress_SetEquipment =
 		//self.immune_to_check = time + 4;
 
 		self.undercover_team = 0;
-		// Set their color 
+		// Set their color
 		stuffcmd(self, "color ");
 		st = ftos(TeamFortress_TeamGetColor(self.team_no) - 1);
          //- OfN - Nice colors
@@ -2118,7 +2120,7 @@ void() TeamFortress_SetEquipment =
 	self.is_unabletospy = 0;
 	self.is_malfunctioning = 0;
 	self.is_abouttodie = 0; // reset preventing automartyr flag
-	
+
 	self.martyr_enemy = self; // reset martyr enemy
 	self.stored_deathmsg = 0; // reset stored death message - OfN UNUSED?
 
@@ -2156,7 +2158,7 @@ void() TeamFortress_SetEquipment =
 			self.ammo_rockets = self.maxammo_rockets / 2;
 			self.ammo_nails = (3 * self.maxammo_nails) / 4;
 			self.ammo_shells = (3 * self.maxammo_shells) / 4;
-			self.ammo_cells = (2 * self.maxammo_cells) / 3;			
+			self.ammo_cells = (2 * self.maxammo_cells) / 3;
 		}
 		else
 		{
@@ -2193,7 +2195,7 @@ void() TeamFortress_SetEquipment =
 			te.owner = self;
 			te.classname = "timer";
 		} */
-	
+
 		if (self.cutf_items & #CUTF_FULLARMOUR)
 			self.armorvalue = self.maxarmor;
 		else
@@ -2274,7 +2276,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_SNIPER_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_SNIPER_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_SNIPER_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_SNIPER_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_SNIPER_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_SNIPER_GRENADE_TYPE_1;
@@ -2307,7 +2309,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_SOLDIER_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_SOLDIER_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_SOLDIER_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_SOLDIER_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_SOLDIER_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_SOLDIER_GRENADE_TYPE_1;
@@ -2339,7 +2341,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_DEMOMAN_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_DEMOMAN_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_DEMOMAN_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_DEMOMAN_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_DEMOMAN_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_DEMOMAN_GRENADE_TYPE_1;
@@ -2378,7 +2380,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_MEDIC_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_MEDIC_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_MEDIC_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_MEDIC_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_MEDIC_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_MEDIC_GRENADE_TYPE_1;
@@ -2420,7 +2422,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_HVYWEAP_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_HVYWEAP_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_HVYWEAP_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_HVYWEAP_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_HVYWEAP_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_HVYWEAP_GRENADE_TYPE_1;
@@ -2453,7 +2455,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_PYRO_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_PYRO_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_PYRO_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_PYRO_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_PYRO_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_PYRO_GRENADE_TYPE_1;
@@ -2484,7 +2486,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_CIVILIAN_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_CIVILIAN_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_CIVILIAN_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_CIVILIAN_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_CIVILIAN_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_CIVILIAN_GRENADE_TYPE_1;
@@ -2516,7 +2518,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_SPY_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_SPY_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_SPY_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_SPY_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_SPY_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_SPY_GRENADE_TYPE_1;
@@ -2535,7 +2537,7 @@ void() TeamFortress_SetEquipment =
 
 		// set the weapon icons on the status bar
 		self.items = self.items | #IT_SHOTGUN | #IT_SUPER_SHOTGUN | #IT_NAILGUN;
-		
+
 
 		// If the Spy only has invis, start the Spy's cell regen timer
 		if (invis_only == #TRUE)
@@ -2558,7 +2560,7 @@ void() TeamFortress_SetEquipment =
 		self.maxammo_nails = #PC_ENGINEER_MAXAMMO_NAIL;
 		self.maxammo_shells = #PC_ENGINEER_MAXAMMO_SHOT;
 		self.maxammo_cells = #PC_ENGINEER_MAXAMMO_CELL;
-	
+
 		self.no_grenades_1 = #PC_ENGINEER_GRENADE_INIT_1;
 		self.no_grenades_2 = #PC_ENGINEER_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_ENGINEER_GRENADE_TYPE_1;
@@ -2591,7 +2593,7 @@ void() TeamFortress_SetEquipment =
 		self.no_grenades_2 = 0;
 		self.tp_grenades_1 = 0;
 		self.tp_grenades_2 = 0;
-	
+
 		self.armorclass = 0;
 		self.armortype = 0;
 		self.armorvalue = 0;
@@ -2611,23 +2613,23 @@ void() TeamFortress_SetEquipment =
 		self.weaponmodel = string_null;
 		modelindex_player = 0;
 		self.tfstate = self.tfstate | #TFSTATE_RELOADING;
-	
+
 		setmodel(self, string_null);
-	}    
-    
+	}
+
     /*if (stock_mode==1) //- OfN - Stock classes don't get a job when stock_mode is 1
         self.job=0;*/
 
     //- OfN - Set initial grens number
     self.no_grenades_1 = GetMaxGrens(self,1);
-    self.no_grenades_2 = GetMaxGrens(self,2);   
-    
+    self.no_grenades_2 = GetMaxGrens(self,2);
+
     if (!(self.job & #JOB_ARMY) && !(self.job & #JOB_WARLOCK))
         kill_my_demons();
-    
+
     // Initialize any job stuff if needed
     InitJobStuff();
-        
+
 	// Give normal classes the hook
 	// Custom classes get it in 'drop into custom class gen'
 	if (allow_hook && self.playerclass != #PC_UNDEFINED && self.playerclass != #PC_CUSTOM)
@@ -2638,12 +2640,12 @@ void() TeamFortress_SetEquipment =
         RestoreOriginalItems(self);
     else
         ResetStripedAndGiven(self);
-    
+
     // Remove disallowed items on player, if any
     StripDisallowed(self);
     // Give free items, if any
     GiveFreeStuff(self);
-    
+
 	W_SetCurrentAmmo ();
 };
 
@@ -2723,7 +2725,7 @@ float(entity Retriever, entity Items) TeamFortress_AddBackpackItems =
 	// If you want the classes to _not_ start off with all their legal
 	// weapons, then you may want them to be able to pick up weapons
 	// from backpacks. If so, this is where to do it.
-	// For now, return. 
+	// For now, return.
 	return;
 };
 
@@ -2926,7 +2928,7 @@ void() TeamFortress_RemoveTimers =
 					dremove(te);
 					te = find(world, classname, "timer");
 				}
-				else 
+				else
 					te = find(te, classname, "timer");
 			}
             else if (te.netname == "alias") // Ignore alias timer
@@ -2986,7 +2988,7 @@ void() TeamFortress_RemoveTimers =
 	// detonate all of the players pipebombs
 	TeamFortress_DetonatePipebombs();
 
-    // OfN Remove holo if player dies! 
+    // OfN Remove holo if player dies!
     if (self.has_holo > 0) RemoveHolo(self);
 
 	stuffcmd(self, "v_idlescale 0\n");
@@ -3014,7 +3016,7 @@ void(float Suicided) TeamFortress_SetupRespawn =
 	// Setup Respawn Delay
 	if (toggleflags & #TFLAG_RESPAWNDELAY)
 		restime = respawn_delay_time;
-	else 
+	else
 		restime = 0;
 
 	// Suiciders can't respawn immediately
@@ -3029,8 +3031,8 @@ void(float Suicided) TeamFortress_SetupRespawn =
 		else if (self.team_no == 2) team1total = team2total - 1;
 		else if (self.team_no == 3) team1total = team3total - 1;
 		else if (self.team_no == 4) team1total = team4total - 1;*///- ???
-		
-		
+
+
 	}
 
 	if (self.lives != -1)
@@ -3094,19 +3096,19 @@ void() TeamFortress_CheckClassStats =
 	if (self.ammo_nails < 0)
 		self.ammo_nails = 0;
 	if (self.ammo_rockets > TeamFortress_GetMaxAmmo(self,#IT_ROCKETS))
-		self.ammo_rockets = TeamFortress_GetMaxAmmo(self,#IT_ROCKETS);		
+		self.ammo_rockets = TeamFortress_GetMaxAmmo(self,#IT_ROCKETS);
 	if (self.ammo_rockets < 0)
 		self.ammo_rockets = 0;
 	if (self.ammo_cells > TeamFortress_GetMaxAmmo(self,#IT_CELLS))
-		self.ammo_cells = TeamFortress_GetMaxAmmo(self,#IT_CELLS);		
+		self.ammo_cells = TeamFortress_GetMaxAmmo(self,#IT_CELLS);
 	if (self.ammo_cells < 0)
 		self.ammo_cells = 0;
 	if (self.ammo_medikit > TeamFortress_GetMaxAmmo(self,#WEAP_MEDIKIT))
-		self.ammo_medikit = TeamFortress_GetMaxAmmo(self,#WEAP_MEDIKIT);		
+		self.ammo_medikit = TeamFortress_GetMaxAmmo(self,#WEAP_MEDIKIT);
 	if (self.ammo_medikit < 0)
 		self.ammo_medikit = 0;
 	if (self.ammo_detpack > TeamFortress_GetMaxAmmo(self,131072))
-		self.ammo_detpack = TeamFortress_GetMaxAmmo(self,131072);		
+		self.ammo_detpack = TeamFortress_GetMaxAmmo(self,131072);
 	if (self.ammo_detpack < 0)
 		self.ammo_detpack = 0;
 	// Check Grenades
@@ -3238,7 +3240,7 @@ void (float type) TeamFortress_DropAmmo =
 		if (num_team_ammoboxes(self.team_no) > (#MAX_WORLD_AMMOBOXES / number_of_teams))
 			RemoveOldAmmobox(self.team_no);
 	}
-	else 
+	else
 	{
 		num_world_ammoboxes = num_world_ammoboxes + 1;
 		if (num_world_ammoboxes > #MAX_WORLD_AMMOBOXES)
@@ -3275,7 +3277,7 @@ void (float type) TeamFortress_DropAmmo =
 	}
 
 	newmis.avelocity = '0 300 0';
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, self.origin);
 	newmis.nextthink = time + 30;	// remove after 30 seconds
 	newmis.think = SUB_Remove;
@@ -3293,12 +3295,12 @@ void () TeamFortress_AmmoboxTouch =
 
 	// Cant touch own ammobox for 2 seconds after throwing
 	if ((other == self.enemy) && (time < self.health + 2))
-		return;			
+		return;
 
 	if (other.health <= 0)
 		return;
 
-    
+
     // Return if other is not a player
 	if (other.classname != "player") //- OfN - Now grunt can take em
 	{
@@ -3336,25 +3338,25 @@ void () TeamFortress_AmmoboxTouch =
 			other.ammo_shells = other.ammo_shells + self.ammo_shells;
 			quantity = ftos(self.ammo_shells);
 			sprint2(other, #PRINT_LOW, quantity, " shells  ");
-		}	
+		}
 		if (self.ammo_nails > 0)
 		{
 			other.ammo_nails = other.ammo_nails + self.ammo_nails;
 			quantity = ftos(self.ammo_nails);
 			sprint2(other, #PRINT_LOW, quantity, " nails  ");
-		}	
+		}
 		if (self.ammo_rockets > 0)
 		{
 			other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
 			quantity = ftos(self.ammo_rockets);
 			sprint2(other, #PRINT_LOW, quantity, " rockets  ");
-		}	
+		}
 		if (self.ammo_cells > 0)
 		{
 			other.ammo_cells = other.ammo_cells + self.ammo_cells;
 			quantity = ftos(self.ammo_cells);
 			sprint2(other, #PRINT_LOW, quantity, " cells  ");
-		}	
+		}
 		sprint(other, #PRINT_LOW, "\n");
 	}
 	// shotgun
@@ -3496,13 +3498,13 @@ void(float tno) decrement_team_ammoboxes =
 void() TeamFortress_AssaultWeapon =
 {
 	//local	float	it;
-	
+
 	self.impulse = 0;
 
     if (self.tfstate & #TFSTATE_RELOADING)
    		return;
 
-	if (!(self.weapons_carried & #WEAP_ASSAULT_CANNON)) 
+	if (!(self.weapons_carried & #WEAP_ASSAULT_CANNON))
 		return;
 
 	if (self.heat > 0)
@@ -3516,7 +3518,7 @@ void() TeamFortress_AssaultWeapon =
 		sprint (self, #PRINT_HIGH, "not enough ammo.\n");
 		return;
 	}
-	// The cannon also needs 6 cells to power up 
+	// The cannon also needs 6 cells to power up
 	if (self.ammo_cells < 6)
 	{
 		sprint (self, #PRINT_HIGH, "not enough cells to power the assault cannon.\n");
@@ -3545,11 +3547,11 @@ void() TeamFortress_ExplodePerson =
 	newmis.classname = "grenade";
 	newmis.team_no = self.owner.team_no;
 	newmis.owner = self.owner;
-		
+
 	// Don't bother calculating a velocity
 	newmis.velocity = '0 0 0';
 	newmis.angles = vectoangles(newmis.velocity);
-	
+
 	// set the grenades thinktime to now
 	newmis.think = SUB_Null;
 	newmis.nextthink = time + 0.1;
@@ -3619,7 +3621,7 @@ void() TeamFortress_ExplodePerson =
 		newmis.avelocity = '0 300 0';
 		setmodel (newmis, "progs/biggren.mdl");
 	}
-//CH no flare 
+//CH no flare
 //OfN why??
 	else if (self.weapon == #GR_TYPE_FLARE)
 	{
@@ -3644,10 +3646,10 @@ void() TeamFortress_ExplodePerson =
 		te.solid = #SOLID_NOT;
 		self.owner.effects = self.owner.effects | #EF_BRIGHTLIGHT;*/
 
-    	setsize (newmis, '0 0 0', '0 0 0');		
+    	setsize (newmis, '0 0 0', '0 0 0');
 	    setorigin (newmis, self.owner.origin);
 
-        
+
         dremove(self);
 		//dremove(newmis);
 		return;
@@ -3704,7 +3706,7 @@ void() TeamFortress_ExplodePerson =
 		setmodel (newmis, "progs/grenade2.mdl");
 	}
 
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, self.owner.origin);
 
 	//bprint(#PRINT_MEDIUM, "No ");
@@ -3718,7 +3720,7 @@ void() TeamFortress_ExplodePerson =
     //no xxx, your grenade is your friend for another reason!
     //no
 
-	// Remove primed grenade object	
+	// Remove primed grenade object
 	dremove(self);
 };
 
@@ -3860,7 +3862,7 @@ void() BioInfection_Decay =
 	deathmsg = #DMSG_BIOWEAPON;
 	TF_T_Damage(self.owner, self, self.enemy, 5, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 
-	SpawnBlood(self.owner.origin, 30);	
+	SpawnBlood(self.owner.origin, 30);
 };
 
 //========================================================================
@@ -3907,15 +3909,15 @@ void() BioInfection_MonsterDecay =
 
             sound(self.enemy, #CHAN_VOICE, "speech/saveme1.wav", 1, #ATTN_NORM);
         }
-    }		
+    }
 }; */
 
 //=========================================================================
 // UTILITY FUNCTIONS
 //=========================================================================
 // Stuff an alias. This is a little messy since we insisted
-// on maintaining the ability to alter the impulse numbers in the defs.qc 
-// and not have to change any code. 
+// on maintaining the ability to alter the impulse numbers in the defs.qc
+// and not have to change any code.
 void(string halias, float himpulse1, float himpulse2) TeamFortress_Alias =
 {
 	local string imp;
@@ -3926,7 +3928,7 @@ void(string halias, float himpulse1, float himpulse2) TeamFortress_Alias =
 	imp = ftos(himpulse1);
 	stuffcmd(self, imp);
 
-	// if himpulse2 is not zero, assume that himpulse1 is a preimpulse 
+	// if himpulse2 is not zero, assume that himpulse1 is a preimpulse
 	// and complete the alias
 	if (himpulse2 != 0)
 	{
@@ -3977,7 +3979,7 @@ void() CyberAugSleep =
 {
 	if (self.owner.velocity_z == 0 && self.owner.velocity_y == 0 && self.owner.velocity_x == 0)
 		self.think = TeamFortress_RegenerateCyber;
-	
+
 	self.nextthink = time + 2;
 };
 
@@ -3986,7 +3988,7 @@ void() TeamFortress_RegenerateCyber =
 	//local entity te;
 	if (self.is_abouttodie)
 		return;
-	
+
 //WK	if (self.owner.playerclass == #PC_MEDIC)
 	if (self.owner.velocity_z > 0 || self.owner.velocity_y > 0 || self.owner.velocity_x > 0)
 	{
@@ -4014,7 +4016,7 @@ void() TeamFortress_RegenerateCyber =
 				self.owner.ammo_medikit = self.owner.ammo_medikit - #PC_MEDIC_REGEN_AMOUNT / 2;
 			}
 		}
-		
+
 		if (self.owner.armorvalue < self.owner.maxarmor)
 		{
 			if (self.owner.ammo_cells == 0)
@@ -4049,7 +4051,7 @@ void() TeamFortress_RegenerateCyber =
 		else if (self.owner.armorvalue < 3)
 			self.owner.armorvalue = 0;
 	}
-	
+
 	self.nextthink = time + #PC_MEDIC_REGEN_TIME;
 
 };
@@ -4073,7 +4075,7 @@ void() TeamFortress_RegenerateCells =
 		{
 			RevealThief(self.owner,#FALSE);
 		}
-		else {	*/		
+		else {	*/
 			//if (self.owner.ammo_cells > 100) self.owner.ammo_cells = 100;
 		if ((self.owner.velocity_z > 0 || self.owner.velocity_y > 0 || self.owner.velocity_x > 0) && self.owner.job & #JOB_FULL_HIDE)
 		{
@@ -4086,7 +4088,7 @@ void() TeamFortress_RegenerateCells =
 			if (self.owner.ammo_cells <= 0) {
 				self.owner.ammo_cells = 0;
 				RevealThief(self.owner,#FALSE);*/
-			
+
 		}
 		else if ((self.owner.velocity_z == 0 && self.owner.velocity_y == 0 && self.owner.velocity_x == 0) && !(self.owner.job & #JOB_FULL_HIDE))
 		{

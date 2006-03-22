@@ -2,7 +2,7 @@
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for spotlights, etc.
 */
-void() info_null = 
+void() info_null =
 {
 	dremove(self);
 };
@@ -17,7 +17,7 @@ void() info_notnull =
 
 //============================================================================
 
-#define START_OFF	1 
+#define START_OFF	1
 
 void() light_use =
 {
@@ -52,7 +52,7 @@ void() light =
 		dremove(self);
 		return;
 	}
-	
+
 	if (self.style >= 32)
 	{
 		self.use = light_use;
@@ -86,7 +86,7 @@ void() light_fluoro =
 		else
 			lightstyle(self.style, "m");
 	}
-	
+
 	precache_sound ("ambience/fl_hum1.wav");
 	ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, #ATTN_STATIC);
 };
@@ -230,7 +230,7 @@ void() misc_fireball =
 	self.nextthink = time + (random() * 5);
 	self.think = fire_fly;
 	if (!self.speed)
-		self.speed == 1000;
+		self.speed == 1000;															// <------------- wtf? (phrosty)
 };
 
 void() fire_fly =
@@ -249,7 +249,7 @@ void() fire_fly =
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
 	newmis.touch = fire_touch;
-	
+
 	self.nextthink = time + (random() * 5) + 3;
 	self.think = fire_fly;
 };
@@ -298,7 +298,7 @@ TESTING THING
 void() misc_explobox =
 {
 	local float	oldz;
-	
+
 	if (CheckExistence() == #FALSE)
 	{
 		dremove(self);
@@ -337,7 +337,7 @@ Smaller exploding box, REGISTERED ONLY
 void() misc_explobox2 =
 {
 	local float	oldz;
-	
+
 	if (CheckExistence() == #FALSE)
 	{
 		dremove(self);
@@ -377,7 +377,7 @@ from ENFORCER.QC
 void() Laser_Touch =
 {
 	local vector org;
-	
+
 	if (other == self.owner)
 		return;		// don't explode on owner
 
@@ -386,7 +386,7 @@ void() Laser_Touch =
 		dremove(self);
 		return;
 	}
-	
+
 	sound (self, #CHAN_WEAPON, "enforcer/enfstop.wav", 1, #ATTN_STATIC);
 	org = self.origin - 8*normalize(self.velocity);
 
@@ -410,7 +410,7 @@ void() Laser_Touch =
 	#endif
 	}
 
-	dremove(self);	
+	dremove(self);
 };
 
 /*=====================
@@ -420,12 +420,12 @@ from ENFORCER.QC
 void(vector org, vector vec) LaunchLaser =
 {
 	local	vector	vec;
-		
+
 	if (self.classname == "monster_enforcer")
 		sound (self, #CHAN_WEAPON, "enforcer/enfire.wav", 1, #ATTN_NORM);
 
 	vec = normalize(vec);
-	
+
 	newmis = spawn();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLY;
@@ -433,7 +433,7 @@ void(vector org, vector vec) LaunchLaser =
 	newmis.effects = #EF_DIMLIGHT;
 
 	setmodel (newmis, "progs/laser.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 
 	setorigin (newmis, org);
 
@@ -460,8 +460,8 @@ void(vector org, vector vec) TFFireRocket =
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
 	newmis.solid = #SOLID_BBOX;
-		
-	// set newmis speed	
+
+	// set newmis speed
 	makevectors (self.v_angle);
 	newmis.velocity = vec * 900;
 	newmis.angles = vectoangles(newmis.velocity);
@@ -474,7 +474,7 @@ void(vector org, vector vec) TFFireRocket =
 
 	newmis.weapon = #DMSG_ROCKETL;
 	setmodel (newmis, "progs/missile.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, org);
 };
 
@@ -499,9 +499,9 @@ void(vector org, vector vec) TFFireGrenade =
 		newmis.skin = 1;
 		newmis.touch = GrenadeTouch;
 		newmis.nextthink = time + 1.5; //CH 2.5 is too long for the gren
-	
-		
-	// set newmis speed	
+
+
+	// set newmis speed
 	makevectors (self.v_angle);
 	if (self.v_angle_x)
 		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
@@ -516,7 +516,7 @@ void(vector org, vector vec) TFFireGrenade =
 
 	newmis.think = GrenadeExplode;
 	setmodel (newmis, "progs/grenade2.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, org);
 };
 
@@ -614,7 +614,7 @@ void() trap_spikeshooter =
 	if (self.spawnflags & #SPAWNFLAG_LASER)
 	{
 		precache_model2 ("progs/laser.mdl");
-		
+
 		precache_sound2 ("enforcer/enfire.wav");
 		precache_sound2 ("enforcer/enfstop.wav");
 	}
@@ -635,7 +635,7 @@ void() trap_tf_spikeshooter =
 	if (self.spawnflags & #SPAWNFLAG_LASER)
 	{
 		precache_model2 ("progs/laser.mdl");
-		
+
 		precache_sound2 ("enforcer/enfire.wav");
 		precache_sound2 ("enforcer/enfstop.wav");
 	}
@@ -658,7 +658,7 @@ void() trap_shooter =
 	}
 
 	trap_spikeshooter ();
-	
+
 	if (self.wait == 0)
 		self.wait = 1;
 	self.nextthink = self.nextthink + self.wait + self.ltime;
@@ -674,7 +674,7 @@ void() trap_tf_shooter =
 	}
 
 	trap_spikeshooter ();
-	
+
 	if (self.wait == 0)
 		self.wait = 1;
 	self.nextthink = self.nextthink + self.wait + self.ltime;
@@ -790,21 +790,21 @@ local float		rnd1, rnd2, rnd3;
 		rnd1 = 5;
 	if (rnd1 < -10)
 		rnd1 = -5;
-		
+
 	if (rnd2 > 10)
 		rnd2 = 5;
 	if (rnd2 < -10)
 		rnd2 = -5;
-		
+
 	if (rnd3 < 10)
 		rnd3 = 15;
 	if (rnd3 > 30)
 		rnd3 = 25;
-	
+
 	self.velocity_x = rnd1;
 	self.velocity_y = rnd2;
 	self.velocity_z = rnd3;
-		
+
 	self.nextthink = time + 0.5;
 	self.think = bubble_bob;
 };

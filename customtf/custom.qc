@@ -1,9 +1,9 @@
 /*======================================================
-	CUSTOM.QC			Custom TeamFortress v3.2	
+	CUSTOM.QC			Custom TeamFortress v3.2
 
 	(c) William Kerney			5/21/00
 ========================================================
-All the functions pertaining to custom class generation and 
+All the functions pertaining to custom class generation and
 the miscellanious new features of Custom TF
 ======================================================*/
 
@@ -23,7 +23,7 @@ void(entity tif, float pain) RevealThief;
 void() FragGrenadeTouch;
 void() FragGrenadeExplode;
 void() KracGrenadeTouch;
-void() KracGrenadeExplode; 
+void() KracGrenadeExplode;
 void(entity bastard,float threshold) createBastard;
 void(entity immuner,float timer) makeImmune;
 void() UseJobSkill; //Function for handling professions
@@ -62,7 +62,7 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer;
 //- OfN
 void(entity mine_owner) DetonateMines; //external, job.qc
 string (float tno) TeamGetNiceColor;
-void(entity player, float start) SetArmyTimer; 
+void(entity player, float start) SetArmyTimer;
 void() RemoveArmyTimer;
 entity() SelectSpawnPoint;
 void() CleanUpEverything;
@@ -125,9 +125,9 @@ void() DropToCustomClassGen =
 	self.gravity = 1;
     self.aura = 0;
 
-    //Remove everything he's carrying	
+    //Remove everything he's carrying
 	self.job = 0;
-	
+
     // This is the appropiate place to: (after clearing job due to armytimer stuff weirdness)
     CleanUpEverything();
 
@@ -150,7 +150,7 @@ void() DropToCustomClassGen =
 	self.maxammo_medikit = 0;
 	self.maxammo_detpack = 0;
 	self.ammo_c4det = 0;
-	
+
     self.demon_one = world; //SB - this tells us who our demon is for easy reference
 	self.demon_two = world; //- OfN-  Used for hacker job, target building and for timer (% on sbar)
     self.demon_three = world;
@@ -170,7 +170,7 @@ void() DropToCustomClassGen =
 	self.maxarmor = 0;  //200 etc
 	self.weapon = 0; // #WEAP_HOOK & #WEAP_SHOTGUN etc
 	self.current_weapon = 0; // No current weapon
-	
+
 	if ((allow_hook) && (no_grapple != 1)) //If map allows it...
       	self.weapons_carried = #WEAP_HOOK; // Start with grapple
 	else
@@ -216,16 +216,16 @@ void() DropToCustomClassGen =
 	//Overrides the menu handler to always display my menu
 	//Hack alert! This preserves the selling flag. :p
 	if (self.done_custom & #CUSTOM_SELLING)
-		self.done_custom = #CUSTOM_BUILDING | #CUSTOM_SELLING; 
+		self.done_custom = #CUSTOM_BUILDING | #CUSTOM_SELLING;
 	else
-		self.done_custom = #CUSTOM_BUILDING; 
-	
+		self.done_custom = #CUSTOM_BUILDING;
+
 	//Destroy Buildings... again. :p
 	//DetonateAllGuns();
-    
+
 
 	//And then kill all demons I own
-	
+
     //kill_my_demon();
     //DetonateMines(self);
     //RemoveArmyTimer();
@@ -297,7 +297,7 @@ void() DropFromCustomClassGen =
 	}
 
 	//Clean up detpack fraction
-	if (self.maxammo_detpack > 1 && self.maxammo_detpack < 2) 
+	if (self.maxammo_detpack > 1 && self.maxammo_detpack < 2)
 		self.maxammo_detpack = 1;
 
 	if (self.cutf_items & #CUTF_SENSOR) // SB
@@ -319,24 +319,24 @@ void() DropFromCustomClassGen =
 		self.maxammo_nails = 350;
       if (self.maxammo_shells > 300)
 		self.maxammo_shells = 300;
-      
+
       //- ofn
       if (self.tf_items & #NIT_AMMO_BANDOLIER && self.tf_items & #NIT_AMMO_BACKPACK)
       {
-        if (self.maxammo_cells > #MAXAMMO_CELLS + 100) 
+        if (self.maxammo_cells > #MAXAMMO_CELLS + 100)
 		    self.maxammo_cells = #MAXAMMO_CELLS + 100;
       }
       else if (self.tf_items & #NIT_AMMO_BACKPACK)
       {
         if (self.maxammo_cells > #MAXAMMO_CELLS + 50) // was 360
 		    self.maxammo_cells = #MAXAMMO_CELLS + 50;
-      }      
+      }
       else
       {
         if (self.maxammo_cells > #MAXAMMO_CELLS) // was 320
 		    self.maxammo_cells = #MAXAMMO_CELLS;
       }
-      
+
 
 	//- OFN HERE FRONTLIN HELI BUG FIX ---//
     local entity spot;
@@ -350,10 +350,10 @@ void() DropFromCustomClassGen =
 	makevectors(self.angles);
 	spawn_tfog (self.origin + v_forward*20);
     //------------------------------------//
-    
+
     //Telefrag anyone sitting on top of us
 	spawn_tdeath(self.origin,self);
-	
+
 	//Remove observer-like mode
 	self.takedamage = #DAMAGE_AIM;
 	//Prevent bad movetype errors, or something
@@ -389,22 +389,22 @@ void() DropFromCustomClassGen =
 	stuffcmd(self, "v_cshift 0 0 0 0\n");
 	stuffcmd(self, "bf\n");
 
-	ResetMenu();		
+	ResetMenu();
 	self.impulse = 0;
 
 	//PZ - can't use martyr for 5 seconds after spawning
 	self.goal_no = time + 5;
 
 	//Make them invincible if they bought respawn protection
-	if (self.tf_items & #NIT_RESPAWN_GUARD) 
+	if (self.tf_items & #NIT_RESPAWN_GUARD)
 	{
 		self.items = self.items + #IT_INVULNERABILITY;
 		self.invincible_time = 1;
 		self.invincible_finished = time + #RESPAWN_GUARD_TIME;
 		if (self.custom_speed > 300)
-			self.invincible_finished = self.invincible_finished - 1;			
+			self.invincible_finished = self.invincible_finished - 1;
 		if (self.custom_speed > 400)
-			self.invincible_finished = self.invincible_finished - 1;			
+			self.invincible_finished = self.invincible_finished - 1;
 	}
 
     //Come again!
@@ -415,7 +415,7 @@ void() DropFromCustomClassGen =
 void() PrintMoney =
 {
     CuTFMenuSound(#MENUSOUND_BUY);
-    
+
     if (pay_msgs != 1)
     	return;
 
@@ -468,7 +468,7 @@ void(float in) PrintNotEnoughMoney =
     }
 
 	local string as;
-    
+
     sprint(self,#PRINT_HIGH,"Sorry, that costs ");
 	as = ftos(in);
 	sprint(self,#PRINT_HIGH,as);
@@ -560,7 +560,7 @@ void(float cost, float item) BuyWeapon =
 {
 	if (item == 0) //Make sure we don't buy a null weapon
 		return;
-	
+
 	if (self.weapons_carried & item) //We are selling
 	{
 		if (item == #WEAP_ROCKET_LAUNCHER && self.tf_items & #NIT_RL_LASER_SIGHT)
@@ -602,7 +602,7 @@ void(float cost, float item) BuyCuTF =
 {
 	if (item == 0) //Make sure we don't buy a null weapon
 		return;
-	
+
     if (item == #CUTF_HOLO && !(self.cutf_items & #CUTF_HOLO)) {
 		if (!(cost > self.money))
             sprint(self,#PRINT_HIGH,"Use the 'holo' command to activate/deactivate the holograph\n");
@@ -714,7 +714,7 @@ void(float cost, float type) BuyJob =
 {
 	if (type == 0) //Make sure we don't buy a null grenade
 		return;
-	
+
 	if (type == self.job) //We are selling
 	{
 		/*if (self.job & #JOB_WARLOCK)
@@ -763,19 +763,19 @@ void(float cost, float type) BuyJob =
 			self.money = self.money + 300; // sync this with demonlore cost
 		else
 			self.cutf_items = self.cutf_items | #CUTF_DEMONLORE; // warlocks see demon health
-	
+
 	if (type == #JOB_RUNNER)
 		if (self.cutf_items & #CUTF_HIGHJUMP)
 			self.money = self.money + 200; // sync with highjump cost
 		else
 			self.cutf_items = self.cutf_items | #CUTF_HIGHJUMP; // runner jumps high
-	
+
 	if (type == #JOB_JUDOKA)
 		if (self.cutf_items & #CUTF_STEALTH)
 			self.money = self.money + 400; // sync with stealth price
 		else
 			self.cutf_items = self.cutf_items | #CUTF_STEALTH; // Judo is a master of stealth by default*/
-	
+
 	//Ok we buy it
 	self.job = type;
 	self.money = self.money - cost;
@@ -786,7 +786,7 @@ void (float cost1, float cost2) BuyExtra =
 {
     local float allcost;
     allcost = 0;
-    
+
     if (self.job & #JOB_EXTRA1) // we have extra1
     {
         if (self.money < cost2) // not enough money for extra2, sell back job and extra1 then..
@@ -818,9 +818,9 @@ void (float cost1, float cost2) BuyExtra =
         {
             self.job = self.job - (self.job & #JOB_EXTRA1);
             self.job = self.job | #JOB_EXTRA2;
-            
+
             // decrease our money
-            self.money = self.money - cost2;    
+            self.money = self.money - cost2;
         }
     }
     else if (self.job & #JOB_EXTRA2) // we have extra2, so sell back everything..
@@ -842,7 +842,7 @@ void (float cost1, float cost2) BuyExtra =
         {
             allcost = (cost1+cost2)+#COST_GUERILLA;
         }
-            
+
         self.job = 0;
         PrintRefund(allcost);
         return;
@@ -891,7 +891,7 @@ void (float cost, float type) BuyGren =
 {
 	//local string talk;
 	///local float level; // This is the level of legs we have.
-	
+
 	if (type == 0) // if type is 0 we are buying the NULL GRENADE(tm)
 	{
 		sprint(self, #PRINT_HIGH, "Congratulations. You have just attempted to buy a null grenade.\n");
@@ -908,9 +908,9 @@ void (float cost, float type) BuyGren =
 	else if (level == 2)
 	{
 		local float acc; // Acceptable.
-		
+
 		acc = #FALSE;
-		
+
 		if (type == #GR_TYPE_CALTROP)
 			acc = #TRUE;
 		else if (type == #GR_TYPE_CONCUSSION)
@@ -936,7 +936,7 @@ void (float cost, float type) BuyGren =
 		}
 	}*/
 	// Grenade and speed is fine.
-	
+
 	if (!self.tp_grenades_1 && cost <= self.money) // if we don't have gren1s, make it a gren1
 	{
 /*		if (self.money_misc + cost > self.money_spent - self.money_misc)
@@ -988,7 +988,7 @@ void (float cost, float type) BuyGren =
 		}
         else
 			PrintNotEnoughMoney(cost);
-		
+
 		return;
 	}
 	self.money = self.money - cost;
@@ -1008,7 +1008,7 @@ void(float cost, float type) BuyGren1 =
 {
 	if (type == 0) //Make sure we don't buy a null grenade
 		return;
-	
+
 	if (type == self.tp_grenades_1) //We are selling
 	{
 		PrintRefund(cost);
@@ -1034,7 +1034,7 @@ void(float cost, float type) BuyGren2 =
 {
 	if (type == 0) //Make sure we don't buy a null grenade
 		return;
-	
+
 	if (type == self.tp_grenades_2) //We are selling
 	{
 		PrintRefund(cost);
@@ -1067,7 +1067,7 @@ void() fragspike_touch =
 		dremove(self);
 		return;
 	}
-	
+
 // hit something that bleeds
 	if (other.takedamage)
 	{
@@ -1082,11 +1082,11 @@ void() fragspike_touch =
 		if (self.heat > 0) {
 //			self.heat = self.heat - 1;
 //			if (self.velocity = '0 0 0') { //Skip around
-			if (1) { //Skip around
+			//if (1) { //Skip around
 				self.velocity_x = (random() - 0.5) * 200;
 				self.velocity_y = (random() - 0.5) * 200;
 				self.velocity_z = random() * 200;
-			}
+			//}
 		}
 		else {
             if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
@@ -1117,7 +1117,7 @@ void() FragSpikeThink =
 		self.angles_x = 0;
 		self.angles_z = 0;
 		makevectors(self.angles);
-		if (self.velocity = '0 0 0')
+		if (self.velocity = '0 0 0')							// <------ Is that a bug? (phrosty)
 			self.origin_z = self.origin_z + 50;
 
 		self.velocity = v_forward * 1000;
@@ -1133,7 +1133,7 @@ void() FragSpikeThink =
 		WriteCoord (#MSG_BROADCAST, self.origin_z);
 	#ifdef QUAKE_WORLD
 		multicast (self.origin, #MULTICAST_PHS);
-	#endif						
+	#endif
 		dremove(self);
 	}
 };
@@ -1188,14 +1188,14 @@ void() FragGrenadeExplode =
 //		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 1;
 		setmodel (newmis, "progs/spike.mdl");
-		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);
 		setorigin (newmis, self.origin);
 
 		//Start it over the ground
 		newmis.origin_z = newmis.origin_z + 10;
 
 		newmis.velocity = v_forward * 1000;
-		if (random() < 0.5) 
+		if (random() < 0.5)
 			newmis.velocity_z = 20;
 		else
 			newmis.velocity_z = random() * 1000;
@@ -1228,7 +1228,7 @@ void() KracGrenadeTouch =
 		return;		// don't explode on owner
 
 	sound (self, #CHAN_WEAPON, "weapons/bounce.wav", 1, #ATTN_NORM);	// bounce sound
-	
+
 	KracGrenadeExplode();
 };
 
@@ -1292,7 +1292,7 @@ void() KracGrenadeExplode =
                                 te.model = string_null;
                                 te.nextthink = time + 45; //WK 20
                                 te.think = SUB_regen;
-                                //SUB_UseTargets();     
+                                //SUB_UseTargets();
                         } else if (te.classname == "detpack") {
                                 if (te.owner.netname != self.owner.netname) {
                                         bprint (#PRINT_MEDIUM, te.owner.netname);
@@ -1364,7 +1364,7 @@ void() BastardTimer =
 		//Reset their color
 		stuffcmd(te, "color ");
 		st = ftos(TeamFortress_TeamGetColor(te.team_no) - 1);
-        
+
         //- OfN - Nice colors
         if (nicecolors==1) st =TeamGetNiceColor(te.team_no);
 
@@ -1377,14 +1377,14 @@ void() BastardTimer =
 		//Don't let up on them. Two more teamkills and its back into the tarpit for them
 		te.ff_count = self.frags - 1.9;
 		if (te.ff_count < 0) te.ff_count = 0;
-		
+
 		TF_T_Damage(te, world, world, te.health + 300, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
-		
+
 		remove(self);
 		return;
 	}
 
-	if (random() > 0.5) 
+	if (random() > 0.5)
 		stuffcmd(te, "cl_yawspeed 500;-left;+right;color 8 8\n");
 	else
 		stuffcmd(te, "cl_yawspeed 500;-right;+left;color 8 8\n"); // <-- was 9 9
@@ -1408,7 +1408,7 @@ void(entity bastard,float threshold) createBastard =
 	//if (mapname == "border1" || mapname == "border1r") // dont curse ppl on these maps, thay use a bug
     // done - TODO: Make triggers ignore cursed persons instead..
     //    return;
-    
+
     local entity te;
 
 	if (bastard == world) return;
@@ -1429,9 +1429,9 @@ void(entity bastard,float threshold) createBastard =
         bprint(#PRINT_HIGH,"ok, lets send ");
         bprint(#PRINT_HIGH,bastard.netname);
         bprint(#PRINT_HIGH," to a nice megaTF server...\n");
-        stuffcmd(bastard, "name \"CustomTF reject-wanna play Mega\"\n");        
-        //stuffcmd(bastard, "name \"im gay, wanna make new friends\"\n");  
-        
+        stuffcmd(bastard, "name \"CustomTF reject-wanna play Mega\"\n");
+        //stuffcmd(bastard, "name \"im gay, wanna make new friends\"\n");
+
 		local string st;
 #ifdef QUAKE_WORLD
 		st = infokey(world,"curseserver");
@@ -1558,7 +1558,7 @@ void() DetonateAllGuns =
 {
 	if (!(self.cutf_items & #CUTF_DISPENSER))
 		Find_And_Dmg("building_dispenser", self, 1,0);
-	if (!(self.cutf_items & #CUTF_SENTRYGUN)) 
+	if (!(self.cutf_items & #CUTF_SENTRYGUN))
 		Find_And_Dmg("building_sentrygun", self, 1,0);
 	if (!(self.tf_items & #NIT_TESLA)) //WK
 		Find_And_Dmg("building_tesla", self, 1,0);
