@@ -1,31 +1,35 @@
-reduced airfist recoil for players who are holding the flag (phrosty)
+The following is a changelog for the Improve Prozac CustomTF Project
+Changes represent everything added/removed/altered since Often released his code on the customtf.com website
+Blame RjLan for the horribleness of this changelog
 
-Randomer's log:
 ========================================================================
 Bug Fixes:
 ========================================================================
 
 - Grenades
-	Grenades would stick and follow the player through a death and respawn if the grenade was primed 0.8 seconds before the player died and respawned. Primed grenades are now always dropped when you die.
+	Grenades would stick and follow the player through a death and respawn if the grenade was primed 0.8 seconds before the player died and respawned. Primed grenades are now always dropped when you die. -Randomer
 
 - Tranquilizer
-	The tranquilizer gun could not be selected if the player had no shells, even though the tranquilizer gun uses nails. You now only need nails to select the tranquilizer gun.
+	The tranquilizer gun could not be selected if the player had no shells, even though the tranquilizer gun uses nails. You now only need nails to select the tranquilizer gun. -Randomer
 
 - Camera/Sensor
-	The camera or sensor could be used to stick other players to the ground because the bounds were not checked properly when a thrown camera or sensor landed. Now the camera or sensor simply explodes (dealing no damage) instead of sticking a player to the ground.
+	The camera or sensor could be used to stick other players to the ground because the bounds were not checked properly when a thrown camera or sensor landed. Now the camera or sensor simply explodes (dealing no damage) instead of sticking a player to the ground. -Randomer
 
 - Spy Feign/Unfeign
 	You were warned that you could not feign on top of another spy, but were still allowed to.
-	You could not unfeign and are warned that you can't unfeign when someone is standing on top of you when another player was within 64 game units from you but the other player did not have to actually be on top of you. You can now no longer feign while on top of another feigned spy (can still feign on top of any non-feigned player) and can unfeign unless another player is actually on top of you.
+	You could not unfeign and are warned that you can't unfeign when someone is standing on top of you when another player was within 64 game units from you but the other player did not have to actually be on top of you. You can now no longer feign while on top of another feigned spy (can still feign on top of any non-feigned player) and can unfeign unless another player is actually on top of you. -Randomer
 
 - Sniper Rifle Power Up Time
-	The sniper rifle power up time was based on the player's FPS, which allowed players with a greater FPS to do damage faster. The rifle now takes exactly 3.8 seconds to power up which matches the original TF code running at 30 FPS, as intended.
+	The sniper rifle power up time was based on the player's FPS, which allowed players with a greater FPS to do damage faster. The rifle now takes exactly 3.8 seconds to power up which matches the original TF code running at 30 FPS, as intended. -Randomer
 
 - Newlines in Messages
-	Some messages contain extra newlines in the middle of them. At least some of these newlines have been removed.
+	Some messages contain extra newlines in the middle of them. At least some of these newlines have been removed. -Randomer
+
+	String errors (help me add to the list) -Pulseczar
+		- "wastes his life hacking a \n.."
 
 - Invulnerability (Pentagram & Respawn Guard)
-	Some attacks could still affect players with invulnerability, particularly the player's armor. These have been fixed as follows. When a player is invulnerable:
+	Some attacks could still affect players with invulnerability, particularly the player's armor. These have been fixed as follows. When a player is invulnerable: -Randomer
 		- Concussion grenades no longer concuss them.
 		- Krac grenades no longer strip their armor and cells.
 		- EMP grenades no longer explode their ammo.
@@ -35,36 +39,130 @@ Bug Fixes:
 		- The incendiary cannon, flame thrower and napalm grenades no longer set them on fire.
 		- They can no longer be disarmed or have their arms broken with Judoka.
 		- They can no longer be hooked onto with the grappling hook.
+		- Antigrav Grenade -Pulseczar
 
 - Grappling Hook
-	The player used to slowly slide to the floor when building or hacking while on the hook. This has been fixed, which could pose a small problem if they are in the middle of the air when they build or hack.
+	The player used to slowly slide to the floor when building or hacking while on the hook. This has been fixed, which could pose a small problem if they are in the middle of the air when they build or hack. -Randomer
+
+- Assault Cannon
+	Removed console spam when trying to fire assault cannon while in the air -Pulseczar/Randomer
+		- Used .goal_state to hold time value to prevent the spam -I think I used randomer's code when merging -RJ
+
+- Mines
+	Supernailgun and laser cannon can now blow up mines -Pulseczar
+
+- Judo
+	Judo gives back weapon, but not ammo.. why?? (I think it's because I've been discarding while judoed) -Pulseczar
+		- Took out old fix - going to try to fix discard so that it doesn't discard judoed weapon ammo
+		- Also, apparently you can't use a weapon you judo from someone if you discard, but that makes sense, right? you would discard the ammo for the weapon, then judo the weapon and not have the ammo to use it
+		- Implemented something - not sure if it fixed this bug
 
 
 ========================================================================
-Changes:
+Changes/Balance:
 ========================================================================
+
+- Fix bunny hopping
+		-Fixed in FTE server
 
 - Light Assault Gun
-	The light assault gun has been changed to use shells rather than nails -- shells are usually zero-fly-time (instant hit when you fire them) while nails are usually projectiles and take some amount of time to reach the enemy. It has also been given 1/4th the spread that the assault cannon has.
+	The light assault gun has been changed to use shells rather than nails -- shells are usually zero-fly-time (instant hit when you fire them) while nails are usually projectiles and take some amount of time to reach the enemy. It has also been given 1/4th the spread that the assault cannon has. -Randomer
+
+	Tone down light assault slightly -Pulseczar
+		- Weapons.qc / FireBullets()
+		- Damage should be decreased by 25%
 
 - Voting System
-	The voting system has been improved greatly.
+	The voting system has been improved greatly. -Randomer
 		- If more than 50% of the people on the server vote yes then a vote will pass immediately.
 		- If more than 50% of the people on the server vote no then a vote will fail immediately.
 		- If after 60 seconds if more people have voted yes than no then the vote passes, otherwise it fails.
 
 - Krac Grenades
-	Krac grenades have been given linear falloff damage for armor, cells and buildings and the range against these has been increased slightly to compensate for this large decrease in damage. The damage may need to be adjusted some, especially against buildings, to balance it more.
+	Krac grenades have been given linear falloff damage for armor, cells and buildings and the range against these has been increased slightly to compensate for this large decrease in damage. The damage may need to be adjusted some, especially against buildings, to balance it more. -Randomer
 
-- Airfist
-	The regular detpack is now unfistable. The C4 detpack is now unfistable for the first half second to reduce detpack spamming, and the velocity that the c4 detpack gets when fisted is now reduced by half.
-	Players with Aspect of HWGuy can now only be pushed one quarter the amount that players without Aspect of HWGuy can be pushed. Recoil from firing the airfist has been reduced by 30% for players with Aspect of HWGuy.
+	Pulseczar:
+	- Now subtracts armor by 90 and cells by 100 (changed to 75 on armor and 90 on cells)
+	- Rather than instant cut down to 10 armor (or 75 armor with impact armor)
+	- Should this be toned down even more? Considering how easy it is to hit with kracs (very little timing involved)
+	- And does 25% less damage to builds than before (another value that needs lots of testing)
 
 - Concussion Grenades
-	The TF2.9 style uncheatable "stumble" concussion grenades have been added. The server can select the old style grenades with localinfo old_grens "1".
+	The TF2.9 style uncheatable "stumble" concussion grenades have been added. The server can select the old style grenades with localinfo old_grens "1". -Randomer
+
+	Shorten conc time (old: 25sec ; new: 12.5) -Pulseczar
+		- Changed #define GR_CONCUSS_TIME from 5 to 2.5, changing conc time from 25 to 12.5 seconds
+
+- Psi Grenades
+	Decrease psi area-effect and time of effect -Pulseczar
+		- Time: 4.5 down to 3.5 (time of psi mines not affected)
+		- Radius: 250 down to 200
+
+- Napalm Grenades
+	- #define NAPALM_MINDMG 40 // PZ - was 60
+	- #define NAPALM_MAXDMG 80 // PZ - was 120
+	- #define NAPALM_MAINDMG 100 // PZ - was 140
+	- These all have to do with the damage over time.. the initial damage was kept the same.
+
+- Airfist
+	The regular detpack is now unfistable. The C4 detpack is now unfistable for the first half second to reduce detpack spamming, and the velocity that the c4 detpack gets when fisted is now reduced by half. -Randomer
+
+	Players with Aspect of HWGuy can now only be pushed one quarter the amount that players without Aspect of HWGuy can be pushed. Recoil from firing the airfist has been reduced by 30% for players with Aspect of HWGuy. -Randomer
+
+	Make dets un-fistable (no fisted dets at last second - too hard for engies to defend against). -Pulseczar
+		- Only regular dets are un-fistable.. and fist does half the force to tossable dets.
+
+	Reduced airfist recoil for players who are holding the flag -phrosty
+
+- Sniper Rifle
+	Make sniper rifle and autorifle weak to builds (too easy to take out builds with sniper) -Pulseczar
+		- Added check for builds under W_FireSniperRifle()
+		- Currently at 25% of the damage of before (still looking for a sweet spot value)
+
+	Increase range of sniper rifle
+    		- Now should be the same range as spray rifle
 
 - Incendiary Cannon & Napalm Grenades
-	Fire from the incendiary cannon and napalm grenades no longer go through walls.
+	Fire from the incendiary cannon and napalm grenades no longer go through walls. -Randomer
+
+	Pulseczar:
+	- Lowered #FLAME_MAXPLYRFLAMES from 4 to 3
+	- Don't really have a clue yet how that will affect it; hopefully will decrease damage by 25%?
+	- Now seems about like the classic flamethrower - too weak for people to bother with
+
+- Martyr (much thanks to randomer for all his help fixing bugs with this) -Pulseczar
+	- Martyr no longer has invulnerability; has an insta-det C-4 vest
+	- Damage is directly tied to radius in detpack functioning
+	- Setting damage/radius to 41.65% of det
+	- Constructed a new JobMartyr() and C-4VestExplode function out of old JobMartyr() and 3 detpack functions
+	- Shouldn't survive in any way (including invulnerability)
+	- Just made it so you can't det while invulnerable for now (also, martyr is guarenteed not to survive det)
+	- Need to remove some things that aren't needed like showing detpack model (general cleanup of new functions)
+	- Detpack map triggers should be working too
+	- Just remember the C-4 vest has less range than the detpack
+	- The sound of the detpack might need to be toned down too once its damage is decided
+	- No longer can be heard all over the map (ATTN_NONE to ATTN_NORM)
+	- Though the player always died in the test, sometimes they weren't gibbed (minor bug)
+	- Should be fixed
+	- C-4 vest explodes say %5 of the time it gets hit by explosive damage? (Lith)
+	- How about emp has a chance to cause vest trigger to malfunction, causing the vest to explode at a random time (how about between 5 and 30 seconds?) (emps add a lot of time to det timer)
+	- Or krac has a chance of making vest explode (kracs destroy dets)
+	- Or how about kracs giving chance of making vest malfunction in some way like destroying the vest and making the electronics of the bomb "burn a hole through the martyr's chest"
+	- Add a 'Glory to God!' sound? (done)
+	- "God decrees that ye shall not commit suicide more than once per minute"? (done)
+
+- Builds
+	Give builds more health -Pulseczar
+		- Added +50% to initial health (the health the building starts with) amount in defs.qc (had to edit other file(s) too for sent and tes upgrades)
+		- Why do cameras seem indestructable now? (at least against martyr)
+
+	Ddd confimation menus for dismantle/destroy (no more accidently hitting dismantle, FFS) -Pulseczar
+		- Need a menu that 'intercepts' the call to dismantle build and passes on the call if player confirms else it cancels call
+		- Seems to all be working.. much thanks to randomer.
+
+- Summons
+	Shouldn't be able to infect summons.. too easy to kill them that way -Pulseczar
+		- Disabled, should be fixed
 
 
 ========================================================================
@@ -75,154 +173,10 @@ Known Issues:
 	After having your weapon stolen by a player with Judoka, you cannot throw a primed grenade. Since the grenade explodes 3.8 seconds after you prime and Judoka disables you for 5 seconds you will always be holding the primed grenade when it explodes.
 
 
-
-Pulseczar's log:
-* = done (no serious bugs known, though is still in testing and may have balance issues)
-? = implemented but hasn't been tested any or needs a lot more testing
-! = implemented but has known serious bugs
-_ = hasn't been worked on yet
-
-
-+++++++++++++
-===balance===
-+++++++++++++
-
-### all this stuff needs lots of testing to find the right balance ###
-
-*. make dets un-fistable (no fisted dets at last second - too hard for engies to defend against)
-    -only regular dets are un-fistable.. and fist does half the force to tossable dets
-
-*. make sniper rifle and autorifle weak to builds (too easy to take out builds with sniper)
-    -added check for builds under W_FireSniperRifle()
-    -currently at 25% of the damage of before (still looking for a sweet spot value)
-
-*. give builds more health
-    -added +50% to initial health (the health the building starts with) amount in defs.qc 
-     (had to edit other file(s) too for sent and tes upgrades)
-    -!why do cameras seem indestructable now? (at least against martyr)
-
-_. builds also sometimes lock-on targets very slowly.. maybe up for the lock-on rate?
-    -I think it's just slow in large games.. quick in small games.. so if I increase lock-on rate time, might make
-     builds overpowered in small games.. I wonder if there's a way to make lock-on not so laggy in large games..
-     would be nice if you could give more priority to some entities' thinks over others'.
-
-*. nerf kracs
-    -now subtracts armor by 90 and cells by 100 (changed to 75 on armor and 90 on cells)
-     -rather than instant cut down to 10 armor (or 75 armor with impact armor)
-      -?should this be toned down even more? considering how easy it is to hit with kracs (very little timing involved)
-    -and does 25% less damage to builds than before (another value that needs lots of testing)
-
-?. nerf flamethrower
-    -lowered #FLAME_MAXPLYRFLAMES from 4 to 3
-     -don't really have a clue yet how that will affect it; hopefully will decrease damage by 25%?
-      -?now seems about like the classic flamethrower - too weak for people to bother with
-
-?. nerf napalm grenades
-    -#define NAPALM_MINDMG 40 // PZ - was 60
-     #define NAPALM_MAXDMG 80 // PZ - was 120
-     #define NAPALM_MAINDMG 100 // PZ - was 140
-     -these all have to do with the damage over time.. the initial damage was kept the same.
-
-*. nerf martyr (much thanks to randomer for all his help fixing bugs with this)
-    -martyr no longer has invulnerability; has an insta-det C-4 vest
-     -damage is directly tied to radius in detpack functioning
-      -setting damage/radius to 41.65% of det
-    -constructed a new JobMartyr() and C-4VestExplode function out of old JobMartyr() and 3 detpack functions
-    -shouldn't survive in any way (including invulnerability)
-     -just made it so you can't det while invulnerable for now (also, martyr is guarenteed not to survive det)
-    -!need to remove some things that aren't needed like showing detpack model (general cleanup of new functions)
-    -detpack map triggers should be working too
-     -just remember the C-4 vest has less range than the detpack
-    -the sound of the detpack might need to be toned down too once its damage is decided
-      -no longer can be heard all over the map (ATTN_NONE to ATTN_NORM)
-    -though the player always died in the test, sometimes they weren't gibbed (minor bug)
-      -should be fixed
-    -?C-4 vest explodes say %5 of the time it gets hit by explosive damage? (Lith)
-    -?how about emp has a chance to cause vest trigger to malfunction, causing the vest to explode at a random time
-     (how about between 5 and 30 seconds?) (emps add a lot of time to det timer)
-    -?or krac has a chance of making vest explode (kracs destroy dets)
-     -or how about kracs giving chance of making vest malfunction in some way like destroying the vest and making
-      making the electronics of the bomb "burn a hole through the martyr's chest"
-    -add a 'Glory to God!' sound? (done)
-    -"God decrees that ye shall not commit suicide more than once per minute"? (done)
-
-*. shorten conc time (old: 25sec ; new: 12.5)
-    -changed #define GR_CONCUSS_TIME from 5 to 2.5, changing conc time from 25 to 12.5 seconds
-
-?. tone down light assault slightly
-    -weapons.qc / FireBullets()
-    -damage should be decreased by 25%
-
-?. decrease psi area-effect and time of effect
-    -time: 4.5 down to 3.5 (time of psi mines not affected)
-    -radius: 250 down to 200
-
-
-+++++++++++++++++
-===innovations===
-+++++++++++++++++
-
-### just new stuff that doesn't really fit the other categories ###
-
-*. add confimation menus for dismantle/destroy (no more accidently hitting dismantle, FFS)
-    -need a menu that 'intercepts' the call to dismantle build and passes on the call if player confirms
-     else it cancels call
-    -seems to all be working.. much thanks to randomer.
-
-*. make a 2fort5 version of Keepaway to replace Egypt2 with (or find an old version of 2fort5 Keepaway)
-    -2fort5 Steal is now on the server rather than Egypt2
-
-
+----------------------Ideas/Suggested fixes-----------------------------
 +++++++++++
 ===fixes===
 +++++++++++
-
-*. fix bunny hopping
-    -should be fixed in FTE
-     -not running FTE server yet though
-
-*. some attacks still work on invulnerable people
-    -*judo, _legshots (apparently they do slow you down), *grapple, *conc, *set ablaze (*thrower, *cannon, *napalm),
-     *impulse rifle affects armor, *antigrav seems to work some, *EMP (explodes ammo), *krac (drops armor and cells),
-     *caltrops slow you down
-
-*. increase range of sniper rifle?
-    -now should be the same range as spray rifle
-
-*. no friendly dismantles (no need with vote system)
-   (people abuse friendly dismantles and use proxy server or whatever to keep rejoining and dismantling friendlies)
-    -done in menu.qc
-    -!all working except for some reason enemies can't dismantle telepads
-     -seems they couldn't in Often's code as well
-      (seems like I tested that and it turned out true, but don't really remember)
-
-*. rifle charge-up fix (without fix, charge-up time depends on FPS which varies from system to system)
-    -used randomer's fix from the forums
-     -MAX_TIME variable might need adjusting
-    -?seems correct but not certain yet that rifle damage hasn't been changed
-      (we want to make it charge correctly.. not change its damage any)
-
-!. camming and ... sensoring... (trapping players with a bug that sticks them to a camera or sensor)
-    -should be fixed (used randomer's fix)
-    -!hmm.. still doesn't work quite right.. but at least it seems you can't cam other players
-
-*. remove console spam when trying to fire assault cannon while in the air
-    -used .goal_state to hold time value to prevent the spam
-
-*. supernailgun and laser cannon won't blow up mines
-    -any other weapons that don't blow up mines?
-
-?. judo gives back weapon, but not ammo.. why?? (I think it's because I've been discarding while judoed)
-    -took out old fix - going to try to fix discard so that it doesn't discard judoed weapon ammo
-     -also, apparently you can't use a weapon you judo from someone if you discard, but that makes sense, right?
-      you would discard the ammo for the weapon, then judo the weapon and not have the ammo to use it
-     -implemented something - not sure if it fixed this bug
-
-*. string errors (help me add to the list)
-    -"wastes his life hacking a \n.."
-
-?. shouldn't be able to infect summons.. too easy to kill them that way
-    -should be fixed
 
 _. instead of "no room to build here" jive, make it put the build as close to the wall as it can
 
@@ -269,6 +223,9 @@ _. sometimes if you drop the flag with 'dropitems' it becomes invisible?
 _. "Killing Machine" shows incorrectly a lot
 
 _. spec scanner/id is not working in FTE server
+
+-.	Builds also sometimes lock-on targets very slowly.. maybe up for the lock-on rate? -Pulseczar
+		- I think it's just slow in large games.. quick in small games.. so if I increase lock-on rate time, might make builds overpowered in small games.. I wonder if there's a way to make lock-on not so laggy in large games.. would be nice if you could give more priority to some entities' thinks over others'.
 
 
 +++++++++++
