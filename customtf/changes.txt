@@ -198,7 +198,7 @@ _. gives frags for dismantling enemy fields? but not for destroying them
 
 _. teammates turreting friendly builds or turning sents?
 
-_. sliding down while hacking on grapple (bug)
+_. sliding down while hacking on grapple (bug) (PZ - didn't rando fix this?)
     -I've worked quite a bit on this one before to no avail
     -also noticed that if you hold jump while grappled to ceiling, you'll slide down (could be related)
 
