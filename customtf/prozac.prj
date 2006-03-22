@@ -13,7 +13,7 @@ CVS Module=
 Using CVS=0
 Create Tagfile=0
 CTags Legacy Support=0
-Working Time=15855
+Working Time=16773
 [Files]
 0=actions.qc
 1=admin.qc
@@ -109,16 +109,16 @@ Working Time=15855
 [uemakeXp]
 ReleaseMode=0
 [Open Files]
-Open File0=I:\dev\prozacSRC-phrosty\jobs.qc
-Open File Pos0=25571
-Open File Line0=25033
-Open File Window Pos0=0,1,-1,-1,-4,-30,0,0,912,424
-Open File1=I:\dev\prozacSRC-phrosty\cutfmenu.qc
-Open File Pos1=62041
-Open File Line1=68724
-Active File Index=1
-Open File Window Pos1=2,3,-1,-1,-4,-30,22,29,934,453
-Open File2=I:\dev\prozacSRC-phrosty\tinker.qc
+Open File0=C:\dev\customtf\airfist.qc
+Open File Pos0=15616
+Open File Line0=15922
+Open File Window Pos0=2,3,-1,-1,-4,-30,110,145,958,582
+Open File1=C:\dev\customtf\weapons.qc
+Open File Pos1=42393
+Open File Line1=48586
+Active File Index=0
+Open File Window Pos1=0,1,-1,-1,-4,-30,44,58,852,611
+Open File2=
 Active File Display Mode=3
 Open File Pos2=698
 Open File Line2=62

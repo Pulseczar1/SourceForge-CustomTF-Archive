@@ -1,5 +1,5 @@
 #ifdef FTEQCC
-#pragma PROGS_DAT "../qwprogs.prozac.dat"
+#pragma PROGS_DAT "../qwprogs.dat"
 #endif
 //#pragma PROGS_SRC "progs.src"
 
@@ -37,7 +37,7 @@ items.qc
 admin.qc
 weapons.qc
 world.qc
-status.qc   
+status.qc
 client.qc
 obits.qc
 player.qc
