@@ -93,10 +93,13 @@ Changes/Balance:
 	Shorten conc time (old: 25sec ; new: 12.5) -Pulseczar
 		- Changed #define GR_CONCUSS_TIME from 5 to 2.5, changing conc time from 25 to 12.5 seconds
 
+	When the "no_conc" key is "on", disable conc grens -phrosty
+
 - Psi Grenades
 	Decrease psi area-effect and time of effect -Pulseczar
 		- Time: 4.5 down to 3.5 (time of psi mines not affected)
 		- Radius: 250 down to 200
+	When the "no_psi" key is "on", disable psi grens -phrosty
 
 - Napalm Grenades
 	- #define NAPALM_MINDMG 40 // PZ - was 60
@@ -112,7 +115,7 @@ Changes/Balance:
 	Make dets un-fistable (no fisted dets at last second - too hard for engies to defend against). -Pulseczar
 		- Only regular dets are un-fistable.. and fist does half the force to tossable dets.
 
-	Reduced airfist recoil for players who are holding the flag -phrosty
+	Reduced airfist recoil for players who are holding the flag (if "no_fisting_noobs" key is "on") -phrosty
 
 - Sniper Rifle
 	Make sniper rifle and autorifle weak to builds (too easy to take out builds with sniper) -Pulseczar
@@ -245,7 +248,7 @@ _. make it so that grapples don't keep flying (until they hit something) after t
 _. make aspect resist push from fist a lot more or completely?
 
 _. 'lay' punishment
-    -why is that there? it's as if it has anti-Mega origins, yet CuTF uses a bit of MegaTF code, itself 
+    -why is that there? it's as if it has anti-Mega origins, yet CuTF uses a bit of MegaTF code, itself
 
 _. add changeteam and changeclass commands?
 
@@ -265,9 +268,9 @@ _. someone to finish Gremlin (says DP) http://www.customtf.com/forums/viewtopic.
      -player keeps weapon when Gremlin steals
      -should Gremlin do some damage when he steals your weapon?
      -"The gremlin can steal a laser cannon, but cannot fire it, so it only gets stolen for a fraction of a second."
-     -"When the gremlin steals te grenade launcher, he can't fire grenades, or attack any other way, so 
+     -"When the gremlin steals te grenade launcher, he can't fire grenades, or attack any other way, so
        he is useless when it happens."
-     -"The gremlin retains the physics of the regular quake monsters. This means when he lands on 
+     -"The gremlin retains the physics of the regular quake monsters. This means when he lands on
        something that isn't solid floor, he gets stuck for a sec."
      -Gremlin keeps weapon after player dies
      -Gremlin moves very slowly (like in slow-motion)
@@ -282,7 +285,7 @@ _. is warlock finished? do heads function like they should?
      -make the heads function about the same as the purple thing
       -make heads face whatever direction they are flying like Doom lost souls
        -how could the warlock heads tie into the vore throwing heads? anyone? ammo for vore? damage heads do?
-    -scrag and pirahna can't move up and down (rl3001) 
+    -scrag and pirahna can't move up and down (rl3001)
      -I believe I've seen scrags move up and down
     -shambler can't come to me on simple and wide easy ramp. (rl3001)
     -summons should be immune to medikit and disease. They're not of this world, you know. (rl3001)
