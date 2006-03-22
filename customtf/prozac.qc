@@ -20,7 +20,7 @@
 #define MSG_INTRO2 "Based on the aussie ver by SB-1\nModified version by Clan Prozac\n\n" // Ÿ\n\n
 //#define MSG_INTRO3 "¨Lot of the stuff under test!!©\n\nClan¯Admin issuesº ask Pirivan!\nGeneral bitchingº ask your mom! :P"
 //#define MSG_INTRO3 "Send bug reports and comments to:\ngrunwÀcopc®es (àQuakeà as subject¡)"
-#define MSG_INTRO3 "Modified Prozac CuTF - 'Improve CuTF'\nsee customtf®com¯forums"
+#define MSG_INTRO3 "Modified Prozac CuTF - 'Improve CuTF'\nsee customtf®sf®net"
 //http:¯¯kickme®to¯customtf"
 
 
@@ -29,17 +29,17 @@
 
 void() PrintProzacMOTD =
 {
-    local string st;   
+    local string st;
 
     st = "Ÿ Celebrating  years !! Ÿ\n\n";
-    
+
     if ((self.#cprint_fx & 3) == 3)
         st = colstr(st,#COLSTR_MIX1);
     else if (self.#cprint_fx & 2)
         st = colstr(st,#COLSTR_RED);
     else if (self.#cprint_fx & 1)
         st = colstr(st,#COLSTR_MIX2);
-    
+
     CenterPrint4(self,#MSG_INTRO,#MSG_INTRO2,st,#MSG_INTRO3);
 
     self.#cprint_fx = self.#cprint_fx + 1;
