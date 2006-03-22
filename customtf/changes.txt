@@ -1,1 +1,381 @@
 reduced airfist recoil for players who are holding the flag (phrosty)
+
+Randomer's log:
+========================================================================
+Bug Fixes:
+========================================================================
+
+- Grenades
+	Grenades would stick and follow the player through a death and respawn if the grenade was primed 0.8 seconds before the player died and respawned. Primed grenades are now always dropped when you die.
+
+- Tranquilizer
+	The tranquilizer gun could not be selected if the player had no shells, even though the tranquilizer gun uses nails. You now only need nails to select the tranquilizer gun.
+
+- Camera/Sensor
+	The camera or sensor could be used to stick other players to the ground because the bounds were not checked properly when a thrown camera or sensor landed. Now the camera or sensor simply explodes (dealing no damage) instead of sticking a player to the ground.
+
+- Spy Feign/Unfeign
+	You were warned that you could not feign on top of another spy, but were still allowed to.
+	You could not unfeign and are warned that you can't unfeign when someone is standing on top of you when another player was within 64 game units from you but the other player did not have to actually be on top of you. You can now no longer feign while on top of another feigned spy (can still feign on top of any non-feigned player) and can unfeign unless another player is actually on top of you.
+
+- Sniper Rifle Power Up Time
+	The sniper rifle power up time was based on the player's FPS, which allowed players with a greater FPS to do damage faster. The rifle now takes exactly 3.8 seconds to power up which matches the original TF code running at 30 FPS, as intended.
+
+- Newlines in Messages
+	Some messages contain extra newlines in the middle of them. At least some of these newlines have been removed.
+
+- Invulnerability (Pentagram & Respawn Guard)
+	Some attacks could still affect players with invulnerability, particularly the player's armor. These have been fixed as follows. When a player is invulnerable:
+		- Concussion grenades no longer concuss them.
+		- Krac grenades no longer strip their armor and cells.
+		- EMP grenades no longer explode their ammo.
+		- The impulse rifle no longer strips their armor.
+		- Caltrops no longer slow them down.
+		- Sniper rifle leg shots no longer slow them down.
+		- The incendiary cannon, flame thrower and napalm grenades no longer set them on fire.
+		- They can no longer be disarmed or have their arms broken with Judoka.
+		- They can no longer be hooked onto with the grappling hook.
+
+- Grappling Hook
+	The player used to slowly slide to the floor when building or hacking while on the hook. This has been fixed, which could pose a small problem if they are in the middle of the air when they build or hack.
+
+
+========================================================================
+Changes:
+========================================================================
+
+- Light Assault Gun
+	The light assault gun has been changed to use shells rather than nails -- shells are usually zero-fly-time (instant hit when you fire them) while nails are usually projectiles and take some amount of time to reach the enemy. It has also been given 1/4th the spread that the assault cannon has.
+
+- Voting System
+	The voting system has been improved greatly.
+		- If more than 50% of the people on the server vote yes then a vote will pass immediately.
+		- If more than 50% of the people on the server vote no then a vote will fail immediately.
+		- If after 60 seconds if more people have voted yes than no then the vote passes, otherwise it fails.
+
+- Krac Grenades
+	Krac grenades have been given linear falloff damage for armor, cells and buildings and the range against these has been increased slightly to compensate for this large decrease in damage. The damage may need to be adjusted some, especially against buildings, to balance it more.
+
+- Airfist
+	The regular detpack is now unfistable. The C4 detpack is now unfistable for the first half second to reduce detpack spamming, and the velocity that the c4 detpack gets when fisted is now reduced by half.
+	Players with Aspect of HWGuy can now only be pushed one quarter the amount that players without Aspect of HWGuy can be pushed. Recoil from firing the airfist has been reduced by 30% for players with Aspect of HWGuy.
+
+- Concussion Grenades
+	The TF2.9 style uncheatable "stumble" concussion grenades have been added. The server can select the old style grenades with localinfo old_grens "1".
+
+- Incendiary Cannon & Napalm Grenades
+	Fire from the incendiary cannon and napalm grenades no longer go through walls.
+
+
+========================================================================
+Known Issues:
+========================================================================
+
+- Judoka & Primed Grenades
+	After having your weapon stolen by a player with Judoka, you cannot throw a primed grenade. Since the grenade explodes 3.8 seconds after you prime and Judoka disables you for 5 seconds you will always be holding the primed grenade when it explodes.
+
+
+
+Pulseczar's log:
+* = done (no serious bugs known, though is still in testing and may have balance issues)
+? = implemented but hasn't been tested any or needs a lot more testing
+! = implemented but has known serious bugs
+_ = hasn't been worked on yet
+
+
++++++++++++++
+===balance===
++++++++++++++
+
+### all this stuff needs lots of testing to find the right balance ###
+
+*. make dets un-fistable (no fisted dets at last second - too hard for engies to defend against)
+    -only regular dets are un-fistable.. and fist does half the force to tossable dets
+
+*. make sniper rifle and autorifle weak to builds (too easy to take out builds with sniper)
+    -added check for builds under W_FireSniperRifle()
+    -currently at 25% of the damage of before (still looking for a sweet spot value)
+
+*. give builds more health
+    -added +50% to initial health (the health the building starts with) amount in defs.qc 
+     (had to edit other file(s) too for sent and tes upgrades)
+    -!why do cameras seem indestructable now? (at least against martyr)
+
+_. builds also sometimes lock-on targets very slowly.. maybe up for the lock-on rate?
+    -I think it's just slow in large games.. quick in small games.. so if I increase lock-on rate time, might make
+     builds overpowered in small games.. I wonder if there's a way to make lock-on not so laggy in large games..
+     would be nice if you could give more priority to some entities' thinks over others'.
+
+*. nerf kracs
+    -now subtracts armor by 90 and cells by 100 (changed to 75 on armor and 90 on cells)
+     -rather than instant cut down to 10 armor (or 75 armor with impact armor)
+      -?should this be toned down even more? considering how easy it is to hit with kracs (very little timing involved)
+    -and does 25% less damage to builds than before (another value that needs lots of testing)
+
+?. nerf flamethrower
+    -lowered #FLAME_MAXPLYRFLAMES from 4 to 3
+     -don't really have a clue yet how that will affect it; hopefully will decrease damage by 25%?
+      -?now seems about like the classic flamethrower - too weak for people to bother with
+
+?. nerf napalm grenades
+    -#define NAPALM_MINDMG 40 // PZ - was 60
+     #define NAPALM_MAXDMG 80 // PZ - was 120
+     #define NAPALM_MAINDMG 100 // PZ - was 140
+     -these all have to do with the damage over time.. the initial damage was kept the same.
+
+*. nerf martyr (much thanks to randomer for all his help fixing bugs with this)
+    -martyr no longer has invulnerability; has an insta-det C-4 vest
+     -damage is directly tied to radius in detpack functioning
+      -setting damage/radius to 41.65% of det
+    -constructed a new JobMartyr() and C-4VestExplode function out of old JobMartyr() and 3 detpack functions
+    -shouldn't survive in any way (including invulnerability)
+     -just made it so you can't det while invulnerable for now (also, martyr is guarenteed not to survive det)
+    -!need to remove some things that aren't needed like showing detpack model (general cleanup of new functions)
+    -detpack map triggers should be working too
+     -just remember the C-4 vest has less range than the detpack
+    -the sound of the detpack might need to be toned down too once its damage is decided
+      -no longer can be heard all over the map (ATTN_NONE to ATTN_NORM)
+    -though the player always died in the test, sometimes they weren't gibbed (minor bug)
+      -should be fixed
+    -?C-4 vest explodes say %5 of the time it gets hit by explosive damage? (Lith)
+    -?how about emp has a chance to cause vest trigger to malfunction, causing the vest to explode at a random time
+     (how about between 5 and 30 seconds?) (emps add a lot of time to det timer)
+    -?or krac has a chance of making vest explode (kracs destroy dets)
+     -or how about kracs giving chance of making vest malfunction in some way like destroying the vest and making
+      making the electronics of the bomb "burn a hole through the martyr's chest"
+    -add a 'Glory to God!' sound? (done)
+    -"God decrees that ye shall not commit suicide more than once per minute"? (done)
+
+*. shorten conc time (old: 25sec ; new: 12.5)
+    -changed #define GR_CONCUSS_TIME from 5 to 2.5, changing conc time from 25 to 12.5 seconds
+
+?. tone down light assault slightly
+    -weapons.qc / FireBullets()
+    -damage should be decreased by 25%
+
+?. decrease psi area-effect and time of effect
+    -time: 4.5 down to 3.5 (time of psi mines not affected)
+    -radius: 250 down to 200
+
+
++++++++++++++++++
+===innovations===
++++++++++++++++++
+
+### just new stuff that doesn't really fit the other categories ###
+
+*. add confimation menus for dismantle/destroy (no more accidently hitting dismantle, FFS)
+    -need a menu that 'intercepts' the call to dismantle build and passes on the call if player confirms
+     else it cancels call
+    -seems to all be working.. much thanks to randomer.
+
+*. make a 2fort5 version of Keepaway to replace Egypt2 with (or find an old version of 2fort5 Keepaway)
+    -2fort5 Steal is now on the server rather than Egypt2
+
+
++++++++++++
+===fixes===
++++++++++++
+
+*. fix bunny hopping
+    -should be fixed in FTE
+     -not running FTE server yet though
+
+*. some attacks still work on invulnerable people
+    -*judo, _legshots (apparently they do slow you down), *grapple, *conc, *set ablaze (*thrower, *cannon, *napalm),
+     *impulse rifle affects armor, *antigrav seems to work some, *EMP (explodes ammo), *krac (drops armor and cells),
+     *caltrops slow you down
+
+*. increase range of sniper rifle?
+    -now should be the same range as spray rifle
+
+*. no friendly dismantles (no need with vote system)
+   (people abuse friendly dismantles and use proxy server or whatever to keep rejoining and dismantling friendlies)
+    -done in menu.qc
+    -!all working except for some reason enemies can't dismantle telepads
+     -seems they couldn't in Often's code as well
+      (seems like I tested that and it turned out true, but don't really remember)
+
+*. rifle charge-up fix (without fix, charge-up time depends on FPS which varies from system to system)
+    -used randomer's fix from the forums
+     -MAX_TIME variable might need adjusting
+    -?seems correct but not certain yet that rifle damage hasn't been changed
+      (we want to make it charge correctly.. not change its damage any)
+
+!. camming and ... sensoring... (trapping players with a bug that sticks them to a camera or sensor)
+    -should be fixed (used randomer's fix)
+    -!hmm.. still doesn't work quite right.. but at least it seems you can't cam other players
+
+*. remove console spam when trying to fire assault cannon while in the air
+    -used .goal_state to hold time value to prevent the spam
+
+*. supernailgun and laser cannon won't blow up mines
+    -any other weapons that don't blow up mines?
+
+?. judo gives back weapon, but not ammo.. why?? (I think it's because I've been discarding while judoed)
+    -took out old fix - going to try to fix discard so that it doesn't discard judoed weapon ammo
+     -also, apparently you can't use a weapon you judo from someone if you discard, but that makes sense, right?
+      you would discard the ammo for the weapon, then judo the weapon and not have the ammo to use it
+     -implemented something - not sure if it fixed this bug
+
+*. string errors (help me add to the list)
+    -"wastes his life hacking a \n.."
+
+?. shouldn't be able to infect summons.. too easy to kill them that way
+    -should be fixed
+
+_. instead of "no room to build here" jive, make it put the build as close to the wall as it can
+
+_. remove delay when you join server that keeps you from joining team and choosing class for a few seconds?
+
+_. damage over time things and invulnerability (fire, disease, etc. shouldn't last through pent)
+
+_. people feigned in acid don't take damage from acid (might just be that way in shallow acid - not sure)
+
+_. berzerker doesn't damage invulnerable people
+
+_. mines can be killed by explosions on the other side of walls?
+
+_. gives frags for dismantling enemy fields? but not for destroying them
+    -also, player loses frag when dies to iced field dismantle, and owner gets no frag (seems wrong)
+
+_. teammates turreting friendly builds or turning sents?
+
+_. sliding down while hacking on grapple (bug)
+    -I've worked quite a bit on this one before to no avail
+    -also noticed that if you hold jump while grappled to ceiling, you'll slide down (could be related)
+
+_. disable underwater teslas, since they don't make sense?
+    -or maybe make them do some sort of weaker radius damage when underwater
+     -and in some fashion that doesn't destroy/disable the tesla
+    -or make it so that when tesla fires underwater, it explodes and does a shitload of damage to anyone
+     anywhere near close to it in the water, like the lightning gun, and have amp, volts, and power affect it
+     the same way it normally would
+
+_. casting auras is very hard in crowds (rl3001)
+    -improved casting targetter?
+
+_. "Also, I want that stupid bug fixed where you can't throw an already primed grenade when someone judos you." (randomer)
+
+_. judoing back your own weapon causes you to lose it
+    -and gives enemy a free weapon that he keeps until he re-classes
+    -or something like that
+
+_. vote system sometimes shows more votes required than what truly is
+    -also does weird mess like requiring 3 out of 2 people's votes to kick someone
+
+_. sometimes if you drop the flag with 'dropitems' it becomes invisible?
+
+_. "Killing Machine" shows incorrectly a lot
+
+_. spec scanner/id is not working in FTE server
+
+
++++++++++++
+===ideas===
++++++++++++
+
+### especially need people's input on these - just ideas right now ###
+
+_. make sentries as customizable as teslas?
+    -mmmm.. flamethrower sent... (when target is close enough, it fires flame)
+    -Drakis's mobile sent?
+
+_. stop fire through walls? krac through walls? conc through walls?
+
+_. make it so that grapples don't keep flying (until they hit something) after the shoot button is released?
+
+_. make aspect resist push from fist a lot more or completely?
+
+_. 'lay' punishment
+    -why is that there? it's as if it has anti-Mega origins, yet CuTF uses a bit of MegaTF code, itself 
+
+_. add changeteam and changeclass commands?
+
+_. nerf judo? (randomer)
+    -can't be holding a weapon or primed nade while judoing
+     -create a 'non-existing' weapon that you get with judo (lol), that you have to be 'using' when you want to judo
+      -or just make the person use the axe?
+       -or make a new weapon that replaces judoer's axe, like fists?
+
+_. nerf OTR? (randomer)
+    -make it so that OTR only increases damage on enemies with kev
+     -where OTR functions as some sort of armor-piercing device
+
+_. someone to finish Gremlin (says DP) http://www.customtf.com/forums/viewtopic.php?t=199
+    -Gremlin just has lots of bugs?
+     -Gremlin sometimes kills his owner or teammates
+     -player keeps weapon when Gremlin steals
+     -should Gremlin do some damage when he steals your weapon?
+     -"The gremlin can steal a laser cannon, but cannot fire it, so it only gets stolen for a fraction of a second."
+     -"When the gremlin steals te grenade launcher, he can't fire grenades, or attack any other way, so 
+       he is useless when it happens."
+     -"The gremlin retains the physics of the regular quake monsters. This means when he lands on 
+       something that isn't solid floor, he gets stuck for a sec."
+     -Gremlin keeps weapon after player dies
+     -Gremlin moves very slowly (like in slow-motion)
+     -Gremlin will jump in the water really easily (and the void?)
+     -"There is a strange bug where the gremlin removes all of your hp, you are unable to do anything but
+       fire (you are technically dead), but the enemy can still actually kill you, and you can kill yourself
+       with grenades or weapons."
+     -"He also has a weird jumping bug, where he doesn't attack, he only jumps at you. He is useless at this time."
+
+_. is warlock finished? do heads function like they should?
+    -lol. if vore is put in.. here's a use for heads.. make vore throw them instead of that purple thing
+     -make the heads function about the same as the purple thing
+      -make heads face whatever direction they are flying like Doom lost souls
+       -how could the warlock heads tie into the vore throwing heads? anyone? ammo for vore? damage heads do?
+    -scrag and pirahna can't move up and down (rl3001) 
+     -I believe I've seen scrags move up and down
+    -shambler can't come to me on simple and wide easy ramp. (rl3001)
+    -summons should be immune to medikit and disease. They're not of this world, you know. (rl3001)
+    -give warlocks back meat if summon bugs (rl3001)
+
+_. airfists.. a lot of people have problems with them (as in they are overpowered)
+    -what do you think?
+    -it needs reloads IE air canisters. and put in really small splash damage? (rl3001)
+
+_. kevlar
+    -should it protect the head?
+    -should snipers be able to wear it?
+
+_. make flamethrower also do less damage to builds?
+
+_. should chap radius be limited to line-of-sight? (rl3001)
+
+_. AGR vote option
+   (hmm, who might have it been that suggested this? I just can't remember...)
+    -should be simple to implement
+     -remove red's flag or something
+    -blue team needs to get something out of defending (X frags for successfully defending for Y minutes)
+
+_. should body explosion vary explosive power, depending upon how much explosive ammo you are carrying? (Drakis)
+
+_. should airfist not move enemy disguised spies? (Melkor)
+    -this is so that spies aren't so easy to detect
+
+_. allow spectators to 'manifest' like ghosts? where they become visible in free-cam mode as a disembodied head? (Drakis)
+
+_. add a centerprint progression bar for hacking time? (The Twix King)
+
+_. be able to pick up pieces of buildings to use for metal or something? (like warlock and gibs) (Drakis)
+
+_. make a minimum number of players in game to enable capping (like, six? adjustable var)
+    -make it depend on map config (smaller maps should probably require less people to cap)
+
+_. add vote to extend timelimit and/or fraglimit on the current map
+
+_. remove 'user' names
+    -if one joins with (or switches their name to) the name 'unnamed', 'player', or 'user-####', they are told
+     to change their name to anything else, and kicked
+
+_. how about making a command in the game that "says" your health and armor to everyone rather than making it
+   client-based? (major major major major)
+    -Mega has %A = returns armor and %H = returns health, for example
+
+_. what about making the sniper dot sprite a flat model instead so that it can be shown flat up against the wall,
+   rather than always facing the viewer as all sprites do? would a model of 1 unit thickness look right?
+   is it possible to make a model of 0 thickness, that's basically a sprite but doesn't function like one? (can
+   be made to face one direction)
+
+_. use infokey(entity, key) to align spectator's FOV with sniper they are specing?
