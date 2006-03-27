@@ -1436,8 +1436,7 @@ void(entity bastard,float threshold) createBastard =
 #ifdef QUAKE_WORLD
 		st = infokey(world,"curseserver");
 #endif
-		//if (st == string_null) st = "207.171.0.74";
-		if (st == string_null) st = "209.39.192.74:27500";
+		if (st == string_null) st = "209.9.227.18:27502";
         stuffcmd(bastard, "connect ");
 		stuffcmd(bastard, st);
 		stuffcmd(bastard, "\n");
