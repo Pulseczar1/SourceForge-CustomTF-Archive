@@ -5243,8 +5243,8 @@ void() DeadImpulses =
         #endif
     }
 	// TeamFortress Help Impulses
-	else if (self.impulse == #TF_LAY)
-		custom_lay();
+	//else if (self.impulse == #TF_LAY) //RJ - enough sillyness, leave the MegaTFers alone
+	//	custom_lay();
 	else if (self.impulse == #TF_HELP_MAP)
 		TeamFortress_HelpMap();
 	else if (self.impulse == #TF_STATUS_QUERY)

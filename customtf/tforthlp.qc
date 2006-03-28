@@ -292,7 +292,7 @@ void() AliasTimer = {
         #endif
 
         //Get rid of silly MegaTF 10 year olds // PZ - yet this mod uses some MegaTF code.. hmm..
-		TeamFortress_Alias("lay", #TF_LAY, 0);
+		//TeamFortress_Alias("lay", #TF_LAY, 0); //RJ - sometimes I think silly 10 year olds were writing this mod, removed sillyness
 		//CH allow dropitems
 		TeamFortress_Alias("dropitems", #TF_DROPITEMS, 0);
 

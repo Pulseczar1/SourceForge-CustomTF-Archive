@@ -1,15 +1,15 @@
 /*=======================================================//
 // ofndefs.QC - CustomTF 3.2.OfN           - 30/1/2001 - //
-// by Sergio Fumaña Grunwaldt - OfteN [cp]               //
+// by Sergio Fumaï¿½ Grunwaldt - OfteN [cp]               //
 =========================================================//
  Debug flags and other *IMPORTANT* settings and flags
  --------------------------------------------------------
  Special number chars reference:  (why here? dunno..)
 
  0123456789  --> Normally white
- °±²³´µ¶·¸¹  --> Normally red
+   --> Normally red
    --> Normally gold
- ’“”•–—˜™š›  --> Normally gold (2nd variation)
+   --> Normally gold (2nd variation)
 
  The actual color depends on the gfx.wad the client uses
  or the charset loaded into fuhquake.
@@ -322,7 +322,7 @@
 #define UNABLE_TOVOTE_FORSAME_MAP
 
 //#define XMAS_STUFF
-//#define LIGHTNING_PUSHES
+#define LIGHTNING_PUSHES
 
 //__________________________________________________________//
 //                                                          //
