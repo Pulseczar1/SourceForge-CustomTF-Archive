@@ -1882,11 +1882,18 @@ void() CheckDistance =
 	
 	// Check to see if the Engineer's spanner'ed a different building 
 	// without leaving the area of this one.
-	if (self.owner.building != self.enemy)
+	if (!(self.owner.building.classname == "building_tesla" && self.enemy.classname == "building_dispenser")) {
+	if ((self.owner.building != self.enemy))
 	{
-		dremove(self);
+		dremove (self);
 		return;
-	}
+	} }
+//old code, changed so remote tesla access works
+//	if (self.owner.building != self.enemy)
+//	{
+//		dremove(self);
+//		return;
+//	}
 
 	dist = self.enemy.origin - self.owner.origin;
 //WK	if (vlen(dist) > 64)
