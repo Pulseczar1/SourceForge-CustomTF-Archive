@@ -1533,7 +1533,7 @@ void() Autoitem_think =
 	self.nextthink = time + 0.5;
 };
 
-void() custom_lay =
+/*void() custom_lay =
 {
     if (intermission_running)
         return;
@@ -1550,7 +1550,7 @@ void() custom_lay =
 	TeamFortress_SetSpeed(self);
 	if (self.health > 50) self.health = 50;
 	if (self.armorvalue > 10) self.armorvalue = 10;
-};
+};*/
 
 //Blow up all sentries, dispensers and teslas if we can no longer build them
 void() DetonateAllGuns =

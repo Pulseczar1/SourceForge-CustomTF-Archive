@@ -1448,7 +1448,7 @@ float       rj;					// Rocket Jump Modifier
 // WK Sell off frags
 #define TF_SELL			187
 #define TF_SKILL			200
-#define TF_LAY			201 //MegaTFer killer
+//#define TF_LAY			201 //MegaTFer killer
 
 #define TF_DROPITEMS		202 //CH
 
