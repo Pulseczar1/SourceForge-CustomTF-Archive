@@ -2198,7 +2198,7 @@ void(float inp) Menu_EngineerFix_Dispenser_Input =
 						if (thetesla.classname == "building_dispenser" && thetesla.real_owner == self)
 						{
 							ResetMenu();
-							self.impulse = TF_FLARE_LIT;
+							self.impulse = 0;
 								local string st;
 
 							local string st;
