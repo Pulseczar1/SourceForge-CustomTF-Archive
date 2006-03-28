@@ -2070,7 +2070,7 @@ void(entity person, string build) Add_Building_Teamkill =
 void() Menu_EngineerFix_Dispenser =
 {
 	if (self.has_turretized_tesla == 1) {	// If player has turretized tesla, show the option to access it
-		CenterPrint(self, "Áãôéïî:                            \n\n.. Put Ammo into Dispenser     \n.. Put Armor into Dispenser    \n.. Repair Dispenser            \n.. Dismantle Dispenser         \n—‘.. Access Turretized Tesla     \n\n˜‘.. Îïôèéîç                     \n\n");
+		CenterPrint(self, "Áãôéïî:                            \n\n.. Put Ammo into Dispenser     \n.. Put Armor into Dispenser    \n.. Repair Dispenser            \n.. Dismantle Dispenser         \n—.. Access Turretized Tesla     \n\n˜.. Îïôèéîç                     \n\n");
 	}
 	else {
 		CenterPrint(self, "Áãôéïî:                            \n\n.. Put Ammo into Dispenser     \n.. Put Armor into Dispenser    \n.. Repair Dispenser            \n.. Dismantle Dispenser         \n\n.. Îïôèéîç                     \n\n");
