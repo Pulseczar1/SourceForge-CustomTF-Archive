@@ -2201,7 +2201,7 @@ void(float inp) Menu_EngineerFix_Dispenser_Input =
 							self.impulse = 0;
 								local string st;
 
-							local string st;
+//							local string st;
 						
 							// Print the gun's details
 							sprint(self, #PRINT_HIGH, "ָובלפט:");
