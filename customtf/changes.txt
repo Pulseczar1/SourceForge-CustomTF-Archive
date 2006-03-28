@@ -166,10 +166,20 @@ Changes/Balance:
 		- Need a menu that 'intercepts' the call to dismantle build and passes on the call if player confirms else it cancels call
 		- Seems to all be working.. much thanks to randomer.
 
+	Turreted teslas now accessible via dispencer -avirox
+		- Currently only accesses one tesla though
+
 - Summons
 	Shouldn't be able to infect summons.. too easy to kill them that way -Pulseczar
 		- Disabled, should be fixed
 
+- Lightning Gun
+	Re-enabled the 'push' (via the #define in ofndefs) :P -RJ
+
+- MegaTF
+	Removed the 'lay' lameness by the megatf haters -RJ
+	Updated the curse server to an Amnesia megatf server address in the source (theres a key for it as
+well that most probably don't even know about)
 
 ========================================================================
 Known Issues:
