@@ -1319,6 +1319,7 @@ void() Menu_EngineerDismantle =
 	else if (self.building.classname == "building_tesla")
 	{
 		sprint(self, #PRINT_HIGH, "You dismantle the Tesla Gun.\n");
+		self.building.real_owner.has_turretized_tesla = 0;
 		//CH give .5 of ammount of build====give 25*health level (0-3)====give .5 of cells
 		self.ammo_cells = self.ammo_cells + (#BUILD_COST_TESLA / 2) + (self.building.ammo_rockets * 25) + (self.building.ammo_cells / 2);
 		//self.building.real_owner.has_tesla = #FALSE;
@@ -2068,7 +2069,12 @@ void(entity person, string build) Add_Building_Teamkill =
 
 void() Menu_EngineerFix_Dispenser =
 {
-	CenterPrint(self, "Áãôéïî:                            \n\n.. Put Ammo into Dispenser     \n.. Put Armor into Dispenser    \n.. Repair Dispenser            \n.. Dismantle Dispenser         \n\n.. Îïôèéîç                     \n\n");
+	if (self.has_turretized_tesla == 1) {	// If player has turretized tesla, show the option to access it
+		CenterPrint(self, "Áãôéïî:                            \n\n.. Put Ammo into Dispenser     \n.. Put Armor into Dispenser    \n.. Repair Dispenser            \n.. Dismantle Dispenser         \n—‘.. Access Turretized Tesla     \n\n˜‘.. Îïôèéîç                     \n\n");
+	}
+	else {
+		CenterPrint(self, "Áãôéïî:                            \n\n.. Put Ammo into Dispenser     \n.. Put Armor into Dispenser    \n.. Repair Dispenser            \n.. Dismantle Dispenser         \n\n.. Îïôèéîç                     \n\n");
+	}
 };
 
 void(float inp) Menu_EngineerFix_Dispenser_Input =
@@ -2173,6 +2179,135 @@ void(float inp) Menu_EngineerFix_Dispenser_Input =
 		}
     }
 
+	// remotely send ammo to turretized tesla (by XavioR)
+	if (self.has_turretized_tesla == 1) 
+	{
+		if (inp == 5)
+		{
+			local entity thetesla;
+			local entity te;
+			te = find (world, classname, "building_tesla");
+			while (te)
+			{
+				if ((te.real_owner == self))
+				{
+					thetesla = findradius(te.origin, 550);
+					while (thetesla)
+					{
+//						sprint(self, 2, "entity ",thetesla.classname," found\n");
+						if (thetesla.classname == "building_dispenser" && thetesla.real_owner == self)
+						{
+							ResetMenu();
+							self.impulse = TF_FLARE_LIT;
+								local string st;
+
+							local string st;
+						
+							// Print the gun's details
+							sprint(self, #PRINT_HIGH, "Èåáìôè:");
+							st = ftos(te.health);
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, "¯");
+							st = ftos(te.max_health);
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, " Ãåììó:");
+							st = ftos(te.ammo_cells);
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, "¯");
+							st = ftos(te.maxammo_cells);
+							sprint(self, #PRINT_HIGH, st);
+							st = ftos(te.has_sentry);
+							sprint(self, #PRINT_HIGH, " Îïòíáì Ups Left:");
+							sprint(self, #PRINT_HIGH, st);
+							st = ftos(te.has_tesla);
+							sprint(self, #PRINT_HIGH, " Íéóã Ups Left:");
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, "\n");
+						
+							sprint(self, #PRINT_HIGH, "Öïìôáçå:");
+							st = ftos(te.ammo_shells);
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, " Áíğåòáçå:");
+							st = ftos(te.ammo_nails);
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, " Ğï÷åò Óõğğìù:");
+							st = ftos(te.ammo_rockets);
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, "\n");
+							if (te.tf_items) {
+								local float num;
+								num = 0;
+								if (te.tf_items & #NIT_TURRET) {
+									sprint(self, #PRINT_HIGH, "TeslaTurret(tm). ");
+									num = num + 1;
+								}
+								if (te.tf_items & #NIT_SCANNER) {
+									sprint(self, #PRINT_HIGH, "Improved Targeter. ");
+									num = num + 1;
+								}
+								if (te.tf_items & #NIT_AUTOID) {
+									sprint(self, #PRINT_HIGH, "Spy Detector. ");
+									num = num + 1;
+								}
+								if (te.tf_items & #NIT_KEVLAR) {
+									sprint(self, #PRINT_HIGH, "Kevlar Armor. ");
+									num = num + 1;
+								}
+								if (te.tf_items & #NIT_BLAST) {
+									sprint(self, #PRINT_HIGH, "Blast Armor. ");
+									num = num + 1;
+								}
+								if (te.tf_items & #NIT_ASBESTOS) {
+									sprint(self, #PRINT_HIGH, "Asbestos Armor. ");
+									num = num + 1;
+								}
+								if (te.tf_items & #NIT_TELEPORTER) {
+									sprint(self, #PRINT_HIGH, "Upgrades from frags. ");
+									num = num + 1;
+								}
+								if (te.tf_items & #NIT_TESLA_CLOAKING) {
+									sprint(self, #PRINT_HIGH, "Cloaking Device. ");
+									num = num + 1;
+								}
+								if (num != 0)
+									sprint(self, #PRINT_HIGH, "\n");
+							}
+
+							sprint(self, #PRINT_HIGH, "Tesla Sentry ÆÒÁÇÓ: "); //CH Displays kills of tesla
+								st = ftos(te.frags);
+							sprint(self, #PRINT_HIGH, st);
+							sprint(self, #PRINT_HIGH, "\n");
+
+							self.building = te;
+							self.current_menu = 18;
+							return;
+						}
+						thetesla = thetesla.chain;
+					}
+					sprint(self, 2, "You're too far away from your tesla\n");
+				}
+				te = find (te, classname, "building_tesla");
+			}
+
+		}
+	}
+	if (self.has_turretized_tesla == 1 && inp > 5)
+	{
+		ResetMenu();
+		self.impulse = 0;
+		self.building = world;
+
+		bound_other_ammo(self);
+
+		if (self.armorvalue == 0)
+		{
+			self.armortype = 0;	// lost all armor
+			self.armorclass = 0; // lost special armor
+			self.items = self.items - (self.items & (#IT_ARMOR1 | #IT_ARMOR2 | #IT_ARMOR3));
+		}
+
+		W_SetCurrentAmmo();
+	}
 	if ((inp >= 1 && inp <= 3) || inp == 5)
 	{
 		ResetMenu();
@@ -3257,6 +3392,7 @@ void(float inp) Menu_EngineerFix_Tesla_Input2 =
 					//self.building.origin_z = self.building.origin_z + 25; //+ 25 //Finish liftoff
                     self.building.origin_z = self.building.origin_z - 35;//- 25;//40;//- 25; //often fixes tesla not touchin ceiling//+ 25 //Finish liftoff
 					sprint(self, #PRINT_HIGH, "You turretize the tesla\n");
+					self.has_turretized_tesla = 1;
 
                     if (self.building.job == 1 && self.building.tf_items & #NIT_TESLA_CLOAKING)
                     {
