@@ -107,6 +107,9 @@ Changes/Balance:
 	- #define NAPALM_MAINDMG 100 // PZ - was 140
 	- These all have to do with the damage over time.. the initial damage was kept the same.
 
+- Grenades
+	- the "no_spam" key now includes more grenades plus c4 detpack when the key is "on". -RJ
+
 - Airfist
 	The regular detpack is now unfistable. The C4 detpack is now unfistable for the first half second to reduce detpack spamming, and the velocity that the c4 detpack gets when fisted is now reduced by half. -Randomer
 
@@ -159,7 +162,7 @@ Changes/Balance:
 		- Added +50% to initial health (the health the building starts with) amount in defs.qc (had to edit other file(s) too for sent and tes upgrades)
 		- Why do cameras seem indestructable now? (at least against martyr)
 
-	Ddd confimation menus for dismantle/destroy (no more accidently hitting dismantle, FFS) -Pulseczar
+	Add confimation menus for dismantle/destroy (no more accidently hitting dismantle, FFS) -Pulseczar
 		- Need a menu that 'intercepts' the call to dismantle build and passes on the call if player confirms else it cancels call
 		- Seems to all be working.. much thanks to randomer.
 

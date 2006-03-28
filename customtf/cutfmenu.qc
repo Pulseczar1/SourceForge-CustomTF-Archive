@@ -1367,9 +1367,9 @@ void(float inp) Menu_Special_Input =
 	local string st2;
 
 //Scanner
-
 	//st = infokey(world, "no_grapple");
 	st2 = infokey(world, "no_spam");
+
 	if (inp == 1) {
 		if (self.tf_items & #NIT_SCANNER)
 		{
@@ -1397,11 +1397,12 @@ void(float inp) Menu_Special_Input =
 		BuyItem(#COST_AUTOSCANNER,#NIT_AUTOSCANNER);
 		Menu_Special();
 	}
+
 //Detpack
 	if (inp == 3) {
-		if (st2 == "on") {//If admin disable it
+		if (st2 == "on") //If admin disable it
+		{
 			sprint(self,#PRINT_HIGH,"The admin has disabled spam devices on this map.\n");
-//                self.impulse=0;
 			return;
 		}
 		if (self.cutf_items & #CUTF_DETPACK) //Already have it
@@ -1452,7 +1453,6 @@ void(float inp) Menu_Special_Input =
 		if (no_grapple == 1) //If admin disable it
 		{
 			sprint(self,#PRINT_HIGH,"The admin has disabled the grapple on this map.\n");
-			self.impulse = 0;
 			return;
 		}
 		else if (allow_hook) //If map allows it...
@@ -1510,6 +1510,9 @@ void() Menu_Special2 =
 
 void(float inp) Menu_Special2_Input =
 {
+        local string st;
+        st = infokey (world, "no_spam");
+
 	if (inp == 1)//SB Jammer
 	{
 		BuyCuTF(#COST_JAMMER, #CUTF_JAMMER);
@@ -1547,6 +1550,11 @@ void(float inp) Menu_Special2_Input =
 	}
 	else if (inp == 6)//SB C4 tossable detpack
 	{
+                if (st == "on") //If admin disable it
+                {
+                        sprint(self,#PRINT_HIGH,"The admin has disabled spam devices on this map.\n");
+                        return;
+                }
 		BuyCuTF(#COST_TOSSABLEDET,#CUTF_TOSSABLEDET);
 		sprint(self, #PRINT_HIGH, "Type 'throwdet' to throw the detpack.\n");
 	}
@@ -1611,6 +1619,11 @@ void(float inp) Menu_Gren1_Input =
 	}
 	else if (inp == 2)
 	{
+                if (st2 == "on") //If admin disable it
+                {
+                        sprint(self,#PRINT_HIGH,"The admin has disabled spam devices on this map.\n");
+                        return;
+                }
 		BuyGren(#COST_GR_NAPALM,#GR_TYPE_FLAME); // Flame was 750
 		Menu_Gren1();
 	}
@@ -1651,6 +1664,11 @@ void(float inp) Menu_Gren1_Input =
 	}
 	else if (inp == 6)
 	{
+                if (st2 == "on") //If admin disable it
+                {
+                        sprint(self,#PRINT_HIGH,"The admin has disabled spam devices on this map.\n");
+                        return;
+                }
 		BuyGren(#COST_GR_NAIL,#GR_TYPE_NAIL);
 		Menu_Gren1();
 	}
@@ -1726,7 +1744,10 @@ void(float inp) Menu_Gren2_Input =
 	if (inp == 2)
 	{
 		if (st2 == "on")
+		{
 			sprint(self, #PRINT_HIGH, "The admin has disabled spam devices on this map.\n");
+			return;
+		}
 		else
 		{
 			BuyGren(#COST_GR_CALTROP, #GR_TYPE_CALTROP);
@@ -1763,7 +1784,10 @@ void(float inp) Menu_Gren2_Input =
 	if (inp == 5)
 	{
 		if (st == "on")
+		{
 			sprint(self, #PRINT_HIGH, "The admin has disabled anti-grav grens on this map.\n");
+			return;
+		}
 		else
 		{
 			BuyGren(#COST_GR_ANTIGRAV, #GR_TYPE_ANTIGRAV);
