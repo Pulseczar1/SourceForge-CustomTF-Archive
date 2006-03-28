@@ -2606,3 +2606,6 @@ void(entity client, float ammount) BackFlash;
 .float runes_owned;
 .float clversion;
 .float cltype;
+
+// XavioR Vars
+.float has_turretized_tesla;			// tells us if the player has a turretized tesla (1) or not (0)
