@@ -10,13 +10,13 @@
  °±²³´µ¶·¸¹  --> Normally red
    --> Normally gold
  ’“”•–—˜™š›  --> Normally gold (2nd variation)
-  
+
  The actual color depends on the gfx.wad the client uses
  or the charset loaded into fuhquake.
 =========================================================*/
 
 // This file does not have any QuakeC, only preprocessor stuff, so..
-#pragma DONT_COMPILE_THIS_FILE 
+#pragma DONT_COMPILE_THIS_FILE
 
 //================================================================================//
 // MAIN BUILD CONFIGURATION  (un/comment any of the following lines to change it) //
@@ -146,7 +146,7 @@
 // Field generator
 #define FIELDGEN_NUMCELLS    150 // Was 120
 
-// Holograph 
+// Holograph
 #define HOLO_POWER_COST     10   //
 #define HOLO_CYCLE_COST      2   //
 #define HOLO_CYCLE_TIME      1.5 //
@@ -192,6 +192,7 @@
 
 #define AIRFIST_DMG_REDUCTION    0.7 // was 0.65
 #define AIRFIST_RECOIL_REDUCTION 0.6
+#define AIRFIST_FLAG_RECOIL_REDUCTION 0.25
 #define AIRFIST_RECOIL_HWGUY     0.6
 #define AIRFIST_PUSH_REDUCTION   0.5 // Only applies to players pushed
 #define AIRFIST_PUSH_DETPACK     0.5 // The amount to push detpacks.
@@ -339,7 +340,7 @@
 // DEFINED FIELDS - Method to easily change them using preprocessor //
 //------------------------------------------------------------------//
 
-#define runes     runes_owned 
+#define runes     runes_owned
 #define mapflags  has_holo
 
 #define monster_type  increase_team3
