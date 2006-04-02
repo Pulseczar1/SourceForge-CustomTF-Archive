@@ -39,6 +39,11 @@ void(vector v1, vector v2, float nomonsters, entity forent) ftebi_traceline = #1
 
 void (vector v1, vector v2, float nomonsters, entity forent) ftetraceline =
 {
+	if (nomonsters == MOVE_HITMODEL)	// HACK!
+	{
+		ftebi_traceline(v1, v2, #MOVE_HITMODEL, forent);
+		return;
+	}
 	switch (nomonsters)
 	{
 	case #TL_ANY_SOLID: // will hit any solid, but not triggers

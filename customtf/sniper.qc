@@ -86,7 +86,8 @@ void() SniperSight_Update =
 	org = self.owner.origin + v_forward*10;
 	org_z = self.owner.absmin_z + self.owner.size_z * 0.7;
 
-    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
+//    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
+    traceline (org, org + v_forward*9192, MOVE_HITMODEL, self);
 
     if (trace_fraction == 1.0)
 	{
@@ -125,7 +126,8 @@ void() SniperSight_Update2 =
 	org = self.owner.origin + v_forward*10;
 	org_z = self.owner.absmin_z + self.owner.size_z * 0.7;
 
-    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
+//    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
+    traceline (org, org + v_forward*9192, MOVE_HITMODEL, self);
 
     if (trace_fraction == 1.0)
 	{
