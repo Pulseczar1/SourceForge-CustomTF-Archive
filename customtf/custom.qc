@@ -1653,27 +1653,27 @@ float(float inp) CanBuyItem =
 
     if (mnu_offset < 3)
     {
-        if (disabledstuff1 & itob(itm_num))
+        if (usedisabledstuff1 & itob(itm_num))
             return #FALSE;
     }
     else if (mnu_offset < 6)
     {
-        if (disabledstuff2 & itob(itm_num))
+        if (usedisabledstuff2 & itob(itm_num))
             return #FALSE;
     }
     else if (mnu_offset < 9)
     {
-        if (disabledstuff3 & itob(itm_num))
+        if (usedisabledstuff3 & itob(itm_num))
             return #FALSE;
     }
     else if (mnu_offset < 12)
     {
-        if (disabledstuff4 & itob(itm_num))
+        if (usedisabledstuff4 & itob(itm_num))
             return #FALSE;
     }
     else if (mnu_offset < 15)
     {
-        if (disabledstuff5 & itob(itm_num))
+        if (usedisabledstuff5 & itob(itm_num))
             return #FALSE;
     }
     else
@@ -1694,27 +1694,27 @@ float(float inp) ItemIsFree =
 
     if (mnu_offset < 3)
     {
-        if (givenstuff1 & itob(itm_num))
+        if (usegivenstuff1 & itob(itm_num))
             return #TRUE;
     }
     else if (mnu_offset < 6)
     {
-        if (givenstuff2 & itob(itm_num))
+        if (usegivenstuff2 & itob(itm_num))
             return #TRUE;
     }
     else if (mnu_offset < 9)
     {
-        if (givenstuff3 & itob(itm_num))
+        if (usegivenstuff3 & itob(itm_num))
             return #TRUE;
     }
     else if (mnu_offset < 12)
     {
-        if (givenstuff4 & itob(itm_num))
+        if (usegivenstuff4 & itob(itm_num))
             return #TRUE;
     }
     else if (mnu_offset < 15)
     {
-        if (givenstuff5 & itob(itm_num))
+        if (usegivenstuff5 & itob(itm_num))
             return #TRUE;
     }
     else

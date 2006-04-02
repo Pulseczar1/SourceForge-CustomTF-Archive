@@ -759,7 +759,7 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
                 if (storm != tmpf)
                 {
                     sprint(self,#PRINT_HIGH,"New storm setting is applied\n");
-                    UpdateEnvironment(tmpf,earthquake,daytime,runes);
+                    UpdateEnvironment(tmpf,earthquake,daytime,userunes);
                     return #TRUE;
                 }
 
@@ -790,7 +790,7 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
                 if (earthquake != tmpf)
                 {
                     sprint(self,#PRINT_HIGH,"New earthquake setting is applied\n");
-                    UpdateEnvironment(storm,tmpf,daytime,runes);
+                    UpdateEnvironment(storm,tmpf,daytime,userunes);
                     return #TRUE;
                 }
 
@@ -801,24 +801,24 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
             {
                 if (num_args == 2)
                 {
-                    st = ftos(runes);
+                    st = ftos(userunes);
 
                     sprint(self,#PRINT_HIGH,"Runes setting is ",st,"\n");
                     return #TRUE;
                 }
 
-                tmpf = runes;
+                tmpf = userunes;
 
-                runes = floor(stof(arg3));
+                userunes = floor(stof(arg3));
 
-                if (runes < 0 || runes > 4)
+                if (userunes < 0 || userunes > 4)
                 {
                     sprint(self,#PRINT_HIGH,"Invalid runes setting! (0-4 allowed)\n");
-                    runes = tmpf;
+                    userunes = tmpf;
                     return #TRUE;
                 }
 
-                if (runes != tmpf)
+                if (userunes != tmpf)
                 {
                     sprint(self,#PRINT_HIGH,"New runes setting is applied\n");
                     UpdateEnvironment(storm,earthquake,daytime,tmpf);
@@ -852,7 +852,7 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
                 if (daytime != tmpf)
                 {
                     sprint(self,#PRINT_HIGH,"New DayTime setting is applied\n");
-                    UpdateEnvironment(storm,earthquake,tmpf,runes);
+                    UpdateEnvironment(storm,earthquake,tmpf,userunes);
                     return #TRUE;
                 }
 
@@ -1261,9 +1261,9 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
                         if (num_args == 4)
                         if (!strcasecmp(arg4,"all"))
                         {
-                            if (disabledstuff1 | disabledstuff2 | disabledstuff3 | disabledstuff4 | disabledstuff5)
+                            if (usedisabledstuff1 | usedisabledstuff2 | usedisabledstuff3 | usedisabledstuff4 | usedisabledstuff5)
                             {
-                                disabledstuff1 = disabledstuff2 = disabledstuff3 = disabledstuff4 = disabledstuff5 = 0;
+                                usedisabledstuff1 = usedisabledstuff2 = usedisabledstuff3 = usedisabledstuff4 = usedisabledstuff5 = 0;
                                 sprint(self,#PRINT_HIGH,"All items have been enabled.\n");
                             }
                             else
@@ -1343,9 +1343,9 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
                         if (num_args == 4)
                         if (!strcasecmp(arg4,"all"))
                         {
-                            if (givenstuff1 | givenstuff2 | givenstuff3 | givenstuff4 | givenstuff5)
+                            if (usegivenstuff1 | usegivenstuff2 | usegivenstuff3 | usegivenstuff4 | usegivenstuff5)
                             {
-                                givenstuff1 = givenstuff2 = givenstuff3 = givenstuff4 = givenstuff5 = 0;
+                                usegivenstuff1 = usegivenstuff2 = usegivenstuff3 = usegivenstuff4 = usegivenstuff5 = 0;
                                 sprint(self,#PRINT_HIGH,"All free items removed.\n");
                             }
                             else

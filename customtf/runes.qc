@@ -142,14 +142,14 @@ void() GetRunesGlobal =
 
     if (st != "")
     {
-        runes = floor(stof(st)); // we use the custom setting..
+        userunes = floor(stof(st)); // we use the custom setting..
 
         // Cap minimum/maximum's
-        if (runes < 0)
-            runes = 0;
+        if (userunes < 0)
+            userunes = 0;
 
-        if (runes > 4)
-            runes = 4;        
+        if (userunes > 4)
+            userunes = 4;        
     }
 };
 
@@ -158,9 +158,9 @@ void() GetRunesGlobal =
 
 void(float oldrunes) UpdateRuneStuff =
 {
-    if (oldrunes == 0 && runes != 0)
+    if (oldrunes == 0 && userunes != 0)
         StartRunes(); // We should start the party
-    else if (oldrunes != 0 && runes == 0)
+    else if (oldrunes != 0 && userunes == 0)
         EndRunes(); // We must close the store
 
     // TODO: Make players drop runes if needed after a runes setting change to less runes per player
@@ -171,7 +171,7 @@ void(float oldrunes) UpdateRuneStuff =
 
 void() StartRunes =
 {
-    if (runes == 0) return;
+    if (userunes == 0) return;
 
     // Spawn our 4 runes from scratch
     SpawnNewRune(#RUNE_TRIAD);
@@ -430,7 +430,7 @@ void() Rune_touch =
         numrunes = GetPlayerNoRunes(other);
 
         // Does this player should take another one?
-        if ((numrunes + 1) > runes)
+        if ((numrunes + 1) > userunes)
             return; // nope.. so just ignore touch
 
         // Ok, he/she picks it up!

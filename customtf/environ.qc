@@ -282,7 +282,7 @@ void() ApplyMapFlags =
     if (world.#mapflags & #MAPFLAG_DAYTIME)
         daytime = 10;
     if (world.#mapflags & #MAPFLAG_RUNES)
-        runes = 1;
+        userunes = 1;
 
     // Disable custom/stock classes if needed
     if (world.#mapflags & #MAPFLAG_NOCUSTOM)
@@ -307,17 +307,17 @@ void() ApplyMapFlags =
     // Get disabled/free stuff masks, if map stuff not disabled
     if (infokey(world,"no_mapstuff") != "1")
     {
-        disabledstuff1 = world.#disabledstuff1;
-        disabledstuff2 = world.#disabledstuff2;
-        disabledstuff3 = world.#disabledstuff3;
-        disabledstuff4 = world.#disabledstuff4;
-        disabledstuff5 = world.#disabledstuff5;
+        usedisabledstuff1 = world.#disabledstuff1;
+        usedisabledstuff2 = world.#disabledstuff2;
+        usedisabledstuff3 = world.#disabledstuff3;
+        usedisabledstuff4 = world.#disabledstuff4;
+        usedisabledstuff5 = world.#disabledstuff5;
 
-        givenstuff1 = world.#givenstuff1;
-        givenstuff2 = world.#givenstuff2;
-        givenstuff3 = world.#givenstuff3;
-        givenstuff4 = world.#givenstuff4;
-        givenstuff5 = world.#givenstuff5;
+        usegivenstuff1 = world.#givenstuff1;
+        usegivenstuff2 = world.#givenstuff2;
+        usegivenstuff3 = world.#givenstuff3;
+        usegivenstuff4 = world.#givenstuff4;
+        usegivenstuff5 = world.#givenstuff5;
     }
 };
 
@@ -423,35 +423,35 @@ void() GetEnvironmentGlobals =
     // Get the disabled/free stuff masks settings on server, if any
     st = infokey(world,"dstuff1");
     if (st != "") 
-        disabledstuff1 = stof(st); 
+        usedisabledstuff1 = stof(st); 
     st = infokey(world,"dstuff2");
     if (st != "") 
-        disabledstuff2 = stof(st);
+        usedisabledstuff2 = stof(st);
     st = infokey(world,"dstuff3");
     if (st != "") 
-        disabledstuff3 = stof(st);
+        usedisabledstuff3 = stof(st);
     st = infokey(world,"dstuff4");
     if (st != "") 
-        disabledstuff4 = stof(st);
+        usedisabledstuff4 = stof(st);
     st = infokey(world,"dstuff5");
     if (st != "") 
-        disabledstuff5 = stof(st);
+        usedisabledstuff5 = stof(st);
 
     st = infokey(world,"gstuff1");
     if (st != "") 
-        givenstuff1 = stof(st); 
+        usegivenstuff1 = stof(st); 
     st = infokey(world,"gstuff2");
     if (st != "")
-        givenstuff2 = stof(st);
+        usegivenstuff2 = stof(st);
     st = infokey(world,"gstuff3");
     if (st != "") 
-        givenstuff3 = stof(st);
+        usegivenstuff3 = stof(st);
     st = infokey(world,"gstuff4");
     if (st != "") 
-        givenstuff4 = stof(st);
+        usegivenstuff4 = stof(st);
     st = infokey(world,"gstuff5");
     if (st != "") 
-        givenstuff5 = stof(st);
+        usegivenstuff5 = stof(st);
 };
 
 //===============================================================

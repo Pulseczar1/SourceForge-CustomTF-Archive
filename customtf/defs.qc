@@ -1176,7 +1176,7 @@ float daylight;
 float storm;
 float earthquake;
 float daytime;
-float runes;
+float userunes;
 
 float noon_light;
 float midnight_light;
@@ -1193,17 +1193,17 @@ float no_votemap;
 
 float no_bright;
 
-float disabledstuff1;
-float disabledstuff2;
-float disabledstuff3;
-float disabledstuff4;
-float disabledstuff5;
+float usedisabledstuff1;
+float usedisabledstuff2;
+float usedisabledstuff3;
+float usedisabledstuff4;
+float usedisabledstuff5;
 
-float givenstuff1;
-float givenstuff2;
-float givenstuff3;
-float givenstuff4;
-float givenstuff5;
+float usegivenstuff1;
+float usegivenstuff2;
+float usegivenstuff3;
+float usegivenstuff4;
+float usegivenstuff5;
 
 float megatf;
 
