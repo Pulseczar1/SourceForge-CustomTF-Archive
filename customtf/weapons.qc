@@ -4863,7 +4863,7 @@ void() ImpulseCommands =
 		return;
 		
 	if (prematch >= time)
-		if (self.impulse > 10 || self.impulse < 1)
+		if ((self.impulse > 10 || self.impulse < 1) && (self.impulse <  #TF_GRENADE_1 || self.impulse > #TF_GRENADE_T) && self.impulse != 173)	//RJ - We can change weapons, shoot, and now toss grens and reload
 		{
 			self.impulse = 0;
 			return;
