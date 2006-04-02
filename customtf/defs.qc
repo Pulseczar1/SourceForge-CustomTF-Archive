@@ -2609,3 +2609,4 @@ void(entity client, float ammount) BackFlash;
 
 // XavioR Vars
 .float has_turretized_tesla;			// tells us if the player has a turretized tesla (1) or not (0)
+float MOVE_HITMODEL = 4;			// check against model geometry (FTE/DP Only!!)
