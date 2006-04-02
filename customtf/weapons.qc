@@ -2206,7 +2206,7 @@ void() W_FireRocket =
 				newmis.velocity = newmis.velocity * 600; //Cluster and no sight
 		}
 		else 
-			newmis.velocity = newmis.velocity * 900;
+			newmis.velocity = newmis.velocity * 1350;
 	}
 	else if (self.tf_items & #NIT_RL_LASER_SIGHT) //Cluster and sight to start
 		newmis.velocity = newmis.velocity * 400;
