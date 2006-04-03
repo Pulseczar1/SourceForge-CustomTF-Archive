@@ -3,7 +3,7 @@
 
 	TeamFortress v2.5	 29/2/97
 ========================================================
-Functions for the SNIPER class and associated weaponry                          
+Functions for the SNIPER class and associated weaponry
 ========================================================*/
 // Functions outside this file
 
@@ -14,6 +14,7 @@ void(float zoom_level) TF_zoom;
 void() SniperSight_Update;
 void() SniperSight_Update2;
 void(float type) SniperSight_Create;
+void(entity targ, float pain) RevealThief;
 
 
 
@@ -22,7 +23,7 @@ void(float type) SniperSight_Create;
 void() TeamFortress_SniperWeapon =
 {
 	//local	float	it;
-	
+
 	self.impulse = 0;
 
     if (self.tfstate & #TFSTATE_RELOADING)
@@ -54,7 +55,7 @@ void() TeamFortress_SniperWeapon =
 void(float zoom_level) TF_zoom =
 {
 	local string zl;
-	
+
 	if (self.tfstate & #TFSTATE_ZOOMOFF)
 		return;
 
@@ -174,6 +175,10 @@ void(float type) SniperSight_Create =
 	else
 		sight.think = SniperSight_Update;
 	sight.nextthink = time + 0.05;
+
+	// Prevent theif snipers.
+	if (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE)
+		RevealThief(self,#FALSE);
 };
 
 // this toggles the snipers autozoom on/off

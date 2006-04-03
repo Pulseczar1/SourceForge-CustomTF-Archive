@@ -128,6 +128,8 @@ Changes/Balance:
 	Increase range of sniper rifle
     		- Now should be the same range as spray rifle
 
+   If you are a theif, looking down the scope reveals you -phrosty
+
 - Incendiary Cannon & Napalm Grenades
 	Fire from the incendiary cannon and napalm grenades no longer go through walls. -Randomer
 
