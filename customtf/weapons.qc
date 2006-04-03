@@ -1,22 +1,27 @@
-/*======================================================
-	WEAPONS.QC			Custom TeamFortress v3.1
+/*
+==============================================================================
 
-	(c) TeamFortress Software Pty Ltd 	29/2/97
+WEAPONS.QC
+Custom TeamFortress v3.1
+	(c) TeamFortress Software Pty Ltd	29/2/97
 	(c) William Kerney			5/21/00
-========================================================
+
 All the functions for firing all the weapons, holds
-all new precache() functions, finding best weapons, 
+all new precache() functions, finding best weapons,
 choosing next weapon, and all impulse commands.
-======================================================*/
+
+==============================================================================
+*/
+
 void() SniperSight_Update2; //CH for RL
 void() I_DID_CHEAT_ONE; //CH for speed.qc
 void() I_DID_CHEAT_TWO;
 void() I_DID_CHEAT_THREE;
-//void(string gibname, float dm) ThrowGib;	
+//void(string gibname, float dm) ThrowGib;
 void(string gibname, float dm, float makecool, float gibskin, float gibkgs, float randorg) ThrowGib;
-void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
-void (entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage;
-void () player_run;
+void(entity targ, entity inflictor, entity attacker, float damage) T_Damage;
+void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage;
+void() player_run;
 void(entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
 void() TeamFortress_DisplayDetectionItems;
 float(vector veca, vector vecb) crossproduct;
@@ -61,7 +66,7 @@ void() TeamFortress_EngineerBuild;
 void() DropKey;
 void() UseSpecialSkill;
 void() UseJobSkill; //WK Function for handling professions
-void (entity targ, float pain) RevealThief;
+void(entity targ, float pain) RevealThief;
 void(vector startpos) GuerillaMineSweep;
 void(entity foo,float bar) makeImmune;
 float() CheckForReload;
@@ -85,7 +90,7 @@ void(entity Player) TeamFortress_TeamShowMemberClasses;
 // Camera Functions
 void() CamLock;
 void() CamDistLock;
-void() CamVecLock; 
+void() CamVecLock;
 void() CamAngleLock;
 void() CamRevAngleLock;
 void() CamProjectileLock;
@@ -176,67 +181,66 @@ void() W_Precache =
 	precache_sound ("weapons/r_exp3.wav");	// new rocket explosion
 	precache_sound ("weapons/rocket1i.wav");  // spike gun
 	precache_sound ("weapons/sgun1.wav");
-	precache_sound ("weapons/guncock.wav");	// player shotgun
+	precache_sound ("weapons/guncock.wav"); // player shotgun
 	precache_sound ("weapons/ric1.wav");	// ricochet (used in c code)
 	precache_sound ("weapons/ric2.wav");	// ricochet (used in c code)
 	precache_sound ("weapons/ric3.wav");	// ricochet (used in c code)
 	precache_sound ("weapons/spike2.wav");	// super spikes
 	precache_sound ("weapons/tink1.wav");	// spikes tink (used in c code)
-	precache_sound ("weapons/grenade.wav");	// grenade launcher
+	precache_sound ("weapons/grenade.wav"); // grenade launcher
 	precache_sound ("weapons/bounce.wav");	// grenade bounce
-	precache_sound ("weapons/shotgn2.wav");	// super shotgun
-	precache_sound ("wizard/wattack.wav");    // sniper rifle
+	precache_sound ("weapons/shotgn2.wav"); // super shotgun
+	precache_sound ("wizard/wattack.wav");	  // sniper rifle
 	precache_sound ("items/r_item1.wav");	// Medikit
 	precache_sound ("items/r_item2.wav");	// Medikit
-	precache_model ("progs/flame2.mdl");  	// Flamethrower
+	precache_model ("progs/flame2.mdl");	// Flamethrower
 	precache_sound ("ambience/fire1.wav");
-	//UNUSED_TEST precache_sound2("blob/land1.wav");        // Hook
-	//precache_model2("progs/v_spike.mdl");	// Hook
-	precache_sound ("hknight/hit.wav");		// Hook
-// NEW FILES
-	precache_sound ("weapons/turrset.wav");	// Sentry Gun Setup
-	precache_sound ("weapons/turrspot.wav");	// Sentry Gun Spot 
+	//UNUSED_TEST precache_sound2("blob/land1.wav");		// Hook
+	//precache_model2("progs/v_spike.mdl"); // Hook
+	precache_sound ("hknight/hit.wav"); 	// Hook
+	precache_sound ("weapons/turrset.wav"); // Sentry Gun Setup
+	precache_sound ("weapons/turrspot.wav");	// Sentry Gun Spot
 	precache_sound ("weapons/turridle.wav");	// Sentry Gun Idle
-    	precache_sound ("weapons/sniper.wav");	// sniper rifle
-    	precache_sound ("weapons/flmfire2.wav");	// flamethrower
-    	precache_sound ("weapons/flmgrexp.wav");	// flamethrower
+	precache_sound ("weapons/sniper.wav");	// sniper rifle
+	precache_sound ("weapons/flmfire2.wav");	// flamethrower
+	precache_sound ("weapons/flmgrexp.wav");	// flamethrower
 	precache_sound ("misc/vapeur2.wav");	// flamethrower
-	precache_sound ("weapons/asscan1.wav");	// Assault Cannon Powerup
-	precache_sound ("weapons/asscan2.wav");	// Assault Cannon Churning
-	precache_sound ("weapons/asscan3.wav");	// Assault Cannon Powerdown
-	precache_sound ("weapons/railgun.wav");	// Railgun
-	precache_sound ("weapons/dartgun.wav");	// Spy's dart gun
-      //precache_sound ("ambience/thunder1.wav");	// Connect sound
-	
+	precache_sound ("weapons/asscan1.wav"); // Assault Cannon Powerup
+	precache_sound ("weapons/asscan2.wav"); // Assault Cannon Churning
+	precache_sound ("weapons/asscan3.wav"); // Assault Cannon Powerdown
+	precache_sound ("weapons/railgun.wav"); // Railgun
+	precache_sound ("weapons/dartgun.wav"); // Spy's dart gun
+	//precache_sound ("ambience/thunder1.wav");	// Connect sound
+
 	//WK
 	//precache_model ("progs/v_merc.mdl");		//Carbine Model
-	//precache_sound ("weapons/carbfire.wav");		// Carbine shooting
-	//precache_sound ("weapons/carbreld.wav");		// Carbine shooting
-	//precache_sound ("weapons/carbrock.wav");		// Carbine shooting
-	//precache_sound ("weapons/nishi.wav");		// Nishi shooting
-	precache_model ("progs/telepad.mdl");		//Teleporter pad
-	precache_model ("progs/camera.mdl");		// Security Camera
-	precache_sound ("ambience/orff.wav");		// Chaplan sound
+	//precache_sound ("weapons/carbfire.wav");	// Carbine shooting
+	//precache_sound ("weapons/carbreld.wav");	// Carbine shooting
+	//precache_sound ("weapons/carbrock.wav");	// Carbine shooting
+	//precache_sound ("weapons/nishi.wav"); 	// Nishi shooting
+	precache_model ("progs/telepad.mdl");	//Teleporter pad
+	precache_model ("progs/camera.mdl");	// Security Camera
+	precache_sound ("ambience/orff.wav");	// Chaplan sound
 	precache_sound ("weapons/guerblip.wav");	// Landmine beep - Ofn was guerilla_blip
-	precache_sound ("weapons/guerset.wav");	// Landmine set - oFn guerilla_set
-	precache_sound ("weapons/cambeep.wav");	// CH camera beep - OfN camera_beep
+	precache_sound ("weapons/guerset.wav"); // Landmine set - oFn guerilla_set
+	precache_sound ("weapons/cambeep.wav"); // CH camera beep - OfN camera_beep
 	precache_sound ("misc/enemy.wav"); // sensor alert
 	precache_sound ("weapons/fith.wav");	// WK Fire in the hole
 	precache_sound ("weapons/hallelujah.wav"); // PZ - martyr yell
 	//precache_model2("progs/guerilla_mine.mdl");	// The Landmine
-	//precache_model ("progs/tesla.mdl");	  	  	  // The Tesla (by --Warrior--)
-	precache_model ("progs/minimis.mdl");	  	  // Swarm missile (BLOG) - OfN was minimissile
-	//precache_model ("progs/newtesla.mdl");	  	  // The Tesla (by --Warrior-- & BLOG)
+	//precache_model ("progs/tesla.mdl");	// The Tesla (by --Warrior--)
+	precache_model ("progs/minimis.mdl");	// Swarm missile (BLOG) - OfN was minimissile
+	//precache_model ("progs/newtesla.mdl");	// The Tesla (by --Warrior-- & BLOG)
 
-    precache_model ("progs/coil.mdl");	  	  // The Tesla (by --Warrior-- & BLOG)
+	precache_model ("progs/coil.mdl");		  // The Tesla (by --Warrior-- & BLOG)
 
-    //precache_model ("progs/tscloak.mdl");
+	//precache_model ("progs/tscloak.mdl");
 
-	precache_model ("progs/tesgib1.mdl");		  // Tesla Gib
-	precache_model ("progs/tesgib2.mdl");		  // Tesla Gib
-	precache_model ("progs/tesgib3.mdl");		  // Tesla Gib
-	precache_sound ("doors/medtry.wav");		  //CH Dropping detpack sound
-	precache_sound ("doors/baseuse.wav");		  //CH Detpack warning sound
+	precache_model ("progs/tesgib1.mdl");	// Tesla Gib
+	precache_model ("progs/tesgib2.mdl");	// Tesla Gib
+	precache_model ("progs/tesgib3.mdl");	// Tesla Gib
+	precache_sound ("doors/medtry.wav");	//CH Dropping detpack sound
+	precache_sound ("doors/baseuse.wav");	//CH Detpack warning sound
 	precache_sound ("enforcer/sight1.wav");   // WK Taunt
 	precache_sound ("enforcer/sight2.wav");   // WK Taunt
 	precache_sound ("enforcer/sight3.wav");   // WK Taunt
@@ -255,25 +259,25 @@ float() crandom =
 void(float att_delay) Attack_Finished =
 {
 	if (self.tfstate & #TFSTATE_TRANQUILISED)
-        att_delay = att_delay * 1.5;
-    
-    if (self.aura == #AURA_HASTE && self.#runes & #RUNE_SPEED)
-        att_delay = att_delay * 0.5;
-    else
-    {
-        if (self.aura == #AURA_HASTE)
-            att_delay = att_delay * 0.75;
-        else if (self.#runes & #RUNE_SPEED)
-            att_delay = att_delay * 0.7;
-    }
-    
-    self.attack_finished = time + att_delay;
+		att_delay = att_delay * 1.5;
 
-    /*OLD CODEif (self.tfstate & #TFSTATE_TRANQUILISED)
+	if (self.aura == #AURA_HASTE && self.#runes & #RUNE_SPEED)
+		att_delay = att_delay * 0.5;
+	else
+	{
+		if (self.aura == #AURA_HASTE)
+			att_delay = att_delay * 0.75;
+		else if (self.#runes & #RUNE_SPEED)
+			att_delay = att_delay * 0.7;
+	}
+
+	self.attack_finished = time + att_delay;
+
+	/*OLD CODEif (self.tfstate & #TFSTATE_TRANQUILISED)
 		self.attack_finished = time + (att_delay * 1.5);
 	else if (self.aura == #AURA_HASTE)
 		self.attack_finished = time + (att_delay * 0.75);
-	else 
+	else
 		self.attack_finished = time + att_delay;*/
 };
 
@@ -284,62 +288,62 @@ W_FireAxe
 */
 void() W_FireAxe =
 {
-	local	vector	source;
-	local	vector	org, def;
-	local	vector	dir;
-    local entity oself; // OfN
+	local vector source;
+	local vector org, def;
+	local vector dir;
+	local entity oself; // OfN
 
 	if (self.classname == "player")
 		makevectors(self.v_angle);
 	else
 		dir = normalize (self.enemy.origin - self.origin);
-	source = self.origin + '0 0 16';
-	
+		source = self.origin + '0 0 16';
+
 	if (self.classname == "player")
 	{
 		if (!self.cutf_items & #CUTF_CLOSECOMBAT)
 			//traceline (source, source + v_forward*64, #TL_ANY_SOLID, self);
-            BulletTraceline(source, source + v_forward*64);
+			BulletTraceline(source, source + v_forward*64);
 		else
 			//traceline (source, source + v_forward*96, #TL_ANY_SOLID, self);
-            BulletTraceline(source, source + v_forward*96);
+			BulletTraceline(source, source + v_forward*96);
 	}
 	else
 		//traceline (source, source + dir*64, #TL_ANY_SOLID, self);
-        BulletTraceline(source, source + dir*64);
+		BulletTraceline(source, source + dir*64);
 
 	if (trace_fraction == 1.0)
 		return;
-	
+
 	org = trace_endpos - v_forward*4;
 
-    if (trace_ent.classname == "force_field")
-    {
-        FieldEvent(trace_ent,trace_endpos,trace_ent);        
-        return;
-    }
+	if (trace_ent.classname == "force_field")
+	{
+		FieldEvent(trace_ent,trace_endpos,trace_ent);
+		return;
+	}
 
-    #ifdef GIBABLE_CORPSES
-    if (trace_ent.#corpseflag == #STRFLAG_CORPSE)
-    {
-        if (self.cutf_items & #CUTF_KNIFE)
-        {
-            if (self.cutf_items & #CUTF_CLOSECOMBAT)
-                DamageCorpse(trace_ent,30,trace_ent.origin,self,#TRUE);    
-            else
-                DamageCorpse(trace_ent,15,trace_ent.origin,self,#TRUE);
-        }
-        else
-        {
-            if (self.cutf_items & #CUTF_CLOSECOMBAT)
-                DamageCorpse(trace_ent,20,trace_ent.origin,self,#TRUE);    
-            else
-                DamageCorpse(trace_ent,10,trace_ent.origin,self,#TRUE);
-        }
-        
-        return;
-    }
-    #endif
+	#ifdef GIBABLE_CORPSES
+	if (trace_ent.#corpseflag == #STRFLAG_CORPSE)
+	{
+		if (self.cutf_items & #CUTF_KNIFE)
+		{
+			if (self.cutf_items & #CUTF_CLOSECOMBAT)
+				DamageCorpse(trace_ent,30,trace_ent.origin,self,#TRUE);
+			else
+				DamageCorpse(trace_ent,15,trace_ent.origin,self,#TRUE);
+		}
+		else
+		{
+			if (self.cutf_items & #CUTF_CLOSECOMBAT)
+				DamageCorpse(trace_ent,20,trace_ent.origin,self,#TRUE);
+			else
+				DamageCorpse(trace_ent,10,trace_ent.origin,self,#TRUE);
+		}
+
+		return;
+	}
+	#endif
 
 	if (trace_ent.takedamage)
 	{
@@ -362,7 +366,7 @@ void() W_FireAxe =
 			{
 				self.job = self.job | #JOB_BLOODY_KNIFE;
 				self.weaponmode = 1; // Put blood on the knife
-  				self.weaponmodel = "progs/v_knife2.mdl";
+				self.weaponmodel = "progs/v_knife2.mdl";
 			}
 			else if (self.job & #JOB_WARLOCK)
 			{
@@ -381,15 +385,15 @@ void() W_FireAxe =
 			if (crossproduct(def,v_forward) > 0)
 			{
 				deathmsg = #DMSG_BACKSTAB;
-                oself = self;
-                self = trace_ent;
+				oself = self;
+				self = trace_ent;
 				ThrowGib("progs/gib1.mdl", -50, #TRUE,0,#GIB1_KGS, #FALSE);
 				ThrowGib("progs/gib2.mdl", 10, #TRUE,0,#GIB2_KGS, #FALSE);
 				ThrowGib("progs/gib3.mdl", 50, #TRUE,0,#GIB3_KGS, #FALSE);
-                self = oself;
-                //ThrowGib ("progs/gib2.mdl", 25); //-added
+				self = oself;
+				//ThrowGib ("progs/gib2.mdl", 25); //-added
 
-//WK 120 & no IGNOREARMOR
+				//WK 120 & no IGNOREARMOR
 				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
 					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
 				else
@@ -398,11 +402,11 @@ void() W_FireAxe =
 			else
 			{
 				deathmsg = #DMSG_AXE;
-//WK 40
+				//WK 40
 				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
 					TF_T_Damage (trace_ent, self, self, 50, #TF_TD_NOTTEAM, #TF_TD_OTHER);
 				else
-					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER);				
+					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER);
 			}
 		}
 	}
@@ -444,22 +448,22 @@ void() W_FireSpanner =
 
 	if (trace_fraction == 1.0)
 		return;
-	
+
 	org = trace_endpos - v_forward*4;
 
-    if (trace_ent.classname == "force_field")
-    {
-        FieldEvent(trace_ent,trace_endpos,trace_ent);
-        
-        //FieldExplosion(trace_ent,trace_endpos,trace_ent);
-        //PutFieldWork(trace_ent);
+	if (trace_ent.classname == "force_field")
+	{
+		FieldEvent(trace_ent,trace_endpos,trace_ent);
 
-        deathmsg = #DMSG_SPANNERFIELD;
-        TF_T_Damage(self, self, self, self.health + 50, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
-        sound (self, #CHAN_MISC, "effects/crunch.wav", 1, #ATTN_NONE);
+		//FieldExplosion(trace_ent,trace_endpos,trace_ent);
+		//PutFieldWork(trace_ent);
 
-        return;
-    }
+		deathmsg = #DMSG_SPANNERFIELD;
+		TF_T_Damage(self, self, self, self.health + 50, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
+		sound (self, #CHAN_MISC, "effects/crunch.wav", 1, #ATTN_NONE);
+
+		return;
+	}
 
 	// It may be a trigger that can be activated by the engineer's spanner
 	if (trace_ent.goal_activation & #TFGA_SPANNER)
@@ -547,7 +551,7 @@ void() W_FireSpanner =
 			Engineer_UseTeleporter(trace_ent);
 			return;
 		}
-        else if (trace_ent.classname == "building_fieldgen")
+		else if (trace_ent.classname == "building_fieldgen")
 		{
 			Engineer_UseFieldGen(trace_ent);
 			return;
@@ -565,13 +569,13 @@ void() W_FireSpanner =
 					// Only fix armor if they've got some
 					if (trace_ent.armor_allowed == 0) //WK
 						return;
-						
+
 					if (trace_ent.armorvalue <= 0) // SB
 						return;
-					
+
 					if (trace_ent.maxarmor - trace_ent.armorvalue < (healam * 4))
 						healam = ceil((trace_ent.maxarmor - trace_ent.armorvalue) / 4);
-						
+
 					if (healam > 0)
 					{
 						trace_ent.armorvalue = trace_ent.armorvalue + (healam * 4);
@@ -606,7 +610,7 @@ void() W_FireSpanner =
 			SpawnBlood (org, 20);
 
 			deathmsg = #DMSG_SPANNER;
-//WK 20
+			//WK 20
 			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
 				TF_T_Damage (trace_ent, self, self, 20, #TF_TD_NOTTEAM, #TF_TD_OTHER);
 			else
@@ -614,7 +618,7 @@ void() W_FireSpanner =
 		}
 	}
 	else // hit wall
-	{	
+	{
 		sound (self, #CHAN_WEAPON, "player/axhit2.wav", 1, #ATTN_NORM);
 		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 		WriteByte (#MSG_BROADCAST, #TE_GUNSHOT);
@@ -632,7 +636,7 @@ void() W_FireSpanner =
 
 /*
 ================
-W_FireMedikit  
+W_FireMedikit
 ================
 */
 
@@ -643,8 +647,8 @@ void(float inAuto) W_FireMedikit =
 {
 	local	vector	source;
 	local	vector	org;
-	local	float healam;	
-	local 	entity te, BioInfection;
+	local	float healam;
+	local	entity te, BioInfection;
 
 	source = self.origin + '0 0 16';
 	if (self.cutf_items & #CUTF_CLOSECOMBAT)
@@ -654,11 +658,11 @@ void(float inAuto) W_FireMedikit =
 
 	if (trace_fraction == 1.0)
 		return;
-	
+
 	org = trace_endpos - v_forward*4;
 
-    if (!trace_ent) // OfN - Fixes crash?
-        return;
+	if (!trace_ent) // OfN - Fixes crash?
+		return;
 
 	if (trace_ent.takedamage)
 	{
@@ -686,7 +690,7 @@ void(float inAuto) W_FireMedikit =
 					if (!Teammate(self.team_no,te.team_no))
 					{
 						self.real_frags = self.real_frags + 1;
-			 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+						if (!(toggleflags & #TFLAG_TEAMFRAGS))
 							self.frags = self.real_frags;
 					}
 
@@ -714,7 +718,7 @@ void(float inAuto) W_FireMedikit =
 						if (!Teammate(self.team_no,te.team_no))
 						{
 							self.real_frags = self.real_frags + 1;
-				 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+							if (!(toggleflags & #TFLAG_TEAMFRAGS))
 								self.frags = self.real_frags;
 						}
 
@@ -748,7 +752,7 @@ void(float inAuto) W_FireMedikit =
 						if (!Teammate(self.team_no,te.team_no))
 						{
 							self.real_frags = self.real_frags + 1;
-				 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+							if (!(toggleflags & #TFLAG_TEAMFRAGS))
 								self.frags = self.real_frags;
 						}
 
@@ -759,10 +763,10 @@ void(float inAuto) W_FireMedikit =
 						RPrint("Warning: Error in Tranquilisation Timer logic.\n");
 					}
 				}
-                
-                #ifdef OLD_FLASH
+
+				#ifdef OLD_FLASH
 				// check if the healed player is blinded
-                if (trace_ent.FlashTime > 0)
+				if (trace_ent.FlashTime > 0)
 				{
 					te = find(world, netname, "flashtimer");
 					while ((te.owner != trace_ent || te.classname != "timer") && (te != world))
@@ -780,7 +784,7 @@ void(float inAuto) W_FireMedikit =
 						if (!Teammate(self.team_no,te.team_no))
 						{
 							self.real_frags = self.real_frags + 1;
-				 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+							if (!(toggleflags & #TFLAG_TEAMFRAGS))
 								self.frags = self.real_frags;
 						}
 
@@ -793,15 +797,15 @@ void(float inAuto) W_FireMedikit =
 					}
 				}
 
-                #else // OLD_FLASH
+				#else // OLD_FLASH
 
-                if (trace_ent.tfstate & #TFSTATE_PSIONIZED && trace_ent != world) // << FIX?
-                {
-                    trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_PSIONIZED;
+				if (trace_ent.tfstate & #TFSTATE_PSIONIZED && trace_ent != world) // << FIX?
+				{
+					trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_PSIONIZED;
 
-                    TeamFortress_SetSpeed(trace_ent);
+					TeamFortress_SetSpeed(trace_ent);
 
-                    te = find(world, netname, "psionictimer");
+					te = find(world, netname, "psionictimer");
 					while ((te.owner != trace_ent || te.classname != "timer") && (te != world))
 						te = find(te, netname, "psionictimer");
 
@@ -809,22 +813,22 @@ void(float inAuto) W_FireMedikit =
 					{
 						SpawnBlood(org, 20);
 
-                        sprint(trace_ent, #PRINT_HIGH, self.netname, " restores your psionic problems!\n");
-                        sprint(self, #PRINT_HIGH, "You restore ", trace_ent.netname, "'s psionic normality\n");
-                        
+						sprint(trace_ent, #PRINT_HIGH, self.netname, " restores your psionic problems!\n");
+						sprint(self, #PRINT_HIGH, "You restore ", trace_ent.netname, "'s psionic normality\n");
+
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						if (!Teammate(self.team_no,te.team_no))
 						{
 							self.real_frags = self.real_frags + 1;
-				 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+							if (!(toggleflags & #TFLAG_TEAMFRAGS))
 								self.frags = self.real_frags;
 						}
 
 						dremove(te);
 					}
-                }
+				}
 
-                #endif // FLASH/PSIONIC
+				#endif // FLASH/PSIONIC
 
 				// check if the healed player is infected
 				if (trace_ent.tfstate & #TFSTATE_INFECTED && trace_ent != world) // << FIX?
@@ -841,7 +845,7 @@ void(float inAuto) W_FireMedikit =
 
 					SpawnBlood(org, 30);
 					sprint(trace_ent, #PRINT_HIGH,self.netname);
-         			sprint(trace_ent, #PRINT_HIGH, " cures your infection!\n");
+					sprint(trace_ent, #PRINT_HIGH, " cures your infection!\n");
 
 					if (self.classname == "player")
 					{
@@ -849,14 +853,14 @@ void(float inAuto) W_FireMedikit =
 						sprint(self, #PRINT_HIGH, trace_ent.netname);
 						sprint(self, #PRINT_HIGH, " of the infection.\n");
 
-                        teamprefixsprintbi(self.team_no,self,trace_ent);
-                        teamsprintbi(self,trace_ent,trace_ent.netname," infection has been cured by ",self.netname,"\n","","");
+						teamprefixsprintbi(self.team_no,self,trace_ent);
+						teamsprintbi(self,trace_ent,trace_ent.netname," infection has been cured by ",self.netname,"\n","","");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						if (!Teammate(trace_ent.infection_team_no, self.team_no))
 						{
 							self.real_frags = self.real_frags + 1;
-				 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+							if (!(toggleflags & #TFLAG_TEAMFRAGS))
 								self.frags = self.real_frags;
 						}
 					}
@@ -874,12 +878,12 @@ void(float inAuto) W_FireMedikit =
 					sprint(trace_ent, #PRINT_HIGH, "The flames have been doused!\n");
 
 					if (self.classname == "player")
-					{		
+					{
 						sprint(self, #PRINT_MEDIUM, "You have put out ");
 						sprint(self, #PRINT_MEDIUM, trace_ent.netname);
-						sprint(self, #PRINT_MEDIUM, "'s fire.\n");	
+						sprint(self, #PRINT_MEDIUM, "'s fire.\n");
 					}
-					
+
 					return;
 				}
 
@@ -914,7 +918,7 @@ void(float inAuto) W_FireMedikit =
 				}
 			}
 
-#ifdef MEDIKIT_IS_BIOWEAPON
+		#ifdef MEDIKIT_IS_BIOWEAPON
 			//WK Don't infect if they're invincible or observing
 			else if (!(trace_ent.invincible_finished) && !(trace_ent.playerclass == #PC_UNDEFINED))
 			{
@@ -928,7 +932,7 @@ void(float inAuto) W_FireMedikit =
 					T_Damage (trace_ent, self, self, 10);
 				else
 					T_Damage (trace_ent, self, self, 20);
-					
+
 				if (trace_ent.weapons_carried & #WEAP_MEDIKIT) //WK
 					return;
 
@@ -936,27 +940,27 @@ void(float inAuto) W_FireMedikit =
 				if (trace_ent.tf_items & #NIT_GEL && random() < 0.75)
 					return;
 
-                if (trace_ent.#runes & #RUNE_RESIS)
-                    return;
+				if (trace_ent.#runes & #RUNE_RESIS)
+					return;
 
-                if (trace_ent.penance_time > time) // Don't let lame teamkillers get infected
-                    return;
+				if (trace_ent.penance_time > time) // Don't let lame teamkillers get infected
+					return;
 
-                // Reports, only if first infection
-                if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
-                {
-                    sprint(trace_ent,#PRINT_HIGH,"You have been infected!\n");
+				// Reports, only if first infection
+				if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
+				{
+					sprint(trace_ent,#PRINT_HIGH,"You have been infected!\n");
 
-                    // Report to infecter
-                    sprint(self,#PRINT_HIGH,"You infect ",trace_ent.netname,"!\n");
+					// Report to infecter
+					sprint(self,#PRINT_HIGH,"You infect ",trace_ent.netname,"!\n");
 
-                    // Report to teammates of infected
-                    teamprefixsprint(trace_ent.team_no,trace_ent);
-                    teamsprint6(trace_ent,trace_ent.netname," has been infected!\n","","","","");
+					// Report to teammates of infected
+					teamprefixsprint(trace_ent.team_no,trace_ent);
+					teamsprint6(trace_ent,trace_ent.netname," has been infected!\n","","","","");
 
-                    // Update infection flag
-                    trace_ent.tfstate = trace_ent.tfstate | #TFSTATE_INFECTED;
-                }
+					// Update infection flag
+					trace_ent.tfstate = trace_ent.tfstate | #TFSTATE_INFECTED;
+				}
 
 				BioInfection = spawn ();
 				BioInfection.classname = "timer";
@@ -968,28 +972,28 @@ void(float inAuto) W_FireMedikit =
 
 				trace_ent.infection_team_no = self.team_no;
 			}
-#endif
+		#endif
 
-  		}
-   		else if (IsMonster(trace_ent))//- OfN - Monsters 
-  		{
-  			if (Teammate(trace_ent.real_owner.team_no, self.team_no))
-  			{
+		}
+		else if (IsMonster(trace_ent))//- OfN - Monsters
+		{
+			if (Teammate(trace_ent.real_owner.team_no, self.team_no))
+			{
 				if (trace_ent.health < trace_ent.max_health)
 				{
 					local float healfactor;
-                    healfactor = 3;
+					healfactor = 3;
 
-                    if (trace_ent.classname == "monster_army")
-                        healfactor = 2;
+					if (trace_ent.classname == "monster_army")
+						healfactor = 2;
 
-                    if (trace_ent.max_health - trace_ent.health < 50 * healfactor) // 50 for players
+					if (trace_ent.max_health - trace_ent.health < 50 * healfactor) // 50 for players
 						healam = trace_ent.max_health - trace_ent.health;
 					else
 						healam = 50 * healfactor;
 					if (healam > self.ammo_medikit * healfactor)
 						healam = self.ammo_medikit * healfactor;
-						
+
 					if (healam == 0)
 						return;
 
@@ -997,99 +1001,99 @@ void(float inAuto) W_FireMedikit =
 					trace_ent.axhitme = 1;
 					SpawnBlood (org, 20);
 
-                    T_Heal(trace_ent, healam, 0);
+					T_Heal(trace_ent, healam, 0);
 					self.ammo_medikit = self.ammo_medikit - (healam/healfactor);
 
-                    self.ammo_medikit = rint(self.ammo_medikit);
+					self.ammo_medikit = rint(self.ammo_medikit);
 
-                    if (self.ammo_medikit < 0)
-                        self.ammo_medikit = 0;
+					if (self.ammo_medikit < 0)
+						self.ammo_medikit = 0;
 
 					if (trace_ent.health > trace_ent.max_health)
 						trace_ent.health = trace_ent.max_health;
 				}
 				/* PZ - can't infect summons anymore
-                if (trace_ent.tfstate & #TFSTATE_INFECTED) // infected monsters
-                {
-                    trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_INFECTED;
-                    
-                    local string tmps;
-                    tmps = GetMonsterName(trace_ent);
-                    
-                    // Inform the medic
-                    sprint(self,#PRINT_HIGH,"You have cured this ",tmps," from the infection\n");
+				if (trace_ent.tfstate & #TFSTATE_INFECTED) // infected monsters
+				{
+					trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_INFECTED;
 
-                    // Report to the owner of the monster
-                    sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," has been cured by ",self.netname,"\n");
-                    
-                    // Report to teammates
-                    teamprefixsprintbi(trace_ent.real_owner.team_no,trace_ent.real_owner,self);
-                    teamsprintbi(trace_ent.real_owner,self,self.netname, " cures the ",tmps," ",trace_ent.netname,"\n");
+					local string tmps;
+					tmps = GetMonsterName(trace_ent);
 
-                    // Give the medic a frag for doing it, only if it was caused by an enemy
-                    if (!Teammate(trace_ent.infection_team_no, self.team_no))
-                    {
-                        self.real_frags = self.real_frags + 1;
-                        if (!(toggleflags & #TFLAG_TEAMFRAGS))
-                            self.frags = self.real_frags;
-                    }
-                } */
+					// Inform the medic
+					sprint(self,#PRINT_HIGH,"You have cured this ",tmps," from the infection\n");
+
+					// Report to the owner of the monster
+					sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," has been cured by ",self.netname,"\n");
+
+					// Report to teammates
+					teamprefixsprintbi(trace_ent.real_owner.team_no,trace_ent.real_owner,self);
+					teamsprintbi(trace_ent.real_owner,self,self.netname, " cures the ",tmps," ",trace_ent.netname,"\n");
+
+					// Give the medic a frag for doing it, only if it was caused by an enemy
+					if (!Teammate(trace_ent.infection_team_no, self.team_no))
+					{
+						self.real_frags = self.real_frags + 1;
+						if (!(toggleflags & #TFLAG_TEAMFRAGS))
+							self.frags = self.real_frags;
+					}
+				} */
 			}
-            else // enemy monsters
-            {
-                trace_ent.axhitme = 1;
-                SpawnBlood(org, 20);
-                if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-                    T_Damage (trace_ent, self, self, 10);
-                else
-                    T_Damage (trace_ent, self, self, 20);
+			else // enemy monsters
+			{
+				trace_ent.axhitme = 1;
+				SpawnBlood(org, 20);
+				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+					T_Damage (trace_ent, self, self, 10);
+				else
+					T_Damage (trace_ent, self, self, 20);
 
-                // Report to owner, only if first infection
-                if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
-                {   
-					// PZ - do nothing.. can no longer infect summons 
-                    /*local string tmps;
-                    tmps = GetMonsterName(trace_ent);
-                    sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," ",trace_ent.netname," has been infected!\n");
+				// Report to owner, only if first infection
+				if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
+				{
+					// PZ - do nothing.. can no longer infect summons
+					/*local string tmps;
+					tmps = GetMonsterName(trace_ent);
+					sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," ",trace_ent.netname," has been infected!\n");
 
-                    // Report to infecter
-                    sprint(self,#PRINT_HIGH,"You infect the ",tmps, " ", trace_ent.netname,"!\n");
+					// Report to infecter
+					sprint(self,#PRINT_HIGH,"You infect the ",tmps, " ", trace_ent.netname,"!\n");
 
-                    // Report to teammates of owner
-                    teamprefixsprint(trace_ent.real_owner.team_no,trace_ent.real_owner);
-                    teamsprint6(trace_ent.real_owner,"The ",tmps," ", trace_ent.netname," has been infected!\n","");
+					// Report to teammates of owner
+					teamprefixsprint(trace_ent.real_owner.team_no,trace_ent.real_owner);
+					teamsprint6(trace_ent.real_owner,"The ",tmps," ", trace_ent.netname," has been infected!\n","");
 
-                    // Update infection flag
-                    trace_ent.tfstate = trace_ent.tfstate | #TFSTATE_INFECTED; */
-                }
+					// Update infection flag
+					trace_ent.tfstate = trace_ent.tfstate | #TFSTATE_INFECTED; */
+				}
 				/* PZ - don't infect summons
-                // Infect it!
-                BioInfection = spawn ();
-                BioInfection.classname = "timer";
-                BioInfection.classname = "biotimer";
-                BioInfection.nextthink = time + 2;
-                BioInfection.think = BioInfection_MonsterDecay;
-                BioInfection.owner = self;
-                BioInfection.enemy = trace_ent;
+				// Infect it!
+				BioInfection = spawn ();
+				BioInfection.classname = "timer";
+				BioInfection.classname = "biotimer";
+				BioInfection.nextthink = time + 2;
+				BioInfection.think = BioInfection_MonsterDecay;
+				BioInfection.owner = self;
+				BioInfection.enemy = trace_ent;
 
-                trace_ent.infection_team_no = self.team_no;
+				trace_ent.infection_team_no = self.team_no;
 				*/
-            }
-		} 
-        else // OfN - Buttons, Switches, doors
-        {
-            if (!inAuto)
-            if (trace_ent.classname == "func_button" || trace_ent.classname == "door")
-            {
-                trace_ent.axhitme = 1;
-			    SpawnBlood (org, 30);
+			}
+		}
+		else // OfN - Buttons, Switches, doors
+		{
+			if (!inAuto)
+			if (trace_ent.classname == "func_button" || trace_ent.classname == "door")
+			{
+				trace_ent.axhitme = 1;
+				SpawnBlood (org, 30);
 
-			    T_Damage(trace_ent, self, self, 40);
-            }
-        }
+				T_Damage(trace_ent, self, self, 40);
+			}
+		}
 	}
 	else
-	{	
+	{
 		if (inAuto) return; //Don't click for automedic
 		// hit wall
 		sound (self, #CHAN_WEAPON, "player/axhit2.wav", 1, #ATTN_NORM);
@@ -1117,15 +1121,15 @@ void() W_FireBioweapon =
 {
 	local	vector	source;
 	local	vector	org;
-	//local	float healam;	
+	//local float healam;
 
-	local 	entity BioInfection;
+	local	entity BioInfection;
 
 	source = self.origin + '0 0 16';
 	traceline (source, source + v_forward*64, #TL_ANY_SOLID, self);
 	if (trace_fraction == 1.0)
 		return;
-	
+
 	org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage)
@@ -1136,7 +1140,7 @@ void() W_FireBioweapon =
 			{
 				trace_ent.axhitme = 1;
 				SpawnBlood (org, 20);
-		
+
 				deathmsg = #DMSG_BIOWEAPON_ATT;
 				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
 					T_Damage (trace_ent, self, self, 10);
@@ -1173,7 +1177,7 @@ void() W_FireBioweapon =
 				T_Damage (trace_ent, self, self, 10);
 			else
 				T_Damage (trace_ent, self, self, 20);
-		/*  // PZ - don't infect summons
+			/* PZ - don't infect summons
 			BioInfection = spawn ();
 			BioInfection.classname = "timer";
 			BioInfection.classname = "biotimer";
@@ -1214,12 +1218,12 @@ void() W_FireBioweapon =
 vector() wall_velocity =
 {
 	local vector	vel;
-	
+
 	vel = normalize (self.velocity);
 	vel = normalize(vel + v_up*(random()- 0.5) + v_right*(random()- 0.5));
 	vel = vel + 2*trace_plane_normal;
 	vel = vel * 200;
-	
+
 	return vel;
 };
 
@@ -1245,13 +1249,13 @@ void(vector org, vector vel) SpawnMeatSpray =
 	missile.velocity_z = missile.velocity_z + 250 + 50*random();
 
 	missile.avelocity = '3000 1000 2000';
-	
-// set missile duration
+
+	// set missile duration
 	missile.nextthink = time + 1;
 	missile.think = SUB_Remove;
 
 	setmodel (missile, "progs/zom_gib.mdl");
-	setsize (missile, '0 0 0', '0 0 0');		
+	setsize (missile, '0 0 0', '0 0 0');
 	setorigin (missile, org);
 };
 
@@ -1315,11 +1319,11 @@ entity	multi_ent;
 float	multi_damage;
 
 #ifdef QUAKE_WORLD
-vector  blood_org;
-float   blood_count;
+vector	blood_org;
+float	blood_count;
 
-vector  puff_org;
-float   puff_count;
+vector	puff_org;
+float	puff_count;
 #endif
 
 void() ClearMultiDamage =
@@ -1347,7 +1351,7 @@ void(entity hit, float damage) AddMultiDamage =
 {
 	if (!hit)
 		return;
-	
+
 	if (hit != multi_ent)
 	{
 		ApplyMultiDamage ();
@@ -1361,7 +1365,7 @@ void(entity hit, float damage) AddMultiDamage =
 #ifdef QUAKE_WORLD
 void() Multi_Finish =
 {
-	/* WK Save spam SB ok, you save spam*/
+	// WK Save spam SB ok, you save spam
 	if (puff_count)
 	{
 		WriteByte (#MSG_MULTICAST, #SVC_TEMPENTITY);
@@ -1372,7 +1376,7 @@ void() Multi_Finish =
 		WriteCoord (#MSG_MULTICAST, puff_org_z);
 		multicast (puff_org, #MULTICAST_PVS);
 	}
-	
+
 
 	if (blood_count)
 	{
@@ -1399,40 +1403,40 @@ BULLETS
 #ifdef COOL_GIBS_TRACE
 void(vector org, vector dir,float intensity,float radius) CoolPush =
 {
-    // Go away if its disabled..
-    if (!cool_gibs)
-        return;
+	// Go away if its disabled..
+	if (!cool_gibs)
+		return;
 
-    local entity head;
-	head = findradius(org, radius);	
+	local entity head;
+	head = findradius(org, radius);
 
 	while (head)
 	{
-		if (head.#coolflag == #STRFLAG_COOL) 
-        {
-            // Wheeeeeeeeee
-            head.velocity = head.velocity + (dir * intensity * 16);
-            
-            // Are we onground? is so put us up
-            if (head.flags & #FL_ONGROUND)
-            {
-                head.flags = head.flags - #FL_ONGROUND;
-                head.velocity_z = head.velocity_z + (135 + intensity*2 +random()*120);
-            }               
-            
-            // Do an appropiate spin movement if we arent spinning currently and sometimes even if we are
-            if (head.avelocity == '0 0 0' || random() < 0.2)
-            {
-                // is this a head?
-                if (head.classname != "gib")
-                    head.avelocity = crandom() * '0 600 0';
-                else // should be a gib then
-                {
-                    head.avelocity_x = crandom()*600;
-                    head.avelocity_y = crandom()*600;
-                    head.avelocity_z = crandom()*600;
-                }
-            }
+		if (head.#coolflag == #STRFLAG_COOL)
+		{
+			// Wheeeeeeeeee
+			head.velocity = head.velocity + (dir * intensity * 16);
+
+			// Are we onground? is so put us up
+			if (head.flags & #FL_ONGROUND)
+			{
+				head.flags = head.flags - #FL_ONGROUND;
+				head.velocity_z = head.velocity_z + (135 + intensity*2 +random()*120);
+			}
+
+			// Do an appropiate spin movement if we arent spinning currently and sometimes even if we are
+			if (head.avelocity == '0 0 0' || random() < 0.2)
+			{
+				// is this a head?
+				if (head.classname != "gib")
+					head.avelocity = crandom() * '0 600 0';
+				else // should be a gib then
+				{
+					head.avelocity_x = crandom()*600;
+					head.avelocity_y = crandom()*600;
+					head.avelocity_z = crandom()*600;
+				}
+			}
 		}
 
 		head = head.chain;
@@ -1449,7 +1453,7 @@ TraceAttack
 void(float damage, vector dir) TraceAttack =
 {
 	local	vector	vel, org;
-	
+
 	vel = normalize(dir + v_up*crandom() + v_right*crandom());
 	vel = vel + 2*trace_plane_normal;
 	vel = vel * 200;
@@ -1459,11 +1463,11 @@ void(float damage, vector dir) TraceAttack =
 	//WK Sweep mines at the end of the attack
 	GuerillaMineSweep(trace_endpos);
 
-    #ifdef COOL_GIBS
-    #ifdef COOL_GIBS_TRACE
-    CoolPush(trace_endpos,dir,damage,30);
-    #endif
-    #endif
+	#ifdef COOL_GIBS
+	#ifdef COOL_GIBS_TRACE
+	CoolPush(trace_endpos,dir,damage,30);
+	#endif
+	#endif
 
 	if (trace_ent.takedamage)
 	{
@@ -1478,25 +1482,25 @@ void(float damage, vector dir) TraceAttack =
 	}
 	else
 	{
-        if (trace_ent.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-            FieldEvent(trace_ent,trace_endpos,trace_ent);
-        else
-        {
-        #ifndef QUAKE_WORLD
-            WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-            WriteByte (#MSG_BROADCAST, #TE_GUNSHOT);
-            WriteCoord (#MSG_BROADCAST, org_x);
-            WriteCoord (#MSG_BROADCAST, org_y);
-            WriteCoord (#MSG_BROADCAST, org_z);
-        #else
-            //multicast (trace_endpos, #MULTICAST_PVS);
-            #ifndef REALISTIC_SHOTGUN_PARTS 
-            puff_count = puff_count + 1;
-            #endif
-        #endif
-        }
+		if (trace_ent.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+			FieldEvent(trace_ent,trace_endpos,trace_ent);
+		else
+		{
+		#ifndef QUAKE_WORLD
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_GUNSHOT);
+			WriteCoord (#MSG_BROADCAST, org_x);
+			WriteCoord (#MSG_BROADCAST, org_y);
+			WriteCoord (#MSG_BROADCAST, org_z);
+		#else
+			//multicast (trace_endpos, #MULTICAST_PVS);
+			#ifndef REALISTIC_SHOTGUN_PARTS
+			puff_count = puff_count + 1;
+			#endif
+		#endif
+		}
 	}
-	
+
 };
 
 //======================================================================
@@ -1507,29 +1511,29 @@ void(float damage, vector dir) TraceAttack =
 
 void(vector src, vector endpos) BulletTraceline =
 {
-    #ifdef USE_CORPSE_CODE    
-    traceline(src, endpos, #TL_EVERYTHING,self);
-    
-        #ifdef IDABLE_TFITEMS
-    if (trace_ent.classname == "item_tfgoal")
-    {
-        traceline(src, endpos, #TL_ANY_SOLID,self);      
-        return;
-    }
-        #endif
+	#ifdef USE_CORPSE_CODE
+	traceline(src, endpos, #TL_EVERYTHING,self);
 
-        #ifdef IDABLE_RUNES
-    if (trace_ent.classname == "rune")
-    {
-        traceline(src, endpos, #TL_ANY_SOLID,self);      
-        return;
-    }
-        #endif
+		#ifdef IDABLE_TFITEMS
+	if (trace_ent.classname == "item_tfgoal")
+	{
+		traceline(src, endpos, #TL_ANY_SOLID,self);
+		return;
+	}
+		#endif
 
-    #else // USE_CORPSE_CODE disabled..
-    
-        traceline(src, endpos, #TL_ANY_SOLID,self);
-    #endif
+		#ifdef IDABLE_RUNES
+	if (trace_ent.classname == "rune")
+	{
+		traceline(src, endpos, #TL_ANY_SOLID,self);
+		return;
+	}
+		#endif
+
+	#else // USE_CORPSE_CODE disabled..
+
+		traceline(src, endpos, #TL_ANY_SOLID,self);
+	#endif
 };
 
 /*
@@ -1544,7 +1548,7 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 {
 	local	vector direction;
 	local	vector	src;
-	
+
 	makevectors(self.v_angle);
 
 	src = self.origin + v_forward*10;
@@ -1557,33 +1561,33 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 	{
 		direction = dir + crandom()*0.2*v_right + crandom()*0.1*v_up;
 		//traceline (src, src + direction*2048, #TL_ANY_SOLID, self); //WK 2048
-        //traceline (src, src + direction*dist, #TL_ANY_SOLID, self); //WK 2048
-        BulletTraceline(src, src + direction*dist);
+		//traceline (src, src + direction*dist, #TL_ANY_SOLID, self); //WK 2048
+		BulletTraceline(src, src + direction*dist);
 	}
 	else if (self.current_weapon & #WEAP_LIGHT_ASSAULT)
 	{
 		direction = dir + crandom() * 0.05 * v_right + crandom() * 0.025 * v_up;
 		//traceline (src, src + direction*2048, #TL_ANY_SOLID, self); //WK 2048
-        //traceline (src, src + direction*dist, #TL_ANY_SOLID, self); //WK 2048
-        BulletTraceline(src, src + direction * dist);
+		//traceline (src, src + direction*dist, #TL_ANY_SOLID, self); //WK 2048
+		BulletTraceline(src, src + direction * dist);
 	}
 	else
 	{
 		//traceline (src, src + dir*1024, #TL_ANY_SOLID, self); //WK 2048
-        //traceline (src, src + dir*dist, #TL_ANY_SOLID, self); //WK 2048
-        BulletTraceline(src, src + dir*dist);
+		//traceline (src, src + dir*dist, #TL_ANY_SOLID, self); //WK 2048
+		BulletTraceline(src, src + dir*dist);
 	}
-	
-    #ifdef REALISTIC_SHOTGUN_PARTS 
-    // OfN - Don't make particles if it doesnt hit anything!
-    if (trace_fraction != 1.0)
-    {
-    #endif
-    puff_org = trace_endpos - dir*4;
+
+	#ifdef REALISTIC_SHOTGUN_PARTS
+	// OfN - Don't make particles if it doesnt hit anything!
+	if (trace_fraction != 1.0)
+	{
+	#endif
+	puff_org = trace_endpos - dir*4;
 	puff_count = shotcount;
-    #ifdef REALISTIC_SHOTGUN_PARTS 
-    }
-    #endif
+	#ifdef REALISTIC_SHOTGUN_PARTS
+	}
+	#endif
 #endif
 
 	while (shotcount > 0)
@@ -1591,10 +1595,10 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 		if (self.current_weapon & #WEAP_ASSAULT_CANNON)
 			//traceline (src, src + direction*2048, #TL_ANY_SOLID, self); //WK 2048
-            BulletTraceline(src, src + direction*dist);
+			BulletTraceline(src, src + direction*dist);
 		else
 			//traceline (src, src + direction*1024, #TL_ANY_SOLID, self); //WK 2048
-            BulletTraceline(src, src + direction*dist);
+			BulletTraceline(src, src + direction*dist);
 
 		if (trace_fraction != 1.0)
 		{
@@ -1604,12 +1608,12 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 			{
 				TraceAttack (3, direction); // PZ - lowered LA damage to 3 from 4 (25% reduction)
 			}
-			else 
+			else
 				TraceAttack (6, direction); //WK 4
 		}
 
 		shotcount = shotcount - 1;
-  	}
+	}
 	ApplyMultiDamage ();
 #ifdef QUAKE_WORLD
 	Multi_Finish ();
@@ -1625,11 +1629,11 @@ void() W_FireShotgun =
 {
 	local vector dir;
 
-	sound (self, #CHAN_WEAPON, "weapons/guncock.wav", 1, #ATTN_NORM);	
+	sound (self, #CHAN_WEAPON, "weapons/guncock.wav", 1, #ATTN_NORM);
 
 	if (self.classname == "player")
 		KickPlayer(-2, self);
-				 
+
 	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
 	if (self.classname == "player")
 		dir = aim (self, 100000);
@@ -1658,8 +1662,8 @@ void() W_FireSuperShotgun =
 		W_FireShotgun ();
 		return;
 	}
-		
-	sound (self ,#CHAN_WEAPON, "weapons/shotgn2.wav", 1, #ATTN_NORM);	
+
+	sound (self ,#CHAN_WEAPON, "weapons/shotgn2.wav", 1, #ATTN_NORM);
 
 	if (self.classname == "player")
 		KickPlayer(-4, self);
@@ -1694,23 +1698,23 @@ void(vector direction, float damage) FireSniperBullet =
 
 	ClearMultiDamage ();
 
-//      traceline (src, src + direction*4096, #TL_ANY_SOLID, self);
-      traceline (src, src + direction*4096, MOVE_HITMODEL, self);
+//		traceline (src, src + direction*4096, #TL_ANY_SOLID, self);
+	  traceline (src, src + direction*4096, MOVE_HITMODEL, self);
 
 	if (trace_fraction != 1.0)
 	{
 		// PZ - decrease sniper damage by 75% if damaging building
 		if (trace_ent.netname == "dispenser" || trace_ent.netname == "sentrygun" || trace_ent.netname == "tesla" || trace_ent.netname == "security_camera" || trace_ent.netname == "teleporter" || trace_ent.netname == "field generator" || trace_ent.netname == "motion_sensor")
-   			TraceAttack (damage * 0.25, direction);
+			TraceAttack (damage * 0.25, direction);
 		else
 			TraceAttack (damage, direction);
 	}
 
 	ApplyMultiDamage ();
 
-    // OfN
-    if (trace_fraction != 1.0)
-        SpawnDmgFX(trace_ent,trace_endpos, 0.25,1,1);
+	// OfN
+	if (trace_fraction != 1.0)
+		SpawnDmgFX(trace_ent,trace_endpos, 0.25,1,1);
 };
 
 
@@ -1733,7 +1737,7 @@ void() W_FireSniperRifle =
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	use_this = #FALSE;
-//    traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
+	//traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
 	traceline (src, src + dir*8192, MOVE_HITMODEL, self);
 
 
@@ -1754,32 +1758,32 @@ void() W_FireSniperRifle =
 	{
 		// aim, 'cause no entity in sights
 		dir = aim (self, 10000);	// this corrects the aiming slightly, for bad players
-//	    traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
+		//traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
 		traceline (src, src + dir*8192, MOVE_HITMODEL, self);
 	}
 
-    local float OTR;
-    OTR = 1; // 1 = No OTR
+	local float OTR;
+	OTR = 1; // 1 = No OTR
 
-    if (self.cutf_items & #CUTF_OTR)
-    if (self.ammo_shells >= #OTR_AMMO_COST)
-        OTR = #OTR_DMG_FACTOR;
+	if (self.cutf_items & #CUTF_OTR)
+	if (self.ammo_shells >= #OTR_AMMO_COST)
+		OTR = #OTR_DMG_FACTOR;
 
 	deathmsg = #DMSG_SNIPERRIFLE;
 	dam_mult = 1;
 
-	//// PZ - code added for randomer's charge-up fix
+	// PZ - code added for randomer's charge-up fix
 	damg = (time - self.heat) / #WEAP_SNIPER_RIFLE_MAX_TIME;
 	if (damg < 0)
 		damg = 0;
 	if (damg > 1)
-	   damg = 1;
+		damg = 1;
 	damg = damg * (#WEAP_SNIPER_RIFLE_MAX_DAMG - #WEAP_SNIPER_RIFLE_MIN_DAMG) + #WEAP_SNIPER_RIFLE_MIN_DAMG; // Powerup * damage range + minimum damage.
 
-    if (OTR > 1)
-        self.currentammo = self.ammo_shells = self.ammo_shells - #OTR_AMMO_COST;
-    else
-        self.currentammo = self.ammo_shells = self.ammo_shells - 1;
+	if (OTR > 1)
+		self.currentammo = self.ammo_shells = self.ammo_shells - #OTR_AMMO_COST;
+	else
+		self.currentammo = self.ammo_shells = self.ammo_shells - 1;
 
 	if (trace_ent)
 	{
@@ -1803,7 +1807,7 @@ void() W_FireSniperRifle =
 			f = (normalize(f) * x) + trace_endpos;
 
 			zdif = f_z - trace_ent.origin_z;
-  			deathmsg = #DMSG_SNIPERRIFLE;
+			deathmsg = #DMSG_SNIPERRIFLE;
 
 			trace_ent.head_shot_vector = '0 0 0';
 			if (zdif < 0)
@@ -1811,19 +1815,19 @@ void() W_FireSniperRifle =
 				// leg shot
 				dam_mult = 0.75;
 
-                local float legdmgdone;                
+				local float legdmgdone;
 
-                /*if (OTR > 1)
-                    trace_ent.leg_damage = trace_ent.leg_damage + 2;
-                else
-                    trace_ent.leg_damage = trace_ent.leg_damage + 1;*/
+				/*if (OTR > 1)
+					trace_ent.leg_damage = trace_ent.leg_damage + 2;
+				else
+					trace_ent.leg_damage = trace_ent.leg_damage + 1;*/
 
-                if (OTR > 1)
-                    legdmgdone = HurtLegs(trace_ent,2);
-                else
-                    legdmgdone = HurtLegs(trace_ent,1);
+				if (OTR > 1)
+					legdmgdone = HurtLegs(trace_ent,2);
+				else
+					legdmgdone = HurtLegs(trace_ent,1);
 
-				//TeamFortress_SetSpeed(trace_ent); 
+				//TeamFortress_SetSpeed(trace_ent);
 				deathmsg = #DMSG_SNIPERLEGSHOT;
 				//WK Kevlar ignored for snipers again.
 				TF_T_Damage (trace_ent, self, self, damg * dam_mult * OTR, 0, 0);
@@ -1832,16 +1836,16 @@ void() W_FireSniperRifle =
 
 				if (trace_ent.health > 0 && legdmgdone)
 				{
-                    if (OTR > 1)
-                    {
-                        sprint(trace_ent, #PRINT_MEDIUM, "Leg injury! That was OTR stuff!\n");
-					    sprint(self, #PRINT_MEDIUM, "Leg shot - that really will slow him down!\n");
-                    }
-                    else
-                    {
-                        sprint(trace_ent, #PRINT_MEDIUM, "Leg injury!\n");
-					    sprint(self, #PRINT_MEDIUM, "Leg shot - that'll slow him down!\n");
-                    }
+					if (OTR > 1)
+					{
+						sprint(trace_ent, #PRINT_MEDIUM, "Leg injury! That was OTR stuff!\n");
+						sprint(self, #PRINT_MEDIUM, "Leg shot - that really will slow him down!\n");
+					}
+					else
+					{
+						sprint(trace_ent, #PRINT_MEDIUM, "Leg injury!\n");
+						sprint(self, #PRINT_MEDIUM, "Leg shot - that'll slow him down!\n");
+					}
 				}
 
 				return;
@@ -1851,10 +1855,10 @@ void() W_FireSniperRifle =
 				// head shot
 				dam_mult = 2;
 
-                if (OTR > 1)
-                    stuffcmd(trace_ent, "bf;bf\n");
-                else
-                    stuffcmd(trace_ent, "bf\n");
+				if (OTR > 1)
+					stuffcmd(trace_ent, "bf;bf\n");
+				else
+					stuffcmd(trace_ent, "bf\n");
 
 				trace_ent.head_shot_vector = trace_ent.origin - self.origin;
 				deathmsg = #DMSG_SNIPERHEADSHOT;
@@ -1863,17 +1867,17 @@ void() W_FireSniperRifle =
 
 				if (trace_ent.health > 0)
 				{
-                    if (OTR > 1)
-                    {
-                        sprint(trace_ent, #PRINT_MEDIUM, "Head injury! That was OTR stuff!\n");
-    					sprint(self, #PRINT_MEDIUM, "Head shot - that really gotta hurt!\n");
-                    }
-                    else
-                    {
-                        sprint(trace_ent, #PRINT_MEDIUM, "Head injury!\n");
-    					sprint(self, #PRINT_MEDIUM, "Head shot - that's gotta hurt!\n");
-                    }
-                }
+					if (OTR > 1)
+					{
+						sprint(trace_ent, #PRINT_MEDIUM, "Head injury! That was OTR stuff!\n");
+						sprint(self, #PRINT_MEDIUM, "Head shot - that really gotta hurt!\n");
+					}
+					else
+					{
+						sprint(trace_ent, #PRINT_MEDIUM, "Head injury!\n");
+						sprint(self, #PRINT_MEDIUM, "Head shot - that's gotta hurt!\n");
+					}
+				}
 
 				return;
 			}
@@ -1895,29 +1899,29 @@ void() W_FireSniperRifle =
 				//PZ - changed self.heat to damg for Randomer's charge-up fix
 	}
 
-    // OfN - Particle/sound stuff and dot removal
-    local entity sight;
+	// OfN - Particle/sound stuff and dot removal
+	local entity sight;
 
-    sight = find(world,netname,"sniperdot");
+	sight = find(world,netname,"sniperdot");
 
-    while (sight)
-    {
-        if (sight.classname == "timer")
-        if (sight.owner == self)
-        {               
-            // Remove sight dot always
-            dremove(sight);
-            //return; // and stop rearching for dot
-        }
+	while (sight)
+	{
+		if (sight.classname == "timer")
+		if (sight.owner == self)
+		{
+			// Remove sight dot always
+			dremove(sight);
+			//return; // and stop rearching for dot
+		}
 
-        sight = find(sight,netname,"sniperdot");
-    }
+		sight = find(sight,netname,"sniperdot");
+	}
 
-    // Do particle and sound if it hits anything
-    if (trace_fraction != 1.0) // Did it hit something?            
-        SpawnDmgFX(trace_ent,trace_endpos,0.5,1,1);
+	// Do particle and sound if it hits anything
+	if (trace_fraction != 1.0) // Did it hit something?
+		SpawnDmgFX(trace_ent,trace_endpos,0.5,1,1);
 
-    ApplyMultiDamage ();
+	ApplyMultiDamage ();
 };
 
 /*
@@ -1958,8 +1962,8 @@ void() W_FireAssaultCannon =
 	deathmsg = #DMSG_ASSAULTCANNON;
 	//WK FireBullets (5, dir, '0.1 0.1 0');
 	//We want more of a cone of fire...
-//	FireBullets (5, dir, '0.2 0.1 0');
-//	FireBullets (5, dir, '0.4 0.1 0');
+	//FireBullets (5, dir, '0.2 0.1 0');
+	//FireBullets (5, dir, '0.4 0.1 0');
 	FireBullets (7, dir, '0.15 0.1 0',2048);
 	FireBullets (3, dir, '0.3 0.1 0',2048);
 };
@@ -1981,7 +1985,7 @@ void() W_FireLightAssault =
 		return;
 	}
 
-	sound (self, #CHAN_WEAPON, "weapons/guncock.wav", 0.6, #ATTN_NORM);	
+	sound (self, #CHAN_WEAPON, "weapons/guncock.wav", 0.6, #ATTN_NORM);
 
 	KickPlayer(-4, self);
 
@@ -2005,12 +2009,12 @@ ROCKETS
 ==============================================================================
 */
 
-void()	s_explode1	=	[0,		s_explode2] {};
-void()	s_explode2	=	[1,		s_explode3] {};
-void()	s_explode3	=	[2,		s_explode4] {};
-void()	s_explode4	=	[3,		s_explode5] {};
-void()	s_explode5	=	[4,		s_explode6] {};
-void()	s_explode6	=	[5,		SUB_Remove] {};
+void()	s_explode1	=	[0, 	s_explode2] {};
+void()	s_explode2	=	[1, 	s_explode3] {};
+void()	s_explode3	=	[2, 	s_explode4] {};
+void()	s_explode4	=	[3, 	s_explode5] {};
+void()	s_explode5	=	[4, 	s_explode6] {};
+void()	s_explode6	=	[5, 	SUB_Remove] {};
 
 void() BecomeExplosion =
 {
@@ -2028,8 +2032,8 @@ void() BecomeExplosion =
 
 void() T_MissileTouch =
 {
-	local float	damg;
-	local float	bonus;
+	local float damg;
+	local float bonus;
 
 	if (pointcontents(self.origin) == #CONTENT_SKY)
 	{
@@ -2039,12 +2043,12 @@ void() T_MissileTouch =
 
 	// Lowered from 120
 	damg = 92;
-	
-    if (self.owner.classname == "trap_shooter" || self.owner.classname == "trap_spikeshooter" || self.owner.classname == "trap_tf_spikeshooter" || self.owner.classname == "trap_tf_shooter")
-        if (self.owner.dmg != 0)
-            damg = self.owner.dmg;
 
-    /*
+	if (self.owner.classname == "trap_shooter" || self.owner.classname == "trap_spikeshooter" || self.owner.classname == "trap_tf_spikeshooter" || self.owner.classname == "trap_tf_shooter")
+		if (self.owner.dmg != 0)
+			damg = self.owner.dmg;
+
+	/*
 	if (self.owner)
 		if (self.owner.tf_items & #NIT_RL_LASER_SIGHT) {
 			//RPrint("Laser rocket hit!\n");
@@ -2084,8 +2088,8 @@ void() T_MissileTouch =
 #ifdef QUAKE_WORLD
 	multicast (self.origin, #MULTICAST_PHS);
 
-    if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-        FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+	if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+		FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
 
 	dremove(self);
 #else
@@ -2128,7 +2132,7 @@ void() Rocket_Track_Dot =
 			self.angles = vectoangles(self.velocity);
 			self.think = Rocket_Track_Dot;
 			//WK Add in cluster munitions support
-			if (self.has_tesla) { //We're a cluster, so act crazy	
+			if (self.has_tesla) { //We're a cluster, so act crazy
 				makevectors(self.angles);
 				self.v_angle = sight.origin; //Save last direction for losing sight
 				self.velocity = self.velocity + 300 * v_right * (random() - 0.5);
@@ -2183,10 +2187,10 @@ void() W_FireRocket =
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
 	newmis.solid = #SOLID_BBOX;
-    
-    newmis.classname = "rocket"; //- OfN - Checked on airfist
 
-	// set newmis speed	
+	newmis.classname = "rocket"; //- OfN - Checked on airfist
+
+	// set newmis speed
 	if (self.classname == "player")
 	{
 		makevectors (self.v_angle);
@@ -2194,8 +2198,8 @@ void() W_FireRocket =
 	}
 	else if (self.classname == "monster_army")
 		dir = Grunty_LeadShot();
-			
-	newmis.velocity = dir;	
+
+	newmis.velocity = dir;
 	if (!loops)
 	{ //WK Not a cluster Rocket
 		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
@@ -2205,7 +2209,7 @@ void() W_FireRocket =
 			else
 				newmis.velocity = newmis.velocity * 600; //Cluster and no sight
 		}
-		else 
+		else
 			newmis.velocity = newmis.velocity * 1350;
 	}
 	else if (self.tf_items & #NIT_RL_LASER_SIGHT) //Cluster and sight to start
@@ -2233,13 +2237,13 @@ void() W_FireRocket =
 		setmodel (newmis, "progs/missile.mdl");
 	else
 		setmodel (newmis, "progs/minimis.mdl"); //Diff model for swarm rockets
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, self.origin + dir*8 + '0 0 16');
 	if (loops) { //WK Vary the starting point of the cluster
 		traceline (self.origin, self.origin + v_forward*9192, #TL_ANY_SOLID, self); //Make this TRUE
 		newmis.v_angle = trace_endpos;
 		newmis.has_tesla = loops; //Tell the rocket it is a cluster
-       	newmis.weapon = #DMSG_CLUSTER_ROCKET;
+		newmis.weapon = #DMSG_CLUSTER_ROCKET;
 		olorigin = newmis.origin;
 		newmis.origin = newmis.origin + v_right * (random() * 120 - 60);
 		newmis.origin = newmis.origin + v_forward * (random() * 40);
@@ -2247,7 +2251,7 @@ void() W_FireRocket =
 		olorigin = olorigin - newmis.origin; //Get vector to new point
 		olorigin = 200 * normalize(olorigin);
 		if (self.tf_items & #NIT_RL_LASER_SIGHT) //Dont spread without sight
-			newmis.velocity = newmis.velocity + olorigin;			
+			newmis.velocity = newmis.velocity + olorigin;
 	}
 	loops = loops - 1;
 	} //End while loops
@@ -2289,7 +2293,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 {
 	local entity		e1, e2;
 	local vector		f;
-	
+
 	f = p2 - p1;
 	normalize (f);
 	f_x = 0 - f_y;
@@ -2314,13 +2318,13 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 			TF_T_Damage (trace_ent, from, from, damage, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 		#endif
 
-        #ifdef LIGHTNING_PUSHES
+		#ifdef LIGHTNING_PUSHES
 		if (self.classname == "player")
 		{
 			if (trace_ent.classname == "player")//if (other.classname == "player") // <-- OfN fixed Ancient bug
 				trace_ent.velocity_z = trace_ent.velocity_z + 400;
 		}
-        #endif
+		#endif
 	}
 	e1 = trace_ent;
 
@@ -2352,7 +2356,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 void() W_FireLightning =
 {
 	local	vector	org;
-	local float		cells,excess;
+	local float 	cells,excess;
 
 	if (self.ammo_cells < 1)
 	{
@@ -2362,7 +2366,7 @@ void() W_FireLightning =
 		return;
 	}
 
-// explode if under water
+	// explode if under water
 	if (self.waterlevel > 1)
 	{
 		cells = self.ammo_cells;
@@ -2406,36 +2410,35 @@ void() W_FireLightning =
 	if (self.ammo_cells < 0) self.ammo_cells = 0;
 #endif
 	self.currentammo = self.ammo_cells;
-	
+
 
 	org = self.origin + '0 0 16';
-	
-    // OfN - Check for force field
-    traceline (org, org + v_forward*600, #TL_ANY_SOLID, self);
 
-    if (trace_ent.classname == "force_field")
-    {
-        FieldEvent(trace_ent,trace_endpos,trace_ent);
+	// OfN - Check for force field
+	traceline (org, org + v_forward*600, #TL_ANY_SOLID, self);
 
-        //FieldExplosion(trace_ent,trace_endpos,trace_ent);
-        //PutFieldWork(trace_ent);
+	if (trace_ent.classname == "force_field")
+	{
+		FieldEvent(trace_ent,trace_endpos,trace_ent);
 
-        WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-        WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
-        WriteEntity (#MSG_BROADCAST, self);
-        WriteCoord (#MSG_BROADCAST, org_x);
-        WriteCoord (#MSG_BROADCAST, org_y);
-        WriteCoord (#MSG_BROADCAST, org_z);
-        WriteCoord (#MSG_BROADCAST, trace_endpos_x);
-        WriteCoord (#MSG_BROADCAST, trace_endpos_y);
-        WriteCoord (#MSG_BROADCAST, trace_endpos_z);
-    #ifdef QUAKE_WORLD
-        multicast (org, #MULTICAST_PHS);
-    #endif
+		//FieldExplosion(trace_ent,trace_endpos,trace_ent);
+		//PutFieldWork(trace_ent);
 
-        return;
-    }
-    //_------------------------------------_//
+		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
+		WriteEntity (#MSG_BROADCAST, self);
+		WriteCoord (#MSG_BROADCAST, org_x);
+		WriteCoord (#MSG_BROADCAST, org_y);
+		WriteCoord (#MSG_BROADCAST, org_z);
+		WriteCoord (#MSG_BROADCAST, trace_endpos_x);
+		WriteCoord (#MSG_BROADCAST, trace_endpos_y);
+		WriteCoord (#MSG_BROADCAST, trace_endpos_z);
+	#ifdef QUAKE_WORLD
+		multicast (org, #MULTICAST_PHS);
+	#endif
+
+		return;
+	}
 
 	traceline (org, org + v_forward*600, #TL_BSP_ONLY, self);
 
@@ -2459,7 +2462,7 @@ void() W_FireLightning =
 		LightningDamage (self.origin, trace_endpos + v_forward*4, self, excess);
 	}
 	else
-//WK 30. Lowered damage to make it a $2200 weapon
+		//WK 30. Lowered damage to make it a $2200 weapon
 		LightningDamage (self.origin, trace_endpos + v_forward*4, self, 12);
 };
 
@@ -2500,7 +2503,7 @@ void(float tno) ExplodeOldPipebomb =
 		if (old == world)
 		{
 			RPrint("*** ERROR: ExplodeOldPipebomb. ***\n");
-			RPrint("*** Please report this.        ***\n");
+			RPrint("*** Please report this. 	   ***\n");
 			num_world_pipebombs = 0;
 			num_team_pipebombs_1 = 0;
 			num_team_pipebombs_2 = 0;
@@ -2622,7 +2625,7 @@ void() W_FireGrenade =
 			if (num_team_pipebombs(self.team_no) > (#MAX_WORLD_PIPEBOMBS / number_of_teams))
 				ExplodeOldPipebomb(self.team_no);
 		}
-		else 
+		else
 		{
 			num_world_pipebombs = num_world_pipebombs + 1;
 			if (num_world_pipebombs > #MAX_WORLD_PIPEBOMBS)
@@ -2635,8 +2638,8 @@ void() W_FireGrenade =
 		newmis.nextthink = time + 120;		// Remove pipebombs older than 2 minutes
 		newmis.weapon = #DMSG_GREN_PIPE;
 	}
-		
-	// set newmis speed	
+
+	// set newmis speed
 	makevectors (self.v_angle);
 	if (self.v_angle_x)
 		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
@@ -2651,7 +2654,7 @@ void() W_FireGrenade =
 
 	newmis.think = GrenadeExplode;
 	setmodel (newmis, "progs/grenade2.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, self.origin);
 
 #ifdef DEMO_STUFF
@@ -2688,7 +2691,7 @@ void(vector org, vector dir) launch_spike =
 	newmis.think = SUB_Remove;
 	newmis.nextthink = time + 6;
 	setmodel (newmis, "progs/spike.mdl");
-	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);
 	setorigin (newmis, org);
 
 	newmis.velocity = dir * 1600; // was 1000
@@ -2702,47 +2705,47 @@ void(vector org, vector dir) launch_spike =
 
 // OfN - For nail grens, invisible direct impact nail (no entity)
 void(vector org, vector dir) launch_directspike =
-{       
-    local entity oldowner;
-    oldowner = self.owner;
-    self.owner = self;
+{
+	local entity oldowner;
+	oldowner = self.owner;
+	self.owner = self;
 
-    traceline(org, org + (dir * 4096),#TL_ANY_SOLID,self);
-    
-    self.owner = oldowner;
+	traceline(org, org + (dir * 4096),#TL_ANY_SOLID,self);
 
-    if (pointcontents(trace_endpos) == #CONTENT_SKY)
+	self.owner = oldowner;
+
+	if (pointcontents(trace_endpos) == #CONTENT_SKY)
 		return;
-	
+
 	//WK Sweep mines at point of impact
 	GuerillaMineSweep(trace_endpos);
 
-    // hit something that bleeds
+	// hit something that bleeds
 	if (trace_ent.takedamage)
 	{
-    	SpawnBlood (trace_endpos, 9);
+		SpawnBlood (trace_endpos, 9);
 		deathmsg = #DMSG_GREN_NAIL;
 
-        TF_T_Damage (trace_ent, self, self.owner, #NAILGREN_DMG, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, #TF_TD_NAIL);        
+		TF_T_Damage (trace_ent, self, self.owner, #NAILGREN_DMG, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, #TF_TD_NAIL);
 	}
 	else
-	{        
-        if (trace_fraction != 1.0)
-        {
-            if (trace_ent.classname == "force_field") // Makes field explosion 
-                FieldEvent(trace_ent,trace_endpos,self);
-            else
-            {
-                WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-                WriteByte (#MSG_BROADCAST, #TE_SPIKE);
-                WriteCoord (#MSG_BROADCAST, trace_endpos_x);
-                WriteCoord (#MSG_BROADCAST, trace_endpos_y);
-                WriteCoord (#MSG_BROADCAST, trace_endpos_z);
-            #ifdef QUAKE_WORLD
-                multicast (trace_endpos, #MULTICAST_PHS);
-            #endif
-            }
-        }
+	{
+		if (trace_fraction != 1.0)
+		{
+			if (trace_ent.classname == "force_field") // Makes field explosion
+				FieldEvent(trace_ent,trace_endpos,self);
+			else
+			{
+				WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+				WriteByte (#MSG_BROADCAST, #TE_SPIKE);
+				WriteCoord (#MSG_BROADCAST, trace_endpos_x);
+				WriteCoord (#MSG_BROADCAST, trace_endpos_y);
+				WriteCoord (#MSG_BROADCAST, trace_endpos_z);
+			#ifdef QUAKE_WORLD
+				multicast (trace_endpos, #MULTICAST_PHS);
+			#endif
+			}
+		}
 	}
 };
 
@@ -2754,7 +2757,7 @@ void() superspike_touch =
 		return;
 
 	if (other.solid == #SOLID_TRIGGER)
-		return;	// trigger field, do nothing
+		return; // trigger field, do nothing
 
 	if (pointcontents(self.origin) == #CONTENT_SKY)
 	{
@@ -2763,8 +2766,8 @@ void() superspike_touch =
 	}
 
 	GuerillaMineSweep(self.origin); // PZ - supernailgun wasn't det'ing mines
-	
-// hit something that bleeds
+
+	// hit something that bleeds
 	if (other.takedamage)
 	{
 		spawn_touchblood (18);
@@ -2788,19 +2791,19 @@ void() superspike_touch =
 	}
 	else
 	{
-        if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-           FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
-        else
-        {
-            WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-            WriteByte (#MSG_BROADCAST, #TE_SUPERSPIKE);
-            WriteCoord (#MSG_BROADCAST, self.origin_x);
-            WriteCoord (#MSG_BROADCAST, self.origin_y);
-            WriteCoord (#MSG_BROADCAST, self.origin_z);
-        #ifdef QUAKE_WORLD
-            multicast (self.origin, #MULTICAST_PHS);
-        #endif						
-        }
+		if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+		   FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+		else
+		{
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_SUPERSPIKE);
+			WriteCoord (#MSG_BROADCAST, self.origin_x);
+			WriteCoord (#MSG_BROADCAST, self.origin_y);
+			WriteCoord (#MSG_BROADCAST, self.origin_z);
+		#ifdef QUAKE_WORLD
+			multicast (self.origin, #MULTICAST_PHS);
+		#endif
+		}
 	}
 
 	dremove(self);
@@ -2811,7 +2814,7 @@ void() W_FireSuperSpikes =
 {
 	local vector	dir;
 	//local entity	old;
-	
+
 	sound (self, #CHAN_WEAPON, "weapons/spike2.wav", 1, #ATTN_NORM);
 	Attack_Finished(0.2);
 	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
@@ -2820,7 +2823,7 @@ void() W_FireSuperSpikes =
 	newmis.touch = superspike_touch;
 	newmis.weapon = #DMSG_SNG;
 	setmodel (newmis, "progs/s_spike.mdl");
-	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);
 
 	KickPlayer(-2, self);
 };
@@ -2833,15 +2836,15 @@ void(float ox) W_FireSpikes =
 		W_FireSuperSpikes ();
 		return;
 	}
-    
-    local vector	dir;
+
+	local vector	dir;
 	//local entity	old;
-	
+
 	if (self.classname == "player")
 		makevectors (self.v_angle);
 	else
 		makevectors (self.angles);
-	
+
 	if (self.ammo_nails < 1)
 		if (self.classname == "player")
 		{
@@ -2856,15 +2859,15 @@ void(float ox) W_FireSpikes =
 	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
 	if (self.classname == "player")
 	{
-        dir = aim (self, 1000);
-        launch_spike (self.origin + '0 0 16' + v_right*ox, dir);
-        KickPlayer(-2, self);
-    }
+		dir = aim (self, 1000);
+		launch_spike (self.origin + '0 0 16' + v_right*ox, dir);
+		KickPlayer(-2, self);
+	}
 	else if (self.classname == "monster_army") //- OfN -
-    {
-        dir = Grunty_LeadShot();
-        grunty_spike(self.origin + '0 0 16' + v_right*ox, dir);
-	}		
+	{
+		dir = Grunty_LeadShot();
+		grunty_spike(self.origin + '0 0 16' + v_right*ox, dir);
+	}
 };
 
 
@@ -2873,14 +2876,14 @@ void(float ox) W_FireSpikes =
 void() spike_touch =
 {
 	if (other.solid == #SOLID_TRIGGER)
-		return;	// trigger field, do nothing
+		return; // trigger field, do nothing
 
 	if (pointcontents(self.origin) == #CONTENT_SKY)
 	{
 		dremove(self);
 		return;
 	}
-	
+
 	//WK Sweep mines at point of impact
 	GuerillaMineSweep(self.origin);
 
@@ -2890,47 +2893,47 @@ void() spike_touch =
 		spawn_touchblood (9);
 		deathmsg = self.weapon;
 
-        //- OfN - Wizard projectiles do SCRAG_DMG damage
-        if (self.classname == "wizspike")
-        {
-           local float wizdmg;
-           wizdmg = #SCRAG_DMG;
-    
-           if (other.classname == "player")
-           {
-              if (other.cutf_items & #CUTF_DEMONLORE) // if we have demon lore, it does less damage to us
-                 wizdmg = wizdmg * 0.8;
-           }
+		//- OfN - Wizard projectiles do SCRAG_DMG damage
+		if (self.classname == "wizspike")
+		{
+		   local float wizdmg;
+		   wizdmg = #SCRAG_DMG;
 
-           TF_T_Damage (other, self, self.owner, wizdmg, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, 0);
-           sound (self, #CHAN_MISC, "effects/crunch.wav", 0.4, #ATTN_NORM); // any better sound?
-        } // - OfN -
-		else 
-        if (self.owner.classname == "grenade")
+		   if (other.classname == "player")
+		   {
+			  if (other.cutf_items & #CUTF_DEMONLORE) // if we have demon lore, it does less damage to us
+				 wizdmg = wizdmg * 0.8;
+		   }
+
+		   TF_T_Damage (other, self, self.owner, wizdmg, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, 0);
+		   sound (self, #CHAN_MISC, "effects/crunch.wav", 0.4, #ATTN_NORM); // any better sound?
+		} // - OfN -
+		else
+		if (self.owner.classname == "grenade")
 			TF_T_Damage (other, self, self.owner.owner, #NAILGREN_DMG, #TF_TD_NOTTEAM, #TF_TD_NAIL);
-		else 
+		else
 			TF_T_Damage (other, self, self.owner, 12, #TF_TD_NOTTEAM, #TF_TD_NAIL);
 	}
 	else
 	{
-        if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-           FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
-        else
-        {
-            WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-            if (self.classname == "wizspike")
-                WriteByte (#MSG_BROADCAST, #TE_WIZSPIKE);
-            else if (self.classname == "knightspike")
-                WriteByte (#MSG_BROADCAST, #TE_KNIGHTSPIKE);
-            else
-                WriteByte (#MSG_BROADCAST, #TE_SPIKE);
-            WriteCoord (#MSG_BROADCAST, self.origin_x);
-            WriteCoord (#MSG_BROADCAST, self.origin_y);
-            WriteCoord (#MSG_BROADCAST, self.origin_z);
-        #ifdef QUAKE_WORLD
-            multicast (self.origin, #MULTICAST_PHS);
-        #endif
-        }
+		if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+		   FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+		else
+		{
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			if (self.classname == "wizspike")
+				WriteByte (#MSG_BROADCAST, #TE_WIZSPIKE);
+			else if (self.classname == "knightspike")
+				WriteByte (#MSG_BROADCAST, #TE_KNIGHTSPIKE);
+			else
+				WriteByte (#MSG_BROADCAST, #TE_SPIKE);
+			WriteCoord (#MSG_BROADCAST, self.origin_x);
+			WriteCoord (#MSG_BROADCAST, self.origin_y);
+			WriteCoord (#MSG_BROADCAST, self.origin_z);
+		#ifdef QUAKE_WORLD
+			multicast (self.origin, #MULTICAST_PHS);
+		#endif
+		}
 	}
 
 #ifdef DEMO_STUFF
@@ -2956,7 +2959,7 @@ void() W_SetCurrentAmmo =
 	//local string st;
 
 	if (self.health <= 0 || self.current_weapon == 0)
-		return;		// get out of any weapon firing states
+		return; 	// get out of any weapon firing states
 
 	player_run();
 
@@ -2964,7 +2967,7 @@ void() W_SetCurrentAmmo =
 	self.weapon = 0;
 
 	//WK Set armor here... update armor picture
-	self.items = self.items - (self.items & (#IT_ARMOR1 | #IT_ARMOR2 | #IT_ARMOR3));	
+	self.items = self.items - (self.items & (#IT_ARMOR1 | #IT_ARMOR2 | #IT_ARMOR3));
 	if (self.armortype >= 0.8)
 		self.items = self.items | #IT_ARMOR3;
 	else if (self.armortype >= 0.6)
@@ -3052,8 +3055,8 @@ void() W_SetCurrentAmmo =
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
 			self.weaponmodel = "progs/v_nail2.mdl";
-            //self.weaponmodel = "progs/v_chain.mdl";
-            
+			//self.weaponmodel = "progs/v_chain.mdl";
+
 			self.weaponframe = 0;
 		}
 		self.items = self.items | #IT_SHELLS;
@@ -3094,8 +3097,8 @@ void() W_SetCurrentAmmo =
 		self.weapon = #IT_LIGHTNING;
 	}
 	else if (self.current_weapon == #WEAP_SNIPER_RIFLE)
-  	{
-	    	self.currentammo = self.ammo_shells;
+	{
+			self.currentammo = self.ammo_shells;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
 			self.weaponmodel = "progs/v_srifle.mdl";
@@ -3105,45 +3108,45 @@ void() W_SetCurrentAmmo =
 		self.weapon = #IT_SHOTGUN;
 	}
 	else if (self.current_weapon == #WEAP_AUTO_RIFLE)
- 	{
-  		self.currentammo = self.ammo_shells;
+	{
+		self.currentammo = self.ammo_shells;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
-		    	self.weaponmodel = "progs/v_srifle.mdl";
-		    	self.weaponframe = 0;
+				self.weaponmodel = "progs/v_srifle.mdl";
+				self.weaponframe = 0;
 		}
 		self.items = self.items | #IT_SHELLS;
 		self.weapon = #IT_SUPER_SHOTGUN;
 	}
 	else if (self.current_weapon == #WEAP_ASSAULT_CANNON)
- 	{
-  		self.currentammo = self.ammo_shells;
+	{
+		self.currentammo = self.ammo_shells;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
 			self.weaponmodel = "progs/v_asscan.mdl";
-		    	self.weaponframe = 0;
+				self.weaponframe = 0;
 		}
 		self.items = self.items | #IT_SHELLS;
 		self.weapon = #IT_ROCKET_LAUNCHER;
 	}
 	else if (self.current_weapon == #WEAP_FLAMETHROWER)
- 	{
-  		self.currentammo = self.ammo_cells;
+	{
+		self.currentammo = self.ammo_cells;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
-	    	self.weaponmodel = "progs/v_rock.mdl";
-	    	self.weaponframe = 0;
+			self.weaponmodel = "progs/v_rock.mdl";
+			self.weaponframe = 0;
 		}
 		self.items = self.items | #IT_CELLS;
 		self.weapon = #IT_GRENADE_LAUNCHER;
 	}
 	else if (self.current_weapon == #WEAP_INCENDIARY)
- 	{
-  		self.currentammo = self.ammo_rockets;
+	{
+		self.currentammo = self.ammo_rockets;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
-	    	self.weaponmodel = "progs/v_rock2.mdl";
-	    	self.weaponframe = 0;
+			self.weaponmodel = "progs/v_rock2.mdl";
+			self.weaponframe = 0;
 		}
 		self.items = self.items | #IT_ROCKETS;
 		self.weapon = #IT_ROCKET_LAUNCHER;
@@ -3153,7 +3156,7 @@ void() W_SetCurrentAmmo =
 		self.currentammo = 0;
 		self.weaponmodel = "progs/v_medi.mdl";
 		self.weaponframe = 0;
-   	}
+	}
 	else if (self.current_weapon == #WEAP_TRANQ)
 	{
 		self.currentammo = self.ammo_nails;
@@ -3204,19 +3207,19 @@ void() W_SetCurrentAmmo =
 		self.items = self.items | #IT_SHELLS;
 		self.weapon = #IT_LIGHT_ASSAULT;
 	}
-    else if (self.current_weapon == #WEAP_AIRF)
- 	{
-  		self.currentammo = self.ammo_cells;
+	else if (self.current_weapon == #WEAP_AIRF)
+	{
+		self.currentammo = self.ammo_cells;
 
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
 			self.weaponmodel = "progs/v_airgun.mdl";
-	    	self.weaponframe = 0;
+			self.weaponframe = 0;
 		}
 
-        self.items = self.items | #IT_CELLS;
+		self.items = self.items | #IT_CELLS;
 	}
-    else if (self.current_weapon == #WEAP_SNG)
+	else if (self.current_weapon == #WEAP_SNG)
 	{
 		self.currentammo = self.ammo_nails;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
@@ -3227,16 +3230,16 @@ void() W_SetCurrentAmmo =
 		self.items = self.items | #IT_SHELLS;
 		self.weapon = #IT_LIGHT_ASSAULT;//IT_SUPER_NAILGUN;
 	}
-    else if (self.current_weapon == #WEAP_LASERCANNON)
- 	{
-    	self.currentammo = self.ammo_cells;
+	else if (self.current_weapon == #WEAP_LASERCANNON)
+	{
+		self.currentammo = self.ammo_cells;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
 			self.weaponmodel = "progs/v_laserg.mdl";
-	    		self.weaponframe = 0;
+				self.weaponframe = 0;
 		}
 
-   		self.items = self.items | #IT_CELLS;
+		self.items = self.items | #IT_CELLS;
 		self.weapon = #WEAP_LASERCANNON;
 	}
 	else
@@ -3250,7 +3253,7 @@ void() W_SetCurrentAmmo =
 float() W_BestWeapon =
 {
 	local	float	it;
-	
+
 	it = self.weapons_carried;
 
 	if (self.ammo_cells >= 1 && (it & #WEAP_LIGHTNING) && self.waterlevel <= 1)
@@ -3269,13 +3272,13 @@ float() W_BestWeapon =
 		return #WEAP_INCENDIARY;
 	else if(self.ammo_rockets >= 1 && (it & #WEAP_GRENADE_LAUNCHER) )
 		return #WEAP_GRENADE_LAUNCHER;
-    else if (self.ammo_cells >= 1 && (it & #WEAP_LASERCANNON))
+	else if (self.ammo_cells >= 1 && (it & #WEAP_LASERCANNON))
 		return #WEAP_LASERCANNON;
-   	else if(self.ammo_nails >= 2 && (it & #WEAP_SNG))
+	else if(self.ammo_nails >= 2 && (it & #WEAP_SNG))
 		return #WEAP_SNG;
-    else if (self.ammo_cells >= 1 && (it & #WEAP_FLAMETHROWER))
+	else if (self.ammo_cells >= 1 && (it & #WEAP_FLAMETHROWER))
 		return #WEAP_FLAMETHROWER;
-    else if(self.ammo_shells >= 2 && (it & #WEAP_SUPER_SHOTGUN) )
+	else if(self.ammo_shells >= 2 && (it & #WEAP_SUPER_SHOTGUN) )
 		return #WEAP_SUPER_SHOTGUN;
 	else if (self.ammo_nails >= 1 && (it & #WEAP_RAILGUN) )
 		return #WEAP_RAILGUN;
@@ -3286,12 +3289,12 @@ float() W_BestWeapon =
 	else if (self.ammo_nails >= 1 && (it & #WEAP_MAUSER) )
 		return #WEAP_MAUSER;
 	else if (self.ammo_cells >= #AIRFIST_CELLS_COST && (it & #WEAP_AIRF))
-		return #WEAP_AIRF;    
-    else if (self.ammo_nails >= 1 && (it & #WEAP_TRANQ) )
+		return #WEAP_AIRF;
+	else if (self.ammo_nails >= 1 && (it & #WEAP_TRANQ) )
 		return #WEAP_TRANQ;
 	else if (it & #WEAP_MEDIKIT)
-		return #WEAP_MEDIKIT;    
-    else if (it & #WEAP_SPANNER)
+		return #WEAP_MEDIKIT;
+	else if (it & #WEAP_SPANNER)
 		return #WEAP_SPANNER;
 	else if (it & #WEAP_AXE)
 		return #WEAP_AXE;
@@ -3305,9 +3308,9 @@ float() W_CheckNoAmmo =
 		return #TRUE;
 	if (self.current_weapon == #WEAP_AIRF)
 	{
-        if (self.currentammo >= #AIRFIST_CELLS_COST)
-            return #TRUE;
-    }
+		if (self.currentammo >= #AIRFIST_CELLS_COST)
+			return #TRUE;
+	}
 	else if (self.current_weapon == #WEAP_AXE || self.current_weapon == #WEAP_HOOK || self.current_weapon == #WEAP_SPANNER)
 		return #TRUE;
 	else if (self.current_weapon == #WEAP_INCENDIARY)
@@ -3326,7 +3329,7 @@ float() W_CheckNoAmmo =
 	self.current_weapon = W_BestWeapon ();
 	W_SetCurrentAmmo ();
 	W_PrintWeaponMessage();
-	
+
 // drop the weapon down
 	return #FALSE;
 };
@@ -3338,32 +3341,32 @@ Is called when weapon has finished reloading
 void() W_Reload_shotgun =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
-    self.owner.weaponmodel = "progs/v_shot.mdl";
-    sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	self.owner.weaponmodel = "progs/v_shot.mdl";
+	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
 
-    dremove(self);
+	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
 };
 
 void() W_Reload_light_assault =
 {
-    self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
-    self.owner.weaponmodel = "progs/v_nail2.mdl";
-    //self.owner.weaponmodel = "progs/v_chain.mdl";
-    
-    sprint(self.owner, #PRINT_LOW, "finished reloading\n");
-    self.owner.StatusRefreshTime = time + 0.1;
+	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
+	self.owner.weaponmodel = "progs/v_nail2.mdl";
+	//self.owner.weaponmodel = "progs/v_chain.mdl";
 
-    dremove(self);
+	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	self.owner.StatusRefreshTime = time + 0.1;
+
+	dremove(self);
 };
 
 void() W_Reload_super_shotgun =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
-    self.owner.weaponmodel = "progs/v_shot2.mdl";
-    sprint(self.owner, #PRINT_LOW, "finished reloading\n");
-    dremove(self);
+	self.owner.weaponmodel = "progs/v_shot2.mdl";
+	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
 };
@@ -3371,9 +3374,9 @@ void() W_Reload_super_shotgun =
 void() W_Reload_grenade_launcher =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
-    self.owner.weaponmodel = "progs/v_rock.mdl";
-    sprint(self.owner, #PRINT_LOW, "finished reloading\n");
-    dremove(self);
+	self.owner.weaponmodel = "progs/v_rock.mdl";
+	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
 };
@@ -3381,9 +3384,9 @@ void() W_Reload_grenade_launcher =
 void() W_Reload_rocket_launcher =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
-    self.owner.weaponmodel = "progs/v_rock2.mdl";
-    sprint(self.owner, #PRINT_LOW, "finished reloading\n");
-    dremove(self);
+	self.owner.weaponmodel = "progs/v_rock2.mdl";
+	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
 };
@@ -3391,180 +3394,179 @@ void() W_Reload_rocket_launcher =
 void() W_Reload_laser_cannon =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
-    self.owner.weaponmodel = "progs/v_laserg.mdl";
-    sprint(self.owner, #PRINT_LOW, "Laser Cannon charged\n");
+	self.owner.weaponmodel = "progs/v_laserg.mdl";
+	sprint(self.owner, #PRINT_LOW, "Laser Cannon charged\n");
 
-    dremove(self);
+	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
 };
 
 float() CheckForReload =
 {
-    local float speedmult;
-    speedmult = 1;
+	local float speedmult;
+	speedmult = 1;
 
-    if (self.#runes & #RUNE_SPEED)
-        speedmult = #SPEEDRUNE_RELOADMULT;
+	if (self.#runes & #RUNE_SPEED)
+		speedmult = #SPEEDRUNE_RELOADMULT;
 
-    //---------------- CLIP EXTENDER (same as below but with _EX values -------------//
-    if (self.cutf_items & #CUTF_CLIPEXTEND)
-    {
+	//---------------- CLIP EXTENDER (same as below but with _EX values -------------//
+	if (self.cutf_items & #CUTF_CLIPEXTEND)
+	{
 
-        //---//
-        local entity tWeapon;
+		//---//
+		local entity tWeapon;
 
-        if (self.current_weapon == #WEAP_SHOTGUN)
-        {
-            if (self.reload_shotgun >= #RE_SHOTGUN_EX && self.ammo_shells > 0)
-            {
-                self.reload_shotgun = 0;
-                if (self.ammo_shells < #RE_SHOTGUN_EX)
-                    self.reload_shotgun = #RE_SHOTGUN_EX - self.ammo_shells;
+		if (self.current_weapon == #WEAP_SHOTGUN)
+		{
+			if (self.reload_shotgun >= #RE_SHOTGUN_EX && self.ammo_shells > 0)
+			{
+				self.reload_shotgun = 0;
+				if (self.ammo_shells < #RE_SHOTGUN_EX)
+					self.reload_shotgun = #RE_SHOTGUN_EX - self.ammo_shells;
 
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + (#RE_SHOTGUN_TIME_EX * speedmult);
-                tWeapon.think = W_Reload_shotgun;
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + (#RE_SHOTGUN_TIME_EX * speedmult);
+				tWeapon.think = W_Reload_shotgun;
 
-                self.weaponmodel = "";
-                self.weaponframe = 0;
+				self.weaponmodel = "";
+				self.weaponframe = 0;
 
-                return #TRUE;
-            }
-        }
-        else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
-        {
-            if (self.reload_super_shotgun > #RE_SUPER_SHOTGUN_EX)
-                self.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX;
-            if (self.reload_super_shotgun >= #RE_SUPER_SHOTGUN_EX && self.ammo_shells > 0)
-            {
-                self.reload_super_shotgun = 0;
-                if (self.ammo_shells < #RE_SUPER_SHOTGUN_EX)
-                    self.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX - self.ammo_shells;
+				return #TRUE;
+			}
+		}
+		else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
+		{
+			if (self.reload_super_shotgun > #RE_SUPER_SHOTGUN_EX)
+				self.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX;
+			if (self.reload_super_shotgun >= #RE_SUPER_SHOTGUN_EX && self.ammo_shells > 0)
+			{
+				self.reload_super_shotgun = 0;
+				if (self.ammo_shells < #RE_SUPER_SHOTGUN_EX)
+					self.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX - self.ammo_shells;
 
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + (#RE_SUPER_SHOTGUN_TIME_EX * speedmult);
-                tWeapon.think = W_Reload_super_shotgun;
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + (#RE_SUPER_SHOTGUN_TIME_EX * speedmult);
+				tWeapon.think = W_Reload_super_shotgun;
 
-                self.weaponmodel = "";
-                self.weaponframe = 0;
+				self.weaponmodel = "";
+				self.weaponframe = 0;
 
-                return #TRUE;
-            }
-        }
-        else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
-        {
-            if (self.reload_light_assault >= #RE_LIGHT_ASSAULT_EX && self.ammo_shells > 0)
-            {
-                self.reload_light_assault = 0;
-                if (self.ammo_shells < #RE_LIGHT_ASSAULT_EX)
-                    self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_shells;
+				return #TRUE;
+			}
+		}
+		else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
+		{
+			if (self.reload_light_assault >= #RE_LIGHT_ASSAULT_EX && self.ammo_shells > 0)
+			{
+				self.reload_light_assault = 0;
+				if (self.ammo_shells < #RE_LIGHT_ASSAULT_EX)
+					self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_shells;
 
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + (#RE_LIGHT_ASSAULT_TIME_EX * speedmult);
-                tWeapon.think = W_Reload_light_assault;
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + (#RE_LIGHT_ASSAULT_TIME_EX * speedmult);
+				tWeapon.think = W_Reload_light_assault;
 
-                self.weaponmodel = "";
-                self.weaponframe = 0;
+				self.weaponmodel = "";
+				self.weaponframe = 0;
 
-                return #TRUE;
-            }
-        }
-        else if (self.current_weapon == #WEAP_LASERCANNON)
-        {
-            if (self.reload_laser_cannon >= #RE_LASER_CANNON_EX && self.ammo_cells > 0)
-            {
-                self.reload_laser_cannon = 0;
-                if (self.ammo_cells < #RE_LASER_CANNON_EX)
-                    self.reload_laser_cannon = #RE_LASER_CANNON_EX - self.ammo_cells;
+				return #TRUE;
+			}
+		}
+		else if (self.current_weapon == #WEAP_LASERCANNON)
+		{
+			if (self.reload_laser_cannon >= #RE_LASER_CANNON_EX && self.ammo_cells > 0)
+			{
+				self.reload_laser_cannon = 0;
+				if (self.ammo_cells < #RE_LASER_CANNON_EX)
+					self.reload_laser_cannon = #RE_LASER_CANNON_EX - self.ammo_cells;
 
-                sprint (self, #PRINT_HIGH, "Charging cannon...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + (#RE_LASER_CANNON_TIME_EX * speedmult);
-                tWeapon.think = W_Reload_laser_cannon;
+				sprint (self, #PRINT_HIGH, "Charging cannon...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + (#RE_LASER_CANNON_TIME_EX * speedmult);
+				tWeapon.think = W_Reload_laser_cannon;
 
-                self.weaponmodel = "";
-                self.weaponframe = 0;
+				self.weaponmodel = "";
+				self.weaponframe = 0;
 
-                return #TRUE;
-            }
-        }
-        else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
-        {
-            if (self.reload_grenade_launcher >= #RE_GRENADE_LAUNCHER_EX && self.ammo_rockets > 0)
-            {
-                self.reload_grenade_launcher = 0;
-                if (self.ammo_rockets < #RE_GRENADE_LAUNCHER_EX)
-                    self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER_EX - self.ammo_rockets;
+				return #TRUE;
+			}
+		}
+		else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
+		{
+			if (self.reload_grenade_launcher >= #RE_GRENADE_LAUNCHER_EX && self.ammo_rockets > 0)
+			{
+				self.reload_grenade_launcher = 0;
+				if (self.ammo_rockets < #RE_GRENADE_LAUNCHER_EX)
+					self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER_EX - self.ammo_rockets;
 
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + (#RE_GRENADE_LAUNCHER_TIME_EX * speedmult);
-                tWeapon.think = W_Reload_grenade_launcher;
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + (#RE_GRENADE_LAUNCHER_TIME_EX * speedmult);
+				tWeapon.think = W_Reload_grenade_launcher;
 
-                self.weaponmodel = "";
-                self.weaponframe = 0;
+				self.weaponmodel = "";
+				self.weaponframe = 0;
 
-                return #TRUE;
-            }
-        }
-        else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER)
-        {
-            if (self.reload_rocket_launcher >= #RE_ROCKET_LAUNCHER_EX && self.ammo_rockets > 0)
-            {
-                self.reload_rocket_launcher = 0;
-                if (self.ammo_rockets < #RE_ROCKET_LAUNCHER_EX)
-                    self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER_EX - self.ammo_rockets;
+				return #TRUE;
+			}
+		}
+		else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER)
+		{
+			if (self.reload_rocket_launcher >= #RE_ROCKET_LAUNCHER_EX && self.ammo_rockets > 0)
+			{
+				self.reload_rocket_launcher = 0;
+				if (self.ammo_rockets < #RE_ROCKET_LAUNCHER_EX)
+					self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER_EX - self.ammo_rockets;
 
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                if(self.tf_items & #NIT_CLUSTER_ROCKETS)
-                    tWeapon.nextthink = time + ((#RE_ROCKET_LAUNCHER_TIME_EX - 1) * speedmult);
-                else
-                    tWeapon.nextthink = time + (#RE_ROCKET_LAUNCHER_TIME_EX * speedmult);
-                tWeapon.think = W_Reload_rocket_launcher;
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				if(self.tf_items & #NIT_CLUSTER_ROCKETS)
+					tWeapon.nextthink = time + ((#RE_ROCKET_LAUNCHER_TIME_EX - 1) * speedmult);
+				else
+					tWeapon.nextthink = time + (#RE_ROCKET_LAUNCHER_TIME_EX * speedmult);
+				tWeapon.think = W_Reload_rocket_launcher;
 
-                self.weaponmodel = "";
-                self.weaponframe = 0;
+				self.weaponmodel = "";
+				self.weaponframe = 0;
 
-                return #TRUE;
-            }
-        }
+				return #TRUE;
+			}
+		}
 
-        return #FALSE;
+		return #FALSE;
+
+	//---//
+	}
 
 
-    //---//
-    }
-    
-    
-    local entity tWeapon;
+	local entity tWeapon;
 
 	if (self.current_weapon == #WEAP_SHOTGUN)
 	{
-        if (self.reload_shotgun >= #RE_SHOTGUN && self.ammo_shells > 0)
-        {
+		if (self.reload_shotgun >= #RE_SHOTGUN && self.ammo_shells > 0)
+		{
 			self.reload_shotgun = 0;
 			if (self.ammo_shells < #RE_SHOTGUN)
 				self.reload_shotgun = #RE_SHOTGUN - self.ammo_shells;
@@ -3581,36 +3583,36 @@ float() CheckForReload =
 			self.weaponframe = 0;
 
 			return #TRUE;
-        }
+		}
 	}
 	else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
 	{
 		if (self.reload_super_shotgun > #RE_SUPER_SHOTGUN)
 			self.reload_super_shotgun = #RE_SUPER_SHOTGUN;
-        if (self.reload_super_shotgun >= #RE_SUPER_SHOTGUN && self.ammo_shells > 0)
-        {
-            self.reload_super_shotgun = 0;
+		if (self.reload_super_shotgun >= #RE_SUPER_SHOTGUN && self.ammo_shells > 0)
+		{
+			self.reload_super_shotgun = 0;
 			if (self.ammo_shells < #RE_SUPER_SHOTGUN)
 				self.reload_super_shotgun = #RE_SUPER_SHOTGUN - self.ammo_shells;
 
-	      	sprint (self, #PRINT_HIGH, "reloading...\n");
-            self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-	        tWeapon = spawn();
-    	    tWeapon.owner = self;
- 		    tWeapon.classname = "timer";
-        	tWeapon.nextthink = time + (#RE_SUPER_SHOTGUN_TIME * speedmult);
-         	tWeapon.think = W_Reload_super_shotgun;
+			sprint (self, #PRINT_HIGH, "reloading...\n");
+			self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+			tWeapon = spawn();
+			tWeapon.owner = self;
+			tWeapon.classname = "timer";
+			tWeapon.nextthink = time + (#RE_SUPER_SHOTGUN_TIME * speedmult);
+			tWeapon.think = W_Reload_super_shotgun;
 
-         	self.weaponmodel = "";
-         	self.weaponframe = 0;
+			self.weaponmodel = "";
+			self.weaponframe = 0;
 
 			return #TRUE;
-	  	}
+		}
 	}
 	else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
 	{
-        if (self.reload_light_assault >= #RE_LIGHT_ASSAULT && self.ammo_shells > 0)
-        {
+		if (self.reload_light_assault >= #RE_LIGHT_ASSAULT && self.ammo_shells > 0)
+		{
 			self.reload_light_assault = 0;
 			if (self.ammo_shells < #RE_LIGHT_ASSAULT)
 				self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_shells;
@@ -3627,12 +3629,12 @@ float() CheckForReload =
 			self.weaponframe = 0;
 
 			return #TRUE;
-        }
+		}
 	}
-    else if (self.current_weapon == #WEAP_LASERCANNON)
+	else if (self.current_weapon == #WEAP_LASERCANNON)
 	{
-        if (self.reload_laser_cannon >= #RE_LASER_CANNON && self.ammo_cells > 0)
-        {
+		if (self.reload_laser_cannon >= #RE_LASER_CANNON && self.ammo_cells > 0)
+		{
 			self.reload_laser_cannon = 0;
 			if (self.ammo_cells < #RE_LASER_CANNON)
 				self.reload_laser_cannon = #RE_LASER_CANNON - self.ammo_cells;
@@ -3649,54 +3651,54 @@ float() CheckForReload =
 			self.weaponframe = 0;
 
 			return #TRUE;
-        }
+		}
 	}
 	else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
 	{
-        if (self.reload_grenade_launcher >= #RE_GRENADE_LAUNCHER && self.ammo_rockets > 0)
-        {
-    	  	self.reload_grenade_launcher = 0;
+		if (self.reload_grenade_launcher >= #RE_GRENADE_LAUNCHER && self.ammo_rockets > 0)
+		{
+			self.reload_grenade_launcher = 0;
 			if (self.ammo_rockets < #RE_GRENADE_LAUNCHER)
 				self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER - self.ammo_rockets;
 
-      	  	sprint (self, #PRINT_HIGH, "reloading...\n");
+			sprint (self, #PRINT_HIGH, "reloading...\n");
 			self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-          	tWeapon = spawn();
-          	tWeapon.owner = self;
- 		    tWeapon.classname = "timer";
-          	tWeapon.nextthink = time + (#RE_GRENADE_LAUNCHER_TIME * speedmult);
-         	tWeapon.think = W_Reload_grenade_launcher;
+			tWeapon = spawn();
+			tWeapon.owner = self;
+			tWeapon.classname = "timer";
+			tWeapon.nextthink = time + (#RE_GRENADE_LAUNCHER_TIME * speedmult);
+			tWeapon.think = W_Reload_grenade_launcher;
 
-         	self.weaponmodel = "";
-         	self.weaponframe = 0;
+			self.weaponmodel = "";
+			self.weaponframe = 0;
 
 			return #TRUE;
-      	}
+		}
 	}
 	else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER)
 	{
- 	    if (self.reload_rocket_launcher >= #RE_ROCKET_LAUNCHER && self.ammo_rockets > 0)
-      	{
-        	self.reload_rocket_launcher = 0;
+		if (self.reload_rocket_launcher >= #RE_ROCKET_LAUNCHER && self.ammo_rockets > 0)
+		{
+			self.reload_rocket_launcher = 0;
 			if (self.ammo_rockets < #RE_ROCKET_LAUNCHER)
 				self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER - self.ammo_rockets;
 
-      		sprint (self, #PRINT_HIGH, "reloading...\n");
+			sprint (self, #PRINT_HIGH, "reloading...\n");
 		self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-         	tWeapon = spawn();
-         	tWeapon.owner = self;
- 	    	tWeapon.classname = "timer";
+			tWeapon = spawn();
+			tWeapon.owner = self;
+			tWeapon.classname = "timer";
 		if(self.tf_items & #NIT_CLUSTER_ROCKETS)
-         		tWeapon.nextthink = time + ((#RE_ROCKET_LAUNCHER_TIME - 1) * speedmult);
+				tWeapon.nextthink = time + ((#RE_ROCKET_LAUNCHER_TIME - 1) * speedmult);
 		else
-         		tWeapon.nextthink = time + (#RE_ROCKET_LAUNCHER_TIME * speedmult);
-         	tWeapon.think = W_Reload_rocket_launcher;
+				tWeapon.nextthink = time + (#RE_ROCKET_LAUNCHER_TIME * speedmult);
+			tWeapon.think = W_Reload_rocket_launcher;
 
-         	self.weaponmodel = "";
-         	self.weaponframe = 0;
+			self.weaponmodel = "";
+			self.weaponframe = 0;
 
 			return #TRUE;
-      	}
+		}
 	}
 
 	return #FALSE;
@@ -3723,9 +3725,9 @@ void()	player_light_assault1;
 void()	player_rocket1;
 
 void()	player_autorifle1;
-void()  player_assaultcannon1;
-void()  player_assaultcannonup1;
-void()  player_assaultcannondown1;
+void()	player_assaultcannon1;
+void()	player_assaultcannonup1;
+void()	player_assaultcannondown1;
 void()	player_medikit1;
 void()	player_medikitb1;
 void()	player_medikitc1;
@@ -3734,16 +3736,16 @@ void()	player_bioweapon1;
 void()	player_bioweaponb1;
 void()	player_bioweaponc1;
 void()	player_bioweapond1;
-void()  player_chain1;
-void()  player_chain2;
-void()  player_chain3;
-void()  player_chain4;
-void()  player_chain5;
+void()	player_chain1;
+void()	player_chain2;
+void()	player_chain3;
+void()	player_chain4;
+void()	player_chain5;
 
 
 void() W_Attack =
 {
-	local float	 r;//, tc;
+	local float  r;//, tc;
 	//local entity tcool;
 	//local string st;
 
@@ -3759,9 +3761,9 @@ void() W_Attack =
 	if (self.penance_time > time)
 		return;
 
-    // OfN - Psionized guys can't shoot
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-        return;
+	// OfN - Psionized guys can't shoot
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+		return;
 
 	//WK Tranq does not remove disguise
 	if (self.is_undercover && (self.current_weapon != #WEAP_TRANQ && self.current_weapon != #WEAP_MAUSER))
@@ -3775,17 +3777,17 @@ void() W_Attack =
 		if (random() <= 0.3)
 			return;
 
-	makevectors	(self.v_angle);			// calculate forward angle for velocity
+	makevectors (self.v_angle); 		// calculate forward angle for velocity
 	self.show_hostile = time + 1;	// wake monsters up
 
 	if (self.current_weapon == #WEAP_AXE)
 	{
 		//if (self.cutf_items & #CUTF_KNIFE) //WK Go berserk with the knife
 		//	Attack_Finished(0.5); // no, don't (0.35)
-		//else 
-		    Attack_Finished(0.5);
-		
-        sound (self, #CHAN_WEAPON, "weapons/ax1.wav", 1, #ATTN_NORM);
+		//else
+			Attack_Finished(0.5);
+
+		sound (self, #CHAN_WEAPON, "weapons/ax1.wav", 1, #ATTN_NORM);
 		r = random();
 		if (r < 0.25)
 			player_axe1 ();
@@ -3805,7 +3807,7 @@ void() W_Attack =
 	else if (self.current_weapon == #WEAP_HOOK)
 	{
 		if (!self.hook_out)
-	    	player_chain1 ();
+			player_chain1 ();
 
 		Attack_Finished(1); //WK
 	}
@@ -3817,7 +3819,7 @@ void() W_Attack =
 		player_shot1 ();
 		W_FireShotgun ();
 
-   	    self.reload_shotgun = self.reload_shotgun + 1;
+		self.reload_shotgun = self.reload_shotgun + 1;
 		self.StatusRefreshTime = time + 0.1;
 
 		CheckForReload();
@@ -3830,9 +3832,9 @@ void() W_Attack =
 
 		player_shot1 ();
 		W_FireSuperShotgun ();
- 
-       	self.reload_super_shotgun = self.reload_super_shotgun + 2;
-			
+
+		self.reload_super_shotgun = self.reload_super_shotgun + 2;
+
 		self.StatusRefreshTime = time + 0.1;
 
 		CheckForReload();
@@ -3862,7 +3864,7 @@ void() W_Attack =
 		player_rocket1();
 		W_FireGrenade();
 
-       	self.reload_grenade_launcher = self.reload_grenade_launcher + 1;
+		self.reload_grenade_launcher = self.reload_grenade_launcher + 1;
 		self.StatusRefreshTime = time + 0.1;
 
 		CheckForReload();
@@ -3877,9 +3879,9 @@ void() W_Attack =
 		W_FireRocket();
 
 		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE) //WK Clusters are multiple shots
-	       	self.reload_rocket_launcher = self.reload_rocket_launcher + 8;
+			self.reload_rocket_launcher = self.reload_rocket_launcher + 8;
 		else
-	       	self.reload_rocket_launcher = self.reload_rocket_launcher + 1;
+			self.reload_rocket_launcher = self.reload_rocket_launcher + 1;
 		self.StatusRefreshTime = time + 0.1;
 
 		CheckForReload();
@@ -3908,19 +3910,19 @@ void() W_Attack =
 		// WK You can if you are a scuba commando!
 		if ((self.flags & #FL_ONGROUND) || (self.hook_out) || ((self.tf_items & #NIT_SCUBA) && self.waterlevel) )
 		{
-	  		player_shot1();
-	      	W_FireSniperRifle();
-	    	 	Attack_Finished(#SNIPER_RIFLE_RELOAD_TIME);
+			player_shot1();
+			W_FireSniperRifle();
+				Attack_Finished(#SNIPER_RIFLE_RELOAD_TIME);
 		}
-  	}
-  	else if (self.current_weapon == #WEAP_AUTO_RIFLE)
-  	{
-  		player_autorifle1();
-	     	W_FireAutoRifle();
-	     	Attack_Finished(0.1);
-  	}
-  	else if (self.current_weapon == #WEAP_ASSAULT_CANNON)
-  	{
+	}
+	else if (self.current_weapon == #WEAP_AUTO_RIFLE)
+	{
+		player_autorifle1();
+			W_FireAutoRifle();
+			Attack_Finished(0.1);
+	}
+	else if (self.current_weapon == #WEAP_ASSAULT_CANNON)
+	{
 		// Need 4 cells to power up the Assault Cannon
 		if (self.ammo_cells < 4)
 		{
@@ -3936,17 +3938,17 @@ void() W_Attack =
 			//self.immune_to_check = time + 2;
 			self.tfstate = self.tfstate | #TFSTATE_CANT_MOVE;
 			TeamFortress_SetSpeed(self);
- 			player_assaultcannonup1();
+			player_assaultcannonup1();
 		}
-  	}
+	}
 	else if (self.current_weapon == #WEAP_FLAMETHROWER)
 	{
-    	player_shot1();
-        W_FireFlame();
-        if (self.waterlevel >2)
-            Attack_Finished(1);
-        else
-        	Attack_Finished(0.15);
+		player_shot1();
+		W_FireFlame();
+		if (self.waterlevel >2)
+			Attack_Finished(1);
+		else
+			Attack_Finished(0.15);
 	}
 	else if (self.current_weapon == #WEAP_INCENDIARY)
 	{
@@ -3974,7 +3976,7 @@ void() W_Attack =
 		sound (self, #CHAN_WEAPON, "weapons/dartgun.wav", 1, #ATTN_NORM);
 		player_shot1 ();
 		W_FireTranq ();
-     		Attack_Finished(1.5);
+			Attack_Finished(1.5);
 	}
 	else if (self.current_weapon == #WEAP_RAILGUN)
 	{
@@ -3990,18 +3992,18 @@ void() W_Attack =
 		W_FireMauser();
 		Attack_Finished(2.0);
 	}
-    else if (self.current_weapon == #WEAP_AIRF)
-    {
+	else if (self.current_weapon == #WEAP_AIRF)
+	{
 		launch_horn();
-  	}
-    if (self.current_weapon == #WEAP_LASERCANNON)
-    {
-        if (CheckForReload() == #TRUE)
+	}
+	if (self.current_weapon == #WEAP_LASERCANNON)
+	{
+		if (CheckForReload() == #TRUE)
 			return;
 
-        player_laser1();
-        CheckForReload();
-    }
+		player_laser1();
+		CheckForReload();
+	}
 };
 
 /*=========================
@@ -4028,7 +4030,7 @@ void() W_PrintWeaponMessage =
 	}
 	else if (self.current_weapon == #WEAP_HOOK)
 		sprint(self, #PRINT_MEDIUM, "Grappling Hook selected\n");
-//CH because they use the same mdl, say what they are.
+	//CH because they use the same mdl, say what they are.
 	else if (self.current_weapon == #WEAP_FLAMETHROWER)
 		sprint(self, #PRINT_MEDIUM, "Flamethrower selected\n");
 	else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER) {
@@ -4063,30 +4065,30 @@ void() W_PrintWeaponMessage =
 		sprint(self, #PRINT_MEDIUM, "Tranquiliser gun selected\n");
 	else if (self.current_weapon == #WEAP_MEDIKIT)
 		sprint(self, #PRINT_MEDIUM, "Medikit/Bioweapon readied\n");
-    else if (self.current_weapon == #WEAP_ASSAULT_CANNON)
-    	sprint(self, #PRINT_MEDIUM, "Assault Cannon ready\n");
+	else if (self.current_weapon == #WEAP_ASSAULT_CANNON)
+		sprint(self, #PRINT_MEDIUM, "Assault Cannon ready\n");
 	else if (self.current_weapon == #WEAP_MAUSER)
 		sprint(self, #PRINT_MEDIUM, "Mauser WK-77 Assassin's Gun readied\n");
 	else if (self.current_weapon == #WEAP_DAEDALUS)
 		sprint(self, #PRINT_MEDIUM, "Daedalus Impulse Rifle readied\n");
-    else if (self.current_weapon == #WEAP_LIGHTNING)
+	else if (self.current_weapon == #WEAP_LIGHTNING)
 		sprint(self, #PRINT_MEDIUM, "Lighting gun selected\n");
-    else if (self.current_weapon == #WEAP_AIRF)
-        sprint(self, #PRINT_MEDIUM, "Airfist prepared\n");
-    else if (self.current_weapon == #WEAP_LASERCANNON)
-        sprint(self, #PRINT_MEDIUM, "Laser Cannon selected\n");
-    else if (self.current_weapon == #WEAP_SNG)
-        sprint(self, #PRINT_MEDIUM, "Super Nailgun selected\n");
-    else if (self.current_weapon == #WEAP_NAILGUN)
-        sprint(self, #PRINT_MEDIUM, "Nailgun selected\n");
-    else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
-        sprint(self, #PRINT_MEDIUM, "Light Assault cannon selected\n");
-    else if (self.current_weapon == #WEAP_SHOTGUN)
-        sprint(self, #PRINT_MEDIUM, "Shotgun selected\n");
-    else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
-        sprint(self, #PRINT_MEDIUM, "Super Shotgun selected\n");
-    else if (self.current_weapon == #WEAP_RAILGUN)
-        sprint(self, #PRINT_MEDIUM, "Railgun selected\n");
+	else if (self.current_weapon == #WEAP_AIRF)
+		sprint(self, #PRINT_MEDIUM, "Airfist prepared\n");
+	else if (self.current_weapon == #WEAP_LASERCANNON)
+		sprint(self, #PRINT_MEDIUM, "Laser Cannon selected\n");
+	else if (self.current_weapon == #WEAP_SNG)
+		sprint(self, #PRINT_MEDIUM, "Super Nailgun selected\n");
+	else if (self.current_weapon == #WEAP_NAILGUN)
+		sprint(self, #PRINT_MEDIUM, "Nailgun selected\n");
+	else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
+		sprint(self, #PRINT_MEDIUM, "Light Assault cannon selected\n");
+	else if (self.current_weapon == #WEAP_SHOTGUN)
+		sprint(self, #PRINT_MEDIUM, "Shotgun selected\n");
+	else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
+		sprint(self, #PRINT_MEDIUM, "Super Shotgun selected\n");
+	else if (self.current_weapon == #WEAP_RAILGUN)
+		sprint(self, #PRINT_MEDIUM, "Railgun selected\n");
 };
 
 
@@ -4099,13 +4101,13 @@ W_ChangeWeapon
 void() W_ChangeWeapon =
 {
 	local	float	it, am, fl, loopck;
-	local 	float 	have_weapon, usable;
-	
+	local	float	have_weapon, usable;
+
 	if (self.tfstate & #TFSTATE_RELOADING)
-  		return;
+		return;
 
 	if (self.tfstate & #TFSTATE_CANT_MOVE)
-		return; 
+		return;
 
 	it = self.weapons_carried;
 	fl = self.current_weapon;
@@ -4116,7 +4118,7 @@ void() W_ChangeWeapon =
 	if (self.impulse == 1)
 	{
 		if (!(it & (#WEAP_HOOK | #WEAP_MEDIKIT | #WEAP_AXE | #WEAP_SPANNER)))
-			have_weapon = #FALSE;			
+			have_weapon = #FALSE;
 
 		while (!usable && have_weapon)
 		{
@@ -4134,8 +4136,8 @@ void() W_ChangeWeapon =
 				if ((self.weapons_carried & #WEAP_HOOK) && (fl & #WEAP_HOOK))
 					usable = 1;
 
-                if (self.hook_out)
-                	Reset_Grapple(self.hook);
+				if (self.hook_out)
+					Reset_Grapple(self.hook);
 			}
 			else if (fl == #WEAP_HOOK)
 			{
@@ -4153,14 +4155,14 @@ void() W_ChangeWeapon =
 			}
 		}
 	}
-	else if ((self.weapons_carried & #WEAP_HOOK) && (self.impulse == #HOOK_IMP1 || self.impulse == #HOOK_IMP2)) 
+	else if ((self.weapons_carried & #WEAP_HOOK) && (self.impulse == #HOOK_IMP1 || self.impulse == #HOOK_IMP2))
 	{
-		fl = #WEAP_HOOK;		
+		fl = #WEAP_HOOK;
 	}
 	else if (self.impulse == #AXE_IMP)
 	{
 		if (!(it & (#WEAP_MEDIKIT | #WEAP_AXE | #WEAP_SPANNER)))
-			have_weapon = #FALSE;			
+			have_weapon = #FALSE;
 
 		while (!usable && have_weapon)
 		{
@@ -4228,7 +4230,7 @@ void() W_ChangeWeapon =
 				am = 1;
 		}
 		else
-		{	
+		{
 			if (self.ammo_shells < 1)
 				am = 1;
 		}
@@ -4262,18 +4264,18 @@ void() W_ChangeWeapon =
 				am = 1;
 		}
 		else
-		{	
+		{
 			if (self.ammo_shells < 1)
 				am = 1;
 		}
-	}		
+	}
 	else if (self.impulse == 4)
 	{
 		/*fl = #WEAP_NAILGUN;
 		if (self.ammo_nails < 1)
 			am = 1;*/
 
-        if (!(it & #WEAP_LASERCANNON || it & #WEAP_NAILGUN))
+		if (!(it & #WEAP_LASERCANNON || it & #WEAP_NAILGUN))
 			have_weapon = #FALSE;
 		loopck = 0;
 		while (!usable && have_weapon)
@@ -4321,17 +4323,15 @@ void() W_ChangeWeapon =
 				if (it & #WEAP_MAUSER)
 					usable = 1;
 			}
-			
-            //-
-            else if (fl == #WEAP_MAUSER)
+
+			else if (fl == #WEAP_MAUSER)
 			{
 				fl = #WEAP_SNG;
 				if (it & #WEAP_SNG)
 					usable = 1;
 			}
-            //-
 
-            else
+			else
 			{
 				fl = #WEAP_LIGHT_ASSAULT;
 				if (it & #WEAP_LIGHT_ASSAULT)
@@ -4348,8 +4348,8 @@ void() W_ChangeWeapon =
 			if (self.ammo_shells < 1)
 				am = 1;
 		}
-        //
-        else if (fl == #WEAP_SNG)
+		//
+		else if (fl == #WEAP_SNG)
 		{
 			if (self.ammo_nails < 2)
 				am = 1;
@@ -4385,7 +4385,7 @@ void() W_ChangeWeapon =
 				am = 1;
 		}
 		else
-		{	
+		{
 			if (self.ammo_rockets < 1)
 				am = 1;
 		}
@@ -4412,7 +4412,7 @@ void() W_ChangeWeapon =
 				{
 					if (self.cluster_mode == #TRUE)
 					{
-//						bprint(#PRINT_HIGH, "cluster mode FALSE\n");
+						//bprint(#PRINT_HIGH, "cluster mode FALSE\n");
 						self.cluster_mode = #FALSE;
 						fl = #WEAP_ASSAULT_CANNON;
 						if (it & #WEAP_ASSAULT_CANNON && self.ammo_shells > 0 && self.ammo_cells > 3)
@@ -4420,13 +4420,13 @@ void() W_ChangeWeapon =
 					}
 					else
 					{
-//						bprint(#PRINT_HIGH, "cluster mode TRUE\n");
+						//bprint(#PRINT_HIGH, "cluster mode TRUE\n");
 						self.cluster_mode = #TRUE;
 						fl = #WEAP_ROCKET_LAUNCHER;
 						if (it & #WEAP_ROCKET_LAUNCHER && self.ammo_rockets > 0)
 							usable = 1;
 					}
-				} 
+				}
 				else
 				{
 					fl = #WEAP_ASSAULT_CANNON;
@@ -4480,7 +4480,7 @@ void() W_ChangeWeapon =
 				if (it & #WEAP_LIGHTNING) //WEAP_DAEDALUS
 					usable = 1;
 			}
-            else if (fl == #WEAP_LIGHTNING)
+			else if (fl == #WEAP_LIGHTNING)
 			{
 				fl = #WEAP_AIRF;
 				if (it & #WEAP_AIRF) //WEAP_DAEDALUS
@@ -4502,12 +4502,12 @@ void() W_ChangeWeapon =
 		{
 			if (self.ammo_cells < 1)
 				am = 1;
-		}	
-        else if (fl == #WEAP_AIRF)
-        {
-            if (self.ammo_cells < #AIRFIST_CELLS_COST)
-                am = 3;
-        }
+		}
+		else if (fl == #WEAP_AIRF)
+		{
+			if (self.ammo_cells < #AIRFIST_CELLS_COST)
+				am = 3;
+		}
 	}
 	else if (self.impulse == #TF_MEDIKIT)
 	{
@@ -4518,34 +4518,34 @@ void() W_ChangeWeapon =
 	}
 
 	self.impulse = 0;
-	
+
 	// don't have the weapon
 	if (!have_weapon || (!(it & fl)))
-	{	
-		sprint (self, #PRINT_HIGH, "no weapon.\n");
+	{
+		sprint (self, #PRINT_HIGH, "No weapon.\n");
 		return;
 	}
-	
+
 	// don't have the ammo
 	if (am == 1)
-	{	
-		sprint(self, #PRINT_HIGH, "not enough ammo.\n");
+	{
+		sprint(self, #PRINT_HIGH, "Not enough ammo.\n");
 		return;
 	}
 
 	// don't have the cells for the cannon
 	if (am == 2)
 	{
-		sprint(self, #PRINT_HIGH, "not enough cells to power assault cannon.\n");
+		sprint(self, #PRINT_HIGH, "Not enough cells to power assault cannon.\n");
 		return;
 	}
 
-    // Don't have enough cells for airfist
-    if (am == 3)
-    {
-        sprint(self,#PRINT_HIGH,"Not enough cells to power the airfist.\n");
-        return;
-    }
+	// Don't have enough cells for airfist
+	if (am == 3)
+	{
+		sprint(self,#PRINT_HIGH,"Not enough cells to power the airfist.\n");
+		return;
+	}
 
 	// set weapon, set ammo
 	self.current_weapon = fl;
@@ -4564,23 +4564,23 @@ Go to the next weapon with ammo
 */
 void() CycleWeaponCommand =
 {
-//CH reorder so that they please me
+	//CH reorder so that they please me
 	local	float	it, am, cont, loopcount;
-	
+
 	// Some safety code
 	if (self.weaponmodel == string_null || self.current_weapon == 0)
 		return;
 
-      if (self.tfstate & #TFSTATE_RELOADING)
-  		return;
+	  if (self.tfstate & #TFSTATE_RELOADING)
+		return;
 
 	if (self.tfstate & #TFSTATE_CANT_MOVE)
-		return; 
+		return;
 
 	it = self.weapons_carried;
 	self.impulse = 0;
 	loopcount = 0;
-	
+
 	while (1)
 	{
 		am = 0;
@@ -4601,20 +4601,20 @@ void() CycleWeaponCommand =
 			self.current_weapon = #WEAP_RAILGUN;
 			if (self.ammo_nails < 1)
 				am = 1;
-		}		
+		}
 		else if (self.current_weapon == #WEAP_RAILGUN)
 		{
 			self.current_weapon = #WEAP_TRANQ;
 			if (self.ammo_nails < 1)
 				am = 1;
-		}		
+		}
 		else if (self.current_weapon == #WEAP_TRANQ)
 		{
 			self.current_weapon = #WEAP_SNIPER_RIFLE;
 			if (self.ammo_shells < 1)
 				am = 1;
-		}		
-  		else if (self.current_weapon == #WEAP_SNIPER_RIFLE)
+		}
+		else if (self.current_weapon == #WEAP_SNIPER_RIFLE)
 		{
 			self.current_weapon = #WEAP_AUTO_RIFLE;
 			if (self.ammo_shells < 1)
@@ -4638,25 +4638,22 @@ void() CycleWeaponCommand =
 			if (self.ammo_nails < 1)
 				am = 1;
 		}
-		
-        //-
-        else if (self.current_weapon == #WEAP_NAILGUN)
+
+		else if (self.current_weapon == #WEAP_NAILGUN)
 		{
 			self.current_weapon = #WEAP_SNG;
 			if (self.ammo_nails < 2)
 				am = 1;
 		}
-        //-
 
-        else if (self.current_weapon == #WEAP_SNG)
+		else if (self.current_weapon == #WEAP_SNG)
 		{
 			self.current_weapon = #WEAP_LASERCANNON;
-            if (self.ammo_cells < 1)
+			if (self.ammo_cells < 1)
 				am = 1;
 		}
-        //-
-        
-        else if (self.current_weapon == #WEAP_LASERCANNON) // was WEAP_NAILGUN
+
+		else if (self.current_weapon == #WEAP_LASERCANNON) // was WEAP_NAILGUN
 		{
 			self.current_weapon = #WEAP_LIGHT_ASSAULT;
 			if (self.ammo_shells < 2)
@@ -4706,17 +4703,17 @@ void() CycleWeaponCommand =
 			{
 				if (self.cluster_mode == #TRUE)
 				{
-//					bprint(#PRINT_HIGH, "cluster mode FALSE\n");
+					//bprint(#PRINT_HIGH, "cluster mode FALSE\n");
 					self.cluster_mode = #FALSE;
 					self.current_weapon = #WEAP_ASSAULT_CANNON;
 					if (self.ammo_cells < 4)
 						am = 1;
-       				if (self.ammo_shells < 1)
-		        		am = 1;
+					if (self.ammo_shells < 1)
+						am = 1;
 				}
 				else
 				{
-//					bprint(#PRINT_HIGH, "cluster mode TRUE\n");
+					//bprint(#PRINT_HIGH, "cluster mode TRUE\n");
 					self.cluster_mode = #TRUE;
 					self.current_weapon = #WEAP_ROCKET_LAUNCHER;
 					if (self.ammo_rockets < 1)
@@ -4728,34 +4725,34 @@ void() CycleWeaponCommand =
 				self.current_weapon = #WEAP_ASSAULT_CANNON;
 				if (self.ammo_cells < 4)
 					am = 1;
-      	  		if (self.ammo_shells < 1)
-	        		am = 1;
+				if (self.ammo_shells < 1)
+					am = 1;
 			}
 
 		}
 		else if (self.current_weapon == #WEAP_ASSAULT_CANNON)
 		{
-         		self.current_weapon = #WEAP_LIGHTNING;
-         		if (self.ammo_cells < 1)
-         			am = 1;
-      	}
-        else if (self.current_weapon == #WEAP_LIGHTNING)
-     	{
+				self.current_weapon = #WEAP_LIGHTNING;
+				if (self.ammo_cells < 1)
+					am = 1;
+		}
+		else if (self.current_weapon == #WEAP_LIGHTNING)
+		{
 			self.current_weapon = #WEAP_AIRF;
 
 			if (!(self.weapons_carried & #WEAP_AIRF))
 				am = 1;
 
-            if (self.ammo_cells < #AIRFIST_CELLS_COST)
-                am = 1;
-     	}
-        else if (self.current_weapon == #WEAP_AIRF)
-     	{
+			if (self.ammo_cells < #AIRFIST_CELLS_COST)
+				am = 1;
+		}
+		else if (self.current_weapon == #WEAP_AIRF)
+		{
 			self.current_weapon = #WEAP_HOOK;
 
 			if (!(self.weapons_carried & #WEAP_HOOK))
 				am = 1;
-     	} 
+		}
 		else if (self.current_weapon == #WEAP_HOOK)
 		{
 			self.current_weapon = #WEAP_MEDIKIT;
@@ -4771,8 +4768,8 @@ void() CycleWeaponCommand =
 
 		loopcount = loopcount + 1;
 
-	    // check if player actually has the weapon
-	   	// if not, loop again
+		// check if player actually has the weapon
+		// if not, loop again
 		if ((self.weapons_carried & self.current_weapon) && (am == 0))
 		{
 			if (self.current_weapon != #WEAP_GRENADE_LAUNCHER)
@@ -4824,31 +4821,31 @@ float(float inp) BuildingImpulses =
 	if (inp == #TF_SELL) return #TRUE;
 	if (inp == #I_CHEAT_ONE) return #TRUE;
 	if (inp == #I_CHEAT_TWO) return #TRUE;
-	if (inp == #I_CHEAT_THREE) return #TRUE;    
-    if (inp == #IMPULSE_VOTEYES) return #TRUE;
-    if (inp == #IMPULSE_VOTENO) return #TRUE;
+	if (inp == #I_CHEAT_THREE) return #TRUE;
+	if (inp == #IMPULSE_VOTEYES) return #TRUE;
+	if (inp == #IMPULSE_VOTENO) return #TRUE;
 	return #FALSE;
 };
 
 void() ImpulseCommands =
 {
-	if ((self.impulse== #TF_CHANGEPC + #PC_CUSTOM || self.impulse==#TF_SELL) && custom_mode==2)
-    {
-        self.impulse=0;
-        sprint(self,#PRINT_MEDIUM,"Custom player classes are disabled\n");
-        return;
-    }
+	if ((self.impulse == #TF_CHANGEPC + #PC_CUSTOM || self.impulse==#TF_SELL) && custom_mode==2)
+	{
+		self.impulse=0;
+		sprint(self,#PRINT_MEDIUM,"Custom player classes are disabled\n");
+		return;
+	}
 
-    if (self.impulse <= #TF_CHANGEPC + #PC_RANDOM && self.impulse >= #TF_CHANGEPC + #PC_SCOUT && stock_mode==2)
-    {
-        self.impulse=0;
-        sprint(self,#PRINT_MEDIUM,"Stock player classes are disabled\n");
-        return;
-    }
+	if (self.impulse <= #TF_CHANGEPC + #PC_RANDOM && self.impulse >= #TF_CHANGEPC + #PC_SCOUT && stock_mode==2)
+	{
+		self.impulse=0;
+		sprint(self,#PRINT_MEDIUM,"Stock player classes are disabled\n");
+		return;
+	}
 
-    //local entity te; //- OfN - Unused!
-    
-    //WK Don't allow any commands except menu ones when building a class
+	//local entity te; //- OfN - Unused!
+
+	//WK Don't allow any commands except menu ones when building a class
 	if (self.playerclass == #PC_CUSTOM && (self.done_custom & #CUSTOM_BUILDING))
 	{
 		if (!BuildingImpulses(self.impulse))
@@ -4861,18 +4858,18 @@ void() ImpulseCommands =
 	//WK Don't allow bastards to do any commands
 	if (self.penance_time > time)
 		return;
-		
+
 	if (prematch >= time)
-		if ((self.impulse > 10 || self.impulse < 1) && (self.impulse <  #TF_GRENADE_1 || self.impulse > #TF_GRENADE_T) && self.impulse != 173)	//RJ - We can change weapons, shoot, and now toss grens and reload
+		if ((self.impulse > 10 || self.impulse < 1) && (self.impulse < #TF_GRENADE_1 || self.impulse > #TF_GRENADE_T) && self.impulse != #TF_RELOAD)
 		{
 			self.impulse = 0;
 			return;
 		}
 
 	/*=====================
-	These Impulse commands rely on the use of self.last_impulse. Since they use 
-	self.impulse for their own purposes, they _must_ be placed before the other 
-	self.impulse tests, and they _must_ set self.impulse = 0 when they're done. 
+	These Impulse commands rely on the use of self.last_impulse. Since they use
+	self.impulse for their own purposes, they _must_ be placed before the other
+	self.impulse tests, and they _must_ set self.impulse = 0 when they're done.
 	=====================*/
 
 	// TeamFortress Detpack
@@ -4883,8 +4880,8 @@ void() ImpulseCommands =
 		TeamFortress_Scan(self.impulse,#FALSE);
 
 	/*=====================
-    The rest of these Impulse Commands don't use self.last_impulse. They _must_
-	be placed _after_ the Impulse Commands that do require self.last_impulse 
+	The rest of these Impulse Commands don't use self.last_impulse. They _must_
+	be placed _after_ the Impulse Commands that do require self.last_impulse
 	=====================*/
 
 	// Catch the 8 key to reprint the classhelp.
@@ -4915,12 +4912,12 @@ void() ImpulseCommands =
 		else if ((self.weapons_carried & #WEAP_HOOK) && (self.impulse == #HOOK_IMP1 || self.impulse == #HOOK_IMP2))
 			W_ChangeWeapon ();
 
-		// Axe 
+		// Axe
 		else if (self.impulse == #AXE_IMP)
 			W_ChangeWeapon ();
 
 		// cycle weapon reverse and cycle weapon do the same thing
-		// TBD: make CycleWeaponReverseCommand()
+		// TODO: make CycleWeaponReverseCommand()
 		else if (self.impulse == 10 || self.impulse == 12)
 			CycleWeaponCommand ();
 
@@ -4954,12 +4951,12 @@ void() ImpulseCommands =
 		}
 		else if (self.impulse == #TF_DISCARD)
 			TeamFortress_Discard();
-//CH
+		//CH
 		else if (self.impulse == #TF_DROPITEMS)
 		{
-            if (!TeamFortress_DropItems())
-                sprint(self,#PRINT_MEDIUM,"You have no items to drop!\n");
-        }
+			if (!TeamFortress_DropItems())
+				sprint(self,#PRINT_MEDIUM,"You have no items to drop!\n");
+		}
 #ifdef COOP_MODE
 		else if (self.impulse == #TF_DROPKEY && coop)
 			DropKey();
@@ -5013,26 +5010,26 @@ void() ImpulseCommands =
 		}
 	}
 
-	// TeamFortress Throw Grenade 
+	// TeamFortress Throw Grenade
 	else if (self.impulse == #TF_GRENADE_T)
 		TeamFortress_ThrowGrenade();
-		
+
 	//else if (self.impulse == #BUILD_SENSOR && self.cutf_items & #CUTF_SENSOR) // SB build sensor (not enough room on menu...)
 	//	SBBuildSensor();
-		
+
 	else if (self.impulse == #IMPULSE_THROWDETPACK)
 		PrimeC4Det();
 
 	/*else if (self.impulse == IMPULSE_INTERFACE)
 		SBInitiateInterface();*/
 
-    else if (self.impulse == #IMPULSE_HOLO)
+	else if (self.impulse == #IMPULSE_HOLO)
 		ActivateHolo(self);
 
 	else if (self.impulse == #TF_ID)
 		TeamFortress_ID(#FALSE);
 
-	// TeamFortress Detonate Pipebombs  (yep, can be done while setting a detpack :)
+	// TeamFortress Detonate Pipebombs	(yep, can be done while setting a detpack :)
 	else if (self.impulse == #TF_PB_DETONATE)
 		TeamFortress_DetonatePipebombs();
 
@@ -5049,20 +5046,20 @@ void() ImpulseCommands =
 	else if (self.impulse == #TF_SPY_DIE2 && (self.cutf_items & #CUTF_SPY_KIT))
 		TeamFortress_SpyFeignDeath(2); //CH special sfeign
 	else if (self.impulse == #TF_ENGINEER_BUILD &&
-              ((self.cutf_items & #CUTF_SENSOR) || (self.cutf_items & #CUTF_SENTRYGUN) || self.tf_items & #NIT_TESLA || self.tf_items & #NIT_SECURITY_CAMERA || self.tf_items & #NIT_TELEPORTER || self.cutf_items & #CUTF_FIELDGEN || self.cutf_items & #CUTF_DISPENSER)) 
+			  ((self.cutf_items & #CUTF_SENSOR) || (self.cutf_items & #CUTF_SENTRYGUN) || self.tf_items & #NIT_TESLA || self.tf_items & #NIT_SECURITY_CAMERA || self.tf_items & #NIT_TELEPORTER || self.cutf_items & #CUTF_FIELDGEN || self.cutf_items & #CUTF_DISPENSER))
 		TeamFortress_EngineerBuild();
 
 	// CTF Support Impulses
 	else if (self.impulse == #FLAG_INFO)
 	{
-		if (CTF_Map == #TRUE)	
+		if (CTF_Map == #TRUE)
 			TeamFortress_CTF_FlagInfo();
 		else
 			TeamFortress_DisplayDetectionItems();
 	}
 	else if (self.impulse == #TF_DISPLAYLOCATION)
 		display_location();
-		
+
 	/*else if (self.impulse == 199)
 		CameraSwitchView();
 */
@@ -5106,7 +5103,7 @@ void() ImpulseCommands =
 		self.last_impulse = self.impulse;
 	if (self.impulse == #TF_SCAN)
 		self.last_impulse = self.impulse;
-		
+
 	self.impulse = 0;
 };
 
@@ -5120,20 +5117,20 @@ player is dead
 void() DeadImpulses =
 {
 	if ((self.impulse== #TF_CHANGEPC + #PC_CUSTOM || self.impulse==#TF_SELL) && custom_mode==2)
-    {
-        self.impulse=0;
-        sprint(self,#PRINT_MEDIUM,"Custom player classes are disabled\n");
-        return;
-    }
+	{
+		self.impulse=0;
+		sprint(self,#PRINT_MEDIUM,"Custom player classes are disabled\n");
+		return;
+	}
 
-    if (self.impulse <= #TF_CHANGEPC + #PC_RANDOM && self.impulse >= #TF_CHANGEPC + #PC_SCOUT && stock_mode==2)
-    {
-        self.impulse=0;
-        sprint(self,#PRINT_MEDIUM,"Stock player classes are disabled\n");
-        return;
-    }
+	if (self.impulse <= #TF_CHANGEPC + #PC_RANDOM && self.impulse >= #TF_CHANGEPC + #PC_SCOUT && stock_mode==2)
+	{
+		self.impulse=0;
+		sprint(self,#PRINT_MEDIUM,"Stock player classes are disabled\n");
+		return;
+	}
 
-//<CH>
+	//<CH>
 	if (self.impulse == #I_CHEAT_ONE) {
 		I_DID_CHEAT_ONE();
 	}
@@ -5143,11 +5140,11 @@ void() DeadImpulses =
 	if (self.impulse == #I_CHEAT_THREE) {
 		I_DID_CHEAT_THREE();
 	}
-//</CH>
+	//</CH>
 	//WK - Add in TF2.6 support for changeclass
 	if (self.impulse == #TF_CHANGECLASS) {
-        self.current_menu = #MENU_CLASS;
-        Menu_Class();
+		self.current_menu = #MENU_CLASS;
+		Menu_Class();
 	}
 
 	//WK Have a normal "custom" command reset the "sell" flag
@@ -5176,7 +5173,7 @@ void() DeadImpulses =
 	// TeamFortress Show Toggleflag State
 	if (self.impulse == #TF_SHOWTF)
 		TeamFortress_ShowTF();
-	// TeamFortress Show Legal PlayerClasses 
+	// TeamFortress Show Legal PlayerClasses
 	// Toggle autozoom on/off
 	else if (self.impulse == #TF_AUTOZOOM)
 		TeamFortress_AutoZoomToggle();
@@ -5190,63 +5187,63 @@ void() DeadImpulses =
 		if (self.impulse == #TF_CHANGEPC + #PC_CUSTOM)
 		{
 			if ((self.done_custom & (#CUSTOM_FINISHED | #CUSTOM_BUILDING) && !(self.done_custom & #CUSTOM_ON_SPAWN)) || self.playerclass != #PC_CUSTOM)
-		    		TeamFortress_ChangeClass();
+					TeamFortress_ChangeClass();
 		}
 		else
-	    	TeamFortress_ChangeClass();
+			TeamFortress_ChangeClass();
 
 	}
 	else if (self.impulse == #TF_UNCUSTOM)
 	{
 		if (self.done_custom & #CUSTOM_ON_SPAWN)
-        {
-            self.done_custom = self.done_custom - (self.done_custom & #CUSTOM_ON_SPAWN);
-            self.nextpc = self.playerclass;
-		    sprint(self, #PRINT_HIGH, "You will no longer spawn as a new player class.\n");	
-        }
-        else if (self.nextpc != self.playerclass)
-        {
-            sprint(self, #PRINT_HIGH, "You will mantain your current player class.\n");	
-            self.nextpc = self.playerclass;
-        }
-        else
-        {
-            sprint(self, #PRINT_HIGH, "No class change to cancel!\n");
-            // You haven't switched to a class
-        }
+		{
+			self.done_custom = self.done_custom - (self.done_custom & #CUSTOM_ON_SPAWN);
+			self.nextpc = self.playerclass;
+			sprint(self, #PRINT_HIGH, "You will no longer spawn as a new player class.\n");
+		}
+		else if (self.nextpc != self.playerclass)
+		{
+			sprint(self, #PRINT_HIGH, "You will mantain your current player class.\n");
+			self.nextpc = self.playerclass;
+		}
+		else
+		{
+			sprint(self, #PRINT_HIGH, "No class change to cancel!\n");
+			// You haven't switched to a class
+		}
 	}
-    else if (self.impulse == #IMPULSE_TESTRANGE) // thanks to the aussies for the idea, another reason to hate me i guess.. =)
-    {        
-        local float dist;
-        local string st;
+	else if (self.impulse == #IMPULSE_TESTRANGE) // thanks to the aussies for the idea, another reason to hate me i guess.. =)
+	{
+		local float dist;
+		local string st;
 
-        makevectors(self.v_angle);
-	    	    
+		makevectors(self.v_angle);
+
 		traceline (self.origin + self.view_ofs, self.origin + v_forward * 99999, #TL_ANY_SOLID, self);
 
-        dist = vlen(self.origin - trace_endpos);
-        st = ftos(dist);
+		dist = vlen(self.origin - trace_endpos);
+		st = ftos(dist);
 
-        // Create Lightning 
-        msg_entity = self;
-        WriteByte (#MSG_ONE, #SVC_TEMPENTITY);
-        WriteByte (#MSG_ONE, #TE_LIGHTNING1);
-        WriteEntity (#MSG_ONE, self);
-        WriteCoord (#MSG_ONE, self.origin_x);
-        WriteCoord (#MSG_ONE, self.origin_y);
-        WriteCoord (#MSG_ONE, self.origin_z + self.view_ofs_z);
-        WriteCoord (#MSG_ONE, trace_endpos_x);
-        WriteCoord (#MSG_ONE, trace_endpos_y);
-        WriteCoord (#MSG_ONE, trace_endpos_z);
+		// Create Lightning
+		msg_entity = self;
+		WriteByte (#MSG_ONE, #SVC_TEMPENTITY);
+		WriteByte (#MSG_ONE, #TE_LIGHTNING1);
+		WriteEntity (#MSG_ONE, self);
+		WriteCoord (#MSG_ONE, self.origin_x);
+		WriteCoord (#MSG_ONE, self.origin_y);
+		WriteCoord (#MSG_ONE, self.origin_z + self.view_ofs_z);
+		WriteCoord (#MSG_ONE, trace_endpos_x);
+		WriteCoord (#MSG_ONE, trace_endpos_y);
+		WriteCoord (#MSG_ONE, trace_endpos_z);
 
-        stuffcmd(self,"play weapons/flmgrexp.wav\n");
+		stuffcmd(self,"play weapons/flmgrexp.wav\n");
 
-        sprint(self,#PRINT_HIGH,"Range is ",st," units\n");
+		sprint(self,#PRINT_HIGH,"Range is ",st," units\n");
 
-        #ifdef TESTRANGE_EXTRA
-        sprint(self,#PRINT_HIGH,"Entity is '",trace_ent.classname,"'\n");
-        #endif
-    }
+		#ifdef TESTRANGE_EXTRA
+		sprint(self,#PRINT_HIGH,"Entity is '",trace_ent.classname,"'\n");
+		#endif
+	}
 	// TeamFortress Help Impulses
 	//else if (self.impulse == #TF_LAY) //RJ - enough sillyness, leave the MegaTFers alone
 	//	custom_lay();
@@ -5285,50 +5282,50 @@ void() DeadImpulses =
 	}
 	//CH Admin controls
 #ifdef QUAKE_WORLD
-    /*else if (self.impulse == #IMPULSE_DEBUG && allow_debug == 1)
+	/*else if (self.impulse == #IMPULSE_DEBUG && allow_debug == 1)
 	{
 		MakeMeDebug(self);
 	}
-    else if (self.impulse == #IMPULSE_STUFFCMD)
+	else if (self.impulse == #IMPULSE_STUFFCMD)
 	{
 		Admin_Cmd();
 	}*/
-    else if (self.impulse == #IMPULSE_PUNISH)
-    {
-        Player_Punish();
-    }
-    else if (self.impulse == #IMPULSE_VOTEMAP)
-    {
-        Player_VoteMap();
-    }
-    else if (self.impulse == #IMPULSE_VOTEYES)
-    {
-        Player_VoteYes();
-    }
-    else if (self.impulse == #IMPULSE_VOTENO)
-    {
-        Player_VoteNo();
-    }
-    /*else if (self.impulse == #IMPULSE_UPDATEINFO)
+	else if (self.impulse == #IMPULSE_PUNISH)
 	{
-        if (self.admin_flag)
-        {
-            RPrint("Admin ");
-            RPrint(self.netname);
-            RPrint(" requested a server localinfos update\n");
-            UpdateInfos();
-            RPrint("INFO: localinfos updated successfully.\n");
-            if (debug_target!=self) sprint(self,#PRINT_HIGH,"localinfos updated succesfully.\n");
-       }
-       else
-       {
-            RPrint(self.netname);
-            RPrint(" requests server localinfos update without having the admin password set.\n");
-       }
+		Player_Punish();
 	}
-    else if (self.impulse == #IMPULSE_CHECKADMIN)
+	else if (self.impulse == #IMPULSE_VOTEMAP)
 	{
-        Check_Admin_Password(self);
+		Player_VoteMap();
+	}
+	else if (self.impulse == #IMPULSE_VOTEYES)
+	{
+		Player_VoteYes();
+	}
+	else if (self.impulse == #IMPULSE_VOTENO)
+	{
+		Player_VoteNo();
+	}
+	/*else if (self.impulse == #IMPULSE_UPDATEINFO)
+	{
+		if (self.admin_flag)
+		{
+			RPrint("Admin ");
+			RPrint(self.netname);
+			RPrint(" requested a server localinfos update\n");
+			UpdateInfos();
+			RPrint("INFO: localinfos updated successfully.\n");
+			if (debug_target!=self) sprint(self,#PRINT_HIGH,"localinfos updated succesfully.\n");
+	   }
+	   else
+	   {
+			RPrint(self.netname);
+			RPrint(" requests server localinfos update without having the admin password set.\n");
+	   }
+	}
+	else if (self.impulse == #IMPULSE_CHECKADMIN)
+	{
+		Check_Admin_Password(self);
 	}
 	else if (self.impulse == #TF_ADMIN_KICK_CYCLE)
 	{
@@ -5368,21 +5365,21 @@ Called every frame so impulse events can be handled as well as possible
 void() W_WeaponFrame =
 {
 	if (self.flags & #FL_FINALIZED)
-        return;
-    
-    local vector tv;
+		return;
 
-    // OfN - sorry guyz! this is the end of funny lay's on intermissions
-    if (intermission_running)
-    {
-        if (self.impulse != 0)
-        if (GoodIntermissionImpulse(self.impulse))
-            ImpulseCommands();
-        
-        return;
-    }
-	
-    if (!(self.tfstate & #TFSTATE_AIMING))
+	local vector tv;
+
+	// OfN - sorry guyz! this is the end of funny lay's on intermissions
+	if (intermission_running)
+	{
+		if (self.impulse != 0)
+		if (GoodIntermissionImpulse(self.impulse))
+			ImpulseCommands();
+
+		return;
+	}
+
+	if (!(self.tfstate & #TFSTATE_AIMING))
 	{
 		if (self.height > 29 && self.height < 90)
 		{
@@ -5396,11 +5393,11 @@ void() W_WeaponFrame =
 
 	if (self.current_menu > 0)
 	{
-		Player_Menu();		
+		Player_Menu();
 
 		if (self.impulse > 0 && self.impulse < 11)
 		{
-  			Menu_Input(self.impulse);
+			Menu_Input(self.impulse);
 
 			if (self.impulse != 0)
 			{
@@ -5418,7 +5415,7 @@ void() W_WeaponFrame =
 	}
 
 	if (time < self.attack_finished)
-		return;    
+		return;
 
 	// Stop calling this function so much
 	if (self.impulse != 0)
@@ -5435,7 +5432,7 @@ void() W_WeaponFrame =
 	// Check for release
 	if (!self.button0 && self.fire_held_down && self.current_weapon == #WEAP_ASSAULT_CANNON)
 	{
-	    self.fire_held_down = #FALSE;
+		self.fire_held_down = #FALSE;
 
 		// Let him/her walk again
 		self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
@@ -5444,7 +5441,7 @@ void() W_WeaponFrame =
 		player_run ();
 	}
 	// check for attack
-    if (self.button0 && !(self.fire_held_down))
+	if (self.button0 && !(self.fire_held_down))
 	{
 		if ((self.current_menu == #MENU_CLASSHELP) || (self.current_menu == #MENU_CLASSHELP2))
 		{
@@ -5479,10 +5476,10 @@ void() W_WeaponFrame =
 					#ifdef WEINER_SNIPER
 					//	self.heat = 80; // PZ - removed for Randomer's charge-up fix
 					#endif
-					
+
 					self.height = 90;
 					self.tfstate = self.tfstate | #TFSTATE_AIMING;
-	
+
 					TeamFortress_SetSpeed(self);
 				}
 			}
@@ -5563,7 +5560,7 @@ void() T_DaedalusTouch =
 	local vector org;
 	local entity head;
 
-	head = findradius(self.origin, #BOUNCE);	
+	head = findradius(self.origin, #BOUNCE);
 	while (head) {
 		//Conc
 		if (head.takedamage && !IsBuilding(head) && head.health > 0 && head.invincible_finished <= time) // PZ - don't harm invulnerable
@@ -5590,7 +5587,7 @@ void() T_DaedalusTouch =
 			//Rocket Launcher (w/ armor stripping)
 			else
 			{
-				if (head.armorvalue > 35) head.armorvalue = head.armorvalue - 35;				
+				if (head.armorvalue > 35) head.armorvalue = head.armorvalue - 35;
 				else head.armorvalue = 0;
 				deathmsg = #DMSG_DAEDALUS;
 				TF_T_Damage (head, self, self.owner, points / 8, #TF_TD_NOTTEAM, #TF_TD_FIRE);
@@ -5609,8 +5606,8 @@ void() T_DaedalusTouch =
 #ifdef QUAKE_WORLD
 	multicast (self.origin, #MULTICAST_PHS);
 
-    if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-        FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+	if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+		FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
 
 	dremove(self);
 #else
@@ -5634,24 +5631,24 @@ void() W_FireDaedalus =
 		self.ammo_cells = 0;
 		return;
 	}
-	
+
 	SuperDamageSound();
-	
+
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
-    newmis.classname = "rocket"; // OfN - for airfist pushing
+	newmis.classname = "rocket"; // OfN - for airfist pushing
 	newmis.solid = #SOLID_BBOX;
-		
+
 	makevectors (self.v_angle);
-	newmis.velocity = v_forward;	
+	newmis.velocity = v_forward;
 	newmis.velocity = newmis.velocity * 500;
 	newmis.avelocity = '600 600 0';
 	newmis.angles = vectoangles(newmis.velocity);
 	newmis.skin = 1;
 	//CHANGEME Replace this with s_explode sprite. :)
 	setmodel (newmis, "progs/flare.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, self.origin + v_forward*8 + '0 0 16');
 
 	newmis.touch = T_DaedalusTouch;
@@ -5662,8 +5659,7 @@ void() W_FireDaedalus =
 /* Sponsored by SB-1 Tech
 **
 ** W_FireMauser!
-** Fires the mauser spy thing which is likely to have a name change
-** so nyeh
+** Fires the mauser spy thing which is likely to have a name change so nyeh
 */
 
 void() W_FireMauser =
@@ -5678,23 +5674,23 @@ void() W_FireMauser =
 		self.ammo_nails = 0;
 		return;
 	}
-	
+
 	KickPlayer(-2, self);
 
 	makevectors(self.v_angle);
 	source = self.origin + '0 0 16';
-	
+
 	traceline (source, source + v_forward*100, #TL_ANY_SOLID, self);
-	
+
 	if (trace_fraction == 1.0)
 		return;
-	
+
 	org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage)
 	{
 		trace_ent.axhitme = 1;
-		
+
 		SpawnBlood (org, 20);
 		deathmsg = #DMSG_MAUSER;
 		SuperDamageSound();
@@ -5705,16 +5701,16 @@ void() W_FireMauser =
 			sprint(trace_ent, #PRINT_HIGH, "Your nerves scream as poison floods your veins...\n");
 		}
 	}
-    else
-    {
-       if (trace_ent.classname == "force_field") //- OfN - Makes field explosion
-       {
-            FieldEvent(trace_ent,trace_endpos,trace_ent);
-            //FieldExplosion(trace_ent,trace_endpos,trace_ent);
-            //PutFieldWork(trace_ent);
-       }
-    }
-	
+	else
+	{
+	   if (trace_ent.classname == "force_field") //- OfN - Makes field explosion
+	   {
+			FieldEvent(trace_ent,trace_endpos,trace_ent);
+			//FieldExplosion(trace_ent,trace_endpos,trace_ent);
+			//PutFieldWork(trace_ent);
+	   }
+	}
+
 	newmis = spawn();
 	newmis.owner = self;
 	newmis.heat = 0;
@@ -5726,7 +5722,7 @@ void () MauserRecoilThink =
 {
 
 	self.owner.weaponframe = self.heat = self.heat + 1;
-	
+
 	if (self.heat >= 6)
 	{
 		self.owner.weaponframe = 0;
@@ -5748,9 +5744,9 @@ Plays sound if needed
 void() SuperDamageSound =
 {
 	if (self.tfstate & #TFSTATE_RELOADING)
-        return;
-    
-    if (self.super_damage_finished > time)
+		return;
+
+	if (self.super_damage_finished > time)
 	{
 		if (self.super_sound < time)
 		{
@@ -5758,8 +5754,8 @@ void() SuperDamageSound =
 			sound (self, #CHAN_BODY, "items/damage3.wav", 1, #ATTN_NORM);
 		}
 	}
-	
-    else if (self.aura == #AURA_POWER || self.#runes & #RUNE_TRIAD)
+
+	else if (self.aura == #AURA_POWER || self.#runes & #RUNE_TRIAD)
 	{
 		if (self.super_sound < time)
 		{
@@ -5767,7 +5763,7 @@ void() SuperDamageSound =
 			sound (self, #CHAN_BODY, "auras/aura2b.wav", 1, #ATTN_NORM);
 		}
 	}
-    else if (self.aura == #AURA_HASTE || self.#runes & #RUNE_SPEED)
+	else if (self.aura == #AURA_HASTE || self.#runes & #RUNE_SPEED)
 	{
 		if (self.super_sound < time)
 		{
@@ -5784,135 +5780,148 @@ void() SuperDamageSound =
 void() HIP_LaserTouch =
 {
 	local vector org;
-   local vector spot1,spot2;
-   local vector oldvel;
-   //local float mag;
-   //local float r;
+	local vector spot1,spot2;
+	local vector oldvel;
+	//local float mag;
+	//local float r;
 
-   self.owner = world;
-   self.cnt = self.cnt + 1;
-   if (pointcontents(self.origin) == #CONTENT_SKY)
-   {
-	  remove(self);
-	  return;
-   }
-   oldvel = normalize(self.neworigin);
-   spot1 = self.origin - (16*oldvel);
-   spot2 = self.origin + (16*oldvel);
-   traceline (spot1, spot2, #TL_ANY_SOLID, self);  // see through other monsters
-   self.origin = trace_endpos;
+	self.owner = world;
+	self.cnt = self.cnt + 1;
+	if (pointcontents(self.origin) == #CONTENT_SKY)
+	{
+		remove(self);
+		return;
+	}
+	oldvel = normalize(self.neworigin);
+	spot1 = self.origin - (16*oldvel);
+	spot2 = self.origin + (16*oldvel);
+	traceline (spot1, spot2, #TL_ANY_SOLID, self);  // see through other monsters
+	self.origin = trace_endpos;
 
-   org = self.origin;
+	org = self.origin;
 
-   GuerillaMineSweep(self.origin); // PZ - lazers weren't det'ing mines
+	GuerillaMineSweep(self.origin); // PZ - lazers weren't det'ing mines
 
-   if (other.health)
-   {
-	  //other.deathtype = "hiplaser";
-      if (self.owner == other)
-	     self.dmg = self.dmg / 2;
+	if (other.health)
+	{
+		//other.deathtype = "hiplaser";
+		if (self.owner == other)
+		{
+			self.dmg = self.dmg / 2;
 
-   
-      spawn_touchblood (self.dmg);
-      
-      //- OfN laser hurts monsters a lot
-      if (IsMonsterNonArmy(other)) self.dmg = self.dmg * 2;
+			spawn_touchblood (self.dmg);
+		}
 
-      //- scrags get rapped by the laser
-      if (other.classname == "monster_wizard") self.dmg = self.dmg * 2; // so.. this is *4
+		//- OfN laser hurts monsters a lot
+		if (IsMonsterNonArmy(other))
+			self.dmg = self.dmg * 2;
 
-      deathmsg = #DMSG_LASERCANNON;
-      TF_T_Damage (other, self, self.demon_one, self.dmg, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, #TF_TD_ELECTRICITY);
-   }
-   else if ((self.cnt >= 3) || (random()<0.15))
-   {
-       WriteByte (#MSG_MULTICAST, #SVC_TEMPENTITY);
-       WriteByte (#MSG_MULTICAST, #TE_GUNSHOT);
-       WriteByte (#MSG_MULTICAST, 3);
-       WriteCoord (#MSG_MULTICAST, org_x);
-       WriteCoord (#MSG_MULTICAST, org_y);
-       WriteCoord (#MSG_MULTICAST, org_z);
-       multicast (org, #MULTICAST_PHS);
-   }
-   else
-   {
-//      self.dmg = 0.66 * self.dmg;
-      self.dmg = 0.9 * self.dmg;
-//      self.speed = 0.95 * self.speed;
-      self.velocity = oldvel+(2*trace_plane_normal);
-      self.velocity = normalize(self.velocity);
-      self.velocity = self.speed * self.velocity;
-      self.neworigin = self.velocity;
-      if (self.flags & #FL_ONGROUND)
-	  self.flags = self.flags - #FL_ONGROUND;
-      //r = random();
-      //self.attack_finished = time + 7; //ofn - restart its life of 7 seconds
+		//- scrags get rapped by the laser
+		if (other.classname == "monster_wizard")
+		{
+			self.dmg = self.dmg * 2; // so.. this is *4
 
-      if (other.classname == "force_field") //- OfN - Makes field explosion
-        FieldEvent(other,self.origin,self);
-        //FieldExplosion(other,self.origin,self);
-      
-      sound (self, #CHAN_WEAPON, "weapons/laserric.wav", 1, #ATTN_STATIC);
-      return;
-   }
+			deathmsg = #DMSG_LASERCANNON;
+			TF_T_Damage (other, self, self.demon_one, self.dmg, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, #TF_TD_ELECTRICITY);
+		}
+	}
+	else if ((self.cnt >= 3) || (random()<0.15))
+	{
+		WriteByte (#MSG_MULTICAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_MULTICAST, #TE_GUNSHOT);
+		WriteByte (#MSG_MULTICAST, 3);
+		WriteCoord (#MSG_MULTICAST, org_x);
+		WriteCoord (#MSG_MULTICAST, org_y);
+		WriteCoord (#MSG_MULTICAST, org_z);
+		multicast (org, #MULTICAST_PHS);
+	}
+	else
+	{
+		//self.dmg = 0.66 * self.dmg;
+		self.dmg = 0.9 * self.dmg;
+		//self.speed = 0.95 * self.speed;
+		self.velocity = oldvel+(2*trace_plane_normal);
+		self.velocity = normalize(self.velocity);
+		self.velocity = self.speed * self.velocity;
+		self.neworigin = self.velocity;
+		if (self.flags & #FL_ONGROUND)
+		{
+			self.flags = self.flags - #FL_ONGROUND;
+			//r = random();
+			//self.attack_finished = time + 7; //ofn - restart its life of 7 seconds
+		}
 
-   if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-        FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+		if (other.classname == "force_field") //- OfN - Makes field explosion
+		{
+			FieldEvent(other,self.origin,self);
+			//FieldExplosion(other,self.origin,self);
 
-   sound (self, #CHAN_WEAPON, "enforcer/enfstop.wav", 1, #ATTN_STATIC);
-   dremove(self);
+			sound (self, #CHAN_WEAPON, "weapons/laserric.wav", 1, #ATTN_STATIC);
+			return;
+		}
+	}
 
+	if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+	{
+		FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+
+		sound (self, #CHAN_WEAPON, "enforcer/enfstop.wav", 1, #ATTN_STATIC);
+		dremove(self);
+	}
 };
+
 void() HIP_LaserThink =
 {
-   //local float delta; //unused?
+	//local float delta; //unused?
 
-   if (time>self.attack_finished)
-   {
-      remove(self);
-      return;
-   }
-   if (self.flags & #FL_ONGROUND)
-      self.flags = self.flags - #FL_ONGROUND;
-   self.velocity = self.neworigin;
-   self.angles = vectoangles(self.velocity);
-   self.nextthink = time+0.15;
+	if (time > self.attack_finished)
+	{
+		remove(self);
+		return;
+	}
+	if (self.flags & #FL_ONGROUND)
+	{
+		self.flags = self.flags - #FL_ONGROUND;
+		self.velocity = self.neworigin;
+		self.angles = vectoangles(self.velocity);
+		self.nextthink = time+0.15;
+	}
 };
 
 
 void(vector org, vector vec, float light) HIP_LaunchLaser =
 {
-//   sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);
-   sound (self ,#CHAN_WEAPON, "weapons/laserg.wav", 1, #ATTN_NORM);
+	//sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);
+	sound (self ,#CHAN_WEAPON, "weapons/laserg.wav", 1, #ATTN_NORM);
 
-   vec = normalize(vec);
+	vec = normalize(vec);
 
 	newmis = spawn();
-   newmis.owner = self;
-   newmis.classname = "hiplaser";
-   newmis.demon_one = self; // was "lastvictim" field of hipnotic // OfN needed because .owner is removed later 
-   newmis.movetype = #MOVETYPE_FLYMISSILE;
-   newmis.solid = #SOLID_BBOX;
-   //if (light)
-   //   newmis.effects = EF_DIMLIGHT;
+	newmis.owner = self;
+	newmis.classname = "hiplaser";
+	newmis.demon_one = self; // was "lastvictim" field of hipnotic // OfN needed because .owner is removed later
+	newmis.movetype = #MOVETYPE_FLYMISSILE;
+	newmis.solid = #SOLID_BBOX;
+	//if (light)
+		//newmis.effects = EF_DIMLIGHT;
 
-   setmodel (newmis, "progs/lasrspik.mdl");
+	setmodel (newmis, "progs/lasrspik.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');
 
 	setorigin (newmis, org);
 
-   newmis.speed = 1000;
-   newmis.dmg = #LASER_CANNON_DMG;
-   newmis.velocity = vec * newmis.speed;
-   newmis.neworigin = newmis.velocity; // was last_velocity field on hypnotic source code
-   newmis.angles = vectoangles(newmis.velocity);
-   newmis.avelocity = '0 0 400';
+	newmis.speed = 1000;
+	newmis.dmg = #LASER_CANNON_DMG;
+	newmis.velocity = vec * newmis.speed;
+	newmis.neworigin = newmis.velocity; // was last_velocity field on hypnotic source code
+	newmis.angles = vectoangles(newmis.velocity);
+	newmis.avelocity = '0 0 400';
 
-   newmis.nextthink = time;
-   newmis.attack_finished = time + 3.5; //was 3.5//OfN- they last for 7 seconds now
-   newmis.think = HIP_LaserThink;
-   newmis.touch = HIP_LaserTouch;
-   newmis.count = 0;
+	newmis.nextthink = time;
+	newmis.attack_finished = time + 3.5; //was 3.5//OfN- they last for 7 seconds now
+	newmis.think = HIP_LaserThink;
+	newmis.touch = HIP_LaserTouch;
+	newmis.count = 0;
 
 };
 
@@ -5923,62 +5932,63 @@ HIP_FireLaser
 =================
 */
 void(float stat) HIP_FireLaser =
-   {
+{
 	local vector org;
-   local vector dir;
-   local vector out;
-   local float ofs;
-   local float aofs;
+	local vector dir;
+	local vector out;
+	local float ofs;
+	local float aofs;
 
-   if (!self.button0)
-   {
-      player_run ();
-      return;
-   }
-   if (self.ammo_cells < 1)
-   {
+	if (!self.button0)
+	{
+		player_run ();
+		return;
+	}
+	if (self.ammo_cells < 1)
+	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
 		return;
-   }
+	}
 
-   SuperDamageSound();
-   muzzleflash();
-   makevectors (self.v_angle);
+	SuperDamageSound();
+	muzzleflash();
+	makevectors (self.v_angle);
 
-   ofs = 6;
-   out = v_forward;
-   out_z = 0;
-   out = normalize(out);
-   org = self.origin + ((12-ofs) * v_up) + (12*out);
-//   org = self.origin + (1*v_forward);
-   dir = aim (self, 1000);
-   aofs = ofs * 0.707;
-   if (stat == 0)
-   {
-      self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-      //org = org + (aofs*v_right);
-      org = org - (aofs*v_up);
-      HIP_LaunchLaser(org, dir, 0);
-      //org = org - (2*aofs*v_right);
-      //HIP_LaunchLaser(org, dir, 0);
-   }
-   else if (stat == 1)
-   {
-      self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-      org = org + (ofs*v_up);
-      //if (random()<0.1)
-	// {
-	// HIP_LaunchLaser(org, dir, 1);
-	// newmis.dmg = 25;
-	// }
-      //else
-	  HIP_LaunchLaser(org, dir, 0);
+	ofs = 6;
+	out = v_forward;
+	out_z = 0;
+	out = normalize(out);
+	org = self.origin + ((12-ofs) * v_up) + (12*out);
+	//org = self.origin + (1*v_forward);
+	dir = aim (self, 1000);
+	aofs = ofs * 0.707;
+	if (stat == 0)
+	{
+		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+		//org = org + (aofs*v_right);
+		org = org - (aofs*v_up);
+		HIP_LaunchLaser(org, dir, 0);
+		//org = org - (2*aofs*v_right);
+		//HIP_LaunchLaser(org, dir, 0);
+	}
+	else if (stat == 1)
+	{
+		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+		org = org + (ofs*v_up);
+		//if (random()<0.1)
+		//{
+			//HIP_LaunchLaser(org, dir, 1);
+			//newmis.dmg = 25;
+		//}
+		//else
+		HIP_LaunchLaser(org, dir, 0);
 	}
 	msg_entity = self;
 	WriteByte (#MSG_ONE, #SVC_SMALLKICK);
 
-    self.reload_laser_cannon = self.reload_laser_cannon + 1;
+	self.reload_laser_cannon = self.reload_laser_cannon + 1;
 
-	if (CheckForReload() == #TRUE) return;
+	if (CheckForReload() == #TRUE)
+		return;
 };
