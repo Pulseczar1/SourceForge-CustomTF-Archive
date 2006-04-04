@@ -1,5 +1,5 @@
 #ifdef FTEQCC
-#pragma PROGS_DAT "../qwprogs.dat"
+#pragma PROGS_DAT "../qwprogs.tst.dat"
 //#pragma target FTE
 #endif
 //#pragma PROGS_SRC "progs.src"

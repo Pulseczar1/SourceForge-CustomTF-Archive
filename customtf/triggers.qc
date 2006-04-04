@@ -1,4 +1,11 @@
-//WK
+/*
+==============================================================================
+
+Triggers.QC
+
+==============================================================================
+*/
+
 float(entity tester) IsBuilding;
 void(entity foo,float bar) makeImmune;
 
@@ -10,10 +17,8 @@ void() trigger_reactivate =
 	self.solid = #SOLID_TRIGGER;
 };
 
-//=============================================================================
-
-#define SPAWNFLAG_NOMESSAGE	1 
-#define SPAWNFLAG_NOTOUCH	1 
+#define SPAWNFLAG_NOMESSAGE	1
+#define SPAWNFLAG_NOTOUCH	1
 
 // the wait time has passed, so set back up for another activation
 void() multi_wait =
@@ -52,10 +57,10 @@ void() multi_trigger =
 	self.takedamage = #DAMAGE_NO;
 
 	activator = self.enemy;
-	
+
 	SUB_UseTargets();
 
-	if (self.wait > 0)	
+	if (self.wait > 0)
 	{
 		self.think = multi_wait;
 		self.nextthink = time + self.wait;
@@ -85,17 +90,17 @@ void() multi_touch =
 {
 	local entity te;
 
-    if (other.classname != "player")
+	if (other.classname != "player")
 		return;
 
-    // OfN - Dont let triggers go for invalid players
-    if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
-        return;
-    if (other.playerclass == #PC_UNDEFINED) // skip observers
-        return;
-    if (other.health <= 0) // dead players out
-        return;
-    // Teamkillers
+	// OfN - Dont let triggers go for invalid players
+	if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
+		return;
+	if (other.playerclass == #PC_UNDEFINED) // skip observers
+		return;
+	if (other.health <= 0) // dead players out
+		return;
+	// Teamkillers
 	if (other.penance_time >= time)
 		return;
 
@@ -111,7 +116,7 @@ void() multi_touch =
 
 		return;
 	}
-	
+
 // if the trigger has an angles field, check player's facing direction
 	if (self.movedir != '0 0 0')
 	{
@@ -119,7 +124,7 @@ void() multi_touch =
 		if (v_forward * self.movedir < 0)
 			return;		// not facing the right way
 	}
-	
+
 	self.enemy = other;
 	multi_trigger ();
 };
@@ -160,7 +165,7 @@ void() trigger_multiple =
 		precache_sound ("misc/trigger1.wav");
 		self.noise = "misc/trigger1.wav";
 	}
-	
+
 	if (!self.wait)
 		self.wait = 0.2;
 	self.use = multi_use;
@@ -254,7 +259,7 @@ void() trigger_secret =
 		self.message = "You found a secret area!";
 	if (!self.sounds)
 		self.sounds = 1;
-	
+
 	if (self.sounds == 1)
 	{
 		precache_sound ("misc/secret.wav");
@@ -279,7 +284,7 @@ void() counter_use =
 	self.count = self.count - 1;
 	if (self.count < 0)
 		return;
-	
+
 	if (self.count != 0)
 	{
 		if (activator.classname == "player"
@@ -296,7 +301,7 @@ void() counter_use =
 		}
 		return;
 	}
-	
+
 	if (activator.classname == "player"
 	&& (self.spawnflags & #SPAWNFLAG_NOMESSAGE) == 0)
 		CenterPrint(activator, "Sequence completed!");
@@ -335,8 +340,8 @@ TELEPORT TRIGGERS
 ==============================================================================
 */
 
-#define PLAYER_ONLY	1 
-#define SILENT	2 
+#define PLAYER_ONLY	1
+#define SILENT	2
 
 void() play_teleport =
 {
@@ -384,9 +389,9 @@ void() tdeath_touch =
 	if (other == self.owner)
 		return;
 
-    //- OfN Hack to avoid turretized teles to be telefragged when beeing used
-    if (other.classname == "building_teleporter" && other.tf_items & #NIT_TURRET)
-        return;
+	//- OfN Hack to avoid turretized teles to be telefragged when beeing used
+	if (other.classname == "building_teleporter" && other.tf_items & #NIT_TURRET)
+		return;
 
 // frag anyone who teleports in on top of an invincible player
 	if (other.classname == "player")
@@ -395,12 +400,12 @@ void() tdeath_touch =
 			self.classname = "teledeath2";
 
 		if (self.owner.classname != "player")
-		{	
+		{
 			T_Damage (self.owner, self, self, 5000);
 			return;
 		}
 	}
-	
+
 	if (other.health)
 	{
 		T_Damage(other, self, self, 5000);
@@ -423,7 +428,7 @@ void(vector org, entity death_owner) spawn_tdeath =
 	death.nextthink = time + 0.2;
 	death.think = SUB_Remove;
 	death.owner = death_owner;
-	
+
 	force_retouch = 2;		// make sure even still objects get hit
 };
 
@@ -471,7 +476,7 @@ void() teleport_touch =
 	t = find (world, targetname, self.target);
 	if (!t)
 		objerror ("couldn't find target");
-		
+
 // spawn a tfog flash in front of the destination
 	makevectors (t.mangle);
 	org = t.origin + 32 * v_forward;
@@ -559,7 +564,7 @@ void() trigger_teleport =
 
 	InitTrigger ();
 	self.touch = teleport_touch;
-	// find the destination 
+	// find the destination
 	if (!self.target)
 		objerror ("no target");
 	self.use = teleport_use;
@@ -599,7 +604,7 @@ void() trigger_skill_touch =
 
 		return;
 	}
-	
+
 	cvar_set ("skill", self.message);
 };
 
@@ -752,7 +757,7 @@ void() trigger_hurt =
 
 //============================================================================
 
-#define PUSH_ONCE	1 
+#define PUSH_ONCE	1
 
 void() trigger_push_touch =
 {
@@ -820,10 +825,10 @@ void() trigger_monsterjump_touch =
 // set XY even if not on ground, so the jump will clear lips
 	other.velocity_x = self.movedir_x * self.speed;
 	other.velocity_y = self.movedir_y * self.speed;
-	
+
 	if ( !(other.flags & #FL_ONGROUND) )
 		return;
-	
+
 	other.flags = other.flags - #FL_ONGROUND;
 
 	other.velocity_z = self.height;
@@ -851,5 +856,3 @@ void() trigger_monsterjump =
 	InitTrigger ();
 	self.touch = trigger_monsterjump_touch;
 };
-
-

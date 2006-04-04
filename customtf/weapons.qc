@@ -3,8 +3,6 @@
 
 WEAPONS.QC
 Custom TeamFortress v3.1
-	(c) TeamFortress Software Pty Ltd	29/2/97
-	(c) William Kerney			5/21/00
 
 All the functions for firing all the weapons, holds
 all new precache() functions, finding best weapons,
@@ -382,31 +380,34 @@ void() W_FireAxe =
 				makevectors(self.angles);
 
 			// Backstab
-			if (crossproduct(def,v_forward) > 0)
+			if (trace_ent.classname == "player" && trace_ent.invincible_finished <= time)
 			{
-				deathmsg = #DMSG_BACKSTAB;
-				oself = self;
-				self = trace_ent;
-				ThrowGib("progs/gib1.mdl", -50, #TRUE,0,#GIB1_KGS, #FALSE);
-				ThrowGib("progs/gib2.mdl", 10, #TRUE,0,#GIB2_KGS, #FALSE);
-				ThrowGib("progs/gib3.mdl", 50, #TRUE,0,#GIB3_KGS, #FALSE);
-				self = oself;
-				//ThrowGib ("progs/gib2.mdl", 25); //-added
-
-				//WK 120 & no IGNOREARMOR
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				if (crossproduct(def,v_forward) > 0)
+				{
+					deathmsg = #DMSG_BACKSTAB;
+					oself = self;
+					self = trace_ent;
+					ThrowGib("progs/gib1.mdl", -50, #TRUE,0,#GIB1_KGS, #FALSE);
+					ThrowGib("progs/gib2.mdl", 10, #TRUE,0,#GIB2_KGS, #FALSE);
+					ThrowGib("progs/gib3.mdl", 50, #TRUE,0,#GIB3_KGS, #FALSE);
+					self = oself;
+					//ThrowGib ("progs/gib2.mdl", 25); //-added
+	
+					//WK 120 & no IGNOREARMOR
+					if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+						TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
+					else
+						TF_T_Damage (trace_ent, self, self, 200, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				}
 				else
-					TF_T_Damage (trace_ent, self, self, 200, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
-			}
-			else
-			{
-				deathmsg = #DMSG_AXE;
-				//WK 40
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					TF_T_Damage (trace_ent, self, self, 50, #TF_TD_NOTTEAM, #TF_TD_OTHER);
-				else
-					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				{
+					deathmsg = #DMSG_AXE;
+					//WK 40
+					if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+						TF_T_Damage (trace_ent, self, self, 50, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+					else
+						TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				}
 			}
 		}
 	}
@@ -684,7 +685,7 @@ void(float inAuto) W_FireMedikit =
 				{
 					stuffcmd(trace_ent ,"v_idlescale 0\n");
 					SpawnBlood(org, 20);
-					sprint(trace_ent, #PRINT_HIGH, "you have been healed of your concussion\n");
+					sprint(trace_ent, #PRINT_HIGH, "You have been healed of your concussion\n");
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
 					if (!Teammate(self.team_no,te.team_no))
@@ -712,7 +713,7 @@ void(float inAuto) W_FireMedikit =
 						trace_ent.tfstate = trace_ent.tfstate - (trace_ent.tfstate & #TFSTATE_HALLUCINATING);
 
 						SpawnBlood(org, 20);
-						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your hallucinations\n");
+						sprint(trace_ent, #PRINT_HIGH, "You have been healed of your hallucinations\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						if (!Teammate(self.team_no,te.team_no))
@@ -746,7 +747,7 @@ void(float inAuto) W_FireMedikit =
 						TeamFortress_SetSpeed(trace_ent);
 
 						SpawnBlood(org, 20);
-						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your tranquilisation\n");
+						sprint(trace_ent, #PRINT_HIGH, "You have been healed of your tranquilisation\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						if (!Teammate(self.team_no,te.team_no))
@@ -3342,7 +3343,7 @@ void() W_Reload_shotgun =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
 	self.owner.weaponmodel = "progs/v_shot.mdl";
-	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	sprint(self.owner, #PRINT_LOW, "Finished reloading\n");
 
 	dremove(self);
 
@@ -3355,7 +3356,7 @@ void() W_Reload_light_assault =
 	self.owner.weaponmodel = "progs/v_nail2.mdl";
 	//self.owner.weaponmodel = "progs/v_chain.mdl";
 
-	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	sprint(self.owner, #PRINT_LOW, "Finished reloading\n");
 	self.owner.StatusRefreshTime = time + 0.1;
 
 	dremove(self);
@@ -3365,7 +3366,7 @@ void() W_Reload_super_shotgun =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
 	self.owner.weaponmodel = "progs/v_shot2.mdl";
-	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	sprint(self.owner, #PRINT_LOW, "Finished reloading\n");
 	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
@@ -3375,7 +3376,7 @@ void() W_Reload_grenade_launcher =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
 	self.owner.weaponmodel = "progs/v_rock.mdl";
-	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	sprint(self.owner, #PRINT_LOW, "Finished reloading\n");
 	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
@@ -3385,7 +3386,7 @@ void() W_Reload_rocket_launcher =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
 	self.owner.weaponmodel = "progs/v_rock2.mdl";
-	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	sprint(self.owner, #PRINT_LOW, "Finished reloading\n");
 	dremove(self);
 
 	self.owner.StatusRefreshTime = time + 0.1;
@@ -3425,7 +3426,7 @@ float() CheckForReload =
 				if (self.ammo_shells < #RE_SHOTGUN_EX)
 					self.reload_shotgun = #RE_SHOTGUN_EX - self.ammo_shells;
 
-				sprint (self, #PRINT_HIGH, "reloading...\n");
+				sprint (self, #PRINT_HIGH, "Reloading...\n");
 				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 				tWeapon = spawn();
 				tWeapon.owner = self;
@@ -3449,7 +3450,7 @@ float() CheckForReload =
 				if (self.ammo_shells < #RE_SUPER_SHOTGUN_EX)
 					self.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX - self.ammo_shells;
 
-				sprint (self, #PRINT_HIGH, "reloading...\n");
+				sprint (self, #PRINT_HIGH, "Reloading...\n");
 				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 				tWeapon = spawn();
 				tWeapon.owner = self;
@@ -3471,7 +3472,7 @@ float() CheckForReload =
 				if (self.ammo_shells < #RE_LIGHT_ASSAULT_EX)
 					self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_shells;
 
-				sprint (self, #PRINT_HIGH, "reloading...\n");
+				sprint (self, #PRINT_HIGH, "Reloading...\n");
 				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 				tWeapon = spawn();
 				tWeapon.owner = self;
@@ -3515,7 +3516,7 @@ float() CheckForReload =
 				if (self.ammo_rockets < #RE_GRENADE_LAUNCHER_EX)
 					self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER_EX - self.ammo_rockets;
 
-				sprint (self, #PRINT_HIGH, "reloading...\n");
+				sprint (self, #PRINT_HIGH, "Reloading...\n");
 				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 				tWeapon = spawn();
 				tWeapon.owner = self;
@@ -3537,7 +3538,7 @@ float() CheckForReload =
 				if (self.ammo_rockets < #RE_ROCKET_LAUNCHER_EX)
 					self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER_EX - self.ammo_rockets;
 
-				sprint (self, #PRINT_HIGH, "reloading...\n");
+				sprint (self, #PRINT_HIGH, "Reloading...\n");
 				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 				tWeapon = spawn();
 				tWeapon.owner = self;
@@ -3571,7 +3572,7 @@ float() CheckForReload =
 			if (self.ammo_shells < #RE_SHOTGUN)
 				self.reload_shotgun = #RE_SHOTGUN - self.ammo_shells;
 
-			sprint (self, #PRINT_HIGH, "reloading...\n");
+			sprint (self, #PRINT_HIGH, "Reloading...\n");
 			self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 			tWeapon = spawn();
 			tWeapon.owner = self;
@@ -3595,7 +3596,7 @@ float() CheckForReload =
 			if (self.ammo_shells < #RE_SUPER_SHOTGUN)
 				self.reload_super_shotgun = #RE_SUPER_SHOTGUN - self.ammo_shells;
 
-			sprint (self, #PRINT_HIGH, "reloading...\n");
+			sprint (self, #PRINT_HIGH, "Reloading...\n");
 			self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 			tWeapon = spawn();
 			tWeapon.owner = self;
@@ -3617,7 +3618,7 @@ float() CheckForReload =
 			if (self.ammo_shells < #RE_LIGHT_ASSAULT)
 				self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_shells;
 
-			sprint (self, #PRINT_HIGH, "reloading...\n");
+			sprint (self, #PRINT_HIGH, "Reloading...\n");
 			self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 			tWeapon = spawn();
 			tWeapon.owner = self;
@@ -3661,7 +3662,7 @@ float() CheckForReload =
 			if (self.ammo_rockets < #RE_GRENADE_LAUNCHER)
 				self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER - self.ammo_rockets;
 
-			sprint (self, #PRINT_HIGH, "reloading...\n");
+			sprint (self, #PRINT_HIGH, "Reloading...\n");
 			self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 			tWeapon = spawn();
 			tWeapon.owner = self;
@@ -3683,7 +3684,7 @@ float() CheckForReload =
 			if (self.ammo_rockets < #RE_ROCKET_LAUNCHER)
 				self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER - self.ammo_rockets;
 
-			sprint (self, #PRINT_HIGH, "reloading...\n");
+			sprint (self, #PRINT_HIGH, "Reloading...\n");
 		self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
 			tWeapon = spawn();
 			tWeapon.owner = self;
@@ -4794,7 +4795,7 @@ void() QuadCheat =
 	self.super_time = 1;
 	self.super_damage_finished = time + 30;
 	self.items = self.items | #IT_QUAD;
-	RPrint ("quad cheat\n");
+	RPrint ("Quad cheat\n");
 };
 #endif
 

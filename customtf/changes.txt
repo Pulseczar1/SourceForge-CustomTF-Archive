@@ -40,6 +40,7 @@ Bug Fixes:
 		- They can no longer be disarmed or have their arms broken with Judoka.
 		- They can no longer be hooked onto with the grappling hook.
 		- Antigrav Grenade -Pulseczar
+		- Warlock can no longer spawn meat when backstabbing - RJ
 
 - Grappling Hook
 	The player used to slowly slide to the floor when building or hacking while on the hook. This has been fixed, which could pose a small problem if they are in the middle of the air when they build or hack. -Randomer
@@ -126,9 +127,11 @@ Changes/Balance:
 		- Currently at 25% of the damage of before (still looking for a sweet spot value)
 
 	Increase range of sniper rifle
-    		- Now should be the same range as spray rifle
+			- Now should be the same range as spray rifle
 
-   If you are a theif, looking down the scope reveals you -phrosty
+	If you are a theif, looking down the scope reveals you -phrosty
+
+	Added model geometry (somewhat) checking to sniper rifle fire and sniper dot. You can now aim between players legs and over their shoulders and not gib them, but it's not too accurate. REQUIRES FTE or any QW engine supporting DP_QC_TRACE_OVETYPE_HITMODEL - avirox
 
 - Incendiary Cannon & Napalm Grenades
 	Fire from the incendiary cannon and napalm grenades no longer go through walls. -Randomer
@@ -180,8 +183,12 @@ Changes/Balance:
 
 - MegaTF
 	Removed the 'lay' lameness by the megatf haters -RJ
-	Updated the curse server to an Amnesia megatf server address in the source (theres a key for it as
-well that most probably don't even know about)
+	Updated the curse server to an Amnesia megatf server address in the source (theres a key for it as well that most probably don't even know about)
+	Added mtf rocket speed (900 -> 1350)
+
+- Prematch
+	Now permits reloading and grenades (hey, why not?) -RJ
+
 
 ========================================================================
 Known Issues:
@@ -209,32 +216,32 @@ _. berzerker doesn't damage invulnerable people
 _. mines can be killed by explosions on the other side of walls?
 
 _. gives frags for dismantling enemy fields? but not for destroying them
-    -also, player loses frag when dies to iced field dismantle, and owner gets no frag (seems wrong)
+	-also, player loses frag when dies to iced field dismantle, and owner gets no frag (seems wrong)
 
 _. teammates turreting friendly builds or turning sents?
 
 _. sliding down while hacking on grapple (bug) (PZ - didn't rando fix this?)
-    -I've worked quite a bit on this one before to no avail
-    -also noticed that if you hold jump while grappled to ceiling, you'll slide down (could be related)
+	-I've worked quite a bit on this one before to no avail
+	-also noticed that if you hold jump while grappled to ceiling, you'll slide down (could be related)
 
 _. disable underwater teslas, since they don't make sense?
-    -or maybe make them do some sort of weaker radius damage when underwater
-     -and in some fashion that doesn't destroy/disable the tesla
-    -or make it so that when tesla fires underwater, it explodes and does a shitload of damage to anyone
-     anywhere near close to it in the water, like the lightning gun, and have amp, volts, and power affect it
-     the same way it normally would
+	-or maybe make them do some sort of weaker radius damage when underwater
+	 -and in some fashion that doesn't destroy/disable the tesla
+	-or make it so that when tesla fires underwater, it explodes and does a shitload of damage to anyone
+	 anywhere near close to it in the water, like the lightning gun, and have amp, volts, and power affect it
+	 the same way it normally would
 
 _. casting auras is very hard in crowds (rl3001)
-    -improved casting targetter?
+	-improved casting targetter?
 
 _. "Also, I want that stupid bug fixed where you can't throw an already primed grenade when someone judos you." (randomer)
 
 _. judoing back your own weapon causes you to lose it
-    -and gives enemy a free weapon that he keeps until he re-classes
-    -or something like that
+	-and gives enemy a free weapon that he keeps until he re-classes
+	-or something like that
 
 _. vote system sometimes shows more votes required than what truly is
-    -also does weird mess like requiring 3 out of 2 people's votes to kick someone
+	-also does weird mess like requiring 3 out of 2 people's votes to kick someone
 
 _. sometimes if you drop the flag with 'dropitems' it becomes invisible?
 
@@ -253,66 +260,63 @@ _. spec scanner/id is not working in FTE server
 ### especially need people's input on these - just ideas right now ###
 
 _. make sentries as customizable as teslas?
-    -mmmm.. flamethrower sent... (when target is close enough, it fires flame)
-    -Drakis's mobile sent?
+	-mmmm.. flamethrower sent... (when target is close enough, it fires flame)
+	-Drakis's mobile sent?
 
-_. stop fire through walls? krac through walls? conc through walls?
+_. stop krac through walls? conc through walls?
 
 _. make it so that grapples don't keep flying (until they hit something) after the shoot button is released?
 
 _. make aspect resist push from fist a lot more or completely?
 
-_. 'lay' punishment
-    -why is that there? it's as if it has anti-Mega origins, yet CuTF uses a bit of MegaTF code, itself
-
 _. add changeteam and changeclass commands?
 
 _. nerf judo? (randomer)
-    -can't be holding a weapon or primed nade while judoing
-     -create a 'non-existing' weapon that you get with judo (lol), that you have to be 'using' when you want to judo
-      -or just make the person use the axe?
-       -or make a new weapon that replaces judoer's axe, like fists?
+	-can't be holding a weapon or primed nade while judoing
+	 -create a 'non-existing' weapon that you get with judo (lol), that you have to be 'using' when you want to judo
+	  -or just make the person use the axe?
+	   -or make a new weapon that replaces judoer's axe, like fists?
 
 _. nerf OTR? (randomer)
-    -make it so that OTR only increases damage on enemies with kev
-     -where OTR functions as some sort of armor-piercing device
+	-make it so that OTR only increases damage on enemies with kev
+	 -where OTR functions as some sort of armor-piercing device
 
 _. someone to finish Gremlin (says DP) http://www.customtf.com/forums/viewtopic.php?t=199
-    -Gremlin just has lots of bugs?
-     -Gremlin sometimes kills his owner or teammates
-     -player keeps weapon when Gremlin steals
-     -should Gremlin do some damage when he steals your weapon?
-     -"The gremlin can steal a laser cannon, but cannot fire it, so it only gets stolen for a fraction of a second."
-     -"When the gremlin steals te grenade launcher, he can't fire grenades, or attack any other way, so
-       he is useless when it happens."
-     -"The gremlin retains the physics of the regular quake monsters. This means when he lands on
-       something that isn't solid floor, he gets stuck for a sec."
-     -Gremlin keeps weapon after player dies
-     -Gremlin moves very slowly (like in slow-motion)
-     -Gremlin will jump in the water really easily (and the void?)
-     -"There is a strange bug where the gremlin removes all of your hp, you are unable to do anything but
-       fire (you are technically dead), but the enemy can still actually kill you, and you can kill yourself
-       with grenades or weapons."
-     -"He also has a weird jumping bug, where he doesn't attack, he only jumps at you. He is useless at this time."
+	-Gremlin just has lots of bugs?
+	 -Gremlin sometimes kills his owner or teammates
+	 -player keeps weapon when Gremlin steals
+	 -should Gremlin do some damage when he steals your weapon?
+	 -"The gremlin can steal a laser cannon, but cannot fire it, so it only gets stolen for a fraction of a second."
+	 -"When the gremlin steals te grenade launcher, he can't fire grenades, or attack any other way, so
+	   he is useless when it happens."
+	 -"The gremlin retains the physics of the regular quake monsters. This means when he lands on
+	   something that isn't solid floor, he gets stuck for a sec."
+	 -Gremlin keeps weapon after player dies
+	 -Gremlin moves very slowly (like in slow-motion)
+	 -Gremlin will jump in the water really easily (and the void?)
+	 -"There is a strange bug where the gremlin removes all of your hp, you are unable to do anything but
+	   fire (you are technically dead), but the enemy can still actually kill you, and you can kill yourself
+	   with grenades or weapons."
+	 -"He also has a weird jumping bug, where he doesn't attack, he only jumps at you. He is useless at this time."
 
 _. is warlock finished? do heads function like they should?
-    -lol. if vore is put in.. here's a use for heads.. make vore throw them instead of that purple thing
-     -make the heads function about the same as the purple thing
-      -make heads face whatever direction they are flying like Doom lost souls
-       -how could the warlock heads tie into the vore throwing heads? anyone? ammo for vore? damage heads do?
-    -scrag and pirahna can't move up and down (rl3001)
-     -I believe I've seen scrags move up and down
-    -shambler can't come to me on simple and wide easy ramp. (rl3001)
-    -summons should be immune to medikit and disease. They're not of this world, you know. (rl3001)
-    -give warlocks back meat if summon bugs (rl3001)
+	-lol. if vore is put in.. here's a use for heads.. make vore throw them instead of that purple thing
+	 -make the heads function about the same as the purple thing
+	  -make heads face whatever direction they are flying like Doom lost souls
+	   -how could the warlock heads tie into the vore throwing heads? anyone? ammo for vore? damage heads do?
+	-scrag and pirahna can't move up and down (rl3001)
+	 -I believe I've seen scrags move up and down
+	-shambler can't come to me on simple and wide easy ramp. (rl3001)
+	-summons should be immune to medikit and disease. They're not of this world, you know. (rl3001)
+	-give warlocks back meat if summon bugs (rl3001)
 
 _. airfists.. a lot of people have problems with them (as in they are overpowered)
-    -what do you think?
-    -it needs reloads IE air canisters. and put in really small splash damage? (rl3001)
+	-what do you think?
+	-it needs reloads IE air canisters. and put in really small splash damage? (rl3001)
 
 _. kevlar
-    -should it protect the head?
-    -should snipers be able to wear it?
+	-should it protect the head?
+	-should snipers be able to wear it?
 
 _. make flamethrower also do less damage to builds?
 
@@ -320,14 +324,14 @@ _. should chap radius be limited to line-of-sight? (rl3001)
 
 _. AGR vote option
    (hmm, who might have it been that suggested this? I just can't remember...)
-    -should be simple to implement
-     -remove red's flag or something
-    -blue team needs to get something out of defending (X frags for successfully defending for Y minutes)
+	-should be simple to implement
+	 -remove red's flag or something
+	-blue team needs to get something out of defending (X frags for successfully defending for Y minutes)
 
 _. should body explosion vary explosive power, depending upon how much explosive ammo you are carrying? (Drakis)
 
 _. should airfist not move enemy disguised spies? (Melkor)
-    -this is so that spies aren't so easy to detect
+	-this is so that spies aren't so easy to detect
 
 _. allow spectators to 'manifest' like ghosts? where they become visible in free-cam mode as a disembodied head? (Drakis)
 
@@ -336,17 +340,17 @@ _. add a centerprint progression bar for hacking time? (The Twix King)
 _. be able to pick up pieces of buildings to use for metal or something? (like warlock and gibs) (Drakis)
 
 _. make a minimum number of players in game to enable capping (like, six? adjustable var)
-    -make it depend on map config (smaller maps should probably require less people to cap)
+	-make it depend on map config (smaller maps should probably require less people to cap)
 
 _. add vote to extend timelimit and/or fraglimit on the current map
 
 _. remove 'user' names
-    -if one joins with (or switches their name to) the name 'unnamed', 'player', or 'user-####', they are told
-     to change their name to anything else, and kicked
+	-if one joins with (or switches their name to) the name 'unnamed', 'player', or 'user-####', they are told
+	 to change their name to anything else, and kicked
 
 _. how about making a command in the game that "says" your health and armor to everyone rather than making it
    client-based? (major major major major)
-    -Mega has %A = returns armor and %H = returns health, for example
+	-Mega has %A = returns armor and %H = returns health, for example
 
 _. what about making the sniper dot sprite a flat model instead so that it can be shown flat up against the wall,
    rather than always facing the viewer as all sprites do? would a model of 1 unit thickness look right?

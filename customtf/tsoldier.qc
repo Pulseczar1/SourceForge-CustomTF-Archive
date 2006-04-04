@@ -1,10 +1,13 @@
-/*======================================================
-	TSOLDIER.QC
+/*
+==============================================================================
 
-	TeamFortress v2.5	 29/2/97
-========================================================
-Functions for the SOLDIER class and associated weaponry                          
-========================================================*/
+TSOLDIER.QC
+
+Functions for the SOLDIER class and associated weaponry
+
+==============================================================================
+*/
+
 // Functions outside this file
 
 // Functions inside this file
@@ -74,17 +77,17 @@ void() NailGrenadeLaunchNail =
 		self.angles_x = 0;
 		self.angles_z = 0;
 		makevectors(self.angles);
-	
-        #ifdef OLD_NAILGREN
-        deathmsg = #DMSG_GREN_NAIL;
+
+		#ifdef OLD_NAILGREN
+		deathmsg = #DMSG_GREN_NAIL;
 		launch_spike(self.origin, v_forward);
 		newmis.touch = spike_touch;
 		newmis.weapon = #DMSG_GREN_NAIL;
-        #else
-        if (random() < 0.33)
-            MuzzleFlash(self);
-        launch_directspike(self.origin, v_forward);
-        #endif
+		#else
+		if (random() < 0.33)
+			MuzzleFlash(self);
+		launch_directspike(self.origin, v_forward);
+		#endif
 
 		i = i + 1;
 	}
@@ -92,7 +95,7 @@ void() NailGrenadeLaunchNail =
 	self.playerclass = self.playerclass + 1;
 	self.nextthink = time + 0.1;
 
-	// Explode 
+	// Explode
 	if (self.playerclass > 50)
 	{
 		self.weapon = #DMSG_GREN_NAIL;

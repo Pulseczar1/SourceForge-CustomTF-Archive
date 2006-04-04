@@ -1,15 +1,23 @@
+/*
+==============================================================================
+
+Tinker.QC
+
+==============================================================================
+*/
+
 void() BadTinker =
 {
 	local float prob;
 	prob = random();
-        if (prob <= 0.6){ // Zilch
+		if (prob <= 0.6){ // Zilch
 		sprint(self,#PRINT_HIGH,"Nothing happened.\n");
 	}
-        else if (prob <= 0.8){ // Zowie!
+		else if (prob <= 0.8){ // Zowie!
 		TF_T_Damage(self.building, world, world, self.building.health+1, 0, 0);
 		sprint(self,#PRINT_HIGH,"The tesla blew up.\n");
 	}
-        else { // ZAP!
+		else { // ZAP!
 		self.building.tf_items = self.building.tf_items | #NIT_SECURITY_CAMERA; //Turns tesla against team.
 		self.building.health = 100; //WK Make it easy to kill
 		self.building.max_health = 100;
@@ -20,7 +28,7 @@ void() BadTinker =
 void () DoTinker =
 {
 		local float prob, thresh, enough;
-        //local entity te;
+		//local entity te;
 
 		if (self.building.has_sentry > 0) {
 			sprint(self,#PRINT_HIGH,"You have to fully upgrade before tinkering\n");
@@ -41,11 +49,11 @@ void () DoTinker =
 		// 4th up 75%
 
 		if (self.building.lip == 1)
-                        thresh = 0.25;
+						thresh = 0.25;
 		else if (self.building.lip <= 3)
-                        thresh = 0.5;
+						thresh = 0.5;
 		else
-                        thresh = 0.75;
+						thresh = 0.75;
 
 		if (random() <= thresh){ // Uh Oh!
 			BadTinker();
@@ -60,10 +68,10 @@ void () DoTinker =
 			sprint(self,#PRINT_HIGH,"Nothing happened.\n");
 		}
 		else if (prob <= 0.35){
-                        if (!(self.building.tf_items & #NIT_SCANNER)){
+						if (!(self.building.tf_items & #NIT_SCANNER)){
 				self.building.tf_items = (self.building.tf_items | #NIT_SCANNER);
 				sprint(self,#PRINT_HIGH,"The tesla gets a free improved targeter!\n");
-                        }
+						}
 			else{
 				Tesla_Add_Rand_Upgrade(self.building, self);
 			}
@@ -81,12 +89,12 @@ void () DoTinker =
 			Tesla_Add_Rand_Upgrade(self.building, self);
 		}
 		else if (prob <= 0.9){
-			self.building.max_health = self.building.max_health + 100;	
+			self.building.max_health = self.building.max_health + 100;
 			self.building.health = self.building.health + 100;
 			sprint(self,#PRINT_HIGH,"The tesla got more health.\n");
 		}
 		else if (prob <= 1){
-			self.building.maxammo_cells = self.building.maxammo_cells + 100;	
+			self.building.maxammo_cells = self.building.maxammo_cells + 100;
 			self.building.ammo_cells = self.building.ammo_cells + 100;
 			sprint(self,#PRINT_HIGH,"The tesla got more cells.\n");
 		}

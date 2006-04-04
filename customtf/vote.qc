@@ -1,61 +1,65 @@
-/*=======================================================//
-// Vote.QC - CustomTF 3.2.OfN             - 04/11/2002 - //
-// by Sergio FumaÒa Grunwaldt - OfteN [cp]               //
-=========================================================//
+/*
+==============================================================================
+
+Vote.QC
+CustomTF 3.2.OfN
+
  Voting system functions and stuff...
  (Requires PROZAC qwsv, uses special built-ins)
-=========================================================*/
+ (FTEWQ hack prevents some punishments from occuring)
+==============================================================================
+*/
 
 // Flag defines
 
 // vote entity types
-#define VOTE_PUNISH         0
-#define VOTE_NEXTMAP        1
-#define VOTE_SWITCHMAP      2
+#define VOTE_PUNISH 		0
+#define VOTE_NEXTMAP		1
+#define VOTE_SWITCHMAP		2
 
 // punish types
-#define PUNISH_CURSE        0
-#define PUNISH_KICK         1
-#define PUNISH_BAN          2
-#define PUNISH_MUTE         3
-#define PUNISH_CUFF         4
+#define PUNISH_CURSE		0
+#define PUNISH_KICK 		1
+#define PUNISH_BAN			2
+#define PUNISH_MUTE 		3
+#define PUNISH_CUFF 		4
 
 // player voting status
-#define VOTED_JUSTJOINED    0
-#define VOTED_READY         1
-#define VOTED_YES           2
-#define VOTED_NO            3
+#define VOTED_JUSTJOINED	0
+#define VOTED_READY 		1
+#define VOTED_YES			2
+#define VOTED_NO			3
 
 // Settings defines
 
-#define VOTE_TIME           40
-#define VOTE_TIME_REFRESH   25
-#define VOTE_DELAY          240 // seconds to wait until another vote from same user is allowed
+#define VOTE_TIME			40
+#define VOTE_TIME_REFRESH	25
+#define VOTE_DELAY			240 // seconds to wait until another vote from same user is allowed
 
 // Number of votes required for each action
 
-#define VOTESNEEDED_CURSE   4
-#define VOTESNEEDED_MUTE    4
-#define VOTESNEEDED_KICK    5
-#define VOTESNEEDED_CUFF    5
-#define VOTESNEEDED_BAN     6
-#define VOTESNEEDED_MAP     6
+#define VOTESNEEDED_CURSE	4
+#define VOTESNEEDED_MUTE	4
+#define VOTESNEEDED_KICK	5
+#define VOTESNEEDED_CUFF	5
+#define VOTESNEEDED_BAN 	6
+#define VOTESNEEDED_MAP 	6
 #define VOTESNEEDED_NEXTMAP 4
 
-#define NEEDEDVOTES_NEXTMAP_FACTOR  0.51 // 0.50
-#define NEEDEDVOTES_MAP_FACTOR      0.51 // 0.60  // 0.65
+#define NEEDEDVOTES_NEXTMAP_FACTOR	0.51 // 0.50
+#define NEEDEDVOTES_MAP_FACTOR		0.51 // 0.60  // 0.65
 
-//#define BAN_VOTED_TIME        0 // permanent ban
-#define BAN_VOTED_TIME       60 // 60 minutes
-#define MUTE_VOTED_TIME      30
-#define CUFF_VOTED_TIME      15
+//#define BAN_VOTED_TIME		0 // permanent ban
+#define BAN_VOTED_TIME		 60 // 60 minutes
+#define MUTE_VOTED_TIME 	 30
+#define CUFF_VOTED_TIME 	 15
 
 #ifdef VOTING_TEST
-#define VOTE_DELAY          0 // for testing
+#define VOTE_DELAY			0 // for testing
 #endif
 
 #define VOTESLEEP_RATECHECK   5 // Rate in seconds of the think for sleeping votes
-#define VOTESLEEP_DURATION   10 // Maximum minutes for a vote to be sleeping before getting discarded
+#define VOTESLEEP_DURATION	 10 // Maximum minutes for a vote to be sleeping before getting discarded
 
 /*===============================================================================================
 
@@ -70,28 +74,28 @@ current_voteent   - Points to current vote entity, if any, if not it points to w
 For player entity:
 ------------------
 
-.g_a              - Contains the type of punishment selected on menu
-.goal_no          - Controls delay between same client votes
-.group_no         - Flag determines if we are choosing next map, or switch to modes
-.goal_state       - Determines what page of maps to be shown for voting
-.owned_by         - Contains #VOTED_XXXX, yes, no or NOT_VOTED
+.g_a			  - Contains the type of punishment selected on menu
+.goal_no		  - Controls delay between same client votes
+.group_no		  - Flag determines if we are choosing next map, or switch to modes
+.goal_state 	  - Determines what page of maps to be shown for voting
+.owned_by		  - Contains #VOTED_XXXX, yes, no or NOT_VOTED
 
 For vote entity:
 ----------------
 
-.has_sentry          - Type of vote
-.g_a                 - Type of punishment to vote
-.admin_kick          - Player to be punished
-.all_active          - Number of affirmative votes
-.has_holo            - Number of negative votes
-.group_no            - Type of votemap, nextmap or switchmap
-.has_tesla           - Number of map beeing voted
+.has_sentry 		 - Type of vote
+.g_a				 - Type of punishment to vote
+.admin_kick 		 - Player to be punished
+.all_active 		 - Number of affirmative votes
+.has_holo			 - Number of negative votes
+.group_no			 - Type of votemap, nextmap or switchmap
+.has_tesla			 - Number of map beeing voted
 .dont_do_triggerwork - If TRUE, means the player to be banned has left
-    (when banning a user that left)
-.t_s_h               - Permanent string containing IP to be banned
-.t_s_m               - Permanent string with the name of user to be banned
-    (when map voting)
-.netname             - Permanent string that is the name of map
+	(when banning a user that left)
+.t_s_h				 - Permanent string containing IP to be banned
+.t_s_m				 - Permanent string with the name of user to be banned
+	(when map voting)
+.netname			 - Permanent string that is the name of map
 
 ===============================================================================================*/
 
@@ -116,367 +120,367 @@ void(string text) CmdMsg;
 
 void() AllResetMenu =
 {
-    if (self.classname == "spec")
-        SpecResetMenu();
-    else if (self.classname == "player")
-        ResetMenu();  
+	if (self.classname == "spec")
+		SpecResetMenu();
+	else if (self.classname == "player")
+		ResetMenu();
 };
 
-void() Player_Punish = 
+void() Player_Punish =
 {
-    if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
-        return;
-    
-    if (current_voteent != world)
-    {
-        sprint(self,#PRINT_HIGH,"Already running a vote!\n");
-        return;
-    }
-    
-    if (self.goal_no > time)
-    {
-        sprint(self,#PRINT_HIGH,"You just have ran a vote!\n");
-        return;
-    }
+	if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
+		return;
 
-    if (self.classname == "player")
-        self.current_menu = #MENU_PUNISH;
-    else if (self.classname == "spec")
-        self.current_menu = #SPEC_MENU_PUNISH;
-    else
-        return;
-        //RPrint("BUG: Non-spec/player on Player_Punish()\n");
+	if (current_voteent != world)
+	{
+		sprint(self,#PRINT_HIGH,"Already running a vote!\n");
+		return;
+	}
 
-    CuTFMenuSound(#MENUSOUND_BUY);
-    Menu_Punish();
-    BackFlash(self,1);
+	if (self.goal_no > time)
+	{
+		sprint(self,#PRINT_HIGH,"You just have ran a vote!\n");
+		return;
+	}
+
+	if (self.classname == "player")
+		self.current_menu = #MENU_PUNISH;
+	else if (self.classname == "spec")
+		self.current_menu = #SPEC_MENU_PUNISH;
+	else
+		return;
+		//RPrint("BUG: Non-spec/player on Player_Punish()\n");
+
+	CuTFMenuSound(#MENUSOUND_BUY);
+	Menu_Punish();
+	BackFlash(self,1);
 };
 
 void() Menu_Punish =
 {
-    local string st, st2, st3;
-        
-    // if we didn't disconnect and we are a valid class, player or spectator..
-    if (HasValidAdminTarget2(self))
-    {
-        st2 = self.admin_kick.netname;    
-        
-        if (self.admin_kick.classname == "spec")
-            st="’ÛÂÚ: ®spectator© \n\n";
-        else
-            st="’ÛÂÚ:             \n\n";
-    }
-    else
-        st2 = "’ÛÂÚ:             \n\nNo user selected! ";
+	local string st, st2, st3;
 
-    if (self.g_a == #PUNISH_BAN)
-        st3 = ".. Ban°          ";
-    else if (self.g_a == #PUNISH_KICK)
-        st3 = ".. Kick°         ";
-    else if (self.g_a == #PUNISH_MUTE)
-        st3 = ".. Mute°         ";
-    else if (self.g_a == #PUNISH_CUFF)
-        st3 = ".. Cuff°         ";
-    else
-        st3 = ".. Curse°        ";        
+	// if we didn't disconnect and we are a valid class, player or spectator..
+	if (HasValidAdminTarget2(self))
+	{
+		st2 = self.admin_kick.netname;
 
-    CenterPrint5(self,st,st2,"\n\n.. Next UserÆÆÆ  \n\n.. √ËÔÔÛÂ ¡„ÙÈÔÓ:\n\n",st3,"\n\nÆÆ ≈¯ÈÙ          \n");
-                                                           
+		if (self.admin_kick.classname == "spec")
+			st="’ÛÂÚ: ®spectator© \n\n";
+		else
+			st="’ÛÂÚ:			  \n\n";
+	}
+	else
+		st2 = "’ÛÂÚ:			 \n\nNo user selected! ";
+
+	if (self.g_a == #PUNISH_BAN)
+		st3 = ".. Ban° 		 ";
+	else if (self.g_a == #PUNISH_KICK)
+		st3 = ".. Kick°		 ";
+	else if (self.g_a == #PUNISH_MUTE)
+		st3 = ".. Mute°		 ";
+	else if (self.g_a == #PUNISH_CUFF)
+		st3 = ".. Cuff°		 ";
+	else
+		st3 = ".. Curse°		 ";
+
+	CenterPrint5(self,st,st2,"\n\n.. Next UserÆÆÆ	\n\n.. √ËÔÔÛÂ ¡„ÙÈÔÓ:\n\n",st3,"\n\nÆÆ ≈¯ÈÙ		   \n");
+
 };
 
 void(float input) Menu_Punish_Input =
 {
-    if (input == 1)
-    {
-        PunishClientCycle();
-        CuTFMenuSound(#MENUSOUND_BROWSE);
-        Menu_Punish();
-        self.impulse = 0;
-        return;
-    }
-    else if (input == 2)
-    {
-        if (self.g_a == #PUNISH_CURSE)
-            self.g_a = #PUNISH_KICK;
-        else if (self.g_a == #PUNISH_KICK)
-            self.g_a = #PUNISH_MUTE;
-        else if (self.g_a == #PUNISH_MUTE)
-            self.g_a = #PUNISH_BAN;
-        else if (self.g_a == #PUNISH_BAN)
-            self.g_a = #PUNISH_CUFF;
-        else self.g_a = #PUNISH_CURSE;
+	if (input == 1)
+	{
+		PunishClientCycle();
+		CuTFMenuSound(#MENUSOUND_BROWSE);
+		Menu_Punish();
+		self.impulse = 0;
+		return;
+	}
+	else if (input == 2)
+	{
+		if (self.g_a == #PUNISH_CURSE)
+			self.g_a = #PUNISH_KICK;
+		else if (self.g_a == #PUNISH_KICK)
+			self.g_a = #PUNISH_MUTE;
+		else if (self.g_a == #PUNISH_MUTE)
+			self.g_a = #PUNISH_BAN;
+		else if (self.g_a == #PUNISH_BAN)
+			self.g_a = #PUNISH_CUFF;
+		else self.g_a = #PUNISH_CURSE;
 
-        CuTFMenuSound(#MENUSOUND_BUY);
-        Menu_Punish();
-        self.impulse = 0;
-        return;
-    }
-    else if (input == 3)
-    {
-        self.impulse = 0;
-        
-        if (current_voteent != world)
-        {
-            sprint(self,#PRINT_HIGH,"Already running a vote!\n");
-            AllResetMenu();
-            return;
-        }
-        else if (self.admin_kick == world)
-            sprint(self,#PRINT_HIGH,"No user selected!\n");
-        else if (!self.admin_kick.is_connected)
-        {
-            sprint(self,#PRINT_HIGH,"User has left the server!\n");
-            PunishClientCycle();
-        }
-        else if (self.admin_kick.classname=="spec" && self.g_a == #PUNISH_CURSE)
-            sprint(self,#PRINT_HIGH,"Can't curse spectators!\n");
-        else if (self.admin_kick.classname=="spec" && self.g_a == #PUNISH_CUFF)
-            sprint(self,#PRINT_HIGH,"Can't cuff spectators!\n");
-        else if (self.admin_kick.classname != "spec" && self.admin_kick.classname != "player")
-            sprint(self,#PRINT_HIGH,"Invalid user selected!\n");
-        else
-        {
-            StartPunishmentVote();
-            AllResetMenu();
-            return;
-        }
+		CuTFMenuSound(#MENUSOUND_BUY);
+		Menu_Punish();
+		self.impulse = 0;
+		return;
+	}
+	else if (input == 3)
+	{
+		self.impulse = 0;
 
-        CuTFMenuSound(#MENUSOUND_WRONG);
-    }
-    else if (input == 10)
-    {
-        AllResetMenu();
-        CuTFMenuSound(#MENUSOUND_SELL);
-        BackFlash(self,1);
-        self.impulse = 0;
-        return;
-    }
-    
-    self.impulse = 0;
+		if (current_voteent != world)
+		{
+			sprint(self,#PRINT_HIGH,"Already running a vote!\n");
+			AllResetMenu();
+			return;
+		}
+		else if (self.admin_kick == world)
+			sprint(self,#PRINT_HIGH,"No user selected!\n");
+		else if (!self.admin_kick.is_connected)
+		{
+			sprint(self,#PRINT_HIGH,"User has left the server!\n");
+			PunishClientCycle();
+		}
+		else if (self.admin_kick.classname=="spec" && self.g_a == #PUNISH_CURSE)
+			sprint(self,#PRINT_HIGH,"Can't curse spectators!\n");
+		else if (self.admin_kick.classname=="spec" && self.g_a == #PUNISH_CUFF)
+			sprint(self,#PRINT_HIGH,"Can't cuff spectators!\n");
+		else if (self.admin_kick.classname != "spec" && self.admin_kick.classname != "player")
+			sprint(self,#PRINT_HIGH,"Invalid user selected!\n");
+		else
+		{
+			StartPunishmentVote();
+			AllResetMenu();
+			return;
+		}
+
+		CuTFMenuSound(#MENUSOUND_WRONG);
+	}
+	else if (input == 10)
+	{
+		AllResetMenu();
+		CuTFMenuSound(#MENUSOUND_SELL);
+		BackFlash(self,1);
+		self.impulse = 0;
+		return;
+	}
+
+	self.impulse = 0;
 };
 
-void() Player_VoteMap = 
+void() Player_VoteMap =
 {
-    if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
-        return;
-    
-    if (current_voteent != world)
-    {
-        sprint(self,#PRINT_HIGH,"Already running a vote!\n");
-        return;
-    }
+	if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
+		return;
 
-    if (time/60 < 1)
-    {
-        sprint(self,#PRINT_HIGH,"Too early for a map vote!\n");
-        return;
-    }
+	if (current_voteent != world)
+	{
+		sprint(self,#PRINT_HIGH,"Already running a vote!\n");
+		return;
+	}
 
-    if (self.goal_no > time)
-    {
-        sprint(self,#PRINT_HIGH,"You just have ran a vote!\n");
-        return;
-    }
+	if (time/60 < 1)
+	{
+		sprint(self,#PRINT_HIGH,"Too early for a map vote!\n");
+		return;
+	}
 
-    if (ServerUpdating())
-    {
-        sprint(self,#PRINT_HIGH,"Server update is taking place, no map changes are allowed!\n");
-        return;
-    }
+	if (self.goal_no > time)
+	{
+		sprint(self,#PRINT_HIGH,"You just ran a vote!\n");
+		return;
+	}
 
-    if (self.classname == "player")
-        self.current_menu = #MENU_VOTEMAP;
-    else if (self.classname == "spec")
-        self.current_menu = #SPEC_MENU_VOTEMAP;
-    else 
-        return;
-    //RPrint("BUG: Non-spec/player on Player_VoteMap()\n");
+	if (ServerUpdating())
+	{
+		sprint(self,#PRINT_HIGH,"Server update is taking place, no map changes are allowed!\n");
+		return;
+	}
 
-    CuTFMenuSound(#MENUSOUND_BUY);
-    Menu_VoteMap();
-    BackFlash(self,1);
-};  
+	if (self.classname == "player")
+		self.current_menu = #MENU_VOTEMAP;
+	else if (self.classname == "spec")
+		self.current_menu = #SPEC_MENU_VOTEMAP;
+	else
+		return;
+	//RPrint("BUG: Non-spec/player on Player_VoteMap()\n");
+
+	CuTFMenuSound(#MENUSOUND_BUY);
+	Menu_VoteMap();
+	BackFlash(self,1);
+};
 
 void() Menu_VoteMap =
 {
-    local string paddedstr,st1,st2,st3,st4,st5,st6,st7,keyst,color;
-    
-    keyst = GetMapString(self.goal_state*6+1);
-    if (mapname == keyst)
-    {
-        color = colstr(keyst,#COLSTR_RED);
-        if (self.#cprint_fx & 1)
-            keyst = strcat(color," [Ï·˘ÈÓÁ]");
-        else
-            keyst = strcat(color," €playing›");
-        color = keyst;
-    }
-    else
-        color = keyst;
-    paddedstr = padstr(color,18);
-    if (self.goal_state == 0)
-        st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 1Ø6©\n\n.. ",paddedstr);
-    else if (self.goal_state == 1)
-        st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 2Ø6©\n\n.. ",paddedstr);
-    else if (self.goal_state == 2)
-        st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 3Ø6©\n\n.. ",paddedstr);
-    else if (self.goal_state == 3)
-        st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 4Ø6©\n\n.. ",paddedstr);
-    else if (self.goal_state == 4)
-        st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 5Ø6©\n\n.. ",paddedstr);
-    else
-        st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 6Ø6©\n\n.. ",paddedstr);
-        
-    keyst = GetMapString(self.goal_state*6+2);
-    if (mapname == keyst)
-    {
-        color = colstr(keyst,#COLSTR_RED);
-        if (self.#cprint_fx & 1)
-            keyst = strcat(color," [Ï·˘ÈÓÁ]");
-        else
-            keyst = strcat(color," €playing›");
-        color = keyst;
-    }
-    else
-        color = keyst;
-    paddedstr = padstr(color,18);
-    st2 = strcat(st1, "\n.. ");
-    st2 = strcat(st2,paddedstr);
-        
-    keyst = GetMapString(self.goal_state*6+3);
-    if (mapname == keyst)
-    {
-        color = colstr(keyst,#COLSTR_RED);
-        if (self.#cprint_fx & 1)
-            keyst = strcat(color," [Ï·˘ÈÓÁ]");
-        else
-            keyst = strcat(color," €playing›");
-        color = keyst;
-    }
-    else
-        color = keyst;
-    paddedstr = padstr(color,18);
-    st3 = strcat(st2, "\n.. ");
-    st3 = strcat(st3, paddedstr);
-    
-    keyst = GetMapString(self.goal_state*6+4);
-    if (mapname == keyst)
-    {
-        color = colstr(keyst,#COLSTR_RED);
-        if (self.#cprint_fx & 1)
-            keyst = strcat(color," [Ï·˘ÈÓÁ]");
-        else
-            keyst = strcat(color," €playing›");
-        color = keyst;
-    }
-    else
-        color = keyst;
-    paddedstr = padstr(color,18);
-    st4 = strcat(st3, "\n.. ");
-    st4 = strcat(st4, paddedstr);
+	local string paddedstr,st1,st2,st3,st4,st5,st6,st7,keyst,color;
 
-    keyst = GetMapString(self.goal_state*6+5);
-    if (mapname == keyst)
-    {
-        color = colstr(keyst,#COLSTR_RED);
-        if (self.#cprint_fx & 1)
-            keyst = strcat(color," [Ï·˘ÈÓÁ]");
-        else
-            keyst = strcat(color," €playing›");
-        color = keyst;
-    }
-    else
-        color = keyst;
-    paddedstr = padstr(color,18);
-    st5 = strcat(st4, "\n.. ");
-    st5 = strcat(st5, paddedstr);
+	keyst = GetMapString(self.goal_state*6+1);
+	if (mapname == keyst)
+	{
+		color = colstr(keyst,#COLSTR_RED);
+		if (self.#cprint_fx & 1)
+			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+		else
+			keyst = strcat(color," €playing›");
+		color = keyst;
+	}
+	else
+		color = keyst;
+	paddedstr = padstr(color,18);
+	if (self.goal_state == 0)
+		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 1Ø6©\n\n.. ",paddedstr);
+	else if (self.goal_state == 1)
+		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 2Ø6©\n\n.. ",paddedstr);
+	else if (self.goal_state == 2)
+		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 3Ø6©\n\n.. ",paddedstr);
+	else if (self.goal_state == 3)
+		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 4Ø6©\n\n.. ",paddedstr);
+	else if (self.goal_state == 4)
+		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 5Ø6©\n\n.. ",paddedstr);
+	else
+		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 6Ø6©\n\n.. ",paddedstr);
 
-    keyst = GetMapString(self.goal_state*6+6);
-    if (mapname == keyst)
-    {
-        color = colstr(keyst,#COLSTR_RED);
-        if (self.#cprint_fx & 1)
-            keyst = strcat(color," [Ï·˘ÈÓÁ]");
-        else
-            keyst = strcat(color," €playing›");
-        color = keyst;
-    }
-    else
-        color = keyst;
-    paddedstr = padstr(color,18);
-    st6 = strcat(st5, "\n.. ");
-    st6 = strcat(st6,paddedstr);
+	keyst = GetMapString(self.goal_state*6+2);
+	if (mapname == keyst)
+	{
+		color = colstr(keyst,#COLSTR_RED);
+		if (self.#cprint_fx & 1)
+			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+		else
+			keyst = strcat(color," €playing›");
+		color = keyst;
+	}
+	else
+		color = keyst;
+	paddedstr = padstr(color,18);
+	st2 = strcat(st1, "\n.. ");
+	st2 = strcat(st2,paddedstr);
 
-    if (self.group_no == 0)
-        st7 ="\n\n.. ÕÔ‰Â: as next map \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
-    else
-        st7 ="\n\n.. ÕÔ‰Â: play now°   \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+	keyst = GetMapString(self.goal_state*6+3);
+	if (mapname == keyst)
+	{
+		color = colstr(keyst,#COLSTR_RED);
+		if (self.#cprint_fx & 1)
+			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+		else
+			keyst = strcat(color," €playing›");
+		color = keyst;
+	}
+	else
+		color = keyst;
+	paddedstr = padstr(color,18);
+	st3 = strcat(st2, "\n.. ");
+	st3 = strcat(st3, paddedstr);
 
-    CenterPrint2(self,st6,st7);
+	keyst = GetMapString(self.goal_state*6+4);
+	if (mapname == keyst)
+	{
+		color = colstr(keyst,#COLSTR_RED);
+		if (self.#cprint_fx & 1)
+			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+		else
+			keyst = strcat(color," €playing›");
+		color = keyst;
+	}
+	else
+		color = keyst;
+	paddedstr = padstr(color,18);
+	st4 = strcat(st3, "\n.. ");
+	st4 = strcat(st4, paddedstr);
 
-    self.#cprint_fx = self.#cprint_fx + 1;
+	keyst = GetMapString(self.goal_state*6+5);
+	if (mapname == keyst)
+	{
+		color = colstr(keyst,#COLSTR_RED);
+		if (self.#cprint_fx & 1)
+			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+		else
+			keyst = strcat(color," €playing›");
+		color = keyst;
+	}
+	else
+		color = keyst;
+	paddedstr = padstr(color,18);
+	st5 = strcat(st4, "\n.. ");
+	st5 = strcat(st5, paddedstr);
+
+	keyst = GetMapString(self.goal_state*6+6);
+	if (mapname == keyst)
+	{
+		color = colstr(keyst,#COLSTR_RED);
+		if (self.#cprint_fx & 1)
+			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+		else
+			keyst = strcat(color," €playing›");
+		color = keyst;
+	}
+	else
+		color = keyst;
+	paddedstr = padstr(color,18);
+	st6 = strcat(st5, "\n.. ");
+	st6 = strcat(st6,paddedstr);
+
+	if (self.group_no == 0)
+		st7 ="\n\n.. ÕÔ‰Â: as next map \n\n.. –ÚÂˆ –·ÁÂ		  \n.. ŒÂ¯Ù –·ÁÂ		  \n\nÆÆ ≈¯ÈÙ				\n";
+	else
+		st7 ="\n\n.. ÕÔ‰Â: play now°	\n\n.. –ÚÂˆ –·ÁÂ		  \n.. ŒÂ¯Ù –·ÁÂ		  \n\nÆÆ ≈¯ÈÙ				\n";
+
+	CenterPrint2(self,st6,st7);
+
+	self.#cprint_fx = self.#cprint_fx + 1;
 };
 
 void(float input) Menu_VoteMap_Input =
 {
-    if (input >= 1 && input <= 6)
-    {
-        if (current_voteent != world)
-        {
-            sprint(self,#PRINT_HIGH,"Already running a vote!\n");
-            AllResetMenu();
-            self.impulse = 0;
-            return;
-        }
+	if (input >= 1 && input <= 6)
+	{
+		if (current_voteent != world)
+		{
+			sprint(self,#PRINT_HIGH,"Already running a vote!\n");
+			AllResetMenu();
+			self.impulse = 0;
+			return;
+		}
 
-        local float nummap;
-        
-        nummap = input + (self.goal_state*6);
+		local float nummap;
 
-        StartVoteMap(nummap,"");
-        AllResetMenu();
-    }   
-    else if (input == 7)
-    {
-        if (self.group_no == 0)
-            self.group_no = 1;
-        else self.group_no = 0;
+		nummap = input + (self.goal_state*6);
 
-        CuTFMenuSound(#MENUSOUND_BUY);
+		StartVoteMap(nummap,"");
+		AllResetMenu();
+	}
+	else if (input == 7)
+	{
+		if (self.group_no == 0)
+			self.group_no = 1;
+		else self.group_no = 0;
 
-        NoCprintFX();
-        Menu_VoteMap();
-    }    
-    else if (input == 8)
-    {
-        self.goal_state = self.goal_state - 1;
-        if (self.goal_state < 0)
-            self.goal_state = 5;
-                
-        CuTFMenuSound(#MENUSOUND_BROWSE);
+		CuTFMenuSound(#MENUSOUND_BUY);
 
-        NoCprintFX();
-        Menu_VoteMap();
-    }    
-    else if (input == 9)
-    {
-        self.goal_state = self.goal_state + 1;
-        if (self.goal_state > 5)
-            self.goal_state = 0;
-                            
-        CuTFMenuSound(#MENUSOUND_BROWSE);
-        
-        NoCprintFX();
-        Menu_VoteMap();
-    }    
-    else if (input == 10)
-    {
-        AllResetMenu();
-        CuTFMenuSound(#MENUSOUND_SELL);
-        BackFlash(self,1);
-    }    
+		NoCprintFX();
+		Menu_VoteMap();
+	}
+	else if (input == 8)
+	{
+		self.goal_state = self.goal_state - 1;
+		if (self.goal_state < 0)
+			self.goal_state = 5;
 
-    self.impulse = 0;
+		CuTFMenuSound(#MENUSOUND_BROWSE);
+
+		NoCprintFX();
+		Menu_VoteMap();
+	}
+	else if (input == 9)
+	{
+		self.goal_state = self.goal_state + 1;
+		if (self.goal_state > 5)
+			self.goal_state = 0;
+
+		CuTFMenuSound(#MENUSOUND_BROWSE);
+
+		NoCprintFX();
+		Menu_VoteMap();
+	}
+	else if (input == 10)
+	{
+		AllResetMenu();
+		CuTFMenuSound(#MENUSOUND_SELL);
+		BackFlash(self,1);
+	}
+
+	self.impulse = 0;
 };
 
 //===============================================================
@@ -484,43 +488,43 @@ void(float input) Menu_VoteMap_Input =
 
 void() bprintVoteIssue =
 {
-    if (current_voteent.has_sentry == #VOTE_PUNISH)
-    {
-        if (current_voteent.dont_do_triggerwork) // Special ban (client has left)
-        {
-            bprint(#PRINT_HIGH," ®ban ");
-            bprint(#PRINT_HIGH,current_voteent.t_s_m);
-            bprint(#PRINT_HIGH,"©");
-        }
-        else
-        {
-            if (current_voteent.g_a == #PUNISH_CURSE)
-                bprint(#PRINT_HIGH," ®curse ");
-            else if (current_voteent.g_a == #PUNISH_KICK)
-                bprint(#PRINT_HIGH," ®kick ");
-            else if (current_voteent.g_a == #PUNISH_BAN)
-                bprint(#PRINT_HIGH," ®ban ");
-            else if (current_voteent.g_a == #PUNISH_MUTE)
-                bprint(#PRINT_HIGH," ®mute ");
-            else if (current_voteent.g_a == #PUNISH_CUFF)
-                bprint(#PRINT_HIGH," ®cuff ");
+	if (current_voteent.has_sentry == #VOTE_PUNISH)
+	{
+		if (current_voteent.dont_do_triggerwork) // Special ban (client has left)
+		{
+			bprint(#PRINT_HIGH," ®ban ");
+			bprint(#PRINT_HIGH,current_voteent.t_s_m);
+			bprint(#PRINT_HIGH,"©");
+		}
+		else
+		{
+			if (current_voteent.g_a == #PUNISH_CURSE)
+				bprint(#PRINT_HIGH," ®curse ");
+			else if (current_voteent.g_a == #PUNISH_KICK)
+				bprint(#PRINT_HIGH," ®kick ");
+			else if (current_voteent.g_a == #PUNISH_BAN)
+				bprint(#PRINT_HIGH," ®ban ");
+			else if (current_voteent.g_a == #PUNISH_MUTE)
+				bprint(#PRINT_HIGH," ®mute ");
+			else if (current_voteent.g_a == #PUNISH_CUFF)
+				bprint(#PRINT_HIGH," ®cuff ");
 
-            bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-            bprint(#PRINT_HIGH,"©");
-        }
-    }
-    else if (current_voteent.has_sentry == #VOTE_NEXTMAP) // as next map
-    {
-        bprint(#PRINT_HIGH," ®"); // FIXME: CPQCCX compiler says 'Not a name' if only "(" is used ???
-        bprint(#PRINT_HIGH, current_voteent.netname);
-        bprint(#PRINT_HIGH," as next map©");
-    } 
-    else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
-    {
-        bprint(#PRINT_HIGH," ®switch to ");
-        bprint(#PRINT_HIGH,current_voteent.netname);
-        bprint(#PRINT_HIGH,"©");
-    }    
+			bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
+			bprint(#PRINT_HIGH,"©");
+		}
+	}
+	else if (current_voteent.has_sentry == #VOTE_NEXTMAP) // as next map
+	{
+		bprint(#PRINT_HIGH," ®"); // FIXME: CPQCCX compiler says 'Not a name' if only "(" is used ???
+		bprint(#PRINT_HIGH, current_voteent.netname);
+		bprint(#PRINT_HIGH," as next map©");
+	}
+	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
+	{
+		bprint(#PRINT_HIGH," ®switch to ");
+		bprint(#PRINT_HIGH,current_voteent.netname);
+		bprint(#PRINT_HIGH,"©");
+	}
 };
 
 //==============================================================
@@ -528,56 +532,56 @@ void() bprintVoteIssue =
 
 void() Player_VoteYes =
 {
-    if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
-        return;
+	if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
+		return;
 
-    if (current_voteent == world)
-    {
-        sprint(self,#PRINT_HIGH,"Not voting currently!\n");
-        return;
-    }
+	if (current_voteent == world)
+	{
+		sprint(self,#PRINT_HIGH,"Not voting currently!\n");
+		return;
+	}
 
-    //if (current_voteent.has_sentry == #VOTE_PUNISH)
-    if (self.owned_by == #VOTED_JUSTJOINED)
-    {
-        sprint(self,#PRINT_HIGH,"You weren't in game when this vote started!\n");
-        return;
-    }
-    #ifndef VOTING_TEST
-    else if (current_voteent.admin_kick == self)
-    {
-        sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
-        return;
-    }
-    else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
-    {
-        sprint(self,#PRINT_HIGH,"You already voted!\n");
-    }
-    else
-    {
-    #endif        
-        BackFlash(self,1);
-        
-        bprint(#PRINT_HIGH,"Votingç ");
-        bprint(#PRINT_HIGH,self.netname);
-        bprint(#PRINT_HIGH," agrees");
+	//if (current_voteent.has_sentry == #VOTE_PUNISH)
+	if (self.owned_by == #VOTED_JUSTJOINED)
+	{
+		sprint(self,#PRINT_HIGH,"You weren't in game when this vote started!\n");
+		return;
+	}
+	#ifndef VOTING_TEST
+	else if (current_voteent.admin_kick == self)
+	{
+		sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
+		return;
+	}
+	else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
+	{
+		sprint(self,#PRINT_HIGH,"You already voted!\n");
+	}
+	else
+	{
+	#endif
+		BackFlash(self,1);
 
-        self.owned_by = #VOTED_YES;
+		bprint(#PRINT_HIGH,"Votingç ");
+		bprint(#PRINT_HIGH,self.netname);
+		bprint(#PRINT_HIGH," agrees");
 
-        bprintVoteIssue();
-                
-        BroadcastSound("misc/basekey");
-        
-        current_voteent.all_active = current_voteent.all_active + 1;
+		self.owned_by = #VOTED_YES;
 
-        if (current_voteent.nextthink < time + #VOTE_TIME_REFRESH)
-            current_voteent.nextthink = time + #VOTE_TIME_REFRESH;
-                
-        if (!CheckVoting())
-            bprintVotesLeft();
-    #ifndef VOTING_TEST
-    }
-    #endif
+		bprintVoteIssue();
+
+		BroadcastSound("misc/basekey");
+
+		current_voteent.all_active = current_voteent.all_active + 1;
+
+		if (current_voteent.nextthink < time + #VOTE_TIME_REFRESH)
+			current_voteent.nextthink = time + #VOTE_TIME_REFRESH;
+
+		if (!CheckVoting())
+			bprintVotesLeft();
+	#ifndef VOTING_TEST
+	}
+	#endif
 };
 
 //==============================================================
@@ -585,58 +589,58 @@ void() Player_VoteYes =
 
 void() Player_VoteNo =
 {
-    if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
-        return;
-    
-    if (current_voteent == world)
-    {
-        sprint(self,#PRINT_HIGH,"Not voting currently!\n");
-        return;
-    }
-    
-    //if (current_voteent.has_sentry == #VOTE_PUNISH)
-    if (self.owned_by == #VOTED_JUSTJOINED)
-    {
-        sprint(self,#PRINT_HIGH,"You weren't in game when this vote started!\n");
-        return;
-    }
-    
-    #ifndef VOTING_TEST
-    else if (current_voteent.admin_kick == self)
-    {
-        sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
-        return;
-    }
-    else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
-    {
-        sprint(self,#PRINT_HIGH,"You already voted!\n");
-    }
-    else
-    {
-    #endif
-        BackFlash(self,1);
+	if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
+		return;
 
-        bprint(#PRINT_HIGH,"Votingç ");
-        bprint(#PRINT_HIGH,self.netname);
-        bprint(#PRINT_HIGH," disagrees");
+	if (current_voteent == world)
+	{
+		sprint(self,#PRINT_HIGH,"Not voting currently!\n");
+		return;
+	}
 
-        self.owned_by = #VOTED_NO;
+	//if (current_voteent.has_sentry == #VOTE_PUNISH)
+	if (self.owned_by == #VOTED_JUSTJOINED)
+	{
+		sprint(self,#PRINT_HIGH,"You weren't in game when this vote started!\n");
+		return;
+	}
 
-        bprintVoteIssue();
-        
-        BroadcastSound("misc/basekey");
-        
-        current_voteent.has_holo = current_voteent.has_holo +1;
-        
-        if (current_voteent.nextthink < time + #VOTE_TIME_REFRESH)
-            current_voteent.nextthink = time + #VOTE_TIME_REFRESH;
-                
-        if (!CheckVoting())
-            bprintVotesLeft();
+	#ifndef VOTING_TEST
+	else if (current_voteent.admin_kick == self)
+	{
+		sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
+		return;
+	}
+	else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
+	{
+		sprint(self,#PRINT_HIGH,"You already voted!\n");
+	}
+	else
+	{
+	#endif
+		BackFlash(self,1);
 
-    #ifndef VOTING_TEST
-    }
-    #endif
+		bprint(#PRINT_HIGH,"Votingç ");
+		bprint(#PRINT_HIGH,self.netname);
+		bprint(#PRINT_HIGH," disagrees");
+
+		self.owned_by = #VOTED_NO;
+
+		bprintVoteIssue();
+
+		BroadcastSound("misc/basekey");
+
+		current_voteent.has_holo = current_voteent.has_holo +1;
+
+		if (current_voteent.nextthink < time + #VOTE_TIME_REFRESH)
+			current_voteent.nextthink = time + #VOTE_TIME_REFRESH;
+
+		if (!CheckVoting())
+			bprintVotesLeft();
+
+	#ifndef VOTING_TEST
+	}
+	#endif
 };
 
 //========================================================================
@@ -644,57 +648,57 @@ void() Player_VoteNo =
 
 void() PunishClientCycle =
 {
-    local entity te;
+	local entity te;
 	local float num;
 	num = #FALSE;
 
-    te = world; // none	
-    
-    te = find(self.admin_kick, classname, "player");
+	te = world; // none
+
+	te = find(self.admin_kick, classname, "player");
 	while (te != world && num == #FALSE)
-    {
-        num = #TRUE;
+	{
+		num = #TRUE;
 
-        if (!te.is_connected)
-            num = #FALSE;
-        
-        if (self.admin_kick==te)
-            num = #FALSE;
+		if (!te.is_connected)
+			num = #FALSE;
 
-        #ifndef VOTING_TEST
-        if (te == self)
-            num = #FALSE;
-        #endif
-        
-        if (num == #FALSE) te = find(te, classname, "player");
-    }    
-    
-    if (te == world) // if out of players on our search lets scan for spectators
-    {
-        te = find(self.admin_kick, classname, "spec");
-    	while (te != world && num == #FALSE)
-        {
-            num = #TRUE;
-    
-            if (!te.is_connected)
-                num = #FALSE;
-            
-            if (self.admin_kick==te)
-                num = #FALSE;
+		if (self.admin_kick==te)
+			num = #FALSE;
 
-            #ifndef VOTING_TEST
-            if (te == self)
-                num = #FALSE;
-            #endif
+		#ifndef VOTING_TEST
+		if (te == self)
+			num = #FALSE;
+		#endif
 
-            if (num == #FALSE) te = find(te, classname, "spec");
-        }
-    }
+		if (num == #FALSE) te = find(te, classname, "player");
+	}
 
-    if (te == world) 
-	    self.admin_kick=world; // No clients found!
-    else
-        self.admin_kick = te;
+	if (te == world) // if out of players on our search lets scan for spectators
+	{
+		te = find(self.admin_kick, classname, "spec");
+		while (te != world && num == #FALSE)
+		{
+			num = #TRUE;
+
+			if (!te.is_connected)
+				num = #FALSE;
+
+			if (self.admin_kick==te)
+				num = #FALSE;
+
+			#ifndef VOTING_TEST
+			if (te == self)
+				num = #FALSE;
+			#endif
+
+			if (num == #FALSE) te = find(te, classname, "spec");
+		}
+	}
+
+	if (te == world)
+		self.admin_kick=world; // No clients found!
+	else
+		self.admin_kick = te;
 };
 
 //========================================================================
@@ -702,21 +706,21 @@ void() PunishClientCycle =
 
 void() ResetVoteEnt =
 {
-    if (current_voteent.classname == "voteent")
-    {
-        if (current_voteent.has_sentry == #VOTE_NEXTMAP || current_voteent.has_sentry == #VOTE_SWITCHMAP)
-            delstr(current_voteent.netname);
+	if (current_voteent.classname == "voteent")
+	{
+		if (current_voteent.has_sentry == #VOTE_NEXTMAP || current_voteent.has_sentry == #VOTE_SWITCHMAP)
+			delstr(current_voteent.netname);
 
-        if (current_voteent.dont_do_triggerwork)
-        {
-            delstr(current_voteent.t_s_h);
-            delstr(current_voteent.t_s_m);
-        }
-        
-        dremove(current_voteent);
-        current_voteent = world;
-    }
-    else current_voteent = world;
+		if (current_voteent.dont_do_triggerwork)
+		{
+			delstr(current_voteent.t_s_h);
+			delstr(current_voteent.t_s_m);
+		}
+
+		dremove(current_voteent);
+		current_voteent = world;
+	}
+	else current_voteent = world;
 };
 
 //==========================================================================
@@ -724,31 +728,31 @@ void() ResetVoteEnt =
 
 float() GetNoClients =
 {
-    return num_players + num_specs;
+	return num_players + num_specs;
 
-    /*local entity te;
+	/*local entity te;
 	local float clients;
 	clients = 0;
 
-    te = find(world, classname, "player");
+	te = find(world, classname, "player");
 	while (te != world)
-    {
-        if (!te.has_disconnected)
-            clients = clients + 1;
-        
-        te = find(te, classname, "player");
-    }    
+	{
+		if (!te.has_disconnected)
+			clients = clients + 1;
 
-    te = find(world, classname, "spec");
+		te = find(te, classname, "player");
+	}
+
+	te = find(world, classname, "spec");
 	while (te != world)
-    {
-        if (!te.has_disconnected)
-            clients = clients + 1;
-        
-        te = find(te, classname, "spec");
-    }    
+	{
+		if (!te.has_disconnected)
+			clients = clients + 1;
 
-    return clients;*/
+		te = find(te, classname, "spec");
+	}
+
+	return clients;*/
 };
 
 void() PunishVote_Think;
@@ -758,90 +762,90 @@ void() PunishVote_Think;
 
 void() StartPunishmentVote =
 {
-    if (no_punish)
-    {
-        CmdMsg("Punishment votes are disabled, sorry!\n");
-        return;
-    }
+	if (no_punish)
+	{
+		CmdMsg("Punishment votes are disabled, sorry!\n");
+		return;
+	}
 
-    if (self.classname != "player" && self.classname != "spec")
-    {
-        sprint(self,#PRINT_HIGH,"You can't vote still, join the game first!\n");
-        return;
-    }
-    
-    if (mutedtime(self))
-    {
-        sprint(self,#PRINT_HIGH,"You can't start a vote while muted!\n");
-        return;
-    }
-    
-    BackFlash(self,1);
+	if (self.classname != "player" && self.classname != "spec")
+	{
+		sprint(self,#PRINT_HIGH,"You can't vote still, join the game first!\n");
+		return;
+	}
 
-    CleanClientVotes();
-    
-    local entity voteent;
+	if (mutedtime(self))
+	{
+		sprint(self,#PRINT_HIGH,"You can't start a vote while muted!\n");
+		return;
+	}
 
-    voteent = spawn();
-    voteent.g_a = self.g_a;
-    voteent.think = PunishVote_Think;
-    voteent.nextthink = time + #VOTE_TIME;
-    voteent.classname = "voteent";
-    voteent.owner = world; // ADDED
+	BackFlash(self,1);
 
-    voteent.all_active = 1;
-    voteent.has_holo = 0;
+	CleanClientVotes();
 
-    voteent.demon_one = self;
+	local entity voteent;
 
-    voteent.admin_kick = self.admin_kick;
+	voteent = spawn();
+	voteent.g_a = self.g_a;
+	voteent.think = PunishVote_Think;
+	voteent.nextthink = time + #VOTE_TIME;
+	voteent.classname = "voteent";
+	voteent.owner = world; // ADDED
 
-    voteent.has_sentry = #VOTE_PUNISH;
+	voteent.all_active = 1;
+	voteent.has_holo = 0;
 
-    self.goal_no = time + #VOTE_DELAY;
+	voteent.demon_one = self;
 
-    self.owned_by = #VOTED_YES; // we already voted yes
+	voteent.admin_kick = self.admin_kick;
 
-    BroadcastSound("misc/medkey");
+	voteent.has_sentry = #VOTE_PUNISH;
 
-    bprint(#PRINT_HIGH,"Votingç ");
+	self.goal_no = time + #VOTE_DELAY;
 
-    bprint(#PRINT_HIGH,self.netname);
-    bprint(#PRINT_HIGH," proposes to ");
+	self.owned_by = #VOTED_YES; // we already voted yes
 
-    if (self.g_a == #PUNISH_CURSE)
-        bprint(#PRINT_HIGH,"curse ");
-    else if (self.g_a == #PUNISH_KICK)
-        bprint(#PRINT_HIGH,"kick ");
-    else if (self.g_a == #PUNISH_MUTE)
-        bprint(#PRINT_HIGH,"mute ");
-    else if (self.g_a == #PUNISH_BAN)
-        bprint(#PRINT_HIGH,"ban ");
-    else if (self.g_a == #PUNISH_CUFF)
-        bprint(#PRINT_HIGH,"cuff ");
+	BroadcastSound("misc/medkey");
 
-    bprint(#PRINT_HIGH,self.admin_kick.netname);
+	bprint(#PRINT_HIGH,"Votingç ");
 
-    bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
+	bprint(#PRINT_HIGH,self.netname);
+	bprint(#PRINT_HIGH," proposes to ");
 
-    current_voteent = voteent;
+	if (self.g_a == #PUNISH_CURSE)
+		bprint(#PRINT_HIGH,"curse ");
+	else if (self.g_a == #PUNISH_KICK)
+		bprint(#PRINT_HIGH,"kick ");
+	else if (self.g_a == #PUNISH_MUTE)
+		bprint(#PRINT_HIGH,"mute ");
+	else if (self.g_a == #PUNISH_BAN)
+		bprint(#PRINT_HIGH,"ban ");
+	else if (self.g_a == #PUNISH_CUFF)
+		bprint(#PRINT_HIGH,"cuff ");
 
-    current_voteent.dont_do_triggerwork = #FALSE;
-        
-    ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
+	bprint(#PRINT_HIGH,self.admin_kick.netname);
 
-    CheckVoting(); // If we are the only player on server, checks
+	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
+
+	current_voteent = voteent;
+
+	current_voteent.dont_do_triggerwork = #FALSE;
+
+	ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
+
+	CheckVoting(); // If we are the only player on server, checks
 };
 
 void() PunishVote_Think =
 {
-    bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
-    bprintVoteIssue();
-    bprint(#PRINT_HIGH,"\n");
+	bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
+	bprintVoteIssue();
+	bprint(#PRINT_HIGH,"\n");
 
-    BroadcastSound("misc/runekey");
+	BroadcastSound("misc/runekey");
 
-    ResetVoteEnt();
+	ResetVoteEnt();
 };
 
 void() VoteMap_Think;
@@ -851,145 +855,145 @@ void() VoteMap_Think;
 
 void(float nummap, string themap) StartVoteMap =
 {
-    if (no_votemap)
-    {
-        CmdMsg("Map voting within the mod is disabled, sorry!\n");
-        return;
-    }
+	if (no_votemap)
+	{
+		CmdMsg("Map voting within the mod is disabled, sorry!\n");
+		return;
+	}
 
-    if (self.classname != "player" && self.classname != "spec")
-    {
-        sprint(self,#PRINT_HIGH,"You can't vote still, join the game first!\n");
-        return;
-    }
+	if (self.classname != "player" && self.classname != "spec")
+	{
+		sprint(self,#PRINT_HIGH,"You can't vote still, join the game first!\n");
+		return;
+	}
 
-    if (time/60 < #MIN_MINUTES_TOVOTEMAP)
-    {
-        sprint(self,#PRINT_HIGH,"Too early for a map change!\n");
-        return;
-    }
-    
-    if (mutedtime(self))
-    {
-        sprint(self,#PRINT_HIGH,"You can't start a vote while muted!\n");
-        return;
-    }
+	if (time/60 < #MIN_MINUTES_TOVOTEMAP)
+	{
+		sprint(self,#PRINT_HIGH,"Too early for a map change!\n");
+		return;
+	}
 
-    if (ServerUpdating())
-    {
-        sprint(self,#PRINT_HIGH,"Server update is taking place, no map changes are allowed!\n");
-        return;
-    }
+	if (mutedtime(self))
+	{
+		sprint(self,#PRINT_HIGH,"You can't start a vote while muted!\n");
+		return;
+	}
 
-    BackFlash(self,1);
-        
-    local entity voteent;
+	if (ServerUpdating())
+	{
+		sprint(self,#PRINT_HIGH,"Server update is taking place, no map changes are allowed!\n");
+		return;
+	}
 
-    voteent = spawn();
-    voteent.g_a = self.g_a;
-    voteent.think = VoteMap_Think;
-    voteent.nextthink = time + #VOTE_TIME;
-    voteent.classname = "voteent";
-    voteent.owner = world; // ADDED
+	BackFlash(self,1);
 
-    if (!nummap)
-    {
-        voteent.netname = themap;
+	local entity voteent;
 
-        #ifdef UNABLE_TOVOTE_FORSAME_MAP
-        // Don't let votes to switch to current map
-        if (voteent.netname == mapname && self.group_no == 1)
-        {
-            sprint(self,#PRINT_HIGH,"You can't start voting for a map that is currently beeing played!\n");
-            CuTFMenuSound(#MENUSOUND_WRONG);
-            dremove(voteent);
-            voteent = world;
-            return;
-        }
-        #endif
+	voteent = spawn();
+	voteent.g_a = self.g_a;
+	voteent.think = VoteMap_Think;
+	voteent.nextthink = time + #VOTE_TIME;
+	voteent.classname = "voteent";
+	voteent.owner = world; // ADDED
 
-        voteent.netname = makestr(voteent.netname);
-        voteent.has_tesla = 0;
-    }
-    else
-    {
-        voteent.netname = GetMapString(nummap);
+	if (!nummap)
+	{
+		voteent.netname = themap;
 
-        // Abort if empty map name on localinfo
-        if (voteent.netname == "")
-        {
-            sprint(self,#PRINT_HIGH,"You can't choose an empty map slot!\n");
-            CuTFMenuSound(#MENUSOUND_WRONG);
-            dremove(voteent);
-            voteent = world;
-            return;
-        }
+		#ifdef UNABLE_TOVOTE_FORSAME_MAP
+		// Don't let votes to switch to current map
+		if (voteent.netname == mapname && self.group_no == 1)
+		{
+			sprint(self,#PRINT_HIGH,"You can't start voting for a map that is currently being played!\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+			dremove(voteent);
+			voteent = world;
+			return;
+		}
+		#endif
 
-        #ifdef UNABLE_TOVOTE_FORSAME_MAP
-        // Don't let votes to switch to current map
-        if (voteent.netname == mapname && self.group_no == 1)
-        {
-            sprint(self,#PRINT_HIGH,"You can't start voting for a map that is currently beeing played!\n");
-            CuTFMenuSound(#MENUSOUND_WRONG);
-            dremove(voteent);
-            voteent = world;
-            return;
-        }
-        #endif
+		voteent.netname = makestr(voteent.netname);
+		voteent.has_tesla = 0;
+	}
+	else
+	{
+		voteent.netname = GetMapString(nummap);
 
-        voteent.netname = makestr(voteent.netname);
-        voteent.has_tesla = nummap;
-    }
+		// Abort if empty map name on localinfo
+		if (voteent.netname == "")
+		{
+			sprint(self,#PRINT_HIGH,"You can't choose an empty map slot!\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+			dremove(voteent);
+			voteent = world;
+			return;
+		}
 
-    CleanClientVotes();
+		#ifdef UNABLE_TOVOTE_FORSAME_MAP
+		// Don't let votes to switch to current map
+		if (voteent.netname == mapname && self.group_no == 1)
+		{
+			sprint(self,#PRINT_HIGH,"You can't start voting for a map that is currently being played!\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+			dremove(voteent);
+			voteent = world;
+			return;
+		}
+		#endif
 
-    voteent.all_active = 1;
-    voteent.has_holo = 0;
+		voteent.netname = makestr(voteent.netname);
+		voteent.has_tesla = nummap;
+	}
 
-    if (self.group_no == 0)
-        voteent.has_sentry = #VOTE_NEXTMAP;
-    else
-        voteent.has_sentry = #VOTE_SWITCHMAP;    
+	CleanClientVotes();
 
-    current_voteent = voteent;
+	voteent.all_active = 1;
+	voteent.has_holo = 0;
 
-    self.goal_no = time + #VOTE_DELAY;
+	if (self.group_no == 0)
+		voteent.has_sentry = #VOTE_NEXTMAP;
+	else
+		voteent.has_sentry = #VOTE_SWITCHMAP;
 
-    self.owned_by = #VOTED_YES; // we already voted yes
-    
-    voteent.group_no = self.group_no;
+	current_voteent = voteent;
 
-    current_voteent.dont_do_triggerwork = #FALSE;
+	self.goal_no = time + #VOTE_DELAY;
 
-    BroadcastSound("misc/medkey");
+	self.owned_by = #VOTED_YES; // we already voted yes
 
-    themap = colstr(current_voteent.netname,#COLSTR_RED);
+	voteent.group_no = self.group_no;
 
-    bprint(#PRINT_HIGH,"Votingç ",self.netname);
-    
-    if (self.group_no == 0)
-        bprint(#PRINT_HIGH," suggests ",themap," as next map");
-    else 
-        bprint(#PRINT_HIGH," wants to play ",themap," right now");
-    
-    bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
-        
-    ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
+	current_voteent.dont_do_triggerwork = #FALSE;
 
-    CheckVoting(); // If we are the only player on server must check
+	BroadcastSound("misc/medkey");
+
+	themap = colstr(current_voteent.netname,#COLSTR_RED);
+
+	bprint(#PRINT_HIGH,"Votingç ",self.netname);
+
+	if (self.group_no == 0)
+		bprint(#PRINT_HIGH," suggests ",themap," as next map");
+	else
+		bprint(#PRINT_HIGH," wants to play ",themap," right now");
+
+	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
+
+	ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
+
+	CheckVoting(); // If we are the only player on server must check
 };
 
 void() VoteMap_Think =
 {
-    bprint(#PRINT_HIGH,"Votingç Map voting failed");
+	bprint(#PRINT_HIGH,"Votingç Map voting failed");
 
-    bprintVoteIssue();
+	bprintVoteIssue();
 
-    bprint(#PRINT_HIGH,"\n");
+	bprint(#PRINT_HIGH,"\n");
 
-    BroadcastSound("misc/runekey");
+	BroadcastSound("misc/runekey");
 
-    ResetVoteEnt();
+	ResetVoteEnt();
 };
 
 //==================================================================
@@ -997,25 +1001,25 @@ void() VoteMap_Think =
 
 void() CleanClientVotes =
 {
-    local entity te;
+	local entity te;
 
-    te = find(world, classname, "player");
+	te = find(world, classname, "player");
 	while (te != world)
-    {
-        if (te.is_connected)
-            te.owned_by = #VOTED_READY;
-        
-        te = find(te, classname, "player");
-    }    
+	{
+		if (te.is_connected)
+			te.owned_by = #VOTED_READY;
 
-    te = find(world, classname, "spec");
+		te = find(te, classname, "player");
+	}
+
+	te = find(world, classname, "spec");
 	while (te != world)
-    {
-        if (te.is_connected)
-            te.owned_by = #VOTED_READY;
-        
-        te = find(te, classname, "spec");
-    }    
+	{
+		if (te.is_connected)
+			te.owned_by = #VOTED_READY;
+
+		te = find(te, classname, "spec");
+	}
 };
 
 //=============================================================================
@@ -1023,37 +1027,37 @@ void() CleanClientVotes =
 
 void() ResetClientsMenu =
 {
-    local entity te;
+	local entity te;
 
-    te = find(world, classname, "player");
+	te = find(world, classname, "player");
 	while (te != world)
-    {
-        if (te.is_connected)
-        if (te != self)
-        if (te.current_menu == #MENU_PUNISH || te.current_menu == #MENU_VOTEMAP)
-        {
-            sprint(te,#PRINT_HIGH,"Already running a vote!\n"); 
-            CenterPrint(te,"\n");
-            te.current_menu = #MENU_DEFAULT;
-        }
+	{
+		if (te.is_connected)
+		if (te != self)
+		if (te.current_menu == #MENU_PUNISH || te.current_menu == #MENU_VOTEMAP)
+		{
+			sprint(te,#PRINT_HIGH,"Already running a vote!\n");
+			CenterPrint(te,"\n");
+			te.current_menu = #MENU_DEFAULT;
+		}
 
-        te = find(te, classname, "player");
-    }    
+		te = find(te, classname, "player");
+	}
 
-    te = find(world, classname, "spec");
+	te = find(world, classname, "spec");
 	while (te != world)
-    {
-        if (te.is_connected)
-        if (te != self)
-        if (te.current_menu == #SPEC_MENU_PUNISH || te.current_menu == #SPEC_MENU_VOTEMAP)
-        {
-            sprint(te,#PRINT_HIGH,"Already running a vote!\n"); 
-            CenterPrint(te,"\n");
-            te.current_menu = #SPEC_MENU_NONE;
-        }
+	{
+		if (te.is_connected)
+		if (te != self)
+		if (te.current_menu == #SPEC_MENU_PUNISH || te.current_menu == #SPEC_MENU_VOTEMAP)
+		{
+			sprint(te,#PRINT_HIGH,"Already running a vote!\n");
+			CenterPrint(te,"\n");
+			te.current_menu = #SPEC_MENU_NONE;
+		}
 
-        te = find(te, classname, "spec");
-    }    
+		te = find(te, classname, "spec");
+	}
 };
 
 //==========================================================================
@@ -1061,232 +1065,232 @@ void() ResetClientsMenu =
 
 float() CheckVoting =
 {
-    // this shouldn't be needed
-    if (current_voteent == world || current_voteent.classname!="voteent")
-    {
-        bprint(#PRINT_HIGH,"\nVotingç Error in voting system!\n");
-        ResetVoteEnt();
-        return #TRUE;
-    }    
+	// this shouldn't be needed
+	if (current_voteent == world || current_voteent.classname!="voteent")
+	{
+		bprint(#PRINT_HIGH,"\nVotingç Error in voting system!\n");
+		ResetVoteEnt();
+		return #TRUE;
+	}
 
-    // If an update is taking place, dont allow map voting
-    if (current_voteent.has_sentry == #VOTE_NEXTMAP || current_voteent.has_sentry == #VOTE_SWITCHMAP)
-    if (ServerUpdating())
-    {
-        bprint(#PRINT_HIGH,"\nVotingç Server update is taking place, no map changes are allowed\n");
-        ResetVoteEnt();
-        return #TRUE;
-    }
+	// If an update is taking place, dont allow map voting
+	if (current_voteent.has_sentry == #VOTE_NEXTMAP || current_voteent.has_sentry == #VOTE_SWITCHMAP)
+	if (ServerUpdating())
+	{
+		bprint(#PRINT_HIGH,"\nVotingç Server update is taking place, no map changes are allowed\n");
+		ResetVoteEnt();
+		return #TRUE;
+	}
 
-    local float numclients;
-    local string st;
-    
-    numclients = GetNoClients();
-    
-    if (current_voteent.has_sentry == #VOTE_PUNISH) // Punishment voting
-    {
-        // Check for a valid client as target
-        if (!current_voteent.dont_do_triggerwork) // only if not a special ban (user left)
-        if ((current_voteent.admin_kick.classname != "player" && current_voteent.admin_kick.classname != "spec") || !current_voteent.admin_kick.is_connected)
-        {
-            bprint(#PRINT_HIGH,"\nVotingç Invalid client as target for vote!\n");
-            ResetVoteEnt();
-            return #TRUE;
-        }
-        
-        if (current_voteent.g_a == #PUNISH_CURSE) // Curse
-        {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_CURSE) // success?
-            {
-                local float tf;
-                
-                tf = 0;
-                st = infokey(world, "curse");
-                
-                if (st == string_null) 
-                    tf = stof(st);
-                
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
-                bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-                bprint(#PRINT_HIGH," must be cursed\n");
+	local float numclients;
+	local string st;
 
-                BroadcastSound("doors/runeuse");
-                
-                createBastard(current_voteent.admin_kick,tf);
+	numclients = GetNoClients();
 
-                ResetVoteEnt(); // removes current vote entity
+	if (current_voteent.has_sentry == #VOTE_PUNISH) // Punishment voting
+	{
+		// Check for a valid client as target
+		if (!current_voteent.dont_do_triggerwork) // only if not a special ban (user left)
+		if ((current_voteent.admin_kick.classname != "player" && current_voteent.admin_kick.classname != "spec") || !current_voteent.admin_kick.is_connected)
+		{
+			bprint(#PRINT_HIGH,"\nVotingç Invalid client as target for vote!\n");
+			ResetVoteEnt();
+			return #TRUE;
+		}
 
-                return #TRUE;
-            }
-        }
-        else if (current_voteent.g_a == #PUNISH_KICK) // Kick
-        {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_KICK) // success?
-            {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
-                bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-                bprint(#PRINT_HIGH," must be kicked\n");
+		if (current_voteent.g_a == #PUNISH_CURSE) // Curse
+		{
+			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_CURSE) // success?
+			{
+				local float tf;
 
-                bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
-        		bprint(#PRINT_HIGH, " is À…√À≈ƒ from the server\n");
+				tf = 0;
+				st = infokey(world, "curse");
 
-                sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been À…√À≈ƒ from the server!\n");
+				if (st == string_null)
+					tf = stof(st);
 
-                stuffcmd(current_voteent.admin_kick, "disconnect\n"); //Kick them!
+				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
+				bprint(#PRINT_HIGH," must be cursed\n");
 
-                BroadcastSound("player/teledth1");
+				BroadcastSound("doors/runeuse");
 
-                ResetVoteEnt(); // removes current vote entity
+				createBastard(current_voteent.admin_kick,tf);
 
-                return #TRUE;
-            }
-        }
-        else if (current_voteent.g_a == #PUNISH_BAN) // Ban!
-        {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_BAN) // success?
-            {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				ResetVoteEnt(); // removes current vote entity
 
-                if (current_voteent.dont_do_triggerwork) // Special ban (user has left)
-                {                    
-                    bprint(#PRINT_HIGH,current_voteent.t_s_m);
-                    bprint(#PRINT_HIGH," must be banned\n");
+				return #TRUE;
+			}
+		}
+		else if (current_voteent.g_a == #PUNISH_KICK) // Kick
+		{
+			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_KICK) // success?
+			{
+				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
+				bprint(#PRINT_HIGH," must be kicked\n");
 
-                    bprint(#PRINT_HIGH, current_voteent.t_s_m);
-                    bprint(#PRINT_HIGH, " is ¬¡ŒŒ≈ƒ from the server\n");
+				bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
+				bprint(#PRINT_HIGH, " is À…√À≈ƒ from the server\n");
 
-                    localcmd("addip ");
-                    localcmd(current_voteent.t_s_h);
-                    localcmd(" #BAN_VOTED_TIME");
-                    localcmd("\n");
+				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been À…√À≈ƒ from the server!\n");
 
-                    BroadcastSound("doors/runeuse");
-                }
-                else
-                {                    
-                    bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-                    bprint(#PRINT_HIGH," must be banned\n");
+				stuffcmd(current_voteent.admin_kick, "disconnect\n"); //Kick them!
 
-                    bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
-                    bprint(#PRINT_HIGH, " is ¬¡ŒŒ≈ƒ from the server\n");
+				BroadcastSound("player/teledth1");
 
-                    sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been ¬¡ŒŒ≈ƒ from the server!\n");
-                    
-                    stuffcmd(current_voteent.admin_kick, "disconnect\n"); //Kick them!
-                    
-                    st = infokey(current_voteent.admin_kick,"ip");
-                    localcmd("addip ");
-                    localcmd(st);
-                    localcmd(" #BAN_VOTED_TIME");
-                    localcmd("\n");   
-                    
-                    BroadcastSound("player/teledth1");
-                }               
+				ResetVoteEnt(); // removes current vote entity
 
-                ResetVoteEnt(); // removes current vote entity
+				return #TRUE;
+			}
+		}
+		else if (current_voteent.g_a == #PUNISH_BAN) // Ban!
+		{
+			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_BAN) // success?
+			{
+				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
 
-                return #TRUE;
-            }
-        }
-        else if (current_voteent.g_a == #PUNISH_MUTE) // Mute
-        {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MUTE) // success? 
-            {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
-                bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-                bprint(#PRINT_HIGH," must be muted =)\n");
+				if (current_voteent.dont_do_triggerwork) // Special ban (user has left)
+				{
+					bprint(#PRINT_HIGH,current_voteent.t_s_m);
+					bprint(#PRINT_HIGH," must be banned\n");
 
-                bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
-        		bprint(#PRINT_HIGH, " is muted.\n");
+					bprint(#PRINT_HIGH, current_voteent.t_s_m);
+					bprint(#PRINT_HIGH, " is ¬¡ŒŒ≈ƒ from the server\n");
 
-                BroadcastSound("doors/runeuse");
+					localcmd("addip ");
+					localcmd(current_voteent.t_s_h);
+					localcmd(" #BAN_VOTED_TIME");
+					localcmd("\n");
 
-                sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been muted!\n");
-                
-                local float uid;
-                
-                uid = getuid(current_voteent.admin_kick);
-                st = ftos(uid);
+					BroadcastSound("doors/runeuse");
+				}
+				else
+				{
+					bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
+					bprint(#PRINT_HIGH," must be banned\n");
 
-                localcmd("mute 00");
-                localcmd(st);
-        		localcmd(" #MUTE_VOTED_TIME");
-                localcmd("\n");
+					bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
+					bprint(#PRINT_HIGH, " is ¬¡ŒŒ≈ƒ from the server\n");
 
-                ResetVoteEnt(); // removes current vote entity
+					sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been ¬¡ŒŒ≈ƒ from the server!\n");
 
-                return #TRUE;
-            }
-        }        
-        else if (current_voteent.g_a == #PUNISH_CUFF) // Cuff
-        {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_CUFF) // success? 
-            {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
-                bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-                bprint(#PRINT_HIGH," is annoying\n");
+					stuffcmd(current_voteent.admin_kick, "disconnect\n"); //Kick them!
 
-                bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
-        		bprint(#PRINT_HIGH, " is cuffed.\n");
+					st = infokey(current_voteent.admin_kick,"ip");
+					localcmd("addip ");
+					localcmd(st);
+					localcmd(" #BAN_VOTED_TIME");
+					localcmd("\n");
 
-                BroadcastSound("doors/runeuse");
+					BroadcastSound("player/teledth1");
+				}
 
-                sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been cuffed!\n");
-                
-                local float uid;
-                
-                uid = getuid(current_voteent.admin_kick);
-                st = ftos(uid);
+				ResetVoteEnt(); // removes current vote entity
 
-                localcmd("cuff 00");
-                localcmd(st);
-        		localcmd(" #CUFF_VOTED_TIME");
-                localcmd("\n");
+				return #TRUE;
+			}
+		}
+		else if (current_voteent.g_a == #PUNISH_MUTE) // Mute
+		{
+			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MUTE) // success?
+			{
+				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
+				bprint(#PRINT_HIGH," must be muted =)\n");
 
-                ResetVoteEnt(); // removes current vote entity
+				bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
+				bprint(#PRINT_HIGH, " is muted.\n");
 
-                return #TRUE;
-            }
-        }
-    }
-    else if (current_voteent.has_sentry == #VOTE_NEXTMAP)
-    {
-        if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_NEXTMAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_NEXTMAP_FACTOR )) // success?
-        {
-            st = colstr(current_voteent.netname,#COLSTR_RED);
-            
-            bprint(#PRINT_HIGH,"\nVotingç Success° Setting ",st," as next map\n");
+				BroadcastSound("doors/runeuse");
 
-            localcmd("localinfo nmap \"");
-            localcmd(current_voteent.netname);
-      		localcmd("\"\n");
-            
-            BroadcastSound("misc/runekey");
+				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been muted!\n");
 
-            ResetVoteEnt(); // removes current vote entity
+				local float uid;
 
-            return #TRUE;
-       }
-    }
-    else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
-    {
-        if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_MAP_FACTOR )) // success?
-        {
-            st = colstr(current_voteent.netname,#COLSTR_RED);
+				uid = getuid(current_voteent.admin_kick);
+				st = ftos(uid);
 
-            bprint(#PRINT_HIGH,"\nVotingç Success° Switching map to ",st,"\n");
+				localcmd("mute 00");
+				localcmd(st);
+				localcmd(" #MUTE_VOTED_TIME");
+				localcmd("\n");
 
-            BroadcastSound("misc/runekey");
+				ResetVoteEnt(); // removes current vote entity
 
-            LaunchMap(current_voteent.netname);
+				return #TRUE;
+			}
+		}
+		else if (current_voteent.g_a == #PUNISH_CUFF) // Cuff
+		{
+			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_CUFF) // success?
+			{
+				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
+				bprint(#PRINT_HIGH," is annoying\n");
 
-            ResetVoteEnt(); // removes current vote entity
+				bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
+				bprint(#PRINT_HIGH, " is cuffed.\n");
 
-            return #TRUE;
-        }
-    }
+				BroadcastSound("doors/runeuse");
 
-    return #FALSE;
+				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been cuffed!\n");
+
+				local float uid;
+
+				uid = getuid(current_voteent.admin_kick);
+				st = ftos(uid);
+
+				localcmd("cuff 00");
+				localcmd(st);
+				localcmd(" #CUFF_VOTED_TIME");
+				localcmd("\n");
+
+				ResetVoteEnt(); // removes current vote entity
+
+				return #TRUE;
+			}
+		}
+	}
+	else if (current_voteent.has_sentry == #VOTE_NEXTMAP)
+	{
+		if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_NEXTMAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_NEXTMAP_FACTOR )) // success?
+		{
+			st = colstr(current_voteent.netname,#COLSTR_RED);
+
+			bprint(#PRINT_HIGH,"\nVotingç Success° Setting ",st," as next map\n");
+
+			localcmd("localinfo nmap \"");
+			localcmd(current_voteent.netname);
+			localcmd("\"\n");
+
+			BroadcastSound("misc/runekey");
+
+			ResetVoteEnt(); // removes current vote entity
+
+			return #TRUE;
+	   }
+	}
+	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
+	{
+		if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_MAP_FACTOR )) // success?
+		{
+			st = colstr(current_voteent.netname,#COLSTR_RED);
+
+			bprint(#PRINT_HIGH,"\nVotingç Success° Switching map to ",st,"\n");
+
+			BroadcastSound("misc/runekey");
+
+			LaunchMap(current_voteent.netname);
+
+			ResetVoteEnt(); // removes current vote entity
+
+			return #TRUE;
+		}
+	}
+
+	return #FALSE;
 };
 
 //==========================================================================
@@ -1294,13 +1298,13 @@ float() CheckVoting =
 
 float() ValidVoteEnt =
 {
-    if (current_voteent == world)
-        return #FALSE;
+	if (current_voteent == world)
+		return #FALSE;
 
-    if (current_voteent.classname != "voteent")
-        return #FALSE;
-    
-    return #TRUE;
+	if (current_voteent.classname != "voteent")
+		return #FALSE;
+
+	return #TRUE;
 };
 
 
@@ -1309,14 +1313,14 @@ float() ValidVoteEnt =
 
 string(float themap) GetMapString =
 {
-    local string st, mapnum, temp;
-    
-    mapnum = ftos(themap);
+	local string st, mapnum, temp;
 
-    temp = strcat("m",mapnum);
-    st = infokey(world,temp);
-    
-    return st;
+	mapnum = ftos(themap);
+
+	temp = strcat("m",mapnum);
+	st = infokey(world,temp);
+
+	return st;
 };
 
 //===============================================================
@@ -1324,18 +1328,18 @@ string(float themap) GetMapString =
 
 void() bprintVotesLeft =
 {
-    local string st;
-    local float tmp;
+	local string st;
+	local float tmp;
 
-    tmp = GetRemainingVotes();
-    tmp = floor(tmp);
-    st = ftos(tmp);   
-    st = colstr(st,#COLSTR_NUMBER);
+	tmp = GetRemainingVotes();
+	tmp = floor(tmp);
+	st = ftos(tmp);
+	st = colstr(st,#COLSTR_NUMBER);
 
-    if (tmp > 1)
-        bprint(#PRINT_HIGH," €",st," votes left›\n");
-    else
-        bprint(#PRINT_HIGH," € vote left!›\n");
+	if (tmp > 1)
+		bprint(#PRINT_HIGH," €",st," votes left›\n");
+	else
+		bprint(#PRINT_HIGH," € vote left!›\n");
 };
 
 //======================================================================================
@@ -1344,97 +1348,97 @@ void() bprintVotesLeft =
 // Warning: here we assume self is the player leaving server to be punished
 void() VoteToSleep =
 {
-    local string st;
-    
-    // First clean up any sleeping vote
-    CleanUpSleepVote();
+	local string st;
 
-    current_voteent.think = VoteSleep_think;
-    current_voteent.nextthink = time + #VOTESLEEP_RATECHECK;
-    current_voteent.classname = "sleepvote";
+	// First clean up any sleeping vote
+	CleanUpSleepVote();
 
-    st = infokey(self,"ip");
+	current_voteent.think = VoteSleep_think;
+	current_voteent.nextthink = time + #VOTESLEEP_RATECHECK;
+	current_voteent.classname = "sleepvote";
 
-    current_voteent.message = makestr(st);
-    current_voteent.admin_kick = world;
-    current_voteent.ltime = time;
+	st = infokey(self,"ip");
 
-    current_voteent = world;
+	current_voteent.message = makestr(st);
+	current_voteent.admin_kick = world;
+	current_voteent.ltime = time;
 
-    votesleeping = #TRUE;
+	current_voteent = world;
+
+	votesleeping = #TRUE;
 };
 
 void() VoteSleep_think =
 {
-    self.nextthink = time + #VOTESLEEP_RATECHECK;
+	self.nextthink = time + #VOTESLEEP_RATECHECK;
 
-    if (!ValidVoteEnt())
-    {
-        if (self.admin_kick != world)
-        {
-            if (!self.admin_kick.is_connected) // He tries to hide again? lol
-                self.admin_kick = world; // reset
-            else
-                SleepVoteResume(self, self.admin_kick);
-        }
-    }
+	if (!ValidVoteEnt())
+	{
+		if (self.admin_kick != world)
+		{
+			if (!self.admin_kick.is_connected) // He tries to hide again? lol
+				self.admin_kick = world; // reset
+			else
+				SleepVoteResume(self, self.admin_kick);
+		}
+	}
 
-    // Check if we should discard this sleeping vote
-    if (floor((time - self.ltime) / 60) > #VOTESLEEP_DURATION)
-    {
-        delstr(self.message);
-        dremove(self);
-        votesleeping = #FALSE;
-    }
+	// Check if we should discard this sleeping vote
+	if (floor((time - self.ltime) / 60) > #VOTESLEEP_DURATION)
+	{
+		delstr(self.message);
+		dremove(self);
+		votesleeping = #FALSE;
+	}
 };
 
 void() CleanUpSleepVote =
 {
-    local entity te;
+	local entity te;
 
-    te = find(world,classname,"sleepvote");
+	te = find(world,classname,"sleepvote");
 
-    while (te)
-    {
-        delstr(te.message);
-        dremove(te);
+	while (te)
+	{
+		delstr(te.message);
+		dremove(te);
 
-        te = find(te,classname,"sleepvote");
-    }
+		te = find(te,classname,"sleepvote");
+	}
 
-    votesleeping = #FALSE;
+	votesleeping = #FALSE;
 };
 
 entity() GetSleepVote =
 {
-    local entity te;
+	local entity te;
 
-    te = find(world,classname,"sleepvote");
+	te = find(world,classname,"sleepvote");
 
-    return te;
+	return te;
 };
 
 void(entity sleepent, entity targetclient) SleepVoteResume =
 {
-    delstr(sleepent.message);
-    
-    current_voteent = sleepent;
-    current_voteent.think = PunishVote_Think;
-    current_voteent.nextthink = time + #VOTE_TIME;
-    current_voteent.classname = "voteent";
-    current_voteent.admin_kick = targetclient;
+	delstr(sleepent.message);
 
-    votesleeping = #FALSE;
+	current_voteent = sleepent;
+	current_voteent.think = PunishVote_Think;
+	current_voteent.nextthink = time + #VOTE_TIME;
+	current_voteent.classname = "voteent";
+	current_voteent.admin_kick = targetclient;
 
-    BroadcastSound("misc/medkey");
+	votesleeping = #FALSE;
 
-    bprint(#PRINT_HIGH,"Votingç Resuming vote to ");
-    if (current_voteent.g_a == #PUNISH_MUTE)
-        bprint(#PRINT_HIGH,"mute ");
-    else if (current_voteent.g_a == #PUNISH_CUFF)
-        bprint(#PRINT_HIGH,"cuff ");
-    bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-    bprintVotesLeft();
+	BroadcastSound("misc/medkey");
+
+	bprint(#PRINT_HIGH,"Votingç Resuming vote to ");
+	if (current_voteent.g_a == #PUNISH_MUTE)
+		bprint(#PRINT_HIGH,"mute ");
+	else if (current_voteent.g_a == #PUNISH_CUFF)
+		bprint(#PRINT_HIGH,"cuff ");
+	bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
+	bprintVotesLeft();
 };
 
 //========================================================================
@@ -1442,26 +1446,26 @@ void(entity sleepent, entity targetclient) SleepVoteResume =
 
 float() GetRemainingVotes =
 {
-    if (!current_voteent)
-        return 666; // BUG
+	if (!current_voteent)
+		return 666; // BUG
 
-    if (current_voteent.has_sentry == #VOTE_PUNISH)
-    {
-        if (current_voteent.g_a == #PUNISH_CURSE)
-            return #VOTESNEEDED_CURSE - (current_voteent.all_active - current_voteent.has_holo);
-        else if (current_voteent.g_a == #PUNISH_MUTE)
-            return #VOTESNEEDED_MUTE - (current_voteent.all_active - current_voteent.has_holo);
-        else if (current_voteent.g_a == #PUNISH_KICK)
-            return #VOTESNEEDED_KICK - (current_voteent.all_active - current_voteent.has_holo);
-        else if (current_voteent.g_a == #PUNISH_BAN)
-            return #VOTESNEEDED_BAN - (current_voteent.all_active - current_voteent.has_holo);
-        else if (current_voteent.g_a == #PUNISH_CUFF)
-            return #VOTESNEEDED_CUFF - (current_voteent.all_active - current_voteent.has_holo);
-    }
-    else if (current_voteent.has_sentry == #VOTE_NEXTMAP)
-        return #VOTESNEEDED_NEXTMAP - (current_voteent.all_active - current_voteent.has_holo);
-    else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
-        return #VOTESNEEDED_MAP - (current_voteent.all_active - current_voteent.has_holo);
-    
-    return 666; // If this happens, its a bug.. and evil!
+	if (current_voteent.has_sentry == #VOTE_PUNISH)
+	{
+		if (current_voteent.g_a == #PUNISH_CURSE)
+			return #VOTESNEEDED_CURSE - (current_voteent.all_active - current_voteent.has_holo);
+		else if (current_voteent.g_a == #PUNISH_MUTE)
+			return #VOTESNEEDED_MUTE - (current_voteent.all_active - current_voteent.has_holo);
+		else if (current_voteent.g_a == #PUNISH_KICK)
+			return #VOTESNEEDED_KICK - (current_voteent.all_active - current_voteent.has_holo);
+		else if (current_voteent.g_a == #PUNISH_BAN)
+			return #VOTESNEEDED_BAN - (current_voteent.all_active - current_voteent.has_holo);
+		else if (current_voteent.g_a == #PUNISH_CUFF)
+			return #VOTESNEEDED_CUFF - (current_voteent.all_active - current_voteent.has_holo);
+	}
+	else if (current_voteent.has_sentry == #VOTE_NEXTMAP)
+		return #VOTESNEEDED_NEXTMAP - (current_voteent.all_active - current_voteent.has_holo);
+	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
+		return #VOTESNEEDED_MAP - (current_voteent.all_active - current_voteent.has_holo);
+
+	return 666; // If this happens, its a bug.. and evil!
 };
