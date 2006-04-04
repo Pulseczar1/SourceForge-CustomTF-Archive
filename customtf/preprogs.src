@@ -27,7 +27,6 @@ environ.qc
 
 menu.qc
 cutfmenu.qc
-tinker.qc
 custom.qc
 sbitems.qc
 jobs.qc

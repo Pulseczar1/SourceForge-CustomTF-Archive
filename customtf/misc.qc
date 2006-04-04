@@ -570,7 +570,7 @@ void() spikeshooter_use =
 	}
 	else if (self.spawnflags & #SPAWNFLAG_TFGRENADE)
 	{
-		sound (self, #CHAN_VOICE, "weapons/grenade.wav", 1, #ATTN_NORM);
+		sound (self, #CHAN_VOICE, "weapons/throw.wav", 1, #ATTN_NORM);
 		TFFireGrenade (self.origin, self.movedir);
 	}
 	else if (self.spawnflags & #SPAWNFLAG_TFFLAME)

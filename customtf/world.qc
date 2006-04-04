@@ -456,8 +456,8 @@ void() worldspawn =
 	precache_sound2("auras/aura3b.wav");
 	precache_sound2("auras/aura4b.wav");
 
-	//precache_sound2("weapons/pinpull.wav");
-	//precache_sound2("weapons/throw.wav");
+	precache_sound2("weapons/pinpull.wav");	//RJ re-enabled, it's cooler (megatf-ish)
+	precache_sound2("weapons/throw.wav");
 
 #ifdef SPEECH
 	precache_sound2("speech/scout.wav");
