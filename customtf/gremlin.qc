@@ -1441,7 +1441,7 @@ void() GremlinFireProximityGrenade =
    NumProximityGrenades = NumProximityGrenades + 1;
    self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 
-	sound (self, #CHAN_WEAPON, "weapons/grenade.wav", 1, #ATTN_NORM);
+	sound (self, #CHAN_WEAPON, "weapons/throw.wav", 1, #ATTN_NORM);
 
 	missile = spawn ();
    missile.owner = self;
