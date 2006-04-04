@@ -1,12 +1,16 @@
-/*=============================
-	Turrets
+/*
+==============================================================================
+
+Turrets
 
 This file contains all information required
 to handle turrets. Some changes may have
 to be made in ClientObituary().
-=============================*/
 
-float TURRET_INSTANT_FIRE 	= 1;
+==============================================================================
+*/
+
+float TURRET_INSTANT_FIRE = 1;
 float TURRET_EXPLOSIVE_FIRE = 2;
 
 void() turret_scanthink;
@@ -66,7 +70,7 @@ void() turret_normal =
 	if (!(self.aflag))
 		self.aflag = 1200;
 
-	// this is the radius damage done	
+	// this is the radius damage done
 	if (self.all_active)
 		self.spawnflags = self.spawnflags | TURRET_EXPLOSIVE_FIRE;
 
@@ -83,7 +87,7 @@ void() turret_scanthink =
 	local entity search;
 
 	bprint("t: scanning..\n");
-	
+
 	search = checkclient();
 
 	if (visible(search) && search.health > 1)
@@ -119,15 +123,15 @@ void() turret_attackthink =
 void() turret_fire =
 {
 
-/*	if (self.spawnflags & TURRET_INSTANT_FIRE)
+	/*if (self.spawnflags & TURRET_INSTANT_FIRE)
 	{
 		// fire instant weapon
 	}
-	else
-*///	{
+	else 
+	{*/
 		newmis = spawn();
 		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
-		
+
 		setorigin(newmis, self.origin + dir * 48);
 		setmodel(newmis, self.weaponmodel);
 
@@ -141,7 +145,7 @@ void() turret_fire =
 		newmis.owner = self;
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 5; // remove projectile after 5 seconds
-//	}
+	//}
 };
 
 void() turret_projectiletouch =

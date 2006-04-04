@@ -1,11 +1,12 @@
-/* 
-	TeamFortress 2.1	-	22/1/97
+/*
+==============================================================================
 
-	TeamFortress Software
-	Robin Walker, John Cook, Ian Caughley.
+Tforttm.QC
+TeamFortress 2.1
 
-	Functions handling all the help displaying for TeamFortress. 
+==============================================================================
 */
+
 // Prototypes
 // Team Functions
 float() TeamFortress_TeamPutPlayerInTeam;
@@ -29,11 +30,9 @@ void(entity p) SetTeamName;
 #endif
 string(float tno) GetTrueTeamName;
 
-//-------- OfN ---------------------------------//
-void(float tno, entity ignore) teamprefixsprint;
+void(float tno, entity ignore) teamprefixsprint;	//OfN
 
-//- OfN - Extra cheat checking...
-float (string skin_str) Is_TF_Skin;
+float (string skin_str) Is_TF_Skin;		//- OfN - Extra cheat checking...
 float (float tno, float theColor ) IsValidTopColor;
 
 //=========================================================================
@@ -128,11 +127,11 @@ string(float tno) GetTeamName =
 	if (tno == 1)
 	{
 	    /*if (world.b_b != "" && world.b_b != string_null)
-        {
-            return world.b_b;
-        }*/
+		{
+			return world.b_b;
+		}*/
 
-        st = infokey(world, "team1");
+		st = infokey(world, "team1");
 		if (st == string_null)
 			st = infokey(world, "t1");
 
@@ -142,11 +141,11 @@ string(float tno) GetTeamName =
 	else if (tno == 2)
 	{
 	    /*if (world.b_t != "" && world.b_t != string_null)
-        {
-            return world.b_t;
-        }*/
-        
-        st = infokey(world, "team2");
+		{
+			return world.b_t;
+		}*/
+
+		st = infokey(world, "team2");
 		if (st == string_null)
 			st = infokey(world, "t2");
 
@@ -156,11 +155,11 @@ string(float tno) GetTeamName =
 	else if (tno == 3)
 	{
 		/*if (world.b_n != "" && world.b_n != string_null)
-        {
-            return world.b_n;
-        }*/
-        
-        st = infokey(world, "team3");
+		{
+			return world.b_n;
+		}*/
+
+		st = infokey(world, "team3");
 		if (st == string_null)
 			st = infokey(world, "t3");
 
@@ -170,18 +169,18 @@ string(float tno) GetTeamName =
 	else if (tno == 4)
 	{
 		/*if (world.b_o != "" && world.b_o != string_null)
-        {
-            return world.b_o;
-        }*/
+		{
+			return world.b_o;
+		}*/
 
-        st = infokey(world, "team4");
+		st = infokey(world, "team4");
 		if (st == string_null)
 			st = infokey(world, "t4");
 
 		if (st == string_null || st == "")
 			return "teal";
 	}
-	else 
+	else
 		st = "\"\"";
 
 	return st;
@@ -197,7 +196,7 @@ string(float tno) GetTrueTeamName =
 		return "Ùåììï÷";
 	else if (tno == 4)
 		return "Çòååî";
-	else 
+	else
 		return "ERROR";
 };
 #endif
@@ -226,13 +225,6 @@ float(float tno) TeamFortress_TeamSet =
 		sprint (self, #PRINT_HIGH, "Teamplay is not On, so FortressTeams are inactive.\n");
 		return #FALSE;
 	}
-	
-/*	if (chris)
-		if (prematch > time)
-		{
-			sprint(self, #PRINT_HIGH, "Sorry, Chris' Teamplay Plus Mode is active and a round is in progress. Please wait for the next round to begin.\n");
-			PlayerObserverMode();
-		}*/
 
 	if (tno > number_of_teams && number_of_teams != 0)
 	{
@@ -256,15 +248,15 @@ float(float tno) TeamFortress_TeamSet =
 	if (tc >= TeamFortress_TeamGetMaxPlayers(tno))
 	{
 	    //- OfN
-        if (mapname == "huntedr")
-        {
-            if (tno == 3)
-                sprint (self, #PRINT_HIGH, "The game has already enough assassins, be a bodyguard.\n");
-            else if (tno == 1)
-                sprint (self, #PRINT_HIGH, "You wanna be the vicepresident or what?\n");
-        }
-        else
-            sprint (self, #PRINT_HIGH, "That team is full. Pick another.\n");
+		if (mapname == "huntedr")
+		{
+			if (tno == 3)
+				sprint (self, #PRINT_HIGH, "The game has already enough assassins, be a bodyguard.\n");
+			else if (tno == 1)
+				sprint (self, #PRINT_HIGH, "You wanna be the vicepresident or what?\n");
+		}
+		else
+			sprint (self, #PRINT_HIGH, "That team is full. Pick another.\n");
 
 		return #FALSE;
 	}
@@ -279,7 +271,7 @@ float(float tno) TeamFortress_TeamSet =
 		// If the color wasn't set
 		if (TeamFortress_TeamGetColor(tno) == 0)
 		{
-			sprint (self, #PRINT_HIGH, "You can't start a new team with your color, since another ");
+			sprint (self, #PRINT_HIGH, "You can't start a new team with your color, since another is ");
 			sprint (self, #PRINT_HIGH, "already using that color. Change your pants color, then try again.\n");
 			return #FALSE;
 		}
@@ -291,7 +283,7 @@ float(float tno) TeamFortress_TeamSet =
 		bprint(#PRINT_HIGH, st);
 		bprint(#PRINT_HIGH, ".\n");
 
-		// Prevent the cheatchecking mechanism from nabbing them b4 the 
+		// Prevent the cheatchecking mechanism from nabbing them b4 the
 		// color command works.
 		makeImmune(self,time+10);
 		//self.immune_to_check = time + 10;
@@ -301,8 +293,8 @@ float(float tno) TeamFortress_TeamSet =
 		tc = TeamFortress_TeamGetColor(tno) - 1;
 		st = ftos(tc);
 
-         //- OfN - Nice colors
-        if (nicecolors==1) st =TeamGetNiceColor(tno);
+		 //- OfN - Nice colors
+		if (nicecolors==1) st =TeamGetNiceColor(tno);
 
 		stuffcmd(self, st);
 		stuffcmd(self, "\n");
@@ -328,35 +320,36 @@ float(float tno) TeamFortress_TeamSet =
 	}
 
 	// Announce the new teammember
-    #ifndef OLD_TEAM_ANNOUNCEMENTS
+	#ifndef OLD_TEAM_ANNOUNCEMENTS
 	bprint(#PRINT_HIGH, self.netname);
 	bprint(#PRINT_HIGH, " has joined Team No ");
 	st = ftos(tno);
 	bprint(#PRINT_HIGH, st);
-    st = GetTrueTeamName(tno);
+	st = GetTrueTeamName(tno);
 	bprint(#PRINT_HIGH, " (", st, " team)\n");
 
-    #else
-    
-    bprint(#PRINT_HIGH, self.netname);
+	#else
+
+	bprint(#PRINT_HIGH, self.netname);
 	bprint(#PRINT_HIGH, " has joined Team No ");
 	st = ftos(tno);
 	bprint(#PRINT_HIGH, ".\n");
-    #endif
-    
+	#endif
+
 	// Set the player's color
 	stuffcmd(self, "color ");
 	tc = TeamFortress_TeamGetColor(tno) - 1;
 	st = ftos(tc);
 
-    //- OfN - Nice colors
-    if (nicecolors==1) st =TeamGetNiceColor(tno);
+	//- OfN - Nice colors
+	if (nicecolors==1)
+		st = TeamGetNiceColor(tno);
 
 	stuffcmd(self, st);
 	stuffcmd(self, "\n");
 
 	self.team_no = tno;
-	// Prevent the cheatchecking mechanism from nabbing them b4 the 
+	// Prevent the cheatchecking mechanism from nabbing them b4 the
 	// color command works.
 	makeImmune(self,time+10);
 	//self.immune_to_check = time + 10;
@@ -378,32 +371,33 @@ float(float tno) TeamFortress_TeamSet =
 			TeamFortress_ChangeClass();
 		}
 	}
-//RJM
- 	if (toggleflags & #TFLAG_TEAMFRAGS)
+
+	//RJM
+	if (toggleflags & #TFLAG_TEAMFRAGS)
 		self.frags = TeamFortress_TeamGetScore(self.team_no);
-//RJM
+	//RJM
 
-    //- OfN Team3 should have less players than red in Hunted
-    if (mapname == "huntedr")
-    {
-        local float result;
-        result = floor(TeamFortress_TeamGetNoPlayers(2) * #HUNTED_YELLOWTEAM_FACTOR);
-        team3maxplayers = result;
-        if (team3maxplayers < 1) team3maxplayers = 1;
-    }
-    else
-    if (mapname == "border1" || mapname == "border1r")
-    {
-        local float result;
-        result = floor(TeamFortress_TeamGetNoPlayers(2) * #BORDER_FACTOR);
-        team3maxplayers = result;
-        team1maxplayers = result;
-        if (team3maxplayers < 1) team3maxplayers = 1;
-        if (team1maxplayers < 1) team1maxplayers = 1;
-    }
+	//- OfN Team3 should have less players than red in Hunted
+	if (mapname == "huntedr")
+	{
+		local float result;
+		result = floor(TeamFortress_TeamGetNoPlayers(2) * #HUNTED_YELLOWTEAM_FACTOR);
+		team3maxplayers = result;
+		if (team3maxplayers < 1) team3maxplayers = 1;
+	}
+	else
+	if (mapname == "border1" || mapname == "border1r")
+	{
+		local float result;
+		result = floor(TeamFortress_TeamGetNoPlayers(2) * #BORDER_FACTOR);
+		team3maxplayers = result;
+		team1maxplayers = result;
+		if (team3maxplayers < 1) team3maxplayers = 1;
+		if (team1maxplayers < 1) team1maxplayers = 1;
+	}
 
-    // OfN - Adjust his teammates army rating as needed
-    ArmyRatingJoin(self);
+	// OfN - Adjust his teammates army rating as needed
+	ArmyRatingJoin(self);
 
 	return #TRUE;
 };
@@ -429,7 +423,7 @@ void() TeamFortress_CheckTeamCheats =
 
 	//WK Add in hack for "skins" cheat. This is as good a place as any
 	if (self.netname == string_null) {
-		stuffcmd(self,"name \"I'm a cheater even when RENAMED\"\n");
+		sprint(self, #PRINT_HIGH, "You have been kicked for changing your skin. Don't do it.\n");
 		stuffcmd(self,"disconnect\n");
 	}
 
@@ -439,14 +433,15 @@ void() TeamFortress_CheckTeamCheats =
 	if (st != string_null)
 		rate = stof(st);
 	if (rate > 10000) {
-		stuffcmd(self,"rate 10000\n");
+		//stuffcmd(self,"rate 10000\n"); //RJ why? lets send them a message instead, since i don't understand why it should be limited
+		sprint(self, #PRINT_HIGH, "Your rate is greater than 10,000. Consider lowering it.\n");
 	}
 #endif
 
-    //- OfN - Added checking for topcolor changes... (see IsValidTopColor in OfteN.qc)
-    local float tTopColor;
-    st = infokey(self,"topcolor");
-    tTopColor=stof(st);
+	//- OfN - Added checking for topcolor changes... (see IsValidTopColor in OfteN.qc)
+	local float tTopColor;
+	st = infokey(self,"topcolor");
+	tTopColor = stof(st);
 
 	// Have they changed color?
 	if (self.team_no > 0 && teamplay > 0)
@@ -456,17 +451,17 @@ void() TeamFortress_CheckTeamCheats =
 		if ((self.cutf_items & #CUTF_SPY_KIT) && self.undercover_team != 0)
 		{
 			if (TeamFortress_TeamGetColor(self.undercover_team) != self.team) //- OfN
-            //if ((TeamFortress_TeamGetColor(self.undercover_team) != self.team) || !IsValidTopColor(self.undercover_team,tTopColor))
-            //  || !IsValidTopColor(self.undercover_team,tTopColor)
+			//if ((TeamFortress_TeamGetColor(self.undercover_team) != self.team) || !IsValidTopColor(self.undercover_team,tTopColor))
+			//  || !IsValidTopColor(self.undercover_team,tTopColor)
 			{
-				// Set their color 
+				// Set their color
 				stuffcmd(self, "color ");
 				tc = TeamFortress_TeamGetColor(self.undercover_team) - 1;
-				
+
 				st = ftos(tc);
 
-                //- OfN - Nice colors
-                if (nicecolors==1) st =TeamGetNiceColor(self.undercover_team);
+				//- OfN - Nice colors
+				if (nicecolors==1) st =TeamGetNiceColor(self.undercover_team);
 
 				stuffcmd(self, st);
 				stuffcmd(self, "\n");
@@ -479,13 +474,13 @@ void() TeamFortress_CheckTeamCheats =
 		}
 		else if (TeamFortress_TeamGetColor(self.team_no) != self.team)
 		{
-			// Set their color 
+			// Set their color
 			stuffcmd(self, "color ");
 			tc = TeamFortress_TeamGetColor(self.team_no) - 1;
 			st = ftos(tc);
 
-            //- OfN - Nice colors
-            if (nicecolors==1) st =TeamGetNiceColor(self.team_no);
+			//- OfN - Nice colors
+			if (nicecolors==1) st =TeamGetNiceColor(self.team_no);
 
 			stuffcmd(self, st);
 			stuffcmd(self, "\n");
@@ -514,8 +509,8 @@ void() TeamFortress_CheckTeamCheats =
 				tc = TeamFortress_TeamGetColor(self.undercover_team) - 1;
 				st = ftos(tc);
 
-                //- OfN - Nice colors
-                if (nicecolors==1) st =TeamGetNiceColor(self.undercover_team);
+				//- OfN - Nice colors
+				if (nicecolors==1) st =TeamGetNiceColor(self.undercover_team);
 
 				stuffcmd(self, st);
 				stuffcmd(self, "\n");
@@ -538,8 +533,8 @@ void() TeamFortress_CheckTeamCheats =
 			tc = TeamFortress_TeamGetColor(self.team_no) - 1;
 			st = ftos(tc);
 
-            //- OfN - Nice colors
-            if (nicecolors==1) st =TeamGetNiceColor(self.team_no);
+			//- OfN - Nice colors
+			if (nicecolors==1) st =TeamGetNiceColor(self.team_no);
 
 			stuffcmd(self, st);
 			stuffcmd(self, "\n");
@@ -560,15 +555,15 @@ void() TeamFortress_CheckTeamCheats =
 			st = infokey(self, "skin");
 			tc = 0;
 
-            // OfN kick custom player classes using a non TF-skin
-            if (self.playerclass == #PC_CUSTOM && !Is_TF_Skin(st))
-            {
+			// OfN kick custom player classes using a non TF-skin
+			if (self.playerclass == #PC_CUSTOM && !Is_TF_Skin(st))
+			{
    				TeamFortress_SetSkin(self);
 
 				bprint2(#PRINT_MEDIUM, self.netname, " has been kicked for changing skin.\n");
 				sprint(self, #PRINT_HIGH, "You have been kicked for changing your skin. Don't do it.\n");
-				stuffcmd(self, "disconnect\n");                
-            }
+				stuffcmd(self, "disconnect\n");
+			}
 
 			if ((self.cutf_items & #CUTF_SPY_KIT) && self.undercover_skin != 0)
 			{
@@ -807,39 +802,39 @@ void(float all, float teamscored, float scorepoints) TeamFortress_TeamShowScores
 
 	i = 1;
 
-    // OfN - End of map team scores
-    if (all == 3)
-    {
-        // long scores
-        while (i <= number_of_teams)
-        {
-            if (TeamFortress_TeamGetColor(i) > 0)
-            {
-                st = ftos(i);
-                bprint (#PRINT_HIGH, "Team ", st, " (");
+	// OfN - End of map team scores
+	if (all == 3)
+	{
+		// long scores
+		while (i <= number_of_teams)
+		{
+			if (TeamFortress_TeamGetColor(i) > 0)
+			{
+				st = ftos(i);
+				bprint (#PRINT_HIGH, "Team ", st, " (");
 
-                st = GetTrueTeamName(i);
-                st = strcat(st,") ");
-                st = padstr(st,8);
-                st = strcat(st,": ");
-                bprint (#PRINT_HIGH, st); 
-                
-                j = TeamFortress_TeamGetScore(i);
-                st = ftos(j);
-                st = colstr(st,#COLSTR_NUMBER);
+				st = GetTrueTeamName(i);
+				st = strcat(st,") ");
+				st = padstr(st,8);
+				st = strcat(st,": ");
+				bprint (#PRINT_HIGH, st);
 
-                if (j < 10)
-                    bprint(#PRINT_HIGH,"  ");
-                else if (j < 100)
-                    bprint(#PRINT_HIGH," ");                
+				j = TeamFortress_TeamGetScore(i);
+				st = ftos(j);
+				st = colstr(st,#COLSTR_NUMBER);
 
-                bprint (#PRINT_HIGH, st, " points\n");
-            }
-            i = i + 1;
-        }
-        return;
-    }
-        
+				if (j < 10)
+					bprint(#PRINT_HIGH,"  ");
+				else if (j < 100)
+					bprint(#PRINT_HIGH," ");
+
+				bprint (#PRINT_HIGH, st, " points\n");
+			}
+			i = i + 1;
+		}
+		return;
+	}
+
 	// short scores
 	if (all == 2)
 	{
@@ -858,17 +853,17 @@ void(float all, float teamscored, float scorepoints) TeamFortress_TeamShowScores
 			}
 			i = i + 1;
 		}
-        
-        if (!teamscored)
-            bprint(#PRINT_HIGH," (mixed scoring)\n");
-        else
-        {
-            st = GetTrueTeamName(teamscored);
-            bprint(#PRINT_HIGH," [",st," scores ");
-            st = ftos(scorepoints);
-            st = colstr(st,#COLSTR_NUMBER);
-            bprint(#PRINT_HIGH,st,"]\n");		
-        }
+
+		if (!teamscored)
+			bprint(#PRINT_HIGH," (mixed scoring)\n");
+		else
+		{
+			st = GetTrueTeamName(teamscored);
+			bprint(#PRINT_HIGH," [",st," scores ");
+			st = ftos(scorepoints);
+			st = colstr(st,#COLSTR_NUMBER);
+			bprint(#PRINT_HIGH,st,"]\n");
+		}
 
 		return;
 	}
@@ -904,7 +899,7 @@ void(float all, float teamscored, float scorepoints) TeamFortress_TeamShowScores
 				bprint (#PRINT_HIGH, ") : ");
 			else
 				sprint (self, #PRINT_HIGH, ") : ");
-			
+
 			j = TeamFortress_TeamGetScore(i);
 			st = ftos(j);
 
@@ -966,8 +961,8 @@ void(entity Player) TeamFortress_TeamShowMemberClasses =
 {
 	/*local string st;
 	st = infokey(world, "no_showmembers");	*/
-    
-    local entity e;
+
+	local entity e;
 	local float found;
 
 	found = #FALSE;
@@ -991,7 +986,7 @@ void(entity Player) TeamFortress_TeamShowMemberClasses =
 					TeamFortress_PrintClassName(Player,e.playerclass, (e.tfstate & #TFSTATE_RANDOMPC));
 				else
 					TeamFortress_PrintJobName(Player,e.job);
-					
+
 			}
 		}
 		e = find(e, classname, "player");
@@ -1021,7 +1016,7 @@ void() CalculateTeamEqualiser =
 		self.nextthink = time + 60;
 		return;
 	}
-	
+
 	if (teamplay & #TEAMPLAY_LESSPLAYERSHELP)
 	{
 
@@ -1035,7 +1030,7 @@ void() CalculateTeamEqualiser =
 			self.nextthink = time + 30;
 			return;
 		}
-		
+
 		t_ave = (t1 + t2 + t3 + t4) / number_of_teams;
 
 		// calulate teams equalisation ratio
@@ -1050,7 +1045,7 @@ void() CalculateTeamEqualiser =
 
 			team1advantage = calc;
 		}
-		
+
 		if (t2 > 0 && number_of_teams >= 2)
 		{
 			calc = (t_ave / t2) - 1;
@@ -1087,11 +1082,11 @@ void() CalculateTeamEqualiser =
 			team4advantage = calc;
 		}
 	}
-	
+
 	if (teamplay & #TEAMPLAY_LESSSCOREHELP)
 	{
 		t1 = team1score + #TEAM_HELP_RATE;
-		
+
 		if (number_of_teams >= 2)
 				t2 = team2score + #TEAM_HELP_RATE;
 		else
@@ -1104,7 +1099,7 @@ void() CalculateTeamEqualiser =
 
 		if (number_of_teams >= 4)
 			t4 = team4score + #TEAM_HELP_RATE;
-		else 
+		else
 			t4 = 0;
 
 
@@ -1119,7 +1114,7 @@ void() CalculateTeamEqualiser =
 			calc = calc + 1;
 
 		team1advantage = calc * team1advantage;
-	
+
 		if (number_of_teams >= 2)
 		{
 			t_ave = (t1 + t3 + t4) / (number_of_teams - 1);
@@ -1137,7 +1132,7 @@ void() CalculateTeamEqualiser =
 		if (number_of_teams >= 3)
 		{
 			t_ave = (t2 + t1 + t4) / (number_of_teams - 1);
-	
+
 			calc = (t_ave / t3) - 1;
 
 			if (calc != 0)
@@ -1161,7 +1156,7 @@ void() CalculateTeamEqualiser =
 
 			team4advantage = calc * team4advantage;
 		}
-	}		
+	}
 
 	self.nextthink = time + 10;
 };
@@ -1173,7 +1168,7 @@ void() SetupTeamEqualiser =
 	team2advantage = 1;
 	team3advantage = 1;
 	team4advantage = 1;
-	
+
 	if (!(teamplay & (#TEAMPLAY_LESSPLAYERSHELP | #TEAMPLAY_LESSSCOREHELP)))
 		return;
 
@@ -1183,7 +1178,7 @@ void() SetupTeamEqualiser =
 	TE = spawn();
 	TE.classname = "Team Equaliser";
 	TE.think = CalculateTeamEqualiser;
-	TE.nextthink = time + 30;	
+	TE.nextthink = time + 30;
 };
 
 
@@ -1224,7 +1219,7 @@ float (entity targ, entity attacker, float damage) TeamEqualiseDamage =
 		adv = team3advantage;
 	else if (targ.team_no == 4)
 		adv = team4advantage;
-	
+
 	if (adv == 0)
 	{
 		RPrint("There is a team with an advantage of 0\n");
@@ -1245,20 +1240,20 @@ void() TeamFortress_StatusQuery =
 
 	sprint (self, #PRINT_HIGH, "players per team: ");
 
-	ft = TeamFortress_TeamGetNoPlayers(1);	
+	ft = TeamFortress_TeamGetNoPlayers(1);
 	st = ftos(ft);
 	sprint (self, #PRINT_HIGH, st);
 	sprint (self, #PRINT_HIGH, "  ");
-	ft = TeamFortress_TeamGetNoPlayers(2);	
+	ft = TeamFortress_TeamGetNoPlayers(2);
 	st = ftos(ft);
 	sprint (self, #PRINT_HIGH, st);
 
 	sprint (self, #PRINT_HIGH, "  ");
-	ft = TeamFortress_TeamGetNoPlayers(3);	
+	ft = TeamFortress_TeamGetNoPlayers(3);
 	st = ftos(ft);
 	sprint (self, #PRINT_HIGH, st);
 	sprint (self, #PRINT_HIGH, "  ");
-	ft = TeamFortress_TeamGetNoPlayers(4);	
+	ft = TeamFortress_TeamGetNoPlayers(4);
 	st = ftos(ft);
 	sprint (self, #PRINT_HIGH, st);
 	sprint (self, #PRINT_HIGH, "\n");
@@ -1333,26 +1328,23 @@ float(float tno) TeamFortress_TeamIsCivilian =
 };
 
 //=========================================================================
-// Sprints to all the members on one team except one 
+// Sprints to all the members on one team except one
 float(float tno, entity ignore, string st) teamsprint =
 {
 	// Don't do teamprints in DM
 	if (tno == 0)
 		return;
-    
-    local entity te;
+
+	local entity te;
 
 	te = find(world, classname, "player");
 	while (te)
 	{
 		if (Teammate(te.team_no,tno) && te != ignore)
 		{
-            sprint(te, #PRINT_HIGH, st);
+			sprint(te, #PRINT_HIGH, st);
 		}
 
 		te = find(te, classname, "player");
 	}
 };
-
-
-
