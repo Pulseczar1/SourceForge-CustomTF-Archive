@@ -1,10 +1,14 @@
-/*======================================================
-	SECURITY.QC			Custom TeamFortress v3.1
+/*
+==============================================================================
 
-	(c) Craig Hauser			26/3/00
-========================================================
-Functions for the security camera
-======================================================*/
+SECURITY.QC
+Custom TeamFortress v3.1
+
+ Functions for the security camera
+
+==============================================================================
+*/
+
 void() Security_Camera_Idle;
 float() Security_Camera_FindTarget;
 void() Security_Camera_Pain;
@@ -28,7 +32,7 @@ void() Security_Camera_Idle =
 		self.nextthink = time + 0.5; //CH else 2 checks per sec
 	self.think = Security_Camera_Idle;
 };
-//========
+
 float() Security_Camera_FindTarget =
 {
 	local entity client;
@@ -36,7 +40,7 @@ float() Security_Camera_FindTarget =
 
 	if (self.is_malfunctioning & #SCREWUP_TWO) // SB how tragic, camera can't see
 		return #FALSE;
-		
+
 	if (self.is_malfunctioning & #SCREWUP_THREE) // oh no, we're reading incorrect signals
 	{
 		if (Security_Camera_FindFakeTarget())
@@ -50,11 +54,11 @@ float() Security_Camera_FindTarget =
 	loopc = 0;
 	gotone = #FALSE;
 
-    local float trange; //- OfN - Hack
-    trange=1000;
+	local float trange; //- OfN - Hack
+	trange=1000;
 
-    if (self.all_active & #IMPROVED_ONE)
-        trange=1250;
+	if (self.all_active & #IMPROVED_ONE)
+		trange=1250;
 
 	//CH Theortetically this will check every client on the server now
 	while (loopc < 32 && gotone == #FALSE)
@@ -86,7 +90,7 @@ float() Security_Camera_FindTarget =
 			return #FALSE;
 		}
 	}
-	
+
 	// Spotted sound
 	if (self.heat == 3) { //CH so it does not beep all the time.
 		sound (self, #CHAN_WEAPON, "weapons/cambeep.wav", 1, #ATTN_NORM);
@@ -154,7 +158,7 @@ float() Security_Camera_FindFakeTarget =
 			return #FALSE;
 		}
 	}
-	
+
 	// Spotted sound
 	if (self.heat == 3) { //CH so it does not beep all the time.
 		sound (self, #CHAN_WEAPON, "weapons/cambeep.wav", 1, #ATTN_NORM);
@@ -168,12 +172,12 @@ float() Security_Camera_FindFakeTarget =
 
 	return #TRUE;
 };
-//========
+
 void() Security_Camera_Pain =
 {
 	sound (self, #CHAN_WEAPON, "weapons/cambeep.wav", 1, #ATTN_NORM);
 };
-//======
+
 void() Security_Camera_Die =
 {
 	sprint(self.real_owner, #PRINT_HIGH, "Your security camera was destroyed.\n");
@@ -190,13 +194,13 @@ void() Security_Camera_Die =
 	WriteCoord (#MSG_BROADCAST, self.origin_z);
 #ifdef QUAKE_WORLD
 	multicast (self.origin, #MULTICAST_PHS);
-    dremove(self);
+	dremove(self);
 #else
-    BecomeExplosion ();
+	BecomeExplosion ();
 #endif
-    //SwitchFromCamera();
+	//SwitchFromCamera();
 };
-//==========
+
 //Prints the person to owner/team
 //Outputs: "<>SECURITY CAMERA<>  Team_color class/job (netname)\n"
 void() Security_Camera_PrintTarget =
@@ -210,19 +214,19 @@ void() Security_Camera_PrintTarget =
 	sprint(self.real_owner, #PRINT_HIGH, " ");
 			if (self.enemy.playerclass != #PC_CUSTOM)
 				st = TeamFortress_GetClassName(self.enemy.playerclass);
-			else 
+			else
 				st = TeamFortress_GetJobName(self.enemy.job);
 	sprint(self.real_owner, #PRINT_HIGH, st);
 	sprint(self.real_owner, #PRINT_HIGH, " (");
 	sprint(self.real_owner, #PRINT_HIGH, self.enemy.netname);
 	sprint(self.real_owner, #PRINT_HIGH, ")\n");
 };
-//==========
+
 void() Security_Camera_Spawn =
 {
 	if (self.ammo_cells < #BUILD_COST_CAMERA)
 	{
-		sprint(self,#PRINT_HIGH,"Not enough cells to build a Security Camera\n");		
+		sprint(self,#PRINT_HIGH,"Not enough cells to build a Security Camera\n");
 	}
 	else
 	{
@@ -231,7 +235,7 @@ void() Security_Camera_Spawn =
 	newmis = spawn();
 	newmis.movetype = #MOVETYPE_BOUNCE;
 	setsize (newmis, '0 0 0', '0 0 0');
-//	setsize (newmis, '-8 -8 -8', '8 8 8');
+	//setsize (newmis, '-8 -8 -8', '8 8 8');
 	newmis.solid = #SOLID_BBOX;
 	newmis.takedamage = #DAMAGE_AIM;
 	newmis.classname = "building_camera";
@@ -244,7 +248,7 @@ void() Security_Camera_Spawn =
 	newmis.velocity = v_forward*800 + v_up * 200 + v_right*10 + v_up*10;
 	newmis.angles = '0 0 0';
 	newmis.angles_y = anglemod(self.angles_y + 180);
-//	newmis.skin = 1;
+	//newmis.skin = 1;
 	newmis.th_die = Security_Camera_Die; 		// Death function
 	newmis.th_pain = Security_Camera_Pain;
 	newmis.mdl = "progs/camera.mdl"; //CH temp model
@@ -256,13 +260,13 @@ void() Security_Camera_Spawn =
 	newmis.health = newmis.max_health = #BUILD_HEALTH_CAMERA;
 	newmis.touch = SecurityCameraTossTouch;
 
-    newmis.all_active=0; // OfN - reset HACKER improvements
+	newmis.all_active=0; // OfN - reset HACKER improvements
 
 	W_SetCurrentAmmo();
 	}
 };
-//========
-void() SecurityCameraTossTouch = 
+
+void() SecurityCameraTossTouch =
 {
 	if (other != world || other == self.real_owner)
 		return;
@@ -290,7 +294,7 @@ void() SecurityCameraTossTouch =
 		Security_Camera_Die();
 		return;
 	}
-	
+
 	// Check if the camera is inside a player.
 	// FIXME: Check for summons too? -randomer 2006-02-04
 	local entity te;
@@ -299,21 +303,21 @@ void() SecurityCameraTossTouch =
 		if (self.origin_x - 16 < te.absmax_x && self.origin_x + 16 > te.absmin_x &&
 			self.origin_y - 16 < te.absmax_y && self.origin_y + 16 > te.absmin_y &&
 			self.origin_z -  6 < te.absmax_z && self.origin_z + 10 > te.absmin_z) {
-			
+
 			// FIXME: There should be a better way to handle this. -randomer 2006-02-10
 			Security_Camera_Die();
 			return;
 		}
 		te = find(te, classname, "player");
 	}
-	
+
 	sprint (self.real_owner, #PRINT_HIGH, "You finish building the Security Camera.\n");
 
-    teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
-    teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
+	teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
+	teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
 	teamsprint(self.real_owner.team_no, self.real_owner, " has built a Security Camera.\n");
 
-    self.real_owner.option = time + 2; // so ppl cant destroy it for 2 seconds
+	self.real_owner.option = time + 2; // so ppl cant destroy it for 2 seconds
 
 	self.movetype = #MOVETYPE_NONE;
 	setsize (self, '-16 -16 -6', '16 16 10');
