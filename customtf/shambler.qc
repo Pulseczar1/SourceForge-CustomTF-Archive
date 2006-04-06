@@ -1,3 +1,10 @@
+/*
+==============================================================================
+
+SHAMBLER
+
+==============================================================================
+*/
 
 //void(float side) ShamFireball;
 //void() sham_fireballl1;
@@ -7,43 +14,37 @@ float (entity targ, entity inflictor) CanDamage;
 #ifdef XMAS_STUFF
 void() sham_xmas_removefx;
 #endif
-/*
-==============================================================================
 
-SHAMBLER
-
-==============================================================================
-*/
 
 $cd /raid/quake/id1/models/shams
 $scale 1.5
 $origin 0 0 24
-$base base		
+$base base
 $skin base
 
 $frame stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8 stand9
 $frame stand10 stand11 stand12 stand13 stand14 stand15 stand16 stand17
 
-$frame walk1 walk2 walk3 walk4 walk5 walk6 walk7 
+$frame walk1 walk2 walk3 walk4 walk5 walk6 walk7
 $frame walk8 walk9 walk10 walk11 walk12
 
 $frame	run1 run2 run3 run4 run5 run6
 
-$frame smash1 smash2 smash3 smash4 smash5 smash6 smash7 
+$frame smash1 smash2 smash3 smash4 smash5 smash6 smash7
 $frame smash8 smash9 smash10 smash11 smash12
 
-$frame swingr1 swingr2 swingr3 swingr4 swingr5 
+$frame swingr1 swingr2 swingr3 swingr4 swingr5
 $frame swingr6 swingr7 swingr8 swingr9
 
-$frame swingl1 swingl2 swingl3 swingl4 swingl5 
+$frame swingl1 swingl2 swingl3 swingl4 swingl5
 $frame swingl6 swingl7 swingl8 swingl9
 
-$frame magic1 magic2 magic3 magic4 magic5 
+$frame magic1 magic2 magic3 magic4 magic5
 $frame magic6 magic7 magic8 magic9 magic10 magic11 magic12
 
 $frame pain1 pain2 pain3 pain4 pain5 pain6
 
-$frame death1 death2 death3 death4 death5 death6 
+$frame death1 death2 death3 death4 death5 death6
 $frame death7 death8 death9 death10 death11
 
 void() sham_stand1	=[	$stand1,	sham_stand2	] {ai_stand();};
@@ -77,7 +78,8 @@ void() sham_walk10      =[      $walk10,       sham_walk11] {ai_walk(9);};
 void() sham_walk11      =[      $walk11,       sham_walk12] {ai_walk(7);};
 void() sham_walk12      =[      $walk12,       sham_walk1 ] {ai_walk(7);
 if (random() > 0.8)
-	sound (self, #CHAN_VOICE, "shambler/sidle.wav", 1, #ATTN_IDLE);};
+	sound (self, #CHAN_VOICE, "shambler/sidle.wav", 1, #ATTN_IDLE);
+};
 
 void() sham_run1       =[      $run1,        sham_run2      ] {ai_run(20);};
 void() sham_run2       =[      $run2,        sham_run3      ] {ai_run(24);};
@@ -87,27 +89,26 @@ void() sham_run5       =[      $run5,        sham_run6      ] {ai_run(24);};
 void() sham_run6       =[      $run6,        sham_run1      ] {ai_run(20);
 if (random() > 0.8)
 	sound (self, #CHAN_VOICE, "shambler/sidle.wav", 1, #ATTN_IDLE);
-
-//if (self.enemy
 };
 
 void() sham_smash1     =[      $smash1,       sham_smash2    ] {
-sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
-ai_charge(12);};
+	sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
+	ai_charge(12);
+};
 void() sham_smash2     =[      $smash2,       sham_smash3    ] {ai_charge(12);}; // spd trple
 void() sham_smash3     =[      $smash3,       sham_smash4    ] {ai_charge(12);};
 void() sham_smash4     =[      $smash4,       sham_smash5    ] {ai_charge(10);};
 void() sham_smash5     =[      $smash5,       sham_smash6    ] {ai_charge(8);};
 void() sham_smash6     =[      $smash6,       sham_smash7    ] {ai_charge(2);};
 void() sham_smash7     =[      $smash7,       sham_smash8    ] {ai_charge(0);
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void() sham_smash8     =[      $smash8,       sham_smash9    ] {ai_charge(0);};
 void() sham_smash9     =[      $smash9,       sham_smash10   ] {ai_charge(0);};
 void() sham_smash10    =[      $smash10,      sham_smash11   ] {
-local vector	delta;//, smack_origin, source;
-local float 	ldmg;
-//local entity	head;
+	local vector	delta;//, smack_origin, source;
+	local float 	ldmg;
+	//local entity	head;
 
 	if (!self.enemy)
 		return;
@@ -119,13 +120,13 @@ local float 	ldmg;
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
-		
+
 	ldmg = (random() + random() + random()) * 200 + 30*self.has_tesla;
 	deathmsg = 0;
 	if (self.enemy.tf_items & #NIT_GEL) ldmg = ldmg / 2;
 	if (self.enemy.cutf_items & #CUTF_DEMONLORE) ldmg = ldmg / 2;
 	//T_Damage (self.enemy, self, self, ldmg);
-    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
+	TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
 	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
 
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
@@ -139,11 +140,10 @@ void() sham_swingr1;
 
 void(float side) ShamClaw =
 {
-local vector	delta;
-//local vector	smack_origin, source;
-local float 	ldmg;
-//local entity	head;
-
+	local vector	delta;
+	//local vector	smack_origin, source;
+	local float 	ldmg;
+	//local entity	head;
 
 	if (!self.enemy)
 		return;
@@ -153,9 +153,9 @@ local float 	ldmg;
 
 	if (vlen(delta) > 200)
 		return;
-		
+
 	deathmsg = 0;
-	
+
 	ldmg = (random() + random() + random()) * 75 + 15*self.has_tesla;
 	if (self.enemy.tf_items & #NIT_GEL) ldmg = ldmg / 2;
 	if (self.enemy.cutf_items & #CUTF_DEMONLORE) ldmg = ldmg * 0.8;
@@ -169,7 +169,7 @@ local float 	ldmg;
 			self.health = self.max_health;
 	}
 	//T_Damage (self.enemy, self, self, ldmg);
-    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
+	TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
 	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
 
 	if (side)
@@ -182,7 +182,7 @@ local float 	ldmg;
 
 void() sham_swingl1	=[      $swingl1,      sham_swingl2   ] {
 sound (self, #CHAN_VOICE, "shambler/melee2.wav", 1, #ATTN_NORM);
-    MonsterAuraPower();
+	MonsterAuraPower();
 ai_charge(10);};
 void() sham_swingl2 =[      $swingl2,      sham_swingl3   ] {ai_charge(6);}; //speed doubled
 void() sham_swingl3 =[      $swingl3,      sham_swingl4   ] {ai_charge(14);};
@@ -190,29 +190,29 @@ void() sham_swingl4 =[      $swingl4,      sham_swingl5   ] {ai_charge(6);};
 void() sham_swingl5 =[      $swingl5,      sham_swingl6   ] {ai_charge(14);};
 void() sham_swingl6 =[      $swingl6,      sham_swingl7   ] {ai_charge(18);};
 void() sham_swingl7 =[      $swingl7,      sham_swingl8   ] {ai_charge(10); ShamClaw(250);
-    //if (self.enemy.health <= 0 || self.enemy.has_disconnected)
-    if (!StillValidEnemy(self.enemy))
-    {
-    self.enemy = world;
-    // FIXME: look all around for other targets
-        //if (self.oldenemy.health > 0 && !self.oldenemy.has_disconnected)
-        if (StillValidEnemy(self.oldenemy))
-        {
-            self.enemy = self.oldenemy;
-            HuntTarget ();
-        }
-        else
-        { //FIXES MAD SHAMBLERs?
-            MonsterIdle(self);
-            
-            /*if (self.movetarget)
-                self.th_walk ();
-            else
-                self.th_stand ();*/
+	//if (self.enemy.health <= 0 || self.enemy.has_disconnected)
+	if (!StillValidEnemy(self.enemy))
+	{
+	self.enemy = world;
+	// FIXME: look all around for other targets
+		//if (self.oldenemy.health > 0 && !self.oldenemy.has_disconnected)
+		if (StillValidEnemy(self.oldenemy))
+		{
+			self.enemy = self.oldenemy;
+			HuntTarget ();
+		}
+		else
+		{ //FIXES MAD SHAMBLERs?
+			MonsterIdle(self);
 
-            return;
-        }
-    }
+			/*if (self.movetarget)
+				self.th_walk ();
+			else
+				self.th_stand ();*/
+
+			return;
+		}
+	}
 };
 void() sham_swingl8 =[      $swingl8,      sham_swingl9   ] {ai_charge(8);};
 void() sham_swingl9 =[      $swingl9,      sham_run1  ] {
@@ -222,52 +222,52 @@ if (random()<0.5)
 };
 
 void() sham_swingr1	=[      $swingr1,      sham_swingr2   ] {
-    sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
-    MonsterAuraPower();
+	sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
+	MonsterAuraPower();
 
-    ai_charge(2);};
+	ai_charge(2);};
 void() sham_swingr2	=[      $swingr2,      sham_swingr3   ] {ai_charge(16);};
 void() sham_swingr3 =[      $swingr3,      sham_swingr4   ] {ai_charge(28);};
 void() sham_swingr4 =[      $swingr4,      sham_swingr5   ] {ai_charge(14);}; // speed dbl
 void() sham_swingr5 =[      $swingr5,      sham_swingr6   ] {ai_charge(6);};
 void() sham_swingr6 =[      $swingr6,      sham_swingr7   ] {ai_charge(12);};
 void() sham_swingr7 =[      $swingr7,      sham_swingr8   ] {ai_charge(12); ShamClaw(-250);
-    //if (self.enemy.health <= 0 || self.enemy.has_disconnected)
-    if (!StillValidEnemy(self.enemy))
-    {
-        self.enemy = world;
-    // FIXME: look all around for other targets
-        //if (self.oldenemy.health > 0 && !self.oldenemy.has_disconnected)
-        if (StillValidEnemy(self.oldenemy))
-        {
-            self.enemy = self.oldenemy;
-            HuntTarget ();
-        }
-        else
-        { //FIXES MAD SHAMBLERs? - no
-            MonsterIdle(self);
-            
-            /*if (self.movetarget)
-                self.th_walk ();
-            else
-                self.th_stand ();*/
+	//if (self.enemy.health <= 0 || self.enemy.has_disconnected)
+	if (!StillValidEnemy(self.enemy))
+	{
+		self.enemy = world;
+	// FIXME: look all around for other targets
+		//if (self.oldenemy.health > 0 && !self.oldenemy.has_disconnected)
+		if (StillValidEnemy(self.oldenemy))
+		{
+			self.enemy = self.oldenemy;
+			HuntTarget ();
+		}
+		else
+		{ //FIXES MAD SHAMBLERs? - no
+			MonsterIdle(self);
 
-            return;
-        }
-    }
+			/*if (self.movetarget)
+				self.th_walk ();
+			else
+				self.th_stand ();*/
+
+			return;
+		}
+	}
 };
 void() sham_swingr8 =[      $swingr8,      sham_swingr9   ] {ai_charge(6);};
 void() sham_swingr9 =[      $swingr9,      sham_run1  ] {ai_charge(2);
-//if ((self.has_sensor && self.enemy.health > 0 && random()<0.5) || (!self.has_sensor && self.enemy.health <= 0 && random()<0.5))
-// TOCHECK: WTF is this for??
-if ((self.has_sensor && StillValidEnemy(self.enemy) && random()<0.5) || (!self.has_sensor && !StillValidEnemy(self.enemy) && random()<0.5))
-	self.think = sham_swingl1;
+	//if ((self.has_sensor && self.enemy.health > 0 && random()<0.5) || (!self.has_sensor && self.enemy.health <= 0 && random()<0.5))
+	// TOCHECK: WTF is this for??
+	if ((self.has_sensor && StillValidEnemy(self.enemy) && random()<0.5) || (!self.has_sensor && !StillValidEnemy(self.enemy) && random()<0.5))
+		self.think = sham_swingl1;
 };
 
 void() sham_melee =
 {
 	local float chance;
-	
+
 	chance = random();
 	self.has_sensor = 1;
 	if (chance > 0.7)
@@ -278,14 +278,11 @@ void() sham_melee =
 		sham_swingl1 ();
 };
 
-
-//============================================================================
-
 void() CastLightning =
 {
 	local	vector	org, dir;
 	local	float	ldmg;
-	
+
 	self.effects = self.effects | #EF_DIMLIGHT;
 
 	ai_face ();
@@ -295,32 +292,31 @@ void() CastLightning =
 	dir = self.enemy.origin + '0 0 16' - org;
 	dir = normalize (dir);
 
-    // OfN - Check for force field
-    traceline (org, self.origin + dir*3000, #TL_ANY_SOLID, self);
+	// OfN - Check for force field
+	traceline (org, self.origin + dir*3000, #TL_ANY_SOLID, self);
 
-    if (trace_ent.classname == "force_field")
-    {
-        FieldEvent(trace_ent,trace_endpos,trace_ent);
+	if (trace_ent.classname == "force_field")
+	{
+		FieldEvent(trace_ent,trace_endpos,trace_ent);
 
-        /*FieldExplosion(trace_ent,trace_endpos,trace_ent);
-        PutFieldWork(trace_ent);*/
+		/*FieldExplosion(trace_ent,trace_endpos,trace_ent);
+		PutFieldWork(trace_ent);*/
 
-        WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-        WriteByte (#MSG_BROADCAST, #TE_LIGHTNING1);
-        WriteEntity (#MSG_BROADCAST, self);
-        WriteCoord (#MSG_BROADCAST, org_x);
-        WriteCoord (#MSG_BROADCAST, org_y);
-        WriteCoord (#MSG_BROADCAST, org_z);
-        WriteCoord (#MSG_BROADCAST, trace_endpos_x);
-        WriteCoord (#MSG_BROADCAST, trace_endpos_y);
-        WriteCoord (#MSG_BROADCAST, trace_endpos_z);
-    #ifdef QUAKE_WORLD
-        multicast (org, #MULTICAST_PHS);
-    #endif
+		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_BROADCAST, #TE_LIGHTNING1);
+		WriteEntity (#MSG_BROADCAST, self);
+		WriteCoord (#MSG_BROADCAST, org_x);
+		WriteCoord (#MSG_BROADCAST, org_y);
+		WriteCoord (#MSG_BROADCAST, org_z);
+		WriteCoord (#MSG_BROADCAST, trace_endpos_x);
+		WriteCoord (#MSG_BROADCAST, trace_endpos_y);
+		WriteCoord (#MSG_BROADCAST, trace_endpos_z);
+	#ifdef QUAKE_WORLD
+		multicast (org, #MULTICAST_PHS);
+	#endif
 
-        return;
-    }
-    //_------------------------------------_//
+		return;
+	}
 
 	traceline (org, self.origin + dir*3000, #TL_BSP_ONLY, self);
 
@@ -335,10 +331,10 @@ void() CastLightning =
 	WriteCoord (#MSG_BROADCAST, trace_endpos_z);
 
 #ifdef QUAKE_WORLD
-    multicast (org, #MULTICAST_PHS);
+	multicast (org, #MULTICAST_PHS);
 #endif
 
-    ldmg = 5 + self.has_tesla * 5;
+	ldmg = 5 + self.has_tesla * 5;
 	if (self.has_tesla == 5)
 		if (ldmg < self.enemy.health)
 			self.health = self.health + (ldmg / 10);
@@ -346,24 +342,24 @@ void() CastLightning =
 			self.health = floor(self.health + (self.enemy.health / 10));
 		if (self.health > self.max_health)
 			self.health = self.max_health;
-	
-    #ifdef SHAMBLER_SHOCK_SOUND
-    
-    // OfN - hackish, sry, but better than modifying the ancient LightningDamage :)
+
+	#ifdef SHAMBLER_SHOCK_SOUND
+
+	// OfN - hackish, sry, but better than modifying the ancient LightningDamage :)
 	local float oldhp;
-    oldhp = self.enemy.health;
-        
-    LightningDamage (org, trace_endpos, self, 5 + self.has_tesla * 5);
+	oldhp = self.enemy.health;
 
-    // They got electrified, dont they? so..
-    if (self.enemy.health != oldhp)
-        sound (self.enemy, #CHAN_WEAPON, "weapons/lhit.wav", 0.75, #ATTN_NORM);
-    
-    #else
+	LightningDamage (org, trace_endpos, self, 5 + self.has_tesla * 5);
 
-    LightningDamage (org, trace_endpos, self, 5 + self.has_tesla * 5);
+	// They got electrified, dont they? so..
+	if (self.enemy.health != oldhp)
+		sound (self.enemy, #CHAN_WEAPON, "weapons/lhit.wav", 0.75, #ATTN_NORM);
 
-    #endif
+	#else
+
+	LightningDamage (org, trace_endpos, self, 5 + self.has_tesla * 5);
+
+	#endif
 
 };
 
@@ -372,47 +368,43 @@ void() sham_magic1     =[      $magic1,       sham_magic2    ] {ai_face();
 };
 void() sham_magic2     =[      $magic2,       sham_magic3    ] {ai_face();};
 void() sham_magic3     =[      $magic3,       sham_magic4    ] {ai_face();self.nextthink = self.nextthink + 0.2;
-local entity o;
-
-self.effects = self.effects | #EF_DIMLIGHT;
-ai_face();
-self.owner = spawn();
-o = self.owner;
-setmodel (o, "progs/s_light.mdl");
-setorigin (o, self.origin);
-o.angles = self.angles;
-o.nextthink = time + 0.7;
-o.think = SUB_Remove;
+	local entity o;
+	
+	self.effects = self.effects | #EF_DIMLIGHT;
+	ai_face();
+	self.owner = spawn();
+	o = self.owner;
+	setmodel (o, "progs/s_light.mdl");
+	setorigin (o, self.origin);
+	o.angles = self.angles;
+	o.nextthink = time + 0.7;
+	o.think = SUB_Remove;
 };
 void() sham_magic4     =[      $magic4,       sham_magic5    ]
 {
-    MonsterAuraPower();
-self.effects = self.effects | #EF_DIMLIGHT;
-self.owner.frame = 1;
+	MonsterAuraPower();
+	self.effects = self.effects | #EF_DIMLIGHT;
+	self.owner.frame = 1;
 };
 void() sham_magic5     =[      $magic5,       sham_magic6    ]
 {
-self.effects = self.effects | #EF_DIMLIGHT;
-self.owner.frame = 2;
+	self.effects = self.effects | #EF_DIMLIGHT;
+	self.owner.frame = 2;
 };
 void() sham_magic6     =[      $magic6,       sham_magic9    ]
 {
-remove (self.owner);
-CastLightning();
-sound (self, #CHAN_WEAPON, "shambler/sboom.wav", 1, #ATTN_NORM);
+	remove (self.owner);
+	CastLightning();
+	sound (self, #CHAN_WEAPON, "shambler/sboom.wav", 1, #ATTN_NORM);
 };
-void() sham_magic9     =[      $magic9,       sham_magic10   ]
-{CastLightning();};
-void() sham_magic10    =[      $magic10,      sham_magic11   ]
-{CastLightning();};
+void() sham_magic9     =[      $magic9,       sham_magic10   ]{CastLightning();};
+void() sham_magic10    =[      $magic10,      sham_magic11   ]{CastLightning();};
 void() sham_magic11    =[      $magic11,      sham_magic12   ]
 {
-if (skill == 3)
-	CastLightning();
+	if (skill == 3)
+		CastLightning();
 };
 void() sham_magic12    =[      $magic12,      sham_run1	   ] {self.effects = 0;};
-
-
 
 void() sham_pain1       =[      $pain1, sham_pain2      ] {};
 void() sham_pain2       =[      $pain2, sham_pain3      ] {};
@@ -422,29 +414,29 @@ void() sham_pain5       =[      $pain5, sham_pain6      ] {};
 void() sham_pain6       =[      $pain6, sham_run1      ] {};
 
 void(entity attacker, float damage)	sham_pain =
-{	    
-    //self.real_owner.StatusRefreshTime = time + 0.2;
-	//self.real_owner.StatusBarScreen = 3;  
+{
+	//self.real_owner.StatusRefreshTime = time + 0.2;
+	//self.real_owner.StatusBarScreen = 3;
 
-    if (self.has_holo) return; // there is no pain during xmas! :)
+	if (self.has_holo) return; // there is no pain during xmas! :)
 
-    if (self.pain_finished > time)
+	if (self.pain_finished > time)
 		return;
 
-    if (self.health <= 0)
+	if (self.health <= 0)
 		return;		// allready dying, don't go into pain frame
-	  
-    if (random()*100 > damage) // was 70
+
+	if (random()*100 > damage) // was 70
 		return;		// didn't flinch
 
-    AI_CheckAttacker(attacker);
+	AI_CheckAttacker(attacker);
 
-    sound (self, #CHAN_VOICE, "shambler/shurt2.wav", 1, #ATTN_NORM);
+	sound (self, #CHAN_VOICE, "shambler/shurt2.wav", 1, #ATTN_NORM);
 
 	//self.pain_finished = time + 2; wasnt comented
-    self.pain_finished = time + 1.5 + random() * 1.2; //-OfN first was 1, then 1.5
+	self.pain_finished = time + 1.5 + random() * 1.2; //-OfN first was 1, then 1.5
 	self.effects=0;
-        
+
 	sham_pain1 ();
 };
 
@@ -458,65 +450,65 @@ void() sham_death7      =[      $death7,       sham_death8     ] {};
 void() sham_death8      =[      $death8,       sham_death9     ] {};
 void() sham_death9      =[      $death9,       sham_death10    ] {};
 void() sham_death10     =[      $death10,      sham_death11    ] {};
-void() sham_death11     =[      $death11,      sham_death11    ] 
+void() sham_death11     =[      $death11,      sham_death11    ]
 {
-    //self.nextthink = time + 40 + 40*random();	
+	//self.nextthink = time + 40 + 40*random();
 	//self.think = SUB_Remove;
-    MonsterCorpse();
+	MonsterCorpse();
 };
 
-void() custom_shambler_die = 
+void() custom_shambler_die =
 {
 	self.effects=0;
 
-    if (self.demon_three != world)
-        dremove(self.demon_three);
-    
-    self.demon_three = world;
-    
-    if (self.real_owner.classname == "player")
+	if (self.demon_three != world)
+		dremove(self.demon_three);
+
+	self.demon_three = world;
+
+	if (self.real_owner.classname == "player")
 	{
 		sprint(self.real_owner,#PRINT_HIGH,"Your shambler ");
 		sprint(self.real_owner,#PRINT_HIGH,self.netname);
-        sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
+		sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
 		self.real_owner.job_finished = time + 5; //Can't summon streams of demons SB can so
-        ResetSlotPointer(self.real_owner, self.increase_team1);
+		ResetSlotPointer(self.real_owner, self.increase_team1);
 	}
-    
-    // check for gib
+
+	// check for gib
 	if (self.health < -50)
 	{
-        sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
-	    ThrowMonsterHead ("progs/h_shams.mdl", self.health);
-	    ThrowGib ("progs/gib1.mdl", self.health, #TRUE, 0,#GIB1_KGS, #FALSE);
-	    ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0,#GIB2_KGS, #FALSE);
-	    ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0,#GIB3_KGS, 0.33);  	    
-        ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0,#GIB3_KGS, 0.66);
-        SpawnBloodEx(self.origin,0.66,9);
+		sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
+		ThrowMonsterHead ("progs/h_shams.mdl", self.health);
+		ThrowGib ("progs/gib1.mdl", self.health, #TRUE, 0,#GIB1_KGS, #FALSE);
+		ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0,#GIB2_KGS, #FALSE);
+		ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0,#GIB3_KGS, 0.33);
+		ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0,#GIB3_KGS, 0.66);
+		SpawnBloodEx(self.origin,0.66,9);
 
-        dremove(self);
-        return;
-    }
+		dremove(self);
+		return;
+	}
 
-    sound (self, #CHAN_VOICE, "shambler/sdeath.wav", 1, #ATTN_MONSTERDIE);
+	sound (self, #CHAN_VOICE, "shambler/sdeath.wav", 1, #ATTN_MONSTERDIE);
 
-    // Spawn bubbles if under water/slime
-    local float contres;
-    contres = pointcontents(self.origin);
-    if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
-        DeathBubbles(5);
+	// Spawn bubbles if under water/slime
+	local float contres;
+	contres = pointcontents(self.origin);
+	if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
+		DeathBubbles(5);
 
-    //self.classname = "monster_corpse";
-    MonsterDead();
-    self.think=SUB_Null;
-    sham_death1();
+	//self.classname = "monster_corpse";
+	MonsterDead();
+	self.think=SUB_Null;
+	sham_death1();
 };
 
 float () CheckShamMelee =
 {
 	local vector dist;
 	local float d;
-	
+
 	dist = self.enemy.origin - self.origin;
 	d = vlen(dist);
 	if (d < 150) //CH Check reach
@@ -549,7 +541,7 @@ float () CheckShamLightning =
 		return #FALSE;
 	if (d2 > 2000 + self.has_tesla * 200) //Min X,Y distance away before zap
 		return #FALSE;
-    /*if (self.has_tesla > 3 && random() > 0.5) 
+	/*if (self.has_tesla > 3 && random() > 0.5)
 		self.attack_state = #AS_FIREBALL;
 	//else /// OFTEN*/
 		self.attack_state = #AS_MISSILE;
@@ -559,7 +551,7 @@ float () CheckShamLightning =
 float()	ShamCheckAttack =
 {
 	//local	vector	vec;
-	
+
 // if close enough for slashing, go for it
 	if (CheckShamMelee ())
 	{
@@ -573,24 +565,25 @@ float()	ShamCheckAttack =
 };
 
 // Shambler shoots fireballs!
-
 /*
 void() sham_fireball =
 {
 	local float		r;
-	
+
 	r = random();
-	
+
 	if (r > 0.5)
 		sham_fireballl1();
 	else
 		sham_fireballr1();
-		
+
 };
 
-void() sham_fireballl1	=[      $swingl1,      sham_fireballl2   ] {
-sound (self, #CHAN_VOICE, "shambler/melee2.wav", 1, #ATTN_NORM);
-ai_charge(15 * (0.7 + self.has_tesla * 0.2));};
+void() sham_fireballl1	=[      $swingl1,      sham_fireballl2   ]
+{
+	sound (self, #CHAN_VOICE, "shambler/melee2.wav", 1, #ATTN_NORM);
+	ai_charge(15 * (0.7 + self.has_tesla * 0.2));
+};
 void() sham_fireballl2 =[      $swingl2,      sham_fireballl3   ] {ai_charge(9 * (0.7 + self.has_tesla * 0.2));}; //speed doubled
 void() sham_fireballl3 =[      $swingl3,      sham_fireballl4   ] {ai_charge(21 * (0.7 + self.has_tesla * 0.2));};
 void() sham_fireballl4 =[      $swingl4,      sham_fireballl5   ] {ai_charge(9 * (0.7 + self.has_tesla * 0.2));};
@@ -598,15 +591,18 @@ void() sham_fireballl5 =[      $swingl5,      sham_fireballl6   ] {ai_charge(21 
 void() sham_fireballl6 =[      $swingl6,      sham_fireballl7   ] {ai_charge(27 * (0.7 + self.has_tesla * 0.2));};
 void() sham_fireballl7 =[      $swingl7,      sham_fireballl8   ] {ai_charge(15 * (0.7 + self.has_tesla * 0.2)); ShamFireball(250);};
 void() sham_fireballl8 =[      $swingl8,      sham_fireballl9   ] {ai_charge(12 * (0.7 + self.has_tesla * 0.2));};
-void() sham_fireballl9 =[      $swingl9,      sham_run1  ] {
-ai_charge(24 * (0.7 + self.has_tesla * 0.2));
-if (random() < 0.2)
-	self.think = sham_fireballr1;
+void() sham_fireballl9 =[      $swingl9,      sham_run1  ]
+{
+	ai_charge(24 * (0.7 + self.has_tesla * 0.2));
+	if (random() < 0.2)
+		self.think = sham_fireballr1;
 };
 
-void() sham_fireballr1	=[      $swingr1,      sham_fireballr2   ] {
-sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
-ai_charge(3 * (0.7 + self.has_tesla * 0.2));};
+void() sham_fireballr1	=[      $swingr1,      sham_fireballr2   ]
+{
+	sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
+	ai_charge(3 * (0.7 + self.has_tesla * 0.2));
+};
 void() sham_fireballr2	=[      $swingr2,      sham_fireballr3   ] {ai_charge(24 * (0.7 + self.has_tesla * 0.2));};
 void() sham_fireballr3 =[      $swingr3,      sham_fireballr4   ] {ai_charge(42 * (0.7 + self.has_tesla * 0.2));};
 void() sham_fireballr4 =[      $swingr4,      sham_fireballr5   ] {ai_charge(21 * (0.7 + self.has_tesla * 0.2));}; // speed dbl
@@ -614,9 +610,11 @@ void() sham_fireballr5 =[      $swingr5,      sham_fireballr6   ] {ai_charge(9 *
 void() sham_fireballr6 =[      $swingr6,      sham_fireballr7   ] {ai_charge(18 * (0.7 + self.has_tesla * 0.2));};
 void() sham_fireballr7 =[      $swingr7,      sham_fireballr8   ] {ai_charge(18 * (0.7 + self.has_tesla * 0.2)); ShamFireball(-250);};
 void() sham_fireballr8 =[      $swingr8,      sham_fireballr9   ] {ai_charge(9 * (0.7 + self.has_tesla * 0.2));};
-void() sham_fireballr9 =[      $swingr9,      sham_run1  ] {ai_charge(30 * (0.7 + self.has_tesla * 0.2));
-if (random() < 0.2)
-	self.think = sham_fireballl1;
+void() sham_fireballr9 =[      $swingr9,      sham_run1  ]
+{
+	ai_charge(30 * (0.7 + self.has_tesla * 0.2));
+	if (random() < 0.2)
+		self.think = sham_fireballl1;
 };
 
 void(float side) ShamFireball =
@@ -625,13 +623,13 @@ void(float side) ShamFireball =
 	local	vector	delta;
 	local	vector	offang;
 	local	vector	org, dir;
-	
+
 	ai_face ();
 
 	delta = self.enemy.origin - self.origin;
 	offang = vectoangles (delta);
 	makevectors (offang);
-	
+
 	sound (self, #CHAN_WEAPON, "hknight/attack1.wav", 1, #ATTN_NORM); //Odd, it was already precached
 
 	if (side > 0) //CH cause to spawn on side of demon.
@@ -639,14 +637,14 @@ void(float side) ShamFireball =
 	else
 		org = self.origin + (v_forward * 10) - (v_right * 20);
 
-// set missile speed
+	// set missile speed
 	dir = normalize (v_forward);
 
-//CH demons are not good at throwing
+	//CH demons are not good at throwing
 	dir_z = 0 - dir_z; //Random Z addage
 	//dir_x = dir_x + (random() - 0.5)*0.05; //Random X addage
 	//dir_y = dir_y + (random() - 0.5)*0.05; //Random Y addage
-	
+
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_NOCLIP;
@@ -661,7 +659,7 @@ void(float side) ShamFireball =
 	newmis.nextthink = time + 10;
 	setmodel (newmis, "progs/lavaball.mdl");
 	setsize (newmis, '-8 -16 -8', '20 16 28'); //CH actual mdl bounds
-//	setsize (newmis, '0 0 0', '0 0 0');
+	//setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, org);
 	newmis.velocity = dir * 1000 * (self.has_tesla - 3);
 };
@@ -713,22 +711,22 @@ void() sham_xmas3 =[$magic10, sham_xmas4] {self.effects = #EF_DIMLIGHT;self.next
 
 if (self.demon_three) return;
 
-local entity lightfx;
-
-lightfx = spawn();
-lightfx.owner = self;
-lightfx.movetype = #MOVETYPE_FLY;
-lightfx.solid = #SOLID_NOT;
-lightfx.effects = #EF_DIMLIGHT;
-setmodel (lightfx, "progs/s_light.mdl");
-setorigin (lightfx, self.origin);
-lightfx.angles = self.angles;
-lightfx.nextthink = time + 3;
-lightfx.think = sham_xmas_removefx;
-lightfx.avelocity = '400 400 400';
-lightfx.velocity = '0 0 5';
-
-self.demon_three = lightfx;
+	local entity lightfx;
+	
+	lightfx = spawn();
+	lightfx.owner = self;
+	lightfx.movetype = #MOVETYPE_FLY;
+	lightfx.solid = #SOLID_NOT;
+	lightfx.effects = #EF_DIMLIGHT;
+	setmodel (lightfx, "progs/s_light.mdl");
+	setorigin (lightfx, self.origin);
+	lightfx.angles = self.angles;
+	lightfx.nextthink = time + 3;
+	lightfx.think = sham_xmas_removefx;
+	lightfx.avelocity = '400 400 400';
+	lightfx.velocity = '0 0 5';
+	
+	self.demon_three = lightfx;
 };
 
 void() sham_xmas4 =[$magic10, sham_xmas5] {self.effects = #EF_BRIGHTLIGHT;self.nextthink = time + 0.2;};
@@ -764,77 +762,77 @@ void() sham_xmas29 =[$magic7, sham_xmas30] {};
 void() sham_xmas30 =[$magic6, sham_xmas31] {};
 void() sham_xmas31 =[$magic7, sham_xmas32] {};
 void() sham_xmas32 =[$magic8, sham_xmas33] {
-    
-    // xmas dance! // TODO: make it a function and spread hits among above frames
-    local entity te;
-    local float xmashits;
 
-    xmashits = 0;
+	// xmas dance! // TODO: make it a function and spread hits among above frames
+	local entity te;
+	local float xmashits;
 
-    te = findradius(self.origin,#SHAMBLER_XMAS_RANGE);
+	xmashits = 0;
 
-    while (te!=world && xmashits <= #SHAMBLER_XMAS_MAXHITS)
-    {
-        if (te.classname == "player")
-        if (te.is_connected)
-        if (te.health > 0)
-        #ifndef MAD_MONSTERS
-        if (!Teammate(self.team_no,te.team_no))
-        #endif
-        if (!(te.job & #JOB_THIEF && (te.job & #JOB_ACTIVE || te.job & #JOB_FULL_HIDE)))
-        if (!(te.items & #IT_INVISIBILITY))
-        {
-            #ifndef XMAS_TEST
-            deathmsg = #DMSG_XMAS;
-            TF_T_Damage(te,self,self,#SHAMBLER_XMAS_DMG,0,#TF_TD_ELECTRICITY);
-            #endif
+	te = findradius(self.origin,#SHAMBLER_XMAS_RANGE);
 
-            // lightning
-            WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-	        WriteByte (#MSG_BROADCAST, #TE_LIGHTNING1);
-	        WriteEntity (#MSG_BROADCAST, self);
-	        WriteCoord (#MSG_BROADCAST, self.origin_x);
-        	WriteCoord (#MSG_BROADCAST, self.origin_y);
-	        WriteCoord (#MSG_BROADCAST, self.origin_z + 67);
-	        WriteCoord (#MSG_BROADCAST, te.origin_x);
-	        WriteCoord (#MSG_BROADCAST, te.origin_y);
-	        WriteCoord (#MSG_BROADCAST, te.origin_z);
-            #ifdef QUAKE_WORLD
-            multicast (self.origin, #MULTICAST_PHS);
-            #endif
+	while (te!=world && xmashits <= #SHAMBLER_XMAS_MAXHITS)
+	{
+		if (te.classname == "player")
+		if (te.is_connected)
+		if (te.health > 0)
+		#ifndef MAD_MONSTERS
+		if (!Teammate(self.team_no,te.team_no))
+		#endif
+		if (!(te.job & #JOB_THIEF && (te.job & #JOB_ACTIVE || te.job & #JOB_FULL_HIDE)))
+		if (!(te.items & #IT_INVISIBILITY))
+		{
+			#ifndef XMAS_TEST
+			deathmsg = #DMSG_XMAS;
+			TF_T_Damage(te,self,self,#SHAMBLER_XMAS_DMG,0,#TF_TD_ELECTRICITY);
+			#endif
 
-            SpawnSprite(1,#SPRITE_AIRBURST,self.origin + '0 0 65','0 0 0',#SPRITEMOVE_UPSLOW,0.15);
-            
-            SpawnSprite(1,#SPRITE_AIRBURST,te.origin + '0 0 40','0 0 0',#SPRITEMOVE_UPSLOW,0.15);
+			// lightning
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_LIGHTNING1);
+			WriteEntity (#MSG_BROADCAST, self);
+			WriteCoord (#MSG_BROADCAST, self.origin_x);
+			WriteCoord (#MSG_BROADCAST, self.origin_y);
+			WriteCoord (#MSG_BROADCAST, self.origin_z + 67);
+			WriteCoord (#MSG_BROADCAST, te.origin_x);
+			WriteCoord (#MSG_BROADCAST, te.origin_y);
+			WriteCoord (#MSG_BROADCAST, te.origin_z);
+			#ifdef QUAKE_WORLD
+			multicast (self.origin, #MULTICAST_PHS);
+			#endif
 
-            sound (te, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NONE);
+			SpawnSprite(1,#SPRITE_AIRBURST,self.origin + '0 0 65','0 0 0',#SPRITEMOVE_UPSLOW,0.15);
 
-            WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-            WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
-            WriteCoord (#MSG_BROADCAST, te.origin_x);
-            WriteCoord (#MSG_BROADCAST, te.origin_y);
-            WriteCoord (#MSG_BROADCAST, te.origin_z);
-            #ifdef QUAKE_WORLD
-            multicast (te.origin, #MULTICAST_PHS);
-            #endif
+			SpawnSprite(1,#SPRITE_AIRBURST,te.origin + '0 0 40','0 0 0',#SPRITEMOVE_UPSLOW,0.15);
 
-            xmashits = xmashits + 1;
-        }
+			sound (te, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NONE);
 
-        te = te.chain;
-    }
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
+			WriteCoord (#MSG_BROADCAST, te.origin_x);
+			WriteCoord (#MSG_BROADCAST, te.origin_y);
+			WriteCoord (#MSG_BROADCAST, te.origin_z);
+			#ifdef QUAKE_WORLD
+			multicast (te.origin, #MULTICAST_PHS);
+			#endif
 
-    // Special message if maximum hits is achieved..
-    if (xmashits >= #SHAMBLER_XMAS_MAXHITS)
-        bprint(#PRINT_MEDIUM,self.netname," wishes you #SHAMBLER_XMAS_MAXHITS a merry xmas!\n");
+			xmashits = xmashits + 1;
+		}
+
+		te = te.chain;
+	}
+
+	// Special message if maximum hits is achieved..
+	if (xmashits >= #SHAMBLER_XMAS_MAXHITS)
+		bprint(#PRINT_MEDIUM,self.netname," wishes you #SHAMBLER_XMAS_MAXHITS a merry xmas!\n");
 
 };
 void() sham_xmas33 =[$magic9, sham_run1] {self.effects = 0;self.has_holo = 0;};
 
 void() sham_xmas_removefx =
 {
-    self.owner.demon_three = world;
-    dremove(self);
+	self.owner.demon_three = world;
+	dremove(self);
 };
 
 #endif
