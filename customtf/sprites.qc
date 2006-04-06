@@ -1,11 +1,15 @@
-/*=======================================================//
-// sprites.QC - CustomTF 3.2.OfN           - 18/4/2004 - //
-// by Sergio Fumaña Grunwaldt - OfteN [cp]               //
-=========================================================//
+/*
+==============================================================================
+
+SPRITES.QC
+CustomTF 3.2.OfN
+
  Sprites stuff
----------------------------------------------------------//
+
  Animation of sprites and functions related to them
-=========================================================*/
+
+==============================================================================
+*/
 
 // Sprite types
 #define SPRITE_ABLAST     1
@@ -19,7 +23,7 @@
 
 /*===============================================================================================
 
-EXPLANATION OF HOW THE ENTITY FIELDS ARE USED (thnx? np.. :P) 
+EXPLANATION OF HOW THE ENTITY FIELDS ARE USED (thnx? np.. :P)
 ---------------------------------------------
 
 For sprite entities:
@@ -52,8 +56,7 @@ $frame	40	16	16	16
 $spritename s_light
 $type vp_parallel
 $load /raid/quake/id1/gfx/sprites/light.lbm
-$frame	104	32	32	32
-*/
+$frame	104	32	32	32*/
 
 void() ab_exp1; // AirFist.qc
 void() run_ablast1; // mtfents.qc
@@ -61,88 +64,88 @@ float() crandom;
 
 entity(float num, float type, vector org, vector direction, float animtype, float animrate) SpawnSprite =
 {
-    local entity sprite, oself;
-    local float counter;
+	local entity sprite, oself;
+	local float counter;
 
-    counter = 0;
-    
-    oself = self;
+	counter = 0;
 
-    while (counter < num)
-    {
-        if (type == #SPRITE_ABLAST)
-        {
-            sprite = spawn();
+	oself = self;
 
-            sprite.movetype = #MOVETYPE_NOCLIP;
-            sprite.solid = #SOLID_NOT;
-            
-            setmodel(sprite, "progs/s_ablast.spr");
-            setorigin(sprite, org);
+	while (counter < num)
+	{
+		if (type == #SPRITE_ABLAST)
+		{
+			sprite = spawn();
 
-            if (animtype == #SPRITEMOVE_UP)
-            {
-                direction_z = 240 + crandom()*100;
-                direction_x = crandom()*120;
-                direction_y = crandom()*120;
-            }
-            else if (animtype == #SPRITEMOVE_UPSLOW)
-            {
-                direction_z = 50 + crandom()*50;
-                direction_x = crandom()*20;
-                direction_y = crandom()*20;
-            }
+			sprite.movetype = #MOVETYPE_NOCLIP;
+			sprite.solid = #SOLID_NOT;
 
-            sprite.velocity = direction;
+			setmodel(sprite, "progs/s_ablast.spr");
+			setorigin(sprite, org);
 
-            if (animrate <= 0)
-                sprite.has_fieldgen = 0.1;
-            else
-                sprite.has_fieldgen = animrate;
+			if (animtype == #SPRITEMOVE_UP)
+			{
+				direction_z = 240 + crandom()*100;
+				direction_x = crandom()*120;
+				direction_y = crandom()*120;
+			}
+			else if (animtype == #SPRITEMOVE_UPSLOW)
+			{
+				direction_z = 50 + crandom()*50;
+				direction_x = crandom()*20;
+				direction_y = crandom()*20;
+			}
 
-            self = sprite;
-            run_ablast1();
-        }
-        else if (type == #SPRITE_AIRBURST)
-        {
-            sprite = spawn();
+			sprite.velocity = direction;
 
-            sprite.movetype = #MOVETYPE_NOCLIP;
-            sprite.solid = #SOLID_NOT;
-            
-            setmodel (sprite, "progs/s_explod.spr");
-            setorigin(sprite, org);
-            
-            if (animtype == #SPRITEMOVE_UP)
-            {
-                direction_z = 150 + crandom()*100;
-                direction_x = crandom()*120;
-                direction_y = crandom()*120;
-            }
-            else if (animtype == #SPRITEMOVE_UPSLOW)
-            {
-                direction_z = 50 + crandom()*50;
-                direction_x = crandom()*20;
-                direction_y = crandom()*20;
-            }
-            
-            sprite.velocity = direction;
-            
-            if (animrate <= 0)
-                sprite.has_fieldgen = 0.1;
-            else
-                sprite.has_fieldgen = animrate;
+			if (animrate <= 0)
+				sprite.has_fieldgen = 0.1;
+			else
+				sprite.has_fieldgen = animrate;
 
-            self = sprite;
-            ab_exp1();
-        }
+			self = sprite;
+			run_ablast1();
+		}
+		else if (type == #SPRITE_AIRBURST)
+		{
+			sprite = spawn();
 
-        counter = counter + 1;
-    }
+			sprite.movetype = #MOVETYPE_NOCLIP;
+			sprite.solid = #SOLID_NOT;
 
-    self = oself;
+			setmodel (sprite, "progs/s_explod.spr");
+			setorigin(sprite, org);
 
-    return sprite;
+			if (animtype == #SPRITEMOVE_UP)
+			{
+				direction_z = 150 + crandom()*100;
+				direction_x = crandom()*120;
+				direction_y = crandom()*120;
+			}
+			else if (animtype == #SPRITEMOVE_UPSLOW)
+			{
+				direction_z = 50 + crandom()*50;
+				direction_x = crandom()*20;
+				direction_y = crandom()*20;
+			}
+
+			sprite.velocity = direction;
+
+			if (animrate <= 0)
+				sprite.has_fieldgen = 0.1;
+			else
+				sprite.has_fieldgen = animrate;
+
+			self = sprite;
+			ab_exp1();
+		}
+
+		counter = counter + 1;
+	}
+
+	self = oself;
+
+	return sprite;
 };
 
 //=====================================================
@@ -150,8 +153,8 @@ entity(float num, float type, vector org, vector direction, float animtype, floa
 
 void() SetSpriteThink =
 {
-    if (!self.has_fieldgen)
-        self.nextthink = time + 0.1;
-    else
-        self.nextthink = time + self.has_fieldgen;
+	if (!self.has_fieldgen)
+		self.nextthink = time + 0.1;
+	else
+		self.nextthink = time + self.has_fieldgen;
 };

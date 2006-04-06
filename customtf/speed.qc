@@ -1,5 +1,10 @@
-//some of this by Cyto 3-27-00
-//other by CH
+/*
+==============================================================================
+
+SPEED.QC
+
+==============================================================================
+*/
 
 //Used for testing tolerence, prints out various stuff
 //#define SHOW_CHEAT_LEVELS
@@ -10,7 +15,7 @@
 void() Kick_My_Owner =
 {
 	local string ip;
-      local string oldname,nospeed;
+	local string oldname,nospeed;
 	local float banned,off;
 	banned = #FALSE;
 
@@ -63,7 +68,7 @@ void () TeamFortress_CheckForSpeed =
 {
 	local vector tempvec;
 	local float max, dist, check, immune;
-	//local string ip;	
+	//local string ip;
 	local string nospeed;
 	local float off;
 
@@ -74,31 +79,31 @@ void () TeamFortress_CheckForSpeed =
 	}
 	if (off) return;
 
-max = self.owner.maxspeed;
-if ((self.owner.job & #JOB_RUNNER) && (self.owner.job & #JOB_ACTIVE))
-	max = max + 200;	
-//make sure ok to check
-if (self.owner.immune_to_chec > time)
-	immune = immune | #IMMUNE; //its ok since #IMMUNE becomes 1
-if (self.owner.hook_out)
-	immune = immune | #GRAPPLE;
-//WK We should boot if they have no set speed and are moving
-//if (self.owner.maxspeed == 0) // no set speed
-if (!(self.owner.flags & #FL_ONGROUND)) //WK People in air immune
-	immune = immune | #FLYING;
-if (self.owner.playerclass == #PC_UNDEFINED)
-	immune = immune | #NOCLASS;
-if (self.owner.done_custom & #CUSTOM_BUILDING)
-	immune = immune | #BUILDING;
-if (self.owner.health <= 0)
-	immune = immune | #DEAD;
-if (!self.owner.is_connected)
-	dremove(self);
+	max = self.owner.maxspeed;
+	if ((self.owner.job & #JOB_RUNNER) && (self.owner.job & #JOB_ACTIVE))
+		max = max + 200;
+	//make sure ok to check
+	if (self.owner.immune_to_chec > time)
+		immune = immune | #IMMUNE; //its ok since #IMMUNE becomes 1
+	if (self.owner.hook_out)
+		immune = immune | #GRAPPLE;
+	//WK We should boot if they have no set speed and are moving
+	//if (self.owner.maxspeed == 0) // no set speed
+	if (!(self.owner.flags & #FL_ONGROUND)) //WK People in air immune
+		immune = immune | #FLYING;
+	if (self.owner.playerclass == #PC_UNDEFINED)
+		immune = immune | #NOCLASS;
+	if (self.owner.done_custom & #CUSTOM_BUILDING)
+		immune = immune | #BUILDING;
+	if (self.owner.health <= 0)
+		immune = immune | #DEAD;
+	if (!self.owner.is_connected)
+		dremove(self);
 
-if (immune)
-	check = #FALSE;
-else
-	check = #TRUE;
+	if (immune)
+		check = #FALSE;
+	else
+		check = #TRUE;
 
 	//WK Lowered percent chance of restuffing because stuffcmds() cause overflows
 	if (!self.lip || !(self.has_camera) || (random() <= 0.1)){ //periodically reset ping and gotwalls.
@@ -138,7 +143,7 @@ else
 		bprint(#PRINT_HIGH, " may be cheating. (Current:");
 		bprint(#PRINT_HIGH, ftos(dist));
 		bprint(#PRINT_HIGH, "/Max:");
-            bprint(#PRINT_HIGH, ftos(max));
+			bprint(#PRINT_HIGH, ftos(max));
 		bprint(#PRINT_HIGH, ")\n");
 		self.has_sentry = 10;
 	} else {
@@ -166,7 +171,7 @@ else
 	st = ftos(dist);
 	bprint(#PRINT_HIGH, st);
 	bprint(#PRINT_HIGH, "/");
-	st = ftos(max * (1 + (#MAXPERCENT / 100))); 
+	st = ftos(max * (1 + (#MAXPERCENT / 100)));
 	bprint(#PRINT_HIGH, st);
 	bprint(#PRINT_HIGH, ")\n");
 #endif
@@ -177,13 +182,13 @@ else
 //One, must be called before two, and two before three
 void() I_DID_CHEAT_ONE =
 {
-//	bprint(#PRINT_HIGH, "I did the cheat 1 cmd!\n");
+	//bprint(#PRINT_HIGH, "I did the cheat 1 cmd!\n");
 	if (self.has_cheated == 0)
 		self.has_cheated = 1;
 };
 void() I_DID_CHEAT_TWO =
 {
-//	bprint(#PRINT_HIGH, "I did the cheat 2 cmd!\n");
+	//bprint(#PRINT_HIGH, "I did the cheat 2 cmd!\n");
 	if (self.has_cheated >= 1) {
 		self.has_cheated = 2;
 
@@ -193,7 +198,7 @@ void() I_DID_CHEAT_TWO =
 };
 void() I_DID_CHEAT_THREE =
 {
-//	bprint(#PRINT_HIGH, "I did the cheat 3 cmd!\n");
+	//bprint(#PRINT_HIGH, "I did the cheat 3 cmd!\n");
 	if (self.has_cheated == 2) {
 		//bprint(#PRINT_HIGH, "Making kick entity!\n");
 		local entity te;
@@ -209,6 +214,3 @@ void() I_DID_CHEAT_THREE =
 		self.has_cheated = 0;
 	}
 };
-
-
-

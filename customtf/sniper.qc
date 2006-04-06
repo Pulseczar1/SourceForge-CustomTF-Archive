@@ -1,10 +1,14 @@
-/*======================================================
-	SNIPER.QC
+/*
+==============================================================================
 
-	TeamFortress v2.5	 29/2/97
-========================================================
-Functions for the SNIPER class and associated weaponry
-========================================================*/
+SNIPER.QC
+TeamFortress v2.5
+
+ Functions for the SNIPER class and associated weaponry
+
+==============================================================================
+*/
+
 // Functions outside this file
 
 // Functions inside this file
@@ -17,24 +21,23 @@ void(float type) SniperSight_Create;
 void(entity targ, float pain) RevealThief;
 
 
-
 //=========================================================================
 // Sniper/Auto Rifle selection function
 void() TeamFortress_SniperWeapon =
 {
-	//local	float	it;
+	//local float it;
 
 	self.impulse = 0;
 
-    if (self.tfstate & #TFSTATE_RELOADING)
-   		return;
+	if (self.tfstate & #TFSTATE_RELOADING)
+		return;
 
 	if (!((self.weapons_carried & #WEAP_SNIPER_RIFLE) && (self.weapons_carried & #WEAP_AUTO_RIFLE)))
 		return;
 
 	if (self.ammo_shells < 1)
 	{	// don't have the ammo
-		sprint (self, #PRINT_HIGH, "not enough ammo.\n");
+		sprint (self, #PRINT_HIGH, "Not enough ammo.\n");
 		return;
 	}
 
@@ -66,7 +69,6 @@ void(float zoom_level) TF_zoom =
 	stuffcmd(self, "\n");
 };
 
-
 //=========================================================================
 // Move the sight to the point the rifle's aiming at
 void() SniperSight_Update =
@@ -82,31 +84,32 @@ void() SniperSight_Update =
 		return;
 	}
 
-    makevectors(self.owner.v_angle);
+	makevectors(self.owner.v_angle);
 
 	org = self.owner.origin + v_forward*10;
 	org_z = self.owner.absmin_z + self.owner.size_z * 0.7;
 
-//    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
-    traceline (org, org + v_forward*9192, MOVE_HITMODEL, self);
+	// traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
+	traceline (org, org + v_forward*9192, MOVE_HITMODEL, self);
 
-    if (trace_fraction == 1.0)
+	if (trace_fraction == 1.0)
 	{
-       	setorigin(self, self.owner.origin );
+		setorigin(self, self.owner.origin );
 		return;
 	}
 
 	self.angles = vectoangles(v_forward);
-    setorigin(self, trace_endpos);
+	setorigin(self, trace_endpos);
 
-    #ifdef SNIPERSIGHT_SHOWPOS
-    local string st;
-    st = vtos(trace_endpos);
-    sprint(self.owner,#PRINT_HIGH,"Sniper dot pos: ",st,"\n");
-    #endif
+	#ifdef SNIPERSIGHT_SHOWPOS
+	local string st;
+	st = vtos(trace_endpos);
+	sprint(self.owner,#PRINT_HIGH,"Sniper dot pos: ",st,"\n");
+	#endif
 
 	self.nextthink = time + 0.1;
 };
+
 //CH used for the rl
 void() SniperSight_Update2 =
 {
@@ -122,22 +125,22 @@ void() SniperSight_Update2 =
 		return;
 	}
 
-    makevectors(self.owner.v_angle);
+	makevectors(self.owner.v_angle);
 
 	org = self.owner.origin + v_forward*10;
 	org_z = self.owner.absmin_z + self.owner.size_z * 0.7;
 
 //    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
-    traceline (org, org + v_forward*9192, MOVE_HITMODEL, self);
+	traceline (org, org + v_forward*9192, MOVE_HITMODEL, self);
 
-    if (trace_fraction == 1.0)
+	if (trace_fraction == 1.0)
 	{
-       	setorigin(self, self.owner.origin );
+	   	setorigin(self, self.owner.origin );
 		return;
 	}
 
 	self.angles = vectoangles(v_forward);
-    setorigin(self, trace_endpos);
+	setorigin(self, trace_endpos);
 
 	self.nextthink = time + 0.1;
 };
@@ -158,16 +161,16 @@ void(float type) SniperSight_Create =
 	sight.movetype = #MOVETYPE_NOCLIP;
 	sight.solid = #SOLID_NOT;
 
-    if (megatf & #MEGATF_SIGHTS)
-    {
-        setmodel (sight, "progs/colsight.spr");
-        sight.frame = self.team_no - 1;
-    }
-    else
-    	setmodel (sight, "progs/sight.spr");
+	if (megatf & #MEGATF_SIGHTS)
+	{
+		setmodel (sight, "progs/colsight.spr");
+		sight.frame = self.team_no - 1;
+	}
+	else
+		setmodel (sight, "progs/sight.spr");
 
 	sight.classname = "timer";
-    sight.netname = "sniperdot"; // OfN
+	sight.netname = "sniperdot"; // OfN
 
 	setorigin(sight, self.origin);
 	if (type == 1)
@@ -194,9 +197,4 @@ void() TeamFortress_AutoZoomToggle =
 		self.tfstate = self.tfstate | #TFSTATE_ZOOMOFF;
 		sprint(self, #PRINT_HIGH, "autozoom OFF\n");
 	}
-
 };
-
-
-
-//=========================================================================
