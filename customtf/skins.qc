@@ -1,13 +1,21 @@
-// This file contains defines for the skins for each team.
-// The default is the same skins for all teams.
+/*
+==============================================================================
 
-// But, if you wish to have a clan battle, you can provide
-// different skins for each class for each team.
-// Edit this file to point to the correct skins, and recompile.
+SKINS.QC
 
-// N.B. Make sure you have a \n on the end of each skin's name
+ This file contains defines for the skins for each team.
+ The default is the same skins for all teams.
 
-// These only work under QuakeWorld.
+ But, if you wish to have a clan battle, you can provide
+ different skins for each class for each team.
+ Edit this file to point to the correct skins, and recompile.
+
+ N.B. Make sure you have a \n on the end of each skin's name
+
+ These only work under QuakeWorld.
+
+==============================================================================
+*/
 
 #pragma DONT_COMPILE_THIS_FILE
 

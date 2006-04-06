@@ -1,4 +1,10 @@
+/*
+==============================================================================
 
+SUBS.QC
+
+==============================================================================
+*/
 
 void(entity Goal, entity AP) DoGoalWork;
 void(entity Goal, entity AP) DoGroupWork;
@@ -22,7 +28,7 @@ vector() SetMovedir =
 		makevectors (self.angles);
 		self.movedir = v_forward;
 	}
-	
+
 	self.angles = '0 0 0';
 };
 
@@ -33,8 +39,8 @@ InitTrigger
 */
 void() InitTrigger =
 {
-// trigger angles are used for one-way touches.  An angle of 0 is assumed
-// to mean no restrictions, so use a yaw of 360 instead.
+	// trigger angles are used for one-way touches.  An angle of 0 is assumed
+	// to mean no restrictions, so use a yaw of 360 instead.
 	if (self.angles != '0 0 0')
 		SetMovedir ();
 	self.solid = #SOLID_TRIGGER;
@@ -80,14 +86,14 @@ local float		len, traveltime;
 		self.nextthink = self.ltime + 0.1;
 		return;
 	}
-		
-// set destdelta to the vector needed to move
+
+	// set destdelta to the vector needed to move
 	vdestdelta = tdest - self.origin;
-	
-// calculate length of vector
+
+	// calculate length of vector
 	len = vlen (vdestdelta);
-	
-// divide by speed to get time to reach dest
+
+	// divide by speed to get time to reach dest
 	traveltime = len / tspeed;
 
 #ifndef QUAKE_WORLD
@@ -101,12 +107,12 @@ local float		len, traveltime;
 	if (traveltime < 0.03)
 		traveltime = 0.03;
 #endif
-	
-// set nextthink to trigger a think when dest is reached
+
+	// set nextthink to trigger a think when dest is reached
 	self.nextthink = self.ltime + traveltime;
 
-// scale the destdelta vector by the time spent traveling to get velocity
-	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float	
+	// scale the destdelta vector by the time spent traveling to get velocity
+	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float
 };
 
 /*
@@ -129,7 +135,7 @@ void()  SUB_CalcMoveDone =
 SUB_CalcAngleMove
 
 calculate self.avelocity and self.nextthink to reach destangle from
-self.angles rotating 
+self.angles rotating
 
 The calling function should make sure self.think is valid
 ===============
@@ -150,22 +156,22 @@ local float		len, traveltime;
 
 	if (!tspeed)
 		objerror("No speed is defined!");
-		
-// set destdelta to the vector needed to move
+
+	// set destdelta to the vector needed to move
 	destdelta = destangle - self.angles;
-	
-// calculate length of vector
+
+	// calculate length of vector
 	len = vlen (destdelta);
-	
-// divide by speed to get time to reach dest
+
+	// divide by speed to get time to reach dest
 	traveltime = len / tspeed;
 
-// set nextthink to trigger a think when dest is reached
+	// set nextthink to trigger a think when dest is reached
 	self.nextthink = self.ltime + traveltime;
 
-// scale the destdelta vector by the time spent traveling to get velocity
+	// scale the destdelta vector by the time spent traveling to get velocity
 	self.avelocity = destdelta * (1 / traveltime);
-	
+
 	self.think1 = func;
 	self.finalangle = destangle;
 	self.think = SUB_CalcAngleMoveDone;
@@ -219,7 +225,7 @@ void() SUB_UseTargets =
 	local entity t, stemp, otemp, act;
 
 	// If the trigger's been activated by a spanner, then it'll
-	// have it's trigger-behaviour handled by the goal code, 
+	// have it's trigger-behaviour handled by the goal code,
 	// so get out of here.
 	if (self.dont_do_triggerwork)
 	{
@@ -241,7 +247,7 @@ void() SUB_UseTargets =
 		t.target = self.target;
 		return;
 	}
-	
+
 	// print the message
 	if (activator.classname == "player" && self.message != "")
 	{
@@ -272,7 +278,7 @@ void() SUB_UseTargets =
 			remove (t);
 		} while ( 1 );
 	}
-	
+
 	// fire targets
 	if (self.target)
 	{
