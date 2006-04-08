@@ -3331,7 +3331,7 @@ void() ClientConnect =
     self.#cprint_fx = 0; // Centerprint effect counter
 
     // Set Default autozoom
-	#if DEFAULT_AUTOZOOM == OFF
+	#ifdef DEFAULT_AUTOZOOM == #OFF
 		self.tfstate = self.tfstate | #TFSTATE_ZOOMOFF;
 	#endif
 

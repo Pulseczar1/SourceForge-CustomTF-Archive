@@ -72,12 +72,12 @@ float (entity thing) canairpush =
 
     #ifdef PUSHABLE_ARMY
     else if (thing.classname == "monster_army")
-		return #TRUE;
+		return #FALSE; //pwn- changed this and feind, they are weak enough as it is.
     #endif
 
     #ifdef PUSHABLE_FIEND
     else if (thing.classname == "monster_demon1")
-		return #TRUE;
+		return #FALSE;
     #endif
 
     #ifdef PUSHABLE_SCRAG

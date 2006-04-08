@@ -887,7 +887,7 @@ float(float slot) TeleSoldier =
     
     teamprefixsprint(self.team_no,self);
     teamsprint(self.team_no,self,self.netname);
-	teamsprint(self.team_no,self," teleported Private Class III "); // <--- TOCHANGE
+	teamsprint(self.team_no,self," teleported Private Class "); // <--- TOCHANGE, Pwn- Erased III after class
     teamsprint(self.team_no,self,newmis.netname);
 	teamsprint(self.team_no,self,"\n");
 
