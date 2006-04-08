@@ -160,7 +160,7 @@ void(entity targ, entity attacker) ClientObituary =
                 else if (rnum > 0.3)
                 {
                     bprint (#PRINT_MEDIUM, targ.netname);
-                	bprint (#PRINT_MEDIUM, " didn't survive ");
+                	bprint (#PRINT_MEDIUM, " didn't survive the pirana, ");
                 	bprint (#PRINT_MEDIUM, attacker.netname);
                 	bprint (#PRINT_MEDIUM, "'s (");
                 	bprint (#PRINT_MEDIUM, attacker.real_owner.netname);
@@ -242,7 +242,7 @@ void(entity targ, entity attacker) ClientObituary =
                 else if (rnum > 0.3)
                 {
                     bprint (#PRINT_MEDIUM, targ.netname);
-                	bprint (#PRINT_MEDIUM, " didn't survive ");
+                	bprint (#PRINT_MEDIUM, " didn't survive the scrag, ");
                 	bprint (#PRINT_MEDIUM, attacker.netname);
                 	bprint (#PRINT_MEDIUM, "'s (");
                 	bprint (#PRINT_MEDIUM, attacker.real_owner.netname);
@@ -342,7 +342,7 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 				else if (rnum < 0.5) {
 					bprint (#PRINT_MEDIUM, targ.netname);
-					bprint (#PRINT_MEDIUM, " thought he was safe from ");
+					bprint (#PRINT_MEDIUM, " mistakingly thought he was safe from ");
 					bprint (#PRINT_MEDIUM, attacker.netname);
 					bprint (#PRINT_MEDIUM, " (");
 					bprint (#PRINT_MEDIUM, attacker.real_owner.netname);
@@ -434,7 +434,7 @@ void(entity targ, entity attacker) ClientObituary =
  				else if (rnum < 0.50)
  					bprint (#PRINT_MEDIUM, " just made a strange noise after killing ");
 				else if (rnum < 0.75)
- 					bprint (#PRINT_MEDIUM, " gets a frag for the other team by killing ");
+ 					bprint (#PRINT_MEDIUM, " decided to, when on patrol, take out ");
 				else
 					bprint (#PRINT_MEDIUM, " decreases teammate count by killing");
 
@@ -468,9 +468,9 @@ void(entity targ, entity attacker) ClientObituary =
 				bprint (#PRINT_MEDIUM, attacker.netname);
                 bprint (#PRINT_MEDIUM, " (");
                 bprint (#PRINT_MEDIUM, attacker.real_owner.netname);
-				bprint (#PRINT_MEDIUM, ") puts ");
+				bprint (#PRINT_MEDIUM, ") forces ");
 				bprint (#PRINT_MEDIUM, targ.netname);
-				bprint (#PRINT_MEDIUM, " away with a rocket\n");
+				bprint (#PRINT_MEDIUM, " to swallow its rocket\n");
 			}
 			else if (deathmsg == #DMSG_SSHOTGUN)
 			{
@@ -554,7 +554,7 @@ void(entity targ, entity attacker) ClientObituary =
                 if (rnum < 0.25)
 					bprint (#PRINT_MEDIUM, " mows down a teammate by killing ");
  				else if (rnum < 0.50)
-					bprint (#PRINT_MEDIUM, " checks his glasses after killing ");
+					bprint (#PRINT_MEDIUM, " is ordered to get glasses after killing ");
  				else if (rnum < 0.75)
 					bprint (#PRINT_MEDIUM, " gets a frag for the other team by killing ");
  				else
@@ -580,7 +580,7 @@ void(entity targ, entity attacker) ClientObituary =
 				else
 				{
 					bprint (#PRINT_MEDIUM, targ.netname);
-					bprint (#PRINT_MEDIUM, " is split in two by a powerful axe blow from ");
+					bprint (#PRINT_MEDIUM, " is split in two by a powerful blow from ");
 					bprint (#PRINT_MEDIUM, attacker.undercover_name);
 					bprint (#PRINT_MEDIUM, attacker.netname);
 					bprint (#PRINT_MEDIUM, " (");
@@ -591,7 +591,7 @@ void(entity targ, entity attacker) ClientObituary =
 			else if (deathmsg == #DMSG_BACKSTAB)
 			{
 				bprint (#PRINT_MEDIUM, targ.netname);
-				bprint (#PRINT_MEDIUM, " is filleted by ");
+				bprint (#PRINT_MEDIUM, " is mercilessly stabbed to death by ");
 				bprint (#PRINT_MEDIUM, attacker.undercover_name);
 				bprint (#PRINT_MEDIUM, attacker.netname);
 				bprint (#PRINT_MEDIUM, " (");
@@ -734,7 +734,7 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 				else if (rnum < 0.75) {
 					bprint (#PRINT_MEDIUM, targ.netname);
-					bprint (#PRINT_MEDIUM, "'s goose is cooked by ");
+					bprint (#PRINT_MEDIUM, "'s ass gets roasted by ");
 					bprint (#PRINT_MEDIUM, attacker.netname);
 					bprint (#PRINT_MEDIUM, "'s (");
 					bprint (#PRINT_MEDIUM, attacker.real_owner.netname);
@@ -885,7 +885,7 @@ void(entity targ, entity attacker) ClientObituary =
 */
 				bprint (#PRINT_MEDIUM, targ.netname);
 				
-				deathstring = " kills himself!\n";
+				deathstring = " lit a flare in his mouth.\n";
 
 				if (deathmsg == #DMSG_GREN_HAND)
 					deathstring = " grenades himself\n";
@@ -922,9 +922,9 @@ void(entity targ, entity attacker) ClientObituary =
 				else if (deathmsg == #DMSG_BERSERK)
 				{
 					if (rnum < 0.5)
-						deathstring = " collapses from exhaustion\n";
+						deathstring = " collapses from exhaustion.\n";
 					else
-						deathstring = " goes down fighting\n";
+						deathstring = " goes down fighting.\n";
 				}
 				else if (deathmsg == #DMSG_GREN_NAIL)
 					deathstring = " hammers himself\n";
@@ -988,13 +988,15 @@ void(entity targ, entity attacker) ClientObituary =
                 else if (deathmsg == #DMSG_FGTRAP)
     				deathstring = " is electrified tweaking a field generator\n";
 				else if (deathmsg == #DMSG_CALTROP)
-					deathstring = " stepped on too many of his own caltrops\n";
+					deathstring = " tried playing jacks with his/her caltrops\n";
    				else if (deathmsg == #DMSG_FLYCALTROP)
 					deathstring = " was spiked by his own catlrop\n";
                 else if (deathmsg == #DMSG_ROCKETL)
 				{
-					if (rnum < 0.5)
+					if (rnum < 0.3)
 						deathstring = " becomes bored with life\n";
+					else if (rnum < .6)
+						deathstring = "tries to see the rocket from a different perspective.\n";
 					else
 						deathstring = " checks if his weapon is loaded\n";
 				}
@@ -1016,7 +1018,7 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " electrocutes himself\n";
                 else if (deathmsg == #DMSG_STORM)
                 {
-                    bprint(#PRINT_MEDIUM," is killed by the storm lightning!\n");
+                    bprint(#PRINT_MEDIUM," is killed by the lightning storm!\n");
                     return;
                 }
 				else if (deathmsg == #DMSG_LIGHTNING && targ.waterlevel > 1)
@@ -1054,7 +1056,7 @@ void(entity targ, entity attacker) ClientObituary =
                 if (deathmsg == #DMSG_EXPBODY) //- OfN
 				{
 	 				bprint (#PRINT_MEDIUM, targ.netname);
- 					bprint (#PRINT_MEDIUM, " has been killed as a side effect of ");
+ 					bprint (#PRINT_MEDIUM, " was blasted away by ");
    					bprint (#PRINT_MEDIUM, attacker.netname);
                     bprint (#PRINT_MEDIUM, "'s body explosion\n");
                     return;
@@ -1118,9 +1120,9 @@ void(entity targ, entity attacker) ClientObituary =
                                 if (random() < 0.4)
                                 {
                                     bprint (#PRINT_MEDIUM, attacker.netname);
-                                    bprint (#PRINT_MEDIUM, " considers ");
+                                    bprint (#PRINT_MEDIUM, " hopes ");
                                     bprint (#PRINT_MEDIUM, targ.netname);
-                                    bprint (#PRINT_MEDIUM, " completely expendable");
+                                    bprint (#PRINT_MEDIUM, "'s family will understand.");
                                 }
                                 else
                                 {
@@ -1136,7 +1138,7 @@ void(entity targ, entity attacker) ClientObituary =
                                 if (random() > 0.2)
                                     bprint (#PRINT_MEDIUM, " thinks ");
                                 else
-                                    bprint (#PRINT_MEDIUM, " notes ");
+                                    bprint (#PRINT_MEDIUM, " hopes ");
                                 bprint (#PRINT_MEDIUM, targ.netname);
                                 bprint (#PRINT_MEDIUM, " isn't needed anymore");
                             }
@@ -1176,14 +1178,14 @@ void(entity targ, entity attacker) ClientObituary =
                                 bprint (#PRINT_MEDIUM, attacker.netname);
                                 bprint (#PRINT_MEDIUM, " sees ");
                                 bprint (#PRINT_MEDIUM, targ.netname);                                
-                                bprint (#PRINT_MEDIUM, "'s death as an unavoidable collateral damage");
+                                bprint (#PRINT_MEDIUM, "'s death as team-character building");
                             }
                             else
                             {
                                 bprint (#PRINT_MEDIUM, attacker.netname);
-                                bprint (#PRINT_MEDIUM, " last decision takes ");
+                                bprint (#PRINT_MEDIUM, " takes ");
                                 bprint (#PRINT_MEDIUM, targ.netname);                                    
-                                bprint (#PRINT_MEDIUM, "'s death into account");
+                                bprint (#PRINT_MEDIUM, " off the team in his own way.");
                             }
                         }
                     }
@@ -1258,7 +1260,7 @@ void(entity targ, entity attacker) ClientObituary =
                     else
                     {                        
                         bprint (#PRINT_MEDIUM, attacker.netname);
-                        bprint (#PRINT_MEDIUM, " made the baby Jesus cry by killing ");
+                        bprint (#PRINT_MEDIUM, " made Satan happy by killing ");
                         bprint (#PRINT_MEDIUM, targ.netname);
                     }
                 }
@@ -1280,7 +1282,7 @@ void(entity targ, entity attacker) ClientObituary =
  				else if (rnum < 0.8)
  				{
  					bprint (#PRINT_MEDIUM, attacker.netname);
- 					bprint (#PRINT_MEDIUM, " checks his glasses after killing ");
+ 					bprint (#PRINT_MEDIUM, " is put on the FBI watch list after killing ");
  					bprint (#PRINT_MEDIUM, targ.netname);
  				}
  				else if (rnum < 0.9)
@@ -1521,9 +1523,9 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring2 = "'s land mine\n";
 
                     if (rnum < 0.8)
-						deathstring = " walked over ";
+						deathstring = " stepped on ";
 					else
-						deathstring = " was launched 40 ft into the air by ";
+						deathstring = " didn't notice ";
 
 					if (targ.health < -40)
                     {
@@ -1605,7 +1607,7 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 				else if (deathmsg == #DMSG_SPANNER)
 				{
-					deathstring = " was spanner-murdered by ";
+					deathstring = " was spanner-whacked by ";
 					deathstring2 = "\n";
 				}
 				else if (deathmsg == #DMSG_SHOTGUN)
@@ -1717,7 +1719,7 @@ void(entity targ, entity attacker) ClientObituary =
                     }
                     else
                     {
-                        deathstring = " is underwater-airfisted by ";
+                        deathstring = " is water-fisted by ";
 					    deathstring2 = "\n";
                     }
                 }
@@ -1979,7 +1981,7 @@ void(entity targ, entity attacker) ClientObituary =
 					}
 					else {
 						deathstring = " is obliterated by ";
-						deathstring2 = "'s sentry gun\n";
+						deathstring2 = "'s sentry gun's defense system.\n";
 					}
 				}
 				bprint(#PRINT_MEDIUM, targ.netname);

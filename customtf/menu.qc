@@ -739,11 +739,11 @@ void(float inp) Menu_Class_Input =
 	TeamFortress_ChangeClass();
 	ResetMenu();
 
-#ifdef DISPLAY_CLASS_HELP
+	#ifdef DISPLAY_CLASS_HELP
 		self.current_menu = #MENU_CLASSHELP;
-#else
+	#else
 		self.current_menu = #MENU_DEFAULT;
-#endif
+	#endif
 
 	self.menu_displaytime = 0;
 

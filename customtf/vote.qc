@@ -139,7 +139,7 @@ void() Player_Punish =
 
 	if (self.goal_no > time)
 	{
-		sprint(self,#PRINT_HIGH,"You just have ran a vote!\n");
+		sprint(self,#PRINT_HIGH,"You just ran a vote!\n");
 		return;
 	}
 

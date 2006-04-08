@@ -1688,11 +1688,9 @@ void(entity p) TeamFortress_SetSpeed =
 	// Check for any reason why they can't move at all
 	if (p.tfstate & #TFSTATE_CANT_MOVE)
 	{
-		#if STOP_MOUSE_MOVEMENT == ON
-
+		#ifdef STOP_MOUSE_MOVEMENT == #ON
 			stuffcmd(p,"m_forward 0\n");
 			stuffcmd(p,"m_side 0\n");
-
 		#endif
 
 		p.velocity = '0 0 0';
@@ -1702,13 +1700,11 @@ void(entity p) TeamFortress_SetSpeed =
 		p.maxspeed = 0;
 		return;
 	}
-	#if STOP_MOUSE_MOVEMENT == ON
+	#ifdef #STOP_MOUSE_MOVEMENT == #ON
 	else
 	{
-
 			stuffcmd(p,"m_forward 1\n");
 			stuffcmd(p,"m_side 0.8\n");
-
 	}
 	#endif
 

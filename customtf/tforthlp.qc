@@ -61,7 +61,7 @@ void() TeamFortress_MOTD =
 		#endif
 
 		// Set Default autozoom
-		#if DEFAULT_AUTOZOOM == OFF
+		#ifdef DEFAULT_AUTOZOOM == #OFF
 			self.tfstate = self.tfstate | #TFSTATE_ZOOMOFF;
 		#endif
 

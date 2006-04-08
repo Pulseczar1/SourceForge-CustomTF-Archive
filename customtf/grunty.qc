@@ -1588,39 +1588,39 @@ entity (vector location, float life, float type, entity sld) CreateWaypoint =
 void (entity targ) GetRank =
 {
 	if (targ.has_sensor == 1)
-		targ.undercover_name = "Private Class III ";
+		targ.undercover_name = "Private ";
 	else if (targ.has_sensor == 2)
-		targ.undercover_name = "Private Class II ";
-	else if (targ.has_sensor == 3)
-		targ.undercover_name = "Private Class I ";
-	else if (targ.has_sensor == 4)
 		targ.undercover_name = "Lance Corporal ";
-	else if (targ.has_sensor == 5)
+	else if (targ.has_sensor == 3)
 		targ.undercover_name = "Corporal ";
-	else if (targ.has_sensor == 6)
+	else if (targ.has_sensor == 4)
 		targ.undercover_name = "Sergeant ";
-	else if (targ.has_sensor == 7)
+	else if (targ.has_sensor == 5)
 		targ.undercover_name = "Staff Sergeant ";
+	else if (targ.has_sensor == 6)
+		targ.undercover_name = "Warrent Officer ";
+	else if (targ.has_sensor == 7)
+		targ.undercover_name = "Lieutenant ";
 	else if (targ.has_sensor == 8)
-		targ.undercover_name = "Warrant Officer II ";
-	else if (targ.has_sensor == 9)
-		targ.undercover_name = "Warrant Officer I ";
-	else if (targ.has_sensor == 10)
-		targ.undercover_name = "Lieutenant Class II ";
-	else if (targ.has_sensor == 11)
-		targ.undercover_name = "Lieutenant Class I ";
-	else if (targ.has_sensor == 12)
 		targ.undercover_name = "Captain ";
-	else if (targ.has_sensor == 13)
+	else if (targ.has_sensor == 9)
 		targ.undercover_name = "Major ";
-	else if (targ.has_sensor == 14)
+	else if (targ.has_sensor == 10)
 		targ.undercover_name = "Colonel ";
-	else if (targ.has_sensor == 15)
+	else if (targ.has_sensor == 11)
 		targ.undercover_name = "Brigadier ";
-	else if (targ.has_sensor == 16)
+	else if (targ.has_sensor == 12)
 		targ.undercover_name = "General ";
-	else if (targ.has_sensor == 17)
+	else if (targ.has_sensor == 13)
 		targ.undercover_name = "Field Marshal ";
+	else if (targ.has_sensor == 14)
+		targ.undercover_name = "Senator ";
+	else if (targ.has_sensor == 15)
+		targ.undercover_name = "Justice ";
+	else if (targ.has_sensor == 16)
+		targ.undercover_name = "Secretary of Defense";
+	else if (targ.has_sensor == 17)
+		targ.undercover_name = "President ";
 	else
 		targ.undercover_name = "Error producer ";
 };
