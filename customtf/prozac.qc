@@ -1,27 +1,26 @@
-/*=======================================================//
-// prozac.QC - CustomTF 3.2.OfN           - 15/11/2004 - //
-// by Sergio Fumaña Grunwaldt - OfteN [cp]               //
-=========================================================//
+/*
+==============================================================================
+
+prozac.QC
+CustomTF 3.2.OfN
+
  ProZac Message Of The Day (MOTD) and un/related stuff :)
-=========================================================*/
 
-#ifdef FTEQCC
-#define MSG_OFTEN_CUTFVERSION strcat("Running progs built Û", #__DATE__, "İ\n")
-#else
-#define MSG_OFTEN_CUTFVERSION "Running progs build 243 Û26¯06¯2005İ\n"
-#endif
+==============================================================================
+*/
 
-#define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
+
+#define MSG_OFTEN_CUTFVERSION strcat("Running progs built \{16}", #__DATE__, "\{17}\n")
+
+#define MSG_INFO "\nType \{162}cmd help\{162} to see additional client commands.\n"
 
 //#define MSG_CUTFVERSION "CustomÔÆ version ö3®2®OfN"
-#define MSG_CUTFVERSION   "ĞÒÏÚÁÃ CustomÔÆ ö•®”®OfN˜" //<-- 3.2.OfN6
+#define MSG_CUTFVERSION   "\sProzac\s Custom\sTF\s \sV\s\3\s.\s\2\s.\sOfN\6" //<-- 3.2.OfN6
 
-#define MSG_INTRO  "Welcome to ĞÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®telefragged®com¯shaka\n\nŸ\n\n"
-#define MSG_INTRO2 "Based on the aussie ver by SB-1\nModified version by Clan Prozac\n\n" // Ÿ\n\n
-//#define MSG_INTRO3 "¨Lot of the stuff under test!!©\n\nClan¯Admin issuesº ask Pirivan!\nGeneral bitchingº ask your mom! :P"
-//#define MSG_INTRO3 "Send bug reports and comments to:\ngrunwÀcopc®es (àQuakeà as subject¡)"
-#define MSG_INTRO3 "Modified Prozac CuTF - 'Improve CuTF'\nsee customtf®sf®net"
-//http:¯¯kickme®to¯customtf"
+#define MSG_INTRO  "Welcome to \sProzac\s Custom\sTF\s\na Quake \sTF\s MOD by ShakaUVM\nwww\s.\stelefragged\s.\scom\s/\sshaka\n\n"
+#define MSG_INTRO2 "Based on the aussie ver by SB-1\nFurther modified by Clan Prozac\n\n"
+#define MSG_INTRO3 "\{29}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{31}\n\n"
+#define MSG_INTRO4 "Now maintained by:\nImprove Custom\sTF\s Project\nsee customtf\s.\ssf\s.\snet"
 
 
 //WK 152 Default, must be > 6.
@@ -29,34 +28,33 @@
 
 void() PrintProzacMOTD =
 {
-    local string st;
+	local string st;
 
-    st = "Ÿ Celebrating  years !! Ÿ\n\n";
+	st = "\{29}\{30}\{31} Celebrating \5 years !! \{29}\{30}\{31}\n\n";
 
-    if ((self.#cprint_fx & 3) == 3)
-        st = colstr(st,#COLSTR_MIX1);
-    else if (self.#cprint_fx & 2)
-        st = colstr(st,#COLSTR_RED);
-    else if (self.#cprint_fx & 1)
-        st = colstr(st,#COLSTR_MIX2);
+	if ((self.#cprint_fx & 3) == 3)
+		st = colstr(st,#COLSTR_MIX1);
+	else if (self.#cprint_fx & 2)
+		st = colstr(st,#COLSTR_RED);
+	else if (self.#cprint_fx & 1)
+		st = colstr(st,#COLSTR_MIX2);
 
-    CenterPrint4(self,#MSG_INTRO,#MSG_INTRO2,st,#MSG_INTRO3);
+	CenterPrint5(self,#MSG_INTRO,#MSG_INTRO2,#MSG_INTRO3,st,#MSG_INTRO4);
 
-    self.#cprint_fx = self.#cprint_fx + 1;
+	self.#cprint_fx = self.#cprint_fx + 1;
 };
 
 void() PrintProzacIntro =
 {
-    if (!no_votemap && !no_punish)
-        sprint(self,#PRINT_HIGH,"\nVoting You can issue a vote by using the ¢VoteMap¢ and ¢Punish¢ aliases.\n");
-    else
-    {
-        if (!no_punish)
-            sprint(self,#PRINT_HIGH,"\nVoting You can issue a vote by using ¢VoteMap¢ alias.\n");
-        else if (!no_votemap)
-            sprint(self,#PRINT_HIGH,"\nVoting You can issue a vote by using ¢Punish¢ alias.\n");
-    }
+	if (!no_votemap && !no_punish)
+		sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using the \{162}VoteMap\{162} and \{162}Punish\{162} aliases.\n");
+	else
+	{
+		if (!no_punish)
+			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}VoteMap\{162} alias.\n");
+		else if (!no_votemap)
+			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}Punish\{162} alias.\n");
+	}
 
-    //sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\nŸ ", #MSG_CUTFVERSION, " Ÿ\n       Éîæïòíáôéïî èïíåğáçå:\n     www®telefragged®com¯shaka\nŸ\n\n");
-    sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\nŸ ", #MSG_CUTFVERSION, " Ÿ\n       Éîæïòíáôéïî èïíåğáçå:\n  http:¯¯www®customtf®com¯forums\nŸ\n\n");
+	sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n\{29}\{30}\{30}\{31} ", #MSG_CUTFVERSION, " \{29}\{30}\{30}\{31}\n       \sInformation Homepage\s:\n  http:\s//\swww\s.\scustomtf\s.\scom\s/\sforums\n\{29}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{31}\n\n");
 };
