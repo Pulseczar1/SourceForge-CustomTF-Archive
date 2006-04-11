@@ -251,10 +251,10 @@ void(entity pl) RefreshStatusBar1 =
 
 		s2 = TeslaDetailsToString(sent,1);
 		s3 = ftos(floor((sent.health / sent.max_health) * 100));
-		s4 = "₯ health  ";
+		s4 = "\{165} health  ";
 		if (sent.oldenemy != world)
 		{
-			s5 = "\nΑτταγλιξη: ";
+			s5 = "\n\sAttacking\s: ";
 			s6 = sent.enemy.netname;
 		}
 		else
@@ -283,11 +283,11 @@ void(entity pl) RefreshStatusBar1 =
 			s2 = SentryDetailsToString(sent,0);
 
 		s3 = ftos(floor((sent.health / sent.max_health) * 100));
-		s4 = "₯ health  ";
+		s4 = "\{165} health  ";
 
 		if (sent.enemy != world)
 		{
-			s5 = "\nΑτταγλιξη: ";
+			s5 = "\n\sAttacking\s: ";
 			s6 = sent.enemy.netname;
 		}
 		else
@@ -359,11 +359,11 @@ void(entity pl) RefreshStatusBar4 =
 
 		s2 = SentryDetailsToString(sent,2);
 		s3 = ftos(floor((sent.health / sent.max_health) * 100));
-		s4 = "₯ health  ";
+		s4 = "\{165} health  ";
 
 		if (sent.enemy != world)
 		{
-			s5 = "\nΑτταγλιξη: ";
+			s5 = "\n\sAttacking\s: ";
 			s6 = sent.enemy.netname;
 		}
 		else
@@ -394,10 +394,10 @@ void(entity pl) RefreshStatusBar4 =
 			s2 = TeslaDetailsToString(sent,0);
 
 		s3 = ftos(floor((sent.health / sent.max_health) * 100));
-		s4 = "₯ health  ";
+		s4 = "\{165} health  ";
 		if (sent.oldenemy != world)
 		{
-			s5 = "\nΑτταγλιξη: ";
+			s5 = "\n\sAttacking\s: ";
 			s6 = sent.enemy.netname;
 		}
 		else
@@ -540,7 +540,7 @@ void(entity pl) RefreshStatusBar2 =
 	if (self.is_undercover == 2)
 		s2 = "Disguising: ";
 	else if (self.is_undercover == 1)
-		s2 = "Σλιξ: ";
+		s2 = "\sSkin\s: ";
 	else
 		s2 = "Uncovered ";
 	if (invis_only)
@@ -615,7 +615,7 @@ void(entity pl) RefreshStatusBar3 =
 	{
 		if (self.demon_two.has_camera == -2) // we r aborting hack...
 		{
-			s2 = "\nΘαγλ: Aborting...";
+			s2 = "\n\sHack\s: Aborting...";
 			s3 = "";
 			s4 = "";
 		}
@@ -623,7 +623,7 @@ void(entity pl) RefreshStatusBar3 =
 		{
 			s2 = "\nΘαγλ: ";
 			s3 = ftos(100 - floor((self.demon_two.heat/self.demon_two.ltime) * 100));
-			s4 = "₯ completed";
+			s4 = "\{165} completed";
 		}
 	}
 	else if (HasMonster(pl))
@@ -674,17 +674,17 @@ void(entity pl) RefreshStatusBar3 =
 		}
 
 		if (targ.classname == "monster_army")
-			s2 = "\nΣομδιες";
+			s2 = "\n\sSoldier\s";
 		else if (targ.classname == "monster_shambler")
-			s2 = "\nΣθανβμες";
+			s2 = "\n\sShambler\s";
 		else if (targ.classname == "monster_wizard")
-			s2 = "\nΣγςαη";
+			s2 = "\n\sScrag\s";
 		else if (targ.classname == "monster_demon1")
-			s2 = "\nΖιεξδ";
+			s2 = "\n\sFiend\s";
 		else if (targ.classname == "monster_fish")
-			s2 = "\nΠιςαξθα";
+			s2 = "\n\sPiranha\s";
 		else if (targ.classname == "monster_gremlin")
-			s2 = "\nΗςενμιξ";
+			s2 = "\n\sGremlin\s";
 
 		if (self.job & #JOB_WARLOCK)
 		{
@@ -701,9 +701,9 @@ void(entity pl) RefreshStatusBar3 =
 
 				if (self.job & #JOB_WARLOCK)
 				{
-					s2 = strcat(s2," ¨soul ");
+					s2 = strcat(s2," \{168}soul ");
 					s2 = strcat(s2,tmp);
-					s2 = strcat(s2,"©: ");
+					s2 = strcat(s2,"\{169}: ");
 				}
 			}
 			else // no need to display number of soul
@@ -726,7 +726,7 @@ void(entity pl) RefreshStatusBar3 =
 		}
 
 		s3 = ftos(floor((targ.health / targ.max_health) * 100));
-		s4 = "₯ health";
+		s4 = "\{165} health";
 
 		self.increase_team4 = self.increase_team4 +1;
 		if (self.increase_team4 > 2)
@@ -930,17 +930,17 @@ string(entity pl) ClipSizeToString100 =
 	tmps = ftos(num);
 
 	if (pl.tfstate & #TFSTATE_RELOADING)
-		tmps2 = "";
+		tmps2 = "\0";
 	else
 		tmps2 = colstr(tmps,#COLSTR_NUMBER);
 
 	#ifdef OLD_SBARLOOK
-	tmps3 = strcat("γμιπ: ",tmps2);
+	tmps3 = strcat("\sclip\s: ",tmps2);
 	#else
 	if (num < 10 || pl.tfstate & #TFSTATE_RELOADING)
-		tmps3 = strcat("  γμιπ: ",tmps2);
+		tmps3 = strcat("  \sclip\s: ",tmps2);
 	else
-		tmps3 = strcat("  γμιπ:",tmps2);
+		tmps3 = strcat("  \sclip\s:",tmps2);
 	#endif
 
 	return tmps3;
@@ -1103,17 +1103,17 @@ string(entity te, float devicenum) SentryDetailsToString =
 		if (te.ammo_shells == 0)
 		{
 			if (te.ammo_rockets == 0 && te.weapon == 3)
-				return "Σεξτςω: no ammo   \n        ";
+				return "\sSentry\s: no ammo   \n        ";
 			else
-				return "Σεξτςω: no shells \n        ";
+				return "\sSentry\s: no shells \n        ";
 		}
 		else if (te.ammo_rockets == 0 && te.weapon == 3)
 		{
-			return "Σεξτςω: no rockets\n        ";
+			return "\sSentry\s: no rockets\n        ";
 		}
 		else
 		{
-			return "                  \nΣεξτςω: ";
+			return "                  \n\sSentry\s: ";
 		}
 	}
 	else if (devicenum == 1)
@@ -1121,17 +1121,17 @@ string(entity te, float devicenum) SentryDetailsToString =
 		if (te.ammo_shells == 0)
 		{
 			if (te.ammo_rockets == 0 && te.weapon == 3)
-				return "Σεξτςω £: no ammo   \n           ";
+				return "\sSentry\s \{163}\1: no ammo   \n           ";
 			else
-				return "Σεξτςω £: no shells \n           ";
+				return "\sSentry\s \{163}\1: no shells \n           ";
 		}
 		else if (te.ammo_rockets == 0 && te.weapon == 3)
 		{
-			return "Σεξτςω £: no rockets\n           ";
+			return "\sSentry\s \{163}\1: no rockets\n           ";
 		}
 		else
 		{
-			return "                  \nΣεξτςω £: ";
+			return "                  \n\sSentry\s \{163}\1: ";
 		}
 	}
 	else if (devicenum == 2)
@@ -1139,17 +1139,17 @@ string(entity te, float devicenum) SentryDetailsToString =
 		if (te.ammo_shells == 0)
 		{
 			if (te.ammo_rockets == 0 && te.weapon == 3)
-				return "Σεξτςω £: no ammo   \n           ";
+				return "\sSentry\s \{163}\2: no ammo   \n           ";
 			else
-				return "Σεξτςω £: no shells \n           ";
+				return "\sSentry\s \{163}\2: no shells \n           ";
 		}
 		else if (te.ammo_rockets == 0 && te.weapon == 3)
 		{
-			return "Σεξτςω £: no rockets\n           ";
+			return "\sSentry\s \{163}\2: no rockets\n           ";
 		}
 		else
 		{
-			return "                  \nΣεξτςω £: ";
+			return "                  \n\sSentry\s \{163}\2: ";
 		}
 	}
 
@@ -1162,45 +1162,45 @@ string(entity te, float devicenum) TeslaDetailsToString =
 	{
 		if (te.ammo_cells == 0)
 		{
-			return "Τεσμα:     No cells\n       ";
+			return "\sTesla\s:     No cells\n       ";
 		}
 		else if (te.ammo_cells <= 30)
 		{
-			return "Τεσμα: Low on cells\n       ";
+			return "\sTesla\s: Low on cells\n       ";
 		}
 		else
 		{
-			return "                   \nΤεσμα: ";
+			return "                   \n\sTesla\s: ";
 		}
 	}
 	else if (devicenum == 1)
 	{
 		if (te.ammo_cells == 0)
 		{
-			return "Τεσμα £:     No cells\n          ";
+			return "\sTesla\s \{163}\1:     No cells\n          ";
 		}
 		else if (te.ammo_cells <= 30)
 		{
-			return "Τεσμα £: Low on cells\n        : ";
+			return "\sTesla\s \{163}\1: Low on cells\n        : ";
 		}
 		else
 		{
-			return "                   \nΤεσμα £: ";
+			return "                   \n\sTesla\s \{163}\1: ";
 		}
 	}
 	else if (devicenum == 2)
 	{
 		if (te.ammo_cells == 0)
 		{
-			return "Τεσμα £:     No cells\n          ";
+			return "\sTesla\s \{163}\2:     No cells\n          ";
 		}
 		else if (te.ammo_cells <= 30)
 		{
-			return "Τεσμα £: Low on cells\n          ";
+			return "\sTesla\s \{163}\2: Low on cells\n          ";
 		}
 		else
 		{
-			return "                   \nΤεσμα £: ";
+			return "                   \n\sTesla\s \{163}\2: ";
 		}
 	}
 

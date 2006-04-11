@@ -1,8 +1,16 @@
+/*
+==============================================================================
+
+preopdef.QC
+
+==============================================================================
+*/
+
 #pragma DONT_COMPILE_THIS_FILE
 
 // This contains non-option defines that are needed in the options.qc file.
 
-#define FALSE 0 
+#define FALSE 0
 #define TRUE  1
 #define OFF   0
 #define ON    1

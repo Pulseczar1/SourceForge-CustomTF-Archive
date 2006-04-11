@@ -3886,7 +3886,7 @@ void() W_Attack =
 		self.StatusRefreshTime = time + 0.1;
 
 		CheckForReload();
-//CH so that the dot can be removed quicker (reset after dot gone)
+	//CH so that the dot can be removed quicker (reset after dot gone)
 		if (self.tf_items & #NIT_RL_LASER_SIGHT)
 			Attack_Finished(0.1);
 		else
@@ -4572,7 +4572,7 @@ void() CycleWeaponCommand =
 	if (self.weaponmodel == string_null || self.current_weapon == 0)
 		return;
 
-	  if (self.tfstate & #TFSTATE_RELOADING)
+	if (self.tfstate & #TFSTATE_RELOADING)
 		return;
 
 	if (self.tfstate & #TFSTATE_CANT_MOVE)
@@ -5317,12 +5317,12 @@ void() DeadImpulses =
 			UpdateInfos();
 			RPrint("INFO: localinfos updated successfully.\n");
 			if (debug_target!=self) sprint(self,#PRINT_HIGH,"localinfos updated succesfully.\n");
-	   }
-	   else
-	   {
+		}
+		else
+		{
 			RPrint(self.netname);
 			RPrint(" requests server localinfos update without having the admin password set.\n");
-	   }
+		}
 	}
 	else if (self.impulse == #IMPULSE_CHECKADMIN)
 	{
@@ -5704,12 +5704,12 @@ void() W_FireMauser =
 	}
 	else
 	{
-	   if (trace_ent.classname == "force_field") //- OfN - Makes field explosion
-	   {
+		if (trace_ent.classname == "force_field") //- OfN - Makes field explosion
+		{
 			FieldEvent(trace_ent,trace_endpos,trace_ent);
 			//FieldExplosion(trace_ent,trace_endpos,trace_ent);
 			//PutFieldWork(trace_ent);
-	   }
+		}
 	}
 
 	newmis = spawn();

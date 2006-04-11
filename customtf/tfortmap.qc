@@ -410,7 +410,7 @@ void() info_tfgoal =
 	precache_sound ("items/damage2.wav");
 	precache_sound ("items/damage3.wav");
 
-//CH set solid state
+	//CH set solid state
 	if (self.goal_activation & #TFGI_GOAL_IS_SOLID)
 		self.solid = #SOLID_BBOX;
 	else
@@ -418,7 +418,7 @@ void() info_tfgoal =
 	if (self.goal_state == 0)
 		self.goal_state = #TFGS_INACTIVE;
 
-//CH sets goal bounding box size
+	//CH sets goal bounding box size
 	if (self.goal_min != vector_null)
 		temp1 = self.goal_min;
 	else
@@ -2335,15 +2335,15 @@ void(entity Goal, entity AP, float addb) DoResults =
 								CenterPrint2(te, "\n\n\n", #MSG_CTF_FLAG_GRAB_TEAM7);
 						}
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your team гот the енемы flag!!");
+					 		CenterPrint2(te, "\n\n\n", "Your team \sGOT\s the \sENEMY\s flag!!");
 					}
 					else
-						CenterPrint2(te, "\n\n\n", "Your flag has been такен!!");
+						CenterPrint2(te, "\n\n\n", "Your flag has been \sTAKEN\s!!");
 
 					te = find(te, classname, "player");
 				}
 				bprint(#PRINT_HIGH, AP.netname);
-				bprint(#PRINT_HIGH, " гот the блуе flag!\n");
+				bprint(#PRINT_HIGH, " \sGOT\s the \sBLUE\s flag!\n");
 
 				AP.items = AP.items | #IT_KEY1;
 			}
@@ -2373,15 +2373,15 @@ void(entity Goal, entity AP, float addb) DoResults =
 								CenterPrint2(te, "\n\n\n", #MSG_CTF_FLAG_GRAB_TEAM7);
 						}
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your team гот the енемы flag!!");
+					 		CenterPrint2(te, "\n\n\n", "Your team \sGOT\s the \sENEMY\s flag!!");
 					}
 					else
-						CenterPrint2(te, "\n\n\n", "Your flag has been такен!!");
+						CenterPrint2(te, "\n\n\n", "Your flag has been \sTAKEN\s!!");
 
 					te = find(te, classname, "player");
 				}
 				bprint(#PRINT_HIGH, AP.netname);
-				bprint(#PRINT_HIGH, " гот the ред flag!\n");
+				bprint(#PRINT_HIGH, " \sGOT\s the \sRED\s flag!\n");
 				AP.items = AP.items | #IT_KEY2;
 			}
 			else if (Goal.goal_no == #CTF_DROPOFF1)
@@ -2392,17 +2392,17 @@ void(entity Goal, entity AP, float addb) DoResults =
 					if (te.team_no == 2)
 					{
 						if (te == AP)
-							CenterPrint2(te, "\n\n\n", "You цаптуред the flag!!");
+							CenterPrint2(te, "\n\n\n", "You \sCAPTURED\s the flag!!");
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your flag was цаптуред!!");
+					 		CenterPrint2(te, "\n\n\n", "Your flag was \sCAPTURED\s!!");
 					}
 					else
-						CenterPrint2(te, "\n\n\n", "Your team цаптуред the flag!!");
+						CenterPrint2(te, "\n\n\n", "Your team \sCAPTURED\s the flag!!");
 
 					te = find(te, classname, "player");
 				}
 				bprint(#PRINT_HIGH, AP.netname);
-				bprint(#PRINT_HIGH, " цаптуред the ред flag!\n");
+				bprint(#PRINT_HIGH, " \sCAPTURED\s the \sRED\s flag!\n");
 				AP.items = AP.items - (AP.items & #IT_KEY2);
 
 			}
@@ -2414,17 +2414,17 @@ void(entity Goal, entity AP, float addb) DoResults =
 					if (te.team_no == 1)
 					{
 						if (te == AP)
-							CenterPrint2(te, "\n\n\n", "You цаптуред the flag!!");
+							CenterPrint2(te, "\n\n\n", "You \sCAPTURED\s the flag!!");
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your flag was цаптуред!!");
+					 		CenterPrint2(te, "\n\n\n", "Your flag was \sCAPTURED\s!!");
 					}
 					else
-						CenterPrint2(te, "\n\n\n", "Your team цаптуред the flag!!");
+						CenterPrint2(te, "\n\n\n", "Your team \sCAPTURED\s the flag!!");
 
 					te = find(te, classname, "player");
 				}
 				bprint(#PRINT_HIGH, AP.netname);
-				bprint(#PRINT_HIGH, " цаптуред the блуе flag!\n");
+				bprint(#PRINT_HIGH, " \sCAPTURED\s the \sBLUE\s flag!\n");
 				AP.items = AP.items - (AP.items & #IT_KEY1);
 			}
 		}
@@ -2694,7 +2694,7 @@ void() item_tfgoal_touch =
 {
 	#ifdef QUAKE_WORLD
 	/*if (infokey(world,"ceasefire")=="on") //OfN
-	    return;*/
+		return;*/
 
 	if (ceasefire)
 		return;
@@ -2734,15 +2734,15 @@ void() item_tfgoal_touch =
 				if (other.team_no == 1)
 				{
 					bprint(#PRINT_HIGH, other.netname);
-					bprint(#PRINT_HIGH, " ретурнед the блуе flag!\n");
+					bprint(#PRINT_HIGH, " \sRETURNED\s the \sBLUE flag!\n");
 
 					te = find(world, classname, "player");
 					while (te != world)
 					{
 						if (te.team_no == 1)
-							CenterPrint2(te, "\n\n\n", "Your flag was ретурнед!!");
+							CenterPrint2(te, "\n\n\n", "Your flag was \sRETURNED\s!!");
 						else
-					 		CenterPrint2(te, "\n\n\n", "The енемы flag was ретурнед!!");
+					 		CenterPrint2(te, "\n\n\n", "The \sBLUE\s flag was \sRETURNED\s!!");
 
 						te = find(te, classname, "player");
 					}
@@ -2771,15 +2771,15 @@ void() item_tfgoal_touch =
 				if (other.team_no == 2)
 				{
 					bprint(#PRINT_HIGH, other.netname);
-					bprint(#PRINT_HIGH, " ретурнед the ред flag!\n");
+					bprint(#PRINT_HIGH, " \sRETURNED\s the \sRED\s flag!\n");
 
 					te = find(world, classname, "player");
 					while (te != world)
 					{
 						if (te.team_no == 2)
-							CenterPrint(te, "\n\n\n Your flag was ретурнед!!");
+							CenterPrint(te, "\n\n\n Your flag was \sRETURNED\s!!");
 						else
-					 		CenterPrint(te, "\n\n\n The енемы flag was ретурнед!!");
+					 		CenterPrint(te, "\n\n\n The \sRED\s flag was \sRETURNED\s!!");
 
 						te = find(te, classname, "player");
 					}
@@ -3632,7 +3632,7 @@ void() item_flag_team2 =
 	// Convert the flag to a TeamFortress Goal Item
 	self.classname = "item_tfgoal";
 	self.netname = "Team 1 Flag";
-	self.broadcast = " гот the enemy team's flag!\n";
+	self.broadcast = " \sGOT\s the enemy team's flag!\n";
 	self.deathtype = "You've got the enemy flag!\n";
 	self.noise = "ogre/ogwake.wav";
 	self.mdl = "progs/tf_flag.mdl";
@@ -3659,8 +3659,8 @@ void() item_flag_team2 =
 	dp.items_allowed = #CTF_FLAG2;
 	dp.goal_no = #CTF_DROPOFF1;
 	dp.goal_effects = 3;
-	dp.broadcast = " цаптуред the enemy flag!\n";
-	dp.message = "You цаптуред the enemy flag!\n";
+	dp.broadcast = " \sCAPTURED\s the enemy flag!\n";
+	dp.message = "You \sCAPTURED\s the enemy flag!\n";
 	dp.noise = "boss2/pop2.wav";
 	dp.goal_result = #TFGR_ADD_BONUSES;
 	dp.activate_goal_no = #CTF_SCORE1;
@@ -3700,7 +3700,7 @@ void() item_flag_team1 =
 	// Convert the flag to a TeamFortress Goal Item
 	self.classname = "item_tfgoal";
 	self.netname = "Team 2 Flag";
-	self.broadcast = " гот the enemy team's flag!\n";
+	self.broadcast = " \sGOT\s the enemy team's flag!\n";
 	self.deathtype = "You've got the enemy flag!\n";
 	self.noise = "ogre/ogwake.wav";
 	self.mdl = "progs/tf_flag.mdl";
@@ -3727,8 +3727,8 @@ void() item_flag_team1 =
 	dp.items_allowed = #CTF_FLAG1;
 	dp.goal_no = #CTF_DROPOFF2;
 	dp.goal_effects = 3;
-	dp.broadcast = " цаптуред the enemy flag!\n";
-	dp.message = "You цаптуред the enemy flag!\n";
+	dp.broadcast = " \sCAPTURED\s the enemy flag!\n";
+	dp.message = "You \sCAPTURED\s the enemy flag!\n";
 	dp.noise = "boss2/pop2.wav";
 	dp.goal_result = #TFGR_ADD_BONUSES;
 	dp.activate_goal_no = #CTF_SCORE2;

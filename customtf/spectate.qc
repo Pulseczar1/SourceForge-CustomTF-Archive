@@ -354,19 +354,19 @@ void() Menu_Default =
 	if (self.has_camera != 1)
 	{
 		if (self.tf_items & #NIT_AUTOSCANNER)
-			st2 = ".. Σγαξξες state (οξ)           \n.. ΓθασεΓαν state (οξ)          \n\n";
+			st2 = "\8.. \sScanner\s state (\son\s)           \n\9.. \sChaseCam\s state (\son\s)          \n\n";
 		else
-			st2 = ".. Scanner state (off)          \n.. ΓθασεΓαν state (οξ)          \n\n";
+			st2 = ".. Scanner state (off)          \n.. \sChaseCam\s state (\son\s)          \n\n";
 	}
 	else
 	{
 		if (self.tf_items & #NIT_AUTOSCANNER)
-			st2 = ".. Σγαξξες state (οξ)           \n.. ChaseCam state (off)         \n\n";
+			st2 = ".. \sScanner\s state (\son\s)           \n.. ChaseCam state (off)         \n\n";
 		else
 			st2 = ".. Scanner state (off)          \n.. ChaseCam state (off)         \n\n";
 	}
 
-	centerprint(self,"€‚ Σπεγτατος Νεξυ: €‚\n\n.. Machinery Battlefield Scan   \n.. Helpers Battlefield Scan     \n.. Player Classes Scan          \n.. Overall Balance (N/A)        \n.. SentryGun detail report (N/A)\n.. Tesla detail report (N/A)    \n..                              \n",st2,"®® Hide Menu                    \n\n€‚€‚");
+	centerprint(self,"\{157}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130} \sSpectator Menu: \{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{159}\n\n\1.. Machinery Battlefield Scan   \n\2.. Helpers Battlefield Scan     \n\3.. Player Classes Scan          \n\4.. Overall Balance (N/A)        \n\5.. SentryGun detail report (N/A)\n\6.. Tesla detail report (N/A)    \n\7..                              \n",st2,"\0\s..\s Hide Menu                    \n\n\{157}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{159}");
 };
 
 void(float inp) Menu_Default_Inp =
@@ -375,7 +375,7 @@ void(float inp) Menu_Default_Inp =
 	{
 		CuTFMenuSound(#MENUSOUND_BROWSE);
 		SpecResetMenu();
-		centerprint(self,"Τυςξιξη οζζ σεξσοςσ...\n\nPress ΆΆ to τοηημε status");
+		centerprint(self,"\sTurning off sensors\s...\n\nPress \{162}\0\{162} to \stoggle\s status");
 	}
 	else if (inp == 9)
 	{
@@ -457,7 +457,7 @@ void() Spec_ID =
 	if (trace_ent == self.goalentity || trace_ent == world)
 	{
 		//src = self.goalentity.origin + v_forward*15; // was 10
-	    //src_z = self.absmin_z + self.size_z * 0.7;
+		//src_z = self.absmin_z + self.size_z * 0.7;
 
 		//traceline (src, src + v_forward*2048, #TL_ANY_SOLID, self.goalentity);
 		//sprint(self,#PRINT_HIGH,self.goalentity.classname);
@@ -604,51 +604,47 @@ void() Menu_Charging =
 {
 	local string st2;
 
-	if (self.has_camera == 1)
+	if (self.has_camera != 1)
 	{
 		if (self.tf_items & #NIT_AUTOSCANNER)
-			st2 = "    Σγαξξες state (οξ)           \n    ΓθασεΓαν state (οξ)          \n\n";
+			st2 = "    \sScanner\s state (\son\s)           \n    \sChaseCam\s state (\son\s)          \n\n";
 		else
-			st2 = "    Scanner state (off)          \n    ΓθασεΓαν state (οξ)          \n\n";
+			st2 = "    Scanner state (off)          \n    \sChaseCam\s state (\son\s)          \n\n";
 	}
 	else
 	{
 		if (self.tf_items & #NIT_AUTOSCANNER)
-			st2 = "    Σγαξξες state (οξ)           \n    ChaseCam state (off)         \n\n";
+			st2 = "    \sScanner\s state (\son\s)           \n    ChaseCam state (off)         \n\n";
 		else
 			st2 = "    Scanner state (off)          \n    ChaseCam state (off)         \n\n";
 	}
 
-	centerprint(self,"€‚ Σπεγτατος Νεξυ: €‚\n\n    Machinery Battlefield Scan   \n    Helpers Battlefield Scan     \n    Player Classes Scan          \n    Overall Balance              \n    Sentry gun detail report     \n    Tesla detail report          \n                                 \n",st2,"    Hide Menu                    \n\n€‚€‚\n\nCharging sensors...");
+	centerprint(self,"\{157}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130} \sSpectator Menu: \{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{159}\n\n    Machinery Battlefield Scan   \n    Helpers Battlefield Scan     \n    Player Classes Scan          \n    Overall Balance              \n    SentryGun detail report      \n    Tesla detail report          \n                                 \n",st2,"    Hide Menu                    \n\n\{157}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{159}");
 	stuffcmd(self,"bf\n");
-//  centerprint(self,"Charging sensors...\n");
+	//centerprint(self,"Charging sensors...\n");
 };
 
 void (float team_num)GetTeamMachineryScan;
 
-/*void ()sprintline =
-{
-	sprint(self, #PRINT_HIGH, "\n\n\n");
-};*/
 void ()sprintlineb =
 {
-	sprint(self, #PRINT_HIGH, "\n€‚\n\n");
+	sprint(self, #PRINT_HIGH, "\n\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\n\n");
 };
 void (float num)sprintlineteam =
 {
 	if (num == 1)
-		sprint(self, #PRINT_HIGH, "\n Blue Team \n\n");
+		sprint(self, #PRINT_HIGH, "\n\{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159} Blue Team \{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159}\n\n");
 	else if (num == 2)
-		sprint(self, #PRINT_HIGH, "\n Red Team \n\n");
+		sprint(self, #PRINT_HIGH, "\n\{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159} Red Team \{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159}\n\n");
 	else if (num == 3)
-		sprint(self, #PRINT_HIGH, "\n Yellow Team \n\n");
+		sprint(self, #PRINT_HIGH, "\n\{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159} Yellow Team \{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159}\n\n");
 	else if (num == 4)
-		sprint(self, #PRINT_HIGH, "\n Green Team \n\n");
+		sprint(self, #PRINT_HIGH, "\n\{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159} Green Team \{157}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{159}\n\n");
 };
 
 void ()MachineryScan =
 {
-	sprint(self, #PRINT_HIGH, "\n€‚ Machinery Scan €‚\n");
+	sprint(self, #PRINT_HIGH, "\n\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{130} Machinery Scan \{128}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\n");
 
 	sprintlineteam(1);
 	GetTeamMachineryScan(1);
@@ -903,7 +899,7 @@ void (float team_num)GetTeamMachineryScan =
 	}
 
 	//Defensive power sprint
-	sprint(self,#PRINT_HIGH,"\nΔεζεξσιφε Ποχες: ");
+	sprint(self,#PRINT_HIGH,"\n\sDefensive Power\s: ");
 	str=ftos(defpw);
 	sprint(self,#PRINT_HIGH,str);
 	sprint(self,#PRINT_HIGH,"\n");
@@ -914,7 +910,7 @@ void (float team_num)GetTeamHelpersScan;
 
 void ()HelpersScan =
 {
-	sprint(self, #PRINT_HIGH, "\n€‚ Helpers Scan €‚\n");
+	sprint(self, #PRINT_HIGH, "\n\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{130} Helpers Scan \{128}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\n");
 
 	sprintlineteam(1);
 	GetTeamHelpersScan(1);
@@ -1093,7 +1089,7 @@ void (float team_num)GetTeamHelpersScan =
 	}
 
 	//Defensive power sprint
-	sprint(self,#PRINT_HIGH,"\nΘεμπεςσ Ποχες: ");
+	sprint(self,#PRINT_HIGH,"\n\sHelpers Power\s: ");
 	str=ftos(defpw);
 	sprint(self,#PRINT_HIGH,str);
 	sprint(self,#PRINT_HIGH,"\n");
@@ -1102,7 +1098,7 @@ void (float team_num)GetTeamHelpersScan =
 
 void () ClassScan =
 {
-	sprint(self, #PRINT_HIGH, "\n€‚ Classes Scan €‚\n");
+	sprint(self, #PRINT_HIGH, "\n\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{130} Classes Scan \{128}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\n");
 
 	sprintlineteam(1);
 	GetTeamClassScan(1);

@@ -1,4 +1,11 @@
-//WK
+/*
+==============================================================================
+
+PLATS.QC
+
+==============================================================================
+*/
+
 float(entity foo) IsBuilding;
 
 void() plat_center_touch;
@@ -7,7 +14,7 @@ void() plat_trigger_use;
 void() plat_go_up;
 void() plat_go_down;
 void() plat_crush;
-#define PLAT_LOW_TRIGGER	1 
+#define PLAT_LOW_TRIGGER	1
 
 void() plat_spawn_inside_trigger =
 {
@@ -16,7 +23,7 @@ void() plat_spawn_inside_trigger =
 
 	//
 	// middle trigger
-	//	
+	//
 	trigger = spawn();
 	trigger.touch = plat_center_touch;
 	trigger.movetype = #MOVETYPE_NONE;
@@ -30,22 +37,22 @@ void() plat_spawn_inside_trigger =
 	trigger.activate_goal_no = self.activate_goal_no;
 	trigger.inactivate_goal_no = self.inactivate_goal_no;
 	trigger.remove_goal_no = self.remove_goal_no;
-	trigger.restore_goal_no = self.restore_goal_no;		
-	trigger.activate_group_no =	self.activate_group_no;	
-	trigger.inactivate_group_no = self.inactivate_group_no;	
-	trigger.remove_group_no	= self.remove_group_no;	
-	trigger.restore_group_no = self.restore_group_no;	
-	trigger.goal_activation = self.goal_activation;				
-	trigger.goal_effects = self.goal_effects;	
-	trigger.goal_result = self.goal_result;		
-	trigger.goal_group = self.goal_group;		
+	trigger.restore_goal_no = self.restore_goal_no;
+	trigger.activate_group_no =	self.activate_group_no;
+	trigger.inactivate_group_no = self.inactivate_group_no;
+	trigger.remove_group_no	= self.remove_group_no;
+	trigger.restore_group_no = self.restore_group_no;
+	trigger.goal_activation = self.goal_activation;
+	trigger.goal_effects = self.goal_effects;
+	trigger.goal_result = self.goal_result;
+	trigger.goal_group = self.goal_group;
 
 	tmin = self.mins + '25 25 0';
 	tmax = self.maxs - '25 25 -8';
 	tmin_z = tmax_z - (self.pos1_z - self.pos2_z + 8);
 	if (self.spawnflags & #PLAT_LOW_TRIGGER)
 		tmax_z = tmin_z + 8;
-	
+
 	if (self.size_x <= 50)
 	{
 		tmin_x = (self.mins_x + self.maxs_x) / 2;
@@ -56,7 +63,7 @@ void() plat_spawn_inside_trigger =
 		tmin_y = (self.mins_y + self.maxs_y) / 2;
 		tmax_y = tmin_y + 1;
 	}
-	
+
 	setsize (trigger, tmin, tmax);
 };
 
@@ -140,8 +147,8 @@ void() plat_outside_touch =
 
 	if (other.health <= 0)
 		return;
-		
-//RPrint ("plat_outside_touch\n");
+
+	//RPrint ("plat_outside_touch\n");
 	self = self.enemy;
 	if (self.state == #STATE_TOP)
 		plat_go_down ();
@@ -157,7 +164,7 @@ void() plat_trigger_use =
 
 void() plat_crush =
 {
-//RPrint ("plat_crush\n");
+	//RPrint ("plat_crush\n");
 	if (other.takedamage) {
 		if (IsBuilding(other))
 			T_Damage (other, self, self, other.health + 1);
@@ -198,11 +205,9 @@ Set "sounds" to one of the following:
 2) chain slow
 */
 
-
 void() func_plat =
-
 {
-//local entity t;
+	//local entity t;
 
 	if (CheckExistence() == #FALSE)
 	{
@@ -217,7 +222,7 @@ void() func_plat =
 
 	if (self.sounds == 0)
 		self.sounds = 2;
-// FIX THIS TO LOAD A GENERIC PLAT SOUND
+	// FIX THIS TO LOAD A GENERIC PLAT SOUND
 
 	if (self.sounds == 1)
 	{
@@ -235,14 +240,13 @@ void() func_plat =
 		self.noise1 = "plats/medplat2.wav";
 	}
 
-
 	self.mangle = self.angles;
 	self.angles = '0 0 0';
 
 	self.classname = "plat";
 	self.solid = #SOLID_BSP;
 	self.movetype = #MOVETYPE_PUSH;
-	setorigin (self, self.origin);	
+	setorigin (self, self.origin);
 	setmodel (self, self.model);
 	setsize (self, self.mins , self.maxs);
 
@@ -250,7 +254,7 @@ void() func_plat =
 	if (!self.speed)
 		self.speed = 150;
 
-// pos1 is the top position, pos2 is the bottom
+	// pos1 is the top position, pos2 is the bottom
 	self.pos1 = self.origin;
 	self.pos2 = self.origin;
 	if (self.height)
@@ -260,7 +264,7 @@ void() func_plat =
 
 	self.use = plat_trigger_use;
 
-	plat_spawn_inside_trigger ();	// the "start moving" trigger	
+	plat_spawn_inside_trigger ();	// the "start moving" trigger
 
 	if (self.targetname)
 	{
@@ -274,7 +278,6 @@ void() func_plat =
 	}
 };
 
-//============================================================================
 
 void() train_next;
 void() func_train_find;
@@ -286,6 +289,7 @@ void() train_blocked =
 	self.attack_finished = time + 0.5;
 	T_Damage (other, self, self, self.dmg);
 };
+
 void() train_use =
 {
 	if (self.think != func_train_find)
@@ -302,7 +306,7 @@ void() train_wait =
 	}
 	else
 		self.nextthink = self.ltime + 0.1;
-	
+
 	self.think = train_next;
 };
 
@@ -347,8 +351,9 @@ sounds
 1) ratchet metal
 
 */
+
 void() func_train =
-{	
+{
 	if (CheckExistence() == #FALSE)
 	{
 		dremove(self);
@@ -389,8 +394,8 @@ void() func_train =
 	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
 
-// start trains on the second frame, to make sure their targets have had
-// a chance to spawn
+	// start trains on the second frame, to make sure their targets have had
+	// a chance to spawn
 	self.nextthink = self.ltime + 0.1;
 	self.think = func_train_find;
 };
@@ -399,7 +404,7 @@ void() func_train =
 This is used for the final bos
 */
 void() misc_teleporttrain =
-{	
+{
 	if (CheckExistence() == #FALSE)
 	{
 		dremove(self);
@@ -428,10 +433,8 @@ void() misc_teleporttrain =
 	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
 
-// start trains on the second frame, to make sure their targets have had
-// a chance to spawn
+	// start trains on the second frame, to make sure their targets have had
+	// a chance to spawn
 	self.nextthink = self.ltime + 0.1;
 	self.think = func_train_find;
 };
-
-

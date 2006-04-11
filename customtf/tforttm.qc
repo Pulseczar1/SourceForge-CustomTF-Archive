@@ -126,7 +126,7 @@ string(float tno) GetTeamName =
 
 	if (tno == 1)
 	{
-	    /*if (world.b_b != "" && world.b_b != string_null)
+		/*if (world.b_b != "" && world.b_b != string_null)
 		{
 			return world.b_b;
 		}*/
@@ -140,7 +140,7 @@ string(float tno) GetTeamName =
 	}
 	else if (tno == 2)
 	{
-	    /*if (world.b_t != "" && world.b_t != string_null)
+		/*if (world.b_t != "" && world.b_t != string_null)
 		{
 			return world.b_t;
 		}*/
@@ -189,13 +189,13 @@ string(float tno) GetTeamName =
 string(float tno) GetTrueTeamName =
 {
 	if (tno == 1)
-		return "Âìõå";
+		return "\sBlue\s";
 	else if (tno == 2)
-		return "Òåä";
+		return "\sRed\s";
 	else if (tno == 3)
-		return "Ùåììï÷";
+		return "\sYellow\s";
 	else if (tno == 4)
-		return "Çòååî";
+		return "\sGreen\s";
 	else
 		return "ERROR";
 };
@@ -247,7 +247,7 @@ float(float tno) TeamFortress_TeamSet =
 	tc = TeamFortress_TeamGetNoPlayers(tno);
 	if (tc >= TeamFortress_TeamGetMaxPlayers(tno))
 	{
-	    //- OfN
+		//- OfN
 		if (mapname == "huntedr")
 		{
 			if (tno == 3)
@@ -558,7 +558,7 @@ void() TeamFortress_CheckTeamCheats =
 			// OfN kick custom player classes using a non TF-skin
 			if (self.playerclass == #PC_CUSTOM && !Is_TF_Skin(st))
 			{
-   				TeamFortress_SetSkin(self);
+				TeamFortress_SetSkin(self);
 
 				bprint2(#PRINT_MEDIUM, self.netname, " has been kicked for changing skin.\n");
 				sprint(self, #PRINT_HIGH, "You have been kicked for changing your skin. Don't do it.\n");
@@ -665,7 +665,7 @@ void(float tno, float scoretoadd) TeamFortress_TeamIncreaseScore =
 		team4score = team4score + scoretoadd;
 
 	// If TeamFrags is on, update all the team's player's frags.
- 	if (toggleflags & #TFLAG_TEAMFRAGS)
+	if (toggleflags & #TFLAG_TEAMFRAGS)
 	{
 		e = find(world, classname, "player");
 		while (e)

@@ -14,8 +14,7 @@ CustomTF 3.2.OfN
 
 #define MSG_INFO "\nType \{162}cmd help\{162} to see additional client commands.\n"
 
-//#define MSG_CUTFVERSION "Custom云 version �3�2甇fN"
-#define MSG_CUTFVERSION   "\sProzac\s Custom\sTF\s \sV\s\3\s.\s\2\s.\sOfN\6" //<-- 3.2.OfN6
+#define MSG_CUTFVERSION   "\sProzac\s Custom\sTF\s \sV\s\3\s.\s\2\s.\sOfN\6" //<-- 3.2.OfN6 //RJ we should make a build number system, or something different
 
 #define MSG_INTRO  "Welcome to \sProzac\s Custom\sTF\s\na Quake \sTF\s MOD by ShakaUVM\nwww\s.\stelefragged\s.\scom\s/\sshaka\n\n"
 #define MSG_INTRO2 "Based on the aussie ver by SB-1\nFurther modified by Clan Prozac\n\n"
@@ -39,7 +38,7 @@ void() PrintProzacMOTD =
 	else if (self.#cprint_fx & 1)
 		st = colstr(st,#COLSTR_MIX2);
 
-	CenterPrint5(self,#MSG_INTRO,#MSG_INTRO2,#MSG_INTRO3,st,#MSG_INTRO4);
+	CenterPrint5(self,#MSG_INTRO,#MSG_INTRO3,#MSG_INTRO2,st,#MSG_INTRO4);
 
 	self.#cprint_fx = self.#cprint_fx + 1;
 };
@@ -56,5 +55,5 @@ void() PrintProzacIntro =
 			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}Punish\{162} alias.\n");
 	}
 
-	sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n\{29}\{30}\{30}\{31} ", #MSG_CUTFVERSION, " \{29}\{30}\{30}\{31}\n       \sInformation Homepage\s:\n  http:\s//\swww\s.\scustomtf\s.\scom\s/\sforums\n\{29}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{31}\n\n");
+	sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n\{29}\{30}\{30}\{30}\{31} ", #MSG_CUTFVERSION, " \{29}\{30}\{30}\{30}\{31}\n       \sInformation Homepage\s:\n  http:\s//\swww\s.\scustomtf\s.\scom\s/\sforums\n\{29}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{31}\n\n");
 };
