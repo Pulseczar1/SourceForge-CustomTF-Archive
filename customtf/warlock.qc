@@ -30,13 +30,13 @@ CustomTF 3.2.OfN6
 #define GREMLIN_MAX_HP           3200
 #define DEMON_MAX_HP             3000
 #define SCRAG_MAX_HP             2000
-#define FISH_MAX_HP              2000
+#define FISH_MAX_HP              3000 //pwn- changed this and min, was equal to scrag, fish was weak
 
 #define SHAMBLER_MIN_HP          1200
 #define GREMLIN_MIN_HP           900
 #define DEMON_MIN_HP             800
 #define SCRAG_MIN_HP             500
-#define FISH_MIN_HP              500
+#define FISH_MIN_HP              800
 
 // Meat/heads settings
 #define SHAMBLER_MAX_HEADS       40
@@ -55,8 +55,8 @@ CustomTF 3.2.OfN6
 #define SCRAG_MAXREGEN      3
 #define SCRAG_REGENRATE     1.5
 
-#define FISH_MAXREGEN       4
-#define FISH_REGENRATE      1
+#define FISH_MAXREGEN       6 //pwn- changed this, was 4
+#define FISH_REGENRATE      1.5 //pwn- also changed this, was 1
 
 #define FIEND_MAXREGEN      3
 #define FIEND_REGENRATE     1.5
@@ -224,16 +224,16 @@ void() Menu_Demon =
 
 	if (extras == 0)
 	{
-		st3 = "Áãôéïî";
+		st3 = "\sAction\s";
 	}
 	else
 	{
 		if (currentsoul == 0)
-			st3 = "Óïõì £±";
+			st3 = "\sSoul\s \{163}\s1\s";
 		else if (currentsoul == 1)
-			st3 = "Óïõì £²";
+			st3 = "\sSoul\s \{163}\s2\s";
 		else
-			st3 = "Óïõì £³";
+			st3 = "\sSoul\s \{163}\s3\s";
 	}
 
 	if (soul!=world)
@@ -244,30 +244,30 @@ void() Menu_Demon =
 
 		if (soul.penance_time == 0)
 		{
-			st2 = strcat(st3,":                  \n\n.. Come here, damn beast¡   \n”.. Patrol the zone¡         ");
+			st2 = strcat(st3,":                  \n\n\1.. Come here, damn beast\{161}   \n\2.. Patrol the zone\{161}         ");
 
 			if (extras == 0)
-				st4 = "\n* .. Stop there¡                \n\n®® Unsummon                 \n\n.. Îïôèéîç                  \n\n";
+				st4 = "\n* \3.. Stop there\{161}                \n\n\8\s..\s Unsummon                 \n\n\0.. \sNothing\s                  \n\n";
 			else
-				st4 = "\n* .. Stop there¡                \n\n®® Unsummon                 \n\n.. Îïôèéîç     .. Îåøô Óïõì\n\n";
+				st4 = "\n* \3.. Stop there\{161}¡                \n\n\8\s..\s Unsummon                 \n\n\0.. \sNothing\s     \7.. \sNext Soul\s\n\n";
 		}
 		else if (soul.penance_time == 1)
 		{
-			st2 = strcat(st3,":                  \n\n* .. Come here, damn beast¡     \n.. Patrol the zone¡         ");
+			st2 = strcat(st3,":                  \n\n* \1.. Come here, damn beast\{161}     \n\2.. Patrol the zone\{161}         ");
 
 			if (extras == 0)
-				st4 = "\n.. Stop there¡              \n\n®® Unsummon                 \n\n.. Îïôèéîç                  \n\n";
+				st4 = "\n\3.. Stop there\{161}              \n\n\8\s..\s Unsummon                 \n\n\0.. \sNothing\s                  \n\n";
 			else
-				st4 = "\n.. Stop there¡              \n\n®® Unsummon                 \n\n.. Îïôèéîç     .. Îåøô Óïõì\n\n";
+				st4 = "\n\3.. Stop there\{161}              \n\n\8\s..\s Unsummon                 \n\n\0.. \sNothing\s     \7.. \sNext Soul\s\n\n";
 		}
 		else if (soul.penance_time == 2)
 		{
-			st2 = strcat(st3,":                  \n\n.. Come here, damn beast¡   \n* .. Patrol the zone¡           ");
+			st2 = strcat(st3,":                  \n\n\1.. Come here, damn beast\{161}   \n* \2.. Patrol the zone\{161}           ");
 
 			if (extras == 0)
-				st4 = "\n.. Stop there¡              \n\n®® Unsummon                 \n\n.. Îïôèéîç                  \n\n";
+				st4 = "\n\3.. Stop there\{161}              \n\n\8\s..\s Unsummon                 \n\n\0.. \sNothing\s                  \n\n";
 			else
-				st4 = "\n.. Stop there¡              \n\n®® Unsummon                 \n\n.. Îïôèéîç     .. Îåøô Óïõì\n\n";
+				st4 = "\n\3.. Stop there\{161}              \n\n\8\s..\s Unsummon                 \n\n\0.. \sNothing\s     \7.. \sNext Soul\s\n\n";
 		}
 
 		st6 = ftos(GetMeat(self));
@@ -275,7 +275,7 @@ void() Menu_Demon =
 		st5 = ftos(knifekills);
 		if (strlen(st5)==1)
 			st5 = strcat(" ",st5);
-		st5 = strcat("èåáòôó: ",st5);
+		st5 = strcat("\shearts\s: ",st5);
 		st5 = padstr(st5,21);
 
 
@@ -286,8 +286,8 @@ void() Menu_Demon =
 		else if (strlen(st6)==2)
 			st6 = strcat(" ",st6);
 
-		st7 = strcat("íåáô:  ",st6);
-		st7 = strcat(st7," ëçó");
+		st7 = strcat("\smeat\s:  ",st6);
+		st7 = strcat(st7," \skgs\s");
 		st7 = padstr(st7,21);
 
 
@@ -301,13 +301,13 @@ void() Menu_Demon =
 			st6 = strcat("  ",st6);
 		else if (strlen(st6)==2)
 			st6 = strcat(" ",st6);
-		st7 = strcat("èåáäó: ",st6);
+		st7 = strcat("\sheads\s: ",st6);
 		st7 = padstr(st7,21);
 
 
 		st5 = strcat(st5,st7);
 
-		CenterPrint7(self, soul.netname," ¼",st,"¾", st2,st4, st5);
+		CenterPrint7(self, soul.netname," \{168}",st,"\{169}", st2,st4, st5);
 	}
 	else
 	{
@@ -323,68 +323,68 @@ void() Menu_Demon =
 		if (numsummons == 0)
 		{
 			if (self.job & #JOB_BLOODY_KNIFE)
-				st=strcat(st3,":                  \n\n.. Summon Scrag        (âìïïä)\n.. Summon Piranha      (âìïïä)");
+				st=strcat(st3,":                  \n\n\1.. Summon Scrag        (\sblood\s)\n\2.. Summon Piranha      (\sblood\s)");
 			else
-				st=strcat(st3,":                  \n\n.. Summon Scrag        (blood)\n.. Summon Piranha      (blood)");
+				st=strcat(st3,":                  \n\n\1.. Summon Scrag        (blood)\n\2.. Summon Piranha      (blood)");
 
 			if (knifekills>1)
-			   st2="\n.. Summon Fiend     ( èåáòôó)";
+				st2="\n\3.. Summon Fiend     (\2 \shearts\s)";
 			else
-			   st2="\n.. Summon Fiend     (2 hearts)";
+				st2="\n\3.. Summon Fiend     (2 hearts)";
 
 			if (knifekills>2)
-			   st3="\n.. Summon Gremlin   ( èåáòôó)";
+				st3="\n\4.. Summon Gremlin   (\3 \shearts\s)";
 			else
-			   st3="\n.. Summon Gremlin   (3 hearts)";
+				st3="\n\4.. Summon Gremlin   (3 hearts)";
 
 			if (knifekills>4)
-			   st4="\n.. Summon Shambler  ( èåáòôó)";
+				st4="\n\5.. Summon Shambler  (\5 \shearts\s)";
 			else
-			   st4="\n.. Summon Shambler  (5 hearts)";
+				st4="\n\5.. Summon Shambler  (5 hearts)";
 		}
 		else if (numsummons == 1)
 		{
 			if (knifekills > 0)
-				st=strcat(st3,":                  \n\n.. Summon Scrag      ( èåáòô)\n.. Summon Piranha    ( èåáòô)");
+				st=strcat(st3,":                  \n\n\1.. Summon Scrag      (\1 \sheart\s)\n\2.. Summon Piranha    (\1 \sheart\s)");
 			else
-				st=strcat(st3,":                  \n\n.. Summon Scrag      (1 heart)\n.. Summon Piranha    (1 heart)");
+				st=strcat(st3,":                  \n\n\1.. Summon Scrag      (1 heart)\n\2.. Summon Piranha    (1 heart)");
 
 			if (knifekills>3)
-			   st2="\n.. Summon Fiend     ( èåáòôó)";
+				st2="\n\3.. Summon Fiend     (\4 \shearts\s)";
 			else
-			   st2="\n.. Summon Fiend     (4 hearts)";
+				st2="\n\3.. Summon Fiend     (4 hearts)";
 
 			if (knifekills>5)
-			   st3="\n.. Summon Gremlin   ( èåáòôó)";
+				st3="\n\4.. Summon Gremlin   (\6 \shearts\s)";
 			else
-			   st3="\n.. Summon Gremlin   (6 hearts)";
+				st3="\n\4.. Summon Gremlin   (6 hearts)";
 
 			if (knifekills>9)
-			   st4="\n.. Summon Shambler ( èåáòôó)";
+				st4="\n\5.. Summon Shambler (\10 \shearts\s)";
 			else
-			   st4="\n.. Summon Shambler (10 hearts)";
+				st4="\n\5.. Summon Shambler (10 hearts)";
 		}
 		else
 		{
 			if (knifekills > 1)
-				st=strcat(st3,":                  \n\n.. Summon Scrag     ( èåáòôó)\n.. Summon Piranha   ( èåáòôó)");
+				st=strcat(st3,":                  \n\n\1.. Summon Scrag     (\2 \shearts\s)\n\2.. Summon Piranha   (\2 \shearts\s)");
 			else
-				st=strcat(st3,":                  \n\n.. Summon Scrag     (2 hearts)\n.. Summon Piranha   (2 hearts)");
+				st=strcat(st3,":                  \n\n\1.. Summon Scrag     (2 hearts)\n\2.. Summon Piranha   (2 hearts)");
 
 			if (knifekills>5)
-			   st2="\n.. Summon Fiend     ( èåáòôó)";
+				st2="\n\3.. Summon Fiend     (\6 \shearts\s)";
 			else
-			   st2="\n.. Summon Fiend     (6 hearts)";
+				st2="\n\3.. Summon Fiend     (6 hearts)";
 
 			if (knifekills>8)
-			   st3="\n.. Summon Gremlin   ( èåáòôó)";
+				st3="\n\4.. Summon Gremlin   (\9 \shearts\s)";
 			else
-			   st3="\n.. Summon Gremlin   (9 hearts)";
+				st3="\n\4.. Summon Gremlin   (9 hearts)";
 
 			if (knifekills>14)
-			   st4="\n.. Summon Shambler ( èåáòôó)";
+				st4="\n\5.. Summon Shambler (\15 \shearts\s)";
 			else
-			   st4="\n.. Summon Shambler (15 hearts)";
+				st4="\n\5.. Summon Shambler (15 hearts)";
 		}
 
 
@@ -393,7 +393,7 @@ void() Menu_Demon =
 		st5 = ftos(knifekills);
 		if (strlen(st5)==1)
 			st5= strcat(" ",st5);
-		st5 = strcat("èåáòôó: ",st5);
+		st5 = strcat("\shearts\s: ",st5);
 		st5 = padstr(st5,31);
 
 
@@ -404,20 +404,20 @@ void() Menu_Demon =
 			st6 = strcat("  ",st6);
 		else if (strlen(st6)==2)
 			st6 = strcat(" ",st6);
-		st7 = strcat("íåáô:  ",st6);
-		st7 = strcat(st7," ëçó");
+		st7 = strcat("\smeat\s:  ",st6);
+		st7 = strcat(st7," \skgs\s");
 		st7 = padstr(st7,15);
 
 		if (meatusage == 0)
-			st7 = strcat(st7,"  .. õóáçå   0¥\n");
+			st7 = strcat(st7,"  \8.. \susage\s   0\{165}\n");
 		else if (meatusage == 1)
-			st7 = strcat(st7,"  .. õóáçå  25¥\n");
+			st7 = strcat(st7,"  \8.. \susage\s  25\{165}\n");
 		else if (meatusage == 2)
-			st7 = strcat(st7,"  .. õóáçå  50¥\n");
+			st7 = strcat(st7,"  \8.. \susage\s  50\{165}\n");
 		else if (meatusage == 3)
-			st7 = strcat(st7,"  .. õóáçå  75¥\n");
+			st7 = strcat(st7,"  \8.. \susage\s  75\{165}\n");
 		else if (meatusage == 4)
-			st7 = strcat(st7,"  .. õóáçå 100¥\n");
+			st7 = strcat(st7,"  \8.. \susage\s 100\{165}\n");
 
 		st5 = strcat(st5,st7);
 
@@ -427,27 +427,27 @@ void() Menu_Demon =
 			st6 = strcat("  ",st6);
 		else if (strlen(st6)==2)
 			st6 = strcat(" ",st6);
-		st7 = strcat("èåáäó: ",st6);
+		st7 = strcat("\sheads\s: ",st6);
 		st7 = padstr(st7,15);
 
 		if (headsusage == 0)
-			st7 = strcat(st7,"  .. õóáçå   0¥");
+			st7 = strcat(st7,"  \9.. \susage\s   0\{165}");
 		else if (headsusage == 1)
-			st7 = strcat(st7,"  .. õóáçå  25¥");
+			st7 = strcat(st7,"  \9.. \susage\s  25\{165}");
 		else if (headsusage == 2)
-			st7 = strcat(st7,"  .. õóáçå  50¥");
+			st7 = strcat(st7,"  \9.. \susage\s  50\{165}");
 		else if (headsusage == 3)
-			st7 = strcat(st7,"  .. õóáçå  75¥");
+			st7 = strcat(st7,"  \9.. \susage\s  75\{165}");
 		else if (headsusage == 4)
-			st7 = strcat(st7,"  .. õóáçå 100¥");
+			st7 = strcat(st7,"  \9.. \susage\s 100\{165}");
 
 		st5 = strcat(st5,st7);
 
 
 		if (extras == 0)
-			CenterPrint6(self, st,st2,st3,st4,"\n\n.. Îïôèéîç                    \n\n",st5);
+			CenterPrint6(self, st,st2,st3,st4,"\n\n\0.. \sNothing\s                    \n\n",st5);
 		else
-			CenterPrint6(self, st,st2,st3,st4,"\n\n.. Îïôèéîç      .. Îåøô Óïõì \n\n",st5);
+			CenterPrint6(self, st,st2,st3,st4,"\n\n\0.. \sNothing\s      \7.. \sNext Soul\s \n\n",st5);
 
 	}
 
@@ -623,7 +623,8 @@ void(float inp) Menu_Demon_Input =
 	{
 		if (soul != world)
 		{
-			if (soul.health < #MINHP_TOKILL_MONSTERS)
+			//if (soul.health < #MINHP_TOKILL_MONSTERS)
+			if (soul.health = 0) //pwn- changed this from < #MINHP_TOKILL_MONSTERS, was making problems.
 			{
 				sprint(self,#PRINT_HIGH,"The mystic link between you and ");
 				sprint(self,#PRINT_HIGH,soul.netname);
@@ -2728,7 +2729,7 @@ void(entity warlock, float soulnum) KillSoul =
 			soul.nextthink = time + 0.05;
 
 			sprint (warlock, #PRINT_HIGH, "Your piranha ");
-   			sprint (warlock, #PRINT_HIGH, soul.netname);
+			sprint (warlock, #PRINT_HIGH, soul.netname);
 			sprint (warlock, #PRINT_HIGH, " is dead.\n");
 
 			doclean = #TRUE;

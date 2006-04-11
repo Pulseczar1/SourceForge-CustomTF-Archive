@@ -166,25 +166,25 @@ void() Menu_Punish =
 		st2 = self.admin_kick.netname;
 
 		if (self.admin_kick.classname == "spec")
-			st="’ÛÂÚ: ®spectator© \n\n";
+			st="\sUser\s: \{188}spectator\{190} \n\n";
 		else
-			st="’ÛÂÚ:			  \n\n";
+			st="\sUser\s:             \n\n";
 	}
 	else
-		st2 = "’ÛÂÚ:			 \n\nNo user selected! ";
+		st2 = "\sUser\s:             \n\nNo user selected! ";
 
 	if (self.g_a == #PUNISH_BAN)
-		st3 = ".. Ban° 		 ";
+		st3 = "\3.. Ban\{161}          ";
 	else if (self.g_a == #PUNISH_KICK)
-		st3 = ".. Kick°		 ";
+		st3 = "\3.. Kick\{161}         ";
 	else if (self.g_a == #PUNISH_MUTE)
-		st3 = ".. Mute°		 ";
+		st3 = "\3.. Mute\{161}         ";
 	else if (self.g_a == #PUNISH_CUFF)
-		st3 = ".. Cuff°		 ";
+		st3 = "\3.. Cuff\{161}         ";
 	else
-		st3 = ".. Curse°		 ";
+		st3 = "\3.. Curse\{161}        ";
 
-	CenterPrint5(self,st,st2,"\n\n.. Next UserÆÆÆ	\n\n.. √ËÔÔÛÂ ¡„ÙÈÔÓ:\n\n",st3,"\n\nÆÆ ≈¯ÈÙ		   \n");
+	CenterPrint5(self,st,st2,"\n\n\1.. Next User\s...\s  \n\n\2.. \sChoose Action\s:\n\n",st3,"\n\n\0\s.. Exit\s          \n");
 
 };
 
@@ -310,41 +310,41 @@ void() Menu_VoteMap =
 	{
 		color = colstr(keyst,#COLSTR_RED);
 		if (self.#cprint_fx & 1)
-			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," €playing›");
+			keyst = strcat(color," \{144}playing\{145}");
 		color = keyst;
 	}
 	else
 		color = keyst;
 	paddedstr = padstr(color,18);
 	if (self.goal_state == 0)
-		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 1Ø6©\n\n.. ",paddedstr);
+		st1 = strcat("\sAvaliable Maps\s: \{168}page 1\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 1)
-		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 2Ø6©\n\n.. ",paddedstr);
+		st1 = strcat("\sAvaliable Maps\s: \{168}page 2\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 2)
-		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 3Ø6©\n\n.. ",paddedstr);
+		st1 = strcat("\sAvaliable Maps\s: \{168}page 3\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 3)
-		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 4Ø6©\n\n.. ",paddedstr);
+		st1 = strcat("\sAvaliable Maps\s: \{168}page 4\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 4)
-		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 5Ø6©\n\n.. ",paddedstr);
+		st1 = strcat("\sAvaliable Maps\s: \{168}page 5\{175}6\{169}\n\n\1.. ",paddedstr);
 	else
-		st1 = strcat("¡ˆ·ÏÈ·‚ÏÂ Ì·Û: ®page 6Ø6©\n\n.. ",paddedstr);
+		st1 = strcat("\sAvaliable Maps\s: \{168}page 6\{175}6\{169}\n\n\1.. ",paddedstr);
 
 	keyst = GetMapString(self.goal_state*6+2);
 	if (mapname == keyst)
 	{
 		color = colstr(keyst,#COLSTR_RED);
 		if (self.#cprint_fx & 1)
-			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," €playing›");
+			keyst = strcat(color," \{144}playing\{145}");
 		color = keyst;
 	}
 	else
 		color = keyst;
 	paddedstr = padstr(color,18);
-	st2 = strcat(st1, "\n.. ");
+	st2 = strcat(st1, "\n\2.. ");
 	st2 = strcat(st2,paddedstr);
 
 	keyst = GetMapString(self.goal_state*6+3);
@@ -352,15 +352,15 @@ void() Menu_VoteMap =
 	{
 		color = colstr(keyst,#COLSTR_RED);
 		if (self.#cprint_fx & 1)
-			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," €playing›");
+			keyst = strcat(color," \{144}playing\{145}");
 		color = keyst;
 	}
 	else
 		color = keyst;
 	paddedstr = padstr(color,18);
-	st3 = strcat(st2, "\n.. ");
+	st3 = strcat(st2, "\n\3.. ");
 	st3 = strcat(st3, paddedstr);
 
 	keyst = GetMapString(self.goal_state*6+4);
@@ -368,15 +368,15 @@ void() Menu_VoteMap =
 	{
 		color = colstr(keyst,#COLSTR_RED);
 		if (self.#cprint_fx & 1)
-			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," €playing›");
+			keyst = strcat(color," \{144}playing\{145}›");
 		color = keyst;
 	}
 	else
 		color = keyst;
 	paddedstr = padstr(color,18);
-	st4 = strcat(st3, "\n.. ");
+	st4 = strcat(st3, "\n\4.. ");
 	st4 = strcat(st4, paddedstr);
 
 	keyst = GetMapString(self.goal_state*6+5);
@@ -384,15 +384,15 @@ void() Menu_VoteMap =
 	{
 		color = colstr(keyst,#COLSTR_RED);
 		if (self.#cprint_fx & 1)
-			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," €playing›");
+			keyst = strcat(color," \{144}playing\{145}");
 		color = keyst;
 	}
 	else
 		color = keyst;
 	paddedstr = padstr(color,18);
-	st5 = strcat(st4, "\n.. ");
+	st5 = strcat(st4, "\n\5.. ");
 	st5 = strcat(st5, paddedstr);
 
 	keyst = GetMapString(self.goal_state*6+6);
@@ -400,21 +400,21 @@ void() Menu_VoteMap =
 	{
 		color = colstr(keyst,#COLSTR_RED);
 		if (self.#cprint_fx & 1)
-			keyst = strcat(color," [Ï·˘ÈÓÁ]");
+			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," €playing›");
+			keyst = strcat(color," \{144}playing\{145}");
 		color = keyst;
 	}
 	else
 		color = keyst;
 	paddedstr = padstr(color,18);
-	st6 = strcat(st5, "\n.. ");
+	st6 = strcat(st5, "\n\6.. ");
 	st6 = strcat(st6,paddedstr);
 
 	if (self.group_no == 0)
-		st7 ="\n\n.. ÕÔ‰Â: as next map \n\n.. –ÚÂˆ –·ÁÂ		  \n.. ŒÂ¯Ù –·ÁÂ		  \n\nÆÆ ≈¯ÈÙ				\n";
+		st7 ="\n\n\7.. \sMode\s: as next map \n\n\8.. \sPrev Page\s         \n\9.. \sNext Page\s         \n\n\0\s.. Exit\s              \n";
 	else
-		st7 ="\n\n.. ÕÔ‰Â: play now°	\n\n.. –ÚÂˆ –·ÁÂ		  \n.. ŒÂ¯Ù –·ÁÂ		  \n\nÆÆ ≈¯ÈÙ				\n";
+		st7 ="\n\n\7.. \sMode\s: play now°  \n\n\8.. \sPrev Page\s         \n\9.. \sNext Page\s         \n\n\0\s.. Exit\s               \n";
 
 	CenterPrint2(self,st6,st7);
 
@@ -492,38 +492,38 @@ void() bprintVoteIssue =
 	{
 		if (current_voteent.dont_do_triggerwork) // Special ban (client has left)
 		{
-			bprint(#PRINT_HIGH," ®ban ");
+			bprint(#PRINT_HIGH," \{168}ban ");
 			bprint(#PRINT_HIGH,current_voteent.t_s_m);
-			bprint(#PRINT_HIGH,"©");
+			bprint(#PRINT_HIGH,"\{169}");
 		}
 		else
 		{
 			if (current_voteent.g_a == #PUNISH_CURSE)
-				bprint(#PRINT_HIGH," ®curse ");
+				bprint(#PRINT_HIGH," \{168}curse ");
 			else if (current_voteent.g_a == #PUNISH_KICK)
-				bprint(#PRINT_HIGH," ®kick ");
+				bprint(#PRINT_HIGH," \{168}kick ");
 			else if (current_voteent.g_a == #PUNISH_BAN)
-				bprint(#PRINT_HIGH," ®ban ");
+				bprint(#PRINT_HIGH," \{168}ban ");
 			else if (current_voteent.g_a == #PUNISH_MUTE)
-				bprint(#PRINT_HIGH," ®mute ");
+				bprint(#PRINT_HIGH," \{168}mute ");
 			else if (current_voteent.g_a == #PUNISH_CUFF)
-				bprint(#PRINT_HIGH," ®cuff ");
+				bprint(#PRINT_HIGH," \{168}cuff ");
 
 			bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
-			bprint(#PRINT_HIGH,"©");
+			bprint(#PRINT_HIGH,"\{169}");
 		}
 	}
 	else if (current_voteent.has_sentry == #VOTE_NEXTMAP) // as next map
 	{
-		bprint(#PRINT_HIGH," ®"); // FIXME: CPQCCX compiler says 'Not a name' if only "(" is used ???
+		bprint(#PRINT_HIGH," \{168}"); // FIXME: CPQCCX compiler says 'Not a name' if only "(" is used ???
 		bprint(#PRINT_HIGH, current_voteent.netname);
-		bprint(#PRINT_HIGH," as next map©");
+		bprint(#PRINT_HIGH," as next map\{169}");
 	}
 	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
 	{
-		bprint(#PRINT_HIGH," ®switch to ");
+		bprint(#PRINT_HIGH," \{168}switch to ");
 		bprint(#PRINT_HIGH,current_voteent.netname);
-		bprint(#PRINT_HIGH,"©");
+		bprint(#PRINT_HIGH,"\{169}");
 	}
 };
 
@@ -562,7 +562,7 @@ void() Player_VoteYes =
 	#endif
 		BackFlash(self,1);
 
-		bprint(#PRINT_HIGH,"Votingç ");
+		bprint(#PRINT_HIGH,"Voting\{141} ");
 		bprint(#PRINT_HIGH,self.netname);
 		bprint(#PRINT_HIGH," agrees");
 
@@ -620,7 +620,7 @@ void() Player_VoteNo =
 	#endif
 		BackFlash(self,1);
 
-		bprint(#PRINT_HIGH,"Votingç ");
+		bprint(#PRINT_HIGH,"Voting\{141} ");
 		bprint(#PRINT_HIGH,self.netname);
 		bprint(#PRINT_HIGH," disagrees");
 
@@ -808,7 +808,7 @@ void() StartPunishmentVote =
 
 	BroadcastSound("misc/medkey");
 
-	bprint(#PRINT_HIGH,"Votingç ");
+	bprint(#PRINT_HIGH,"Voting\{141} ");
 
 	bprint(#PRINT_HIGH,self.netname);
 	bprint(#PRINT_HIGH," proposes to ");
@@ -826,7 +826,7 @@ void() StartPunishmentVote =
 
 	bprint(#PRINT_HIGH,self.admin_kick.netname);
 
-	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
+	bprint(#PRINT_HIGH,", type \{162}VoteYes\{162} or \{162}VoteNo\{162} to vote\n");
 
 	current_voteent = voteent;
 
@@ -839,7 +839,7 @@ void() StartPunishmentVote =
 
 void() PunishVote_Think =
 {
-	bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
+	bprint(#PRINT_HIGH,"Voting\{141} Punishment vote has failed");
 	bprintVoteIssue();
 	bprint(#PRINT_HIGH,"\n");
 
@@ -969,14 +969,14 @@ void(float nummap, string themap) StartVoteMap =
 
 	themap = colstr(current_voteent.netname,#COLSTR_RED);
 
-	bprint(#PRINT_HIGH,"Votingç ",self.netname);
+	bprint(#PRINT_HIGH,"Voting\{141} ",self.netname);
 
 	if (self.group_no == 0)
 		bprint(#PRINT_HIGH," suggests ",themap," as next map");
 	else
 		bprint(#PRINT_HIGH," wants to play ",themap," right now");
 
-	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
+	bprint(#PRINT_HIGH,", type \{162}VoteYes\{162} or \{162}VoteNo\{162} to vote\n");
 
 	ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
 
@@ -985,7 +985,7 @@ void(float nummap, string themap) StartVoteMap =
 
 void() VoteMap_Think =
 {
-	bprint(#PRINT_HIGH,"Votingç Map voting failed");
+	bprint(#PRINT_HIGH,"Voting\{141} Map voting failed");
 
 	bprintVoteIssue();
 
@@ -1068,7 +1068,7 @@ float() CheckVoting =
 	// this shouldn't be needed
 	if (current_voteent == world || current_voteent.classname!="voteent")
 	{
-		bprint(#PRINT_HIGH,"\nVotingç Error in voting system!\n");
+		bprint(#PRINT_HIGH,"\nVoting\{141} Error in voting system!\n");
 		ResetVoteEnt();
 		return #TRUE;
 	}
@@ -1077,7 +1077,7 @@ float() CheckVoting =
 	if (current_voteent.has_sentry == #VOTE_NEXTMAP || current_voteent.has_sentry == #VOTE_SWITCHMAP)
 	if (ServerUpdating())
 	{
-		bprint(#PRINT_HIGH,"\nVotingç Server update is taking place, no map changes are allowed\n");
+		bprint(#PRINT_HIGH,"\nVoting\{141} Server update is taking place, no map changes are allowed\n");
 		ResetVoteEnt();
 		return #TRUE;
 	}
@@ -1093,7 +1093,7 @@ float() CheckVoting =
 		if (!current_voteent.dont_do_triggerwork) // only if not a special ban (user left)
 		if ((current_voteent.admin_kick.classname != "player" && current_voteent.admin_kick.classname != "spec") || !current_voteent.admin_kick.is_connected)
 		{
-			bprint(#PRINT_HIGH,"\nVotingç Invalid client as target for vote!\n");
+			bprint(#PRINT_HIGH,"\nVoting\{141} Invalid client as target for vote!\n");
 			ResetVoteEnt();
 			return #TRUE;
 		}
@@ -1110,7 +1110,7 @@ float() CheckVoting =
 				if (st == string_null)
 					tf = stof(st);
 
-				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,"\nVoting\{141} Democracy says ");
 				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
 				bprint(#PRINT_HIGH," must be cursed\n");
 
@@ -1127,14 +1127,14 @@ float() CheckVoting =
 		{
 			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_KICK) // success?
 			{
-				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,"\nVoting\{141} Democracy says ");
 				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
 				bprint(#PRINT_HIGH," must be kicked\n");
 
 				bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
-				bprint(#PRINT_HIGH, " is À…√À≈ƒ from the server\n");
+				bprint(#PRINT_HIGH, " is \sKICKED\s from the server\n");
 
-				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been À…√À≈ƒ from the server!\n");
+				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been \sKICKED\s from the server!\n");
 
 				stuffcmd(current_voteent.admin_kick, "disconnect\n"); //Kick them!
 
@@ -1149,7 +1149,7 @@ float() CheckVoting =
 		{
 			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_BAN) // success?
 			{
-				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,"\nVoting\{141} Democracy says ");
 
 				if (current_voteent.dont_do_triggerwork) // Special ban (user has left)
 				{
@@ -1157,7 +1157,7 @@ float() CheckVoting =
 					bprint(#PRINT_HIGH," must be banned\n");
 
 					bprint(#PRINT_HIGH, current_voteent.t_s_m);
-					bprint(#PRINT_HIGH, " is ¬¡ŒŒ≈ƒ from the server\n");
+					bprint(#PRINT_HIGH, " is \sBANNED\s from the server\n");
 
 					localcmd("addip ");
 					localcmd(current_voteent.t_s_h);
@@ -1172,9 +1172,9 @@ float() CheckVoting =
 					bprint(#PRINT_HIGH," must be banned\n");
 
 					bprint(#PRINT_HIGH, current_voteent.admin_kick.netname);
-					bprint(#PRINT_HIGH, " is ¬¡ŒŒ≈ƒ from the server\n");
+					bprint(#PRINT_HIGH, " is \sBANNED\s from the server\n");
 
-					sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been ¬¡ŒŒ≈ƒ from the server!\n");
+					sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been \sBANNED\s from the server!\n");
 
 					stuffcmd(current_voteent.admin_kick, "disconnect\n"); //Kick them!
 
@@ -1196,7 +1196,7 @@ float() CheckVoting =
 		{
 			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MUTE) // success?
 			{
-				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,"\nVoting\{141} Democracy says ");
 				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
 				bprint(#PRINT_HIGH," must be muted =)\n");
 
@@ -1226,7 +1226,7 @@ float() CheckVoting =
 		{
 			if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_CUFF) // success?
 			{
-				bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+				bprint(#PRINT_HIGH,"\nVoting\{141} Democracy says ");
 				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
 				bprint(#PRINT_HIGH," is annoying\n");
 
@@ -1259,7 +1259,7 @@ float() CheckVoting =
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
 
-			bprint(#PRINT_HIGH,"\nVotingç Success° Setting ",st," as next map\n");
+			bprint(#PRINT_HIGH,"\nVoting\{141} Success° Setting ",st," as next map\n");
 
 			localcmd("localinfo nmap \"");
 			localcmd(current_voteent.netname);
@@ -1278,7 +1278,7 @@ float() CheckVoting =
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
 
-			bprint(#PRINT_HIGH,"\nVotingç Success° Switching map to ",st,"\n");
+			bprint(#PRINT_HIGH,"\nVoting\{141} Success° Switching map to ",st,"\n");
 
 			BroadcastSound("misc/runekey");
 
@@ -1337,9 +1337,9 @@ void() bprintVotesLeft =
 	st = colstr(st,#COLSTR_NUMBER);
 
 	if (tmp > 1)
-		bprint(#PRINT_HIGH," €",st," votes left›\n");
+		bprint(#PRINT_HIGH," \{144}",st," votes left\{144}\n");
 	else
-		bprint(#PRINT_HIGH," € vote left!›\n");
+		bprint(#PRINT_HIGH," \{144}\1 vote left!\{144}\n");
 };
 
 //======================================================================================
@@ -1432,7 +1432,7 @@ void(entity sleepent, entity targetclient) SleepVoteResume =
 
 	BroadcastSound("misc/medkey");
 
-	bprint(#PRINT_HIGH,"Votingç Resuming vote to ");
+	bprint(#PRINT_HIGH,"Voting\{141} Resuming vote to ");
 	if (current_voteent.g_a == #PUNISH_MUTE)
 		bprint(#PRINT_HIGH,"mute ");
 	else if (current_voteent.g_a == #PUNISH_CUFF)

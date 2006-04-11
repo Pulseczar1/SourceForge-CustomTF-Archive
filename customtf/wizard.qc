@@ -399,8 +399,8 @@ void(entity attacker, float damage) Wiz_Pain =
 {
 	/*if (!(self.pain_finished > time))
 	{
-	   sound (self, #CHAN_VOICE, "wizard/wpain.wav", 1, #ATTN_NORM);
-	   self.pain_finished = time + 1.7*random();
+		sound (self, #CHAN_VOICE, "wizard/wpain.wav", 1, #ATTN_NORM);
+		self.pain_finished = time + 1.7*random();
 	} //only used for sound*/
 	if (self.health <= 0)
 		return;

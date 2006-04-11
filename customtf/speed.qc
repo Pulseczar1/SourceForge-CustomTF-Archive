@@ -25,11 +25,12 @@ void() Kick_My_Owner =
 	if (nospeed != string_null) {
 		off = stof(nospeed);
 	}
-	if (off) return;
+	if (off)
+		return;
 
 
 	oldname = self.owner.netname;
-	sprint(self.owner, #PRINT_HIGH,"\nYou have been кицкед for цхеатинг.\nIf you were not cheating, I apologize.\nHave a nice day.\n");
+	sprint(self.owner, #PRINT_HIGH,"\nYou have been \sKICKD\s for \sCHEATING\s.\nIf you were not cheating, I apologize.\nHave a nice day.\n");
 
 	ip = infokey(self.owner,"ip");
 	if (infokey(world,"infip") == ip) { // second infraction. ban.

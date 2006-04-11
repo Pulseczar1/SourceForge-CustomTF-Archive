@@ -1,5 +1,13 @@
-// QW CenterPrinting hack
-// these functions are only used if in normal quake
+/*
+==============================================================================
+
+QW.QC
+
+ QW CenterPrinting hack
+ these functions are only used if in normal quake
+
+==============================================================================
+*/
 
 #ifndef QUAKE_WORLD
 

@@ -1,19 +1,13 @@
+/*
+==============================================================================
 
+PLAYER.QC
+Custom TeamFortress v3.1
 
-/*======================================================
-	PLAYER.QC			Custom TeamFortress v3.1
-
-	(c) TeamFortress Software Pty Ltd 	29/2/97
-	(c) William Kerney			5/21/00
-	(c) Craig Hauser				19/3/00
-========================================================
 Handles all player animations, death and etc. Most weapon
 firings get shunted through here.
-======================================================*/
-/*
-	Heavily Modified for TeamFortress V1.21
-	TeamFortress Software
-	Robin Walker, John Cook, Ian Caughley
+
+==============================================================================
 */
 
 // Prototypes
@@ -43,7 +37,7 @@ PLAYER
 
 $cd /raid/quake/id1/models/player_4
 $origin 0 -6 24
-$base base		
+$base base
 $skin skin
 
 //
@@ -120,7 +114,7 @@ PLAYER
 void() player_touch =
 {
 	//local entity te;
-	
+
 	// Spies and Scouts can uncloak enemy spies
 	// WK Or those with Spy kits & Scanners
 	if (invis_only == #FALSE && (self.cutf_items & #CUTF_SPY_KIT || other.cutf_items & #CUTF_SPY_KIT))
@@ -152,8 +146,8 @@ void() player_touch =
 	if (self.tfstate & #TFSTATE_INFECTED)
 	{
 		local entity Bio;
-	
-        //WK Melee armor stops infections from spreading
+
+		//WK Melee armor stops infections from spreading
 		if (other.classname == "player" && !(other.invincible_finished) && !(other.armorclass & #AT_SAVEMELEE))
 		{
 			// may sure other player is not already infected
@@ -166,14 +160,14 @@ void() player_touch =
 					Bio = spawn ();
 					Bio.nextthink = 2;
 					Bio.think = BioInfection_Decay;
-/* WK Why doesn't this work??? Causes occasional program crashes...
+					/* WK Why doesn't this work??? Causes occasional program crashes...
 					//WK The owner is the original medic if spreading to friend
 					if (self.team_no == other.team_no) {
 						te = find(world, netname, "biotimer");
 						while ((te.owner != self) && (te != world))
 							te = find(te, netname, "biotimer");
 						if (te != world)
-							Bio.enemy = te.enemy; //Person infecting							
+							Bio.enemy = te.enemy; //Person infecting
 						else
 							RPrint("CustomTF: Odd Behavior in infection spreading");
 					}
@@ -182,7 +176,7 @@ void() player_touch =
 					Bio.owner = other; //Person getting hurt
 					Bio.classname = "timer";
 					Bio.netname = "biotimer";
-					
+
 					other.tfstate = other.tfstate | #TFSTATE_INFECTED;
 					other.infection_team_no = self.infection_team_no;
 
@@ -192,54 +186,54 @@ void() player_touch =
 					sprint(self, #PRINT_MEDIUM, "You have infected ");
 					sprint(self, #PRINT_MEDIUM, other.netname);
 					sprint(self, #PRINT_MEDIUM, "!\n");
-                    //-OfN
+					//-OfN
 					teamprefixsprintbi(other.team_no,other,self);
 					teamsprintbi(other,self, other.netname," has been infected!\n","","","","");
-				}				
+				}
 			}
 		}
-        else if (IsMonster(other))
-        {
+		else if (IsMonster(other))
+		{
 			// PZ - do nothing.. summons can no longer be infected
 			/*
-            if (!(other.tfstate & #TFSTATE_INFECTED))
-            {
-                // Report to owner
-                local string tmps;
-                tmps = GetMonsterName(other);
-                sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
+			if (!(other.tfstate & #TFSTATE_INFECTED))
+			{
+				// Report to owner
+				local string tmps;
+				tmps = GetMonsterName(other);
+				sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
 
-                // Report infecter
-                sprint(self,#PRINT_HIGH,"You have infected the ",tmps," ",other.netname,"!\n");
+				// Report infecter
+				sprint(self,#PRINT_HIGH,"You have infected the ",tmps," ",other.netname,"!\n");
 
-                // Report to teammates of owner
-                local string tmps;
-                tmps = GetMonsterName(other);
-                teamprefixsprint(other.real_owner.team_no,other.real_owner);
-                teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
+				// Report to teammates of owner
+				local string tmps;
+				tmps = GetMonsterName(other);
+				teamprefixsprint(other.real_owner.team_no,other.real_owner);
+				teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
 
-                // Update infection flag
-                other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+				// Update infection flag
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
 
-                // Infect it!
-                Bio = spawn ();
-                Bio.classname = "timer";
-                Bio.classname = "biotimer";
-                Bio.nextthink = time + 2;
-                Bio.think = BioInfection_MonsterDecay;
-                Bio.owner = self;
-                Bio.enemy = other;
+				// Infect it!
+				Bio = spawn ();
+				Bio.classname = "timer";
+				Bio.classname = "biotimer";
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_MonsterDecay;
+				Bio.owner = self;
+				Bio.enemy = other;
 
-                other.infection_team_no = self.infection_team_no;
-            } */
-        }
+				other.infection_team_no = self.infection_team_no;
+			} */
+		}
 	}
 
 #ifdef PLAYER_PUSHING
 
-    local float v1, v2;
+	local float v1, v2;
 
-    if (other.classname == "player")
+	if (other.classname == "player")
 	{
 		if (Teammate(self.team_no, other.team_no))
 		{
@@ -291,7 +285,7 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 			self.walkframe = 0;
 		self.frame = $stand1 + self.walkframe;
 	}
-	self.walkframe = self.walkframe + 1;	
+	self.walkframe = self.walkframe + 1;
 };
 
 void()	player_run =[	$rockrun1,	player_run	]
@@ -333,7 +327,7 @@ void()	player_autorifle3 =	[$shotatt6, player_run	] {self.weaponframe=6;};
 
 void()	player_axe1 =	[$axatt1, player_axe2	] {self.weaponframe=1;};
 void()	player_axe2 =	[$axatt2, player_axe3	] {self.weaponframe=2;};
-void()	player_axe3 =	[$axatt3, player_axe4	] 
+void()	player_axe3 =	[$axatt3, player_axe4	]
 {
 	self.weaponframe=3;
 	if (self.current_weapon == #WEAP_AXE)
@@ -345,7 +339,7 @@ void()	player_axe4 =	[$axatt4, player_run	] {self.weaponframe=4;};
 
 void()	player_axeb1 =	[$axattb1, player_axeb2	] {self.weaponframe=5;};
 void()	player_axeb2 =	[$axattb2, player_axeb3	] {self.weaponframe=6;};
-void()	player_axeb3 =	[$axattb3, player_axeb4	] 
+void()	player_axeb3 =	[$axattb3, player_axeb4	]
 {
 	self.weaponframe=7;
 	if (self.current_weapon == #WEAP_AXE)
@@ -357,7 +351,7 @@ void()	player_axeb4 =	[$axattb4, player_run	] {self.weaponframe=8;};
 
 void()	player_axec1 =	[$axattc1, player_axec2	] {self.weaponframe=1;};
 void()	player_axec2 =	[$axattc2, player_axec3	] {self.weaponframe=2;};
-void()	player_axec3 =	[$axattc3, player_axec4	] 
+void()	player_axec3 =	[$axattc3, player_axec4	]
 {
 	self.weaponframe=3;
 	if (self.current_weapon == #WEAP_AXE)
@@ -369,7 +363,7 @@ void()	player_axec4 =	[$axattc4, player_run	] {self.weaponframe=4;};
 
 void()	player_axed1 =	[$axattd1, player_axed2	] {self.weaponframe=5;};
 void()	player_axed2 =	[$axattd2, player_axed3	] {self.weaponframe=6;};
-void()	player_axed3 =	[$axattd3, player_axed4	] 
+void()	player_axed3 =	[$axattd3, player_axed4	]
 {
 	self.weaponframe=7;
 	if (self.current_weapon == #WEAP_AXE)
@@ -387,32 +381,32 @@ void()  player_chain2=  [$axattd2, player_chain2a] {self.weaponframe=3;};
 void()  player_chain2a= [$axattd2, player_chain3 ] {self.weaponframe=4;};
 void()  player_chain3=  [$axattd3, player_chain3 ]
 {
-        self.weaponframe=6;
-        if (!self.hook_out)
-        {
-                player_chain5();
-                return;
-        }
-        if (vlen(self.velocity) >= 750)
-        {
-                player_chain4();
-                return;
-        }
+		self.weaponframe=6;
+		if (!self.hook_out)
+		{
+				player_chain5();
+				return;
+		}
+		if (vlen(self.velocity) >= 750)
+		{
+				player_chain4();
+				return;
+		}
 };
 
 void() player_chain4=  [$deathc4, player_chain4 ]
 {
-        self.weaponframe=6;
-        if (!self.hook_out)
-        {
-                player_chain5();
-                return;
-        }
-        if (vlen(self.velocity) < 750)
-        {
-                player_chain3();
-                return;
-        }
+		self.weaponframe=6;
+		if (!self.hook_out)
+		{
+				player_chain5();
+				return;
+		}
+		if (vlen(self.velocity) < 750)
+		{
+				player_chain3();
+				return;
+		}
 };
 
 void()  player_chain5=  [$axattd4, player_run    ] {self.weaponframe=0;};
@@ -458,10 +452,9 @@ void()	player_bioweapond1 =	[$axattd1, player_bioweapond2	] {self.weaponframe=5;
 void()	player_bioweapond2 =	[$axattd2, player_bioweapond3	] {self.weaponframe=6;};
 void()	player_bioweapond3 =	[$axattd3, player_bioweapond4	] {self.weaponframe=7;W_FireBioweapon();};
 void()	player_bioweapond4 =	[$axattd4, player_run	] {self.weaponframe=8;};
- 
-//============================================================================
 
-void() player_snail1   =[ $nailatt1, player_snail2  ] 
+
+void() player_snail1   =[ $nailatt1, player_snail2  ]
 {
 
 	if (!self.button0 || intermission_running)
@@ -471,7 +464,7 @@ void() player_snail1   =[ $nailatt1, player_snail2  ]
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
 
-    if (self.attack_finished > time)
+	if (self.attack_finished > time)
 		return;
 	muzzleflash();
 
@@ -482,7 +475,7 @@ void() player_snail1   =[ $nailatt1, player_snail2  ]
 	SuperDamageSound();
 	W_FireSpikes (4);
 	//Attack_Finished(0.1);
-  	Attack_Finished(0.2);
+	Attack_Finished(0.2);
 };
 //- OfN -
 
@@ -494,8 +487,8 @@ void() player_snail2   =[ $nailatt2, player_snail1  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    /*if (self.attack_finished > time)
+
+	/*if (self.attack_finished > time)
 		return;*/
 
 	/*self.weaponframe = self.weaponframe + 1;
@@ -503,12 +496,12 @@ void() player_snail2   =[ $nailatt2, player_snail1  ]
 		self.weaponframe = 1;*/
 
 	//SuperDamageSound();
-//	if (random() < 0.5) W_FireSpikes (4);
+	//if (random() < 0.5) W_FireSpikes (4);
 	//Attack_Finished(0.2);
-    //Attack_Finished(0.1);
+	//Attack_Finished(0.1);
 };
 
-void() player_nail1   =[ $nailatt1, player_nail2  ] 
+void() player_nail1   =[ $nailatt1, player_nail2  ]
 {
 
 	if (!self.button0 || intermission_running)
@@ -518,7 +511,7 @@ void() player_nail1   =[ $nailatt1, player_nail2  ]
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
 
-    if (self.attack_finished > time)
+	if (self.attack_finished > time)
 		return;
 	muzzleflash();
 
@@ -529,7 +522,7 @@ void() player_nail1   =[ $nailatt1, player_nail2  ]
 	SuperDamageSound();
 	W_FireSpikes (4);
 	//Attack_Finished(0.1);
-  	Attack_Finished(0.2);
+	Attack_Finished(0.2);
 };
 //- OfN -
 
@@ -541,8 +534,8 @@ void() player_nail2   =[ $nailatt2, player_nail3  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    /*if (self.attack_finished > time)
+
+	/*if (self.attack_finished > time)
 		return;*/
 
 	/*self.weaponframe = self.weaponframe + 1;
@@ -550,9 +543,9 @@ void() player_nail2   =[ $nailatt2, player_nail3  ]
 		self.weaponframe = 1;*/
 
 	//SuperDamageSound();
-//	if (random() < 0.5) W_FireSpikes (4);
+	//if (random() < 0.5) W_FireSpikes (4);
 	//Attack_Finished(0.2);
-    //Attack_Finished(0.1);
+	//Attack_Finished(0.1);
 };
 
 
@@ -564,19 +557,19 @@ void() player_nail3   =[ $nailatt1, player_nail4  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    if (self.attack_finished > time)
+
+	if (self.attack_finished > time)
 		return;
 
 	/*self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;*/
 
-   	muzzleflash();
+	muzzleflash();
 	SuperDamageSound();
 	W_FireSpikes (-4);
 	//Attack_Finished(0.2);
-    Attack_Finished(0.2);
+	Attack_Finished(0.2);
 };
 
 
@@ -588,8 +581,8 @@ void() player_nail4   =[ $nailatt2, player_nail1  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    /*if (self.attack_finished > time)
+
+	/*if (self.attack_finished > time)
 		return;*/
 
 	/*self.weaponframe = self.weaponframe + 1;
@@ -597,30 +590,30 @@ void() player_nail4   =[ $nailatt2, player_nail1  ]
 		self.weaponframe = 1;*/
 
 	//SuperDamageSound();
-//	if (random() < 0.5) W_FireSpikes (-4);
+	//if (random() < 0.5) W_FireSpikes (-4);
 	//Attack_Finished(0.2);
-    //Attack_Finished(0.1);
+	//Attack_Finished(0.1);
 };
 
 
 //============================================================================
 // ASSAULT CANNON FRAMES
 // Cannon powering up
-void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ] 
+void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ]
 {
 	if ((!self.button0) || (self.ammo_shells < 1) || intermission_running)
 	{
 		// Let him/her walk again
 		self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 		TeamFortress_SetSpeed(self);
-        
+
 		self.count = 1;
 		self.heat = 0;
 		player_assaultcannondown1();
 		return;
 	}
 
-    self.fire_held_down = #TRUE;
+	self.fire_held_down = #TRUE;
 
 	if (self.heat == 1)
 		sound (self, #CHAN_WEAPON, "weapons/asscan1.wav", 1, #ATTN_NORM);
@@ -645,16 +638,16 @@ void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ]
 };
 
 // Cannon powering up 2
-void() player_assaultcannonup2   =[$nailatt1, player_assaultcannonup1  ] 
+void() player_assaultcannonup2   =[$nailatt1, player_assaultcannonup1  ]
 {
 	if ((!self.button0) || (self.ammo_shells < 1) || intermission_running)
 	{
 		// Let him/her walk again
 		//if (!self.is_haxxxoring) //- OfN already checked on TeamFortress_SetSpeed()
-        //{
-            self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-		    TeamFortress_SetSpeed(self);
-        //}
+		//{
+			self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+				TeamFortress_SetSpeed(self);
+		//}
 
 		self.count = 1;
 		self.heat = 0;
@@ -683,8 +676,8 @@ void() player_assaultcannonup2   =[$nailatt1, player_assaultcannonup1  ]
 	}
 };
 
-// Cannon Firing 
-void() player_assaultcannon1   =[$nailatt1, player_assaultcannon2  ] 
+// Cannon Firing
+void() player_assaultcannon1   =[$nailatt1, player_assaultcannon2  ]
 {
 	local string st;
 
@@ -696,9 +689,9 @@ void() player_assaultcannon1   =[$nailatt1, player_assaultcannon2  ]
 	{
 		stuffcmd(self, "v_idlescale 0\n");
 		// Let him/her walk again
-        self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-        TeamFortress_SetSpeed(self);
-    
+		self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		TeamFortress_SetSpeed(self);
+
 		self.weaponframe = 0;
 		self.count = 1;
 		player_assaultcannondown1();
@@ -732,9 +725,9 @@ void() player_assaultcannon2   =[$nailatt2, player_assaultcannon1  ]
 	{
 		stuffcmd(self, "v_idlescale 0\n");
 		// Let him/her walk again
-	    self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-	    TeamFortress_SetSpeed(self);
-    
+		self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		TeamFortress_SetSpeed(self);
+
 		self.weaponframe = 0;
 		self.count = 1;
 		player_assaultcannondown1();
@@ -758,7 +751,7 @@ void() player_assaultcannon2   =[$nailatt2, player_assaultcannon1  ]
 };
 
 // Cannon powering down
-void() player_assaultcannondown1   =[$nailatt1, player_assaultcannondown1  ] 
+void() player_assaultcannondown1   =[$nailatt1, player_assaultcannondown1  ]
 {
 	//local entity tcool;
 
@@ -768,12 +761,12 @@ void() player_assaultcannondown1   =[$nailatt1, player_assaultcannondown1  ]
 	if (self.count >= 15)
 	{
 		self.heat = 0;
-	    self.fire_held_down = #FALSE;
+		self.fire_held_down = #FALSE;
 
 		// Let him/her walk again
-	    self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-	    TeamFortress_SetSpeed(self);
-     
+		self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		TeamFortress_SetSpeed(self);
+
 		if (self.ammo_shells < 1 || self.ammo_cells < 6)
 		{
 			self.current_weapon = W_BestWeapon();
@@ -786,7 +779,7 @@ void() player_assaultcannondown1   =[$nailatt1, player_assaultcannondown1  ]
 		return;
 	}
 
-	if (self.count != 8 && self.count != 10 && self.count != 12 && self.count != 14)  
+	if (self.count != 8 && self.count != 10 && self.count != 12 && self.count != 14)
 	{
 		if (self.weaponframe == 3)
 			self.weaponframe = 0;
@@ -798,9 +791,8 @@ void() player_assaultcannondown1   =[$nailatt1, player_assaultcannondown1  ]
 	Attack_Finished(0.1);
 };
 
-//============================================================================
 
-void() player_light1   =[$light1, player_light2  ] 
+void() player_light1   =[$light1, player_light2  ]
 {
 	muzzleflash();
 
@@ -829,22 +821,23 @@ void() player_light2   =[$light2, player_light1  ]
 //WK Frames for the new light assault gun
 //(Using the frames for the lightning gun)
 
-void() player_light_assault1   =[$light1, player_light_assault2  ] 
+void() player_light_assault1   =[$light1, player_light_assault2  ]
 {
 	//muzzleflash();
 
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    muzzleflash(); //- oFn moved
-    
-    self.weaponframe = self.weaponframe + 1;
+	muzzleflash(); //- oFn moved
+
+	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
 	SuperDamageSound();
 	W_FireLightAssault();
 	Attack_Finished(0.2);
 };
+
 void() player_light_assault2   =[$light2, player_light_assault1  ]
 {
 	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
@@ -859,9 +852,6 @@ void() player_light_assault2   =[$light2, player_light_assault1  ]
 //End WK
 
 
-//============================================================================
-
-
 void() player_rocket1   =[$rockatt1, player_rocket2  ] {self.weaponframe=1;	muzzleflash();};
 void() player_rocket2   =[$rockatt2, player_rocket3  ] {self.weaponframe=2;};
 void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.weaponframe=3;};
@@ -872,7 +862,7 @@ void(float num_bubbles) DeathBubbles;
 
 void() PainSound =
 {
-local float		rs;
+	local float rs;
 
 	if (self.health < 0)
 		return;
@@ -893,7 +883,7 @@ local float		rs;
 			sound (self, #CHAN_VOICE, "player/drown2.wav", 1, #ATTN_NORM);
 		return;
 	}
-	
+
 	// slime pain sounds
 	if (self.watertype == #CONTENT_SLIME)
 	{
@@ -921,9 +911,9 @@ local float		rs;
 	}
 	self.pain_finished = time + 0.5;
 
-// don't make multiple pain sounds right after each other
+	// don't make multiple pain sounds right after each other
 
-// ax pain sound
+	// ax pain sound
 	if (self.axhitme == 1)
 	{
 		self.axhitme = 0;
@@ -972,7 +962,7 @@ void() player_pain =
 
 	// eyes don't have pain frames
 	if (self.invisible_finished > time)
-		return;		
+		return;
 
 	// feigning players don't have pain frames
 	if (self.is_feigning)
@@ -1001,10 +991,10 @@ void() player_die_ax1;
 void() DeathBubblesSpawn =
 {
 	if (self.owner.waterlevel != 3 && self.has_holo == 0)
-    {
-        dremove(self);
+	{
+		dremove(self);
 		return;
-    }
+	}
 
 	newmis = spawn();
 	setmodel (newmis, "progs/s_bubble.spr");
@@ -1027,8 +1017,8 @@ void() DeathBubblesSpawn =
 
 void(float num_bubbles) DeathBubbles =
 {
-local entity	bubble_spawner;
-	
+	local entity bubble_spawner;
+
 	bubble_spawner = spawn();
 	setorigin (bubble_spawner, self.origin);
 
@@ -1039,11 +1029,11 @@ local entity	bubble_spawner;
 	bubble_spawner.air_finished = 0;
 	bubble_spawner.owner = self;
 	bubble_spawner.bubble_count = num_bubbles;
-    
-    if (IsMonster(self))
-        bubble_spawner.has_holo = 1; // forced mode
-    else
-        bubble_spawner.has_holo = 0; // normal mode
+
+	if (IsMonster(self))
+		bubble_spawner.has_holo = 1; // forced mode
+	else
+		bubble_spawner.has_holo = 0; // normal mode
 
 	return;
 };
@@ -1072,8 +1062,8 @@ void() NormalBubblesSpawn =
 
 void(float num_bubbles, vector where) SpawnBubbles =
 {
-local entity	bubble_spawner;
-	
+	local entity bubble_spawner;
+
 	bubble_spawner = spawn();
 	setorigin (bubble_spawner, where);
 
@@ -1084,7 +1074,7 @@ local entity	bubble_spawner;
 	bubble_spawner.air_finished = 0;
 	bubble_spawner.owner = world;
 	bubble_spawner.bubble_count = num_bubbles;
-    
+
 	return;
 };
 
@@ -1103,7 +1093,7 @@ void() DeathSound =
 		sound (self, #CHAN_VOICE, "player/h2odeath.wav", 1, #ATTN_NONE);
 		return;
 	}
-	
+
 	rs = rint ((random() * 4) + 1);
 	if (rs == 1)
 		self.noise = "player/death1.wav";
@@ -1127,29 +1117,29 @@ void() PlayerCorpse =
 	// allow respawn after a certain time
 	self.deadflag = #DEAD_DEAD;
 
-    #ifdef GIBABLE_CORPSES
-    MakeCorpse(self,#CORPSE_HP_PLAYER);
-    #endif
+	#ifdef GIBABLE_CORPSES
+	MakeCorpse(self,#CORPSE_HP_PLAYER);
+	#endif
 };
 
 vector(float dm) VelocityForDamage =
 {
 	local vector v;
 
-    v_x = 100 * crandom();
+	v_x = 100 * crandom();
 	v_y = 100 * crandom();
 	v_z = 150 + 100 * random();//v_z = 200 + 100 * random(); // <-- ORiginal code
-    
-    // TODO: Make the calculation acceptable and more realistic/accurate
-    
+
+	// TODO: Make the calculation acceptable and more realistic/accurate
+
 	if (dm > -50)
 	{
-//		RPrint ("level 1\n");
+		//RPrint ("level 1\n");
 		v = v * 0.7;
 	}
 	else if (dm > -200)
 	{
-//		RPrint ("level 3\n");
+		//RPrint ("level 3\n");
 		v = v * 2;
 	}
 	else
@@ -1175,51 +1165,51 @@ void(entity player, float numgibs) SetMeat;
 
 void() gib_touch =
 {
-    if (self.velocity == '0 0 0')
-        self.avelocity = '0 0 0';
-    
-    if (other.classname == "player")
-    #ifndef WARLOCK_TEST
-    if (!Teammate(other.team_no,self.team_no)) // Only enemy gibs can be picked up
-    #endif
-    if (other.job & #JOB_WARLOCK)
-    if (other.playerclass != #PC_UNDEFINED) // Skip Observers
-    if (!(other.done_custom & #CUSTOM_BUILDING)) // ppl customizing
-    //if (self.has_fieldgen) NOT NEEDED, only gibs with meat have their touch assigned
-    if (other.health > 0)
-    {
-        local string kgs;
-        kgs = ftos(self.has_fieldgen);
-    
-        local float meat;
-        meat = GetMeat(other);
-        SetMeat(other,meat+self.has_fieldgen);
+	if (self.velocity == '0 0 0')
+		self.avelocity = '0 0 0';
 
-        sprint(other,#PRINT_HIGH,"You get ");
-        sprint(other,#PRINT_HIGH,kgs);
+	if (other.classname == "player")
+	#ifndef WARLOCK_TEST
+	if (!Teammate(other.team_no,self.team_no)) // Only enemy gibs can be picked up
+	#endif
+	if (other.job & #JOB_WARLOCK)
+	if (other.playerclass != #PC_UNDEFINED) // Skip Observers
+	if (!(other.done_custom & #CUSTOM_BUILDING)) // ppl customizing
+	//if (self.has_fieldgen) NOT NEEDED, only gibs with meat have their touch assigned
+	if (other.health > 0)
+	{
+		local string kgs;
+		kgs = ftos(self.has_fieldgen);
 
-        if (self.has_fieldgen > 1)
-            sprint(other,#PRINT_HIGH," kgs of fresh meat\n");
-        else
-            sprint(other,#PRINT_HIGH," kg of fresh meat\n");
+		local float meat;
+		meat = GetMeat(other);
+		SetMeat(other,meat+self.has_fieldgen);
 
-        GibPickSound(other);
-        stuffcmd(other,"bf\n");
-        dremove(self);
-    }
+		sprint(other,#PRINT_HIGH,"You get ");
+		sprint(other,#PRINT_HIGH,kgs);
+
+		if (self.has_fieldgen > 1)
+			sprint(other,#PRINT_HIGH," kgs of fresh meat\n");
+		else
+			sprint(other,#PRINT_HIGH," kg of fresh meat\n");
+
+		GibPickSound(other);
+		stuffcmd(other,"bf\n");
+		dremove(self);
+	}
 };
 
 void(string gibname, float dm, float makecool, float gibskin, float gibkgs, float randorg) ThrowGib =
 {
 	newmis = spawn();
-    if (!randorg)
-	    newmis.origin = self.origin;
-    else
-    {
-        newmis.origin_x = self.origin_x + (random()* (self.maxs_x + self.mins_x)) * randorg;
-        newmis.origin_y = self.origin_y + (random()* (self.maxs_y + self.mins_y)) * randorg;
-        newmis.origin_z = self.origin_z + (random()* (self.maxs_z + self.mins_z)) * randorg;        
-    }
+	if (!randorg)
+		newmis.origin = self.origin;
+	else
+	{
+		newmis.origin_x = self.origin_x + (random()* (self.maxs_x + self.mins_x)) * randorg;
+		newmis.origin_y = self.origin_y + (random()* (self.maxs_y + self.mins_y)) * randorg;
+		newmis.origin_z = self.origin_z + (random()* (self.maxs_z + self.mins_z)) * randorg;
+	}
 	setmodel (newmis, gibname);
 	setsize (newmis, '0 0 0', '0 0 0');
 	newmis.velocity = VelocityForDamage (dm);
@@ -1234,30 +1224,30 @@ void(string gibname, float dm, float makecool, float gibskin, float gibkgs, floa
 	newmis.frame = 0;
 	newmis.flags = 0;
 
-    #ifdef COOL_GIBS
-    if (makecool)
-    {
-        newmis.#coolflag = #STRFLAG_COOL;
-        newmis.classname = "gib";
-    }
-    #endif
+	#ifdef COOL_GIBS
+	if (makecool)
+	{
+		newmis.#coolflag = #STRFLAG_COOL;
+		newmis.classname = "gib";
+	}
+	#endif
 
-    if (gibskin)
-        newmis.skin = gibskin;
-    
-    if (gibkgs)
-    {
-        newmis.touch = gib_touch;
-        newmis.solid = #SOLID_TRIGGER;
-        newmis.has_fieldgen = gibkgs;
-        newmis.team_no = self.team_no;
-    }
-    #ifdef COOL_GIBS
-    #ifdef COOL_METAL_GIBS
-    else
-        newmis.solid = #SOLID_TRIGGER;
-    #endif
-    #endif
+	if (gibskin)
+		newmis.skin = gibskin;
+
+	if (gibkgs)
+	{
+		newmis.touch = gib_touch;
+		newmis.solid = #SOLID_TRIGGER;
+		newmis.has_fieldgen = gibkgs;
+		newmis.team_no = self.team_no;
+	}
+	#ifdef COOL_GIBS
+	#ifdef COOL_METAL_GIBS
+	else
+		newmis.solid = #SOLID_TRIGGER;
+	#endif
+	#endif
 };
 
 /*
@@ -1281,169 +1271,169 @@ void(entity player, float numheads) SetHeads;
 
 void() head_touch =
 {
-    if (self.velocity == '0 0 0') // stoped?
-    {
-        self.avelocity = '0 0 0';
-      
-        #ifdef KICKABLE_HEADS
-        self.t_width = #TRUE;
-        #endif
-    }
-        
-    if (other.classname == "player")
-    {
-        if (other.health <= 0)
-            return;
-        
-        if (other.playerclass == #PC_UNDEFINED) // Skip Observers
-            return;
-        
-        if (other.done_custom & #CUSTOM_BUILDING) // ppl customizing
-            return;
+	if (self.velocity == '0 0 0') // stoped?
+	{
+		self.avelocity = '0 0 0';
 
-        if (other.job & #JOB_WARLOCK) // Warlock collects this head
-        #ifndef WARLOCK_TEST
-        if (!Teammate(other.team_no,self.team_no)) // Only enemy heads can be picked up
-        #endif    
-        {
-            self.modelindex = modelindex_null;
-            self.touch = SUB_Null;
-            self.solid = #SOLID_NOT;
+		#ifdef KICKABLE_HEADS
+		self.t_width = #TRUE;
+		#endif
+	}
 
-            if (self.classname == "player")
-            {
-                sprint(other,#PRINT_HIGH,"You pick up ");
-                sprint(other,#PRINT_HIGH,self.netname);
-                sprint(other,#PRINT_HIGH,"'s head\n");
+	if (other.classname == "player")
+	{
+		if (other.health <= 0)
+			return;
 
-                sprint(self,#PRINT_HIGH,other.netname);
-                sprint(self,#PRINT_HIGH," picks up your head!\n");
-            }
-            else
-                sprint(other,#PRINT_HIGH,"You pick up a head\n");
-            
-            GibPickSound(other);
-            stuffcmd(other,"bf\n");
+		if (other.playerclass == #PC_UNDEFINED) // Skip Observers
+			return;
 
-            local float numheads;
-            numheads = GetHeads(other);
-            SetHeads(other,numheads+1);
+		if (other.done_custom & #CUSTOM_BUILDING) // ppl customizing
+			return;
 
-            // Dont remove self because we r a player entity or a bodyque entry
+		if (other.job & #JOB_WARLOCK) // Warlock collects this head
+		#ifndef WARLOCK_TEST
+		if (!Teammate(other.team_no,self.team_no)) // Only enemy heads can be picked up
+		#endif
+		{
+			self.modelindex = modelindex_null;
+			self.touch = SUB_Null;
+			self.solid = #SOLID_NOT;
 
-            // Unless its an special head (see below)
-            if (self.classname == "headout")
-                dremove(self);
+			if (self.classname == "player")
+			{
+				sprint(other,#PRINT_HIGH,"You pick up ");
+				sprint(other,#PRINT_HIGH,self.netname);
+				sprint(other,#PRINT_HIGH,"'s head\n");
 
-            return;
-        }
+				sprint(self,#PRINT_HIGH,other.netname);
+				sprint(self,#PRINT_HIGH," picks up your head!\n");
+			}
+			else
+				sprint(other,#PRINT_HIGH,"You pick up a head\n");
 
-        #ifdef KICKABLE_HEADS
-        if (!kickable_heads)
-            return;
+			GibPickSound(other);
+			stuffcmd(other,"bf\n");
 
-        if (!self.t_width)
-            return;
-        
-        if (self.oldenemy == other) // we are the last person that kicked this head
-            if (self.t_length + #KICKHEAD_RATE_PERUSER > time) // too early for him?
-                return;
-        
-        if (self.t_length + #KICKHEAD_RATE > time) // too early?
-            return; // ok, do nothing, dont bounce or anything
+			local float numheads;
+			numheads = GetHeads(other);
+			SetHeads(other,numheads+1);
 
-        if (other.velocity == '0 0 0') // Dont kick if the player is not moving
-            return;
-        
-        self.t_length = time;
-        
-        // Do pain sound if a "living" head :)
-        if (self.classname == "player")
-        if (self.is_connected)
-        {            
-            // TODO: Make the following work!
-            // Put it in a pushable origin
-            /*local vector oldorig;
-            local float oldcont;
-            oldorig = self.origin;
-            oldcont = pointcontents(self.origin);
-            
-            if (fabs(self.origin_x - other.origin_x) > fabs(self.origin_y - other.origin_y))
-            {
-                if (self.origin_x < other.origin_x)
-                    self.origin_x = self.origin_x -( (  (other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
-                else
-                    self.origin_x = self.origin_x +( (  (other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
-            }
-            else
-            {
-                if (self.origin_x < other.origin_x)
-                    self.origin_y = self.origin_y -( (  (other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
-                else
-                    self.origin_y = self.origin_y +( (  (other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
-            }
+			// Dont remove self because we are a player entity or a bodyque entry
 
-            // valid origin?
-            if ((pointcontents(self.origin) != oldcont)
-              ||(pointcontents(self.absmin + '1 1 1') != oldcont)
-              ||(pointcontents(self.absmax - '1 1 1') != oldcont))
-            {
-                self.origin = oldorig;
-                setorigin(self,self.origin);
-                return;
-            }*/
-            
-            // water pain sounds
-        	if (self.watertype == #CONTENT_WATER && self.waterlevel == 3)
-        	{
-        		DeathBubbles(1);
-        		if (random() > 0.5)
-        			sound (self, #CHAN_VOICE, "player/drown1.wav", 1, #ATTN_IDLE);
-        		else
-        			sound (self, #CHAN_VOICE, "player/drown2.wav", 1, #ATTN_IDLE);
-            }
-            else
-            {
-                local float		rs;
-                rs = rint((random() * 5) + 1);
+			// Unless its a special head (see below)
+			if (self.classname == "headout")
+				dremove(self);
 
-                self.noise = "";
-                if (rs == 1)
-                    self.noise = "player/pain1.wav";
-                else if (rs == 2)
-                    self.noise = "player/pain2.wav";
-                else if (rs == 3)
-                    self.noise = "player/pain3.wav";
-                else if (rs == 4)
-                    self.noise = "player/pain4.wav";
-                else if (rs == 5)
-                    self.noise = "player/pain5.wav";
-                else
-                    self.noise = "player/pain6.wav";
+			return;
+		}
 
-                sound (self, #CHAN_VOICE, self.noise, 1, #ATTN_IDLE);
-            }
+		#ifdef KICKABLE_HEADS
+		if (!kickable_heads)
+			return;
 
-            sprint(self,#PRINT_MEDIUM,other.netname);
-            sprint(self,#PRINT_MEDIUM," kicks your head!\n");
+		if (!self.t_width)
+			return;
 
-            sprint(other,#PRINT_MEDIUM,self.netname);
-            sprint(other,#PRINT_MEDIUM,"'s head is still alive!\n");
+		if (self.oldenemy == other) // we are the last person that kicked this head
+			if (self.t_length + #KICKHEAD_RATE_PERUSER > time) // too early for him?
+				return;
 
-            self.t_length = time + #KICKHEAD_RATE_ALIVE;
-        }        
+		if (self.t_length + #KICKHEAD_RATE > time) // too early?
+			return; // ok, do nothing, dont bounce or anything
 
-        //ok, kick it out        
-        self.oldenemy = other;
-        makevectors (other.v_angle);
-        self.velocity = other.velocity * 1.5 + v_forward * 128 + '0 0 260' + '0 0 300'*random();  
-        self.flags = self.flags - (self.flags & #FL_ONGROUND);
-    	
-        self.avelocity = crandom() * '0 600 0';
+		if (other.velocity == '0 0 0') // Dont kick if the player is not moving
+			return;
 
-        sound(self,#CHAN_BODY,"zombie/z_miss.wav",0.5, #ATTN_IDLE);
-        #endif
-    }    
+		self.t_length = time;
+
+		// Do pain sound if a "living" head :)
+		if (self.classname == "player")
+		if (self.is_connected)
+		{
+			// TODO: Make the following work!
+			// Put it in a pushable origin
+			/*local vector oldorig;
+			local float oldcont;
+			oldorig = self.origin;
+			oldcont = pointcontents(self.origin);
+
+			if (fabs(self.origin_x - other.origin_x) > fabs(self.origin_y - other.origin_y))
+			{
+				if (self.origin_x < other.origin_x)
+					self.origin_x = self.origin_x -( (  (other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
+				else
+					self.origin_x = self.origin_x +( (  (other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
+			}
+			else
+			{
+				if (self.origin_x < other.origin_x)
+					self.origin_y = self.origin_y -( (  (other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
+				else
+					self.origin_y = self.origin_y +( (  (other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
+			}
+
+			// valid origin?
+			if ((pointcontents(self.origin) != oldcont)
+			  ||(pointcontents(self.absmin + '1 1 1') != oldcont)
+			  ||(pointcontents(self.absmax - '1 1 1') != oldcont))
+			{
+				self.origin = oldorig;
+				setorigin(self,self.origin);
+				return;
+			}*/
+
+			// water pain sounds
+			if (self.watertype == #CONTENT_WATER && self.waterlevel == 3)
+			{
+				DeathBubbles(1);
+				if (random() > 0.5)
+					sound (self, #CHAN_VOICE, "player/drown1.wav", 1, #ATTN_IDLE);
+				else
+					sound (self, #CHAN_VOICE, "player/drown2.wav", 1, #ATTN_IDLE);
+			}
+			else
+			{
+				local float rs;
+				rs = rint((random() * 5) + 1);
+
+				self.noise = "";
+				if (rs == 1)
+					self.noise = "player/pain1.wav";
+				else if (rs == 2)
+					self.noise = "player/pain2.wav";
+				else if (rs == 3)
+					self.noise = "player/pain3.wav";
+				else if (rs == 4)
+					self.noise = "player/pain4.wav";
+				else if (rs == 5)
+					self.noise = "player/pain5.wav";
+				else
+					self.noise = "player/pain6.wav";
+
+				sound (self, #CHAN_VOICE, self.noise, 1, #ATTN_IDLE);
+			}
+
+			sprint(self,#PRINT_MEDIUM,other.netname);
+			sprint(self,#PRINT_MEDIUM," kicks your head!\n");
+
+			sprint(other,#PRINT_MEDIUM,self.netname);
+			sprint(other,#PRINT_MEDIUM,"'s head is still alive!\n");
+
+			self.t_length = time + #KICKHEAD_RATE_ALIVE;
+		}
+
+		//ok, kick it out
+		self.oldenemy = other;
+		makevectors (other.v_angle);
+		self.velocity = other.velocity * 1.5 + v_forward * 128 + '0 0 260' + '0 0 300'*random();
+		self.flags = self.flags - (self.flags & #FL_ONGROUND);
+
+		self.avelocity = crandom() * '0 600 0';
+
+		sound(self,#CHAN_BODY,"zombie/z_miss.wav",0.5, #ATTN_IDLE);
+		#endif
+	}
 };
 
 void(string gibname, float dm) ThrowHead =
@@ -1455,27 +1445,27 @@ void(string gibname, float dm) ThrowHead =
 	self.movetype = #MOVETYPE_BOUNCE;
 	self.takedamage = #DAMAGE_NO;
 	//self.solid = #SOLID_NOT;
-    self.solid = #SOLID_TRIGGER; // OfN
+	self.solid = #SOLID_TRIGGER; // OfN
 	self.view_ofs = '0 0 8';
 	//setsize (self, '-16 -16 0', '16 16 56');
-    setsize (self, '-16 -16 0', '16 16 8');
-    self.velocity = VelocityForDamage (dm);
+	setsize (self, '-16 -16 0', '16 16 8');
+	self.velocity = VelocityForDamage (dm);
 	//self.origin_z = self.origin_z - 24;
-    self.flags = self.flags - (self.flags & #FL_ONGROUND);
+	self.flags = self.flags - (self.flags & #FL_ONGROUND);
 	self.avelocity = crandom() * '0 600 0';
 
-    //-OfN    
-    self.touch = head_touch;
+	//-OfN
+	self.touch = head_touch;
 
-    #ifdef COOL_GIBS
-    self.#coolflag = #STRFLAG_COOL;
-    #endif
+	#ifdef COOL_GIBS
+	self.#coolflag = #STRFLAG_COOL;
+	#endif
 
-    #ifdef KICKABLE_HEADS
-    self.t_width = #FALSE;
-    self.oldenemy = world;
-    self.t_length = time;
-    #endif
+	#ifdef KICKABLE_HEADS
+	self.t_width = #FALSE;
+	self.oldenemy = world;
+	self.t_length = time;
+	#endif
 };
 
 //==========================================================
@@ -1483,11 +1473,11 @@ void(string gibname, float dm) ThrowHead =
 
 void(string gibname, float dm) ThrowHeadOut =
 {
-    local entity thehead;
-    thehead = spawn();
-    
-    setmodel (thehead, gibname);
-    setorigin(thehead,self.origin);
+	local entity thehead;
+	thehead = spawn();
+
+	setmodel (thehead, gibname);
+	setorigin(thehead,self.origin);
 	thehead.skin = 0;
 	thehead.frame = 0;
 	thehead.movetype = #MOVETYPE_BOUNCE;
@@ -1495,28 +1485,28 @@ void(string gibname, float dm) ThrowHeadOut =
 	thehead.solid = #SOLID_TRIGGER; // OfN
 	thehead.view_ofs = '0 0 8';
 	//setsize (thehead, '-16 -16 0', '16 16 56');
-    setsize (thehead, '-16 -16 0', '16 16 8');
-    thehead.velocity = VelocityForDamage (dm);
+	setsize (thehead, '-16 -16 0', '16 16 8');
+	thehead.velocity = VelocityForDamage (dm);
 	//thehead.origin_z = thehead.origin_z - 24;
-    thehead.flags = thehead.flags - (thehead.flags & #FL_ONGROUND);
+	thehead.flags = thehead.flags - (thehead.flags & #FL_ONGROUND);
 	thehead.avelocity = crandom() * '0 600 0';
 
-    //-OfN    
-    thehead.classname = "headout";
-    thehead.touch = head_touch;
-    thehead.think = SUB_Remove;
-    thehead.nextthink = time + #MIN_HEAD_TIME + (#MAX_HEAD_TIME - #MIN_HEAD_TIME) * random();
-    thehead.team_no = self.team_no;
+	//-OfN
+	thehead.classname = "headout";
+	thehead.touch = head_touch;
+	thehead.think = SUB_Remove;
+	thehead.nextthink = time + #MIN_HEAD_TIME + (#MAX_HEAD_TIME - #MIN_HEAD_TIME) * random();
+	thehead.team_no = self.team_no;
 
-    #ifdef COOL_GIBS
-    thehead.#coolflag = #STRFLAG_COOL;
-    #endif
+	#ifdef COOL_GIBS
+	thehead.#coolflag = #STRFLAG_COOL;
+	#endif
 
-    #ifdef KICKABLE_HEADS
-    thehead.t_width = #FALSE;
-    thehead.oldenemy = world;
-    thehead.t_length = time;
-    #endif
+	#ifdef KICKABLE_HEADS
+	thehead.t_width = #FALSE;
+	thehead.oldenemy = world;
+	thehead.t_length = time;
+	#endif
 };
 
 //=====================================================
@@ -1524,16 +1514,16 @@ void(string gibname, float dm) ThrowHeadOut =
 
 void() GibPlayerOut =
 {
-    if (random() < 0.5)
+	if (random() < 0.5)
 		sound (self, #CHAN_VOICE, "player/gib.wav", 1, #ATTN_NONE);
 	else
 		sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NONE);
-    
-    ThrowHeadOut("progs/h_player.mdl",-40);
-    ThrowGib("progs/gib1.mdl",-40, #TRUE, 0,#GIB1_KGS, #FALSE);
-    ThrowGib("progs/gib2.mdl",-40, #TRUE, 0,#GIB2_KGS, #FALSE);
-    ThrowGib("progs/gib3.mdl",-40, #TRUE, 0,#GIB3_KGS, #FALSE);   
-    SpawnBloodEx(self.origin,0.75,9);
+
+	ThrowHeadOut("progs/h_player.mdl",-40);
+	ThrowGib("progs/gib1.mdl",-40, #TRUE, 0,#GIB1_KGS, #FALSE);
+	ThrowGib("progs/gib2.mdl",-40, #TRUE, 0,#GIB2_KGS, #FALSE);
+	ThrowGib("progs/gib3.mdl",-40, #TRUE, 0,#GIB3_KGS, #FALSE);
+	SpawnBloodEx(self.origin,0.75,9);
 };
 
 /*void(string gibname) HeadShotThrowHead =
@@ -1560,60 +1550,60 @@ void() KillPlayer =
 
 void() GibPlayer =
 {
-  //- OfN now this can be turned on/off with the headless localinfo -//
-  // Decapitation ------------------------------------------------------//
-  /*if (headless == 1)
-  {
-	if (deathmsg == #DMSG_SNIPERHEADSHOT) //- Ofn - I don't like this:  || deathmsg == #DMSG_BACKSTAB)
+	//- OfN now this can be turned on/off with the headless localinfo -//
+	// Decapitation ------------------------------------------------------//
+	/*if (headless == 1)
 	{
-		//if (deathmsg == #DMSG_SNIPERHEADSHOT)
-			HeadShotThrowHead("progs/h_player.mdl");
-		//else
-		//	ThrowHead("progs/h_player.mdl", -60);
-
-		newmis = spawn();
-		newmis.solid = #SOLID_NOT;
-        newmis.movetype = #MOVETYPE_STEP;
-
-        newmis.angles = self.angles;
-
-        setsize(newmis, '0 0 0', '0 0 0');
-		setorigin(newmis, self.origin);   
-
-        newmis.colormap = self.colormap;
-//        newmis.color=self.color
-		//newmis.skin = self.skin;
-        
-        setmodel(newmis, "progs/headless.mdl");
-		     		
-		newmis.think = Headless_Think;
-		newmis.nextthink = time + 0.1;
-		if (self.current_weapon <= #WEAP_AXE)
-			newmis.frame = 0;
+		if (deathmsg == #DMSG_SNIPERHEADSHOT) //- Ofn - I don't like this:  || deathmsg == #DMSG_BACKSTAB)
+		{
+			//if (deathmsg == #DMSG_SNIPERHEADSHOT)
+				HeadShotThrowHead("progs/h_player.mdl");
+			//else
+			//	ThrowHead("progs/h_player.mdl", -60);
+	
+			newmis = spawn();
+			newmis.solid = #SOLID_NOT;
+			newmis.movetype = #MOVETYPE_STEP;
+	
+			newmis.angles = self.angles;
+	
+			setsize(newmis, '0 0 0', '0 0 0');
+			setorigin(newmis, self.origin);
+	
+			newmis.colormap = self.colormap;
+			//newmis.color=self.color
+			//newmis.skin = self.skin;
+	
+			setmodel(newmis, "progs/headless.mdl");
+	
+			newmis.think = Headless_Think;
+			newmis.nextthink = time + 0.1;
+			if (self.current_weapon <= #WEAP_AXE)
+				newmis.frame = 0;
+			else
+				newmis.frame = 8;
+	
+			ThrowGib ("progs/zom_gib.mdl", self.health); //- lol, looks cool
+		}
 		else
-			newmis.frame = 8;
-
-        ThrowGib ("progs/zom_gib.mdl", self.health); //- lol, looks cool 
+		{
+			ThrowHead ("progs/h_player.mdl", self.health);
+			ThrowGib ("progs/gib1.mdl", self.health);
+			ThrowGib ("progs/gib2.mdl", self.health);
+			ThrowGib ("progs/gib3.mdl", self.health);
+			ThrowGib ("progs/gib3.mdl", self.health); //-added
+			//ThrowGib ("progs/zom_gib.mdl", self.health); //-added
+	
+		}
 	}
 	else
-	{
-    	ThrowHead ("progs/h_player.mdl", self.health);
-		ThrowGib ("progs/gib1.mdl", self.health);
-		ThrowGib ("progs/gib2.mdl", self.health);
-		ThrowGib ("progs/gib3.mdl", self.health);
-        ThrowGib ("progs/gib3.mdl", self.health); //-added
-        //ThrowGib ("progs/zom_gib.mdl", self.health); //-added
-
-	}
-  }
-  else
-  {*/
-   	ThrowHead ("progs/h_player.mdl", self.health);
-	ThrowGib ("progs/gib1.mdl", self.health, #TRUE, 0,#GIB1_KGS, #FALSE);
-	ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0,#GIB2_KGS, #FALSE);
-	ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0,#GIB3_KGS, #FALSE);
-    //ThrowGib ("progs/gib3.mdl", self.health); //-added
-  //}
+	{*/
+		ThrowHead ("progs/h_player.mdl", self.health);
+		ThrowGib ("progs/gib1.mdl", self.health, #TRUE, 0,#GIB1_KGS, #FALSE);
+		ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0,#GIB2_KGS, #FALSE);
+		ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0,#GIB3_KGS, #FALSE);
+		//ThrowGib ("progs/gib3.mdl", self.health); //-added
+	//}
 
 	// Why do we need this? What are we doing that's clobbering _something_
 	// within a second after a trigger_hurt kills the player?
@@ -1650,7 +1640,7 @@ void() GibPlayer =
 
 		return;
 	}
-		
+
 	if (random() < 0.5)
 		sound (self, #CHAN_VOICE, "player/gib.wav", 1, #ATTN_NONE);
 	else
@@ -1659,17 +1649,17 @@ void() GibPlayer =
 
 void() PlayerDead =
 {
-    self.weaponmodel="";
+	self.weaponmodel="";
 	self.view_ofs = '0 0 -8';
 	self.deadflag = #DEAD_DYING;
 	self.solid = #SOLID_NOT;
 	self.flags = self.flags - (self.flags & #FL_ONGROUND);
 	self.movetype = #MOVETYPE_TOSS;
-    SpawnBloodEx(self.origin,0.75,9);
+	SpawnBloodEx(self.origin,0.75,9);
 
-    // Reset Auras and runes
-    self.aura = 0;
-    //self.#runes = 0; // Not needed
+	// Reset Auras and runes
+	self.aura = 0;
+	//self.#runes = 0; // Not needed
 };
 
 void() PlayerDie =
@@ -1678,27 +1668,27 @@ void() PlayerDie =
 	local entity te;
 	//WK Stop orff
 	//sound (self, #CHAN_MUSIC, "items/r_item1.wav", 0.1, #ATTN_NORM);
-    sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
+	sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
 	//WK Stop glows!
 	self.flags = self.flags - (self.flags & (#EF_BRIGHTLIGHT | #EF_DIMLIGHT));
-      self.effects = 0;
-    // make dead guy release hook (wedge)
-    if (self.hook_out)
-    {
-	    Reset_Grapple (self.hook);
-    	Attack_Finished(0.75);
-	    self.hook_out = #TRUE;	// PutClientInServer will reset this
-    }
+	self.effects = 0;
+	// make dead guy release hook (wedge)
+	if (self.hook_out)
+	{
+		Reset_Grapple (self.hook);
+		Attack_Finished(0.75);
+		self.hook_out = #TRUE;	// PutClientInServer will reset this
+	}
 
-    self.items = self.items - (self.items &
-    (#IT_INVISIBILITY | #IT_INVULNERABILITY | #IT_SUIT | #IT_QUAD) );
-    self.invisible_finished = 0;    // don't die as eyes
-    self.invincible_finished = 0;
-    self.super_damage_finished = 0;
-    self.radsuit_finished = 0;
-    self.modelindex = modelindex_player;    // don't use eyes
+	self.items = self.items - (self.items &
+	(#IT_INVISIBILITY | #IT_INVULNERABILITY | #IT_SUIT | #IT_QUAD) );
+	self.invisible_finished = 0;    // don't die as eyes
+	self.invincible_finished = 0;
+	self.super_damage_finished = 0;
+	self.radsuit_finished = 0;
+	self.modelindex = modelindex_player;    // don't use eyes
 
-    // If infected, give the medic a frag
+	// If infected, give the medic a frag
 	finished = #TRUE;
 	if (self.tfstate & #TFSTATE_INFECTED && self == self.enemy)
 	{
@@ -1711,7 +1701,7 @@ void() PlayerDie =
 				logfrag(te.enemy, self);
 			#endif
 				te.enemy.real_frags = te.enemy.real_frags + 1;
-			 	if (!(toggleflags & #TFLAG_TEAMFRAGS))
+				if (!(toggleflags & #TFLAG_TEAMFRAGS))
 					te.enemy.frags = te.enemy.real_frags;
 				finished = #TRUE;
 			}
@@ -1724,13 +1714,13 @@ void() PlayerDie =
 	// Remove all the timer entities for this player
 	TeamFortress_RemoveTimers();
 
-    // Drop any runes he would carry
-    PlayerDropRunes(self);
+	// Drop any runes he would carry
+	PlayerDropRunes(self);
 
 	// Restore player's speed
 #ifdef RESTORE_DEAD_SPEEDS
 
-    stuffcmd(self,"cl_backspeed 1000\n");
+	stuffcmd(self,"cl_backspeed 1000\n");
 	stuffcmd(self,"cl_forwardspeed 1000\n");
 	stuffcmd(self,"cl_sidespeed 1000\n");
 	stuffcmd(self,"cl_movespeedkey 2\n");
@@ -1739,7 +1729,7 @@ void() PlayerDie =
 
 	if (deathmatch || coop)
 		DropBackpack();
-	
+
 	PlayerDead();
 
 	if (self.velocity_z < 10)
@@ -1751,7 +1741,7 @@ void() PlayerDie =
 	}
 
 	DeathSound();
-	
+
 	self.angles_x = 0;
 	self.angles_z = 0;
 
@@ -1763,7 +1753,7 @@ void() PlayerDie =
 	}
 
 	i = 1 + floor(random()*6);
-	
+
 	if (i == 1)
 		player_diea1();
 	else if (i == 2)
@@ -1774,7 +1764,7 @@ void() PlayerDie =
 		player_died1();
 	else
 		player_diee1();
-	
+
 	// get ready to spawn!
 	TeamFortress_SetupRespawn(#FALSE);
 };
@@ -1784,16 +1774,16 @@ void() set_suicide_frame =
 	if (self.model != "progs/player.mdl")
 		return;	// allready gibbed
 
-// Was commented
+	// Was commented
 	//self.frame = $deatha11;
 	self.solid = #SOLID_NOT;
 	self.movetype = #MOVETYPE_TOSS;
 	self.deadflag = #DEAD_DEAD;
 	self.nextthink = -1;
-// was comented
+	// was comented
 
 	/* OfN <- commented by
-    setmodel(self, string_null);
+	setmodel(self, string_null);
 	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);*/
 };
 
@@ -1802,18 +1792,17 @@ void() set_suicide_frame_disc =
 	if (self.model != "progs/player.mdl")
 		return;	// allready gibbed
 
-/*	
-    self.frame = $deatha11;
+	/*
+	self.frame = $deatha11;
 	self.solid = #SOLID_NOT;
 	self.movetype = #MOVETYPE_TOSS;
 	self.deadflag = #DEAD_DEAD;
 	self.nextthink = -1;
-*/
+	*/
 
 	setmodel(self, string_null);
 	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);
 };
-
 
 
 void()	player_diea1	=	[	$deatha1,	player_diea2	] {};
@@ -1894,7 +1883,7 @@ void()	player_die_ax9	=	[	$axdeth9,	player_die_ax9	] {PlayerCorpse();};
 		self.think = SUB_Remove;
 		return;
 	}
-	
+
 	self.nextthink = time + 0.1;
 };*/
 
@@ -1916,37 +1905,35 @@ void() player_failedairgun3   =[$nailatt2, player_run  ] {self.weaponframe=8;};
 //================================================================0
 // Laser cannon player stuff
 
-void() player_laser1   =[$nailatt1, player_laser2  ] 
+void() player_laser1   =[$nailatt1, player_laser2  ]
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.attack_finished = time + 0.2;
-    self.weaponframe=1;
-    HIP_FireLaser(0);
+	self.attack_finished = time + 0.2;
+	self.weaponframe=1;
+	HIP_FireLaser(0);
 };
-void() player_laser2   =[$nailatt2, player_laser3  ] 
+void() player_laser2   =[$nailatt2, player_laser3  ]
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.weaponframe=2;
+	self.weaponframe=2;
 };
-void() player_laser3   =[$nailatt2, player_laser4  ] 
+void() player_laser3   =[$nailatt2, player_laser4  ]
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.attack_finished = time + 0.2;
-    self.weaponframe=4;
-    HIP_FireLaser(1);
+	self.attack_finished = time + 0.2;
+	self.weaponframe=4;
+	HIP_FireLaser(1);
 };
-void() player_laser4   =[$nailatt1, player_laser1  ] 
+void() player_laser4   =[$nailatt1, player_laser1  ]
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.weaponframe=5;
+	self.weaponframe=5;
 };
-
-//____________________________________________________//

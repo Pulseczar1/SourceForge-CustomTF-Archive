@@ -1,11 +1,16 @@
-/*======================================================
-	OPTIMIZE.QC			Custom TeamFortress v2.1	
-	(c) Craig Hauser				10/4/00
-========================================================
+/*
+==============================================================================
+
+OPTIMIZE.QC
+Custom TeamFortress v2.1
+
 This has the optimizations that I have done, basically if
 I saw something similar being run in multi places I made
 a function and put it here.
-======================================================*/
+
+==============================================================================
+*/
+
 float (float t1, float t2) Teammate;
 float (entity targ, entity check) visible2;
 float (entity targ, entity check) visible2x;
@@ -20,8 +25,8 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 		if (chkcease)
 			/*if (infokey(world,"ceasefire")=="on")
 				return #FALSE;*/
-            if (ceasefire)
-                return #FALSE;
+			if (ceasefire)
+				return #FALSE;
 #endif
 		if (targ.playerclass == #PC_UNDEFINED)
 			return #FALSE;
@@ -49,16 +54,16 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 					if (istesla)
 					{
 						//- OfN jammer only for scanner -// nope
-                        if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
-                        //if (!(checker.tf_items & #NIT_AUTOID))
+						if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
+						//if (!(checker.tf_items & #NIT_AUTOID))
 							return #FALSE;
 					}
 					else
-					{						
-                        if (! (checker.classname == "building_sensor" && checker.all_active & #IMPROVED_FOUR)) 
-                            return #FALSE;
+					{
+						if (! (checker.classname == "building_sensor" && checker.all_active & #IMPROVED_FOUR))
+							return #FALSE;
 
-                        // - OfN return #FALSE;
+						// - OfN return #FALSE;
 					}
 				}
 		}
@@ -94,8 +99,8 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 			if (istesla)
 			{
 				//- OfN jammer only for scanner -// nope
-                if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
-                //if (!(checker.tf_items & #NIT_AUTOID))
+				if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
+				//if (!(checker.tf_items & #NIT_AUTOID))
 					return #FALSE;
 			}
 			else if (checker.classname != "building_sensor")// && checker.classname != "monster_army" && checker.classname != "monster_demon1")
@@ -103,59 +108,60 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 		}
 		if (chkvis && checker.classname == "building_sentrygun" && !(checker.tf_items & #NIT_TURRET)) // - OfN - hackish fix for sentry gun targetting
 		{
-            if (!visible2x(targ,checker)) // - OfN - hackish fix for sentry gun targetting
+			if (!visible2x(targ,checker)) // - OfN - hackish fix for sentry gun targetting
  				return #FALSE;
-        }
-        else if (chkvis)
+		}
+		else if (chkvis)
 			if (!visible2(targ,checker))
  				return #FALSE;
 		if (chkrng)
 		{
 			local float r;
-			
+
 			r = vlen(targ.origin - checker.origin);
 			if (r > chkrng)
 				return #FALSE;
 		}
 	return #TRUE;
 };
+
 //gives entity passed into number of frags passed
 //entity gets frag, entity gave frag, give this many frags, (0-1) log frags, 1=real_frag 2=frag, (0-1) checks real_frag, (0-1) check frag vamp (takes from targ)
-
 void(entity atk, entity targ, float numfrags, float fraggetlog, float howgive, float chkreal, float chkvamp) Give_Frags_Out =
 {
 /*
-local string st;
-bprint(#PRINT_HIGH, "atk:");
-bprint(#PRINT_HIGH, atk.classname);
-bprint(#PRINT_HIGH, " targ:");
-bprint(#PRINT_HIGH, targ.classname);
-bprint(#PRINT_HIGH, " Frag:");
-st = ftos(numfrags);
-bprint(#PRINT_HIGH, st);
-bprint(#PRINT_HIGH, " log:");
-if (fraggetlog)
-	bprint(#PRINT_HIGH, "yes");
-else
-	bprint(#PRINT_HIGH, "no");
-bprint(#PRINT_HIGH, " howgive:");
-if (howgive == 1)
-	bprint(#PRINT_HIGH, "real_frags");
-else if (howgive == 2)
-	bprint(#PRINT_HIGH, "frags");
-else
-	bprint(#PRINT_HIGH, "ERROR");
-bprint(#PRINT_HIGH, " real:");
-if (chkreal)
-	bprint(#PRINT_HIGH, "yes");
-else
-	bprint(#PRINT_HIGH, "no");
-bprint(#PRINT_HIGH, " vamp:");
-if (chkvamp)
-	bprint(#PRINT_HIGH, "yes");
-else
-	bprint(#PRINT_HIGH, "no");
-bprint(#PRINT_HIGH, "\n");
+	local string st;
+	
+	bprint(#PRINT_HIGH, "atk:");
+	bprint(#PRINT_HIGH, atk.classname);
+	bprint(#PRINT_HIGH, " targ:");
+	bprint(#PRINT_HIGH, targ.classname);
+	bprint(#PRINT_HIGH, " Frag:");
+	st = ftos(numfrags);
+	bprint(#PRINT_HIGH, st);
+	bprint(#PRINT_HIGH, " log:");
+	if (fraggetlog)
+		bprint(#PRINT_HIGH, "yes");
+	else
+		bprint(#PRINT_HIGH, "no");
+	bprint(#PRINT_HIGH, " howgive:");
+	if (howgive == 1)
+		bprint(#PRINT_HIGH, "real_frags");
+	else if (howgive == 2)
+		bprint(#PRINT_HIGH, "frags");
+	else
+		bprint(#PRINT_HIGH, "ERROR");
+	bprint(#PRINT_HIGH, " real:");
+	if (chkreal)
+		bprint(#PRINT_HIGH, "yes");
+	else
+		bprint(#PRINT_HIGH, "no");
+	bprint(#PRINT_HIGH, " vamp:");
+	if (chkvamp)
+		bprint(#PRINT_HIGH, "yes");
+	else
+		bprint(#PRINT_HIGH, "no");
+	bprint(#PRINT_HIGH, "\n");
 */
 	if (atk.classname == "monster_army")
 	{
@@ -170,7 +176,7 @@ bprint(#PRINT_HIGH, "\n");
 			atk.real_frags = atk.real_frags + numfrags;
 		else
 			bprint(#PRINT_HIGH, "Error in Give_Frags_Out!\n");
-			
+
 		#ifdef QUAKE_WORLD
 			if (fraggetlog)
 			{
@@ -185,8 +191,8 @@ bprint(#PRINT_HIGH, "\n");
 				if (!(toggleflags & #TFLAG_TEAMFRAGS))
 					targ.frags = targ.real_frags;
 			}
-		}	
-	
+		}
+
 		if (chkreal)
 		{
 		 	if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -196,35 +202,36 @@ bprint(#PRINT_HIGH, "\n");
 		}
 	}
 };
+
 //replaces det guns
 //classname to find, entity checking, (0-1) check for ownership
 void(string search, entity person, float chkown, float type) Find_And_Dmg =
 {
 	local entity te;
-	
-    te = find(world, classname, search);
-	
-    if (type)
-    {
-        while (te)
-        {
-            if (chkown)
-            {
-                if (te.real_owner == person && type & te.dont_do_triggerwork)
-                    TF_T_Damage(te, world, world, te.health+100, 0, 0);
-            }
-            else
-            {
-                if (type & te.dont_do_triggerwork)
-                    TF_T_Damage(te, world, world, te.health+100, 0, 0);
-            }
-            te = find(te, classname, search);
-        }
-        
-        return;
-    }
 
-    while (te)
+	te = find(world, classname, search);
+
+	if (type)
+	{
+		while (te)
+		{
+			if (chkown)
+			{
+				if (te.real_owner == person && type & te.dont_do_triggerwork)
+					TF_T_Damage(te, world, world, te.health+100, 0, 0);
+			}
+			else
+			{
+				if (type & te.dont_do_triggerwork)
+					TF_T_Damage(te, world, world, te.health+100, 0, 0);
+			}
+			te = find(te, classname, search);
+		}
+
+		return;
+	}
+
+	while (te)
 	{
 		if (chkown)
 		{
@@ -258,7 +265,7 @@ Bit/Byte/Decimal reference:
 2  2 2
 3  3 4
 4  4 8
-5  5 16 
+5  5 16
 6  6 32
 7  7 64
 8  8 128
@@ -294,27 +301,27 @@ Functions to handle multiple integers (byte wide) on a single float:
 
 float (float value) GetByte1 =
 {
-    return value & 255;
+	return value & 255;
 };
 
 float (float value) GetByte2 =
 {
-    local float res;
+	local float res;
 
-    res = value & 65280;
-    res = res / 256;
-    
-    return res;
+	res = value & 65280;
+	res = res / 256;
+
+	return res;
 };
 
 float (float value) GetByte3 =
 {
-    local float res;
+	local float res;
 
-    res = value & 16711680;
-    res = res / 65536;
-    
-    return res;
+	res = value & 16711680;
+	res = res / 65536;
+
+	return res;
 };
 
 //=======================================
@@ -322,22 +329,22 @@ float (float value) GetByte3 =
 
 float (float value) MakeByte2 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 255)
-        value = 255;
-    return value * 256;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 255)
+		value = 255;
+	return value * 256;
 };
 
 float (float value) MakeByte3 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 255)
-        value = 255;
-    return value * 65536;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 255)
+		value = 255;
+	return value * 65536;
 };
 
 //=====================================
@@ -345,31 +352,31 @@ float (float value) MakeByte3 =
 
 float (float targetval, float value) AssignByte1 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 255)
-        value = 255;
-    targetval = targetval - (targetval & 255);
-    targetval = targetval + value;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 255)
+		value = 255;
+	targetval = targetval - (targetval & 255);
+	targetval = targetval + value;
 
-    return targetval;
+	return targetval;
 };
 
 float (float targetval, float value) AssignByte2 =
 {
-    targetval = targetval - (targetval & 65280);
-    targetval = targetval + MakeByte2(value);
+	targetval = targetval - (targetval & 65280);
+	targetval = targetval + MakeByte2(value);
 
-    return targetval;
+	return targetval;
 };
 
 float (float targetval, float value) AssignByte3 =
 {
-    targetval = targetval - (targetval & 16711680);
-    targetval = targetval + MakeByte3(value);
+	targetval = targetval - (targetval & 16711680);
+	targetval = targetval + MakeByte3(value);
 
-    return targetval;
+	return targetval;
 };
 
 //===============================================================================
@@ -379,49 +386,49 @@ float (float targetval, float value) AssignByte3 =
 
 float(float value) GetWarlock1 =
 {
-    return value & 63;
+	return value & 63;
 };
 
 float(float value) GetWarlock2 =
 {
-    local float res;
+	local float res;
 
-    res = value & 65472;
-    res = res / 64;
-    
-    return res;    
+	res = value & 65472;
+	res = res / 64;
+
+	return res;
 };
 
 float (float value) MakeWarlock2 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 1023)
-        value = 1023;
-    return value * 64;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 1023)
+		value = 1023;
+	return value * 64;
 };
 
 float(float targetval, float value) AssignWarlock1 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 63)
-        value = 63;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 63)
+		value = 63;
 
-    targetval = targetval - (targetval & 63);
-    targetval = targetval + value;
+	targetval = targetval - (targetval & 63);
+	targetval = targetval + value;
 
-    return targetval;
+	return targetval;
 };
 
 float(float targetval, float value) AssignWarlock2 =
 {
-    targetval = targetval - (targetval & 65472);
-    targetval = targetval + MakeWarlock2(value);
+	targetval = targetval - (targetval & 65472);
+	targetval = targetval + MakeWarlock2(value);
 
-    return targetval;
+	return targetval;
 };
 
 //==============================================================
@@ -429,30 +436,30 @@ float(float targetval, float value) AssignWarlock2 =
 
 float(float input) itob =
 {
-    if (input == 1) return 1;
-    if (input == 2) return 2;
-    if (input == 3) return 4;
-    if (input == 4) return 8;
-    if (input == 5) return 16;
-    if (input == 6) return 32;
-    if (input == 7) return 64;
-    if (input == 8) return 128;
-    if (input == 9) return 256;
-    if (input == 10) return 512;
-    if (input == 11) return 1024;
-    if (input == 12) return 2048;
-    if (input == 13) return 4096;
-    if (input == 14) return 8192;
-    if (input == 15) return 16384;
-    if (input == 16) return 32768;
-    if (input == 17) return 65536;
-    if (input == 18) return 131072;
-    if (input == 19) return 262144;
-    if (input == 20) return 524288;
-    if (input == 21) return 1048576;
-    if (input == 22) return 2097152;
-    if (input == 23) return 4194304;
-    if (input == 24) return 8388608;
+	if (input == 1) return 1;
+	if (input == 2) return 2;
+	if (input == 3) return 4;
+	if (input == 4) return 8;
+	if (input == 5) return 16;
+	if (input == 6) return 32;
+	if (input == 7) return 64;
+	if (input == 8) return 128;
+	if (input == 9) return 256;
+	if (input == 10) return 512;
+	if (input == 11) return 1024;
+	if (input == 12) return 2048;
+	if (input == 13) return 4096;
+	if (input == 14) return 8192;
+	if (input == 15) return 16384;
+	if (input == 16) return 32768;
+	if (input == 17) return 65536;
+	if (input == 18) return 131072;
+	if (input == 19) return 262144;
+	if (input == 20) return 524288;
+	if (input == 21) return 1048576;
+	if (input == 22) return 2097152;
+	if (input == 23) return 4194304;
+	if (input == 24) return 8388608;
 
-    return 0;
+	return 0;
 };

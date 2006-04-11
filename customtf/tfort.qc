@@ -1,12 +1,14 @@
-/*======================================================
-	TFORT.QC			Custom TeamFortress v3.2
+/*
+==============================================================================
 
-	(c) TeamFortress Software Pty Ltd 	29/2/97
-	(c) William Kerney			9/16/00
-	(c) Craig Hauser				19/3/00
-========================================================
+TFORT.QC
+Custom TeamFortress v3.2
+
 Class handling and other utility functions
-======================================================*/
+
+==============================================================================
+*/
+
 // Function Prototypes
 //void() RemoveFlare;
 void() GrenadeExplode;
@@ -354,8 +356,8 @@ void() TeamFortress_ChangeClass =
 	TeamFortress_SetHealth();
 	TeamFortress_SetSpeed(self);
 	TeamFortress_SetSkin(self);
-	//WK Give them invincibility if they are a normal class or bought it
-	if (self.playerclass >= #PC_SCOUT && self.playerclass <= #PC_RANDOM) {
+	//WK Give them invincibility if they are a normal class or bought it -pwn- added || (self.tf_items #nit respawn etc. so civs could get respawn guard.
+	if ((self.playerclass >= #PC_SCOUT && self.playerclass <= #PC_RANDOM) || (self.tf_items & #NIT_RESPAWN_GUARD)) {
 		self.items = self.items + #IT_INVULNERABILITY;
 		self.invincible_time = 1;
 		self.invincible_finished = time + #RESPAWN_GUARD_TIME;
@@ -754,21 +756,21 @@ void() TeamFortress_Inventory =
 				ac = ftos(ceil(tg.health));
 
 				if (!tg.dont_do_triggerwork || !(self.cutf_items & #CUTF_DOUBLESENTRY))
-					sprint (self, #PRINT_HIGH, "σεξτςω: ");
+					sprint (self, #PRINT_HIGH, "\ssentry\s: ");
 				else
 				{
 					if (tg.dont_do_triggerwork == 1)
-						sprint (self, #PRINT_HIGH, "σεξτςω £: ");
+						sprint (self, #PRINT_HIGH, "\ssentry\s \{163}\1: ");
 					else if (tg.dont_do_triggerwork == 2)
-						sprint (self, #PRINT_HIGH, "σεξτςω £: ");
+						sprint (self, #PRINT_HIGH, "\ssentry\s \{163}\2: ");
 					else
-						sprint (self, #PRINT_HIGH, "σεξτςω: ");
+						sprint (self, #PRINT_HIGH, "\ssentry\s: ");
 				}
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "―");
+				sprint (self, #PRINT_HIGH, "\{175}");
 				ac = ftos(ceil(tg.max_health));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, " θπ\n");
+				sprint (self, #PRINT_HIGH, " \shp\s\n");
 
 			}
 			tg = find(tg, classname, "building_sentrygun");
@@ -785,23 +787,23 @@ void() TeamFortress_Inventory =
 
 
 				if (!tg.dont_do_triggerwork || !(self.tf_items & #NIT_DOUBLETESLA))
-					sprint (self, #PRINT_HIGH, "τεσμα: ");
+					sprint (self, #PRINT_HIGH, "\stesla\s: ");
 				else
 				{
 					if (tg.dont_do_triggerwork == 1)
-						sprint (self, #PRINT_HIGH, "τεσμα £: ");
+						sprint (self, #PRINT_HIGH, "\stesla\s \{163}\1: ");
 					else if (tg.dont_do_triggerwork == 2)
-						sprint (self, #PRINT_HIGH, "τεσμα £: ");
+						sprint (self, #PRINT_HIGH, "\stesla\s \{163}\2: ");
 					else
-						sprint (self, #PRINT_HIGH, "τεσμα: ");
+						sprint (self, #PRINT_HIGH, "\stesla\s: ");
 				}
 
 				//sprint (self, #PRINT_HIGH, "τεσμα: ");
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "―");
+				sprint (self, #PRINT_HIGH, "\{175}");
 				ac = ftos(ceil(tg.max_health));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, " θπ\n");
+				sprint (self, #PRINT_HIGH, " \shp\s\n");
 
 			}
 			tg = find(tg, classname, "building_tesla");
@@ -815,12 +817,12 @@ void() TeamFortress_Inventory =
 			if (tg.real_owner == self)
 			{
 				ac = ftos(ceil(tg.health));
-				sprint (self, #PRINT_HIGH, "δισπεξσες: ");
+				sprint (self, #PRINT_HIGH, "\sdispenser\s: ");
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "―");
+				sprint (self, #PRINT_HIGH, "\{175}");
 				ac = ftos(ceil(tg.max_health));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, " θπ\n");
+				sprint (self, #PRINT_HIGH, " \shp\s\n");
 
 			}
 			tg = find(tg, classname, "building_dispenser");
@@ -834,12 +836,12 @@ void() TeamFortress_Inventory =
 			if (tg.real_owner == self)
 			{
 				ac = ftos(ceil(tg.health));
-				sprint (self, #PRINT_HIGH, "σεξσος: ");
+				sprint (self, #PRINT_HIGH, "\ssensor\s: ");
 				sprint (self, #PRINT_HIGH, ac);
 				sprint (self, #PRINT_HIGH, "―");
 				ac = ftos(ceil(tg.max_health));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, " θπ\n");
+				sprint (self, #PRINT_HIGH, " \shp\s\n");
 
 			}
 			tg = find(tg, classname, "building_sensor");
@@ -853,12 +855,12 @@ void() TeamFortress_Inventory =
 			if (tg.real_owner == self)
 			{
 				ac = ftos(ceil(tg.health));
-				sprint (self, #PRINT_HIGH, "γανεςα: ");
+				sprint (self, #PRINT_HIGH, "\scamera\s: ");
 				sprint (self, #PRINT_HIGH, ac);
 				sprint (self, #PRINT_HIGH, "―");
 				ac = ftos(ceil(tg.max_health));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, " θπ\n");
+				sprint (self, #PRINT_HIGH, " \shp\s\n");
 
 			}
 			tg = find(tg, classname, "building_camera");
@@ -872,19 +874,19 @@ void() TeamFortress_Inventory =
 			if (tg.real_owner == self)
 			{
 				ac = ftos(ceil(tg.health));
-				sprint (self, #PRINT_HIGH, "τεμεποςτες: ");
+				sprint (self, #PRINT_HIGH, "\steleporter\s: ");
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "―");
+				sprint (self, #PRINT_HIGH, "\{175}");
 				ac = ftos(ceil(tg.max_health));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "θπ ");
+				sprint (self, #PRINT_HIGH, "\shp\s ");
 
 				ac = ftos(ceil(tg.ammo_cells));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "―");
+				sprint (self, #PRINT_HIGH, "\{175}");
 				ac = ftos(ceil(tg.maxammo_cells));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "γεμμσ");
+				sprint (self, #PRINT_HIGH, "\scells\s");
 
 				if (!(tg.tf_items & #NIT_TURRET))
 				{
@@ -892,7 +894,7 @@ void() TeamFortress_Inventory =
 				}
 				else
 				{
-					sprint (self, #PRINT_HIGH, "¨T©\n");
+					sprint (self, #PRINT_HIGH, "\{168}T\{169}\n");
 				}
 
 			}
@@ -907,19 +909,19 @@ void() TeamFortress_Inventory =
 			if (tg.real_owner == self)
 			{
 				ac = ftos(ceil(tg.health));
-				sprint (self, #PRINT_HIGH, "Ζιεμδ Ηεξεςατος: ");
+				sprint (self, #PRINT_HIGH, "\sField Generator\s: ");
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "―");
+				sprint (self, #PRINT_HIGH, "\{175}");
 				ac = ftos(ceil(tg.max_health));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "θπ ");
+				sprint (self, #PRINT_HIGH, "\shp\s ");
 
 				ac = ftos(ceil(tg.ammo_cells));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "―");
+				sprint (self, #PRINT_HIGH, "\{175}");
 				ac = ftos(ceil(tg.maxammo_cells));
 				sprint (self, #PRINT_HIGH, ac);
-				sprint (self, #PRINT_HIGH, "γεμμσ\n");
+				sprint (self, #PRINT_HIGH, "\scells\s\n");
 
 			}
 			tg = find(tg, classname, "building_fieldgen");
@@ -1014,7 +1016,7 @@ void() TeamFortress_Inventory =
 	if (self.job & #JOB_ALL)
 	{	// PZ - .goal_no and .goal_effects are for martyr
 		if (self.job_finished <= time && self.goal_no <= time && self.goal_effects <= time)
-			sprint (self,#PRINT_HIGH, "Skill Time:  seconds");
+			sprint (self,#PRINT_HIGH, "Skill Time: \0 seconds");
 		else
 		{
 			if (self.job_finished >= self.goal_no && self.job_finished >= self.goal_effects)
@@ -1050,17 +1052,17 @@ void() TeamFortress_Inventory =
 			sprint(self,#PRINT_HIGH,"\nYou enjoy the AURA of ");
 
 		if (self.aura == #AURA_POWER)
-			sprint(self,#PRINT_HIGH,"ποχες.");
+			sprint(self,#PRINT_HIGH,"\spower\s.");
 		else if (self.aura == #AURA_RESIS)
-			sprint(self,#PRINT_HIGH,"ςεσισταξγε.");
+			sprint(self,#PRINT_HIGH,"\sresistance\s.");
 		else if (self.aura == #AURA_HASTE)
-			sprint(self,#PRINT_HIGH,"θαστε.");
+			sprint(self,#PRINT_HIGH,"\shaste\s.");
 		else if (self.aura == #AURA_INVIS)
-			sprint(self,#PRINT_HIGH,"ιξφισιβιμιτω.");
+			sprint(self,#PRINT_HIGH,"\sinvisibility\s.");
 		else if (self.aura == #AURA_REGEN)
-			sprint(self,#PRINT_HIGH,"ςεηεξεςατιοξ.");
+			sprint(self,#PRINT_HIGH,"\sregeneration\s.");
 		else if (self.aura == #AURA_SPEED)
-			sprint(self,#PRINT_HIGH,"σπεεδ.");
+			sprint(self,#PRINT_HIGH,"\sspeed\s.");
 	}
 
 	if (self.#runes) // OfN - List all the runes we own
@@ -2951,12 +2953,12 @@ void() TeamFortress_RemoveTimers =
 			if (CTF_Map == #TRUE && te.goal_no == #CTF_FLAG1)
 			{
 				bprint(#PRINT_HIGH, self.netname);
-				bprint(#PRINT_HIGH, " ΜΟΣΤ the ΒΜΥΕ flag!\n");
+				bprint(#PRINT_HIGH, " \sLOST\s the \sBLUE\s flag!\n");
 			}
 			else if (CTF_Map == #TRUE && te.goal_no == #CTF_FLAG2)
 			{
 				bprint(#PRINT_HIGH, self.netname);
-				bprint(#PRINT_HIGH, " ΜΟΣΤ the ÒΕΔ flag!\n");
+				bprint(#PRINT_HIGH, " \sLOST\s the \sRED\s flag!\n");
 			}
 
 		}

@@ -123,7 +123,7 @@ void() TeamFortress_HelpMap =
 	// OfN - Display settings
 	PrintGameSettings(#FALSE);
 
-	sprint(self,#PRINT_HIGH,"Ναπ Θεμπ:\n");
+	sprint(self,#PRINT_HIGH,"\sMap Help\s:\n");
 
 	local entity te;
 

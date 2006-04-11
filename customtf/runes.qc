@@ -181,7 +181,7 @@ void() StartRunes =
 	SpawnNewRune(#RUNE_REGEN);
 
 	// Notify to everybody!
-	bprint(#PRINT_HIGH,"Environment Ancient Runes located around the zone!\n");
+	bprint(#PRINT_HIGH,"Environment\{141} Ancient Runes located around the zone!\n");
 };
 
 //=========================================================================
@@ -239,7 +239,7 @@ void() EndRunes =
 	}
 
 	// Notify to everybody the party is over!
-	bprint(#PRINT_HIGH,"Environment Ancient Runes don't exist anymore!\n");
+	bprint(#PRINT_HIGH,"Environment\{141} Ancient Runes don't exist anymore!\n");
 };
 
 //===========================================================================
@@ -734,13 +734,13 @@ float(entity player) GetPlayerNoRunes =
 string(float runetype) GetRuneString =
 {
 	if (runetype == #RUNE_TRIAD)
-		return "Ôòéáä Òõîå";
+		return "\sTried Rune\s";
 	if (runetype == #RUNE_RESIS)
-		return "Òåóéóô Òõîå";
+		return "\sResist Rune\s";
 	if (runetype == #RUNE_SPEED)
-		return "Óğååä Òõîå";
+		return "\sSpeed Rune\s";
 	if (runetype == #RUNE_REGEN)
-		return "Òåçåî Òõîå";
+		return "\sRegen Rune\s";
 
 	return "ERROR!";
 };

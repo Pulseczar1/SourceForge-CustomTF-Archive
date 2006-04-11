@@ -1,19 +1,13 @@
-/*=======================================================//
-// ofndefs.QC - CustomTF 3.2.OfN           - 30/1/2001 - //
-// by Sergio Fumaña Grunwaldt - OfteN [cp]               //
-=========================================================//
+/*
+==============================================================================
+
+ofndefs.QC
+CustomTF 3.2.OfN
+
  Debug flags and other *IMPORTANT* settings and flags
- --------------------------------------------------------
- Special number chars reference:  (why here? dunno..)
 
- 0123456789  --> Normally white
- °±²³´µ¶·¸¹  --> Normally red
-   --> Normally gold
- ’“”•–—˜™š›  --> Normally gold (2nd variation)
-
- The actual color depends on the gfx.wad the client uses
- or the charset loaded into fuhquake.
-=========================================================*/
+==============================================================================
+*/
 
 // This file does not have any QuakeC, only preprocessor stuff, so..
 #pragma DONT_COMPILE_THIS_FILE
@@ -116,7 +110,7 @@
 #define WAYPOINT_LIFE         240 // 120 after this amount of seconds any unused waypoint will be removed
 #define MAXAMMO_CELLS         275 // was 320 // Engineer max is set on defs.qc PC_ENGINNER_XX
 #define SENTRY_UNLOCKTIME       2.5 // (must be greater than 1.1) time for the sentries to begin to rotate after they have no target (+/- 1 second)
-#define HAX_UNSTABLEDIST      300 // distance at which enemy hacks take longer cause of "unstable connection"
+#define HAX_UNSTABLEDIST      300 // distance at which enemy hacks take longer because of "unstable connection"
 #define WAYPOINT_AI_LIFE       10 // life for grunty ai created waypoints - last seen enemy mark
 #define ATTN_MONSTERDIE         #ATTN_NONE // #ATTN_NORM
 #define MINE_SCANRATE           0.6 // mines look again for nearby enemy after this time - it was 1 which caused high ping players to not trigger mines sometimes walking around them fast
@@ -137,7 +131,7 @@
 #define MIN_IN_DMGFACTOR           0.25
 //-------------------------------------//
 
-#define LASER_CANNON_DMG       36//26 // was 28
+#define LASER_CANNON_DMG       30 //26 // was 28 //RJ was 36
 
 #define GRUNTY_SEEKTIME         8
 
@@ -173,13 +167,13 @@
 
 // detpack fx
 #ifdef EXTRA_DETPACK_EXPLOSIONS
-    #define EXTRA_DETEXPLOSIONS       4 // 5 // was 6
+	#define EXTRA_DETEXPLOSIONS       4 // 5 // was 6
 #endif
 
 #define DETPACK_EARTHQUAKE // <-- Shakes players near detpacks explosion
 
 #ifdef DETPACK_EARTHQUAKE
-    #define DETPACK_EARTHQUAKE_RANGE  1200
+	#define DETPACK_EARTHQUAKE_RANGE  1200
 #endif
 
 #define ADMIN_CMND_ALLOWED
@@ -198,12 +192,12 @@
 #define AIRFIST_PUSH_DETPACK     0.5 // The amount to push detpacks.
 #define AIRFIST_PUSH_HWGUY       0.25
 
-#define DONT_SET_AURA_TO_ENEMIES // unless they r spies, of course..
+#define DONT_SET_AURA_TO_ENEMIES // unless they are spies, of course..
 #define ALLOW_AURAS_ON_CRUSADERS
 
 #define PUSHABLE_SCRAG // scrag pushable by the airfist?
-#define PUSHABLE_ARMY
-#define PUSHABLE_FIEND
+//#define PUSHABLE_ARMY
+//#define PUSHABLE_FIEND
 
 #define HUNTED_YELLOWTEAM_FACTOR 0.5 // this multiplied to current red players is max for yellow team on huntedr
 #define BORDER_FACTOR 0.5
@@ -266,13 +260,13 @@
 #define NAPALM_MINRATE 0.1
 #define NAPALM_MAXRATE 0.4
 #define NAPALM_BURNTIMES 8
-#define NAPALM_MINDMG 40 // PZ - was 60
-#define NAPALM_MAXDMG 80 // PZ - was 120
-#define NAPALM_MAINDMG 100 // PZ - was 140
+#define NAPALM_MINDMG 50 // PZ - was 60
+#define NAPALM_MAXDMG 100 // PZ - was 120
+#define NAPALM_MAINDMG 120 // PZ - was 140
 
 #define AIRFIST_CELLS_COST    5
 
-#define PSIONICS_TIME 3.5 // Seconds for the psionic gren effects to last // PZ - was 4.5
+#define PSIONICS_TIME 4.0 // Seconds for the psionic gren effects to last // PZ - was 4.5
 #define PSIONIC_MOVEFACTOR 0.5
 #define PSIONIC_EXPLOSIONRANGE 200 // PZ - was 250
 
@@ -322,7 +316,7 @@
 #define UNABLE_TOVOTE_FORSAME_MAP
 
 //#define XMAS_STUFF
-#define LIGHTNING_PUSHES
+#define LIGHTNING_PUSHES //RJ was commented
 
 //__________________________________________________________//
 //                                                          //
@@ -444,11 +438,11 @@
 //====================================//
 
 #ifdef GIBABLE_CORPSES
-    #define USE_CORPSE_CODE
+	#define USE_CORPSE_CODE
 #endif
 
 #ifdef IDABLE_CORPSES
-    #ifndef USE_CORPSE_CODE
-        #define USE_CORPSE_CODE
-    #endif
+	#ifndef USE_CORPSE_CODE
+		#define USE_CORPSE_CODE
+	#endif
 #endif

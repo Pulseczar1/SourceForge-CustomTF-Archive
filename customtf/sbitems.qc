@@ -522,7 +522,7 @@ float() MotionSensorFindTarget =
 		self.effects = #EF_BRIGHTLIGHT; self.skin=0;
 	}
 
-	sprint(self.real_owner,#PRINT_HIGH,"Ωους νοτιοξ σεξσος ςεποςτσ εξενω πςεσεξγε!\n");
+	sprint(self.real_owner,#PRINT_HIGH,"\sYour motion sensor reports enemy presence\s\n");
 
 	self.think = SensorBeAlarmed;
 	return #TRUE;

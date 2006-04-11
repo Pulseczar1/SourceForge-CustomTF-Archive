@@ -1937,7 +1937,7 @@ float       rj;					// Rocket Jump Modifier
 #define PC_SNIPER_MAXAMMO_ROCKET		25 
 #define PC_SNIPER_INITAMMO_SHOT		60 
 #define PC_SNIPER_INITAMMO_NAIL		50 
-#define PC_SNIPER_INITAMMO_CELL		0 
+#define PC_SNIPER_INITAMMO_CELL		55 
 #define PC_SNIPER_INITAMMO_ROCKET		0 
 #define PC_SNIPER_GRENADE_TYPE_1		#GR_TYPE_CALTROP
 #define PC_SNIPER_GRENADE_TYPE_2		#GR_TYPE_FLARE //- OfN it was #GR_TYPE_FLASH 
@@ -2174,7 +2174,7 @@ float       rj;					// Rocket Jump Modifier
 #define PC_CIVILIAN_GRENADE_TYPE_2		0
 #define PC_CIVILIAN_GRENADE_INIT_1		2 	 
 #define PC_CIVILIAN_GRENADE_INIT_2		0 	 
-#define PC_CIVILIAN_TF_ITEMS			0 
+#define PC_CIVILIAN_TF_ITEMS			#NIT_RESPAWN_GUARD //pwn- added for spam
 #define PC_CIVILIAN_JOB				#JOB_THIEF
 #define PC_CIVILIAN_CUTFITEMS			#CUTF_KNIFE
 

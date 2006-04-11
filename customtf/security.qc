@@ -207,7 +207,7 @@ void() Security_Camera_PrintTarget =
 {
 	local string st;
 
-	sprint(self.real_owner, #PRINT_HIGH, "сецуриты цамера  "); //<>Security camera<>
+	sprint(self.real_owner, #PRINT_HIGH, "\{157}\{159}\sSecurity Camera\s\{157}\{159}  "); //<>Security camera<>
 	st = GetTrueTeamName(self.enemy.team_no);
 	sprint(self.real_owner, #PRINT_HIGH, st);
 
