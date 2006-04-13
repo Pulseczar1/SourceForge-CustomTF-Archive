@@ -1,14 +1,22 @@
-/* ALL MONSTERS SHOULD BE 1 0 0 IN COLOR */
+/*
+==============================================================================
 
-// name =[framenum,	nexttime, nextthink] {code}
-// expands to:
-// name ()
-// {
-//		self.frame=framenum;
-//		self.nextthink = time + nexttime;
-//		self.think = nextthink
-//		<code>
-// };
+monsters.QC
+
+ ALL MONSTERS SHOULD BE 1 0 0 IN COLOR
+
+name =[framenum,	nexttime, nextthink] {code}
+expands to:
+name ()
+{
+	self.frame=framenum;
+	self.nextthink = time + nexttime;
+	self.think = nextthink
+	<code>
+};
+
+==============================================================================
+*/
 
 //- OfN -
 entity (vector location, float life, float type, entity sld) CreateWaypoint;
@@ -27,11 +35,11 @@ returns 1 if the entity is visible to self, even if not infront ()
 float (entity targ) visible =
 {
 	local vector	spot1, spot2;
-	
+
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	traceline (spot1, spot2, #TL_BSP_ONLY, self);	// see through other monsters
-	
+
 	if (trace_inopen && trace_inwater)
 		return #FALSE;			// sight line crossed contents
 
@@ -43,11 +51,11 @@ float (entity targ) visible =
 float (entity targ, entity check) visible2 =
 {
 	local vector	spot1, spot2;
-	
+
 	spot1 = check.origin + check.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	traceline (spot1, spot2, #TL_BSP_ONLY, check);	// see through other monsters
-	
+
 	if (trace_inopen && trace_inwater)
 		return #FALSE;			// sight line crossed contents
 
@@ -60,20 +68,20 @@ float (entity targ, entity check) visible2 =
 float (entity targ, entity check) visible2x =
 {
 	local vector	spot1, spot2;
-	
+
 	spot1 = check.origin + check.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
-	
-    if (check.classname == "building_sentrygun")
-    {
-        if (check.tf_items & #NIT_TURRET)
-            spot1 = check.origin + check.view_ofs - '0 0 20';
-        else
-            spot1 = check.origin + check.view_ofs + '0 0 20';
-    }
 
-    traceline (spot1, spot2, #TL_BSP_ONLY, check);	// see through other monsters
-	
+	if (check.classname == "building_sentrygun")
+	{
+		if (check.tf_items & #NIT_TURRET)
+			spot1 = check.origin + check.view_ofs - '0 0 20';
+		else
+			spot1 = check.origin + check.view_ofs + '0 0 20';
+	}
+
+	traceline (spot1, spot2, #TL_BSP_ONLY, check);	// see through other monsters
+
 	if (trace_inopen && trace_inwater)
 		return #FALSE;			// sight line crossed contents
 
@@ -95,7 +103,7 @@ void() monster_knight =
 {
 	dremove(self);
 };
- 
+
 void() monster_shambler =
 {
 	dremove(self);
@@ -225,7 +233,7 @@ void() t_movetarget =
 
 	if (other.movetarget != self)
 		return;
-	
+
 	if (other.enemy)
 		return;		// fighting, not following a path
 
@@ -261,11 +269,11 @@ float(float v) anglemod =
 float(entity targ) range =
 {
 	local vector	spot1, spot2;
-	local float		r;	
+	local float		r;
 
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
-	
+
 	r = vlen (spot1 - spot2);
 	if (r < 120)
 		return #RANGE_MELEE;
@@ -289,11 +297,11 @@ float(entity targ) infront =
 {
 	local vector	vec;
 	local float		dot;
-	
+
 	makevectors (self.angles);
 	vec = normalize (targ.origin - self.origin);
 	dot = vec * v_forward;
-	
+
 	if ( dot > 0.3)
 	{
 		return #TRUE;
@@ -339,7 +347,7 @@ float() FindTarget =
 //WK THIS CODE IS #DEF-ed out!!
 /* WK Replace this with the code from sentry
 	local entity	client;
-	
+
 	client = checkclient ();
 
 	if (!client)
@@ -349,12 +357,12 @@ float() FindTarget =
 		return #FALSE;
 	if (client.items & #IT_INVISIBILITY)
 		return #FALSE;
-	
+
 	if (!visible (client))
 		return #FALSE;
 
 	if (client.classname != "player")
-		return #FALSE;	
+		return #FALSE;
 
 	self.enemy = client;
 
@@ -412,8 +420,8 @@ float() FindTarget =
 
 		r = range (client);
 		if (r == #RANGE_FAR)
-			gotone = #FALSE;			
-	
+			gotone = #FALSE;
+
 		if (r == #RANGE_NEAR)
 		{
 			if (client.show_hostile < time && !infront (client))
@@ -442,7 +450,7 @@ float() FindTarget =
 			return #FALSE;
 		}
 	}
-	
+
 	HuntTarget ();
 
 	return #TRUE;
@@ -494,9 +502,8 @@ void() monster_use =
 		return;
 	if (activator.classname != "player")
 		return;
-	
-// delay reaction so if the monster is teleported, its sound is still
-// heard
+
+	// delay reaction so if the monster is teleported, its sound is still heard
 	self.enemy = activator;
 	self.nextthink = time + 0.1;
 	self.think = FoundTarget;
@@ -505,7 +512,7 @@ void() monster_use =
 /*===========================
 set_monster_health
 
-Increases the monsters health 
+Increases the monsters health
 for skill levels above 3
 doesnt work
 ===========================*/
@@ -536,7 +543,7 @@ void() monster_death_use =
 {
 	local entity 	ent, otemp;
 
-// fall to ground
+	// fall to ground
 	if (self.flags & #FL_FLY)
 		self.flags = self.flags - #FL_FLY;
 	if (self.flags & #FL_SWIM)
@@ -554,89 +561,89 @@ void() monster_death_use =
 
 void() walkmonster_start_go =
 {
-//	local entity	etemp;
-//	local float		failure;
-//	local vector	test;
+	//local entity	etemp;
+	//local float		failure;
+	//local vector	test;
 
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 	droptofloor();
-	
-/*	failure = 1;
-	
+
+	/*failure = 1;
+
 	test = self.origin;
 	test_z = test_z - self.mins_z - 1;
-	
+
 	if (pointcontents(test) == #CONTENT_SOLID)
 		failure = 0;
-	
+
 	test = self.origin - self.mins;
 	test_z = test_z - 1;
-	
+
 	if (pointcontents(test) == #CONTENT_SOLID)
 		failure = 0;
-	
+
 	test_x = test_x - self.mins_x + self.maxs_x;
-	
+
 	if (pointcontents(test) == #CONTENT_SOLID)
 		failure = 0;
-	
+
 	test_y = test_y - self.mins_y + self.maxs_y;
-	
+
 	if (pointcontents(test) == #CONTENT_SOLID)
 		failure = 0;
-		
+
 	test_x = test_x - self.maxs_x + self.mins_x;
 
 	if (pointcontents(test) == #CONTENT_SOLID)
 		failure = 0;*/
-	
+
 	if (!walkmove(0,0))
-//	if (failure)
+	//if (failure)
 	{
-/*		RPrint ("walkmonster in wall at: ");
+		/*RPrint ("walkmonster in wall at: ");
 		RPrint (vtos(self.origin));
 		RPrint ("\n"); */
-		
+
 		//- OfN - if (self.classname == "monster_demon1" || self.classname == "monster_army" || self.classname == "monster_shambler")
-        if (IsMonster(self))
+		if (IsMonster(self))
 			if (self.real_owner.classname == "player")
 			{
 				//self.real_owner.job = self.real_owner.job - (self.real_owner.job & #JOB_DEMON_OUT);
 				local string MName;
-                MName=GetMonsterName(self);
-                sprint(self.real_owner,#PRINT_HIGH,"Your ");
-                sprint(self.real_owner,#PRINT_HIGH,MName);
-                sprint(self.real_owner,#PRINT_HIGH," was beamed into a wall and died.\n");
+				MName=GetMonsterName(self);
+				sprint(self.real_owner,#PRINT_HIGH,"Your ");
+				sprint(self.real_owner,#PRINT_HIGH,MName);
+				sprint(self.real_owner,#PRINT_HIGH," was beamed into a wall and died.\n");
 
 				/* TODO:
-                if (self.classname == "monster_shambler") //- ofn
+				if (self.classname == "monster_shambler") //- ofn
 				{
 					self.real_owner.demon_blood = self.real_owner.demon_blood + 4;
 					if (self.real_owner.demon_blood > #MAX_KNIFE_BLOOD)
 						self.real_owner.demon_blood = #MAX_KNIFE_BLOOD;
 				}
-                else if (self.classname == "monster_demon1") //- ofn
+				else if (self.classname == "monster_demon1") //- ofn
 				{
 					self.real_owner.demon_blood = self.real_owner.demon_blood + 2;
 					if (self.real_owner.demon_blood > #MAX_KNIFE_BLOOD)
 						self.real_owner.demon_blood = #MAX_KNIFE_BLOOD;
 				}*/
-                
-                /*else if (self.classname == "monster_wizard") //- ofn
+
+				/*else if (self.classname == "monster_wizard") //- ofn
 				{
 					self.real_owner.demon_blood = self.real_owner.demon_blood + ? ;
 					if (self.real_owner.demon_blood > #MAX_KNIFE_BLOOD)
 						self.real_owner.demon_blood = #MAX_KNIFE_BLOOD;
 				}*/
 
-                //kill_his_demons(self.real_owner);
-                KillSoul(self.real_owner,self.increase_team1);
-                return;
+				//kill_his_demons(self.real_owner);
+				KillSoul(self.real_owner,self.increase_team1);
+				return;
 			}
 		dremove(self);
 		return;
 	}
-	
+
 	self.takedamage = #DAMAGE_AIM;
 
 	self.ideal_yaw = self.angles * '0 1 0';
@@ -645,9 +652,9 @@ void() walkmonster_start_go =
 
 	self.view_ofs = '0 0 25';
 	self.use = monster_use;
-	
+
 	self.flags = self.flags | #FL_MONSTER;
-	
+
 	if (self.target)
 	{
 		self.goalentity = self.movetarget = find(world, targetname, self.target);
@@ -658,7 +665,7 @@ void() walkmonster_start_go =
 			RPrint (vtos(self.origin));
 			RPrint ("\n");
 		}
-// this used to be an objerror
+		// this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
 		else
@@ -670,29 +677,29 @@ void() walkmonster_start_go =
 		self.pausetime = 99999999;
 		self.th_stand ();
 	}
-	
+
 	if (self.classname == "monster_army")
 	{
-        self.martyr_enemy = CreateWaypoint(self.origin,#WAYPOINT_LIFE,#WAYPOINT_TYPE_PRIMARY, self);
+		self.martyr_enemy = CreateWaypoint(self.origin,#WAYPOINT_LIFE,#WAYPOINT_TYPE_PRIMARY, self);
 		self.martyr_enemy.goalentity = world;
 
-        // OFTEN
-        self.demon_two=world;
-        self.demon_one=world;
-        // OFTEN
+		// OFTEN
+		self.demon_two=world;
+		self.demon_one=world;
+		// OFTEN
 
 		self.goalentity = world;
 	}
 
-// spread think times so they don't all happen at same time
+	// spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 };
 
 
 void() walkmonster_start =
 {
-// delay drop to floor to make sure all doors have been spawned
-// spread think times so they don't all happen at same time
+	// delay drop to floor to make sure all doors have been spawned
+	// spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + 1; //WK Give time to run from demons
 	//WK self.nextthink = self.nextthink + random()*0.5;
 	self.think = walkmonster_start_go;
@@ -731,7 +738,7 @@ void() flymonster_start_go =
 			RPrint (vtos(self.origin));
 			RPrint ("\n");
 		}
-// this used to be an objerror
+		// this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
 		else
@@ -747,9 +754,9 @@ void() flymonster_start_go =
 
 void() flymonster_start =
 {
-// spread think times so they don't all happen at same time
+	// spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
-        
+
 	self.think = flymonster_start_go;
 	total_monsters = total_monsters + 1;
 	set_monster_health();
@@ -772,7 +779,7 @@ void() swimmonster_start_go =
 		self.yaw_speed = 25; // Original 10
 	self.view_ofs = '0 0 10';
 	self.use = monster_use;
-	
+
 	self.flags = self.flags | #FL_SWIM;
 	self.flags = self.flags | #FL_MONSTER;
 
@@ -785,7 +792,7 @@ void() swimmonster_start_go =
 			RPrint (vtos(self.origin));
 			RPrint ("\n");
 		}
-// this used to be an objerror
+		// this used to be an objerror
 		self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
 		self.th_walk ();
 	}
@@ -795,13 +802,13 @@ void() swimmonster_start_go =
 		self.th_stand ();
 	}
 
-// spread think times so they don't all happen at same time
+	// spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 };
 
 void() swimmonster_start =
 {
-// spread think times so they don't all happen at same time
+	// spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = swimmonster_start_go;
 	total_monsters = total_monsters + 1;
@@ -810,13 +817,13 @@ void() swimmonster_start =
 // WK #endif
 
 //===========================================================================
-// Declares a monster dead 
+// Declares a monster dead
 
 void() MonsterDead =
 {
-    self.th_die = SUB_Null;
-    self.classname = "monster_corpse";
-    SpawnBloodEx(self.origin,0.75,9);
+	self.th_die = SUB_Null;
+	self.classname = "monster_corpse";
+	SpawnBloodEx(self.origin,0.75,9);
 };
 
 //============================================================================
@@ -824,25 +831,25 @@ void() MonsterDead =
 
 void() MonsterCorpse =
 {
-    self.nextthink = time + #MIN_CORPSE_TIME + (#MAX_CORPSE_TIME - #MIN_CORPSE_TIME)*random();	
+	self.nextthink = time + #MIN_CORPSE_TIME + (#MAX_CORPSE_TIME - #MIN_CORPSE_TIME)*random();
 	self.think = SUB_Remove;
-    
-    #ifdef GIBABLE_CORPSES
-    if (self.#monster_type == #MONSTER_SCRAG)
-        MakeCorpse(self,#CORPSE_HP_SCRAG);
-    else if (self.#monster_type == #MONSTER_FISH)
-        MakeCorpse(self,#CORPSE_HP_FISH);
-    else if (self.#monster_type == #MONSTER_DEMON)
-        MakeCorpse(self,#CORPSE_HP_DEMON);
-    else if (self.#monster_type == #MONSTER_GREMLIN)
-        MakeCorpse(self,#CORPSE_HP_GREMLIN);
-    else if (self.#monster_type == #MONSTER_SHAMBLER)
-        MakeCorpse(self,#CORPSE_HP_SHAMBLER);
-    else if (self.#monster_type == #MONSTER_ARMY)
-        MakeCorpse(self,#CORPSE_HP_ARMY);
-    else 
-        MakeCorpse(self,200); // Shouldnt happen, if it does, bug
-    #endif
+
+	#ifdef GIBABLE_CORPSES
+	if (self.#monster_type == #MONSTER_SCRAG)
+		MakeCorpse(self,#CORPSE_HP_SCRAG);
+	else if (self.#monster_type == #MONSTER_FISH)
+		MakeCorpse(self,#CORPSE_HP_FISH);
+	else if (self.#monster_type == #MONSTER_DEMON)
+		MakeCorpse(self,#CORPSE_HP_DEMON);
+	else if (self.#monster_type == #MONSTER_GREMLIN)
+		MakeCorpse(self,#CORPSE_HP_GREMLIN);
+	else if (self.#monster_type == #MONSTER_SHAMBLER)
+		MakeCorpse(self,#CORPSE_HP_SHAMBLER);
+	else if (self.#monster_type == #MONSTER_ARMY)
+		MakeCorpse(self,#CORPSE_HP_ARMY);
+	else
+		MakeCorpse(self,200); // Shouldnt happen, if it does, bug
+	#endif
 };
 
 //=======================================================================
@@ -850,9 +857,9 @@ void() MonsterCorpse =
 
 void() MonsterAuraPower =
 {
-    if (self.aura == #AURA_POWER && self.super_sound < time)
-    {
-        sound (self, #CHAN_BODY, "auras/aura2b.wav", 1, #ATTN_NORM);
-        self.super_sound = time + 1;
-    }
+	if (self.aura == #AURA_POWER && self.super_sound < time)
+	{
+		sound (self, #CHAN_BODY, "auras/aura2b.wav", 1, #ATTN_NORM);
+		self.super_sound = time + 1;
+	}
 };

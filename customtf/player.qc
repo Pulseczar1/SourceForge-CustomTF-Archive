@@ -290,6 +290,8 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 
 void()	player_run =[	$rockrun1,	player_run	]
 {
+	local float rnum;
+	rnum = random();
 	self.weaponframe=0;
 	if (!self.velocity_x && !self.velocity_y)
 	{
@@ -309,6 +311,61 @@ void()	player_run =[	$rockrun1,	player_run	]
 		if (self.walkframe >= 6)
 			self.walkframe = 0;
 		self.frame = self.frame + self.walkframe;
+	}
+	if (footsteps == 1 && checkbottom(self) == 1 && self.playerclass != #PC_UNDEFINED)
+	{
+		if (self.velocity_x > 200 || self.velocity_y > 200 || (self.velocity_x < -200 || self.velocity_y < -200))
+		{
+			if (self.cutf_items & #CUTF_STEALTH)
+			{
+				self.walkframe = self.walkframe + 1;
+				return;
+			}
+			if (self.walkframe == 1)
+			{
+				if (self.waterlevel == 0)
+				{
+					if (rnum < 0.6)
+					{
+						sound(self, #CHAN_BODY, "player/step1l.wav", 0.8, #ATTN_NORM);
+					}
+					else
+					{
+						sound(self, #CHAN_VOICE, "player/step2l.wav", 0.8, #ATTN_NORM);
+					}
+				}
+				if (self.waterlevel == 1)
+				{
+					sound(self, #CHAN_VOICE, "player/h2ojump.wav", 0.8, #ATTN_NORM);
+				}
+				if (self.waterlevel == 2)
+				{
+					sound(self, #CHAN_VOICE, "player/inh2o.wav", 0.8, #ATTN_NORM);
+				}
+			}
+			if (self.walkframe == 4)
+			{
+				if (self.waterlevel == 0)
+				{
+					if (rnum < 0.5)
+					{
+						sound(self, #CHAN_VOICE, "player/step1r.wav", 0.8, #ATTN_NORM);
+					}
+					else
+					{
+						sound(self, #CHAN_VOICE, "player/step2r.wav", 0.8, #ATTN_NORM);
+					}
+				}
+				if (self.waterlevel == 1)
+				{
+					sound(self, #CHAN_VOICE, "player/h2ojump.wav", 0.8, #ATTN_NORM);
+				}
+				if (self.waterlevel == 2)
+				{
+					sound(self, #CHAN_VOICE, "player/inh2o.wav", 0.8, #ATTN_NORM);
+				}
+			}
+		}
 	}
 	self.walkframe = self.walkframe + 1;
 };

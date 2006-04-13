@@ -704,6 +704,13 @@ void() DecodeLevelParms =
 		else if (st == "off")
 			invis_only = #FALSE;
 
+		//RJ - MegaTF footsteps
+		st = infokey(world, "footsteps");
+		if (st == "on")
+			footsteps = #TRUE;
+		else
+			footsteps = #FALSE;
+
 		// RespawnDelay
 		st = infokey(world, "rd");
 		if (st == string_null)
