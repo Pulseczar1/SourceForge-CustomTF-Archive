@@ -19,7 +19,6 @@ debug.qc
 optimize.qc
 
 ofndefs.qc
-prozac.qc
 sprites.qc
 
 environ.qc
@@ -51,7 +50,6 @@ army.qc
 monsters.qc
 ai.qc
 fight.qc
-
 
 demon.qc
 shambler.qc
@@ -102,8 +100,6 @@ vote.qc
 cmnd.qc
 runes.qc
 megatf.qc
-
-
 
 fteqw.qc
 

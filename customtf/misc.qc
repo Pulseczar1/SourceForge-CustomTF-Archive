@@ -15,8 +15,6 @@ void() info_notnull =
 };
 
 
-//============================================================================
-
 #define START_OFF	1
 
 void() light_use =
@@ -133,7 +131,7 @@ void() light_globe =
 void() FireAmbient =
 {
 	precache_sound ("ambience/fire1.wav");
-// attenuate fast
+	// attenuate fast
 	ambientsound (self.origin, "ambience/fire1.wav", 0.5, #ATTN_STATIC);
 };
 
@@ -208,8 +206,6 @@ void() light_flame_small_white =
 	makestatic (self);
 };
 
-//============================================================================
-
 
 /*QUAKED misc_fireball (0 .5 .8) (-8 -8 -8) (8 8 8)
 Lava Balls
@@ -262,8 +258,6 @@ void() fire_touch =
 	dremove(self);
 };
 
-//============================================================================
-
 
 void() barrel_explode =
 {
@@ -288,8 +282,6 @@ void() barrel_explode =
 	remove (self);
 #endif
 };
-
-
 
 /*QUAKED misc_explobox (0 .5 .8) (0 0 0) (32 32 64)
 TESTING THING
@@ -327,9 +319,6 @@ void() misc_explobox =
 	}
 };
 
-
-
-
 /*QUAKED misc_explobox2 (0 .5 .8) (0 0 0) (32 32 64)
 Smaller exploding box, REGISTERED ONLY
 */
@@ -366,7 +355,6 @@ void() misc_explobox2 =
 	}
 };
 
-//============================================================================
 
 void(vector org, vector vec) LaunchLaser;
 void() Laser_Touch;
@@ -455,7 +443,7 @@ void(vector org, vector vec) TFFireRocket =
 	vec = normalize(vec);
 
 
-//?	KickPlayer(-2, self);
+	//?	KickPlayer(-2, self);
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
@@ -529,31 +517,31 @@ void(vector org, vector vec) TFFireFlame =
 	local	vector	vec;
 	vec = normalize(vec);
 
-    local   entity flame;
-//    local   float rn;
+	local   entity flame;
+	//local   float rn;
 
-    flame = spawn ();
+	flame = spawn ();
 
-    flame.owner = self;
-    flame.movetype = #MOVETYPE_FLYMISSILE;
-    flame.solid = #SOLID_BBOX;
-    flame.classname = "flamerflame";
+	flame.owner = self;
+	flame.movetype = #MOVETYPE_FLYMISSILE;
+	flame.solid = #SOLID_BBOX;
+	flame.classname = "flamerflame";
 
 	makevectors (self.v_angle);
 
-    flame.velocity = aim(self, 10000);
-    flame.velocity = vec * 600;
+	flame.velocity = aim(self, 10000);
+	flame.velocity = vec * 600;
 
-    flame.angles = vectoangles(flame.velocity);
+	flame.angles = vectoangles(flame.velocity);
 
-    flame.touch = Flamer_stream_touch;
+	flame.touch = Flamer_stream_touch;
 
-    flame.think = s_explode1;
-    flame.nextthink = time + 0.15;
+	flame.think = s_explode1;
+	flame.nextthink = time + 0.15;
 
-    setmodel (flame, "progs/s_explod.spr");
-    setsize (flame, '0 0 0', '0 0 0');
-    setorigin (flame, org);
+	setmodel (flame, "progs/s_explod.spr");
+	setsize (flame, '0 0 0', '0 0 0');
+	setorigin (flame, org);
 };
 
 void() spikeshooter_use =
@@ -682,14 +670,6 @@ void() trap_tf_shooter =
 };
 
 
-/*
-===============================================================================
-
-
-===============================================================================
-*/
-
-
 void() make_bubbles;
 void() bubble_remove;
 void() bubble_bob;
@@ -765,7 +745,7 @@ void() bubble_remove =
 {
 	if (other.classname == self.classname)
 	{
-//		RPrint ("bump");
+		//RPrint ("bump");
 		return;
 	}
 	dremove(self);
@@ -773,8 +753,8 @@ void() bubble_remove =
 
 void() bubble_bob =
 {
-local float		rnd1, rnd2, rnd3;
-//local vector	vtmp1, modi;
+	local float		rnd1, rnd2, rnd3;
+	//local vector	vtmp1, modi;
 
 	self.cnt = self.cnt + 1;
 	if (self.cnt == 4)
@@ -809,8 +789,6 @@ local float		rnd1, rnd2, rnd3;
 	self.think = bubble_bob;
 };
 
-/*~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>
-~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~<~>~*/
 
 /*QUAKED viewthing (0 .5 .8) (-8 -8 -8) (8 8 8)
 
@@ -1086,4 +1064,3 @@ void() misc_noisemaker =
 	self.nextthink = time + 0.1 + random();
 	self.think = noise_think;
 };
-
