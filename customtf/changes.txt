@@ -179,6 +179,7 @@ Changes/Balance:
 - Summons
 	Shouldn't be able to infect summons.. too easy to kill them that way -Pulseczar
 		- Disabled, should be fixed
+	Summons no longer fistable, except scrag -p4wn/RJ
 
 - Lightning Gun
 	Re-enabled the 'push' (via the #define in ofndefs) :P -RJ
@@ -188,10 +189,18 @@ Changes/Balance:
 	Updated the curse server to an Amnesia megatf server address in the source (theres a key for it as well that most probably don't even know about)
 	Added mtf rocket speed (900 -> 1350)
 	Grenades now sound megatfish, players can hear others prime 'nade
+	Added mtf foorsteps, enable with the footsteps key
 
 - Prematch
 	Now permits reloading and grenades (hey, why not?) -RJ
 
+- Classes
+	Civilian
+		Now has respawn gaurd -p4wn
+
+- Obituaries: Updated some of the death messages - p4wn
+
+- Menus: Fixed a small bug when using some of the spectator menu options, it just visually displayed the wrong menu (functionally fine though) -RJ
 
 ========================================================================
 Known Issues:
