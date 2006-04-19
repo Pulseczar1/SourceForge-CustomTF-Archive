@@ -168,7 +168,7 @@ float(entity test) AI_Check_Contents =
 
 			// Asbestos armor helps against lava, but I doubt it'll save you :)
 			//TF_T_Damage (self, world, world, 25, 0, #TF_TD_FIRE);
-            if (IsMonster(self) && self.#monster_type != #MONSTER_FISH)            
+            if (IsMonster(self) && self.#monster_type != #MONSTER_FISH) //pwn- changed so the fish could be more use
             {
                 local string MName;
                 MName = GetMonsterName(self);
@@ -212,7 +212,7 @@ float(entity test) AI_Check_Contents =
 			//T_Damage (self, world, world, 4*self.waterlevel);
 			//TF_T_Damage (self, world, world, 5, 0, #TF_TD_ELECTRICITY);
 
-            if (IsMonster(self) && self.#monster_type != #MONSTER_FISH)            
+            if (IsMonster(self) && self.#monster_type != #MONSTER_FISH) //pwn- changed so the fish could be more use
             {
                 local string MName;
                 MName = GetMonsterName(self);

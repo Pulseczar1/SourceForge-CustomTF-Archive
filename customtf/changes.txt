@@ -180,6 +180,10 @@ Changes/Balance:
 	Shouldn't be able to infect summons.. too easy to kill them that way -Pulseczar
 		- Disabled, should be fixed
 	Summons no longer fistable, except scrag -p4wn/RJ
+      'Zombie Fish' has been taken care of -p4wn
+      The summon-link error message for scrag has been fixed -p4wn
+      Fish is now stronger, tougher, etc. and worth using some time. -p4wn
+      Fish can now swim in lava and slime without damage -p4wn
 
 - Lightning Gun
 	Re-enabled the 'push' (via the #define in ofndefs) :P -RJ
@@ -199,6 +203,8 @@ Changes/Balance:
 		Now has respawn gaurd -p4wn
 
 - Obituaries: Updated some of the death messages - p4wn
+              -Flare now has an appropriate death msg
+              -Changed the dumb one for the impulse rifle             
 
 - Menus: Fixed a small bug when using some of the spectator menu options, it just visually displayed the wrong menu (functionally fine though) -RJ
 
@@ -310,6 +316,7 @@ _. someone to finish Gremlin (says DP) http://www.customtf.com/forums/viewtopic.
 	   fire (you are technically dead), but the enemy can still actually kill you, and you can kill yourself
 	   with grenades or weapons."
 	 -"He also has a weird jumping bug, where he doesn't attack, he only jumps at you. He is useless at this time."
+       -replacing gremlin with vore, keeping gremlin source(?) - p4wn
 
 _. is warlock finished? do heads function like they should?
 	-lol. if vore is put in.. here's a use for heads.. make vore throw them instead of that purple thing
