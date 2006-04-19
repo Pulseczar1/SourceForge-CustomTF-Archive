@@ -1,0 +1,434 @@
+/*======================================================
+	MEDIC.QC
+
+	SB-1 Tech			15/12/2000
+========================================================
+Functions for the MEDIC class and associated weaponry                          
+========================================================*/
+
+// Functions within this file:
+
+float (entity targ, entity attacker, float prob, entity inflictor) BioInfect;
+void () BioGrenadeTouch;
+void () BioGrenadeExplode;
+
+// Functions referenced from this file:
+
+void() BioInfection_Decay;
+void(entity p) TeamFortress_SetSpeed;
+
+//=========================================================================
+// Attacker attempts to infect targ.
+float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
+{
+	local entity BioInfection;
+	local float r;
+	
+	// If they have medikit, don't infect them.
+	if (targ.weapons_carried & 4)
+		return 0;
+	
+	// Only allow one infection at once.
+	if (targ.tfstate & 16)
+		return 0;
+    
+    if (targ.runes_owned & 2)
+        return 0;
+	
+	if (Teammate(targ.team_no, attacker.team_no) && targ != attacker)
+		return 0;
+	
+	if (targ.invincible_finished > time)
+		return 0;
+	
+	r = random();
+	if (prob < r)
+		return 0;
+	
+	r = random();
+	//Melee armour stops infection 75% of the time
+	if (targ.tf_items & 8 && r < 0.75)
+		return 0;
+
+    local string desc;
+    if (inflictor.netname == "special_mine")
+        desc = "mine";
+    else
+        desc = "grenade";
+
+    if (attacker == targ) // we infected ourselves! lol
+    {
+        sprint(attacker,2,"You infect yourself!\n");
+        
+        teamprefixsprint(attacker.team_no,attacker);
+        teamsprint6(attacker,attacker.netname,"infects himself!\n","","","","");
+    }
+    else
+    {
+        if (IsMonster(targ))
+        {
+            local string tmps;
+            tmps = GetMonsterName(targ);
+            sprint(attacker,2,"Your ",desc," infects the ",tmps," ",targ.netname);
+            sprint(attacker,2,"!\n");
+            
+            // Inform owner
+            sprint(targ.real_owner,2,"Your ",tmps," ",targ.netname," has been infected!\n");
+
+            teamprefixsprint(targ.real_owner.team_no,targ.real_owner);
+            teamsprint6(targ.real_owner,"The ",tmps," ",targ.netname," has been infected!\n","");
+        }
+        else
+        {
+            sprint(attacker,2,"Your ",desc," infects ",targ.netname,"!\n");
+
+            sprint(targ,2,"You have been infected by a biological ",desc,"!\n");
+
+            teamprefixsprint(targ.team_no,targ);
+            teamsprint6(targ,targ.netname," has been infected!\n","","","","");
+        }
+    }
+
+    if (IsMonster(targ))
+    {
+    	targ.tfstate = targ.tfstate | 16;
+	
+	    BioInfection = spawn ();
+	    BioInfection.classname = "timer";
+	    BioInfection.netname = "biotimer";
+	    BioInfection.owner = attacker;
+	    BioInfection.nextthink = time + 2;
+	    BioInfection.think = BioInfection_MonsterDecay;
+	    BioInfection.enemy = targ;
+	
+	    targ.infection_team_no = attacker.team_no;
+    }
+    else
+    {
+    	targ.tfstate = targ.tfstate | 16;
+	
+	    BioInfection = spawn ();
+	    BioInfection.classname = "timer";
+	    BioInfection.netname = "biotimer";
+	    BioInfection.owner = targ;
+	    BioInfection.nextthink = time + 2;
+	    BioInfection.think = BioInfection_Decay;
+	    BioInfection.enemy = attacker;
+	
+	    targ.infection_team_no = attacker.team_no;
+    }
+	
+	return 1;
+};
+
+//=========================================================================
+// Touch function for the bioinfection grenade.
+
+void() BioGrenadeTouch =
+{
+	if (self.velocity == '0 0 0')
+		self.avelocity = '0 0 0';
+    
+    if (other == self.owner)
+		return;		// don't explode on owner
+
+	// Thrown grenades don't detonate when hitting an enemy
+	sound (self, 1, "weapons/bounce.wav", 1, 1);	// bounce sound	
+};
+
+//=========================================================================
+// Biogrenade explosion. Does not do much damage...but infects...
+
+void() BioGrenadeExplode =
+{
+	// Toxic fluids do some damage on explosion
+    deathmsg = 69;
+    T_BeamDamage(self,self.owner,60);
+
+    local entity dier; // He's the dier and he's dying
+	
+	dier = findradius(self.origin, 200);
+	while (dier)
+	{
+		if (dier.classname == "player" && dier.health > 0)
+		{
+            //if (visible(dier))
+			if (CanDamage(dier,self))
+                if (dier.takedamage)
+				{
+                    BioInfect(dier, self.owner, 1, self); // was 0.7
+                }
+        }
+        else
+        {
+            if (IsMonster(dier))
+            //if (visible(dier)) 
+            if (CanDamage(dier,self))
+                BioInfect(dier, self.owner, 1, self);
+		}
+
+		dier = dier.chain;
+	}
+	
+    sound(self,1,"misc/vapeur2.wav",1,1); 
+
+    SpawnSprite(3,1,self.origin,'0 0 0',1,0.1);
+
+	WriteByte (4, 23);
+	WriteByte (4, 3);
+	WriteCoord (4, self.origin_x);
+	WriteCoord (4, self.origin_y);
+	WriteCoord (4, self.origin_z);
+
+	multicast (self.origin, 1);
+	dremove(self);
+
+
+        
+};
+
+float(entity doc, entity patient, vector org) CureAdverseEffects =
+{
+	local entity te;
+	
+	// remove concussion from player
+	// Try to find a concusstimer entity for this player
+	te = find(world, classname, "timer");
+	while (((te.owner != patient) || (te.think != ConcussionGrenadeTimer)) && (te != world))
+	{
+		te = find(te, classname, "timer");
+	}
+
+	if (te != world)
+	{
+		SpawnBlood(org, 20);
+		patient.tfstate = patient.tfstate - (patient.tfstate & 4);
+		if (doc == patient)
+			sprint(doc, 2, "The ground is behaving itself now.\n");
+		else
+		{
+			sprint(patient, 2, doc.netname, " heals you of your concussion\n");
+			sprint(doc, 2, "You heal ", patient.netname, "'s concussion\n");
+		}
+		// Give the medic a frag for doing it, only if it was caused by an enemy
+		if (!Teammate(doc.team_no,te.team_no))
+		{
+			doc.real_frags = doc.real_frags + 1;
+ 			if (!(toggleflags & 128))
+				doc.frags = doc.real_frags;
+		}
+		TeamFortress_SetSpeed(patient);
+		dremove(te);
+		//OfN - return #TRUE;
+	}
+
+	// remove hallucination from player
+	// Try to find a hallucination timer entity for this player
+	if (patient.tfstate & 16384)
+	{
+		te = find(world, classname, "timer");
+		while (((te.owner != patient) || (te.think != HallucinationTimer)) && (te != world))
+		{
+			te = find(te, classname, "timer");
+		}
+
+		if (te != world)
+		{
+			patient.tfstate = patient.tfstate - (patient.tfstate & 16384);
+			SpawnBlood(org, 20);
+			if (patient == doc)
+				sprint(doc, 2, "The visions have stopped.\n");
+			else
+			{
+				sprint(patient, 2, doc.netname, " heals you of your hallucinations\n");
+				sprint(doc, 2, "You halt ", patient.netname, "'s hallucinations\n");
+			}
+			// Give the medic a frag for doing it, only if it was caused by an enemy
+			if (!Teammate(doc.team_no,te.team_no))
+			{
+				doc.real_frags = doc.real_frags + 1;
+	 			if (!(toggleflags & 128))
+					doc.frags = doc.real_frags;
+			}
+
+			dremove(te);
+			//OfN - return #TRUE;
+		}
+		else
+		{
+			RPrint("Warning: Error in Hallucination Timer logic.\n");
+		}
+	}
+
+    
+    if (patient.tfstate & 1048576)
+    {
+        patient.tfstate = patient.tfstate - 1048576;
+
+        TeamFortress_SetSpeed(patient);
+
+        te = find(world, netname, "psionictimer");
+        while ((te.owner != patient || te.classname != "timer") && (te != world))
+            te = find(te, netname, "psionictimer");
+
+        if (te != world)
+        {
+            SpawnBlood(org, 20);
+            
+            if (doc == patient)
+				sprint(doc, 2, "The psionic influence has stopped.\n");
+			else
+			{
+				sprint(patient, 2, doc.netname, " restores your psionic problems!\n");
+				sprint(doc, 2, "You restore ", patient.netname, "'s psionic normality\n");
+			}
+
+            // Give the medic a frag for doing it, only if it was caused by an enemy
+            if (!Teammate(doc.team_no,te.team_no))
+            {
+                doc.real_frags = doc.real_frags + 1;
+                if (!(toggleflags & 128))
+                    doc.frags = doc.real_frags;
+            }
+
+            dremove(te);
+            //OfN - return #TRUE;
+        }
+    }
+     // PSIONIC
+
+	// remove tranquilisation from player
+	// Try to find a tranquilisation timer entity for this player
+	if (patient.tfstate & 32768)
+	{
+		te = find(world, classname, "timer");
+		while (((te.owner != patient) || (te.think != TranquiliserTimer)) && (te != world))
+		{
+			te = find(te, classname, "timer");
+		}
+		if (te != world)
+		{
+			patient.tfstate = patient.tfstate - (patient.tfstate & 32768);
+			TeamFortress_SetSpeed(patient);
+			
+			SpawnBlood(org, 20);
+			if (doc == patient)
+				sprint(doc, 2, "You feel more alert now.\n");
+			else
+			{
+				sprint(patient, 2, doc.netname, " heals you of your tranquilisation!\n");
+				sprint(doc, 2, "You heal ", patient.netname, "'s tranquilisation\n");
+			}
+			// Give the medic a frag for doing it, only if it was caused by an enemy
+			if (!Teammate(doc.team_no,te.team_no))
+			{
+				doc.real_frags = doc.real_frags + 1;
+	 			if (!(toggleflags & 128))
+					doc.frags = doc.real_frags;
+			}
+
+			dremove(te);
+			//OfN - return #TRUE;
+		}
+		else
+		{
+			RPrint("Warning: Error in Tranquilisation Timer logic.\n");
+		}
+	}
+	
+	// check if the healed player is blinded
+	/*if (patient.tfstate & TFSTATE_STASIS)
+	{
+		patient.tfstate = patient.tfstate - (patient.tfstate & TFSTATE_STASIS);
+		TeamFortress_SetSpeed(patient);
+		if (doc == patient)
+			sprint(doc, #PRINT_HIGH, "You can move freely again!\n");
+		else
+		{
+			sprint(patient, #PRINT_HIGH, doc.netname, " removes the effect of stasis on you!\n");
+			sprint(doc, #PRINT_HIGH, "You halt the effects of stasis on ", patient.netname, "!\n");
+		}
+//		patient.movetype = patient.stasismovetype;
+		patient.gravity = patient.stasisGravity;
+		patient.effects = patient.effects - (patient.effects & #EF_BRIGHTFIELD);
+		return 1;
+	}*/
+
+	// check if the healed player is infected
+	if (patient.tfstate & 16)
+	{
+		local float healam;
+		local entity te;
+		
+		healam = rint(patient.health / 2);
+		// remove the infection
+		patient.tfstate = patient.tfstate - (patient.tfstate & 16);
+		
+		te = find(world, netname, "biotimer");
+		
+		while (te != world)
+		{
+			if (te.classname == "timer")
+				if (te.owner == patient)
+					dremove(te);
+			
+			te = find(te, netname, "biotimer");
+		}
+		
+		// some damage is caused (because of the use of leeches!)
+		// remove half their remaining health
+		deathmsg = 23;
+		TF_T_Damage(patient, doc, doc, healam, 0, 0);
+
+		SpawnBlood(org, 30);
+		if (doc == patient)
+			sprint(doc, 2, "Your sores disappear.\n");
+		else
+		{
+			sprint(patient, 2, doc.netname, " cures your infection!\n");
+			if (doc.classname == "player")
+			{
+				sprint(doc, 2, "You have healed ");
+				sprint(doc, 2, patient.netname);
+				sprint(doc, 2, " of the infection.\n");	
+
+                teamprefixsprintbi(doc.team_no,doc,patient);
+                teamsprintbi(doc,patient,doc.netname," cures ",patient.netname,"'s infection\n","","");
+
+				// Give the medic a frag for doing it, only if it was caused by an enemy
+				if (!Teammate(patient.infection_team_no, doc.team_no))
+				{
+					doc.real_frags = doc.real_frags + 1;
+		 			if (!(toggleflags & 128))
+						doc.frags = doc.real_frags;
+				}
+			}
+		}
+
+		//OfN - return #TRUE;
+	}
+
+	// put out the fire if they are burning
+	if (patient.numflames > 0)
+	{
+		sound(patient, 1, "items/r_item1.wav", 1, 1);
+		patient.numflames = 0;
+		
+		if (doc == patient)
+			sprint (doc, 2, "Your flames are extinguished!\n");
+		else
+		{
+			sprint(patient, 2, doc.netname, " stops you burning!\n");
+			if (doc.classname == "player")
+			{		
+				sprint(doc, 1, "You have put out ");
+				sprint(doc, 1, patient.netname);
+				sprint(doc, 1, "'s fire.\n");	
+			}
+		}
+				
+		//OfN - return #TRUE;
+	}
+};
+
+

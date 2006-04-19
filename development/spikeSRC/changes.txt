@@ -1,0 +1,21 @@
+first off, compiling with fteqcc:
+	You need to use the -Fhashonly commandline option.
+	This is needed to prevent autoexpansion of constants with the same name as fields.
+	fteqcc has a more C-like precompiler, which doesn't require the # infront of constants. Pretty much everything else works the same.
+	fteqcc is able to compile the mod into about 10k globals.
+
+changes:
+added fteqw.qc
+	This file contains cpqwsv->fte extension mappings.
+	It it changes the builtins to call fte builtins instead.
+	It won't interfere with cpqwsv functions.
+
+fixed buy menus
+	fteqw cycles between 16 different temporary strings.
+	cpqwsv cycles between 256 or so temporary strings.
+	yeah, this is a big difference. however, fte's maximum string length is much longer, and upping the string count is not a nice memory efficient way to fix this.
+	I have added pr_tempstringcount and pr_tempstringsize cvars, incase I missed something, but the defaults are the same.
+
+corrected/added client download capabilities:
+	the assumptions about which engines can use lit files is a little... well, wrong. I've added a force postfix for future issues.
+	I've also added support for .lux and .rtlights which only fteglqw can use currently. force works here too, of course.
