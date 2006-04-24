@@ -1,0 +1,57 @@
+// progs.src -- written by inferno (waije@titan.oit.umass.edu) to fit
+// the mods for sctf.
+//
+
+../progs.dat
+defs.qc  //  All the definitions of stuff...
+settings.qc  // All of Inferno's definitions....
+_burn.qh    // server modules burner
+_shrap.qh   // Shrapnel gun
+log.qc			// Console logging of game actions
+teamplay.qc     // Compile the teamplay file
+ctfgame.qc  // zoid's little vote-exit stuff
+nteam.qc  // inferno's new teamplay patches
+//status.qc  // Suck's status bar hacked by Inferno (me)
+ident.qc  // identify a player
+subs.qc
+combat.qc  // has to deal with combat, damages, no damages to your self if teamplay 1, etc...
+items.qc  // items in quake
+nitems.qc  // inferno's lovely items...
+observ.qc  // observer code
+chasecam.qc  // chasecam code, deals with chasing people, etc...
+weapons.qc  // weapons, all the weapons from the original quake
+telefrag.qc		// from server modules
+world.qc  // original quake's precaches
+client.qc  // has to do with the client, how he/she is put in a server..etc..
+player.qc  // deals with the player
+enforcer.qc  // when the player turns into an enforcer
+dog.qc  // deals with the dog
+fish.qc  // the fish (liquid rune)
+hknight.qc  // hell knight (knight rune, go figure)
+zombie.qc  // the zombie (skeleton)
+knight.qc  // the knight (rebel)
+soldier.qc  // the soldier (death soldier)
+shambler.qc  // the shambler (frankenstein's pet)
+shalrath.qc  // the shalrath (tarantula)
+// demon.qc
+//hip_part.qc
+//hipquake.qc
+doors.qc  // the personality of doors
+buttons.qc  // how the buttons are touched and stuff
+triggers.qc  // some triggers
+plats.qc
+misc.qc
+admin.qc		// Remote admin functions
+server.qc  // some stuff zoid (zoid@threewave.com) added to make this take less space
+ncomm.qc  // here's the weird thing, impulses and commands, it's also a client
+//portal.qc
+nweapons.qc  // all the special weapons are stored in here.
+             // read the readme.txt file to see what is included.
+sctfweap.qc  // new weapons by cotc
+_shrap.qc    // Shrapnel gun (modules)
+sctfrune.qc  // new runes by cotc
+sctfegg.qc   // easter eggs by cotc
+sctfdev.qc   // developer test cmds
+_burn.qc    // server modules burner
+
+kickbot.qc  // kicks bots

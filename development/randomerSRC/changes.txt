@@ -1,0 +1,72 @@
+========================================================================
+Bug Fixes:
+========================================================================
+
+- Grenades
+	Grenades would stick and follow the player through a death and respawn if the grenade was primed 0.8 seconds before the player died and respawned. Primed grenades are now always dropped when you die.
+
+- Tranquilizer
+	The tranquilizer gun could not be selected if the player had no shells, even though the tranquilizer gun uses nails. You now only need nails to select the tranquilizer gun.
+
+- Camera/Sensor
+	The camera or sensor could be used to stick other players to the ground because the bounds were not checked properly when a thrown camera or sensor landed. Now the camera or sensor simply explodes (dealing no damage) instead of sticking a player to the ground.
+
+- Spy Feign/Unfeign
+	You were warned that you could not feign on top of another spy, but were still allowed to.
+	You could not unfeign and are warned that you can't unfeign when someone is standing on top of you when another player was within 64 game units from you but the other player did not have to actually be on top of you. You can now no longer feign while on top of another feigned spy (can still feign on top of any non-feigned player) and can unfeign unless another player is actually on top of you.
+
+- Sniper Rifle Power Up Time
+	The sniper rifle power up time was based on the player's FPS, which allowed players with a greater FPS to do damage faster. The rifle now takes exactly 3.8 seconds to power up which matches the original TF code running at 30 FPS, as intended.
+
+- Newlines in Messages
+	Some messages contain extra newlines in the middle of them. At least some of these newlines have been removed.
+
+- Invulnerability (Pentagram & Respawn Guard)
+	Some attacks could still affect players with invulnerability, particularly the player's armor. These have been fixed as follows. When a player is invulnerable:
+		- Concussion grenades no longer concuss them.
+		- Krac grenades no longer strip their armor and cells.
+		- EMP grenades no longer explode their ammo.
+		- The impulse rifle no longer strips their armor.
+		- Caltrops no longer slow them down.
+		- Sniper rifle leg shots no longer slow them down.
+		- The incendiary cannon, flame thrower and napalm grenades no longer set them on fire.
+		- They can no longer be disarmed or have their arms broken with Judoka.
+		- They can no longer be hooked onto with the grappling hook.
+
+- Grappling Hook
+	The player used to slowly slide to the floor when building or hacking while on the hook. This has been fixed, which could pose a small problem if they are in the middle of the air when they build or hack.
+
+
+========================================================================
+Changes:
+========================================================================
+
+- Light Assault Gun
+	The light assault gun has been changed to use shells rather than nails -- shells are usually zero-fly-time (instant hit when you fire them) while nails are usually projectiles and take some amount of time to reach the enemy. It has also been given 1/4th the spread that the assault cannon has.
+
+- Voting System
+	The voting system has been improved greatly.
+		- If more than 50% of the people on the server vote yes then a vote will pass immediately.
+		- If more than 50% of the people on the server vote no then a vote will fail immediately.
+		- If after 60 seconds if more people have voted yes than no then the vote passes, otherwise it fails.
+
+- Krac Grenades
+	Krac grenades have been given linear falloff damage for armor, cells and buildings and the range against these has been increased slightly to compensate for this large decrease in damage. The damage may need to be adjusted some, especially against buildings, to balance it more.
+
+- Airfist
+	The regular detpack is now unfistable. The C4 detpack is now unfistable for the first half second to reduce detpack spamming, and the velocity that the c4 detpack gets when fisted is now reduced by half.
+	Players with Aspect of HWGuy can now only be pushed one quarter the amount that players without Aspect of HWGuy can be pushed. Recoil from firing the airfist has been reduced by 30% for players with Aspect of HWGuy.
+
+- Concussion Grenades
+	The TF2.9 style uncheatable "stumble" concussion grenades have been added. The server can select the old style grenades with localinfo old_grens "1".
+
+- Incendiary Cannon & Napalm Grenades
+	Fire from the incendiary cannon and napalm grenades no longer go through walls.
+
+
+========================================================================
+Known Issues:
+========================================================================
+
+- Judoka & Primed Grenades
+	After having your weapon stolen by a player with Judoka, you cannot throw a primed grenade. Since the grenade explodes 3.8 seconds after you prime and Judoka disables you for 5 seconds you will always be holding the primed grenade when it explodes.

@@ -1,0 +1,49 @@
+/*
+**
+** _shrap.qh (Shrapnel Header, 1.0)
+**
+** Copyright (C) 1996, 1997 Johannes Plass
+** 
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+** 
+** Author:   Johannes Plass (plass@dipmza.physik.uni-mainz.de)
+**
+*/
+
+.entity shrapnel_owner;
+.float  shrapnel_damage_time;
+.float  shrapnel_bounce_time;
+.float  shrapnel_sound_time;
+
+string shrapnel_launch_sound_1;
+string shrapnel_launch_sound_2;
+string shrapnel_explode_sound;
+
+// void(entity player) ShrapnelInfo;
+// void(entity player) ShrapnelInit;
+// void(entity player) ShrapnelActiveMessage;
+// void(entity player) ShrapnelHelp;
+
+void() ShrapnelPrecacheSounds;
+// void(entity player) ShrapnelToggleWeapon;
+// void(entity player) ShrapnelResetWeapon;
+
+void() ShrapnelMissileFire;
+void() ShrapnelMissileTouch;
+
+entity(vector vel) ShrapnelDebrisFire;
+void() ShrapnelDebrisThink;
+void() ShrapnelDebrisTouch;
+

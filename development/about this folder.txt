@@ -1,0 +1,8 @@
+This folder contains individual developers' code, as well as different types of code we are working off of.
+Feel free to look through it and make a copy onto your own pc if you like (to edit or whatever) but please
+DO NOT modify its contents. This applies to developers as well, if the code is not your project. We wish
+to keep our code intact and would rather not have the hassle of rolling back our SVN projects alot. You
+may do what you feel like to any code you copy onto your pc, but please keep previous names and handles in
+it for recodnition if you plan to recognition. Thanks for reading this,
+
+-- CustomTF Improvement Project Team
