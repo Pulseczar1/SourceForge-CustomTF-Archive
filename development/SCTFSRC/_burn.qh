@@ -1,0 +1,76 @@
+/*
+**
+** _burn.qh (Burn Header, 1.0)
+**
+** Copyright (C) 1996, 1997 Johannes Plass
+** 
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+** 
+** Author:   Johannes Plass (plass@dipmza.physik.uni-mainz.de)
+**
+*/
+
+string burn_pain_sound_1;
+string burn_pain_sound_2;
+string burn_extinguish_sound;
+string burn_light_sound;
+
+.entity burn_flame;
+.entity burn_flame2;
+.float  burn_burning;
+.float  burn_painsound_time;
+.float  burn_damage_time;
+.float  burn_lifetime1;
+.float  burn_lifetime2;
+.float  burn_lifetime4;
+
+void(entity player) BurnInfo;
+void(entity player) BurnInit;
+void(entity player) BurnActiveMessage;
+
+void() BurnPrecacheSounds;
+
+// we need to set a classname for the obit
+// void(entity victim, entity attacker) BurnSetOnFire;
+void(entity victim, entity attacker, string burnClassName) BurnSetOnFire;
+
+void() BurnThink;
+void() BurnPainSound;
+
+/***********************************************************************\
+* changes to support sctf
+\***********************************************************************/
+
+// from modules.qh
+float USE_MODULE_BURN = 1;
+
+// this is replaced with global teamplay > 0
+// float USE_MODULE_CTF = 1;                
+
+// float MODULES_WEAPON_BURN = 1;
+
+// killweapon controls how the burning stops when the player dies.
+// if 0, the flame disappears, otherwise the flame explodes.
+// In burn, we will always have the flame explode.
+// .float modules_killweapon;
+
+// this gives the target immunity.  In burn, it will never be used.
+// .float protect_finished;
+
+// replace this in burn with .team
+// .float ctf_team;
+ 
+// this is set but never used
+// .float modules_weapon;
