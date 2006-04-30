@@ -190,8 +190,8 @@ void() worldspawn =
 	lastspawn = world;
 
 // custom map attributes
-#ifndef QUAKE_WORLD
-	if (self.model == "maps/e1m8.bsp")
+#ifdef QUAKE_WORLD
+	if (mapname == "e1m8")
 		cvar_set ("sv_gravity", "100");
 	else
 		cvar_set ("sv_gravity", "800");
