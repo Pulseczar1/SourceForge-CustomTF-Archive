@@ -1,21 +1,22 @@
-/*=======================================================//
-// environ.QC - CustomTF 3.2.OfN           - 05/8/2004 - //
-// by Sergio FumaÒa Grunwaldt - OfteN [cp]               //
-=========================================================//
- World environment (special FX's & daylight/brightness) 
----------------------------------------------------------//
+/*
+==============================================================================
+
+environ.QC
+CustomTF 3.2.OfN
+
+ World environment (special FX's & daylight/brightness)
+
  Brightness/daylight fade in/out's and other environment
  stuff is handled here - CREDITS: Thanks Grievre!
  Aren't the storm and earthquake awesome?! =)
-_________________________________________________________//
 
  *** WARNINGs about Storm and Earthquake use: ***
 
- I don't recommend using earthquake or storm on net 
+ I don't recommend using earthquake or storm on net
  servers as they may cause lag/FPS drops, for LAN they are
  great, no problems.
- 
- The drawback of the storm is that on some 
+
+ The drawback of the storm is that on some
  computer/client combos FPS may get decreased by the
  continuous brightness changes. (observed on a P3+Voodoo5
  with gl-fuhquake as client mainly specially on big maps).
@@ -32,7 +33,8 @@ _________________________________________________________//
  good computer and connection it would even not be
  noticed at all! Enjoy!
 
-=========================================================*/
+==============================================================================
+*/
 
 void() RemoveFadeTimer;
 string(float brightness) ReturnBrightness;
@@ -145,7 +147,7 @@ For daytime entity:
 #define EARTHQUAKE_MAXRATE        0.2
 #define EARTHQUAKE_MINRATE        0.1
 
-// Daytime settings 
+// Daytime settings
 #define ENVIRO_MIDNIGHTLIGHT_DEFAULT   5
 #define ENVIRO_NOONLIGHT_DEFAULT      19
 #define DAYTIME_STEPDELAY_TOBPRINT     4
@@ -155,28 +157,28 @@ For daytime entity:
 
 void() InitEnvironment =
 {
-    // Precache the sounds
-    EnvironmentPrecachees();
-    
-    current_brightness = -1; // To make sure its able to be updated by SetWorldBrightness, see below
+	// Precache the sounds
+	EnvironmentPrecachees();
 
-    // First, apply flags set on the map for environment
-    ApplyMapFlags();
+	current_brightness = -1; // To make sure its able to be updated by SetWorldBrightness, see below
 
-    // Then get the global environment vars (infokeys) which may override map flags
-    GetEnvironmentGlobals();
-    
-    // Set initial world brightness 
-    if (no_bright)
-        lightstyle(0,"m");
-    else
-        SetWorldBrightness(#ENVIRO_DARKNESS); //(dark because no clients yet)
+	// First, apply flags set on the map for environment
+	ApplyMapFlags();
 
-    // Impide brightness to be altered as we start dark
-    specialstate = #TRUE;
-    
-    // Initialize our environment sub-sections as needed
-    UpdateEnvironment(0,0,0,0);
+	// Then get the global environment vars (infokeys) which may override map flags
+	GetEnvironmentGlobals();
+
+	// Set initial world brightness
+	if (no_bright)
+		lightstyle(0,"m");
+	else
+		SetWorldBrightness(#ENVIRO_DARKNESS); //(dark because no clients yet)
+
+	// Impide brightness to be altered as we start dark
+	specialstate = #TRUE;
+
+	// Initialize our environment sub-sections as needed
+	UpdateEnvironment(0,0,0,0);
 };
 
 //=================================================================
@@ -184,52 +186,52 @@ void() InitEnvironment =
 
 float() validatelit =
 {
-    local string st;
+	local string st;
 
-    st = strcat("maps/",mapname);
-    st = strcat(st,".lit");
+	st = strcat("maps/",mapname);
+	st = strcat(st,".lit");
 
-    return validatefile(st);
+	return validatefile(st);
 };
 
 float() validatelux =
 {
-    local string st;
+	local string st;
 
-    st = strcat("maps/",mapname);
-    st = strcat(st,".lux");
+	st = strcat("maps/",mapname);
+	st = strcat(st,".lux");
 
-    return validatefile(st);
+	return validatefile(st);
 };
 
 float() validatertlights =
 {
-    local string st;
+	local string st;
 
-    st = strcat("maps/",mapname);
-    st = strcat(st,".rtlights");
+	st = strcat("maps/",mapname);
+	st = strcat(st,".rtlights");
 
-    return validatefile(st);
+	return validatefile(st);
 };
 
 float() validatesky =
 {
-    local string st;
+	local string st;
 
-    st = strcat("maps/",mapname);
-    st = strcat(st,".sky");
+	st = strcat("maps/",mapname);
+	st = strcat(st,".sky");
 
-    return validatefile(st);
+	return validatefile(st);
 };
 
 float() validatehrt =
 {
-    local string st;
+	local string st;
 
-    st = strcat("maps/",mapname);
-    st = strcat(st,".hrt");
+	st = strcat("maps/",mapname);
+	st = strcat(st,".hrt");
 
-    return validatefile(st);
+	return validatefile(st);
 };
 
 //=======================================================================
@@ -237,88 +239,94 @@ float() validatehrt =
 
 void() ApplyMapFlags =
 {
-    // Turn on watervis if this map is flagged as watervised and server has autoset_watervis set
-    if (infokey(world,"autoset_watervis") == "1") // autoset_watervis is enabled?
-    {
-        if (world.#mapflags & #MAPFLAG_WATERVISED)
-        {
-            bprint(#PRINT_HIGH, "Map Infoç This map supports transparent liquids.\n");
+	// Turn on watervis if this map is flagged as watervised and server has autoset_watervis set
+	if (infokey(world,"autoset_watervis") == "1") // autoset_watervis is enabled?
+	{
+		if (world.#mapflags & #MAPFLAG_WATERVISED)
+		{
+			bprint(#PRINT_HIGH, "Map Info\{141} This map supports transparent liquids.\n");
 
-            if (cvar("watervis")!= 1)
-            {
-                RPrint("Turning ON watervis... (map flagged as watervised)\n");
-                //localcmd("watervis 1\n"); 
-                cvar_set("watervis","1");
-            }
-        }
-        else
-        {
-            if (cvar("watervis")!= 0)
-            {
-                RPrint("Turning OFF watervis... (map not flagged as watervised)\n");
-                //localcmd("watervis 0\n");
-                cvar_set("watervis","0");
-            }
-        }
-    }
+			if (cvar("watervis")!= 1)
+			{
+				RPrint("Turning ON watervis... (map flagged as watervised)\n");
+				//localcmd("watervis 1\n");
+				cvar_set("watervis","1");
+			}
+		}
+		else
+		{
+			if (cvar("watervis")!= 0)
+			{
+				RPrint("Turning OFF watervis... (map not flagged as watervised)\n");
+				//localcmd("watervis 0\n");
+				cvar_set("watervis","0");
+			}
+		}
+	}
 
-    // Inform clients about any existing special extra files for this map...
-    dprint("Looking for any map extra files...\n");
-    // Does the server have a coloured lighting file for this map?
-    if (validatelit())
-        bprint(#PRINT_HIGH,"Map Infoç Coloured lighting for this map is avaliable. Type ¢cmd special getlit¢ to download it.\n");
-    // Does the server have a paked skybox file for this map?
-    if (validatesky())
-        bprint(#PRINT_HIGH,"Map Infoç Packed skybox for this map is avaliable. Type ¢cmd special getsky¢ to download it.\n");
-    // Does the server have a hi-res textures file for this map? 
-    if (validatehrt())
-        bprint(#PRINT_HIGH,"Map Infoç Hi-Res texture file for this map is avaliable. Type ¢cmd special gethrt¢ to download it.\n");
-    
-    // Get standard environment flags "hard-coded" into the map file (worldspawn field)
-    if (world.#mapflags & #MAPFLAG_STORM)
-        storm = 1;
-    if (world.#mapflags & #MAPFLAG_EARTHQUAKE)
-        earthquake = 1;
-    if (world.#mapflags & #MAPFLAG_DAYTIME)
-        daytime = 10;
-    if (world.#mapflags & #MAPFLAG_RUNES)
-        userunes = 1;
+	// Inform clients about any existing special extra files for this map...
+	//RPrint("Looking for any map extra files...\n"); //RJ don't need to know this :/
+	// Does the server have a coloured lighting file for this map?
+	if (validatelit())
+		bprint(#PRINT_HIGH,"Map Info\{141} Coloured lighting for this map is avaliable. Type \{162}cmd special getlit\{162} to download it.\n");
+	// Does the server have a paked skybox file for this map?
+	if (validatesky())
+		bprint(#PRINT_HIGH,"Map Info\{141} Packed skybox for this map is avaliable. Type \{162}cmd special getsky\{162} to download it.\n");
+	// Does the server have a hi-res textures file for this map?
+	if (validatehrt())
+		bprint(#PRINT_HIGH,"Map Info\{141} Hi-Res texture file for this map is avaliable. Type \{162}cmd special gethrt\{162} to download it.\n");
+	// RJ wtf is a .sky and .hrt?
+	// now for FTE stuffs :)
+	if (validatertlights())
+		bprint(#PRINT_HIGH,"Map Info\{141} Realtime lighting for this map is avaliable. Type \{162}cmd special getrtlights\{162} to download it.\n");
+	if (validatelux())
+		bprint(#PRINT_HIGH,"Map Info\{141} Deluxe lighting (bumpmapping) file for this map is avaliable. Type \{162}cmd special getlux\{162} to download it.\n");
+		
+	// Get standard environment flags "hard-coded" into the map file (worldspawn field)
+	if (world.#mapflags & #MAPFLAG_STORM)
+		storm = 1;
+	if (world.#mapflags & #MAPFLAG_EARTHQUAKE)
+		earthquake = 1;
+	if (world.#mapflags & #MAPFLAG_DAYTIME)
+		daytime = 10;
+	if (world.#mapflags & #MAPFLAG_RUNES)
+		userunes = 1;
 
-    // Disable custom/stock classes if needed
-    if (world.#mapflags & #MAPFLAG_NOCUSTOM)
-        custom_mode = 2;
-    if (world.#mapflags & #MAPFLAG_NOSTOCK)
-        stock_mode = 2;
-    
-    // Make sure 1 of them is enabled at least
-    if (custom_mode == 2 && stock_mode == 2)
-        custom_mode = 0;
+	// Disable custom/stock classes if needed
+	if (world.#mapflags & #MAPFLAG_NOCUSTOM)
+		custom_mode = 2;
+	if (world.#mapflags & #MAPFLAG_NOSTOCK)
+		stock_mode = 2;
 
-    // Apply hard-coded custom money
-    if (world.money != 0)
-        custom_money = world.money;
-    
-    // Get the teammate's masks
-    friends1_mask = stof(world.noise1);
-    friends2_mask = stof(world.noise2);
-    friends3_mask = stof(world.noise3);
-    friends4_mask = stof(world.noise4);
+	// Make sure 1 of them is enabled at least
+	if (custom_mode == 2 && stock_mode == 2)
+		custom_mode = 0;
 
-    // Get disabled/free stuff masks, if map stuff not disabled
-    if (infokey(world,"no_mapstuff") != "1")
-    {
-        usedisabledstuff1 = world.#disabledstuff1;
-        usedisabledstuff2 = world.#disabledstuff2;
-        usedisabledstuff3 = world.#disabledstuff3;
-        usedisabledstuff4 = world.#disabledstuff4;
-        usedisabledstuff5 = world.#disabledstuff5;
+	// Apply hard-coded custom money
+	if (world.money != 0)
+		custom_money = world.money;
 
-        usegivenstuff1 = world.#givenstuff1;
-        usegivenstuff2 = world.#givenstuff2;
-        usegivenstuff3 = world.#givenstuff3;
-        usegivenstuff4 = world.#givenstuff4;
-        usegivenstuff5 = world.#givenstuff5;
-    }
+	// Get the teammate's masks
+	friends1_mask = stof(world.noise1);
+	friends2_mask = stof(world.noise2);
+	friends3_mask = stof(world.noise3);
+	friends4_mask = stof(world.noise4);
+
+	// Get disabled/free stuff masks, if map stuff not disabled
+	if (infokey(world,"no_mapstuff") != "1")
+	{
+		usedisabledstuff1 = world.#disabledstuff1;
+		usedisabledstuff2 = world.#disabledstuff2;
+		usedisabledstuff3 = world.#disabledstuff3;
+		usedisabledstuff4 = world.#disabledstuff4;
+		usedisabledstuff5 = world.#disabledstuff5;
+
+		usegivenstuff1 = world.#givenstuff1;
+		usegivenstuff2 = world.#givenstuff2;
+		usegivenstuff3 = world.#givenstuff3;
+		usegivenstuff4 = world.#givenstuff4;
+		usegivenstuff5 = world.#givenstuff5;
+	}
 };
 
 //===================================================================
@@ -326,132 +334,132 @@ void() ApplyMapFlags =
 
 void() GetEnvironmentGlobals =
 {
-    local string st;
+	local string st;
 
-    // Get custom daylight setting, if any
-    st = infokey(world,"daylight");
+	// Get custom daylight setting, if any
+	st = infokey(world,"daylight");
 
-    if (st == "") // we should use a default then..
-        daylight = #ENVIRO_DEFAULT_DAYLIGHT;
-    else
-    {
-        daylight = stof(st); // we use the custom setting..
+	if (st == "") // we should use a default then..
+		daylight = #ENVIRO_DEFAULT_DAYLIGHT;
+	else
+	{
+		daylight = stof(st); // we use the custom setting..
 
-        if (daylight < 0 || daylight > 25) // but only if a valid value
-            daylight = #ENVIRO_DEFAULT_DAYLIGHT;
-    }
-    
-    // Get the storm setting, if any
-    st = infokey(world,"storm");
+		if (daylight < 0 || daylight > 25) // but only if a valid value
+			daylight = #ENVIRO_DEFAULT_DAYLIGHT;
+	}
 
-    if (st != "") 
-    {
-        storm = stof(st); // we use the custom setting..
+	// Get the storm setting, if any
+	st = infokey(world,"storm");
 
-        if (storm < 0 || storm > 1) // but only if a valid value
-            storm = 0;
-    }
+	if (st != "")
+	{
+		storm = stof(st); // we use the custom setting..
 
-    // Get the earthquake setting, if any
-    st = infokey(world,"earthquake");
+		if (storm < 0 || storm > 1) // but only if a valid value
+			storm = 0;
+	}
 
-    if (st != "")
-    {
-        earthquake = stof(st); // we use the custom setting..
+	// Get the earthquake setting, if any
+	st = infokey(world,"earthquake");
 
-        if (earthquake < 0 || earthquake > 1) // but only if a valid value
-            earthquake = 0;
-    }
+	if (st != "")
+	{
+		earthquake = stof(st); // we use the custom setting..
 
-    // Get the daytime setting, if any
-    st = infokey(world,"daytime");
+		if (earthquake < 0 || earthquake > 1) // but only if a valid value
+			earthquake = 0;
+	}
 
-    if (st != "")
-    {
-        daytime = stof(st); // we use the custom setting..
+	// Get the daytime setting, if any
+	st = infokey(world,"daytime");
 
-        if (daytime < 0) // but only if a valid value
-            daytime = 0;
-        else if (daytime > 100)
-            daytime = 100;
-    }
+	if (st != "")
+	{
+		daytime = stof(st); // we use the custom setting..
 
-    // Get custom noon/midnight brightness settings, if any
-    st = infokey(world,"noon_light");
+		if (daytime < 0) // but only if a valid value
+			daytime = 0;
+		else if (daytime > 100)
+			daytime = 100;
+	}
 
-    if (st == "") // we should use a default then..
-        noon_light = #ENVIRO_NOONLIGHT_DEFAULT;
-    else
-    {
-        noon_light = stof(st); // we use the custom setting..
+	// Get custom noon/midnight brightness settings, if any
+	st = infokey(world,"noon_light");
 
-        if (noon_light < 0 || noon_light > 25) // but only if a valid value
-            noon_light = #ENVIRO_NOONLIGHT_DEFAULT;
-    }
+	if (st == "") // we should use a default then..
+		noon_light = #ENVIRO_NOONLIGHT_DEFAULT;
+	else
+	{
+		noon_light = stof(st); // we use the custom setting..
 
-    st = infokey(world,"midnight_light");
+		if (noon_light < 0 || noon_light > 25) // but only if a valid value
+			noon_light = #ENVIRO_NOONLIGHT_DEFAULT;
+	}
 
-    if (st == "") // we should use a default then..
-        midnight_light = #ENVIRO_MIDNIGHTLIGHT_DEFAULT;
-    else
-    {
-        midnight_light = stof(st); // we use the custom setting..
+	st = infokey(world,"midnight_light");
 
-        if (midnight_light < 0 || midnight_light > 25) // but only if a valid value
-            midnight_light = #ENVIRO_MIDNIGHTLIGHT_DEFAULT;
+	if (st == "") // we should use a default then..
+		midnight_light = #ENVIRO_MIDNIGHTLIGHT_DEFAULT;
+	else
+	{
+		midnight_light = stof(st); // we use the custom setting..
 
-        // If midnight < noonlight just make them the same
-        if (midnight_light > noon_light)
-            midnight_light = noon_light;
-    }
+		if (midnight_light < 0 || midnight_light > 25) // but only if a valid value
+			midnight_light = #ENVIRO_MIDNIGHTLIGHT_DEFAULT;
 
-    st = infokey(world,"no_bright");
+		// If midnight < noonlight just make them the same
+		if (midnight_light > noon_light)
+			midnight_light = noon_light;
+	}
 
-    if (st == "") // we should use a default then..
-        no_bright = #FALSE;
-    else
-    {
-        if (st == "1")
-            no_bright = #TRUE;
-        else
-            no_bright = #FALSE;
-    }    
+	st = infokey(world,"no_bright");
 
-    // Get runes global
-    GetRunesGlobal();
+	if (st == "") // we should use a default then..
+		no_bright = #FALSE;
+	else
+	{
+		if (st == "1")
+			no_bright = #TRUE;
+		else
+			no_bright = #FALSE;
+	}
 
-    // Get the disabled/free stuff masks settings on server, if any
-    st = infokey(world,"dstuff1");
-    if (st != "") 
-        usedisabledstuff1 = stof(st); 
-    st = infokey(world,"dstuff2");
-    if (st != "") 
-        usedisabledstuff2 = stof(st);
-    st = infokey(world,"dstuff3");
-    if (st != "") 
-        usedisabledstuff3 = stof(st);
-    st = infokey(world,"dstuff4");
-    if (st != "") 
-        usedisabledstuff4 = stof(st);
-    st = infokey(world,"dstuff5");
-    if (st != "") 
-        usedisabledstuff5 = stof(st);
+	// Get runes global
+	GetRunesGlobal();
 
-    st = infokey(world,"gstuff1");
-    if (st != "") 
-        usegivenstuff1 = stof(st); 
-    st = infokey(world,"gstuff2");
-    if (st != "")
-        usegivenstuff2 = stof(st);
-    st = infokey(world,"gstuff3");
-    if (st != "") 
-        usegivenstuff3 = stof(st);
-    st = infokey(world,"gstuff4");
-    if (st != "") 
-        usegivenstuff4 = stof(st);
-    st = infokey(world,"gstuff5");
-    if (st != "") 
-        usegivenstuff5 = stof(st);
+	// Get the disabled/free stuff masks settings on server, if any
+	st = infokey(world,"dstuff1");
+	if (st != "")
+		usedisabledstuff1 = stof(st);
+	st = infokey(world,"dstuff2");
+	if (st != "")
+		usedisabledstuff2 = stof(st);
+	st = infokey(world,"dstuff3");
+	if (st != "")
+		usedisabledstuff3 = stof(st);
+	st = infokey(world,"dstuff4");
+	if (st != "")
+		usedisabledstuff4 = stof(st);
+	st = infokey(world,"dstuff5");
+	if (st != "")
+		usedisabledstuff5 = stof(st);
+
+	st = infokey(world,"gstuff1");
+	if (st != "")
+		usegivenstuff1 = stof(st);
+	st = infokey(world,"gstuff2");
+	if (st != "")
+		usegivenstuff2 = stof(st);
+	st = infokey(world,"gstuff3");
+	if (st != "")
+		usegivenstuff3 = stof(st);
+	st = infokey(world,"gstuff4");
+	if (st != "")
+		usegivenstuff4 = stof(st);
+	st = infokey(world,"gstuff5");
+	if (st != "")
+		usegivenstuff5 = stof(st);
 };
 
 //===============================================================
@@ -459,16 +467,16 @@ void() GetEnvironmentGlobals =
 
 void() EnvironmentPrecachees =
 {
-    // Storm thunder sounds
-    precache_sound("ambience/thunder1.wav");
-    precache_sound("environ/thunder2.wav");
-    precache_sound("environ/thunder3.wav");
-    precache_sound("environ/thunder4.wav");
-    precache_sound("environ/thundrk.wav");
+	// Storm thunder sounds
+	precache_sound("ambience/thunder1.wav");
+	precache_sound("environ/thunder2.wav");
+	precache_sound("environ/thunder3.wav");
+	precache_sound("environ/thunder4.wav");
+	precache_sound("environ/thundrk.wav");
 
-    // Earthquake sounds
-    precache_sound("environ/rumble.wav");
-    precache_sound("environ/rumblend.wav");
+	// Earthquake sounds
+	precache_sound("environ/rumble.wav");
+	precache_sound("environ/rumblend.wav");
 };
 
 //====================================================================================
@@ -476,24 +484,24 @@ void() EnvironmentPrecachees =
 
 void(float oldstorm, float oldearthquake, float olddaytime, float oldrunes) UpdateEnvironment =
 {
-    // Initialize needed environment stuff
-    if (oldstorm == 0 && storm != 0)
-        InitStorm();
-    if (oldearthquake == 0 && earthquake != 0)
-        InitEarthquake();
-    if (olddaytime == 0 && daytime != 0)
-        InitDayTime();
-    
-    // Shutdown environment stuff if needed
-    if (oldstorm != 0 && storm == 0)
-        CleanUpStorm(#TRUE);
-    if (oldearthquake != 0 && earthquake == 0)
-        CleanUpEarthquake(#TRUE);
-    if (olddaytime != 0 && daytime == 0)
-        CleanUpDayTime(#TRUE);
+	// Initialize needed environment stuff
+	if (oldstorm == 0 && storm != 0)
+		InitStorm();
+	if (oldearthquake == 0 && earthquake != 0)
+		InitEarthquake();
+	if (olddaytime == 0 && daytime != 0)
+		InitDayTime();
 
-    // Handled on runes.qc
-    UpdateRuneStuff(oldrunes);
+	// Shutdown environment stuff if needed
+	if (oldstorm != 0 && storm == 0)
+		CleanUpStorm(#TRUE);
+	if (oldearthquake != 0 && earthquake == 0)
+		CleanUpEarthquake(#TRUE);
+	if (olddaytime != 0 && daytime == 0)
+		CleanUpDayTime(#TRUE);
+
+	// Handled on runes.qc
+	UpdateRuneStuff(oldrunes);
 };
 
 //==============================================================
@@ -501,42 +509,42 @@ void(float oldstorm, float oldearthquake, float olddaytime, float oldrunes) Upda
 
 void(float delaytime, float fadetime, float factor) World_FadeIn =
 {
-    local entity fadetimer;
+	local entity fadetimer;
 
-    specialstate = #TRUE;
-    
-    fadetimer = FadeWorld(daylight, fadetime, delaytime, factor);
+	specialstate = #TRUE;
 
-    if (fadetimer)
-        fadetimer.has_teleporter = 2;
-    else
-        specialstate = #FALSE;
+	fadetimer = FadeWorld(daylight, fadetime, delaytime, factor);
+
+	if (fadetimer)
+		fadetimer.has_teleporter = 2;
+	else
+		specialstate = #FALSE;
 };
 
 void(float delaytime, float fadetime, float factor) World_FadeOut =
 {
-    specialstate = #TRUE;
+	specialstate = #TRUE;
 
-    FadeWorld(#ENVIRO_DARKNESS, fadetime, delaytime, factor);    
+	FadeWorld(#ENVIRO_DARKNESS, fadetime, delaytime, factor);
 };
 
 // Used when observers only in-game brightness and for ceasefire
 void(float delaytime, float fadetime, float factor) World_FadeMid =
 {
-    specialstate = #TRUE;
-    
-    FadeWorld(#ENVIRO_MIDBRIGHT, fadetime, delaytime, factor);
+	specialstate = #TRUE;
+
+	FadeWorld(#ENVIRO_MIDBRIGHT, fadetime, delaytime, factor);
 };
 
 // Fade used when intermission runs
 void(float delaytime, float fadetime, float factor) World_FadeEnd =
 {
-    local entity fadetimer;
+	local entity fadetimer;
 
-    fadetimer = FadeWorld(#ENVIRO_ENDBRIGHT, fadetime, delaytime, factor);
+	fadetimer = FadeWorld(#ENVIRO_ENDBRIGHT, fadetime, delaytime, factor);
 
-    if (fadetimer)
-        fadetimer.has_teleporter = 3; // Adjust daylight along with fade out
+	if (fadetimer)
+		fadetimer.has_teleporter = 3; // Adjust daylight along with fade out
 };
 
 //======================================================================================
@@ -544,68 +552,68 @@ void(float delaytime, float fadetime, float factor) World_FadeEnd =
 
 string(float brightness) ReturnBrightness =
 {
-    brightness = rint(brightness);
-    
-    if (brightness > 25)
-        return "z";
+	brightness = rint(brightness);
 
-    if (brightness == 0)
-        return "a";
-    if (brightness == 1)
-        return "b";
-    if (brightness == 2)
-        return "c";
-    if (brightness == 3)
-        return "d";
-    if (brightness == 4)
-        return "e";
-    if (brightness == 5)
-        return "f";
-    if (brightness == 6)
-        return "g";
-    if (brightness == 7)
-        return "h";
-    if (brightness == 8)
-        return "i";
-    if (brightness == 9)
-        return "j";
-    if (brightness == 10)
-        return "k";
-    if (brightness == 11)
-        return "l";
-    if (brightness == 12)
-        return "m";
-    if (brightness == 13)
-        return "n";
-    if (brightness == 14)
-        return "o";
-    if (brightness == 15)
-        return "p";
-    if (brightness == 16)
-        return "q";
-    if (brightness == 17)
-        return "r";
-    if (brightness == 18)
-        return "s";
-    if (brightness == 19)
-        return "t";
-    if (brightness == 20)
-        return "u";
-    if (brightness == 21)
-        return "v";
-    if (brightness == 22)
-        return "w";
-    if (brightness == 23)
-        return "x";
-    if (brightness == 24)
-        return "y";
-    if (brightness == 25)
-        return "z";    
+	if (brightness > 25)
+		return "z";
 
-    if (brightness < 0)
-        return "a";
-    
-    return "m";
+	if (brightness == 0)
+		return "a";
+	if (brightness == 1)
+		return "b";
+	if (brightness == 2)
+		return "c";
+	if (brightness == 3)
+		return "d";
+	if (brightness == 4)
+		return "e";
+	if (brightness == 5)
+		return "f";
+	if (brightness == 6)
+		return "g";
+	if (brightness == 7)
+		return "h";
+	if (brightness == 8)
+		return "i";
+	if (brightness == 9)
+		return "j";
+	if (brightness == 10)
+		return "k";
+	if (brightness == 11)
+		return "l";
+	if (brightness == 12)
+		return "m";
+	if (brightness == 13)
+		return "n";
+	if (brightness == 14)
+		return "o";
+	if (brightness == 15)
+		return "p";
+	if (brightness == 16)
+		return "q";
+	if (brightness == 17)
+		return "r";
+	if (brightness == 18)
+		return "s";
+	if (brightness == 19)
+		return "t";
+	if (brightness == 20)
+		return "u";
+	if (brightness == 21)
+		return "v";
+	if (brightness == 22)
+		return "w";
+	if (brightness == 23)
+		return "x";
+	if (brightness == 24)
+		return "y";
+	if (brightness == 25)
+		return "z";
+
+	if (brightness < 0)
+		return "a";
+
+	return "m";
 };
 
 //==============================================================================================
@@ -614,19 +622,21 @@ string(float brightness) ReturnBrightness =
 
 void(float brightness) SetWorldBrightness =
 {
-    if (no_bright) return;
-    
-    local string st;
-    
-    brightness = rint(brightness);
-    
-    if (brightness == current_brightness) return;
+	if (no_bright)
+		return;
 
-    st = ReturnBrightness(brightness);
+	local string st;
 
-    lightstyle(0,st);
+	brightness = rint(brightness);
 
-    current_brightness = brightness;
+	if (brightness == current_brightness)
+		return;
+
+	st = ReturnBrightness(brightness);
+
+	lightstyle(0,st);
+
+	current_brightness = brightness;
 };
 
 void() FadeWorld_think;
@@ -636,62 +646,63 @@ void() FadeWorld_think;
 
 entity(float brightness, float fadetime, float delaytime, float factor) FadeWorld =
 {
-    if (factor == 0)
-        factor = 1;
+	if (factor == 0)
+		factor = 1;
 
-    local entity fadetimer;
+	local entity fadetimer;
 
-    RemoveFadeTimer();
+	RemoveFadeTimer();
 
-    if (current_brightness == brightness) return world;
-    
-    fadetimer = spawn();
-    fadetimer.classname = "fade";
-    fadetimer.think = FadeWorld_think;
-    fadetimer.nextthink = time + delaytime;    
-    fadetimer.heat = 0;    
+	if (current_brightness == brightness)
+		return world;
 
-    fadetimer.has_sentry = current_brightness;
-    fadetimer.has_tesla = brightness;
-    
-    fadetimer.has_sensor = current_brightness - brightness; // steps
+	fadetimer = spawn();
+	fadetimer.classname = "fade";
+	fadetimer.think = FadeWorld_think;
+	fadetimer.nextthink = time + delaytime;
+	fadetimer.heat = 0;
 
-    if (fadetime == 0) // use default rate
-        fadetimer.has_camera = fabs(fadetimer.has_sensor) * factor;
-    else
-        fadetimer.has_camera = fadetime * 10 * factor; // total steps
+	fadetimer.has_sentry = current_brightness;
+	fadetimer.has_tesla = brightness;
 
-    fadetimer.has_teleporter = 0; // do nothing when fading ends, default
+	fadetimer.has_sensor = current_brightness - brightness; // steps
 
-    return fadetimer;
+	if (fadetime == 0) // use default rate
+		fadetimer.has_camera = fabs(fadetimer.has_sensor) * factor;
+	else
+		fadetimer.has_camera = fadetime * 10 * factor; // total steps
+
+	fadetimer.has_teleporter = 0; // do nothing when fading ends, default
+
+	return fadetimer;
 };
 
 void() FadeWorld_think =
 {
-    local float bright, current_fraction, current_step;
-    
-    current_fraction = self.heat / self.has_camera;
-    current_step = current_fraction * self.has_sensor; 
-    bright = self.has_sentry - current_step;
-    
-    SetWorldBrightness(bright);
+	local float bright, current_fraction, current_step;
 
-    if (self.has_teleporter == 3)
-        daylight = bright;
+	current_fraction = self.heat / self.has_camera;
+	current_step = current_fraction * self.has_sensor;
+	bright = self.has_sentry - current_step;
 
-    self.heat = self.heat + 1;    
-    
-    if (current_brightness == self.has_tesla)
-    {
-        if (self.has_teleporter == 1)
-            specialstate = #TRUE;
-        else if (self.has_teleporter == 2)
-            specialstate = #FALSE;
-       
-        dremove(self);
-    }
-    else
-        self.nextthink = time + 0.1;
+	SetWorldBrightness(bright);
+
+	if (self.has_teleporter == 3)
+		daylight = bright;
+
+	self.heat = self.heat + 1;
+
+	if (current_brightness == self.has_tesla)
+	{
+		if (self.has_teleporter == 1)
+			specialstate = #TRUE;
+		else if (self.has_teleporter == 2)
+			specialstate = #FALSE;
+
+		dremove(self);
+	}
+	else
+		self.nextthink = time + 0.1;
 };
 
 //=========================================================================
@@ -699,11 +710,11 @@ void() FadeWorld_think =
 
 void() RemoveFadeTimer =
 {
-    local entity te;
+	local entity te;
 
-    te = find(world,classname,"fade");
+	te = find(world,classname,"fade");
 
-    if (te) dremove(te);
+	if (te) dremove(te);
 };
 
 //-------------------------//
@@ -717,25 +728,26 @@ void() Storm_think;
 // Initializes storm stuff and starts it
 
 void() InitStorm =
-{    
-    local entity tstorm;
+{
+	local entity tstorm;
 
-    CleanUpStorm(#FALSE);
+	CleanUpStorm(#FALSE);
 
-    if (!storm) return;
+	if (!storm)
+		return;
 
-    // Create storm entity
-    tstorm = spawn();
-    tstorm.classname = "storm";
-    tstorm.think = Storm_think;
-    tstorm.nextthink = time + 1;
+	// Create storm entity
+	tstorm = spawn();
+	tstorm.classname = "storm";
+	tstorm.think = Storm_think;
+	tstorm.nextthink = time + 1;
 
-    // Set starting settings
-    tstorm.has_holo = -1; // last thunder sound
-    tstorm.has_sensor = -1; // 2nd last thunder sound
-    tstorm.has_tesla = 1; // Storm always start far away
+	// Set starting settings
+	tstorm.has_holo = -1; // last thunder sound
+	tstorm.has_sensor = -1; // 2nd last thunder sound
+	tstorm.has_tesla = 1; // Storm always start far away
 
-    bprint(#PRINT_HIGH,"Environmentç Lightning storm near the battlefield!\n");
+	bprint(#PRINT_HIGH,"Environment\{141} Lightning storm near the battlefield!\n");
 };
 
 //=======================================================
@@ -743,21 +755,21 @@ void() InitStorm =
 
 void() Storm_think =
 {
-    local float thunderdelay;
+	local float thunderdelay;
 
-    if (self.has_sentry < #STORM_MAXCONCURRENT)
-    {
-        thunderdelay = GetThunderDelay(self);
+	if (self.has_sentry < #STORM_MAXCONCURRENT)
+	{
+		thunderdelay = GetThunderDelay(self);
 
-        StormLightning(self, thunderdelay);
-    }
-    else
-    {
-        self.nextthink = time + 1 + random() * 2;
-        return;
-    }
-    
-    self.nextthink = time + #STORM_MINFREQUENCY + (#STORM_MAXFREQUENCY - #STORM_MINFREQUENCY) * (1- self.has_tesla) + random()*random()*10;
+		StormLightning(self, thunderdelay);
+	}
+	else
+	{
+		self.nextthink = time + 1 + random() * 2;
+		return;
+	}
+
+	self.nextthink = time + #STORM_MINFREQUENCY + (#STORM_MAXFREQUENCY - #STORM_MINFREQUENCY) * (1- self.has_tesla) + random()*random()*10;
 };
 
 //===========================================================================
@@ -765,7 +777,7 @@ void() Storm_think =
 
 float(entity tstorm) GetThunderDelay =
 {
-    return #STORM_THUNDER_MINDELAY + (#STORM_THUNDER_MAXDELAY - #STORM_THUNDER_MINDELAY) * (1- tstorm.has_tesla);
+	return #STORM_THUNDER_MINDELAY + (#STORM_THUNDER_MAXDELAY - #STORM_THUNDER_MINDELAY) * (1- tstorm.has_tesla);
 };
 
 //====================================================================
@@ -773,32 +785,32 @@ float(entity tstorm) GetThunderDelay =
 
 void(float report) CleanUpStorm =
 {
-    local entity tstorm, te;
-    
-    // remove any storm events out there
-    te = find(world, classname, "stormevent");
+	local entity tstorm, te;
 
-    while (te)
-    {
-        // remove this one..
-        dremove(te);
+	// remove any storm events out there
+	te = find(world, classname, "stormevent");
 
-        // ..and find the next one (if there is one)
-        te = find(world, classname, "stormevent");
-    }
+	while (te)
+	{
+		// remove this one..
+		dremove(te);
 
-    // find main storm entity..
-    tstorm = find(world, classname, "storm");
+		// ..and find the next one (if there is one)
+		te = find(world, classname, "stormevent");
+	}
 
-    // ..and remove it
-    if (tstorm) dremove(tstorm);
+	// find main storm entity..
+	tstorm = find(world, classname, "storm");
 
-    // Reset world brighness to current daylight if needed after any storm lightning
-    if (!ceasefire && !specialstate)
-        SetWorldBrightness(daylight);
+	// ..and remove it
+	if (tstorm) dremove(tstorm);
 
-    if (report)
-        bprint(#PRINT_HIGH,"Environmentç The lighning storm has gone far away.\n");
+	// Reset world brighness to current daylight if needed after any storm lightning
+	if (!ceasefire && !specialstate)
+		SetWorldBrightness(daylight);
+
+	if (report)
+		bprint(#PRINT_HIGH,"Environment\{141} The lighning storm has gone far away.\n");
 };
 
 //==============================================================
@@ -806,101 +818,101 @@ void(float report) CleanUpStorm =
 
 void(entity tstorm) StormThunder =
 {
-    if (ceasefire)
-        return;
-    
-    local float thundernum;
-    local float th1, th2, th3, counter, done, hs_sensor;
+	if (ceasefire)
+		return;
 
-    if (tstorm.has_holo == -1 && tstorm.has_sensor == -1)
-    {
-        thundernum = rint(random()*3);
-    }
-    else 
-    {
-        th1 = 40;
-        th2 = 40;
-        th3 = 40;
+	local float thundernum;
+	local float th1, th2, th3, counter, done, hs_sensor;
 
-        if (random() < #STORM_THUNDERSOUND_CHANCEDOUBLE || tstorm.has_sensor < 0)
-            hs_sensor = tstorm.has_sensor;
-        else
-            hs_sensor = 40;
+	if (tstorm.has_holo == -1 && tstorm.has_sensor == -1)
+	{
+		thundernum = rint(random()*3);
+	}
+	else
+	{
+		th1 = 40;
+		th2 = 40;
+		th3 = 40;
 
-        counter = 0;
-        done = #FALSE;
+		if (random() < #STORM_THUNDERSOUND_CHANCEDOUBLE || tstorm.has_sensor < 0)
+			hs_sensor = tstorm.has_sensor;
+		else
+			hs_sensor = 40;
 
-        while (counter < 4 && done == #FALSE)
-        {
-            if (counter != tstorm.has_holo && counter != hs_sensor)
-            {
-                done = #TRUE;
-                th1 = counter;
-            }
+		counter = 0;
+		done = #FALSE;
 
-            counter = counter + 1;
-        }
+		while (counter < 4 && done == #FALSE)
+		{
+			if (counter != tstorm.has_holo && counter != hs_sensor)
+			{
+				done = #TRUE;
+				th1 = counter;
+			}
 
-        counter = 0;
-        done = #FALSE;
+			counter = counter + 1;
+		}
 
-        while (counter < 4 && done == #FALSE)
-        {
-            if (counter != tstorm.has_holo && counter != hs_sensor && counter != th1)
-            {
-                done = #TRUE;
-                th2 = counter;
-            }
+		counter = 0;
+		done = #FALSE;
 
-            counter = counter + 1;
-        }
+		while (counter < 4 && done == #FALSE)
+		{
+			if (counter != tstorm.has_holo && counter != hs_sensor && counter != th1)
+			{
+				done = #TRUE;
+				th2 = counter;
+			}
 
-        // third loop if we double use the 2nd last sound
-        if (hs_sensor == 40)
-        {
-            counter = 0;
-            done = #FALSE;
+			counter = counter + 1;
+		}
 
-            while (counter < 4 && done == #FALSE)
-            {
-                if (counter != tstorm.has_holo && counter != hs_sensor && counter != th1 && counter != th2)
-                {
-                    done = #TRUE;
-                    th3 = counter;
-                }
+		// third loop if we double use the 2nd last sound
+		if (hs_sensor == 40)
+		{
+			counter = 0;
+			done = #FALSE;
 
-                counter = counter + 1;
-            }
+			while (counter < 4 && done == #FALSE)
+			{
+				if (counter != tstorm.has_holo && counter != hs_sensor && counter != th1 && counter != th2)
+				{
+					done = #TRUE;
+					th3 = counter;
+				}
 
-            counter = rint(random()*2);
+				counter = counter + 1;
+			}
 
-            if (counter == 0)
-                thundernum = th1;
-            else if (counter == 1)
-                thundernum = th2;
-            else if (counter == 2)
-                thundernum = th3;
-        }
-        else
-        {
-            counter = rint(random());
+			counter = rint(random()*2);
 
-            if (counter == 0)
-                thundernum = th1;
-            else if (counter == 1)
-                thundernum = th2;            
-        }
-    }
-    
-    // Get volume of thunder based on storm distance to battle field :)
-    counter = #STORM_MINVOL + (#STORM_MAXVOL - #STORM_MINVOL) * tstorm.has_tesla;
+			if (counter == 0)
+				thundernum = th1;
+			else if (counter == 1)
+				thundernum = th2;
+			else if (counter == 2)
+				thundernum = th3;
+		}
+		else
+		{
+			counter = rint(random());
 
-    // Make thunder sound!
-    ThunderSound(thundernum,counter);
+			if (counter == 0)
+				thundernum = th1;
+			else if (counter == 1)
+				thundernum = th2;
+		}
+	}
 
-    // Update last used thunder sounds
-    tstorm.has_sensor = tstorm.has_holo;
-    tstorm.has_holo = thundernum;
+	// Get volume of thunder based on storm distance to battle field :)
+	counter = #STORM_MINVOL + (#STORM_MAXVOL - #STORM_MINVOL) * tstorm.has_tesla;
+
+	// Make thunder sound!
+	ThunderSound(thundernum,counter);
+
+	// Update last used thunder sounds
+	tstorm.has_sensor = tstorm.has_holo;
+	tstorm.has_holo = thundernum;
 };
 
 //===========================================================================================
@@ -908,18 +920,18 @@ void(entity tstorm) StormThunder =
 
 void() Thunder_think =
 {
-    StormThunder(self.demon_one);
+	StormThunder(self.demon_one);
 
-    if (self.has_teleporter || self.has_fieldgen != 6) // If not a double thing or 1 thunder of 2 already done..
-    {
-        self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
-        dremove(self);
-    }
-    else // this always get executed by a "double type" storm event
-    {
-        self.has_fieldgen = 1; // in next think, do the thing above
-        self.nextthink = time + GetThunderDelay(self.demon_one);
-    }
+	if (self.has_teleporter || self.has_fieldgen != 6) // If not a double thing or 1 thunder of 2 already done..
+	{
+		self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
+		dremove(self);
+	}
+	else // this always get executed by a "double type" storm event
+	{
+		self.has_fieldgen = 1; // in next think, do the thing above
+		self.nextthink = time + GetThunderDelay(self.demon_one);
+	}
 };
 
 //=======================================================================
@@ -927,146 +939,146 @@ void() Thunder_think =
 
 void(float bright, entity stormevent) SetLightningBrightness =
 {
-    if (ceasefire)
-        return;
+	if (ceasefire)
+		return;
 
-    bright = bright - (bright*#STORM_LIGHTNINGBRIGHT_MINIMUMFACTOR)*(1-stormevent.demon_one.has_tesla);
+	bright = bright - (bright*#STORM_LIGHTNINGBRIGHT_MINIMUMFACTOR)*(1-stormevent.demon_one.has_tesla);
 
-    SetWorldBrightness(daylight + bright);
+	SetWorldBrightness(daylight + bright);
 };
 
 //========================================================================================
 // Think for storm event entity, does lightning and passes to thunder_think when ended
 
 void() StormEvent_think =
-{    
-    if (self.has_camera)
-    {
-        SetLightningBrightness(0,self);
+{
+	if (self.has_camera)
+	{
+		SetLightningBrightness(0,self);
 
-        if (self.has_teleporter && self.has_fieldgen != 6) // Sound thunder played? then just do cleanup
-        {
-            self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
-            dremove(self);
-            return;
-        }
-        else // we must play the thunder still
-        {            
-            self.think = Thunder_think;
+		if (self.has_teleporter && self.has_fieldgen != 6) // Sound thunder played? then just do cleanup
+		{
+			self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
+			dremove(self);
+			return;
+		}
+		else // we must play the thunder still
+		{
+			self.think = Thunder_think;
 
-            if (self.has_fieldgen == 6 && self.has_teleporter) // Double lightning/thunder event type
-                self.nextthink = time + GetThunderDelay(self.demon_one);
-            else
-                self.nextthink = self.penance_time + self.job_finished;
+			if (self.has_fieldgen == 6 && self.has_teleporter) // Double lightning/thunder event type
+				self.nextthink = time + GetThunderDelay(self.demon_one);
+			else
+				self.nextthink = self.penance_time + self.job_finished;
 
-            return;
-        }
-    }
-    
-    if (self.has_fieldgen == 0) // first type of lightning
-    {
-        if (self.heat == 0)
-            SetLightningBrightness(15,self);
-        else if (self.heat == 1)
-            SetLightningBrightness(0,self);
-        else if (self.heat == 2)
-        {
-            SetLightningBrightness(8,self);
-            self.has_camera = #TRUE;
-        }
-    }
+			return;
+		}
+	}
 
-    else if (self.has_fieldgen == 1) // second type of lightning
-    {
-        if (self.heat == 0)
-            SetLightningBrightness(15,self);
-        else if (self.heat == 1)
-            SetLightningBrightness(10,self);
-        else if (self.heat == 2)
-        {
-            SetLightningBrightness(3,self);
-            self.has_camera = #TRUE;
-        }
-    }    
+	if (self.has_fieldgen == 0) // first type of lightning
+	{
+		if (self.heat == 0)
+			SetLightningBrightness(15,self);
+		else if (self.heat == 1)
+			SetLightningBrightness(0,self);
+		else if (self.heat == 2)
+		{
+			SetLightningBrightness(8,self);
+			self.has_camera = #TRUE;
+		}
+	}
 
-    else if (self.has_fieldgen == 2) // third type of lightning
-    {
-        if (self.heat == 0)
-            SetLightningBrightness(8,self);
-        else if (self.heat == 1)
-        {
-            SetLightningBrightness(15,self);
-            self.has_camera = #TRUE;
-        }
-    }    
+	else if (self.has_fieldgen == 1) // second type of lightning
+	{
+		if (self.heat == 0)
+			SetLightningBrightness(15,self);
+		else if (self.heat == 1)
+			SetLightningBrightness(10,self);
+		else if (self.heat == 2)
+		{
+			SetLightningBrightness(3,self);
+			self.has_camera = #TRUE;
+		}
+	}
 
-    else if (self.has_fieldgen == 3) // 4th Only sound
-    {
-        self.has_camera = #TRUE;
-        self.nextthink = time;
-    }
+	else if (self.has_fieldgen == 2) // third type of lightning
+	{
+		if (self.heat == 0)
+			SetLightningBrightness(8,self);
+		else if (self.heat == 1)
+		{
+			SetLightningBrightness(15,self);
+			self.has_camera = #TRUE;
+		}
+	}
 
-    else if (self.has_fieldgen == 4) // 5th type of thunder
-    {
-        if (self.heat == 0)
-            SetLightningBrightness(5,self);
-        if (self.heat == 1)
-        {
-            SetLightningBrightness(4,self);
-            self.has_camera = #TRUE;        
-        }
-    }
+	else if (self.has_fieldgen == 3) // 4th Only sound
+	{
+		self.has_camera = #TRUE;
+		self.nextthink = time;
+	}
 
-    else if (self.has_fieldgen == 5) // 6th Only lightning
-    {
-        if (self.heat == 0)
-            SetLightningBrightness(3,self);
-        else if (self.heat == 1)
-        {
-            SetLightningBrightness(0,self);
-            self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
-            dremove(self);
-            return;
-        }
-    }
+	else if (self.has_fieldgen == 4) // 5th type of thunder
+	{
+		if (self.heat == 0)
+			SetLightningBrightness(5,self);
+		if (self.heat == 1)
+		{
+			SetLightningBrightness(4,self);
+			self.has_camera = #TRUE;
+		}
+	}
 
-    else if (self.has_fieldgen == 6) // 7th double lightning/thunder
-    {
-        if (self.heat == 0)
-            SetLightningBrightness(10,self);
-        else if (self.heat == 1)
-            SetLightningBrightness(4,self);
-        else if (self.heat == 2)
-            SetLightningBrightness(0,self);
-        else if (self.heat == 11)
-            SetLightningBrightness(15,self);
-        else if (self.heat == 12)
-            SetLightningBrightness(8,self);
-        else if (self.heat == 13)
-        {
-            SetLightningBrightness(12,self);
-            self.has_camera = #TRUE;
-        }        
-    }
+	else if (self.has_fieldgen == 5) // 6th Only lightning
+	{
+		if (self.heat == 0)
+			SetLightningBrightness(3,self);
+		else if (self.heat == 1)
+		{
+			SetLightningBrightness(0,self);
+			self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
+			dremove(self);
+			return;
+		}
+	}
 
-    if (!self.has_teleporter)
-    if (self.has_fieldgen != 5)
-    if (time > self.penance_time + self.job_finished)
-    {
-        StormThunder(self.demon_one);
-        self.has_teleporter = #TRUE; // Sound job done        
-    }
+	else if (self.has_fieldgen == 6) // 7th double lightning/thunder
+	{
+		if (self.heat == 0)
+			SetLightningBrightness(10,self);
+		else if (self.heat == 1)
+			SetLightningBrightness(4,self);
+		else if (self.heat == 2)
+			SetLightningBrightness(0,self);
+		else if (self.heat == 11)
+			SetLightningBrightness(15,self);
+		else if (self.heat == 12)
+			SetLightningBrightness(8,self);
+		else if (self.heat == 13)
+		{
+			SetLightningBrightness(12,self);
+			self.has_camera = #TRUE;
+		}
+	}
 
-    self.heat = self.heat + 1;
+	if (!self.has_teleporter)
+	if (self.has_fieldgen != 5)
+	if (time > self.penance_time + self.job_finished)
+	{
+		StormThunder(self.demon_one);
+		self.has_teleporter = #TRUE; // Sound job done
+	}
 
-    if (self.heat >= 40) // for safety, shouldnt happen
-    {
-        self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
-        dremove(self);
-        return;
-    }
+	self.heat = self.heat + 1;
 
-    self.nextthink = time + 0.1;
+	if (self.heat >= 40) // for safety, shouldnt happen
+	{
+		self.demon_one.has_sentry = self.demon_one.has_sentry - 1;
+		dremove(self);
+		return;
+	}
+
+	self.nextthink = time + 0.1;
 };
 
 //==============================================================
@@ -1074,28 +1086,28 @@ void() StormEvent_think =
 
 void(entity tstorm, float thunderdelay) StormLightning =
 {
-    if (ceasefire)
-        return;
+	if (ceasefire)
+		return;
 
-    local entity sevent;
+	local entity sevent;
 
-    // Increase our counter
-    tstorm.has_sentry = tstorm.has_sentry + 1;
+	// Increase our counter
+	tstorm.has_sentry = tstorm.has_sentry + 1;
 
-    // Create storm event
-    sevent = spawn();
-    sevent.classname = "stormevent";
-    sevent.think = StormEvent_think;
-    sevent.nextthink = time + 0.1;
-    sevent.demon_one = tstorm;
-    sevent.heat = 0;
-    sevent.penance_time = time;
-    sevent.job_finished = thunderdelay;
+	// Create storm event
+	sevent = spawn();
+	sevent.classname = "stormevent";
+	sevent.think = StormEvent_think;
+	sevent.nextthink = time + 0.1;
+	sevent.demon_one = tstorm;
+	sevent.heat = 0;
+	sevent.penance_time = time;
+	sevent.job_finished = thunderdelay;
 
-    sevent.has_camera = #FALSE;
-    sevent.has_teleporter = #FALSE;
+	sevent.has_camera = #FALSE;
+	sevent.has_teleporter = #FALSE;
 
-    sevent.has_fieldgen = rint(random()*6); // random type of event
+	sevent.has_fieldgen = rint(random()*6); // random type of event
 };
 
 //=========================================================
@@ -1103,52 +1115,52 @@ void(entity tstorm, float thunderdelay) StormLightning =
 
 void(float thundernum, float vol) ThunderSound =
 {
-    local string st, st2;
-    local entity te;
+	local string st, st2;
+	local entity te;
 
-    st = "playvol ";
+	st = "playvol ";
 
-    if (thundernum == 0)
-        st = strcat(st,"ambience/thunder1.wav ");
-    else if (thundernum == 1)
-        st = strcat(st,"environ/thunder2.wav ");
-    else if (thundernum == 2)
-        st = strcat(st,"environ/thunder3.wav ");
-    else if (thundernum == 3)
-        st = strcat(st,"environ/thunder4.wav ");
-    else if (thundernum == 4) // Special sound of killing lightning
-        st = strcat(st,"environ/thundrk.wav ");
-    else
-    {
-        RPrint("BUG: Wrong thunder number on ThunderSound()!\n");
-        return;
-    }
+	if (thundernum == 0)
+		st = strcat(st,"ambience/thunder1.wav ");
+	else if (thundernum == 1)
+		st = strcat(st,"environ/thunder2.wav ");
+	else if (thundernum == 2)
+		st = strcat(st,"environ/thunder3.wav ");
+	else if (thundernum == 3)
+		st = strcat(st,"environ/thunder4.wav ");
+	else if (thundernum == 4) // Special sound of killing lightning
+		st = strcat(st,"environ/thundrk.wav ");
+	else
+	{
+		RPrint("BUG: Wrong thunder number on ThunderSound()!\n");
+		return;
+	}
 
-    st2 = ftos(vol);
-    st = strcat(st,st2);
-    st = strcat(st,"\n");
-    
-    // find clients and stuffcmd the playvol command
-    te = find(world, classname, "player");
+	st2 = ftos(vol);
+	st = strcat(st,st2);
+	st = strcat(st,"\n");
 
-    while (te)
-    {
-        if (te.is_connected)
-            stuffcmd(te,st);
-        
-        te = find(te, classname,"player");
-    }
+	// find clients and stuffcmd the playvol command
+	te = find(world, classname, "player");
 
-    // spectators too..
-    te = find(world, classname, "spec");
+	while (te)
+	{
+		if (te.is_connected)
+			stuffcmd(te,st);
 
-    while (te)
-    {
-        if (te.is_connected)
-            stuffcmd(te,st);
-        
-        te = find(te, classname,"spec");
-    }
+		te = find(te, classname,"player");
+	}
+
+	// spectators too..
+	te = find(world, classname, "spec");
+
+	while (te)
+	{
+		if (te.is_connected)
+			stuffcmd(te,st);
+
+		te = find(te, classname,"spec");
+	}
 };
 
 //=====================================================================
@@ -1156,147 +1168,150 @@ void(float thundernum, float vol) ThunderSound =
 
 float(entity thing) IsKillableByStorm =
 {
-    if (!thing) return #FALSE;
+	if (!thing)
+		return #FALSE;
 
-    if (!IsBuilding(thing) && thing.classname != "player")
-        return #FALSE;
+	if (!IsBuilding(thing) && thing.classname != "player")
+		return #FALSE;
 
-    traceline(thing.origin,thing.origin + '0 0 4096',#TL_BSP_ONLY,thing);
+	traceline(thing.origin,thing.origin + '0 0 4096',#TL_BSP_ONLY,thing);
 
-    if (pointcontents(trace_endpos) == #CONTENT_SKY)
-        return #TRUE;
-  
-    return #FALSE;
+	if (pointcontents(trace_endpos) == #CONTENT_SKY)
+		return #TRUE;
+
+	return #FALSE;
 };
 
 //=====================================================================
-// Sets/Updates vulnerabilities on given machine 
+// Sets/Updates vulnerabilities on given machine
 
 void(entity thing) UpdateVulnerability =
 {
-    if (!thing) return;
+	if (!thing)
+		return;
 
-    if (!IsBuilding(thing)) return;
-    
-    if (IsKillableByStorm(thing))
-        thing.#stormflag = #STRFLAG_STORM_TARGET;
-    else
-        thing.#stormflag = "";
+	if (!IsBuilding(thing))
+		return;
 
-    thing.#earthquakeflag = #STRFLAG_EARTHQUAKE_TARGET;
+	if (IsKillableByStorm(thing))
+		thing.#stormflag = #STRFLAG_STORM_TARGET;
+	else
+		thing.#stormflag = "";
 
-    thing.is_connected = #TRUE;
+	thing.#earthquakeflag = #STRFLAG_EARTHQUAKE_TARGET;
+
+	thing.is_connected = #TRUE;
 };
 
 //======================================================================
 // Happening of a special storm event (aka killer lightning)
 
 void() StormSpecial_think =
-{    
-    if (self.heat == 0)
-    {
-        SetLightningBrightness(8,self);
-    } 
-    else if (self.heat == 1)
-    {
-        SetLightningBrightness(15,self);
-    }
-    else if (self.heat == 2)
-    {
-        SetLightningBrightness(12,self);
-    }
-    else if (self.heat == 3)
-    {
-        SetLightningBrightness(8,self);
-    }
-    else if (self.heat == 4)
-    {
-        SetLightningBrightness(4,self);
-    }
-    else if (self.heat == 5)
-    {
-        SetLightningBrightness(0,self);
-        dremove(self);
-        return;
-    }
+{
+	if (self.heat == 0)
+	{
+		SetLightningBrightness(8,self);
+	}
+	else if (self.heat == 1)
+	{
+		SetLightningBrightness(15,self);
+	}
+	else if (self.heat == 2)
+	{
+		SetLightningBrightness(12,self);
+	}
+	else if (self.heat == 3)
+	{
+		SetLightningBrightness(8,self);
+	}
+	else if (self.heat == 4)
+	{
+		SetLightningBrightness(4,self);
+	}
+	else if (self.heat == 5)
+	{
+		SetLightningBrightness(0,self);
+		dremove(self);
+		return;
+	}
 
-    if (self.heat >= 6)
-    {
-        SetLightningBrightness(0,self);
-        dremove(self);
-        return;
-    }
+	if (self.heat >= 6)
+	{
+		SetLightningBrightness(0,self);
+		dremove(self);
+		return;
+	}
 
-    self.heat = self.heat + 1;
-    self.nextthink = time + 0.1;
+	self.heat = self.heat + 1;
+	self.nextthink = time + 0.1;
 };
 
 float(entity tstorm) StormSpecialEvent =
 {
-    if (ceasefire || intermission_running)
-        return #FALSE;
-    
-    local entity thetarget;
+	if (ceasefire || intermission_running)
+		return #FALSE;
 
-    if (random() > 0.75) // sometimes players have priority over machines for getting crushed
-    {
-        thetarget = StormSelectPlayer(tstorm);
+	local entity thetarget;
 
-        if (!thetarget) 
-            thetarget = StormSelectMachine(tstorm);
-    }
-    else // usual thing
-    {
-        thetarget = StormSelectMachine(tstorm);
+	if (random() > 0.75) // sometimes players have priority over machines for getting crushed
+	{
+		thetarget = StormSelectPlayer(tstorm);
 
-        if (!thetarget) 
-            thetarget = StormSelectPlayer(tstorm);
-    }
+		if (!thetarget)
+			thetarget = StormSelectMachine(tstorm);
+	}
+	else // usual thing
+	{
+		thetarget = StormSelectMachine(tstorm);
 
-    // if no target is avaliable just return with failure
-    if (!thetarget)
-        return #FALSE; 
+		if (!thetarget)
+			thetarget = StormSelectPlayer(tstorm);
+	}
 
-    // Do the lightning ray effect
-    traceline(thetarget.origin,thetarget.origin + '0 0 8192',#TL_BSP_ONLY,thetarget);
-    
-    WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+	// if no target is avaliable just return with failure
+	if (!thetarget)
+		return #FALSE;
+
+	// Do the lightning ray effect
+	traceline(thetarget.origin,thetarget.origin + '0 0 8192',#TL_BSP_ONLY,thetarget);
+
+	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_LIGHTNING3);
-    WriteEntity (#MSG_BROADCAST, thetarget);
-    WriteCoord (#MSG_BROADCAST, thetarget.origin_x);
-    WriteCoord (#MSG_BROADCAST, thetarget.origin_y);
-    WriteCoord (#MSG_BROADCAST, thetarget.origin_z);
-    WriteCoord (#MSG_BROADCAST, trace_endpos_x);
-    WriteCoord (#MSG_BROADCAST, trace_endpos_y);
-    WriteCoord (#MSG_BROADCAST, trace_endpos_z);
-    #ifdef QUAKE_WORLD
-    multicast (thetarget.origin, #MULTICAST_PHS);
-    #endif
+	WriteEntity (#MSG_BROADCAST, thetarget);
+	WriteCoord (#MSG_BROADCAST, thetarget.origin_x);
+	WriteCoord (#MSG_BROADCAST, thetarget.origin_y);
+	WriteCoord (#MSG_BROADCAST, thetarget.origin_z);
+	WriteCoord (#MSG_BROADCAST, trace_endpos_x);
+	WriteCoord (#MSG_BROADCAST, trace_endpos_y);
+	WriteCoord (#MSG_BROADCAST, trace_endpos_z);
+	#ifdef QUAKE_WORLD
+	multicast (thetarget.origin, #MULTICAST_PHS);
+	#endif
 
-    // Make our special louder thunder sound instantly..
-    ThunderSound(4,1);
-    
-    // Electric sound
-    sound (thetarget, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM);
-    
-    // Damage it
-    deathmsg = #DMSG_STORM;
-    TF_T_Damage(thetarget,thetarget,thetarget,#STORM_DIRECTHIT_DMG,0,#TF_TD_ELECTRICITY);
+	// Make our special louder thunder sound instantly..
+	ThunderSound(4,1);
 
-    // TODO: Blast lightning damage on nearby stuff
+	// Electric sound
+	sound (thetarget, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM);
 
-    // Create an entity to handle the lightning brightness changes
-    thetarget = spawn();
-    thetarget.classname = "stormevent";
-    thetarget.think = StormSpecial_think;
-    thetarget.nextthink = time + 0.1;
-    thetarget.heat = 0;
-    thetarget.demon_one = tstorm;
-    // lit start of lightning effect:
-    SetLightningBrightness(25,thetarget);
+	// Damage it
+	deathmsg = #DMSG_STORM;
+	TF_T_Damage(thetarget,thetarget,thetarget,#STORM_DIRECTHIT_DMG,0,#TF_TD_ELECTRICITY);
 
-    // we did it, return success..
-    return #TRUE;
+	// TODO: Blast lightning damage on nearby stuff
+
+	// Create an entity to handle the lightning brightness changes
+	thetarget = spawn();
+	thetarget.classname = "stormevent";
+	thetarget.think = StormSpecial_think;
+	thetarget.nextthink = time + 0.1;
+	thetarget.heat = 0;
+	thetarget.demon_one = tstorm;
+	// lit start of lightning effect:
+	SetLightningBrightness(25,thetarget);
+
+	// we did it, return success..
+	return #TRUE;
 };
 
 //=====================================================================================
@@ -1304,83 +1319,84 @@ float(entity tstorm) StormSpecialEvent =
 
 entity(entity tstorm) StormSelectMachine =
 {
-    local entity te;
-    local float done;
+	local entity te;
+	local float done;
 
-    done = #FALSE;
+	done = #FALSE;
 
-    // Find any machine flagged as storm target
-    te = find(world,#stormflag,#STRFLAG_STORM_TARGET);
+	// Find any machine flagged as storm target
+	te = find(world,#stormflag,#STRFLAG_STORM_TARGET);
 
-    while (done != #TRUE && te != world)
-    {
-        if (te.health > 0)
-        if (IsBuilding(te))
-        if (IsKillableByStorm(te))
-        {
-            done = #TRUE;
-        }
+	while (done != #TRUE && te != world)
+	{
+		if (te.health > 0)
+		if (IsBuilding(te))
+		if (IsKillableByStorm(te))
+		{
+			done = #TRUE;
+		}
 
-        if (!done)
-            te = find(te,#stormflag,#STRFLAG_STORM_TARGET);
-    }
+		if (!done)
+			te = find(te,#stormflag,#STRFLAG_STORM_TARGET);
+	}
 
-    if (te != world && done == #TRUE) // we have a machine to be crushed by the storm
-        return te;
-    else
-        return world;
+	if (te != world && done == #TRUE) // we have a machine to be crushed by the storm
+		return te;
+	else
+		return world;
 };
 
 entity(entity tstorm) StormSelectPlayer =
 {
-    if (num_players < 1) return world;
+	if (num_players < 1)
+		return world;
 
-    local entity te;
-    local float done;
-    local float counter, toskip;
+	local entity te;
+	local float done;
+	local float counter, toskip;
 
-    toskip = 0;
+	toskip = 0;
 
-    // Find player able to be killed by the storm
+	// Find player able to be killed by the storm
 
-    te = find(world,classname,"player");
+	te = find(world,classname,"player");
 
-    if (num_players > 1) // if more than 1 player, skip random number of players first..
-    {        
-        toskip = floor(random()*num_players);
-        counter = 0;
+	if (num_players > 1) // if more than 1 player, skip random number of players first..
+	{
+		toskip = floor(random()*num_players);
+		counter = 0;
 
-        while (counter < toskip)
-        {
-            counter = counter + 1;
-            te = find(te,classname,"player");
-        }
-    }
+		while (counter < toskip)
+		{
+			counter = counter + 1;
+			te = find(te,classname,"player");
+		}
+	}
 
-    done = #FALSE;
-    counter = 0;
+	done = #FALSE;
+	counter = 0;
 
-    while (done != #TRUE && counter < (num_players+1))// && te != world)
-    {
-        if (te.is_connected)
-        if (te.playerclass != #PC_UNDEFINED) // skip observers
-        if (te.health > 0)
-        if (IsKillableByStorm(te))
-        {
-            done = #TRUE;
-        }
+	while (done != #TRUE && counter < (num_players+1))// && te != world)
+	{
+		if (te.is_connected)
+		if (te.playerclass != #PC_UNDEFINED) // skip observers
+		if (te.health > 0)
+		if (IsKillableByStorm(te))
+		{
+			done = #TRUE;
+		}
 
-        if (!done)
-        {
-            counter = counter + 1;
-            te = find(te,classname,"player");
-        }
-    }
+		if (!done)
+		{
+			counter = counter + 1;
+			te = find(te,classname,"player");
+		}
+	}
 
-    if (te != world && done == #TRUE) // we have a player to be crushed by the storm
-        return te;
-    else
-        return world;
+	if (te != world && done == #TRUE) // we have a player to be crushed by the storm
+		return te;
+	else
+		return world;
 };
 
 
@@ -1400,20 +1416,21 @@ void() EarthquakeApply_think;
 
 void() InitEarthquake =
 {
-    local entity teq;
+	local entity teq;
 
-    CleanUpEarthquake(#FALSE);
+	CleanUpEarthquake(#FALSE);
 
-    if (!earthquake) return;
+	if (!earthquake)
+		return;
 
-    // Create earthquake entity
-    teq = spawn();
-    teq.classname = "eq";
-    teq.think = Earthquake_think;
-    teq.nextthink = time + GetNextEarthquakeTime(teq);
-    teq.has_holo = #FALSE;
+	// Create earthquake entity
+	teq = spawn();
+	teq.classname = "eq";
+	teq.think = Earthquake_think;
+	teq.nextthink = time + GetNextEarthquakeTime(teq);
+	teq.has_holo = #FALSE;
 
-    bprint(#PRINT_HIGH,"Environmentç The sismology in this zone seems unstable!\n");
+	bprint(#PRINT_HIGH,"Environment\{141} The seismology in this zone seems unstable!\n");
 };
 
 //===============================================
@@ -1421,7 +1438,7 @@ void() InitEarthquake =
 
 void() Earthquake_think =
 {
-    EarthquakeStart(self);
+	EarthquakeStart(self);
 };
 
 //=================================================================
@@ -1429,44 +1446,44 @@ void() Earthquake_think =
 
 void(entity eqent) EarthquakeStart =
 {
-    if (ceasefire || specialstate)
-    {
-        eqent.think = Earthquake_think;
-        eqent.nextthink = time + GetNextEarthquakeTime(eqent);    
-    }
-    
-    local entity te;
+	if (ceasefire || specialstate)
+	{
+		eqent.think = Earthquake_think;
+		eqent.nextthink = time + GetNextEarthquakeTime(eqent);
+	}
 
-    eqent.think = EarthquakeApply_think;
-    eqent.nextthink = time + 0.1;
-    eqent.has_holo = #TRUE;
+	local entity te;
 
-    // Start earthquake sound on players
-    te = find(world,classname,"player");
+	eqent.think = EarthquakeApply_think;
+	eqent.nextthink = time + 0.1;
+	eqent.has_holo = #TRUE;
 
-    while (te)
-    {
-        if (te.is_connected)
-            clientsound(te,#CHAN_EARTHQUAKE,"environ/rumble.wav",0.75,#ATTN_STATIC);
-        
-        te = find(te,classname,"player");
-    }
+	// Start earthquake sound on players
+	te = find(world,classname,"player");
 
-    // Start earthquake sound on spectators
-    te = find(world,classname,"spec");
+	while (te)
+	{
+		if (te.is_connected)
+			clientsound(te,#CHAN_EARTHQUAKE,"environ/rumble.wav",0.75,#ATTN_STATIC);
 
-    while (te)
-    {
-        if (te.is_connected)
-            clientsound(te,#CHAN_EARTHQUAKE,"environ/rumble.wav",0.75,#ATTN_STATIC);
-        
-        te = find(te,classname,"spec");
-    }
+		te = find(te,classname,"player");
+	}
 
-    // Initialize counter and time flag
-    eqent.heat = 0;
-    eqent.penance_time = time;
-    eqent.job_finished = #EARTHQUAKE_DURATIONMIN + (#EARTHQUAKE_DURATIONMAX - #EARTHQUAKE_DURATIONMIN) * random();
+	// Start earthquake sound on spectators
+	te = find(world,classname,"spec");
+
+	while (te)
+	{
+		if (te.is_connected)
+			clientsound(te,#CHAN_EARTHQUAKE,"environ/rumble.wav",0.75,#ATTN_STATIC);
+
+		te = find(te,classname,"spec");
+	}
+
+	// Initialize counter and time flag
+	eqent.heat = 0;
+	eqent.penance_time = time;
+	eqent.job_finished = #EARTHQUAKE_DURATIONMIN + (#EARTHQUAKE_DURATIONMAX - #EARTHQUAKE_DURATIONMIN) * random();
 };
 
 //================================================================
@@ -1474,82 +1491,82 @@ void(entity eqent) EarthquakeStart =
 
 void() EarthquakeApply_think =
 {
-    if (ceasefire || specialstate)
-    {
-        EarthquakeEnd(self);
-        return;
-    }
-    
-    local entity te;
-    local vector movevec;
+	if (ceasefire || specialstate)
+	{
+		EarthquakeEnd(self);
+		return;
+	}
 
-    // shake all players in same direction
-    movevec_x = crandom()* #EARTHQUAKE_PUSHINTENSITY;
-    movevec_y = crandom()* #EARTHQUAKE_PUSHINTENSITY;
-    
-    te = find(world,classname,"player");
+	local entity te;
+	local vector movevec;
 
-    while (te)
-    {
-        if (te.is_connected)
-        if (te.health > 0) // Skip heads and corpses (not respawned)?
-        if (!(te.done_custom & #CUSTOM_BUILDING)) // skip ppl customizing
-        if (te.playerclass != #PC_UNDEFINED) // skip observers
-        {
-            if (te.flags & #FL_ONGROUND) // player on ground, time for moving!
-            {
-                te.velocity_x = te.velocity_x + movevec_x;
-                te.velocity_y = te.velocity_y + movevec_y;                
-            }
-            else if (te.waterlevel > 1) // player on water, move but slightly less
-            {
-                te.velocity_x = te.velocity_x + movevec_x * 0.5;
-                te.velocity_y = te.velocity_y + movevec_y * 0.5;                
-            }
-        }
+	// shake all players in same direction
+	movevec_x = crandom()* #EARTHQUAKE_PUSHINTENSITY;
+	movevec_y = crandom()* #EARTHQUAKE_PUSHINTENSITY;
 
-        te = find(te,classname,"player");
-    }
+	te = find(world,classname,"player");
 
-    // Damage susceptible machines accordingly
-    local float damage;
+	while (te)
+	{
+		if (te.is_connected)
+		if (te.health > 0) // Skip heads and corpses (not respawned)?
+		if (!(te.done_custom & #CUSTOM_BUILDING)) // skip ppl customizing
+		if (te.playerclass != #PC_UNDEFINED) // skip observers
+		{
+			if (te.flags & #FL_ONGROUND) // player on ground, time for moving!
+			{
+				te.velocity_x = te.velocity_x + movevec_x;
+				te.velocity_y = te.velocity_y + movevec_y;
+			}
+			else if (te.waterlevel > 1) // player on water, move but slightly less
+			{
+				te.velocity_x = te.velocity_x + movevec_x * 0.5;
+				te.velocity_y = te.velocity_y + movevec_y * 0.5;
+			}
+		}
 
-    damage = rint(random()*10);
+		te = find(te,classname,"player");
+	}
 
-    if (damage > 5)
-    {
-        deathmsg = #DMSG_EARTHQUAKE;
+	// Damage susceptible machines accordingly
+	local float damage;
 
-        te = find(world,#earthquakeflag,#STRFLAG_EARTHQUAKE_TARGET);
+	damage = rint(random()*10);
 
-        while (te)
-        {
-            if (te.health > 0)
-            if (random()< 0.4)
-            {
-                //if (te.flags & #FL_ONGROUND) // machine on ground
-                    TF_T_Damage(te,te,te,damage,0,0);
+	if (damage > 5)
+	{
+		deathmsg = #DMSG_EARTHQUAKE;
 
-                if (random()< 0.1)
-                    SpawnBlood(te.origin,20);
-            }
+		te = find(world,#earthquakeflag,#STRFLAG_EARTHQUAKE_TARGET);
 
-            te = find(te,#earthquakeflag,#STRFLAG_EARTHQUAKE_TARGET);
-        }
-    }
+		while (te)
+		{
+			if (te.health > 0)
+			if (random()< 0.4)
+			{
+				//if (te.flags & #FL_ONGROUND) // machine on ground
+					TF_T_Damage(te,te,te,damage,0,0);
 
-    // Bprint warning message
-    if (self.heat == 5)
-        bprint(#PRINT_HIGH,"ú ‘ËÂ ÁÚÔıÓ‰ ÚıÌ‚ÏÂÛ° ≈·ÚÙËÒı·ÎÂ°° ú\n");
+				if (random()< 0.1)
+					SpawnBlood(te.origin,20);
+			}
 
-    // Increase counter
-    self.heat = self.heat + 1;
+			te = find(te,#earthquakeflag,#STRFLAG_EARTHQUAKE_TARGET);
+		}
+	}
 
-    // Set nextthink time randomly or end earthquake if needed
-    if (time > self.penance_time + self.job_finished)
-        EarthquakeEnd(self);
-    else    
-        self.nextthink = time + #EARTHQUAKE_MINRATE + (#EARTHQUAKE_MAXRATE - #EARTHQUAKE_MINRATE)*random();
+	// Bprint warning message
+	if (self.heat == 5)
+		bprint(#PRINT_HIGH,"\{156} \sThe ground rumbles! Earthquake!!\s \{156}\n");
+
+	// Increase counter
+	self.heat = self.heat + 1;
+
+	// Set nextthink time randomly or end earthquake if needed
+	if (time > self.penance_time + self.job_finished)
+		EarthquakeEnd(self);
+	else
+		self.nextthink = time + #EARTHQUAKE_MINRATE + (#EARTHQUAKE_MAXRATE - #EARTHQUAKE_MINRATE)*random();
 };
 
 //=================================================================
@@ -1557,36 +1574,37 @@ void() EarthquakeApply_think =
 
 void(entity eqent) EarthquakeEnd =
 {
-    local entity te;
+	local entity te;
 
-    if (eqent.has_holo != #TRUE) return;
+	if (eqent.has_holo != #TRUE)
+		return;
 
-    eqent.think = Earthquake_think;
-    eqent.nextthink = time + GetNextEarthquakeTime(eqent);    
+	eqent.think = Earthquake_think;
+	eqent.nextthink = time + GetNextEarthquakeTime(eqent);
 
-    // Shut down earthquake sound on players
-    te = find(world,classname,"player");
+	// Shut down earthquake sound on players
+	te = find(world,classname,"player");
 
-    while (te)
-    {
-        if (te.is_connected)
-            clientsound(te,#CHAN_EARTHQUAKE,"environ/rumblend.wav",0.75,#ATTN_STATIC);
-        
-        te = find(te,classname,"player");
-    }    
+	while (te)
+	{
+		if (te.is_connected)
+			clientsound(te,#CHAN_EARTHQUAKE,"environ/rumblend.wav",0.75,#ATTN_STATIC);
 
-    // Shut down earthquake sound on spectators
-    te = find(world,classname,"spec");
+		te = find(te,classname,"player");
+	}
 
-    while (te)
-    {
-        if (te.is_connected)
-            clientsound(te,#CHAN_EARTHQUAKE,"environ/rumblend.wav",0.75,#ATTN_STATIC);
-        
-        te = find(te,classname,"spec");
-    }    
+	// Shut down earthquake sound on spectators
+	te = find(world,classname,"spec");
 
-    eqent.has_holo = #FALSE;
+	while (te)
+	{
+		if (te.is_connected)
+			clientsound(te,#CHAN_EARTHQUAKE,"environ/rumblend.wav",0.75,#ATTN_STATIC);
+
+		te = find(te,classname,"spec");
+	}
+
+	eqent.has_holo = #FALSE;
 };
 
 //================================================================
@@ -1594,7 +1612,7 @@ void(entity eqent) EarthquakeEnd =
 
 float(entity eqent) GetNextEarthquakeTime =
 {
-    return #EARTHQUAKE_MINHAPPEN + (#EARTHQUAKE_MAXHAPPEN - #EARTHQUAKE_MINHAPPEN) * random();
+	return #EARTHQUAKE_MINHAPPEN + (#EARTHQUAKE_MAXHAPPEN - #EARTHQUAKE_MINHAPPEN) * random();
 };
 
 //====================================================================
@@ -1602,18 +1620,18 @@ float(entity eqent) GetNextEarthquakeTime =
 
 void(float report) CleanUpEarthquake =
 {
-    local entity teq;
+	local entity teq;
 
-    teq = find(world, classname, "eq");
+	teq = find(world, classname, "eq");
 
-    if (teq)
-    {
-        EarthquakeEnd(teq); // (checks if needed itself)
-        dremove(teq);
-    }
+	if (teq)
+	{
+		EarthquakeEnd(teq); // (checks if needed itself)
+		dremove(teq);
+	}
 
-    if (report)
-        bprint(#PRINT_HIGH,"Environmentç The earthquakes have ceased.\n");
+	if (report)
+		bprint(#PRINT_HIGH,"Environment\{141} The earthquakes have ceased.\n");
 };
 
 //--------------------------------//
@@ -1628,26 +1646,27 @@ void() DayTime_think;
 
 void() InitDayTime =
 {
-    local entity daytimer;
+	local entity daytimer;
 
-    CleanUpDayTime(#FALSE);
+	CleanUpDayTime(#FALSE);
 
-    if (!daytime) return;
+	if (!daytime)
+		return;
 
-    // Create daytime entity
-    daytimer = spawn();
-    daytimer.classname = "daytimer";
-    daytimer.think = DayTime_think;
-    daytimer.nextthink = time + 1;
-    daytimer.ltime = time; // Time at which days started
-    daytimer.count = daytime; // Number of days
-    daytimer.heat = timelimit / daytime; // single day size
-    daytimer.has_tesla = 0; // first think will initialize this
+	// Create daytime entity
+	daytimer = spawn();
+	daytimer.classname = "daytimer";
+	daytimer.think = DayTime_think;
+	daytimer.nextthink = time + 1;
+	daytimer.ltime = time; // Time at which days started
+	daytimer.count = daytime; // Number of days
+	daytimer.heat = timelimit / daytime; // single day size
+	daytimer.has_tesla = 0; // first think will initialize this
 
-    local string st;
-    st = ftos(rint(daytime));
+	local string st;
+	st = ftos(rint(daytime));
 
-    bprint(#PRINT_HIGH,"Environmentç This battle will last for ",st," days...\n");
+	bprint(#PRINT_HIGH,"Environment\{141} This battle will last for ",st," days...\n");
 };
 
 //===================================================================
@@ -1655,40 +1674,40 @@ void() InitDayTime =
 
 void() DayTime_think =
 {
-    local float currentpos;
+	local float currentpos;
 
-    if (specialstate || ceasefire || intermission_running)
-    {
-        self.nextthink = time + 1;
-        return;
-    }
+	if (specialstate || ceasefire || intermission_running)
+	{
+		self.nextthink = time + 1;
+		return;
+	}
 
-    currentpos = (time - self.ltime)/ self.heat;
+	currentpos = (time - self.ltime)/ self.heat;
 
-    daylight = getwave(currentpos,#GWAVE_USEMINMAX|#GWAVE_USESHAPE,midnight_light,noon_light,0,0,0.6);
+	daylight = getwave(currentpos,#GWAVE_USEMINMAX|#GWAVE_USESHAPE,midnight_light,noon_light,0,0,0.6);
 
-    daylight = rint(daylight);    
-    
-    SetWorldBrightness(daylight);
+	daylight = rint(daylight);
 
-    if (daylight == noon_light)
-    {
-        if (self.has_tesla == #DAYTIME_STEPDELAY_TOBPRINT)
-            bprint(#PRINT_HIGH,"ã Noon ã 13∫00 ã\n");
-        
-        self.has_tesla = self.has_tesla + 1;
-    }
-    else if (daylight == midnight_light)
-    {
-        if (self.has_tesla == #DAYTIME_STEPDELAY_TOBPRINT)
-            bprint(#PRINT_HIGH," ÕÈ‰ÓÈÁËÙ  24∫00 \n");
-        
-        self.has_tesla = self.has_tesla + 1;
-    }
-    else 
-        self.has_tesla = 0;
-    
-    self.nextthink = time + 1;
+	SetWorldBrightness(daylight);
+
+	if (daylight == noon_light)
+	{
+		if (self.has_tesla == #DAYTIME_STEPDELAY_TOBPRINT)
+			bprint(#PRINT_HIGH,"\{139} Noon \{139} 12\{186}00 \{139}\n");
+
+		self.has_tesla = self.has_tesla + 1;
+	}
+	else if (daylight == midnight_light)
+	{
+		if (self.has_tesla == #DAYTIME_STEPDELAY_TOBPRINT)
+			bprint(#PRINT_HIGH,"\{11} \sMidnight\s \{11} 24\{186}00 \{11}\n");
+
+		self.has_tesla = self.has_tesla + 1;
+	}
+	else
+		self.has_tesla = 0;
+
+	self.nextthink = time + 1;
 };
 
 //====================================================================
@@ -1696,12 +1715,12 @@ void() DayTime_think =
 
 void(float report) CleanUpDayTime =
 {
-    local entity daytimer;
+	local entity daytimer;
 
-    daytimer = find(world, classname, "daytimer");
+	daytimer = find(world, classname, "daytimer");
 
-    if (daytimer) dremove(daytimer);
+	if (daytimer) dremove(daytimer);
 
-    if (report)
-        bprint(#PRINT_HIGH,"Environmentç Day light is now static.\n");
+	if (report)
+		bprint(#PRINT_HIGH,"Environment\{141} Day light is now static.\n");
 };

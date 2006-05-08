@@ -1,3 +1,10 @@
+/*
+==============================================================================
+
+misc.qc
+
+==============================================================================
+*/
 
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for spotlights, etc.
@@ -15,7 +22,7 @@ void() info_notnull =
 };
 
 
-#define START_OFF	1
+#define START_OFF 1
 
 void() light_use =
 {
@@ -225,8 +232,8 @@ void() misc_fireball =
 	self.classname = "fireball";
 	self.nextthink = time + (random() * 5);
 	self.think = fire_fly;
-	if (!self.speed)
-		self.speed == 1000;															// <------------- wtf? (phrosty)
+	//if (!self.speed)
+		//self.speed == 1000;	// <------------- wtf? (phrosty) RJ -compiler says it's an effectless statement, so get rid ofit!
 };
 
 void() fire_fly =
@@ -289,7 +296,7 @@ TESTING THING
 
 void() misc_explobox =
 {
-	local float	oldz;
+	local float oldz;
 
 	if (CheckExistence() == #FALSE)
 	{
@@ -325,7 +332,7 @@ Smaller exploding box, REGISTERED ONLY
 
 void() misc_explobox2 =
 {
-	local float	oldz;
+	local float oldz;
 
 	if (CheckExistence() == #FALSE)
 	{
@@ -407,8 +414,6 @@ from ENFORCER.QC
 
 void(vector org, vector vec) LaunchLaser =
 {
-	local	vector	vec;
-
 	if (self.classname == "monster_enforcer")
 		sound (self, #CHAN_WEAPON, "enforcer/enfire.wav", 1, #ATTN_NORM);
 
@@ -439,7 +444,6 @@ void(vector org, vector vec) LaunchLaser =
 //
 void(vector org, vector vec) TFFireRocket =
 {
-	local	vector	vec;
 	vec = normalize(vec);
 
 
@@ -473,10 +477,9 @@ W_FireGrenade
 */
 void(vector org, vector vec) TFFireGrenade =
 {
-	local	vector	vec;
 	vec = normalize(vec);
 
-//?	KickPlayer(-2, self);
+	//KickPlayer(-2, self);
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_BOUNCE;
@@ -514,11 +517,10 @@ void(vector org, vector vec) TFFireGrenade =
 void() Flamer_stream_touch;
 void(vector org, vector vec) TFFireFlame =
 {
-	local	vector	vec;
 	vec = normalize(vec);
 
-	local   entity flame;
-	//local   float rn;
+	local entity flame;
+	//local float rn;
 
 	flame = spawn ();
 
@@ -753,8 +755,8 @@ void() bubble_remove =
 
 void() bubble_bob =
 {
-	local float		rnd1, rnd2, rnd3;
-	//local vector	vtmp1, modi;
+	local float rnd1, rnd2, rnd3;
+	//local vector vtmp1, modi;
 
 	self.cnt = self.cnt + 1;
 	if (self.cnt == 4)

@@ -1,11 +1,16 @@
-/*=======================================================//
-// guerilla.QC - CustomTF 3.2.OfN          - 18/4/2004 - //
-=========================================================//
- Guerilla job stuff - Revamped by OfteN [cp]
----------------------------------------------------------//
- Moved to its own file due to the huge changes
- The Guerilla Menu is also handled here
-=========================================================*/
+/*
+==============================================================================
+
+guerilla.QC
+CustomTF 3.2.OfN
+
+Guerilla job stuff
+
+Moved to its own file due to the huge changes
+The Guerilla Menu is also handled here
+
+==============================================================================
+*/
 
 /*
 ** Guerilla Profession -
@@ -74,7 +79,7 @@
 // Various settings
 #define GUERILLA_ACTIVATE_TIME 8 //Time until it turns on //- it was 3? prolly 10
 #define GUERILLA_BEEP_RATE 4 //Delay between beeps //- it was 3
-#define GUERILLA_MINE_DURATION 360 //Time it lasts after being activated //- it was 60 ofn 
+#define GUERILLA_MINE_DURATION 360 //Time it lasts after being activated //- it was 60 ofn
 #define GUERILLA_JOB_DELAY 4 //Time between mine placements //- it was 10
 #define GUERILLA_RADIUS 135 //-it was 150 without define
 #define GUERILLA_MINE_COST 4 // OfN number of rockets a mine needs
@@ -88,22 +93,22 @@ For player entity:
 ------------------
 
 .all_active     - Used for the following stuff
-                (byte1) Points spent on currently existing mines 
-                (byte2) Mine points still avaliable for mines
-                (byte3) Mine points earned
+				(byte1) Points spent on currently existing mines
+				(byte2) Mine points still avaliable for mines
+				(byte3) Mine points earned
 
 .increase_team4 - Used for the following stuff
-    (WARNING: This field is used also for warlock/army status bar)
-                (byte1) Number of mines up
-                (byte2) Bitfield for converted grenade flags
-                    |1 Converted type1 grenade mine up
-                    |2 Converted type2 grenade mine up
-                (byte3) UNUSED STILL
-               
+	(WARNING: This field is used also for warlock/army status bar)
+				(byte1) Number of mines up
+				(byte2) Bitfield for converted grenade flags
+					|1 Converted type1 grenade mine up
+					|2 Converted type2 grenade mine up
+				(byte3) UNUSED STILL
+
 
 .dont_do_triggerwork -
-    (WARNING: This field is used also for warlock points/army rating)
-                Kills achieved by mines
+	(WARNING: This field is used also for warlock points/army rating)
+				Kills achieved by mines
 
 For mine entity:
 ----------------
@@ -167,199 +172,199 @@ float(entity player, float damage) HurtLegs;
 
 void() Menu_Guerilla =
 {
-    local string header, st1, st2, st3, st4, st5, foot, tmp;
-    local float extras, points, bitfield, minesup;
-    
-    extras = GetJobExtras(self);
-    points = GetMinePoints(self);
-    minesup = GetMinesUp(self);
+	local string header, st1, st2, st3, st4, st5, foot, tmp;
+	local float extras, points, bitfield, minesup;
 
-    if (extras == 1) // Technician
-    {
-        if (!minesup)
-        {
-            header = "Τεγθξιγιαξ:     ¨no mines up©\n\n";
-        }
-        else if (minesup == 1)
-        {
-            header = "Τεγθξιγιαξ:      ¨1 mine up©\n\n";
-        }
-        else
-        {
-            header = "Τεγθξιγιαξ:      ¨";
-            tmp = ftos(minesup);
-            header = strcat(header,tmp);
-            header = strcat(header," mines up©\n\n");
-        }
-        
-        if (points == 0)
-        {
-            st1 = ".. Level 1 Mine        (1 point)\n.. Level 2 Mine       (2 points)\n\n.. Concussion Mine     (1 point)\n.. Psionic Mine       (2 points)\n";
-            
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        (3 points)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    (2 points)\n";
-            else
-                st2 = "\n";
+	extras = GetJobExtras(self);
+	points = GetMinePoints(self);
+	minesup = GetMinesUp(self);
 
-            st3 = ".. MIRV Mine          (3 points)\n\n";
-        }
-        else if (points == 1)
-        {
-            st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       (2 points)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       (2 points)\n";
-            
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        (3 points)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    (2 points)\n";
-            else
-                st2 = "\n";
+	if (extras == 1) // Technician
+	{
+		if (!minesup)
+		{
+			header = "\sTechnician\s:     \{168}no mines up\{169}\n\n";
+		}
+		else if (minesup == 1)
+		{
+			header = "\sTechnician\s:      \{168}1 mine up\{169}\n\n";
+		}
+		else
+		{
+			header = "\sTechnician\s:      \{168}";
+			tmp = ftos(minesup);
+			header = strcat(header,tmp);
+			header = strcat(header," mines up\{169}\n\n");
+		}
 
-            st3 = ".. MIRV Mine          (3 points)\n\n";
-        }
-        else if (points == 2)
-        {
-            st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       ( ποιξτσ)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       ( ποιξτσ)\n";
-            
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        (3 points)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    ( ποιξτσ)\n";
-            else
-                st2 = "\n";
-            
-            st3 = ".. MIRV Mine          (3 points)\n\n";
-        }
-        else if (points > 2)
-        {
-            st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       ( ποιξτσ)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       ( ποιξτσ)\n";
+		if (points == 0)
+		{
+			st1 = "\1.. Level 1 Mine        (1 point)\n\2.. Level 2 Mine       (2 points)\n\n\4.. Concussion Mine     (1 point)\n\5.. Psionic Mine       (2 points)\n";
 
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        ( ποιξτσ)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    ( ποιξτσ)\n";
-            else
-                st2 = "\n";
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (3 points)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (2 points)\n";
+			else
+				st2 = "\n";
 
-            st3 = ".. MIRV Mine          ( ποιξτσ)\n\n";
-        }
-                    
-        st4 = "";
-        st5 = "";
-    }
-    else // Specialist
-    {
-        if (!minesup)
-        {
-            header = "Σπεγιαμιστ:     ¨no mines up©\n\n";
-        }
-        else if (minesup == 1)
-        {
-            header = "Σπεγιαμιστ:      ¨1 mine up©\n\n";
-        }
-        else
-        {
-            header = "Σπεγιαμιστ:      ¨";
-            tmp = ftos(minesup);
-            header = strcat(header,tmp);
-            header = strcat(header," mines up©\n\n");
-        }
-            
-        if (points == 0)
-        {
-            st1 = ".. Level 1 Mine        (1 point)\n.. Level 2 Mine       (2 points)\n.. Level 3 Mine       (3 points)\n\n.. Concussion Mine     (1 point)\n.. Psionic Mine       (2 points)\n";
-            
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        (3 points)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    (2 points)\n";
-            else
-                st2 = "\n";
+			st3 = "\7.. MIRV Mine          (3 points)\n\n";
+		}
+		else if (points == 1)
+		{
+			st1 = "\1.. Level 1 Mine        (\1 \spoint\s)\n\2.. Level 2 Mine       (2 points)\n\n\4.. Concussion Mine     (\1 \spoint\s)\n\5.. Psionic Mine       (2 points)\n";
 
-            st3 = ".. MIRV Mine          (3 points)\n\n";
-        }
-        else if (points == 1)
-        {
-            st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       (2 points)\n.. Level 3 Mine       (3 points)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       (2 points)\n";
-            
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        (3 points)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    (2 points)\n";
-            else
-                st2 = "\n";
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (3 points)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (2 points)\n";
+			else
+				st2 = "\n";
 
-            st3 = ".. MIRV Mine          (3 points)\n\n";
-        }
-        else if (points == 2)
-        {
-            st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       ( ποιξτσ)\n.. Level 3 Mine       (3 points)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       ( ποιξτσ)\n";
-            
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        (3 points)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    ( ποιξτσ)\n";
-            else
-                st2 = "\n";
-            
-            st3 = ".. MIRV Mine          (3 points)\n\n";
-        }
-        else if (points > 2)
-        {
-            st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       ( ποιξτσ)\n.. Level 3 Mine       ( ποιξτσ)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       ( ποιξτσ)\n";
+			st3 = "\7.. MIRV Mine          (3 points)\n\n";
+		}
+		else if (points == 2)
+		{
+			st1 = "\1.. Level 1 Mine        (\1 \spoint\s)\n\2.. Level 2 Mine       (\2 \spoints\s)\n\n\4.. Concussion Mine     (\1 \spoint\s)\n\5.. Psionic Mine       (\2 \spoints\s)\n";
 
-            if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-                st2 = ".. Napalm Mine        ( ποιξτσ)\n";
-            else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-                st2 = ".. Biological Mine    ( ποιξτσ)\n";
-            else
-                st2 = "\n";
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (3 points)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (\2 \spoints\s)\n";
+			else
+				st2 = "\n";
 
-            st3 = ".. MIRV Mine          ( ποιξτσ)\n\n";
-        }
-                
-        st4="";
-        st5="";
+			st3 = "\7.. MIRV Mine          (3 points)\n\n";
+		}
+		else if (points > 2)
+		{
+			st1 = "\1.. Level 1 Mine        (\1 \spoint\s)\n\2.. Level 2 Mine       (\2 \spoints\s)\n\n\4.. Concussion Mine     (\1 \spoint\s)\n\5.. Psionic Mine       (\2 \spoints\s)\n";
 
-        bitfield = GetMineConvBitfield(self);
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (\3 \spoints\s)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (\2 \spoints\s)\n";
+			else
+				st2 = "\n";
 
-        if (!(bitfield & #GUERILLA_CONV1_SET))
-        if (self.no_grenades_1 >= 1)
-        if (IsMineConvertible(self.tp_grenades_1))
-        {
-            st4 = ".. Convert ";
-            tmp = GetGrenadeText(self.tp_grenades_1);
-            st4 = strcat(st4,tmp);
-            st4 = strcat(st4," Grenade");
-            st4 = padstr(st4,33);
-            st4 = strcat(st4,"\n");
-        }
+			st3 = "\7.. MIRV Mine          (\3 \spoints\s)\n\n";
+		}
 
-        if (!(bitfield & #GUERILLA_CONV2_SET))
-        if (self.no_grenades_2 >= 1)
-        if (IsMineConvertible(self.tp_grenades_2))
-        {
-            st5 = ".. Convert ";
-            tmp = GetGrenadeText(self.tp_grenades_2);
-            st5 = strcat(st5,tmp);
-            st5 = strcat(st5," Grenade");
-            st5 = padstr(st5,33);
-            st5 = strcat(st5,"\n");
-        }
-    }
+		st4 = "";
+		st5 = "";
+	}
+	else // Specialist
+	{
+		if (!minesup)
+		{
+			header = "\sSpecialist\s:     \{168}no mines up\{169}\n\n";
+		}
+		else if (minesup == 1)
+		{
+			header = "\sSpecialist\s:      \{168}1 mine up\{169}\n\n";
+		}
+		else
+		{
+			header = "\sSpecialist\s:      \{168}";
+			tmp = ftos(minesup);
+			header = strcat(header,tmp);
+			header = strcat(header," mines up\{169}\n\n");
+		}
 
-    foot =    "\n.. Ξοτθιξη                      \n\nΗυεςιμμα Ποιξτσ: ";
-    
-    tmp = ftos(points);
-    foot = strcat(foot,tmp);
-    foot = strcat(foot,"―");
+		if (points == 0)
+		{
+			st1 = "\1.. Level 1 Mine        (1 point)\n\2.. Level 2 Mine       (2 points)\n\3.. Level 3 Mine       (3 points)\n\n\4.. Concussion Mine     (1 point)\n\5.. Psionic Mine       (2 points)\n";
 
-    bitfield = GetMineSpentPoints(self);
-    tmp = ftos(points + bitfield);
-    foot = strcat(foot,tmp);
-    
-    CenterPrint7(self,header,st1,st2,st3,st4,st5,foot);
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (3 points)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (2 points)\n";
+			else
+				st2 = "\n";
+
+			st3 = "\7.. MIRV Mine          (3 points)\n\n";
+		}
+		else if (points == 1)
+		{
+			st1 = "\1.. Level 1 Mine        (\1 \spoint\s)\n\2.. Level 2 Mine       (2 points)\n\3.. Level 3 Mine       (3 points)\n\n\4.. Concussion Mine     (\1 \spoint\s)\n\5.. Psionic Mine       (2 points)\n";
+
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (3 points)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (2 points)\n";
+			else
+				st2 = "\n";
+
+			st3 = "\7.. MIRV Mine          (3 points)\n\n";
+		}
+		else if (points == 2)
+		{
+			st1 = "\1.. Level 1 Mine        (\1 \spoint\s)\n\2.. Level 2 Mine       (\2 \spoints\s)\n\3.. Level 3 Mine       (3 points)\n\n\4.. Concussion Mine     (\1 \spoint\s)\n\5.. Psionic Mine       (\2 \spoints\s)\n";
+
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (3 points)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (\2 \spoints\s)\n";
+			else
+				st2 = "\n";
+
+			st3 = "\7.. MIRV Mine          (3 points)\n\n";
+		}
+		else if (points > 2)
+		{
+			st1 = "\1.. Level 1 Mine        (\1 \spoint\s)\n\2.. Level 2 Mine       (\2 \spoints\s)\n\3.. Level 3 Mine       (\3 \spoints\s)\n\n\4.. Concussion Mine     (\1 \spoint\s)\n\5.. Psionic Mine       (\2 \spoints\s)\n";
+
+			if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+				st2 = "\6.. Napalm Mine        (\3 \spoints\s)\n";
+			else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+				st2 = "\6.. Biological Mine    (\2 \spoints\s)\n";
+			else
+				st2 = "\n";
+
+			st3 = "\7.. MIRV Mine          (\3 \spoints\s)\n\n";
+		}
+
+		st4="";
+		st5="";
+
+		bitfield = GetMineConvBitfield(self);
+
+		if (!(bitfield & #GUERILLA_CONV1_SET))
+		if (self.no_grenades_1 >= 1)
+		if (IsMineConvertible(self.tp_grenades_1))
+		{
+			st4 = "\8.. Convert ";
+			tmp = GetGrenadeText(self.tp_grenades_1);
+			st4 = strcat(st4,tmp);
+			st4 = strcat(st4," Grenade");
+			st4 = padstr(st4,33);
+			st4 = strcat(st4,"\n");
+		}
+
+		if (!(bitfield & #GUERILLA_CONV2_SET))
+		if (self.no_grenades_2 >= 1)
+		if (IsMineConvertible(self.tp_grenades_2))
+		{
+			st5 = "\9.. Convert ";
+			tmp = GetGrenadeText(self.tp_grenades_2);
+			st5 = strcat(st5,tmp);
+			st5 = strcat(st5," Grenade");
+			st5 = padstr(st5,33);
+			st5 = strcat(st5,"\n");
+		}
+	}
+
+	foot =    "\n\0.. \sNothing\s                      \n\n\sGuerilla Points\s: ";
+
+	tmp = ftos(points);
+	foot = strcat(foot,tmp);
+	foot = strcat(foot,"―");
+
+	bitfield = GetMineSpentPoints(self);
+	tmp = ftos(points + bitfield);
+	foot = strcat(foot,tmp);
+
+	CenterPrint7(self,header,st1,st2,st3,st4,st5,foot);
 };
 
 //======================================================================
@@ -367,64 +372,64 @@ void() Menu_Guerilla =
 
 void(float inp) Menu_Guerilla_Input =
 {
-    if (inp == 10)
-    {
-        ResetMenu();
-        self.impulse = 0;
-    }
+	if (inp == 10)
+	{
+		ResetMenu();
+		self.impulse = 0;
+	}
 
-    // are we a specialist? if so.. we can convert grenades
-    if (self.job & #JOB_EXTRA2)
-    {
-        local float convID;
-        local float bitfield;
+	// are we a specialist? if so.. we can convert grenades
+	if (self.job & #JOB_EXTRA2)
+	{
+		local float convID;
+		local float bitfield;
 
-        bitfield = GetMineConvBitfield(self);
+		bitfield = GetMineConvBitfield(self);
 
-        if (inp == 8) // conversion of grenade 1
-        {
-            if (!(bitfield & #GUERILLA_CONV1_SET))
-            if (self.no_grenades_1 >= 1)
-            if (IsMineConvertible(self.tp_grenades_1))
-            {
-                convID = ConvertGrenIDToMine(self.tp_grenades_1);
-                GuerillaSetMine(convID,1);
-            }
-        }
+		if (inp == 8) // conversion of grenade 1
+		{
+			if (!(bitfield & #GUERILLA_CONV1_SET))
+			if (self.no_grenades_1 >= 1)
+			if (IsMineConvertible(self.tp_grenades_1))
+			{
+				convID = ConvertGrenIDToMine(self.tp_grenades_1);
+				GuerillaSetMine(convID,1);
+			}
+		}
 
-        if (inp == 9) // conversion of grenade 2
-        {
-            if (!(bitfield & #GUERILLA_CONV2_SET))
-            if (self.no_grenades_2 >= 1)
-            if (IsMineConvertible(self.tp_grenades_2))
-            {
-                convID = ConvertGrenIDToMine(self.tp_grenades_2);
-                GuerillaSetMine(convID,2);
-            }    
-        }
-    }
+		if (inp == 9) // conversion of grenade 2
+		{
+			if (!(bitfield & #GUERILLA_CONV2_SET))
+			if (self.no_grenades_2 >= 1)
+			if (IsMineConvertible(self.tp_grenades_2))
+			{
+				convID = ConvertGrenIDToMine(self.tp_grenades_2);
+				GuerillaSetMine(convID,2);
+			}
+		}
+	}
 
-    if (inp == 1)
-        GuerillaSetMine(#MINE_LEVEL1,0);        
-    else if (inp == 2)
-        GuerillaSetMine(#MINE_LEVEL2,0);
-    else if (inp == 3 && self.job & #JOB_EXTRA2)
-        GuerillaSetMine(#MINE_LEVEL3,0);
-    else if (inp == 4)
-        GuerillaSetMine(#MINE_CONCUSSION,0);
-    else if (inp == 5)
-        GuerillaSetMine(#MINE_PSIONIC,0);
-    else if (inp == 6)
-    {
-        if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
-            GuerillaSetMine(#MINE_NAPALM,0);
-        else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
-            GuerillaSetMine(#MINE_BIO,0);        
-    }
-    else if (inp == 7)
-        GuerillaSetMine(#MINE_MIRV,0);
-        
-    self.impulse = 0;
+	if (inp == 1)
+		GuerillaSetMine(#MINE_LEVEL1,0);
+	else if (inp == 2)
+		GuerillaSetMine(#MINE_LEVEL2,0);
+	else if (inp == 3 && self.job & #JOB_EXTRA2)
+		GuerillaSetMine(#MINE_LEVEL3,0);
+	else if (inp == 4)
+		GuerillaSetMine(#MINE_CONCUSSION,0);
+	else if (inp == 5)
+		GuerillaSetMine(#MINE_PSIONIC,0);
+	else if (inp == 6)
+	{
+		if (self.tp_grenades_1 == #GR_TYPE_NAPALM || self.tp_grenades_2 == #GR_TYPE_NAPALM || self.weapons_carried & #WEAP_FLAMETHROWER)
+			GuerillaSetMine(#MINE_NAPALM,0);
+		else if (self.tp_grenades_1 == #GR_TYPE_BIO || self.tp_grenades_2 == #GR_TYPE_BIO || self.weapons_carried & #WEAP_MEDIKIT)
+			GuerillaSetMine(#MINE_BIO,0);
+	}
+	else if (inp == 7)
+		GuerillaSetMine(#MINE_MIRV,0);
+
+	self.impulse = 0;
 };
 
 //======================================================================
@@ -432,196 +437,196 @@ void(float inp) Menu_Guerilla_Input =
 
 void() GuerillaExplode =
 {
-    // Only call minedown() if we r still guerilla, this avoids garbage on clean up
-    if (self.owner.job & #JOB_GUERILLA)
-        MineDown(self.owner,self);
+	// Only call minedown() if we r still guerilla, this avoids garbage on clean up
+	if (self.owner.job & #JOB_GUERILLA)
+		MineDown(self.owner,self);
 
-    local string st,st2;
-    local float charged;
-    
-    if (time < self.heat + #GUERILLA_ACTIVATE_TIME)
-        charged = #FALSE;
-    else
-        charged = #TRUE;
+	local string st,st2;
+	local float charged;
+
+	if (time < self.heat + #GUERILLA_ACTIVATE_TIME)
+		charged = #FALSE;
+	else
+		charged = #TRUE;
 
 	self.health = 0; //CH would cause tesla to act weird without
-	
-    if (self.has_sensor) // Standard mines
-    {
-        local float hitdamage, legdmg;
-        local float joblevel;
 
-        joblevel = GetJobExtras(self.owner);
+	if (self.has_sensor) // Standard mines
+	{
+		local float hitdamage, legdmg;
+		local float joblevel;
 
-        legdmg = 0;
+		joblevel = GetJobExtras(self.owner);
 
-        if (self.has_sentry == #MINE_LEVEL1)
-            hitdamage = #MINE_DMG_LEVEL1;
-        else if (self.has_sentry == #MINE_LEVEL2)
-        {
-            hitdamage = #MINE_DMG_LEVEL2;
+		legdmg = 0;
 
-            legdmg = #MINE_LVL2_LEGDMG;
-            
-            if (charged)
-                SpawnSprite(1,#SPRITE_AIRBURST,self.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
-        }
-        else
-        {
-            hitdamage = #MINE_DMG_LEVEL3;
+		if (self.has_sentry == #MINE_LEVEL1)
+			hitdamage = #MINE_DMG_LEVEL1;
+		else if (self.has_sentry == #MINE_LEVEL2)
+		{
+			hitdamage = #MINE_DMG_LEVEL2;
 
-            legdmg = #MINE_LVL3_LEGDMG;
-            
-            if (charged)
-                SpawnSprite(3,#SPRITE_AIRBURST,self.origin,'0 0 0',#SPRITEMOVE_UP,0.15);
-        }
+			legdmg = #MINE_LVL2_LEGDMG;
 
-        deathmsg = #DMSG_LAND_MINE;
+			if (charged)
+				SpawnSprite(1,#SPRITE_AIRBURST,self.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
+		}
+		else
+		{
+			hitdamage = #MINE_DMG_LEVEL3;
 
-        if (joblevel == 0)
-        {
-          if (self.has_tesla == 2) // set by GuerillaSwep for trace weapons
-            sprint(self.owner,#PRINT_HIGH,"your mine is destroyed\n");
+			legdmg = #MINE_LVL3_LEGDMG;
 
-          if (self.has_tesla == 0) // default 
-            sprint(self.owner,#PRINT_HIGH,"your mine explodes\n");
-        
-          // if has_tesla is 1 print nothing, as this is set by DetonateMines() and GuerillaThink
-        }
-        else // specialist or technician
-        {            
-            st = GetMineStr(self.has_sentry);
-            st2 = "";
+			if (charged)
+				SpawnSprite(3,#SPRITE_AIRBURST,self.origin,'0 0 0',#SPRITEMOVE_UP,0.15);
+		}
 
-            if (self.has_holo)
-                st2 = " converted";
+		deathmsg = #DMSG_LAND_MINE;
 
-            if (self.has_tesla == 2) // set by GuerillaSwep for trace weapons
-                sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine is destroyed\n");
-            
-            if (self.has_tesla == 0) // default 
-                sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine explodes\n");            
-        }
+		if (joblevel == 0)
+		{
+			if (self.has_tesla == 2) // set by GuerillaSwep for trace weapons
+			sprint(self.owner,#PRINT_HIGH,"your mine is destroyed\n");
 
-        if (!charged) //If not charged, do less damage when blowing up
-           T_RadiusDamage (self, self.owner, #MINE_UNARMED_DMG, world); //- damage was 80
-        else 
-        {
-           T_RadiusDamage (self, self.owner, hitdamage, world); //- damage was 160
-           
-           // legdamage for lvl2 and lvl3 mines if was hit from below (on ground usually)
-           if (legdmg)
-           {
-               local entity te;
+			if (self.has_tesla == 0) // default
+			sprint(self.owner,#PRINT_HIGH,"your mine explodes\n");
 
-               te = findradius(self.origin, hitdamage + 15);
-               
-               while (te)
-               {
-                    if (te.classname == "player")
-                    if (CanDamage (te, self))
-                    if (te.health > 0)
-                    if (te.playerclass != #PC_UNDEFINED)
-                    if (!Teammate(te.team_no,self.owner.team_no) || te == self.owner)
-                    if (!(te.invincible_finished > time))
-                    if (te.is_connected)
-                    if (!(te.armorclass & #AT_SAVEEXPLOSION) || random() < 0.25) // blast armor avoids our legs to be hurt most of the time
-                    if (te.origin_z > self.origin_z) // only hurt legs if hit from below..
-                    {
-                        if (HurtLegs(te,legdmg))
-                        {
-                            if (legdmg == #MINE_LVL3_LEGDMG)
-                                sprint(te,#PRINT_HIGH,"Woah! That mine really hurts your legs!\n");   
-                            else
-                                sprint(te,#PRINT_HIGH,"That mine hurts your legs!\n");
-                        }
-                    }
+			// if has_tesla is 1 print nothing, as this is set by DetonateMines() and GuerillaThink
+		}
+		else // specialist or technician
+		{
+			st = GetMineStr(self.has_sentry);
+			st2 = "";
 
-                    te = te.chain;
-               }
-           }
-        }
-        
-        WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-        WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
-        WriteCoord (#MSG_BROADCAST, self.origin_x);
-        WriteCoord (#MSG_BROADCAST, self.origin_y);
-        WriteCoord (#MSG_BROADCAST, self.origin_z);
-    #ifdef QUAKE_WORLD
-        multicast (self.origin, #MULTICAST_PHS);
-        dremove(self);
-    #else
-        BecomeExplosion ();
-    #endif
-     }
-     else // Non-standard mines
-     {
-        self.netname = "special_mine"; // avoids recursive calls and lets us identify mines vs grens
-        self.touch = SUB_Null;
-        self.think = SUB_Null;
-        self.nextthink = -1;
-        self.takedamage = #DAMAGE_NO; // NEEDED or crash
+			if (self.has_holo)
+				st2 = " converted";
 
-        st = GetMineStr(self.has_sentry);
-        st2 = "";
+			if (self.has_tesla == 2) // set by GuerillaSwep for trace weapons
+				sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine is destroyed\n");
 
-        if (self.has_holo)
-            st2 = " converted";
+			if (self.has_tesla == 0) // default
+				sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine explodes\n");
+		}
 
-        if (self.has_tesla == 2) // set by GuerillaSwep for trace weapons
-            sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine is destroyed\n");
-            
-        if (self.has_tesla == 0) // default 
-            sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine explodes\n");
-        
-        if (!charged) // not armed?
-        {
-            WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-            WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
-            WriteCoord (#MSG_BROADCAST, self.origin_x);
-            WriteCoord (#MSG_BROADCAST, self.origin_y);
-            WriteCoord (#MSG_BROADCAST, self.origin_z);
-        #ifdef QUAKE_WORLD
-            multicast (self.origin, #MULTICAST_PHS);
-            dremove(self);
-        #else
-            BecomeExplosion ();
-        #endif
-        }
-        else // special mine is charged..
-        {
-            if (self.has_sentry == #MINE_CONCUSSION)
-                ConcussionGrenadeExplode();
-            else if (self.has_sentry == #MINE_PSIONIC)
-                PsionicGrenadeExplode();
-            else if (self.has_sentry == #MINE_BIO)
-                BioGrenadeExplode();
-            else if (self.has_sentry == #MINE_NAPALM)
-                NapalmGrenadeExplode();
-            else if (self.has_sentry == #MINE_MIRV)
-                MirvGrenadeExplode();
-            else if (self.has_sentry == #MINE_NAIL)
-                NailGrenadeExplode();
-            else if (self.has_sentry == #MINE_GAS)
-                GasGrenadeExplode();
-            else if (self.has_sentry == #MINE_EMP)
-                EMPGrenadeExplode();
-            else if (self.has_sentry == #MINE_FRAG)
-                FragGrenadeExplode();
-            else if (self.has_sentry == #MINE_KRAC)
-                KracGrenadeExplode();
-            else if (self.has_sentry == #MINE_CALTROP)
-                CaltropGrenadeExplode();
-            else if (self.has_sentry == #MINE_ANTIGRAV)
-                AntiGravGrenadeExplode();
-            else
-            {
-                RPrint("BUG: Unknown mine type on GuerillaExplode()!\n");
-                dremove(self);
-                return;
-            }
-        }
-     }
+		if (!charged) //If not charged, do less damage when blowing up
+			T_RadiusDamage (self, self.owner, #MINE_UNARMED_DMG, world); //- damage was 80
+		else
+		{
+			T_RadiusDamage (self, self.owner, hitdamage, world); //- damage was 160
+
+			// legdamage for lvl2 and lvl3 mines if was hit from below (on ground usually)
+			if (legdmg)
+			{
+				local entity te;
+
+				te = findradius(self.origin, hitdamage + 15);
+
+				while (te)
+				{
+					if (te.classname == "player")
+					if (CanDamage (te, self))
+					if (te.health > 0)
+					if (te.playerclass != #PC_UNDEFINED)
+					if (!Teammate(te.team_no,self.owner.team_no) || te == self.owner)
+					if (!(te.invincible_finished > time))
+					if (te.is_connected)
+					if (!(te.armorclass & #AT_SAVEEXPLOSION) || random() < 0.25) // blast armor avoids our legs to be hurt most of the time
+					if (te.origin_z > self.origin_z) // only hurt legs if hit from below..
+					{
+						if (HurtLegs(te,legdmg))
+						{
+							if (legdmg == #MINE_LVL3_LEGDMG)
+								sprint(te,#PRINT_HIGH,"Woah! That mine really hurts your legs!\n");
+							else
+								sprint(te,#PRINT_HIGH,"That mine hurts your legs!\n");
+						}
+					}
+
+					te = te.chain;
+				}
+			}
+		}
+
+		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
+		WriteCoord (#MSG_BROADCAST, self.origin_x);
+		WriteCoord (#MSG_BROADCAST, self.origin_y);
+		WriteCoord (#MSG_BROADCAST, self.origin_z);
+	#ifdef QUAKE_WORLD
+		multicast (self.origin, #MULTICAST_PHS);
+		dremove(self);
+	#else
+		BecomeExplosion ();
+	#endif
+	}
+	else // Non-standard mines
+	{
+		self.netname = "special_mine"; // avoids recursive calls and lets us identify mines vs grens
+		self.touch = SUB_Null;
+		self.think = SUB_Null;
+		self.nextthink = -1;
+		self.takedamage = #DAMAGE_NO; // NEEDED or crash
+
+		st = GetMineStr(self.has_sentry);
+		st2 = "";
+
+		if (self.has_holo)
+			st2 = " converted";
+
+		if (self.has_tesla == 2) // set by GuerillaSwep for trace weapons
+			sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine is destroyed\n");
+
+		if (self.has_tesla == 0) // default
+			sprint(self.owner,#PRINT_HIGH,"Your ",st,st2," mine explodes\n");
+
+		if (!charged) // not armed?
+		{
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
+			WriteCoord (#MSG_BROADCAST, self.origin_x);
+			WriteCoord (#MSG_BROADCAST, self.origin_y);
+			WriteCoord (#MSG_BROADCAST, self.origin_z);
+		#ifdef QUAKE_WORLD
+			multicast (self.origin, #MULTICAST_PHS);
+			dremove(self);
+		#else
+			BecomeExplosion ();
+		#endif
+		}
+		else // special mine is charged..
+		{
+			if (self.has_sentry == #MINE_CONCUSSION)
+				ConcussionGrenadeExplode();
+			else if (self.has_sentry == #MINE_PSIONIC)
+				PsionicGrenadeExplode();
+			else if (self.has_sentry == #MINE_BIO)
+				BioGrenadeExplode();
+			else if (self.has_sentry == #MINE_NAPALM)
+				NapalmGrenadeExplode();
+			else if (self.has_sentry == #MINE_MIRV)
+				MirvGrenadeExplode();
+			else if (self.has_sentry == #MINE_NAIL)
+				NailGrenadeExplode();
+			else if (self.has_sentry == #MINE_GAS)
+				GasGrenadeExplode();
+			else if (self.has_sentry == #MINE_EMP)
+				EMPGrenadeExplode();
+			else if (self.has_sentry == #MINE_FRAG)
+				FragGrenadeExplode();
+			else if (self.has_sentry == #MINE_KRAC)
+				KracGrenadeExplode();
+			else if (self.has_sentry == #MINE_CALTROP)
+				CaltropGrenadeExplode();
+			else if (self.has_sentry == #MINE_ANTIGRAV)
+				AntiGravGrenadeExplode();
+			else
+			{
+				RPrint("BUG: Unknown mine type on GuerillaExplode()!\n");
+				dremove(self);
+				return;
+			}
+		}
+	}
 };
 
 //=========================================================================
@@ -630,30 +635,31 @@ void() GuerillaExplode =
 void(entity mine_owner) DetonateMines =
 {
 	local entity e;
-    local entity oself;
+	local entity oself;
 
-    oself = self;
+	oself = self;
 
 	// Find any mine
 	e = find(world, netname, "land_mine");
-	
-    while (e != world)
-    {
-       if(e.classname == "grenade")
-       if(e.owner == mine_owner) {
-         /*e.heat = time;
-         e.has_tesla = 1; //- display no message on GuerillaExplode
-         e.think = GuerillaExplode;
-         e.nextthink = time;*/
-         self = e;
-         e.heat = time;
-         e.has_tesla = 1;
-         GuerillaExplode();
-	   }
-	   e = find(e, netname, "land_mine");
+
+	while (e != world)
+	{
+		if(e.classname == "grenade")
+		if(e.owner == mine_owner)
+		{
+			/*e.heat = time;
+			e.has_tesla = 1; //- display no message on GuerillaExplode
+			e.think = GuerillaExplode;
+			e.nextthink = time;*/
+			self = e;
+			e.heat = time;
+			e.has_tesla = 1;
+			GuerillaExplode();
+		}
+		e = find(e, netname, "land_mine");
 	}
 
-    self = oself;
+	self = oself;
 };
 
 //====================================================
@@ -663,15 +669,15 @@ void(entity mine_owner) DetonateMines =
 void(vector startpos) GuerillaMineSweep =
 {
 	local entity head;
-	head = findradius(startpos, 30);	
+	head = findradius(startpos, 30);
 	while (head)
 	{
 		if (head.classname == "grenade" && head.netname == "land_mine") {
-                  
-          head.has_tesla = 2; // "mine is destroyed" message on guerillaexplode()
-		  head.think = GuerillaExplode;
-		  head.nextthink = time + 0.1;              
-                  
+
+			head.has_tesla = 2; // "mine is destroyed" message on guerillaexplode()
+			head.think = GuerillaExplode;
+			head.nextthink = time + 0.1;
+
 		}
 		head = head.chain;
 	}
@@ -683,144 +689,148 @@ void(vector startpos) GuerillaMineSweep =
 void() GuerillaThink = //Every second see if we have enemy nearby
 {
 	if (!self.owner.is_connected)
-    {
-        dremove(self);
-        return;
-    }
-    
-    local entity head;
-	local float finished; //Only blow up once
-	
-    if (self.has_fieldgen == 1)
-    {
-        self.effects = 0;
-        self.has_fieldgen = 2;
-        self.nextthink = time + 0.1;
-        return;
-    }
-    if (self.has_fieldgen == 2)
-    {
-        self.effects = #EF_DIMLIGHT;
-        self.has_fieldgen = 3;
-        self.nextthink = time + 0.1;
-        return;
-    }
-    if (self.has_fieldgen == 3)
-    {
-        self.effects = 0;
-        self.has_fieldgen = 4;        
-    }
-    
-    finished = 0;
-	
-    self.nextthink = time + #MINE_SCANRATE;
-	
-    if (time < self.heat + #GUERILLA_ACTIVATE_TIME)
+	{
+		dremove(self);
 		return;
-	
-    if (time > self.last_attacked_time) {
+	}
+
+	local entity head;
+	local float finished; //Only blow up once
+
+	if (self.has_fieldgen == 1)
+	{
+		self.effects = 0;
+		self.has_fieldgen = 2;
+		self.nextthink = time + 0.1;
+		return;
+	}
+	if (self.has_fieldgen == 2)
+	{
+		self.effects = #EF_DIMLIGHT;
+		self.has_fieldgen = 3;
+		self.nextthink = time + 0.1;
+		return;
+	}
+	if (self.has_fieldgen == 3)
+	{
+		self.effects = 0;
+		self.has_fieldgen = 4;
+	}
+
+	finished = 0;
+
+	self.nextthink = time + #MINE_SCANRATE;
+
+	if (time < self.heat + #GUERILLA_ACTIVATE_TIME)
+		return;
+
+	if (time > self.last_attacked_time)
+	{
 		sound (self, #CHAN_WEAPON, "weapons/guerblip.wav", 1, #ATTN_IDLE);
 		self.last_attacked_time = time + #GUERILLA_BEEP_RATE;
 
-        if (!self.has_fieldgen)
-        {
-            self.has_fieldgen = 1;
-            self.effects = #EF_DIMLIGHT;
-            self.nextthink = time + 0.1;
-            return;
-        }
+		if (!self.has_fieldgen)
+		{
+			self.has_fieldgen = 1;
+			self.effects = #EF_DIMLIGHT;
+			self.nextthink = time + 0.1;
+			return;
+		}
 	}
 
-    local string desc, conv;
-    local float hasextras;
+	local string desc, conv;
+	local float hasextras;
 
-    if (self.has_holo)
-        conv = " converted";
-    else
-        conv = "";
+	if (self.has_holo)
+		conv = " converted";
+	else
+		conv = "";
 
-    if (self.owner.job & #JOB_EXTRA1 || self.owner.job & #JOB_EXTRA2)
-        hasextras = #TRUE;
-    else
-        hasextras = #FALSE;
+	if (self.owner.job & #JOB_EXTRA1 || self.owner.job & #JOB_EXTRA2)
+		hasextras = #TRUE;
+	else
+		hasextras = #FALSE;
 
-    desc = GetMineStr(self.has_sentry);
-	
-    self.health = self.health - 1;
+	desc = GetMineStr(self.has_sentry);
+
+	self.health = self.health - 1;
 
 	if (self.health <= 0) { //Detonate mine cause we ran out of time
 
-        local float minesup;
+		local float minesup;
 
-        minesup = GetMinesUp(self.owner);
+		minesup = GetMinesUp(self.owner);
 
 		self.heat = time; //Make it a smaller explosion
 
-        if (hasextras)
-            sprint(self.owner,#PRINT_HIGH,"Your ",desc,conv," mine runs out of energy, ");
-        else
-            sprint(self.owner,#PRINT_HIGH,"Your mine runs out of energy, ");
-        
-        if (minesup > 1) {
-           local string st;
-           st = ftos (minesup - 1);
-           
-           if (self.owner.job & #JOB_EXTRA1 || self.owner.job & #JOB_EXTRA2)
-           {
-               sprint(self.owner,#PRINT_HIGH,"you still have ");
-               sprint(self.owner,#PRINT_HIGH,st);
-               sprint(self.owner,#PRINT_HIGH," mines up\n");
-           }
-           else
-           {
-               sprint(self.owner,#PRINT_HIGH,"you still have ");
-               sprint(self.owner,#PRINT_HIGH,st);
-               sprint(self.owner,#PRINT_HIGH,"/#GUERILLA_NOEXTRAS_MINEMAX mines up\n");
-           }
-        }
-        else
-           sprint(self.owner,#PRINT_HIGH,"you currently have no active mines\n");
-        self.has_tesla = 1; //- display no message on GuerillaExplode
+		if (hasextras)
+			sprint(self.owner,#PRINT_HIGH,"Your ",desc,conv," mine runs out of energy, ");
+		else
+			sprint(self.owner,#PRINT_HIGH,"Your mine runs out of energy, ");
+
+		if (minesup > 1)
+		{
+			local string st;
+			st = ftos (minesup - 1);
+
+			if (self.owner.job & #JOB_EXTRA1 || self.owner.job & #JOB_EXTRA2)
+			{
+				sprint(self.owner,#PRINT_HIGH,"You still have ");
+				sprint(self.owner,#PRINT_HIGH,st);
+				sprint(self.owner,#PRINT_HIGH," mines up\n");
+			}
+			else
+			{
+				sprint(self.owner,#PRINT_HIGH,"You still have ");
+				sprint(self.owner,#PRINT_HIGH,st);
+				sprint(self.owner,#PRINT_HIGH,"/#GUERILLA_NOEXTRAS_MINEMAX mines up\n");
+			}
+		}
+		else
+			sprint(self.owner,#PRINT_HIGH,"You currently have no active mines\n");
+		self.has_tesla = 1; //- display no message on GuerillaExplode
 		GuerillaExplode();
-        finished = 1;
+		finished = 1;
 	}
 	head = findradius(self.origin,#GUERILLA_RADIUS);//OfN it was 150
 	while (head != world && !finished) {
 		if (head.classname == "player" && head.health > 0)
-        {
-            if (head.playerclass != #PC_UNDEFINED) // skip Observers
-            {
-                //Mines detonate on either enemies or yourself
-                if (CanDamage(head,self)) {
-                   if (!Teammate(head.team_no,self.owner.team_no) && head.undercover_team != self.owner.team_no)
-                   {                        //Uncouvered ENEMY
-                        if (hasextras)
-                            sprint(self.owner,#PRINT_HIGH,"your ",desc,conv," mine explodes on ");
-                        else
-                            sprint(self.owner,#PRINT_HIGH,"your mine explodes on ");
+		{
+			if (head.playerclass != #PC_UNDEFINED) // skip Observers
+			{
+				//Mines detonate on either enemies or yourself
+				if (CanDamage(head,self)) {
+					if (!Teammate(head.team_no,self.owner.team_no) && head.undercover_team != self.owner.team_no)
+					{                        //Uncouvered ENEMY
+						if (hasextras)
+							sprint(self.owner,#PRINT_HIGH,"Your ",desc,conv," mine explodes on ");
+						else
+							sprint(self.owner,#PRINT_HIGH,"Your mine explodes on ");
 
-                        sprint(self.owner,#PRINT_HIGH,head.netname);
-                        
-                        if (head.origin_z > self.origin_z)
-                            sprint(self.owner,#PRINT_HIGH,"'s ass!\n");
-                        else
-                            sprint(self.owner,#PRINT_HIGH,"'s face!\n");
+						sprint(self.owner,#PRINT_HIGH,head.netname);
 
-                        self.has_tesla = 1; //- display no message on GuerillaExplode
-                        GuerillaExplode();
-                        finished = 1;
-                   } else if (head == self.owner) { // ourselves
-                            
-                       self.has_tesla = 1; //- display no message on GuerillaExplode
-                       GuerillaExplode();
-                       finished = 1;
-                   }
-                }
-            }
+						if (head.origin_z > self.origin_z)
+							sprint(self.owner,#PRINT_HIGH,"'s ass!\n");
+						else
+							sprint(self.owner,#PRINT_HIGH,"'s face!\n");
+
+						self.has_tesla = 1; //- display no message on GuerillaExplode
+						GuerillaExplode();
+						finished = 1;
+					}
+					else if (head == self.owner)
+					{ // ourselves
+
+						self.has_tesla = 1; //- display no message on GuerillaExplode
+						GuerillaExplode();
+						finished = 1;
+					}
+				}
+			}
 		}
 		else if (IsMonster(head) && !Teammate(head.real_owner.team_no,self.owner.team_no)) { //- OfN - monsters and grunt are affected
 			T_Damage(head,self,self.owner,#MINE_DMG); //Demons are vulnerable
-            self.has_tesla = 1; //- display no message on GuerillaExplode
+			self.has_tesla = 1; //- display no message on GuerillaExplode
 			GuerillaExplode();
 			finished = 1;
 		}
@@ -833,43 +843,43 @@ void() GuerillaThink = //Every second see if we have enemy nearby
 //================================================================
 // What happens when someone runs it over
 
-void() GuerillaTouch = 
+void() GuerillaTouch =
 {
 	if (time < self.heat + #GUERILLA_ACTIVATE_TIME)
 		return;
 
-    if (other.playerclass == #PC_UNDEFINED) // skip Observers
-	    return;   
+	if (other.playerclass == #PC_UNDEFINED) // skip Observers
+		return;
 
-    #ifdef MINES_IGNORE_TEAMMATETOUCH
-    if (other != self.owner)
-    if (other.classname == "player" || IsMonster(other))
-    if (Teammate(self.owner.team_no,other.team_no))
-    if (other.health > 0)
-        return;
-    #endif
+	#ifdef MINES_IGNORE_TEAMMATETOUCH
+	if (other != self.owner)
+	if (other.classname == "player" || IsMonster(other))
+	if (Teammate(self.owner.team_no,other.team_no))
+	if (other.health > 0)
+		return;
+	#endif
 
-    if (other.classname == "player")
-    if (other.health > 0)
-    if (other.is_connected)
-    {
-        local string desc, conv;
-        conv = "";
-        desc = GetMineStr(self.has_sentry);
+	if (other.classname == "player")
+	if (other.health > 0)
+	if (other.is_connected)
+	{
+		local string desc, conv;
+		conv = "";
+		desc = GetMineStr(self.has_sentry);
 
-        if (self.has_holo)
-            conv = " converted";
+		if (self.has_holo)
+			conv = " converted";
 
-        if (self.owner.job & #JOB_EXTRA1 || self.owner.job & #JOB_EXTRA2)
-            sprint(self.owner,#PRINT_HIGH,other.netname," touches your ",desc,conv," mine!\n");
-        else
-            sprint(self.owner,#PRINT_HIGH,other.netname," touches your mine!\n");
-    }
+		if (self.owner.job & #JOB_EXTRA1 || self.owner.job & #JOB_EXTRA2)
+			sprint(self.owner,#PRINT_HIGH,other.netname," touches your ",desc,conv," mine!\n");
+		else
+			sprint(self.owner,#PRINT_HIGH,other.netname," touches your mine!\n");
+	}
 
 	GuerillaExplode();
 };
 
-void() GuerillaTossTouch = 
+void() GuerillaTossTouch =
 {
 	if (other != world) {
 		GuerillaTouch();
@@ -880,10 +890,10 @@ void() GuerillaTossTouch =
 	{
 		self.health = 0; //CH needed for tesla
 		// OfN CAUSES ANY PROBLEM? Is this needed?
-                
-        MineDown(self.owner,self);
 
-        dremove(self);
+		MineDown(self.owner,self);
+
+		dremove(self);
 		return;
 	}
 
@@ -901,19 +911,19 @@ void() GuerillaTossTouch =
 void() JobGuerilla =
 {
 	if (self.job & #JOB_EXTRA1 || self.job & #JOB_EXTRA2)
-    {
-        if (self.current_menu == #MENU_GUERILLA)
-        {
-            GuerillaSetMine(#MINE_LEVEL1,0);
-            return; 
-        }
+	{
+		if (self.current_menu == #MENU_GUERILLA)
+		{
+			GuerillaSetMine(#MINE_LEVEL1,0);
+			return;
+		}
 
-        self.current_menu = #MENU_GUERILLA;
-	    self.menu_count = #MENU_REFRESH_RATE; 
-        return;
-    }
-    
-    GuerillaSetMine(#MINE_REGULAR,0);
+		self.current_menu = #MENU_GUERILLA;
+		self.menu_count = #MENU_REFRESH_RATE;
+		return;
+	}
+
+	GuerillaSetMine(#MINE_REGULAR,0);
 };
 
 //============================================================================
@@ -921,88 +931,89 @@ void() JobGuerilla =
 
 void(float minetype, float converted) GuerillaSetMine =
 {
-    if (!minetype) 
-    {
-        // if this gets executed its a bug
-        RPrint("BUG: Invalid mine type on GuerillaSetMine()\n");
-        return; 
-    }
-    
-    if (!AttemptToSetMine(self,minetype,converted)) return;
+	if (!minetype)
+	{
+		// if this gets executed its a bug
+		RPrint("BUG: Invalid mine type on GuerillaSetMine()\n");
+		return;
+	}
 
-    self.ammo_rockets = self.ammo_rockets - #GUERILLA_MINE_COST;
-    self.job_finished = time + #GUERILLA_JOB_DELAY;
-        
-    if (self.job & #JOB_EXTRA1 || self.job & #JOB_EXTRA2)
-    {
-        local string st;
-        st = GetMineStr(minetype);
-        
-        if (converted)
-            sprint(self,#PRINT_HIGH,"you convert a grenade into a ",st," mine...\n");        
-        else
-            sprint(self,#PRINT_HIGH,"you place a ",st," mine...\n");        
-    }
-    else
-        sprint(self,#PRINT_HIGH,"you place a mine...\n");
+	if (!AttemptToSetMine(self,minetype,converted))
+		return;
 
-    if (self.current_menu == #MENU_GUERILLA)
-        ResetMenu();
-    
-    #ifdef TEAM_MINE_REPORTS
-    teamprefixsprint(self.team_no,self);
-    teamsprint(self.team_no,self,self.netname);
-    teamsprint(self.team_no,self," places a mine\n");
-    #endif
+	self.ammo_rockets = self.ammo_rockets - #GUERILLA_MINE_COST;
+	self.job_finished = time + #GUERILLA_JOB_DELAY;
 
-    //Set all the critical crap on the mine
-    newmis = spawn();
-    newmis.movetype = #MOVETYPE_BOUNCE;
-    newmis.solid = #SOLID_BBOX;
-    newmis.takedamage = #DAMAGE_AIM;
-    newmis.classname = "grenade";
-    newmis.netname   = "land_mine";
-    //newmis.flags = #FL_FINDABLE_NONSOLID; // For mine ID
-    //setsize (newmis, '-1 -1 0', '1 1 0.5');		
-    setsize (newmis, '0 0 0','0 0 0');
-    //setsize (newmis, '-0.5 -0.5 -0.5', '1 1 1');		
-    setorigin (newmis, self.origin);
-    newmis.owner = self;
-    makevectors (self.v_angle);
-    newmis.avelocity = '300 300 300';
-    newmis.velocity = v_forward*600 + v_up * 200 + v_right*10 + v_up*10;
-    newmis.angles = vectoangles(newmis.velocity);
-    
-    if (minetype == #MINE_NAPALM)
-        newmis.skin = 2;
-    else if (minetype == #MINE_MIRV)
-        newmis.skin = 0;
-    else // default look
-        newmis.skin = 1;
+	if (self.job & #JOB_EXTRA1 || self.job & #JOB_EXTRA2)
+	{
+		local string st;
+		st = GetMineStr(minetype);
 
-    //setmodel (newmis, "progs/lndmine.mdl");
-    setmodel (newmis, "progs/biggren.mdl");
+		if (converted)
+			sprint(self,#PRINT_HIGH,"You convert a grenade into a ",st," mine...\n");
+		else
+			sprint(self,#PRINT_HIGH,"You place a ",st," mine...\n");
+	}
+	else
+		sprint(self,#PRINT_HIGH,"You place a mine...\n");
 
-    newmis.heat = time; //Controls when mine can first go off
-    newmis.has_tesla = 0; // OfN flag to Control what to sprint to owner of the mine when it exlodes
-    newmis.last_attacked_time = time; // Controls beeps
-    newmis.health = #GUERILLA_MINE_DURATION; //Max time for mine to live
-    newmis.touch = GuerillaTossTouch;
-    newmis.think = GuerillaThink;
-    newmis.nextthink = time + #GUERILLA_ACTIVATE_TIME;
+	if (self.current_menu == #MENU_GUERILLA)
+		ResetMenu();
 
-    newmis.has_sentry = minetype;
+	#ifdef TEAM_MINE_REPORTS
+	teamprefixsprint(self.team_no,self);
+	teamsprint(self.team_no,self,self.netname);
+	teamsprint(self.team_no,self," places a mine\n");
+	#endif
 
-    newmis.has_fieldgen = 0;
+	//Set all the critical crap on the mine
+	newmis = spawn();
+	newmis.movetype = #MOVETYPE_BOUNCE;
+	newmis.solid = #SOLID_BBOX;
+	newmis.takedamage = #DAMAGE_AIM;
+	newmis.classname = "grenade";
+	newmis.netname   = "land_mine";
+	//newmis.flags = #FL_FINDABLE_NONSOLID; // For mine ID
+	//setsize (newmis, '-1 -1 0', '1 1 0.5');
+	setsize (newmis, '0 0 0','0 0 0');
+	//setsize (newmis, '-0.5 -0.5 -0.5', '1 1 1');
+	setorigin (newmis, self.origin);
+	newmis.owner = self;
+	makevectors (self.v_angle);
+	newmis.avelocity = '300 300 300';
+	newmis.velocity = v_forward*600 + v_up * 200 + v_right*10 + v_up*10;
+	newmis.angles = vectoangles(newmis.velocity);
 
-    if (minetype == #MINE_LEVEL1 || minetype == #MINE_LEVEL2 || minetype == #MINE_LEVEL3)
-        newmis.has_sensor = 1; // Standard mine
-    else
-        newmis.has_sensor = 0; // Non-standard mine
+	if (minetype == #MINE_NAPALM)
+		newmis.skin = 2;
+	else if (minetype == #MINE_MIRV)
+		newmis.skin = 0;
+	else // default look
+		newmis.skin = 1;
 
-    newmis.has_holo = converted;
+	//setmodel (newmis, "progs/lndmine.mdl");
+	setmodel (newmis, "progs/biggren.mdl");
 
-    MineUp(self,newmis);
+	newmis.heat = time; //Controls when mine can first go off
+	newmis.has_tesla = 0; // OfN flag to Control what to sprint to owner of the mine when it exlodes
+	newmis.last_attacked_time = time; // Controls beeps
+	newmis.health = #GUERILLA_MINE_DURATION; //Max time for mine to live
+	newmis.touch = GuerillaTossTouch;
+	newmis.think = GuerillaThink;
+	newmis.nextthink = time + #GUERILLA_ACTIVATE_TIME;
+
+	newmis.has_sentry = minetype;
+
+	newmis.has_fieldgen = 0;
+
+	if (minetype == #MINE_LEVEL1 || minetype == #MINE_LEVEL2 || minetype == #MINE_LEVEL3)
+		newmis.has_sensor = 1; // Standard mine
+	else
+		newmis.has_sensor = 0; // Non-standard mine
+
+	newmis.has_holo = converted;
+
+	MineUp(self,newmis);
 };
 
 //==============================================================================
@@ -1010,55 +1021,55 @@ void(float minetype, float converted) GuerillaSetMine =
 
 void(entity player) MineKill =
 {
-    if (!(player.job & #JOB_GUERILLA))
-    {
-        //RPrint("BUG: Non-guerilla was in MineKill()!\n");
-            // ^_^ not a bug, may happen on cleanup
+	if (!(player.job & #JOB_GUERILLA))
+	{
+		//RPrint("BUG: Non-guerilla was in MineKill()!\n");
+			// not a bug, may happen on cleanup
 
-        return;
-    }
-    
-    // increase our mine kills counter
-    player.dont_do_triggerwork = player.dont_do_triggerwork + 1;
+		return;
+	}
 
-    // award extra guerilla points if appropiate
-    if (player.job & #JOB_EXTRA1 || player.job & #JOB_EXTRA2)
-    {
-        local float tfloat, tint, maxpoints, spent;
+	// increase our mine kills counter
+	player.dont_do_triggerwork = player.dont_do_triggerwork + 1;
 
-        tfloat = player.dont_do_triggerwork / #GUERILLA_FRAGSFORPOINT;
-        tint = floor(player.dont_do_triggerwork / #GUERILLA_FRAGSFORPOINT);
-        
-        if (tfloat == tint)
-        {
-            tfloat = GetMineEarnedPoints(player);
-            tint = GetMinePoints(player);
-            spent = GetMineSpentPoints(player);
-            maxpoints = GuerillaGetMaxPointsForJob(player);
+	// award extra guerilla points if appropiate
+	if (player.job & #JOB_EXTRA1 || player.job & #JOB_EXTRA2)
+	{
+		local float tfloat, tint, maxpoints, spent;
 
-            if ((tint + spent + 1) > maxpoints)
-            {
-                // Do nothing
-            }
-            else
-            {
-                sprint(player,#PRINT_HIGH,"You have earned an extra guerilla point!\n");
+		tfloat = player.dont_do_triggerwork / #GUERILLA_FRAGSFORPOINT;
+		tint = floor(player.dont_do_triggerwork / #GUERILLA_FRAGSFORPOINT);
 
-                SetMinePoints(player, tint + 1);
-                SetMineEarnedPoints(player, tfloat + 1);
-            }
-            
-        }
-    }
+		if (tfloat == tint)
+		{
+			tfloat = GetMineEarnedPoints(player);
+			tint = GetMinePoints(player);
+			spent = GetMineSpentPoints(player);
+			maxpoints = GuerillaGetMaxPointsForJob(player);
 
-    if (extras_mode == 2)
-        return;
+			if ((tint + spent + 1) > maxpoints)
+			{
+				// Do nothing
+			}
+			else
+			{
+				sprint(player,#PRINT_HIGH,"You have earned an extra guerilla point!\n");
 
-    // reward with job extras
-    if (player.dont_do_triggerwork == #GUERILLA_BONUS1)
-        GuerillaUpgradeJob(player);
-    else if (player.dont_do_triggerwork == #GUERILLA_BONUS2)
-        GuerillaUpgradeJob(player);    
+				SetMinePoints(player, tint + 1);
+				SetMineEarnedPoints(player, tfloat + 1);
+			}
+
+		}
+	}
+
+	if (extras_mode == 2)
+		return;
+
+	// reward with job extras
+	if (player.dont_do_triggerwork == #GUERILLA_BONUS1)
+		GuerillaUpgradeJob(player);
+	else if (player.dont_do_triggerwork == #GUERILLA_BONUS2)
+		GuerillaUpgradeJob(player);
 };
 
 //====================================================================
@@ -1066,32 +1077,32 @@ void(entity player) MineKill =
 
 float(entity player) GetMineSpentPoints =
 {
-    return GetByte1(player.all_active);
+	return GetByte1(player.all_active);
 };
 
 float(entity player) GetMinePoints =
 {
-    return GetByte2(player.all_active);
+	return GetByte2(player.all_active);
 };
 
 float(entity player) GetMineEarnedPoints =
 {
-    return GetByte3(player.all_active);
+	return GetByte3(player.all_active);
 };
 
 void(entity player,float spentpoints) SetMineSpentPoints =
 {
-    player.all_active = AssignByte1(player.all_active,spentpoints);
+	player.all_active = AssignByte1(player.all_active,spentpoints);
 };
 
 void(entity player,float points) SetMinePoints =
 {
-    player.all_active = AssignByte2(player.all_active,points);
+	player.all_active = AssignByte2(player.all_active,points);
 };
 
 void(entity player,float points) SetMineEarnedPoints =
 {
-    player.all_active = AssignByte3(player.all_active,points);
+	player.all_active = AssignByte3(player.all_active,points);
 };
 
 //============================================================
@@ -1099,9 +1110,9 @@ void(entity player,float points) SetMineEarnedPoints =
 
 string(float typ) GetGrenadeText =
 {
-    local string st;
+	local string st;
 
-    if (typ == #GR_TYPE_NORMAL)
+	if (typ == #GR_TYPE_NORMAL)
 		st = "Normal";
 	else if (typ == #GR_TYPE_CONCUSSION)
 		st = "Concussion";
@@ -1117,26 +1128,27 @@ string(float typ) GetGrenadeText =
 		st = "Gas";
 	else if (typ == #GR_TYPE_EMP)
 		st = "EMP";
-    #ifdef OLD_FLASH
+	#ifdef OLD_FLASH
 	else if (typ == #GR_TYPE_FLASH)
 		st = "Flash";
-    #else
-    else if (typ == #GR_TYPE_PSIONIC)
+	#else
+	else if (typ == #GR_TYPE_PSIONIC)
 		st = "Psionic";
-    #endif
+	#endif
 	else if (typ == #GR_TYPE_FRAG)
 		st = "Fragmentation";
 	else if (typ == #GR_TYPE_KRAC)
 		st = "KRAC";
-  	else if (typ == #GR_TYPE_CALTROP)
+	else if (typ == #GR_TYPE_CALTROP)
 		st = "Caltrop";
 	else if (typ == #GR_TYPE_BIO)
 		st = "Biological";
 	else if (typ == #GR_TYPE_ANTIGRAV)
 		st = "Antigrav";
-	else st = "ERROR!";
+	else
+		st = "ERROR!";
 
-    return st;
+	return st;
 };
 
 //====================================================================
@@ -1144,7 +1156,7 @@ string(float typ) GetGrenadeText =
 
 float(float typ) IsMineConvertible =
 {
-    if (typ == #GR_TYPE_NORMAL)
+	if (typ == #GR_TYPE_NORMAL)
 		return #TRUE;
 	if (typ == #GR_TYPE_CONCUSSION)
 		return #TRUE;
@@ -1160,20 +1172,20 @@ float(float typ) IsMineConvertible =
 		return #TRUE;
 	if (typ == #GR_TYPE_EMP)
 		return #TRUE;
-    if (typ == #GR_TYPE_PSIONIC)
+	if (typ == #GR_TYPE_PSIONIC)
 		return #TRUE;
 	if (typ == #GR_TYPE_FRAG)
-	    return #TRUE;
+		return #TRUE;
 	if (typ == #GR_TYPE_KRAC)
 		return #TRUE;
-  	if (typ == #GR_TYPE_CALTROP)
-	    return #TRUE;
+	if (typ == #GR_TYPE_CALTROP)
+		return #TRUE;
 	if (typ == #GR_TYPE_BIO)
 		return #TRUE;
 	if (typ == #GR_TYPE_ANTIGRAV)
 		return #TRUE;
-	
-    return #FALSE;
+
+	return #FALSE;
 };
 
 //===========================================================================
@@ -1181,38 +1193,38 @@ float(float typ) IsMineConvertible =
 
 string(float minetype) GetMineStr =
 {
-    if (minetype == #MINE_LEVEL1)
-        return "level 1";
-    if (minetype == #MINE_LEVEL2)
-        return "level 2";
-    if (minetype == #MINE_LEVEL3)
-        return "level 3";
-    if (minetype == #MINE_CONCUSSION)
-        return "concussion";
-    if (minetype == #MINE_PSIONIC)
-        return "psionic";
-    if (minetype == #MINE_BIO)
-        return "biological";
-    if (minetype == #MINE_NAPALM)
-        return "napalm";
-    if (minetype == #MINE_MIRV)
-        return "MIRV";
-    if (minetype == #MINE_NAIL)
-        return "nail";
-    if (minetype == #MINE_GAS)
-        return "gas";
-    if (minetype == #MINE_EMP)
-        return "EMP";
-    if (minetype == #MINE_FRAG)
-        return "fragmentation";
-    if (minetype == #MINE_KRAC)
-        return "krac";
-    if (minetype == #MINE_CALTROP)
-        return "caltrop";
-    if (minetype == #MINE_ANTIGRAV)
-        return "antigrav";
-     
-    return "ERROR!";
+	if (minetype == #MINE_LEVEL1)
+		return "level 1";
+	if (minetype == #MINE_LEVEL2)
+		return "level 2";
+	if (minetype == #MINE_LEVEL3)
+		return "level 3";
+	if (minetype == #MINE_CONCUSSION)
+		return "concussion";
+	if (minetype == #MINE_PSIONIC)
+		return "psionic";
+	if (minetype == #MINE_BIO)
+		return "biological";
+	if (minetype == #MINE_NAPALM)
+		return "napalm";
+	if (minetype == #MINE_MIRV)
+		return "MIRV";
+	if (minetype == #MINE_NAIL)
+		return "nail";
+	if (minetype == #MINE_GAS)
+		return "gas";
+	if (minetype == #MINE_EMP)
+		return "EMP";
+	if (minetype == #MINE_FRAG)
+		return "fragmentation";
+	if (minetype == #MINE_KRAC)
+		return "krac";
+	if (minetype == #MINE_CALTROP)
+		return "caltrop";
+	if (minetype == #MINE_ANTIGRAV)
+		return "antigrav";
+
+	return "ERROR!";
 };
 
 //==========================================================
@@ -1220,7 +1232,7 @@ string(float minetype) GetMineStr =
 
 float(float grentype) ConvertGrenIDToMine =
 {
-    if (grentype == #GR_TYPE_NORMAL)
+	if (grentype == #GR_TYPE_NORMAL)
 		return #MINE_REGULAR;
 	if (grentype == #GR_TYPE_CONCUSSION)
 		return #MINE_CONCUSSION;
@@ -1236,18 +1248,18 @@ float(float grentype) ConvertGrenIDToMine =
 		return #MINE_EMP;
 	if (grentype == #GR_TYPE_PSIONIC)
 		return #MINE_PSIONIC;
-    if (grentype == #GR_TYPE_FRAG)
-	    return #MINE_FRAG;
+	if (grentype == #GR_TYPE_FRAG)
+		return #MINE_FRAG;
 	if (grentype == #GR_TYPE_KRAC)
 		return #MINE_KRAC;
-  	if (grentype == #GR_TYPE_CALTROP)
-	    return #MINE_CALTROP;
+	if (grentype == #GR_TYPE_CALTROP)
+		return #MINE_CALTROP;
 	if (grentype == #GR_TYPE_BIO)
 		return #MINE_BIO;
 	if (grentype == #GR_TYPE_ANTIGRAV)
 		return #MINE_ANTIGRAV;
-	
-    return 0; // Bug if happens
+
+	return 0; // Bug if happens
 };
 
 //========================================================================
@@ -1255,231 +1267,231 @@ float(float grentype) ConvertGrenIDToMine =
 
 void(entity player, entity mine) MineUp =
 {
-    #ifdef MINE_DEBUG
-    if (debug_target == player)
-    if (debug_target.is_connected)
-    {
-        sprint(debug_target,#PRINT_HIGH,"MineUp()\n");    
-    }
-    #endif
-    
-    local float minesup;
-    
-    minesup = GetMinesUp(player);
+	#ifdef MINE_DEBUG
+	if (debug_target == player)
+	if (debug_target.is_connected)
+	{
+		sprint(debug_target,#PRINT_HIGH,"MineUp()\n");
+	}
+	#endif
 
-    if (mine.has_holo) // Converted grenade mine
-    {
-        local float bitfield;
+	local float minesup;
 
-        bitfield = GetMineConvBitfield(player);
+	minesup = GetMinesUp(player);
 
-        if (bitfield & mine.has_holo)
-            RPrint("BUG: Double conversion of mine!\n"); // shouldnt happen
+	if (mine.has_holo) // Converted grenade mine
+	{
+		local float bitfield;
 
-        bitfield = bitfield | mine.has_holo;
+		bitfield = GetMineConvBitfield(player);
 
-        SetMineConvBitfield(player,bitfield);
+		if (bitfield & mine.has_holo)
+			RPrint("BUG: Double conversion of mine!\n"); // shouldnt happen
 
-        if (mine.has_holo == 1)
-        {
-            if (!player.no_grenades_1)
-                RPrint("BUG: MineUp() called with no grenades to be able to convert!\n");
-            else
-                player.no_grenades_1 = player.no_grenades_1 - 1;
-        }
-        else
-        {
-            if (!player.no_grenades_2)
-                RPrint("BUG: MineUp() called with no grenades to be able to convert!\n");
-            else
-                player.no_grenades_2 = player.no_grenades_2 - 1;
-        }
-    }
-    else // non-converted mine
-    {   
-        local float points;
-        local float neededpoints;
-        local float spent;
+		bitfield = bitfield | mine.has_holo;
 
-        points = GetMinePoints(player);
-        neededpoints = MineNeededPoints(mine.has_sentry);
-        
-        if (neededpoints > points) // shouldnt happen
-            RPrint("BUG: Points error in MineUp()!\n");
-        
-        // decrease our guerilla avaliable points
-        SetMinePoints(player, points - neededpoints);
+		SetMineConvBitfield(player,bitfield);
 
-        // increase our spent points counter
-        spent = GetMineSpentPoints(player);
-        SetMineSpentPoints(player, spent + neededpoints);
+		if (mine.has_holo == 1)
+		{
+			if (!player.no_grenades_1)
+				RPrint("BUG: MineUp() called with no grenades to be able to convert!\n");
+			else
+				player.no_grenades_1 = player.no_grenades_1 - 1;
+		}
+		else
+		{
+			if (!player.no_grenades_2)
+				RPrint("BUG: MineUp() called with no grenades to be able to convert!\n");
+			else
+				player.no_grenades_2 = player.no_grenades_2 - 1;
+		}
+	}
+	else // non-converted mine
+	{
+		local float points;
+		local float neededpoints;
+		local float spent;
 
-        #ifdef MINE_DEBUG
-        if (debug_target == player)
-        if (debug_target.is_connected)
-        {
-            local string st, st2;
+		points = GetMinePoints(player);
+		neededpoints = MineNeededPoints(mine.has_sentry);
 
-            st = ftos(points);
-            st2 = ftos(neededpoints);
+		if (neededpoints > points) // shouldnt happen
+			RPrint("BUG: Points error in MineUp()!\n");
 
-            sprint(player,#PRINT_HIGH,"points: ",st," needed: ",st2,"\n");
-            
-            st = ftos(spent);
-            st2 = ftos(points - neededpoints);
+		// decrease our guerilla avaliable points
+		SetMinePoints(player, points - neededpoints);
 
-            sprint(player,#PRINT_HIGH,"spent: ",st," result: ",st2, "\n");
+		// increase our spent points counter
+		spent = GetMineSpentPoints(player);
+		SetMineSpentPoints(player, spent + neededpoints);
 
-            st = ftos (minesup + 1);
-            sprint (player,#PRINT_HIGH,"Res mines: ",st,"\n");            
-        }
-        #endif
-    }
+		#ifdef MINE_DEBUG
+		if (debug_target == player)
+		if (debug_target.is_connected)
+		{
+			local string st, st2;
 
-    // increase our mine counter
-    SetMinesUp(player, minesup + 1);
+			st = ftos(points);
+			st2 = ftos(neededpoints);
+
+			sprint(player,#PRINT_HIGH,"points: ",st," needed: ",st2,"\n");
+
+			st = ftos(spent);
+			st2 = ftos(points - neededpoints);
+
+			sprint(player,#PRINT_HIGH,"spent: ",st," result: ",st2, "\n");
+
+			st = ftos (minesup + 1);
+			sprint (player,#PRINT_HIGH,"Res mines: ",st,"\n");
+		}
+		#endif
+	}
+
+	// increase our mine counter
+	SetMinesUp(player, minesup + 1);
 };
 
 void(entity player, entity mine) MineDown =
 {
-    #ifdef MINE_DEBUG
-    if (debug_target == player)
-    if (debug_target.is_connected)
-    {
-        sprint(debug_target,#PRINT_HIGH,"MineDown()\n");    
-    }
-    #endif
-    
-    local float minesup;
-    
-    minesup = GetMinesUp(player);
+	#ifdef MINE_DEBUG
+	if (debug_target == player)
+	if (debug_target.is_connected)
+	{
+		sprint(debug_target,#PRINT_HIGH,"MineDown()\n");
+	}
+	#endif
 
-    if (mine.has_holo) // converted grenade mine
-    {
-        local float bitfield;
+	local float minesup;
 
-        bitfield = GetMineConvBitfield(player);
+	minesup = GetMinesUp(player);
 
-        /*if (!(bitfield & mine.has_holo))
-            RPrint("BUG: Wrong assignment of converted mine detected!\n"); // shouldnt happen*/
+	if (mine.has_holo) // converted grenade mine
+	{
+		local float bitfield;
 
-            // ^_^ this happens when CleanUpEverything() is called
+		bitfield = GetMineConvBitfield(player);
 
-        bitfield = bitfield - (bitfield & mine.has_holo);
+		/*if (!(bitfield & mine.has_holo))
+			RPrint("BUG: Wrong assignment of converted mine detected!\n"); // shouldnt happen*/
 
-        SetMineConvBitfield(player,bitfield);
-    }
-    else // non-converted mine
-    {
-        local float points;
-        local float neededpoints;
-        local float spent;
+			// this happens when CleanUpEverything() is called
 
-        points = GetMinePoints(player);
-        neededpoints = MineNeededPoints(mine.has_sentry);
-        
-        // increase our guerilla avaliable points
-        SetMinePoints(player,points + neededpoints);
+		bitfield = bitfield - (bitfield & mine.has_holo);
 
-        // decrease our spent points counter
-        spent = GetMineSpentPoints(player);
-        SetMineSpentPoints(player,spent - neededpoints);
+		SetMineConvBitfield(player,bitfield);
+	}
+	else // non-converted mine
+	{
+		local float points;
+		local float neededpoints;
+		local float spent;
 
-        #ifdef MINE_DEBUG
-        if (debug_target == player)
-        if (debug_target.is_connected)
-        {
-            local string st, st2;
+		points = GetMinePoints(player);
+		neededpoints = MineNeededPoints(mine.has_sentry);
 
-            st = ftos(points);
-            st2 = ftos(neededpoints);
+		// increase our guerilla avaliable points
+		SetMinePoints(player,points + neededpoints);
 
-            sprint(player,#PRINT_HIGH,"points: ",st," needed: ",st2,"\n");
-            
-            st = ftos(spent);
-            st2 = ftos(spent - neededpoints);
+		// decrease our spent points counter
+		spent = GetMineSpentPoints(player);
+		SetMineSpentPoints(player,spent - neededpoints);
 
-            sprint(player,#PRINT_HIGH,"spent: ",st," result: ",st2, "\n");
+		#ifdef MINE_DEBUG
+		if (debug_target == player)
+		if (debug_target.is_connected)
+		{
+			local string st, st2;
 
-            st = ftos (minesup - 1);
-            sprint (player,#PRINT_HIGH,"Res mines: ",st,"\n");            
-        }
-        #endif
-    }
+			st = ftos(points);
+			st2 = ftos(neededpoints);
 
-    // decrease our mine counter
-    SetMinesUp(player, minesup - 1);
+			sprint(player,#PRINT_HIGH,"points: ",st," needed: ",st2,"\n");
+
+			st = ftos(spent);
+			st2 = ftos(spent - neededpoints);
+
+			sprint(player,#PRINT_HIGH,"spent: ",st," result: ",st2, "\n");
+
+			st = ftos (minesup - 1);
+			sprint (player,#PRINT_HIGH,"Res mines: ",st,"\n");
+		}
+		#endif
+	}
+
+	// decrease our mine counter
+	SetMinesUp(player, minesup - 1);
 };
 
 //========================================================================
 // Returns TRUE if able to set the specified mine, and reports if not
 
 float(entity player, float minetype, float converted) AttemptToSetMine =
-{    
-    local float minesup;
-    
-    minesup = GetMinesUp(player);
-    
-    // have we set too many mines already? (fixed max)
-    if (minesup >= #GUERILLA_FIXED_MINEMAX) 
-    {
-        sprint(player,#PRINT_HIGH,"you can't set more than #GUERILLA_FIXED_MINEMAX mines!\n");
-        
-        player.job_finished = time + 1;
-        return #FALSE;
-    }
+{
+	local float minesup;
 
-    // not enough ammo for mine? (rockets)
-    if (player.ammo_rockets < #GUERILLA_MINE_COST) 
-    {
-        sprint(player,#PRINT_HIGH,"every mine needs #GUERILLA_MINE_COST rockets to work!\n");		
-        
-        player.job_finished = time + 1;
-        return #FALSE;
-    }    
+	minesup = GetMinesUp(player);
 
-    // converted grenade?
-    if (converted)
-    {
-        // we already have this mine up?
-        local float bitfield;
-        bitfield = GetMineConvBitfield(player);
+	// have we set too many mines already? (fixed max)
+	if (minesup >= #GUERILLA_FIXED_MINEMAX)
+	{
+		sprint(player,#PRINT_HIGH,"You can't set more than #GUERILLA_FIXED_MINEMAX mines!\n");
 
-        if (bitfield & converted)
-            return #FALSE;
-        else
-            return #TRUE; //..ok, set mine        
-    }
-    else // non-converted mines
-    {
-        if (player.job & #JOB_EXTRA1 || player.job & #JOB_EXTRA2)
-        {
-            local float points, neededpoints;
+		player.job_finished = time + 1;
+		return #FALSE;
+	}
 
-            points = GetMinePoints(player);
-            neededpoints = MineNeededPoints(minetype);
+	// not enough ammo for mine? (rockets)
+	if (player.ammo_rockets < #GUERILLA_MINE_COST)
+	{
+		sprint(player,#PRINT_HIGH,"Every mine needs #GUERILLA_MINE_COST rockets to work!\n");
 
-            if (points < neededpoints)
-            {
-                sprint(player,#PRINT_HIGH,"not enough guerilla points to set that mine!\n");
-                return #FALSE;
-            }
-            else
-                return #TRUE; //..ok, set mine
-        }
-        else // standard guerilla (no job extras)
-        {
-            if (minesup >= #GUERILLA_NOEXTRAS_MINEMAX)
-            {
-                sprint(player,#PRINT_HIGH,"you can set upto #GUERILLA_NOEXTRAS_MINEMAX mines!\n");
-                return #FALSE;
-            }
-            else
-                return #TRUE; //..ok, set mine
-        }        
-    }
+		player.job_finished = time + 1;
+		return #FALSE;
+	}
 
-    return #FALSE; // wont happen anyway..
+	// converted grenade?
+	if (converted)
+	{
+		// we already have this mine up?
+		local float bitfield;
+		bitfield = GetMineConvBitfield(player);
+
+		if (bitfield & converted)
+			return #FALSE;
+		else
+			return #TRUE; //..ok, set mine
+	}
+	else // non-converted mines
+	{
+		if (player.job & #JOB_EXTRA1 || player.job & #JOB_EXTRA2)
+		{
+			local float points, neededpoints;
+
+			points = GetMinePoints(player);
+			neededpoints = MineNeededPoints(minetype);
+
+			if (points < neededpoints)
+			{
+				sprint(player,#PRINT_HIGH,"Not enough guerilla points to set that mine!\n");
+				return #FALSE;
+			}
+			else
+				return #TRUE; //..ok, set mine
+		}
+		else // standard guerilla (no job extras)
+		{
+			if (minesup >= #GUERILLA_NOEXTRAS_MINEMAX)
+			{
+				sprint(player,#PRINT_HIGH,"You can set upto #GUERILLA_NOEXTRAS_MINEMAX mines!\n");
+				return #FALSE;
+			}
+			else
+				return #TRUE; //..ok, set mine
+		}
+	}
+
+	return #FALSE; // wont happen anyway..
 };
 
 //===========================================================
@@ -1487,39 +1499,39 @@ float(entity player, float minetype, float converted) AttemptToSetMine =
 
 float(float minetype) MineNeededPoints =
 {
-    if (minetype == #MINE_LEVEL1)
-        return 1;
-    if (minetype == #MINE_LEVEL2)
-        return 2;
-    if (minetype == #MINE_LEVEL3)
-        return 3;
-    if (minetype == #MINE_CONCUSSION)
-        return 1;
-    if (minetype == #MINE_PSIONIC)
-        return 2;
-    if (minetype == #MINE_BIO)
-        return 2;
-    if (minetype == #MINE_NAPALM)
-        return 3;
-    if (minetype == #MINE_MIRV)
-        return 3;
+	if (minetype == #MINE_LEVEL1)
+		return 1;
+	if (minetype == #MINE_LEVEL2)
+		return 2;
+	if (minetype == #MINE_LEVEL3)
+		return 3;
+	if (minetype == #MINE_CONCUSSION)
+		return 1;
+	if (minetype == #MINE_PSIONIC)
+		return 2;
+	if (minetype == #MINE_BIO)
+		return 2;
+	if (minetype == #MINE_NAPALM)
+		return 3;
+	if (minetype == #MINE_MIRV)
+		return 3;
 
-    /*if (minetype == #MINE_NAIL)
-        return ;
-    if (minetype == #MINE_GAS)
-        return ;
-    if (minetype == #MINE_EMP)
-        return ;
-    if (minetype == #MINE_FRAG)
-        return ;
-    if (minetype == #MINE_KRAC)
-        return ;
-    if (minetype == #MINE_CALTROP)
-        return ;
-    if (minetype == #MINE_ANTIGRAV)
-        return ;*/
+	/*if (minetype == #MINE_NAIL)
+		return ;
+	if (minetype == #MINE_GAS)
+		return ;
+	if (minetype == #MINE_EMP)
+		return ;
+	if (minetype == #MINE_FRAG)
+		return ;
+	if (minetype == #MINE_KRAC)
+		return ;
+	if (minetype == #MINE_CALTROP)
+		return ;
+	if (minetype == #MINE_ANTIGRAV)
+		return ;*/
 
-    return 99; // bug if this value is taken into account    
+	return 99; // bug if this value is taken into account
 };
 
 //==============================================================================
@@ -1527,17 +1539,17 @@ float(float minetype) MineNeededPoints =
 
 void(entity player) GuerillaInit =
 {
-    player.all_active = 0; // first reset everything
-    
-    // then add the corresponding points
-    if (player.job & #JOB_EXTRA1)
-        SetMinePoints(player, #GUERILLA_EXTRA1_POINTSMIN);
-    else if (player.job & #JOB_EXTRA2)
-        SetMinePoints(player, #GUERILLA_EXTRA2_POINTSMIN);
-    else SetMinePoints(player, #GUERILLA_NOEXTRAS_MINEMAX);
+	player.all_active = 0; // first reset everything
 
-    // also reset mines up flags and counter
-    player.increase_team4 = 0;
+	// then add the corresponding points
+	if (player.job & #JOB_EXTRA1)
+		SetMinePoints(player, #GUERILLA_EXTRA1_POINTSMIN);
+	else if (player.job & #JOB_EXTRA2)
+		SetMinePoints(player, #GUERILLA_EXTRA2_POINTSMIN);
+	else SetMinePoints(player, #GUERILLA_NOEXTRAS_MINEMAX);
+
+	// also reset mines up flags and counter
+	player.increase_team4 = 0;
 };
 
 //===========================================================================
@@ -1545,22 +1557,22 @@ void(entity player) GuerillaInit =
 
 float(entity player) GetMinesUp =
 {
-    return GetByte1(player.increase_team4);
+	return GetByte1(player.increase_team4);
 };
 
 void(entity player, float minesup) SetMinesUp =
 {
-    player.increase_team4 = AssignByte1(player.increase_team4,minesup);
+	player.increase_team4 = AssignByte1(player.increase_team4,minesup);
 };
 
 float(entity player) GetMineConvBitfield =
 {
-    return GetByte2(player.increase_team4);
+	return GetByte2(player.increase_team4);
 };
 
 void(entity player, float bitfield) SetMineConvBitfield =
 {
-    player.increase_team4 = AssignByte2(player.increase_team4,bitfield);
+	player.increase_team4 = AssignByte2(player.increase_team4,bitfield);
 };
 
 //=================================================================
@@ -1568,17 +1580,17 @@ void(entity player, float bitfield) SetMineConvBitfield =
 
 float(entity player) GuerillaGetMaxPointsForJob =
 {
-    if (player.job & #JOB_GUERILLA)
-    {
-        if (player.job & #JOB_EXTRA2)
-            return #GUERILLA_EXTRA2_POINTSMAX;
-        else if (player.job & #JOB_EXTRA1)
-            return #GUERILLA_EXTRA1_POINTSMAX;
-        else 
-            return #GUERILLA_NOEXTRAS_MINEMAX;
-    }
-    else 
-        return 0;
+	if (player.job & #JOB_GUERILLA)
+	{
+		if (player.job & #JOB_EXTRA2)
+			return #GUERILLA_EXTRA2_POINTSMAX;
+		else if (player.job & #JOB_EXTRA1)
+			return #GUERILLA_EXTRA1_POINTSMAX;
+		else
+			return #GUERILLA_NOEXTRAS_MINEMAX;
+	}
+	else
+		return 0;
 };
 
 //==================================================================
@@ -1586,49 +1598,48 @@ float(entity player) GuerillaGetMaxPointsForJob =
 
 void(entity player) GuerillaUpgradeJob =
 {
-    if (player.job & #JOB_EXTRA2)
-        return; // cant upgrade anymore
-     
-    if (player.job & #JOB_EXTRA1)
-    {
-        sprint(player,#PRINT_HIGH,"You are now a guerilla specialist!\n");
+	if (player.job & #JOB_EXTRA2)
+		return; // cant upgrade anymore
 
-        player.job = (player.job | #JOB_EXTRA2) - #JOB_EXTRA1;
+	if (player.job & #JOB_EXTRA1)
+	{
+		sprint(player,#PRINT_HIGH,"You are now a guerilla specialist!\n");
 
-        // adjust points if needed and for sanity
-        local float currentpoints, spent;
-        spent = GetMineSpentPoints(player);
-        currentpoints = GetMinePoints(player) + spent;
-        
-        if (currentpoints < #GUERILLA_EXTRA2_POINTSMIN)
-        {
-            SetMinePoints(player, #GUERILLA_EXTRA2_POINTSMIN - spent);
-            currentpoints = GetMinePoints(player);
-        }
+		player.job = (player.job | #JOB_EXTRA2) - #JOB_EXTRA1;
 
-        if (currentpoints > #GUERILLA_EXTRA2_POINTSMAX)
-            SetMinePoints(player, #GUERILLA_EXTRA2_POINTSMAX - spent);            
-    }
-    else // no extras
-    {
-        sprint(player,#PRINT_HIGH,"You have become a guerilla technician!\n");
+		// adjust points if needed and for sanity
+		local float currentpoints, spent;
+		spent = GetMineSpentPoints(player);
+		currentpoints = GetMinePoints(player) + spent;
 
-        player.job = player.job | #JOB_EXTRA1;
+		if (currentpoints < #GUERILLA_EXTRA2_POINTSMIN)
+		{
+			SetMinePoints(player, #GUERILLA_EXTRA2_POINTSMIN - spent);
+			currentpoints = GetMinePoints(player);
+		}
 
-        // adjust points if needed and for sanity
-        local float currentpoints, spent;
-        spent = GetMineSpentPoints(player);
-        currentpoints = GetMinePoints(player) + spent;
-        
-        if (currentpoints < #GUERILLA_EXTRA1_POINTSMIN)
-        {
-            SetMinePoints(player, #GUERILLA_EXTRA1_POINTSMIN - spent);
-            currentpoints = GetMinePoints(player);
-        }
+		if (currentpoints > #GUERILLA_EXTRA2_POINTSMAX)
+			SetMinePoints(player, #GUERILLA_EXTRA2_POINTSMAX - spent);
+	}
+	else // no extras
+	{
+		sprint(player,#PRINT_HIGH,"You have become a guerilla technician!\n");
 
-        if (currentpoints > #GUERILLA_EXTRA1_POINTSMAX)
-            SetMinePoints(player, #GUERILLA_EXTRA1_POINTSMAX - spent);            
-    }
+		player.job = player.job | #JOB_EXTRA1;
+
+		// adjust points if needed and for sanity
+		spent = GetMineSpentPoints(player);
+		currentpoints = GetMinePoints(player) + spent;
+
+		if (currentpoints < #GUERILLA_EXTRA1_POINTSMIN)
+		{
+			SetMinePoints(player, #GUERILLA_EXTRA1_POINTSMIN - spent);
+			currentpoints = GetMinePoints(player);
+		}
+
+		if (currentpoints > #GUERILLA_EXTRA1_POINTSMAX)
+			SetMinePoints(player, #GUERILLA_EXTRA1_POINTSMAX - spent);
+	}
 };
 
 //=================================================================
@@ -1636,9 +1647,9 @@ void(entity player) GuerillaUpgradeJob =
 
 /*float(entity player) GuerillaGetTotalPoints =
 {
-    local float spent, avail;
-    avail = GetMinePoints(player);
-    spent = GetMineSpentPoints(player);
+	local float spent, avail;
+	avail = GetMinePoints(player);
+	spent = GetMineSpentPoints(player);
 
-    return spent + avail;
+	return spent + avail;
 };*/

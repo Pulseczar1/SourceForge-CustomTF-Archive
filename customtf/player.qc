@@ -312,7 +312,7 @@ void()	player_run =[	$rockrun1,	player_run	]
 			self.walkframe = 0;
 		self.frame = self.frame + self.walkframe;
 	}
-	if (footsteps == 1 && checkbottom(self) == 1 && self.playerclass != #PC_UNDEFINED)
+	if (footsteps == 1 && (megatf & #MEGATF_STEPS) && checkbottom(self) == 1 && self.playerclass != #PC_UNDEFINED)
 	{
 		if (self.velocity_x > 200 || self.velocity_y > 200 || (self.velocity_x < -200 || self.velocity_y < -200))
 		{

@@ -1,31 +1,10 @@
-// AIRG_MAIN_START
-
 /*
- * File: horn.qc
- * Date: 3 Jan 1997
- *
- * Description: Air gun main code.
- *
- *    Copyright and Distribution Permissions
- *    --------------------------------------
- *
- *  The modifications included in this archive are Copyright 1997, the Evolve team.
- *  The original QuakeC source is Copyright 1996, id software.
- *
- *  Authors MAY NOT use these modifications as a basis for commercially available work.
- *
- *  You may distribute this Quake modification in any electronic format as long as
- *  all the files in this archive remain intact and unmodified and are distributed
- *  together.
- *
- *  QuakeC, Model and artwork can be reused, but credit for the individual developers on
- *   the AirFist team is required.
- *
- */
+==============================================================================
 
-// Spam Light - I changed how it decides which objects to push
+airfist.qc
 
-// OfN - I fixed the "stuck in wall" stupid bug, and added more entities for airfist pushing
+==============================================================================
+*/
 
 #define AIRG_STEPCONVERTEDTOFLY 2
 
@@ -42,74 +21,80 @@ $frame ablast1 ablast2 ablast3 ablast4 ablast5 ablast6
 float (entity thing) canairpush =
 {
 	if (thing.classname == "player")
-    {
-        #ifdef AIRFIST_DONT_PUSH_TEAMMATES
-        if (!Teammate(self.team_no,thing.team_no)) //WARNING: using self
-        #endif
+	{
+		#ifdef AIRFIST_DONT_PUSH_TEAMMATES
+		if (!Teammate(self.team_no,thing.team_no)) //WARNING: using self
+		#endif
 
-        return #TRUE;
+		return #TRUE;
 	}
-    else if (thing.classname == "pipebomb")
-    {
+	else if (thing.classname == "pipebomb")
+	{
 		thing.avelocity = '300 300 300';
-        return #TRUE;
-    }
+		return #TRUE;
+	}
 	else if (thing.classname == "spike")
 		return #TRUE;
 	else if (thing.classname == "grenade")
-    {
+	{
 		thing.avelocity = '300 300 300';
-        return #TRUE;
-    }
-    else if (thing.classname == "rocket")
+		return #TRUE;
+	}
+	else if (thing.classname == "rocket")
 		return #TRUE;
 
-    else if (thing.classname == "caltrop")
-    {
+	else if (thing.classname == "caltrop")
+	{
 		thing.avelocity = '500 500 500';
-        return #TRUE;
-    }
-
-    #ifdef PUSHABLE_ARMY
-    else if (thing.classname == "monster_army")
 		return #TRUE;
-    #endif
+	}
 
-    #ifdef PUSHABLE_FIEND
-    else if (thing.classname == "monster_demon1")
+	#ifdef PUSHABLE_ARMY
+	else if (thing.classname == "monster_army")
 		return #TRUE;
-    #endif
+	#endif
 
-    #ifdef PUSHABLE_SCRAG
-    else if (thing.classname == "monster_wizard")
+	#ifdef PUSHABLE_FIEND
+	else if (thing.classname == "monster_demon1")
 		return #TRUE;
-    #endif
+	#endif
+
+	#ifdef PUSHABLE_SCRAG
+	else if (thing.classname == "monster_wizard")
+		return #TRUE;
+	#endif
 
 	// PZ - only tossable dets can be fisted, and only 50% of force
 	else if (thing.classname == "detpack" && thing.netname == "c4detpack" && thing.invincible_finished <= time && no_detpush == 0)
-    {
+	{
 		local vector temp;
 		temp_x = random() * 300; temp_y = random() * 300; temp_z = random() * 300;
 		thing.avelocity = temp;
 		//thing.avelocity = '300 300 300';
-        thing.movetype = #MOVETYPE_BOUNCE;
-        return #TRUE;
-    }
+		thing.movetype = #MOVETYPE_BOUNCE;
+		return #TRUE;
+	}
 
-    else if (thing.#coolflag == #STRFLAG_COOL)
-    {
-        thing.avelocity = '500 500 500';
+	/*else if (thing.classname == "item_tfgoal") //RJ fistable flag. needs somework to stop it from tumbling and always having a sideways flag or something :P
+	{
+		thing.avelocity = '300 300 300';
+		return #TRUE;
+	}*/
 
-        if (thing.classname != "gib")
-        {
-            thing.avelocity_x = 0;
-            thing.avelocity_z = 0;
-        }
+	else if (thing.#coolflag == #STRFLAG_COOL)
+	{
+		thing.avelocity = '500 500 500';
 
-        thing.avelocity = thing.avelocity * crandom();
+		if (thing.classname != "gib")
+		{
+			thing.avelocity_x = 0;
+			thing.avelocity_z = 0;
+		}
 
-        return #TRUE;
-    }
+		thing.avelocity = thing.avelocity * crandom();
+
+		return #TRUE;
+	}
 
 	return #FALSE;
 };
@@ -119,34 +104,34 @@ float (entity thing) canairpush =
 void() launch_horn =
 {
 	// Local variables used in the function
-    local entity e;
-    local vector delta;
-    local vector dir;
-    local float eSpeed;
-    local float dist;
-    local float percent;
-    local float ldmg;
-    local float nearAWall;
+	local entity e;
+	local vector delta;
+	local vector dir;
+	local float eSpeed;
+	local float dist;
+	local float percent;
+	local float ldmg;
+	local float nearAWall;
 
-    // Constants used in the control of how the AirFist is works
+	// Constants used in the control of how the AirFist is works
 
-    // Maximum strength of the AirFist.  The strength of the affected entity's
-    // movement is based on the distance from the center of the shot.
-    local float strength;
-    strength = 1000;  // full power of weapon
+	// Maximum strength of the AirFist.  The strength of the affected entity's
+	// movement is based on the distance from the center of the shot.
+	local float strength;
+	strength = 1000;  // full power of weapon
 
-    // Maximum damage that can be incurred by the AirFist.  The actual entity's
-    // damage is based on the distance from the center of the shot.
-    local float inDamage;
-    inDamage = 20;  // full damage of weapon
+	// Maximum damage that can be incurred by the AirFist.  The actual entity's
+	// damage is based on the distance from the center of the shot.
+	local float inDamage;
+	inDamage = 20;  // full damage of weapon
 
-    // Range of the AirFist blast.
-    local float inRange;
-    // Number of bubbles generated when the AirFist is fired under water.
-    local float numBubbles = 3; // number of bubbles generated in the water
+	// Range of the AirFist blast.
+	local float inRange;
+	// Number of bubbles generated when the AirFist is fired under water.
+	local float numBubbles = 3; // number of bubbles generated in the water
 
-    // Recoil strength of the AirFist on the player that shot the weapon.
-    local float recoil; // recoil strength of the gun
+	// Recoil strength of the AirFist on the player that shot the weapon.
+	local float recoil; // recoil strength of the gun
 
 	// Reshot time for the airgun attack in seconds.
 	local float attackTime = 0.5;
@@ -154,45 +139,46 @@ void() launch_horn =
 	// Max number of times that the weapon can fired in a period of time.
 	local float maxFireRate = 5;
 
-    // The maximum number of seconds that maxFireRate can fire in.  If the
-    // player has reached the maxFireRate in under the shotTimeout then all
-    // shots up to the shotTimeout are "failed" shots that don't do anything.
-    // e.g.  time to fire is 0.5 seconds.
-    //       maxFireRate is 5.
-    //       shotTimeout is 5.5 seconds.
-    //
-    // If 5 shots where fired at the max rate this would take 2.5 seconds.
-    // So there would be a 3 seconds wait before the AirFist will fire again.
-    // Any fire rate greater than 2.5 seconds will incure a smaller or no
-    // wait time.  Any shots fired in that wait time are "failed" shots that
-    // will do nothing.
-    local float shotTimeout = 5.5; // number of seconds for the maxFireRate
+	// The maximum number of seconds that maxFireRate can fire in.  If the
+	// player has reached the maxFireRate in under the shotTimeout then all
+	// shots up to the shotTimeout are "failed" shots that don't do anything.
+	// e.g.  time to fire is 0.5 seconds.
+	//       maxFireRate is 5.
+	//       shotTimeout is 5.5 seconds.
+	//
+	// If 5 shots where fired at the max rate this would take 2.5 seconds.
+	// So there would be a 3 seconds wait before the AirFist will fire again.
+	// Any fire rate greater than 2.5 seconds will incure a smaller or no
+	// wait time.  Any shots fired in that wait time are "failed" shots that
+	// will do nothing.
+	local float shotTimeout = 5.5; // number of seconds for the maxFireRate
 
-    // The AirFist fire codde:
+	// The AirFist fire codde:
 
-    //Set initial range
-    inRange = 400;
-    //Set intital recoil
-    recoil = 300;
-    // By default, assume not near a wall.
-    nearAWall = 0;
+	//Set initial range
+	inRange = 400;
+	//Set intital recoil
+	recoil = 300;
+	// By default, assume not near a wall.
+	nearAWall = 0;
 
-    // Make such that all previous attack code completes.
-    if (!self.button0)
-    {
-		player_run();return;
+	// Make such that all previous attack code completes.
+	if (!self.button0)
+	{
+		player_run();
+		return;
 	}	// Complete any other attacks first.
 
-    // How long the fire time is.
+	// How long the fire time is.
 	//self.attack_finished = time + attackTime; ORIGINAL
-    // OfN - Take tranquiliser, haste and speed rune into account
-    Attack_Finished(attackTime);
+	// OfN - Take tranquiliser, haste and speed rune into account
+	Attack_Finished(attackTime);
 
-    // First attack in the shotTimeout period
-    if (self.AIRG_FireCount == 0 || self.AIRG_Timeout < time)
-    {
-        // Set count and timeout length
-        self.AIRG_Timeout = time + shotTimeout + attackTime;
+	// First attack in the shotTimeout period
+	if (self.AIRG_FireCount == 0 || self.AIRG_Timeout < time)
+	{
+		// Set count and timeout length
+		self.AIRG_Timeout = time + shotTimeout + attackTime;
 		self.AIRG_FireCount = 1;
 	}
 	// Max Fire Rate reached, so this is a failed shot.
@@ -206,7 +192,7 @@ void() launch_horn =
 		else
 		{	// play above water sound
 			sound(self, #CHAN_AUTO, "weapons/agfail.wav", 0.75, #ATTN_NORM);
-	    }
+		}
 
 		// play Failed AirFist animation
 		player_failedairgun1();
@@ -227,7 +213,7 @@ void() launch_horn =
 
 	if (self.waterlevel > 2) // if under water, change the variables
 	{
-  		// reduced the range by %20
+		// reduced the range by %20
 		inRange = inRange * 0.8;
 
 		// double the damage possible
@@ -243,11 +229,11 @@ void() launch_horn =
 		// This is the exclusion code.  It excludes everything that is "Illegal" to
 		// move. eg. doors.
 
-	    // You may find this code looks funny,  it is the same is doing
+		// You may find this code looks funny,  it is the same is doing
 		// a if( exp & exp & exp & exp) but this way is faster.
 		//   (read the QuakeC manual for reason).
 
-	    // only affect monsters and projectiles
+		// only affect monsters and projectiles
 		//if (visible(e)) // must be visible AND // - OfN candamage
 
 		// PZ - decrease push of tossable dets by 50%
@@ -367,21 +353,22 @@ void() launch_horn =
 			}
 			else
 			{
-					 // Modifications for players. // some randomer stuff
-		               	 	if (e.classname == "player") {
-                		     		 // If we havent the upgrade reduce push on players
-                	      		 	 if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE))
-        	                       			 delta = delta * #AIRFIST_PUSH_REDUCTION;
+					// Modifications for players. // some randomer stuff
+				if (e.classname == "player")
+				{
+					// If we havent the upgrade reduce push on players
+					if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE))
+						delta = delta * #AIRFIST_PUSH_REDUCTION;
 
-		                	        // If the other player has aspect of hwguy reduce the push.
-		        	                if (e.cutf_items & #CUTF_HWGUY)
-                			                delta = delta * #AIRFIST_PUSH_HWGUY;
-			                }
+					// If the other player has aspect of hwguy reduce the push.
+					if (e.cutf_items & #CUTF_HWGUY)
+						delta = delta * #AIRFIST_PUSH_HWGUY;
+				}
 
-                			if (e.classname == "detpack")
-		                        delta = delta * #AIRFIST_PUSH_DETPACK;
+				if (e.classname == "detpack")
+					delta = delta * #AIRFIST_PUSH_DETPACK;
 
-			        // Apply the velocity adjustment
+				// Apply the velocity adjustment
 				e.velocity = e.velocity + delta;
 
 				// calculate the damage amount
@@ -456,21 +443,21 @@ void() launch_horn =
 	//void(float nearAWall, float adjustForward, float adjustRight, float adjustUp, float positionRight, float spriteSpeed) hornBlastSprite =
 	if (self.waterlevel > 2)
 	{
-  		// under water, go slower (%50 slower)
-  		hornBlastSprite(nearAWall, 50, -50, 300, -20, 0.50);
+		// under water, go slower (%50 slower)
+		hornBlastSprite(nearAWall, 50, -50, 300, -20, 0.50);
 		hornBlastSprite(nearAWall, 50, 50, 300, 20, 0.50);
 	}
 	else
 	{
 		// above water, normal speed
-  		hornBlastSprite(nearAWall, 50, -50, 300, -20, 1.0);
+		hornBlastSprite(nearAWall, 50, -50, 300, -20, 1.0);
 		hornBlastSprite(nearAWall, 50, 50, 300, 20, 1.0);
 	}
 
 	// recoil code
 	if (self.flags & #FL_ONGROUND)
 	{
-   		// If self on the ground, raise me up so that the velocity will
+		// If self on the ground, raise me up so that the velocity will
 		// take affect.
 
 		// raise the bugger a bit
@@ -489,7 +476,8 @@ void() launch_horn =
 	local string no_noobs;
 	no_noobs = infokey(world, "no_fisting_noobs");
 
-	if (no_noobs == "on") {
+	if (no_noobs == "on")
+	{
 		local entity the_flag;
 		the_flag = find(world, classname, "item_tfgoal");
 
@@ -509,7 +497,7 @@ void() launch_horn =
 
 	// If we have aspect of hwguy we don't take nearly as much recoil. //randomer
 	if (self.cutf_items & #CUTF_HWGUY)
-        	recoil = recoil * #AIRFIST_RECOIL_HWGUY;
+		recoil = recoil * #AIRFIST_RECOIL_HWGUY;
 
 	// recoil self
 	self.velocity = self.velocity + v_forward * recoil * -1;
@@ -531,8 +519,8 @@ void() launch_horn =
 // modification of infront() from ai.qc to be tighter
 float (entity e) hornInfront =
 {
-	local vector  vec;
-	local float    dot;
+	local vector vec;
+	local float dot;
 
 	makevectors (self.v_angle);
 	vec = normalize (e.origin - self.origin - self.view_ofs);
@@ -599,8 +587,8 @@ void(float nearAWall, float adjustForward, float adjustRight, float adjustUp, fl
 
 	// Set the velocity based on the parameters passed
 	sprite.velocity =
-    v_forward * random() * adjustForward  +
-    v_right * random() * adjustRight +  // [MWH:01/12/97] Reduced left/right/up/down variablilty
+	v_forward * random() * adjustForward  +
+	v_right * random() * adjustRight +  // [MWH:01/12/97] Reduced left/right/up/down variablilty
 	v_up * random() * adjustUp;
 
 	// set Speed
@@ -643,6 +631,3 @@ void() removeFlyMode =
 	// don't need self anymore, remove self.
 	remove(self);
 };
-
-// AIRG_MAIN_END
-

@@ -482,7 +482,7 @@ void() ConcussionGrenadeTimer =
 			stable = 1;
 
 		// Right
-		src_x = self.owner.origin;
+		src_x = self.owner.origin_x;
 		src_y = self.owner.absmax_y + 1;
 		if (pointcontents(src) == #CONTENT_SOLID)
 			stable = 1;

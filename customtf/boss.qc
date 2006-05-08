@@ -206,7 +206,7 @@ void(vector p) boss_missile =
 
 	org = self.origin + p_x*v_forward + p_y*v_right + p_z*'0 0 1';
 	
-// lead the player on hard mode
+	// lead the player on hard mode
 	if (skill > 1)
 	{
 		t = vlen(self.enemy.origin - org) / 300;
@@ -229,7 +229,7 @@ void(vector p) boss_missile =
 	newmis.touch = T_MissileTouch; // rocket explosion
 	sound (self, #CHAN_WEAPON, "boss1/throw.wav", 1, #ATTN_NORM);
 
-// check for dead enemy
+	// check for dead enemy
 	if (self.enemy.health <= 0)
 		boss_idle1 ();
 };
@@ -297,8 +297,8 @@ void() monster_boss =
 
 CH here is a good place to stop as the below is in some maps
 */
-entity	le1, le2;
-float	lightning_end;
+entity le1, le2;
+float lightning_end;
 
 void() lightning_fire =
 {
@@ -354,11 +354,11 @@ void() lightning_use =
 	|| (le2.state != #STATE_TOP && le2.state != #STATE_BOTTOM)
 	|| (le1.state != le2.state) )
 	{
-//		RPrint ("not aligned\n");
+		//RPrint ("not aligned\n");
 		return;
 	}
 
-// don't let the electrodes go back up until the bolt is done
+	// don't let the electrodes go back up until the bolt is done
 	le1.nextthink = -1;
 	le2.nextthink = -1;
 	lightning_end = time + 1;
@@ -366,7 +366,7 @@ void() lightning_use =
 	sound (self, #CHAN_VOICE, "misc/power.wav", 1, #ATTN_NORM);
 	lightning_fire ();		
 
-// advance the boss pain if down
+	// advance the boss pain if down
 	self = find (world, classname, "monster_boss");
 	if (!self)
 		return;
@@ -374,17 +374,16 @@ void() lightning_use =
 	if (le1.state == #STATE_TOP && self.health > 0)
 	{
 		sound (self, #CHAN_VOICE, "boss1/pain.wav", 1, #ATTN_NORM);
-//CH removed those below
-//		self.health = self.health - 1;
-//		if (self.health >= 2)
-//			boss_shocka1();
-//		else if (self.health == 1)
-//			boss_shockb1();
-//		else if (self.health == 0)
-//			boss_shockc1();
+	//CH removed those below
+		/*self.health = self.health - 1;
+		if (self.health >= 2)
+			boss_shocka1();
+		else if (self.health == 1)
+			boss_shockb1();
+		else if (self.health == 0)
+			boss_shockc1();*/
 	}	
 };
-
 
 /*QUAKED event_lightning (0 1 1) (-16 -16 -16) (16 16 16)
 Just for boss level.
@@ -393,6 +392,3 @@ void() event_lightning =
 {
 	self.use = lightning_use;
 };
-
-
-

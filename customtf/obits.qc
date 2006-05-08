@@ -75,7 +75,6 @@ void(entity targ, entity attacker) ClientObituary =
 
 		if (deathmsg==#DMSG_ANTIHACK)
 		{
-			local string tst;
 			tst=GetBuildingName(attacker);
 
 			if (rnum < 0.5)
@@ -104,7 +103,6 @@ void(entity targ, entity attacker) ClientObituary =
 
 		if (deathmsg==#DMSG_ANTIDISM)
 		{
-			local string tst;
 			tst=GetBuildingName(attacker);
 
 			if (rnum < 0.5)
@@ -997,7 +995,7 @@ void(entity targ, entity attacker) ClientObituary =
 					if (rnum < 0.3)
 						deathstring = " becomes bored with life\n";
 					else if (rnum < .6)
-						deathstring = "tries to see the rocket from a different perspective.\n";
+						deathstring = " tries to see the rocket from a different perspective.\n";
 					else
 						deathstring = " checks if his weapon is loaded\n";
 				}
@@ -4192,7 +4190,6 @@ void(entity targ, entity attacker) ClientObituary =
 
 			if (deathmsg == #DMSG_STORM)
 			{
-				local string st;
 				st = GetBuildingName(targ);
 				bprint(#PRINT_MEDIUM,targ.real_owner.netname,"'s ",st," is destroyed by the storm lightning!\n");
 				return;

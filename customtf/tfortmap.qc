@@ -2111,7 +2111,7 @@ void(entity Item, entity AP) DoItemGroupWork =
 // Do all the activation/removal of Quake Triggers
 void(entity Goal, entity AP) DoTriggerWork =
 {
-	local entity otemp, stemp, t;
+	local entity otemp1, stemp1, t; //RJ appended 1 to fix warning of names == a global
 
 #ifdef MAP_DEBUG
 	if (Goal.killtarget != string_null)
@@ -2155,17 +2155,17 @@ void(entity Goal, entity AP) DoTriggerWork =
 			t = find (t, targetname, Goal.target);
 			if (t == world)
 				return;
-			stemp = self;
-			otemp = other;
+			stemp1 = self;
+			otemp1 = other;
 			self = t;
-			other = stemp;
+			other = stemp1;
 			if (self.use != SUB_Null)
 			{
 				if (self.use)
 					self.use ();
 			}
-			self = stemp;
-			other = otemp;
+			self = stemp1;
+			other = otemp1;
 			activator = AP;
 		} while ( t != world );
 	}

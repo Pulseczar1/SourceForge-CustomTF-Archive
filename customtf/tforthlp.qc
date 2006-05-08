@@ -16,7 +16,6 @@ void() TeamFortress_HelpMap;
 void() AliasTimer;
 
 //ofN
-void() bprintline;
 void(entity player, string thesound) PlayClientSound;
 
 //=========================================================================

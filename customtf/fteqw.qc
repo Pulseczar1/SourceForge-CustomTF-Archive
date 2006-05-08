@@ -1,10 +1,16 @@
 /*
+==============================================================================
+
+fteqw.qc
+
 Porting effort from cpqwsv -> fteqwsv
 
 Due to longer strings, FTE has less individual temporary strings, so the menus needed to be changed slightly too.
 These cvars can be tweeked to mimic cpqwsv string usage:
 pr_tempstringcount 128
 pr_tempstringsize 256
+
+==============================================================================
 */
 
 #define CSQC
@@ -14,19 +20,6 @@ pr_tempstringsize 256
 #ifdef CSQC
 #include "csqc_ss.qc"
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void(vector v1, vector v2, float nomonsters, entity forent) ftebi_traceline = #16;
@@ -160,43 +153,47 @@ float GetCircleWave (float inputnum)
 
 	if (inputnum >= 0.75) // -1 to 0
 	{
-		if (inputnum == 0.75) return -1;
+		if (inputnum == 0.75)
+			return -1;
 
 		inputnum = inputnum - 0.75;
 
 		inputnum = inputnum * 4;
 
-		return (1 - sqrt(1 - (inputnum*inputnum))) - 1;		
+		return (1 - sqrt(1 - (inputnum*inputnum))) - 1;
 	}
 	else if (inputnum >= 0.5) // 0 to -1
 	{
-		if (inputnum == 0.5) return 0;
+		if (inputnum == 0.5)
+			return 0;
 
 		inputnum = inputnum - 0.5;
 
-		inputnum = 0.25 - inputnum;			
+		inputnum = 0.25 - inputnum;
 		inputnum = inputnum * 4;
 
 		return (1 - sqrt(1 - (inputnum*inputnum))) - 1;
 	}
 	else if (inputnum >= 0.25) // 1 to 0
 	{
-		if (inputnum == 0.25) return 1;
+		if (inputnum == 0.25)
+			return 1;
 
 		inputnum = inputnum - 0.25;
 
 		inputnum = inputnum * 4;
 
-		return sqrt(1 - (inputnum*inputnum));		
+		return sqrt(1 - (inputnum*inputnum));
 	}
 	else // 0 to 1
 	{
-		if (inputnum == 0) return 0;
-		
-		inputnum = 0.25 - inputnum;
-		inputnum = inputnum * 4;		
+		if (inputnum == 0)
+			return 0;
 
-		return sqrt(1- (inputnum*inputnum));		
+		inputnum = 0.25 - inputnum;
+		inputnum = inputnum * 4;
+
+		return sqrt(1- (inputnum*inputnum));
 	}
 
 	return 0;
@@ -214,7 +211,7 @@ float GetLinearWave (float inputnum)
 		return - (inputnum-0.5)/0.25;
 	else
 		return -1 + (inputnum-0.75)/0.25;
-	
+
 	return 0;
 }
 
@@ -222,18 +219,15 @@ float GetLinearWave (float inputnum)
 
 float(float inputnum, float modes, float minnum, float maxnum, float balance, float offset, float shape) ftegetwave =
 {
-	float retval, inputnum, minnum, maxnum, balance, offset, shape;
-	float temp;
-
-	float modes;
+	float retval, temp;
 
 
 	if (!(modes & #GWAVE_USEOFFSET))
 		offset = 0;
-	
+
 	// Use special shape?
 	if (modes & #GWAVE_USESHAPE)
-	{		
+	{
 		if (shape >= -1 && shape <= 1 && shape != 0)
 		{
 			if (shape < 0) // sine/linear mix
@@ -243,8 +237,8 @@ float(float inputnum, float modes, float minnum, float maxnum, float balance, fl
 				else
 				{
 					// Get standard sinus
-					retval = sin(2*#M_PI*(inputnum+offset));	
-					
+					retval = sin(2*#M_PI*(inputnum+offset));
+
 					temp = GetLinearWave(inputnum+offset);
 					retval = (retval*(1-fabs(shape))) + (temp*fabs(shape));
 				}
@@ -256,8 +250,8 @@ float(float inputnum, float modes, float minnum, float maxnum, float balance, fl
 				else
 				{
 					// Get standard sinus
-					retval = sin(2*#M_PI*(inputnum+offset));	
-					
+					retval = sin(2*#M_PI*(inputnum+offset));
+
 					temp = GetCircleWave(inputnum+offset);
 					retval = retval*(1-shape) + temp*shape;
 				}
@@ -266,13 +260,13 @@ float(float inputnum, float modes, float minnum, float maxnum, float balance, fl
 		else // 0 or invalid shape
 		{
 			// Get standard sinus
-			retval = sin(2*#M_PI*(inputnum+offset));	
+			retval = sin(2*#M_PI*(inputnum+offset));
 		}
 	}
 	else // dont use shape then..
 	{
 		// Get standard sinus
-		retval = sin(2*#M_PI*(inputnum+offset));	
+		retval = sin(2*#M_PI*(inputnum+offset));
 	}
 
 	// Use maximum/minimum values?
@@ -340,11 +334,11 @@ void() FigureOutClientVersion =
 		self.clversion = 0;
 		return;
 	}
-	f = stof(infokey(self, "*client"));
+	f = (infokey(self, "*client") == "ezQuake");
 	if (f)
 	{
 		self.cltype = #CLTYPE_EZQUAKE;
-		self.clversion = f;
+		self.clversion = 0;
 		return;
 	}
 	f = stof(infokey(self, "*ver"));

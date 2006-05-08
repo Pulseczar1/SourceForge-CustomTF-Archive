@@ -356,14 +356,14 @@ void() Menu_Default =
 		if (self.tf_items & #NIT_AUTOSCANNER)
 			st2 = "\8.. \sScanner\s state (\son\s)           \n\9.. \sChaseCam\s state (\son\s)          \n\n";
 		else
-			st2 = ".. Scanner state (off)          \n.. \sChaseCam\s state (\son\s)          \n\n";
+			st2 = "\8.. Scanner state (off)          \n\9.. \sChaseCam\s state (\son\s)          \n\n";
 	}
 	else
 	{
 		if (self.tf_items & #NIT_AUTOSCANNER)
-			st2 = ".. \sScanner\s state (\son\s)           \n.. ChaseCam state (off)         \n\n";
+			st2 = "\8.. \sScanner\s state (\son\s)           \n\9.. ChaseCam state (off)         \n\n";
 		else
-			st2 = ".. Scanner state (off)          \n.. ChaseCam state (off)         \n\n";
+			st2 = "\8.. Scanner state (off)          \n\9.. ChaseCam state (off)         \n\n";
 	}
 
 	centerprint(self,"\{157}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130} \sSpectator Menu: \{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{159}\n\n\1.. Machinery Battlefield Scan   \n\2.. Helpers Battlefield Scan     \n\3.. Player Classes Scan          \n\4.. Overall Balance (N/A)        \n\5.. SentryGun detail report (N/A)\n\6.. Tesla detail report (N/A)    \n\7..                              \n",st2,"\0\s..\s Hide Menu                    \n\n\{157}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{158}\{128}\{129}\{129}\{129}\{129}\{129}\{129}\{130}\{159}");

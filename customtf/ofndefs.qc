@@ -96,13 +96,6 @@ CustomTF 3.2.OfN
 #define GRUNTY_HP             600 // initial HP for soldier
 #define GRUNT_MAX_HP         1200 // OfN - Max health for the damn soldier, no 5000 hp grunts anymore! =)
 
-/* moved to warlock.qc due to new hp system for monsters - Remains here as a reference to old values
-#define SHAMBLER_MAX_HP          2600 // 2000 - 3000 - 2600
-#define DEMON_MAX_HP             1800 // 1200 - 2000 - 1400
-#define SCRAG_MAX_HP             1000 // 800
-#define FISH_MAX_HP              1000 // was 850
-#define GREMLIN_MAX_HP           2000*/
-
 #define OTR_DMG_FACTOR        1.15 // Damage an otr bullet does respect a normal one
 #define OTR_AMMO_COST         3 // Shells an OTR bullet takes when used
 
@@ -247,7 +240,7 @@ CustomTF 3.2.OfN
 //#define CUSTOM_PC_ITEMS_PLAYING
 
 // Old stuff enablers (should be commented out normally)
-//#define OLD_HP_SYSTEM
+#define OLD_HP_SYSTEM
 //#define OLD_FLASH // Warning: If this one is ever defined it should be in defs.qc or earlier, not here
 //#define OLD_CONCS
 //#define OLD_FLAME

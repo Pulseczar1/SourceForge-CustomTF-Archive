@@ -253,7 +253,7 @@ float(float tno) TeamFortress_TeamSet =
 			if (tno == 3)
 				sprint (self, #PRINT_HIGH, "The game has already enough assassins, be a bodyguard.\n");
 			else if (tno == 1)
-				sprint (self, #PRINT_HIGH, "You wanna be the vicepresident or what?\n");
+				sprint (self, #PRINT_HIGH, "You wanna be the vice president or what?\n");
 		}
 		else
 			sprint (self, #PRINT_HIGH, "That team is full. Pick another.\n");
@@ -388,7 +388,6 @@ float(float tno) TeamFortress_TeamSet =
 	else
 	if (mapname == "border1" || mapname == "border1r")
 	{
-		local float result;
 		result = floor(TeamFortress_TeamGetNoPlayers(2) * #BORDER_FACTOR);
 		team3maxplayers = result;
 		team1maxplayers = result;

@@ -1,5 +1,13 @@
-//clientside quakec extension, serverside compontant.
-//invoked directly from the fteqw compatability layer.
+/*
+==============================================================================
+
+csqc_ss.qc
+
+clientside quakec extension, serverside compontant.
+invoked directly from the fteqw compatability layer.
+
+==============================================================================
+*/
 
 #ifdef CSQC
 
@@ -186,7 +194,7 @@ float() SetPlayerStat34 =
 {
 	if (self.is_haxxxoring && self.job & #JOB_HACKER)
 	{	//player is hacking
-	    	if (self.demon_two.has_camera == -2)
+		if (self.demon_two.has_camera == -2)
 		{	//aborting
 			return 101;
 		}

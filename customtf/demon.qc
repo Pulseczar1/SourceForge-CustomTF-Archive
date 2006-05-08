@@ -1,3 +1,11 @@
+/*
+==============================================================================
+
+demon.qc
+
+==============================================================================
+*/
+
 void (float points, float type) custom_demon_create;
 void () custom_demon_precache;
 void () custom_grunt_die;
@@ -84,7 +92,7 @@ void()	demon1_stand13	=[	$stand13,	demon1_stand1	] {ai_stand();};
 void()	demon1_walk1	=[	$walk1,		demon1_walk2	] {
 Demon_Water_Jump();
 if (random() < 0.2)
-    sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
+	sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
 ai_walk(8*#DEMON_WALKFACTOR); //8
 };
 void()	demon1_walk2	=[	$walk2,		demon1_walk3	] {ai_walk(6*#DEMON_WALKFACTOR);}; //6
@@ -99,7 +107,7 @@ void()	demon1_walk8	=[	$walk8,		demon1_walk1	] {ai_walk(10*#DEMON_WALKFACTOR);};
 void()	demon1_run1	=[	$run1,		demon1_run2	] {
 //Demon_Water_Jump();
 if (random() < 0.2)
-    sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
+	sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
 ai_run(20);};
 void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15);};
 void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_run(36);};
@@ -114,8 +122,8 @@ void()	demon1_jump4	=[	$leap4,		demon1_jump5	]
 {
 	ai_face();
 
-    MonsterAuraPower();
-	
+	MonsterAuraPower();
+
 	self.touch = Demon_JumpTouch;
 	makevectors (self.angles);
 	self.origin_z = self.origin_z + 1;
@@ -131,8 +139,8 @@ void()	demon1_jump4	=[	$leap4,		demon1_jump5	]
 
 	if (self.has_tesla == #TRUE) //CH why tesla??  I like teslas and its a float
 	{
-//		sprint(self.real_owner,#PRINT_HIGH,"Demon Jello Jump!\n");
-//		sound (self, #CHAN_VOICE, "misc/vapeur2.wav", 1, #ATTN_NONE);
+		//sprint(self.real_owner,#PRINT_HIGH,"Demon Jello Jump!\n");
+		//sound (self, #CHAN_VOICE, "misc/vapeur2.wav", 1, #ATTN_NONE);
 		if (jello == #TRUE) //Binary on/off
 			self.velocity_z = self.velocity_z + 1000;
 		else
@@ -150,7 +158,7 @@ void()	demon1_jump9	=[ 	$leap9,		demon1_jump10	] {self.has_teleporter = 0;};
 //CH rather then a 3 sec wait.  bust up into 5  better jello effect
 void()	demon1_jump10	=[ 	$leap10,	demon1_jump13	] {
 	Demon_Water_Jump();
-//CH just in case have a loop catcher
+	//CH just in case have a loop catcher
 	self.has_teleporter = self.has_teleporter + 1;
 	if (self.has_teleporter > 40 || self.velocity == '0 0 0') {
 		self.has_sentry = #TRUE; //CH Stuck Jump
@@ -163,7 +171,6 @@ Demon_Water_Jump();
 self.nextthink = time + 0.02;
 };
 
-
 void()	demon1_jump11	=[ 	$leap11,	demon1_jump12	] {};
 void()	demon1_jump12	=[ 	$leap12,	demon1_run1	] {};
 
@@ -171,7 +178,7 @@ void()	demon1_jump12	=[ 	$leap12,	demon1_run1	] {};
 void()	demon1_atta1	=[	$attacka1,		demon1_atta2	] {ai_charge(8);};
 void()	demon1_atta2	=[	$attacka2,		demon1_atta3	] {ai_charge(0);};
 void()	demon1_atta3	=[	$attacka3,		demon1_atta4	] {ai_charge(0);
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void()	demon1_atta4	=[	$attacka4,		demon1_atta5	] {ai_charge(2);};
 void()	demon1_atta5	=[	$attacka5,		demon1_atta6	] {ai_charge(4); Demon_Melee(200);};
@@ -180,7 +187,7 @@ void()	demon1_atta7	=[	$attacka7,		demon1_atta8	] {ai_charge(12);};
 void()	demon1_atta8	=[	$attacka8,		demon1_atta9	] {ai_charge(16);};
 void()	demon1_atta9	=[	$attacka9,		demon1_atta10] {ai_charge(8);};
 void()	demon1_atta10	=[	$attacka10,		demon1_atta11] {ai_charge(4);
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void()	demon1_atta11	=[	$attacka11,		demon1_atta12] {Demon_Melee(-200);};
 void()	demon1_atta12	=[	$attacka12,		demon1_atta13] {ai_charge(10);};
@@ -203,7 +210,7 @@ void()	demon1_fire1	=[	$attacka1,		demon1_fire2	] {ai_charge(16);};
 void()	demon1_fire2	=[	$attacka2,		demon1_fire3	] {ai_charge(8);};
 void()	demon1_fire3	=[	$attacka3,		demon1_fire4	] {ai_charge(2);};
 void()	demon1_fire4	=[	$attacka4,		demon1_fire5	] {ai_charge(4);
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void()	demon1_fire5	=[	$attacka5,		demon1_fire6	] {ai_charge(8);};
 void()	demon1_fire6	=[	$attacka6,		demon1_fire7	] {ai_charge(4); Demon_Shoot_Fire(-1);};
@@ -211,7 +218,7 @@ void()	demon1_fire7	=[	$attacka7,		demon1_fire8	] {ai_charge(24);};
 void()	demon1_fire8	=[	$attacka8,		demon1_fire9	] {ai_charge(32);};
 void()	demon1_fire9	=[	$attacka9,		demon1_fire10	] {ai_charge(16);};
 void()	demon1_fire10	=[	$attacka10,		demon1_fire11	] {ai_charge(8);
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void()	demon1_fire11	=[	$attacka11,		demon1_fire12	] {ai_charge(4); Demon_Shoot_Fire(1);};
 void()	demon1_fire12	=[	$attacka12,		demon1_fire13	] {ai_charge(20);};
@@ -221,29 +228,28 @@ void()	demon1_fire15	=[	$attacka15,		demon1_run1		] {ai_charge(16);};
 
 void(entity attacker, float damage)	demon1_pain =
 {
-
 	//self.real_owner.StatusRefreshTime = time + 0.2;
 	//self.real_owner.StatusBarScreen = 3;
-    
-    if (self.touch == Demon_JumpTouch)
+
+	if (self.touch == Demon_JumpTouch)
 		return;
 
 	if (self.pain_finished > time)
 		return;
 
-    if (self.health <= 0)
-		return;        
+	if (self.health <= 0)
+		return;
 
 	//CH because its on the sbar :)
 
 	if (random()*80 > damage)
 		return;		// didn't flinch
 
-    AI_CheckAttacker(attacker);
+	AI_CheckAttacker(attacker);
 
-    self.pain_finished = time + 0.8 + random() * 0.8;
-    sound (self, #CHAN_VOICE, "demon/dpain1.wav", 1, #ATTN_NORM);
-		
+	self.pain_finished = time + 0.8 + random() * 0.8;
+	sound (self, #CHAN_VOICE, "demon/dpain1.wav", 1, #ATTN_NORM);
+
 	demon1_pain1 ();
 };
 
@@ -257,11 +263,11 @@ void()	demon1_die6		=[	$death6,		demon1_die7	]
 {self.solid = #SOLID_NOT;};
 void()	demon1_die7		=[	$death7,		demon1_die8	] {};
 void()	demon1_die8		=[	$death8,		demon1_die9	] {};
-void()	demon1_die9		=[	$death9,		demon1_die9 ] 
+void()	demon1_die9		=[	$death9,		demon1_die9 ]
 {
-    //self.nextthink = time + 40 + 40*random();	
+	//self.nextthink = time + 40 + 40*random();
 	//self.think = SUB_Remove;
-    MonsterCorpse();
+	MonsterCorpse();
 };
 
 //void() monster_demon_respawn;
@@ -269,7 +275,7 @@ void()	demon1_die9		=[	$death9,		demon1_die9 ]
 /*void() demon_die =
 {
 	self.oldorigin = self.origin;
-// check for gib
+	// check for gib
 	if (self.health < -80)
 	{
 		sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NORM);
@@ -277,13 +283,13 @@ void()	demon1_die9		=[	$death9,		demon1_die9 ]
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-	
+
 		self.lives = self.lives - 1;
 		monster_demon_respawn();
 		return;
 	}
 
-// regular death
+	// regular death
 	demon1_die1 ();
 	//monster_demon_respawn();
 };*/
@@ -341,7 +347,7 @@ void() monster_demon1 =
 	self.th_missile = demon1_jump1;			// jump attack
 	self.th_pain = demon1_pain;
 	self.th_fireball = demon1_fire1; //CH
-		
+
 	walkmonster_start();
 };*/
 
@@ -361,7 +367,7 @@ CheckDemonMelee
 Returns #TRUE if a melee attack would hit right now
 ==============
 */
-float()	CheckDemonMelee =
+float() CheckDemonMelee =
 {
 	local vector dist;
 	local float d;
@@ -389,8 +395,8 @@ inp = 1 check for long range
 */
 float(float inp) CheckDemonFireBall =
 {
-	local	vector	dist;
-	local	float	d;
+	local vector dist;
+	local float d;
 	local float d2;
 
 	if (!visible2(self.enemy, self)) //If can see
@@ -428,39 +434,39 @@ CheckDemonJump
 */
 float()	CheckDemonJump =
 {
-	local	vector	dist;
-	local	float	d;
+	local vector dist;
+	local float d;
 
 	if (self.origin_z + self.mins_z > self.enemy.origin_z + self.enemy.mins_z
 	+ 0.75 * self.enemy.size_z)
 		return #FALSE;
-		
+
 	if (self.origin_z + self.maxs_z < self.enemy.origin_z + self.enemy.mins_z
 	+ 0.25 * self.enemy.size_z)
 		return #FALSE;
-		
+
 	dist = self.enemy.origin - self.origin;
 	dist_z = 0;
-	
+
 	d = vlen(dist);
-	
+
 	if (d < 100)
 		return #FALSE;
-		
+
 	if (d > 200)
 	{
 		if (random() < 0.95) //WK 0.9 Make it jump less often
 			return #FALSE;
 	}
-		
+
 	return #TRUE;
 };
 
 float()	DemonCheckAttack =
 {
-//	local	vector	vec;
-	
-// if close enough for slashing, go for it
+	//local vector vec;
+
+	//if close enough for slashing, go for it
 	if (CheckDemonMelee ())
 	{
 		self.attack_state = #AS_MELEE;
@@ -470,7 +476,7 @@ float()	DemonCheckAttack =
 	if (CheckDemonJump ())
 	{
 		self.attack_state = #AS_MISSILE;
-        sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
+		sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
 		return #TRUE;
 	}
 
@@ -484,18 +490,18 @@ float()	DemonCheckAttack =
 		self.attack_state = #AS_FIREBALL;
 		return #TRUE;
 	}
-	
+
 	return #FALSE;
 };
 
 
 //===========================================================================
 
-void(float side)	Demon_Melee =
+void(float side) Demon_Melee =
 {
-	local	float	ldmg;
-	local vector	delta;
-	
+	local float ldmg;
+	local vector delta;
+
 	ai_face ();
 	// WK walkmove (self.ideal_yaw, 12);	// allow a little closing
 	walkmove (self.ideal_yaw, 24);	// allow a lot closing
@@ -515,9 +521,9 @@ void(float side)	Demon_Melee =
 		ldmg = ldmg / 2;
 	if (self.enemy.cutf_items & #CUTF_DEMONLORE)
 		ldmg = ldmg * 0.8;
-	
+
 	//T_Damage (self.enemy, self, self, ldmg);
-    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
+	TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -528,18 +534,18 @@ void(float side)	Demon_Melee =
 void() demon_fire_touch;
 void(float side) Demon_Shoot_Fire =
 {
-//	local	float	ldmg;
-	local vector	delta;
-	local	vector	offang;
-	local	vector	org, dir;
-	
+	//local float ldmg;
+	local vector delta;
+	local vector offang;
+	local vector org, dir;
+
 	ai_face ();
 	walkmove (self.ideal_yaw, 12);	// allow a little closing
 
 	delta = self.enemy.origin - self.origin;
 	offang = vectoangles (delta);
 	makevectors (offang);
-	
+
 	sound (self, #CHAN_WEAPON, "hknight/attack1.wav", 1, #ATTN_NORM); //Odd, it was already precached
 
 	if (side > 0) //CH cause to spawn on side of demon.
@@ -547,14 +553,14 @@ void(float side) Demon_Shoot_Fire =
 	else
 		org = self.origin + (v_forward * 10) - (v_right * 20);
 
-// set missile speed
+	// set missile speed
 	dir = normalize (v_forward);
 
-//CH demons are not good at throwing
+	//CH demons are not good at throwing
 	dir_z = 0 - dir_z + (random() - 0.5)*0.1; //Random Z addage
 	dir_x = dir_x + (random() - 0.5)*0.05; //Random X addage
 	dir_y = dir_y + (random() - 0.5)*0.05; //Random Y addage
-	
+
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
@@ -568,7 +574,7 @@ void(float side) Demon_Shoot_Fire =
 	newmis.think = SUB_Remove;
 	newmis.nextthink = time + 6;
 	setmodel (newmis, "progs/lavaball.mdl");
-//	setsize (newmis, '-4 -8 -4', '10 8 14'); //CH actual mdl bounds
+	//setsize (newmis, '-4 -8 -4', '10 8 14'); //CH actual mdl bounds
 	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, org);
 	newmis.velocity = dir * 1000;
@@ -614,15 +620,15 @@ void() Demon_Water_Jump =
 	{
 		ai_face();
 		//self.touch = SUB_Null;
-        self.touch = MonsterTouch; // OfN
+		self.touch = MonsterTouch; // OfN
 		self.think = demon1_jump4;
 		self.has_tesla = #TRUE; //Landed in water
 		self.nextthink = time + 0.1;
 	}
 };
-void()	Demon_JumpTouch =
+void() Demon_JumpTouch =
 {
-	local	float	ldmg;
+	local float ldmg;
 
 	if (self.health <= 0)
 		return;
@@ -634,13 +640,13 @@ void()	Demon_JumpTouch =
 	if (trace_inwater == #TL_BSP_ONLY && jello)
 	{
 		//self.touch = SUB_Null;
-        self.touch = MonsterTouch; // OfN
+		self.touch = MonsterTouch; // OfN
 		self.think = demon1_jump1;
 		self.has_tesla = #TRUE; //Landed in water
 		self.nextthink = time + 0.1;
 		return;
 	}
-		
+
 	if (other.takedamage)
 	{
 		if ( vlen(self.velocity) > 400 )
@@ -649,11 +655,12 @@ void()	Demon_JumpTouch =
 			ldmg = 120 + 30*random();
 			if (other.cutf_items & #CUTF_DEMONLORE)
 				ldmg = ldmg * 0.8;
-            
-            TF_T_Damage(other, self, self, ldmg,0,#TF_TD_OTHER);
-			//T_Damage (other, self, self, ldmg);	
+
+			TF_T_Damage(other, self, self, ldmg,0,#TF_TD_OTHER);
+			//T_Damage (other, self, self, ldmg);
 			//WK Comment out this next line for demon-head hopping action!
-			if (self.think == SUB_Remove) return; //We can die when killing owner
+			if (self.think == SUB_Remove)
+				return; //We can die when killing owner
 		}
 	}
 
@@ -666,7 +673,7 @@ void()	Demon_JumpTouch =
 			self.has_sentry = #TRUE; //CH Stuck Jump
 			//self.touch = SUB_Null;
 			self.touch = MonsterTouch; // OfN
-            self.think = demon1_jump1;
+			self.think = demon1_jump1;
 			self.nextthink = time + 0.1;
 
 			//self.velocity_x = (random() - 0.5) * 600;
@@ -679,7 +686,7 @@ void()	Demon_JumpTouch =
 
 	self.has_sentry = 0; //Cancel if this far
 	//self.touch = SUB_Null;
-    self.touch = MonsterTouch; // OfN
+	self.touch = MonsterTouch; // OfN
 	self.think = demon1_jump11;
 	self.nextthink = time + 0.1;
 };
@@ -711,7 +718,7 @@ void() respawn_demon =
 };*/
 
 /*UNUSED - OfN -
-void() monster_demon_respawn = 
+void() monster_demon_respawn =
 {
 	local entity resp;
 
@@ -733,7 +740,7 @@ void() monster_demon_respawn =
  * WK - Pet demon functions
 */
 
-void () custom_demon_die = 
+void () custom_demon_die =
 {
 	if (self.real_owner.classname == "player")
 	{
@@ -741,31 +748,30 @@ void () custom_demon_die =
 		sprint(self.real_owner,#PRINT_HIGH,self.netname);
 		sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
 		self.real_owner.job_finished = time + 5; //Can't summon streams of demons SB can so
-        ResetSlotPointer(self.real_owner, self.increase_team1);
+		ResetSlotPointer(self.real_owner, self.increase_team1);
 	}
-    
-    if (self.health < -40) 
-    {
-        sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
-	    ThrowMonsterHead ("progs/h_demon.mdl", self.health);
-	    ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, #FALSE);
-	    ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0, #GIB2_KGS, #FALSE);
-	    ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, 0.5);
-        SpawnBloodEx(self.origin,0.66,9);
-		
-	    dremove(self);
-        return;
-    }
 
-    // Spawn bubbles if under water/slime
-    local float contres;
-    contres = pointcontents(self.origin);
-    if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
-        DeathBubbles(5);
+	if (self.health < -40)
+	{
+		sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
+		ThrowMonsterHead ("progs/h_demon.mdl", self.health);
+		ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, #FALSE);
+		ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0, #GIB2_KGS, #FALSE);
+		ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, 0.5);
+		SpawnBloodEx(self.origin,0.66,9);
 
-    //self.classname = "monster_corpse";
-    MonsterDead();
-    self.think=SUB_Null;
-    demon1_die1 ();
+		dremove(self);
+		return;
+	}
+
+	// Spawn bubbles if under water/slime
+	local float contres;
+	contres = pointcontents(self.origin);
+	if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
+		DeathBubbles(5);
+
+	//self.classname = "monster_corpse";
+	MonsterDead();
+	self.think=SUB_Null;
+	demon1_die1 ();
 };
-

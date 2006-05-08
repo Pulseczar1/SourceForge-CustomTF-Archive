@@ -1,12 +1,13 @@
-/*======================================================
-	COMBAT.QC			Custom TeamFortress v3.2	
+/*
+==============================================================================
 
-	(c) TeamFortress Software Pty Ltd 	29/2/97
-	(c) William Kerney			5/19/00
-========================================================
+COMBAT.QC
+Custom TeamFortress v3.2
+
 All the functions pertaining to killing people
-======================================================*/
 
+==============================================================================
+*/
 
 //void(string gibname, float dm) ThrowGib;
 void(string gibname, float dm, float makecool, float gibskin, float gibkgs, float randorg) ThrowGib;
@@ -84,7 +85,7 @@ explosions and melee attacks.
 */
 float(entity targ, entity inflictor) CanDamage =
 {
-    // bmodels need special checking because their origin is 0,0,0
+	// bmodels need special checking because their origin is 0,0,0
 	if (targ.movetype == #MOVETYPE_PUSH)
 	{
 		traceline(inflictor.origin, 0.5 * (targ.absmin + targ.absmax), #TL_BSP_ONLY, self);
@@ -95,21 +96,21 @@ float(entity targ, entity inflictor) CanDamage =
 		return #FALSE;
 	}
 
-    local vector soffset; // - OfN - hackish fix for turretized sentry guns
-    soffset='0 0 0';
+	local vector soffset; // - OfN - hackish fix for turretized sentry guns
+	soffset='0 0 0';
 
-    if (targ.classname == "building_sentrygun" && (targ.tf_items & #NIT_TURRET))
-        soffset='0 0 -20';
+	if (targ.classname == "building_sentrygun" && (targ.tf_items & #NIT_TURRET))
+		soffset='0 0 -20';
 
-    // OfN - Force field
-    traceline(inflictor.origin, targ.origin + soffset, #TL_ANY_SOLID, self);
-    if (trace_ent.classname == "force_field")
-    {
-        //FieldExplosion(trace_ent,trace_endpos,trace_ent);
-        //PutFieldWork(trace_ent);
-        FieldEvent(trace_ent,trace_endpos,trace_ent);
-        return #FALSE;
-    }
+	// OfN - Force field
+	traceline(inflictor.origin, targ.origin + soffset, #TL_ANY_SOLID, self);
+	if (trace_ent.classname == "force_field")
+	{
+		//FieldExplosion(trace_ent,trace_endpos,trace_ent);
+		//PutFieldWork(trace_ent);
+		FieldEvent(trace_ent,trace_endpos,trace_ent);
+		return #FALSE;
+	}
 
 	traceline(inflictor.origin, targ.origin + soffset, #TL_BSP_ONLY, self);
 	if (trace_fraction == 1)
@@ -138,104 +139,105 @@ Killed
 */
 void(entity targ, entity attacker) Killed =
 {
-    // SOLVES BUG ???? // Stack overflow?
-    if (targ.is_killed == #TRUE)
-    {
-        if (IsBuilding(targ))
-        {
-            local string st;
-            RPrint("(OfN WARNING:) Building: '");
-            st=GetBuildingName(targ);
-            RPrint(st);
-            RPrint("' was going to be Killed() again!\n");
-            RPrint("Attacker: '");
-            st=GetEnemyName(attacker);
-            RPrint(st);
-            RPrint("\n");
-            return;
-        }
+	// SOLVES BUG ???? // Stack overflow?
+	if (targ.is_killed == #TRUE)
+	{
+		if (IsBuilding(targ))
+		{
+			local string st;
+			RPrint("(OfN WARNING:) Building: '");
+			st=GetBuildingName(targ);
+			RPrint(st);
+			RPrint("' was going to be Killed() again!\n");
+			RPrint("Attacker: '");
+			st=GetEnemyName(attacker);
+			RPrint(st);
+			RPrint("\n");
+			return;
+		}
 
-        if (targ.classname == "player")
-        {
-            local string st;
-            RPrint("(OfN WARNING:) Player: '");
-            RPrint(targ.netname);
+		if (targ.classname == "player")
+		{
+			RPrint("(OfN WARNING:) Player: '");
+			RPrint(targ.netname);
 
-            if (targ.cutf_items & #CUTF_EXPBODY)
-            {
-                RPrint(" (with expbody) ");
-            }
-            else
-            {
-                RPrint(" (without expbody) ");
-            }
-            
+			if (targ.cutf_items & #CUTF_EXPBODY)
+			{
+				RPrint(" (with expbody) ");
+			}
+			else
+			{
+				RPrint(" (without expbody) ");
+			}
 
-            RPrint("' is Killed() again!\n");
-            RPrint("Attacker: '");
-            st=GetEnemyName(attacker);
-            RPrint(st);
 
-            if (attacker.classname == "player" && attacker.cutf_items & #CUTF_EXPBODY)
-            {
-                RPrint(" (with expbody) ");
-            }
-            else
-            {
-                RPrint(" (without expbody) ");
-            }
-            RPrint("\n");          
-        }
-        else
-        {
-            // NOT BUGS, HAPPEN OFTEN WITH BUTTONS ETC..
-            
-            /*RPrint("(OfN WARNING:) Object: '");
-            RPrint(targ.classname);
-            RPrint("' is Killed() again!\n");
-            RPrint("Attacker: '");
-            st=GetEnemyName(attacker);
-            RPrint(st);
-            if (attacker.classname == "player" && attacker.cutf_items & #CUTF_EXPBODY)
-            {
-                RPrint(" (with expbody) ");
-            }
-            else
-            {
-                RPrint(" (without expbody) ");
-            }
-            RPrint("\n");            */
-        }
-    }        
+			RPrint("' is Killed() again!\n");
+			RPrint("Attacker: '");
+			st=GetEnemyName(attacker);
+			RPrint(st);
 
-    targ.is_killed = #TRUE;
-    /////////////////////////////////////
-    
-    local entity oself;
+			if (attacker.classname == "player" && attacker.cutf_items & #CUTF_EXPBODY)
+			{
+				RPrint(" (with expbody) ");
+			}
+			else
+			{
+				RPrint(" (without expbody) ");
+			}
+			RPrint("\n");
+		}
+		else
+		{
+			// NOT BUGS, HAPPEN OFTEN WITH BUTTONS ETC..
+
+			/*RPrint("(OfN WARNING:) Object: '");
+			RPrint(targ.classname);
+			RPrint("' is Killed() again!\n");
+			RPrint("Attacker: '");
+			st=GetEnemyName(attacker);
+			RPrint(st);
+			if (attacker.classname == "player" && attacker.cutf_items & #CUTF_EXPBODY)
+			{
+				RPrint(" (with expbody) ");
+			}
+			else
+			{
+				RPrint(" (without expbody) ");
+			}
+			RPrint("\n");            */
+		}
+	}
+
+	targ.is_killed = #TRUE;
+	/////////////////////////////////////
+
+	local entity oself;
 	//local string db;
 
-//WK Have cursed person respawn immediately
-	if (targ.classname == "player") {
-		if (targ.penance_time > time) {
+	//WK Have cursed person respawn immediately
+	if (targ.classname == "player")
+	{
+		if (targ.penance_time > time)
+		{
 			targ.real_frags = targ.real_frags - 1;
-		 	if (!(toggleflags & #TFLAG_TEAMFRAGS))
+			if (!(toggleflags & #TFLAG_TEAMFRAGS))
 				targ.frags = targ.real_frags;
 			targ.health = 50; //Give em a little so they can die again
-            targ.is_killed = #FALSE;
-			return;	
+			targ.is_killed = #FALSE;
+			return;
 		}
 	}
 
 	oself = self;
 	self = targ;
-	
+
 	// don't let sbar look bad if a player
 	if (self.health < -99)
-		self.health = -99;		
+		self.health = -99;
 
 	// doors, triggers, etc // - ofn added sensor, it now calls clientobituary when dead
 	if ((self.movetype == #MOVETYPE_PUSH || self.movetype == #MOVETYPE_NONE) && self.classname != "building_camera" && self.classname!="building_sensor") //CH stop bug.
-	{	
+	{
 		self.th_die ();
 		self = oself;
 		return;
@@ -251,7 +253,7 @@ void(entity targ, entity attacker) Killed =
 	}
 
 	ClientObituary(self, attacker);
-	
+
 	self.takedamage = #DAMAGE_NO;
 	self.touch = SUB_Null;
 
@@ -286,13 +288,13 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	#TF_TD_IGNOREARMOUR: bypasses the armour of the target
 	#TF_TD_NOTTEAM: doesn't damage a team member
 	#TF_TD_NOTSELF: doesn't damage self
-    #TF_TD_NOKNOCK: Impides knockation on players (OfN)
-    #TF_TD_DONTGIB: Impides the damage to result in a health of target below -1
-    #TF_TD_NOPAIN : Don't do pain frames
+	#TF_TD_NOKNOCK: Impides knockation on players (OfN)
+	#TF_TD_DONTGIB: Impides the damage to result in a health of target below -1
+	#TF_TD_NOPAIN : Don't do pain frames
 
- The following is used to determine whether this attack is affected 
+ The following is used to determine whether this attack is affected
  the type of armor the defender is wearing.
- T_AttackType:		
+ T_AttackType:
 	#TF_TD_OTHER		:	type ignored
 	#TF_TD_SHOT			: 	bullet damage
 	#TF_TD_NAIL			:	nailgun damage
@@ -309,10 +311,10 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage =
 {
-    local	vector	dir;
-	local	entity	te; //<-- oldself,
-	//local	float	save; --> knockem
-	local	float	take; 
+	local vector dir;
+	local entity te; //<-- oldself,
+	//local float save; --> knockem
+	local float take;
 	//local float mirror; --> knockem
 	//local float dist; --> knockem
 	//local string output; (?)
@@ -321,21 +323,21 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	//WK -- For LPB calculation
 	local string st;
 	//local float ping; --> knockem
-    
+
 
 	//mirror = 0;
 #ifdef QUAKE_WORLD // culled by KK. was QUAKE_WORLD
 	/*if (infokey(world,"ceasefire")=="on") //Cyto
 		return;*/
-    if (ceasefire)
-        return;
+	if (ceasefire)
+		return;
 #endif
-                   
+
 	if (targ == world)
 		return;
 
 	if (!targ.takedamage)
-        return;
+		return;
 
 	//WK Set off land mines
 	if (targ.classname == "grenade" && targ.netname == "land_mine")
@@ -343,7 +345,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		targ.think = GuerillaExplode;
 		targ.nextthink = time + 0.1;
 		return;
-	}  
+	}
 
 	//BOOKKEEPING
 	//WK Store last person who shot martyr into .enemy
@@ -363,7 +365,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	if (attacker.classname == "player")
 	{
 		//if (targ.classname != "player" && !IsBuilding(targ) && targ.classname != "monster_demon1")
-        if (targ.classname != "player" && !IsBuilding(targ) && !IsMonster(targ) && targ.#corpseflag != #STRFLAG_CORPSE)
+		if (targ.classname != "player" && !IsBuilding(targ) && !IsMonster(targ) && targ.#corpseflag != #STRFLAG_CORPSE)
 		{
 			if (!Activated(targ,attacker))
 			{
@@ -384,7 +386,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	damage_attacker = attacker;
 
 	// INVINCIBILITY
-    /*
+	/*
 	if (targ.flags & #FL_GODMODE)
 		return;
 	if (targ.invincible_finished >= time)
@@ -396,7 +398,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		}
 		return;
 	}*/
-    if (targ.invincible_finished >= time)
+	if (targ.invincible_finished >= time)
 	{
 		if (targ.invincible_sound < time)
 		{
@@ -412,7 +414,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		knockem = vlen(attacker.origin - attacker.inspirator.origin);
 		//output = ftos(dist);
 		if (knockem > #CHAPLAN_RADIUS) { //We've strayed from the flock
-			sprint(attacker,#PRINT_HIGH,"You have strayed from the flock\n");
+			sprint(attacker,#PRINT_HIGH,"You have strayed from the flock.\n");
 			attacker.tfstate = attacker.tfstate - #TFSTATE_INSPIRED;
 			attacker.super_damage_finished = 0;
 			attacker.items = attacker.items - (attacker.items & #IT_QUAD);
@@ -422,7 +424,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	if (targ.classname == "player" && targ.tfstate & #TFSTATE_INSPIRED) {
 		knockem = vlen(targ.origin - targ.inspirator.origin);
 		if (knockem > #CHAPLAN_RADIUS) { //We've strayed from the flock
-			sprint(targ,#PRINT_HIGH,"You have strayed from the flock\n");
+			sprint(targ,#PRINT_HIGH,"You have strayed from the flock.\n");
 			targ.tfstate = targ.tfstate - #TFSTATE_INSPIRED;
 			targ.super_damage_finished = 0;
 			targ.items = targ.items - (targ.items & #IT_QUAD);
@@ -430,57 +432,60 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		}
 	}
 
-    // OfN - Apply damage factors of attacker and target if any
-    damage = damage * GetDamageOutFactor(attacker);
-    if (!(T_flags & #TF_TD_IGNORERESIST))
-        damage = damage * GetDamageInFactor(targ);
+	// OfN - Apply damage factors of attacker and target if any
+	damage = damage * GetDamageOutFactor(attacker);
+	if (!(T_flags & #TF_TD_IGNORERESIST))
+		damage = damage * GetDamageInFactor(targ);
 
-    // OfN - Corpses are handled in their own routine
-    if (targ.#corpseflag == #STRFLAG_CORPSE)
-    {
-        DamageCorpse(targ,damage,targ.origin,attacker,#TRUE);
-        return;
-    }
+	// OfN - Corpses are handled in their own routine
+	if (targ.#corpseflag == #STRFLAG_CORPSE)
+	{
+		DamageCorpse(targ,damage,targ.origin,attacker,#TRUE);
+		return;
+	}
 
-    // QUAD DAMAGE
-	/*if (attacker.super_damage_finished > time) {
+	// QUAD DAMAGE
+	/*if (attacker.super_damage_finished > time)
+	{
 		if (attacker.tfstate & #TFSTATE_INSPIRED)
 			damage = damage * 1.8; // was 1.5
 		if (attacker.job & #JOB_BERSERKER && attacker.job & #JOB_ACTIVE)
-            damage = damage * #BERSERKER_DMGFACTOR;
-        else
+			damage = damage * #BERSERKER_DMGFACTOR;
+		else
 			damage = damage * 4;
 	}
 
-   	if (attacker.aura == #AURA_POWER)
+	if (attacker.aura == #AURA_POWER)
 		damage = damage * 2; // was 1.5
 
-    if (attacker.#runes & #RUNE_TRIAD)
-        damage = damage * 3;
+	if (attacker.#runes & #RUNE_TRIAD)
+		damage = damage * 3;
 	*/
 	if (targ.aura == #AURA_RESIS || targ.#runes & #RUNE_RESIS)
-    {
-        if (targ.invincible_sound < time) {
+	{
+		if (targ.invincible_sound < time)
+		{
 			sound (targ, #CHAN_ITEM, "auras/aura1b.wav", 1, #ATTN_NORM);
 			targ.invincible_sound = time + 1.5;
-        }
-        
-        /*if (targ.aura == #AURA_RESIS)
-            damage = damage * 0.6; // was 0.66
+		}
 
-        if (targ.#runes & #RUNE_RESIS)
-            damage = damage * 0.4;*/
-    }
+		/*if (targ.aura == #AURA_RESIS)
+			damage = damage * 0.6; // was 0.66
+
+		if (targ.#runes & #RUNE_RESIS)
+			damage = damage * 0.4;*/
+	}
 
 	//DAMAGE ADJUSTMENT
 	//- OfN - if (deathmsg != #DMSG_MARTYR && targ.classname != "monster_demon1" && targ.classname != "monster_shambler" && targ.classname != "monster_army")
-    if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))
-	{ 
+	if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))
+	{
 		/* OfN done in GetDamageInFactor()
-        if (targ.tfstate & #TFSTATE_INSPIRED) //Chaplan defense
+		if (targ.tfstate & #TFSTATE_INSPIRED) //Chaplan defense
 			damage = damage * 0.66;*/
 		//WK Ping fairness code. LPB is < 200 ping
-		if (attacker.classname == "player" && targ.classname == "player" && attacker != targ)
+		//RJ lameness removed
+		/*if (attacker.classname == "player" && targ.classname == "player" && attacker != targ)
 		{
 			st = infokey(attacker,"ping");
 			knockem = 200;
@@ -490,15 +495,16 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			if (knockem < 0.8) knockem = 0.8;
 			if (knockem > 1.2) knockem = 1.2;
 			damage = damage * knockem;
-		}
+		}*/
 		if (teamplay & (#TEAMPLAY_LESSSCOREHELP | #TEAMPLAY_LESSPLAYERSHELP))
 			damage = TeamEqualiseDamage(targ, attacker, damage);
 	}
 
 	//MIRROR DAMAGE
-    knockem = 0;
+	knockem = 0;
 	//WK - Check to see if we hit a friend
-	if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && attacker.classname == "player" && targ.classname == "player")  {
+	if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && attacker.classname == "player" && targ.classname == "player")
+	{
 		//We just hit someone on our team!
 		if (T_flags & #TF_TD_NOTTEAM)
 		{
@@ -518,15 +524,16 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		}
 		//Don't inflict damage on a (teamkiller or spy)-hitter
 		if (knockem > 0)
-        if (!(targ.is_feigning || targ.is_undercover) && !(targ.penance_time > time)) //Hurt the jerk!
+		if (!(targ.is_feigning || targ.is_undercover) && !(targ.penance_time > time)) //Hurt the jerk!
 			TF_T_Damage (attacker, attacker, attacker, knockem, 0, #TF_TD_OTHER);
 	}
 	//WK Slight mirror demon protection
 	//Do 2 points of damage to a friendly teammate shooting a friendly demon
 	//SB 2 damage? no way, we're doing the full mirror damage
 	//- Ofn- if ((targ.classname == "monster_demon1" || targ.classname == "monster_army" || targ.classname == "monster_shambler") && targ.real_owner != world) {
-	if (IsMonster(targ) && targ.real_owner != world) {
-        targ.armorvalue = 1;
+	if (IsMonster(targ) && targ.real_owner != world)
+	{
+		targ.armorvalue = 1;
 		if (T_flags & #TF_TD_NOTTEAM)
 		{
 			//Direct damage
@@ -543,13 +550,14 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			if (teamplay & #TEAMPLAY_HALFMIRROREXPLOSIVE)
 				knockem = knockem + damage / 2;
 		}
-        if (knockem > 0)
+		if (knockem > 0)
 		if (Teammate(targ.real_owner.team_no,attacker.team_no) && (targ.real_owner != attacker) && attacker.classname == "player")
 			TF_T_Damage (attacker, attacker, attacker, knockem, 0, #TF_TD_OTHER);
 	}
 	//WK Friendly Sentrygun protection - you can't hurt friendly sentries
 	if (IsBuilding(targ)) {
-		if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && (!targ.tf_items & #NIT_SECURITY_CAMERA)) {
+		if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && (!targ.tf_items & #NIT_SECURITY_CAMERA))
+		{
 			return;
 		}
 		targ.armorvalue = 1; //CH so that the armors are counted
@@ -558,23 +566,24 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	// SPECIAL ARMOR CALCULATIONS
 	if ((targ.armorclass != 0) && (T_AttackType != 0))
 	{
-		if ((targ.armorclass & #AT_SAVESHOT) && (T_AttackType == #TF_TD_SHOT)) {
+		if ((targ.armorclass & #AT_SAVESHOT) && (T_AttackType == #TF_TD_SHOT))
+		{
 			damage = floor(damage * 0.5);
 			//WK Cap max damage you can take with kevlar on, like in Real Life(tm)
 			//WK The purpose being to cut down on the power of snipers
 			if(targ.classname == "player") // SB kevlar fixed so it caps damage now, also spacing much nicer :)
 			{
-                if (light_damage)
+				if (light_damage)
 				{
 					if (damage > 75)
 						damage = 75;
 				}
 				else
-                    if (damage > 100) damage = 100;
+					if (damage > 100) damage = 100;
 
 				if (attacker.classname == "player" && (deathmsg == #DMSG_SNIPERRIFLE || deathmsg == #DMSG_SNIPERHEADSHOT || deathmsg == #DMSG_SNIPERLEGSHOT))
-				    sprint(attacker,#PRINT_HIGH,"You hit kevlar\n");
-            }
+					sprint(attacker,#PRINT_HIGH,"You hit kevlar.\n");
+			}
 		}
 		else if ((targ.armorclass & #AT_SAVEMELEE) && (deathmsg == #DMSG_JUDOKA || deathmsg == #DMSG_AXE || deathmsg == #DMSG_BACKSTAB || deathmsg == #DMSG_SPANNER))
 		{
@@ -612,14 +621,14 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		//WK Flags prevent armor damage too
 		if (T_flags & #TF_TD_NOTTEAM)
 		{
-			if (Teammate(targ.team_no,attacker.team_no) && (targ != attacker)) 
+			if (Teammate(targ.team_no,attacker.team_no) && (targ != attacker))
 			{
 				if (teamplay & #TEAMPLAY_NOARMORDIRECT)
 					targ.armorvalue = targ.armorvalue;
 				else if (teamplay & #TEAMPLAY_HALFARMORDIRECT)
 					targ.armorvalue = targ.armorvalue - knockem / 2;
-				else 
-					targ.armorvalue = targ.armorvalue - knockem;	
+				else
+					targ.armorvalue = targ.armorvalue - knockem;
 			}
 			else
 					targ.armorvalue = targ.armorvalue - knockem;
@@ -653,7 +662,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	// KNOCKATION CALCULATION
 	if (!(T_flags & #TF_TD_NOKNOCK)) // OfN - No knockation if the appropiate flag is set
-    if ( (inflictor != world) && (targ.movetype == #MOVETYPE_WALK) )
+	if ( (inflictor != world) && (targ.movetype == #MOVETYPE_WALK) )
 	{
 		// Nail Gren doesn't knock ppl
 		//WK People with Aspect of HWGUY are immune to knockation
@@ -663,7 +672,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		knockem = 1;
 		if (targ.cutf_items & #CUTF_HWGUY) knockem = 0;
 		//if (targ.job & #JOB_MARTYR && targ.job & #JOB_ACTIVE && T_AttackType != #TF_TD_SHOT) knockem = 1;
-        if (deathmsg == #DMSG_GREN_NAIL) knockem = 0;
+		if (deathmsg == #DMSG_GREN_NAIL) knockem = 0;
 		if (knockem)
 		{
 			// give them some immunity to cheat check
@@ -675,11 +684,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	#ifdef QUAKE_WORLD
 			// Increase kickback for smaller weapons
-			if ( (damage < 60) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname != targ.netname)) 
+			if ( (damage < 60) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname != targ.netname))
 				targ.velocity = targ.velocity + dir * damage * 11;
-			else                        
+			else
 				targ.velocity = targ.velocity + dir*damage*8;
-			if ( (rj > 1) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname == targ.netname)) 
+			if ( (rj > 1) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname == targ.netname))
 				targ.velocity = targ.velocity + dir * damage * rj;
 			if (targ.classname == "player" && targ.cutf_items & #CUTF_GYMNAST)
 				targ.velocity = targ.velocity + dir * damage * 8;
@@ -690,23 +699,32 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	}
 
 	// TEAMPLAY FLAGS
-	if (attacker.classname == "player" && targ.classname == "player")	{
-		if (T_flags & #TF_TD_NOTTEAM)	{
-			if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker))	{
-				if (teamplay & #TEAMPLAY_NODIRECT) return;
+	if (attacker.classname == "player" && targ.classname == "player")
+	{
+		if (T_flags & #TF_TD_NOTTEAM)
+		{
+			if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker))
+			{
+				if (teamplay & #TEAMPLAY_NODIRECT)
+					return;
 				else if (teamplay & #TEAMPLAY_HALFDIRECT) take = take / 2;
 			}
 		}
-		else	{
-			if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker))	{
-				if (teamplay & #TEAMPLAY_NOEXPLOSIVE) return;
-				else if (teamplay & #TEAMPLAY_HALFEXPLOSIVE) take = take / 2;	
+		else
+		{
+			if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker))
+			{
+				if (teamplay & #TEAMPLAY_NOEXPLOSIVE)
+					return;
+				else if (teamplay & #TEAMPLAY_HALFEXPLOSIVE) take = take / 2;
 			}
 		}
 	}
 
-	if (T_flags & #TF_TD_NOTSELF) {
-		if (targ == attacker) return;
+	if (T_flags & #TF_TD_NOTSELF)
+	{
+		if (targ == attacker)
+			return;
 	}
 
 	// do the damage, min 1
@@ -717,23 +735,24 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		if (!Teammate(targ.team_no, attacker.team_no))
 			RevealThief(targ,#TRUE);
 
-    targ.health = targ.health - take;
+	targ.health = targ.health - take;
 
-	if (targ.armorvalue < 1) {
+	if (targ.armorvalue < 1)
+	{
 		targ.armorclass = 0; // lost special armor
 		targ.armorvalue = 0;
 	}
 
 	if (targ.health < 1 && targ.health > 0) //WK Stop the scoreboard coming up
 		targ.health = 1;
-        
-	if (targ.health <= 0) {
-		
-        // If we dont have to gib the target, just set its HP to -1
-        if (T_flags & #TF_TD_DONTGIB)
-            targ.health = -1;
 
-        if (inflictor.classname == "detpack" && inflictor.weaponmode == 1 && inflictor.enemy == targ)
+	if (targ.health <= 0) {
+
+		// If we dont have to gib the target, just set its HP to -1
+		if (T_flags & #TF_TD_DONTGIB)
+			targ.health = -1;
+
+		if (inflictor.classname == "detpack" && inflictor.weaponmode == 1 && inflictor.enemy == targ)
 			deathmsg = #DMSG_DETPACK_DIS;
 
 		//WK Autotrigger martyr - OfN - Now exp.body
@@ -742,10 +761,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			//oldself = self;
 			//self = targ;
 			targ.health = 1;
-            targ.martyr_enemy=attacker;
+			targ.martyr_enemy=attacker;
 			ExpBody(targ);
 			//self = oldself;
-            targ.is_abouttodie = #TRUE;
+			targ.is_abouttodie = #TRUE;
 			return;
 		}// /////// OFTEN ///////////
 
@@ -762,23 +781,23 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		if (Teammate(targ.team_no, attacker.team_no) && targ != attacker && !(targ.penance_time > time) && !(targ.is_undercover) && prematch < time)
 		{
 			//A teamkill
-			local string st;
 			local float threshold;
 			threshold = 0;
 			st = infokey(world, "curse");
 			if (st != string_null)
 				threshold = stof(st);
 
-
 			attacker.ff_count = attacker.ff_count + 1; //Increase their bastard rating
 			if (threshold >= 1) {
 				if (attacker.ff_count >= threshold) createBastard(attacker,threshold);
-				if ((attacker.ff_count == threshold - 1) || (attacker.ff_count == threshold - 0.5)) {
+				if ((attacker.ff_count == threshold - 1) || (attacker.ff_count == threshold - 0.5))
+				{
 					sprint (attacker, #PRINT_MEDIUM, "One more teamkill and you will be cursed.\n");
 				}
 			}
 		}
-		if (!Teammate(targ.team_no, attacker.team_no) || targ.penance_time > time) {
+		if (!Teammate(targ.team_no, attacker.team_no) || targ.penance_time > time)
+		{
 			attacker.ff_count = attacker.ff_count - 0.5;
 			if (attacker.ff_count < 0) attacker.ff_count = 0;
 		}
@@ -790,11 +809,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			Killed(targ, attacker);
 		return;
 
-	}        
+	}
 
-    // Should we do any pain stuff?
-    if (T_flags & #TF_TD_NOPAIN)
-        return; // Just end
+	// Should we do any pain stuff?
+	if (T_flags & #TF_TD_NOPAIN)
+		return; // Just end
 
 	// react to the damage
 	te = self;
@@ -823,52 +842,52 @@ T_RadiusFireDamage
 */
 void(vector place, entity inflictor, entity attacker, float damage, float fireprob) T_RadiusFireDamage =
 {
-    local entity head;
-    local float finaldmg;
+	local entity head;
+	local float finaldmg;
 
-    head = findradius(place, damage+50);
+	head = findradius(place, damage+50);
 
-    while (head)
-    {
+	while (head)
+	{
 		if (head.classname == "player" && head.invincible_finished >= time)
 			return; // PZ - don't harm invulnerable
-        //WK Set off all land mines in blast radius
-        if (head.classname == "grenade" && head.netname == "land_mine")
-        {
-            head.think = GuerillaExplode;
-            head.nextthink = time + 0.1;
-        }
-        else if (head.takedamage)// && head.health > 0)
-        {
-            finaldmg = damage - vlen(place - head.origin);
+		//WK Set off all land mines in blast radius
+		if (head.classname == "grenade" && head.netname == "land_mine")
+		{
+			head.think = GuerillaExplode;
+			head.nextthink = time + 0.1;
+		}
+		else if (head.takedamage)// && head.health > 0)
+		{
+			finaldmg = damage - vlen(place - head.origin);
 
-            if (finaldmg > 0)
-            {
+			if (finaldmg > 0)
+			{
 				if (CanDamage(head, inflictor)) { // Fire can no longer damage through walls. -randomer 2006-03-04
-	                TF_T_Damage(head, inflictor, attacker, finaldmg, #TF_TD_NOKNOCK | #TF_TD_DONTGIB, #TF_TD_FIRE);
-	
-	                if (head.invincible_finished <= time && random() <= fireprob)
-	                {
-	                    // set 'em on fire
-	                    other = head; 
-	                    Napalm_touch();
-	                    if (other.classname == "player")
-	                        stuffcmd(other, "bf\nbf\n");
-	                }
+					TF_T_Damage(head, inflictor, attacker, finaldmg, #TF_TD_NOKNOCK | #TF_TD_DONTGIB, #TF_TD_FIRE);
+
+					if (head.invincible_finished <= time && random() <= fireprob)
+					{
+						// set 'em on fire
+						other = head;
+						Napalm_touch();
+						if (other.classname == "player")
+							stuffcmd(other, "bf\nbf\n");
+					}
 				}
-            }
-        }
+			}
+		}
 
-        head = head.chain;
-    }
+		head = head.chain;
+	}
 
-    // Push gibs and heads if enabled 
-    // (you may think this could be optimized by pushing the stuff in the loop above
-    // and its true, but doing the scan again lets the gibs/heads that just appeared to be
-    // pushed by its first explosion and thats cool) 
-    #ifdef COOL_GIBS    
-    CoolExplosion(inflictor, damage,20);
-    #endif
+	// Push gibs and heads if enabled
+	// (you may think this could be optimized by pushing the stuff in the loop above
+	// and its true, but doing the scan again lets the gibs/heads that just appeared to be
+	// pushed by its first explosion and thats cool)
+	#ifdef COOL_GIBS
+	CoolExplosion(inflictor, damage,20);
+	#endif
 };
 
 /*
@@ -878,21 +897,21 @@ T_RadiusDamage
 */
 void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDamage =
 {
-	local	float 	points;
-	local	entity	head, te; 
-	local	vector	org;
+	local float points;
+	local entity head, te;
+	local vector org;
 
 	head = findradius(inflictor.origin, damage+40);
-	
+
 	while (head)
 	{
 		if (head != ignore)
 		{
-            //WK Set off all land mines in blast radius
-            if (head.classname == "grenade" && head.netname == "land_mine")
+			//WK Set off all land mines in blast radius
+			if (head.classname == "grenade" && head.netname == "land_mine")
 			{
-				if (deathmsg != #DMSG_LAND_MINE) { 
-                    //head.has_tesla = 2; //- ofn - ur mine explodes better than is destroyed
+				if (deathmsg != #DMSG_LAND_MINE) {
+					//head.has_tesla = 2; //- ofn - ur mine explodes better than is destroyed
 					head.think = GuerillaExplode;
 					head.nextthink = time + 0.1;
 				}
@@ -946,28 +965,29 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 				{
 					if (CanDamage (head, inflictor))
 					{
-		                TF_T_Damage (head, inflictor, attacker, points, #TF_TD_NOTTEAM, #TF_TD_EXPLOSION);                        
+						TF_T_Damage (head, inflictor, attacker, points, #TF_TD_NOTTEAM, #TF_TD_EXPLOSION);
 					}
 					//Turrets have fucked up bounding boxes due to their natures
 					//So we have to make them susceptible to blast damage here
 					//But only 50% damage, since they are turrets...
-					else if ((head.classname == "building_sentrygun" || head.classname == "building_tesla") && head.tf_items & #NIT_TURRET) {
+					else if ((head.classname == "building_sentrygun" || head.classname == "building_tesla") && head.tf_items & #NIT_TURRET)
+					{
 							points = rint(points / 2);
-							TF_T_Damage (head, inflictor, attacker, points, #TF_TD_NOTTEAM, #TF_TD_EXPLOSION);						
-					}                    
+							TF_T_Damage (head, inflictor, attacker, points, #TF_TD_NOTTEAM, #TF_TD_EXPLOSION);
+					}
 				}
-			}            
+			}
 		}
 		head = head.chain;
 	}
 
-    // Push gibs and heads if enabled 
-    // (you may think this could be optimized by pushing the stuff in the loop above
-    // and its true, but doing the scan again lets the gibs/heads that just appeared to be
-    // pushed by its first explosion and thats cool) 
-    #ifdef COOL_GIBS    
-    CoolExplosion(inflictor, damage,50);
-    #endif
+	// Push gibs and heads if enabled
+	// (you may think this could be optimized by pushing the stuff in the loop above
+	// and its true, but doing the scan again lets the gibs/heads that just appeared to be
+	// pushed by its first explosion and thats cool)
+	#ifdef COOL_GIBS
+	CoolExplosion(inflictor, damage,50);
+	#endif
 };
 
 #ifdef COOL_GIBS
@@ -975,58 +995,58 @@ float() crandom;
 
 void(entity inflictor, float radius, float extent) CoolExplosion =
 {
-    // If this is disabled, go away..
-    if (!cool_gibs)
-        return;
+	// If this is disabled, go away..
+	if (!cool_gibs)
+		return;
 
-    local entity head;
-    local vector dir;
-    local float dist, intensity;
+	local entity head;
+	local vector dir;
+	local float dist, intensity;
 
-    head = findradius(inflictor.origin, radius+extent);
+	head = findradius(inflictor.origin, radius+extent);
 
-    while (head)
-    {
-        if (head.#coolflag == #STRFLAG_COOL)
-        if (CanDamage(head,inflictor))
-        {
-            // Get distance between the explosion and this thing
-            dist = vlen(head.origin - inflictor.origin);
+	while (head)
+	{
+		if (head.#coolflag == #STRFLAG_COOL)
+		if (CanDamage(head,inflictor))
+		{
+			// Get distance between the explosion and this thing
+			dist = vlen(head.origin - inflictor.origin);
 
-            // Calculate the intensity based on proximity of explosion (1 = same place, 0 = as far away it shouldnt push this)
-            intensity = 1 - ((radius+extent) - ((radius+extent) - dist)) / (radius+extent);
-            
-            // Calculate the direction the thing will be pushed to            
-            dir = head.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
+			// Calculate the intensity based on proximity of explosion (1 = same place, 0 = as far away it shouldnt push this)
+			intensity = 1 - ((radius+extent) - ((radius+extent) - dist)) / (radius+extent);
+
+			// Calculate the direction the thing will be pushed to
+			dir = head.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
 			dir = normalize(dir);
 
-            // Wheeeeeee, throw it away!
-            head.velocity = head.velocity + dir*radius*intensity*4;            
+			// Wheeeeeee, throw it away!
+			head.velocity = head.velocity + dir*radius*intensity*4;
 
-            // Special: if this is set onground use a randomized*intensity positive velocity_z instead
-            if (head.flags & #FL_ONGROUND)
-            {
-                head.flags = head.flags - #FL_ONGROUND;
-                head.velocity_z = 140*intensity + radius*2*intensity + random()*230 + intensity*random()*120;
-            }            
+			// Special: if this is set onground use a randomized*intensity positive velocity_z instead
+			if (head.flags & #FL_ONGROUND)
+			{
+				head.flags = head.flags - #FL_ONGROUND;
+				head.velocity_z = 140*intensity + radius*2*intensity + random()*230 + intensity*random()*120;
+			}
 
-            // Do an appropiate spin movement if we arent spinning currently and sometimes even if we are
-            if (head.avelocity == '0 0 0' || random() < 0.2)
-            {
-                // is this a head?
-                if (head.classname != "gib")
-                    head.avelocity = crandom() * '0 600 0';
-                else // should be a gib then
-                {
-                    head.avelocity_x = crandom()*600;
-                    head.avelocity_y = crandom()*600;
-                    head.avelocity_z = crandom()*600;
-                }
-            }
-        }        
+			// Do an appropiate spin movement if we arent spinning currently and sometimes even if we are
+			if (head.avelocity == '0 0 0' || random() < 0.2)
+			{
+				// is this a head?
+				if (head.classname != "gib")
+					head.avelocity = crandom() * '0 600 0';
+				else // should be a gib then
+				{
+					head.avelocity_x = crandom()*600;
+					head.avelocity_y = crandom()*600;
+					head.avelocity_z = crandom()*600;
+				}
+			}
+		}
 
-        head = head.chain;
-    }
+		head = head.chain;
+	}
 };
 #endif
 
@@ -1038,11 +1058,11 @@ T_BeamDamage // OfN - Used by bio grens
 
 void(entity inflictor, entity attacker, float damage) T_BeamDamage =
 {
-	local	float 	points;
-	local	entity	head;
-	
+	local float points;
+	local entity head;
+
 	head = findradius(inflictor.origin, damage+40);
-	
+
 	while (head)
 	{
 		if (head.takedamage && head.health > 0)
@@ -1057,13 +1077,13 @@ void(entity inflictor, entity attacker, float damage) T_BeamDamage =
 			{
 				if (CanDamage (head, inflictor))
 				{
-				
-					//if (head.classname == "monster_shambler")						
+
+					//if (head.classname == "monster_shambler")
 					//	T_Damage (head, attacker, attacker, points*0.5);
 					//else
 
 						TF_T_Damage (head, inflictor, attacker, points,#TF_TD_NOKNOCK,0);
-                      
+
 				}
 			}
 		}
