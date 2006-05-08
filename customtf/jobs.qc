@@ -1,11 +1,13 @@
-/*======================================================
-	JOBS.QC			Custom TeamFortress v3.2SB1
+/*
+==============================================================================
 
-	(c) William Kerney			2/9/00
-	(c) SB-1 Tech				25/10/00
-========================================================
+JOBS.QC
+Custom TeamFortress v3.2SB1
+
 Functions for handling the custom class professions
-======================================================*/
+
+==============================================================================
+*/
 
 //WK - all of this
 
@@ -65,47 +67,47 @@ void(entity player) ArmyInit;
 
 float(entity player) GetJobExtras =
 {
-    if (player.job & #JOB_EXTRA1)
-    {
-        if (player.job & #JOB_EXTRA2)
-            return 3; // For future extra item
+	if (player.job & #JOB_EXTRA1)
+	{
+		if (player.job & #JOB_EXTRA2)
+			return 3; // For future extra item
 
-        return 1;
-    }
+		return 1;
+	}
 
-    if (player.job & #JOB_EXTRA2)
-        return 2;
+	if (player.job & #JOB_EXTRA2)
+		return 2;
 
-    return 0;
+	return 0;
 };
 
 void(entity player, float extras) SetJobExtras =
 {
-    if (!extras)
-    {
-        player.job = player.job - (player.job & (#JOB_EXTRA1 | #JOB_EXTRA2));
-        return;
-    }
+	if (!extras)
+	{
+		player.job = player.job - (player.job & (#JOB_EXTRA1 | #JOB_EXTRA2));
+		return;
+	}
 
-    if (extras == 1)
-    {
-        player.job = player.job - (player.job & #JOB_EXTRA2);
-        player.job = player.job | #JOB_EXTRA1;
-        return;
-    }
+	if (extras == 1)
+	{
+		player.job = player.job - (player.job & #JOB_EXTRA2);
+		player.job = player.job | #JOB_EXTRA1;
+		return;
+	}
 
-    if (extras == 2)
-    {
-        player.job = player.job - (player.job & #JOB_EXTRA1);
-        player.job = player.job | #JOB_EXTRA2;
-        return;
-    }
+	if (extras == 2)
+	{
+		player.job = player.job - (player.job & #JOB_EXTRA1);
+		player.job = player.job | #JOB_EXTRA2;
+		return;
+	}
 
-    if (extras == 3) // Unused by now
-    {
-        player.job = player.job | #JOB_EXTRA2 | #JOB_EXTRA1;
-        return;
-    }
+	if (extras == 3) // Unused by now
+	{
+		player.job = player.job | #JOB_EXTRA2 | #JOB_EXTRA1;
+		return;
+	}
 };
 
 //
@@ -173,7 +175,7 @@ void() JobThief =
 			return;
 		}
 		*/
-		sprint(self,#PRINT_HIGH,"Εξτεςιξη σθαδοχσ...\n");
+		sprint(self,#PRINT_HIGH,"\sEntering Shadows\s...\n");
 		self.frame = 0;
 		self.weaponframe = 0;
 		self.modelindex = modelindex_eyes;
@@ -238,9 +240,6 @@ void() JobRunner =
 };
 
 
-
-
-
 void() JobWarlock =
 {
 	if (self.attack_finished > time)
@@ -250,15 +249,16 @@ void() JobWarlock =
 		return;
 	}
 
-    if (self.current_menu == #MENU_DEMON)
-    {
-        Menu_Demon_Input(7);
-        return;
-    }
+	if (self.current_menu == #MENU_DEMON)
+	{
+		Menu_Demon_Input(7);
+		return;
+	}
 
 	self.current_menu = #MENU_DEMON;
 	self.menu_count = #MENU_REFRESH_RATE;
 };
+
 
 /*
 ** Chaplan Profession -
@@ -283,33 +283,35 @@ void() ChaplanInspire = {
 	{
 		//Dispel enemy demons
 		//- OfN - if (head.classname == "monster_demon1" || head.classname == "monster_shambler")
-        if (IsMonsterNonArmy(head))
+		if (IsMonsterNonArmy(head))
 		{ //No short circuit evaluation, so...
-		      if (!Teammate(head.real_owner.team_no,self.team_no))
-		      { //...to avoid a crash from deref
+			if (!Teammate(head.real_owner.team_no,self.team_no))
+			{ //...to avoid a crash from deref
 				/*if ((head.health <= 200 && head.classname == "monster_demon1") || head.health < 500 && head.classname == "monster_shambler") {
 					sprint(self,#PRINT_HIGH,"You dispel a demon\n");
 					self.real_frags = self.real_frags + 1;
-	 				if (!(toggleflags & #TFLAG_TEAMFRAGS))
+					if (!(toggleflags & #TFLAG_TEAMFRAGS))
 						self.frags = self.real_frags;
 				}
 				if (head.classname == "monster_shambler")
 					TF_T_Damage(head, self, self, 500, 0, 0);
 				else if (head.classname == "monster_demon1")
 					TF_T_Damage(head, self, self, 200, 0, 0);*/
-                TF_T_Damage(head, self, self, 220, 0, 0); // OfN
+				TF_T_Damage(head, self, self, 220, 0, 0); // OfN
 			}
 		}
-		else if (head.classname == "player" &&	//Person who is...
-               head.health > 0 && // OfN Alive
-			   Teammate(head.team_no,self.team_no) && //Same Team
-			   head != self &&			//Not me
-			   !(head.is_undercover)  &&		//Not a spy
-			   !(head.job & #JOB_CHAPLAN)  &&	//Not a chaplan
-			   head.playerclass != #PC_CIVILIAN &&  //KK
-			   //... and not Quadded
-			   !(head.items & #IT_QUAD && !(head.tfstate & #TFSTATE_INSPIRED))
-			)
+		else if
+		(
+			head.classname == "player" &&	//Person who is...
+			head.health > 0 && // OfN Alive
+			Teammate(head.team_no,self.team_no) && //Same Team
+			head != self &&			//Not me
+			!(head.is_undercover)  &&		//Not a spy
+			!(head.job & #JOB_CHAPLAN)  &&	//Not a chaplan
+			head.playerclass != #PC_CIVILIAN &&  //KK
+			//... and not Quadded
+			!(head.items & #IT_QUAD && !(head.tfstate & #TFSTATE_INSPIRED))
+		)
 		{
 			head.items = head.items | #IT_QUAD;
 			head.inspirator = self; //We are their designated preacherman
@@ -319,7 +321,8 @@ void() ChaplanInspire = {
 			head.tfstate = head.tfstate | #TFSTATE_INSPIRED;
 			//Heal them if we have automedic too
 			//SB amended to medikit since there is no automedic now
-			if ((self.weapons_carried & #WEAP_MEDIKIT) && (self.last_attacked_time < time + #CHAPLAN_HEAL_DELAY)) {
+			if ((self.weapons_carried & #WEAP_MEDIKIT) && (self.last_attacked_time < time + #CHAPLAN_HEAL_DELAY))
+			{
 				take = head.max_health - head.health;
 				if (take > #CHAPLAN_HEAL) take = #CHAPLAN_HEAL;
 				if (take < 0) take = 0;
@@ -328,13 +331,12 @@ void() ChaplanInspire = {
 		}
 		head = head.chain;
 	}
-
 };
-
 
 //Draws lightning bolts towards all the friendlies we're inspiring
 //entity(entity start, .string fld, string match) find = #18;
-void() ChaplanGuides = {
+void() ChaplanGuides =
+{
 	local entity head;
 	head = find(world,classname,"player");
 	while (head) {
@@ -357,7 +359,8 @@ void() ChaplanGuides = {
 	}
 };
 
-void() ChaplanThink = {
+void() ChaplanThink =
+{
 	local entity oself;
 	//local string temp; //REMOVEME
 	oself = self;
@@ -368,17 +371,19 @@ void() ChaplanThink = {
 	oself.frags = oself.frags + #GUIDE_TIME;
 	if (oself.frags >= #CHAPLAN_TIME) { //Do the full thing every second
 		oself.frags = 0;
-		if (self.heat == #TRUE) { //Inspire everyone again
+		if (self.heat == #TRUE)
+		{ //Inspire everyone again
 			//sprint(self,#PRINT_HIGH,"Chaplan: Still Preaching\n");
 			ChaplanInspire();
 		}
-		else { //We stopped preaching
+		else
+		{ //We stopped preaching
 			sprint(self,#PRINT_HIGH,"You finish your sermon\n");
 			//Sync CHAN_MUSIC with disconnect and sound below
 			self.job = self.job - (self.job & #JOB_ACTIVE);
 			//sound (self, #CHAN_MUSIC, "items/r_item1.wav", 0.1, #ATTN_NORM);
 			sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
-            self.effects = self.effects - (self.effects & #EF_BRIGHTLIGHT);
+			self.effects = self.effects - (self.effects & #EF_BRIGHTLIGHT);
 			//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_RELOADING);
 			self.current_weapon = self.weapon;
 			W_SetCurrentAmmo();
@@ -392,7 +397,8 @@ void() ChaplanThink = {
 void() JobChaplan =
 {
 	local entity tWeapon;
-	if (self.job & #JOB_ACTIVE) {
+	if (self.job & #JOB_ACTIVE)
+	{
 		//self.job = self.job - #JOB_ACTIVE;
 		if (self.heat == #TRUE) //Only print this once
 			sprint(self,#PRINT_HIGH,"You gradually stop preaching...\n");
@@ -400,7 +406,8 @@ void() JobChaplan =
 		self.job_finished = time + 0.7; //Don't allow them to trigger too often
 		return;
 	}
-	if (self.tfstate & #TFSTATE_RELOADING || self.is_feigning || self.heat) {
+	if (self.tfstate & #TFSTATE_RELOADING || self.is_feigning || self.heat)
+	{
 		sprint(self,#PRINT_HIGH,"You can't preach while doing other stuff\n");
 		self.job_finished = time + 0.5; //Don't allow them to trigger too often
 		return;
@@ -482,12 +489,11 @@ void() JobMartyr =
 	self.impulse = 0;
 	self.last_impulse = 0;
 
-	/* PZ - lol.. I'm not sure I want to remove this ability yet
 	if (self.is_feigning)
 	{
-		sprint (self, #PRINT_HIGH, "You can't set detpacks while playing dead!\n");
+		sprint (self, #PRINT_HIGH, "You can't trigger your C-4 vest while playing dead!\n");
 		return;
-	} */
+	}
 	if (self.goal_effects > time) // PZ - can't martyr again for 60 seconds (.job_finished does not work for this)
 	{
 		sprint (self, #PRINT_HIGH, "God decrees that ye shall not martyr suicide more than once per minute!\n");
@@ -537,11 +543,12 @@ void() MartyrThink =
 	//self.owner is the guy who became a martyr
 	// PZ - self is the timer entity (tWeapon)
 
-	if (self.owner.health <= 0) return;
+	if (self.owner.health <= 0)
+		return;
 
 	newmis = spawn ();
 	newmis.owner = self.owner;
-    newmis.origin = self.owner.origin; //; was self.owner.origin - '0 0 23'
+	newmis.origin = self.owner.origin; //; was self.owner.origin - '0 0 23'
 	newmis.movetype = #MOVETYPE_BOUNCE;
 
 	#ifdef QUAKE_WORLD
@@ -551,7 +558,7 @@ void() MartyrThink =
 	#endif
 
 	newmis.classname = "c-4 vest";
-    //; newmis.flags = #FL_ITEM; // PZ - need?
+	//; newmis.flags = #FL_ITEM; // PZ - need?
 
 	newmis.angles = '90 0 0';
 	newmis.angles_y = self.owner.angles_y;
@@ -587,7 +594,7 @@ void() TeamFortress_C4VestExplode =
 		T_RadiusDamage (self, self.owner, #WEAP_DETPACK_SIZE * 0.4165, world); // PZ - (41.65% is directly between 1/3 and 1/2)
 		self.owner.goal_effects = time + 60; // PZ - can't martyr again for 60 seconds (.job_finished does not work for this)
 		// PZ - damage and radius of dets work off the same variable.. so here, both the radius and damage is being divided by 3
-        sound(self, #CHAN_MISC, "weapons/detpack.wav", 1, #ATTN_NORM); // PZ - attenuation was NONE
+		sound(self, #CHAN_MISC, "weapons/detpack.wav", 1, #ATTN_NORM); // PZ - attenuation was NONE
 
 		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
@@ -597,7 +604,7 @@ void() TeamFortress_C4VestExplode =
 		#ifdef QUAKE_WORLD
 			multicast (self.origin, #MULTICAST_PHS);
 		#endif
-        WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 		WriteByte (#MSG_BROADCAST, #TE_LAVASPLASH);
 		WriteCoord (#MSG_BROADCAST, self.origin_x);
 		WriteCoord (#MSG_BROADCAST, self.origin_y);
@@ -656,7 +663,7 @@ void() TeamFortress_C4VestExplode =
 				}
 				head = head.chain;
 			}
-	    #endif
+		#endif
 	}
 	else
 		sprint(self.owner, #PRINT_HIGH, "Your C-4 vest fizzled out\n");
@@ -687,8 +694,8 @@ void() BerserkerKillTimer =
 	}
 
 
-    self.job = self.job - (self.job & #JOB_ACTIVE); //- OfN
-    self.owner.is_abouttodie = #FALSE;
+	self.job = self.job - (self.job & #JOB_ACTIVE); //- OfN
+	self.owner.is_abouttodie = #FALSE;
 	dremove(self);
 };
 
@@ -716,7 +723,7 @@ void() JobBerserker =
 	self.super_damage_finished = time + #BERSERK_TIME + 1;
 	self.items = self.items | #IT_QUAD;
 	self.is_abouttodie = #TRUE;
-    self.job = self.job | #JOB_ACTIVE; //- OfN
+	self.job = self.job | #JOB_ACTIVE; //- OfN
 	self.job_finished = time + #BERSERK_TIME * 3;
 
 	stuffcmd(self, "v_idlescale 30\n");
@@ -834,13 +841,13 @@ void() JobJudoka =
 	}
 
 
-    if (trace_ent)
-    if (trace_ent.classname == "player")
-    if (trace_ent.#runes & #RUNE_RESIS)
-    {
-        sprint (self, #PRINT_HIGH, "He is protected by a mysterious power!\n"); // PZ - spelling
-        return;
-    }
+	if (trace_ent)
+	if (trace_ent.classname == "player")
+	if (trace_ent.#runes & #RUNE_RESIS)
+	{
+		sprint (self, #PRINT_HIGH, "He is protected by a mysterious power!\n"); // PZ - spelling
+		return;
+	}
 
 	if (trace_ent.classname == "player" && !Teammate(trace_ent.team_no, self.team_no) && trace_ent.playerclass != #PC_UNDEFINED && !(trace_ent.invincible_finished > time))
 	{
@@ -971,16 +978,18 @@ void() UseJobSkill =
 	//local string sx,sy,sz;
 
 	//Make sure they can do it
-	if (self.done_custom & #CUSTOM_BUILDING) return;
-	if (self.job_finished > time) return;
+	if (self.done_custom & #CUSTOM_BUILDING)
+		return;
+	if (self.job_finished > time)
+		return;
 
-    // OfN - Psionized guys can't use skill
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You hardly can do anything psionized!\n");
-        self.job_finished = time + 1;
-        return;
-    }
+	// OfN - Psionized guys can't use skill
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You can hardly do anything while psionized!\n");
+		self.job_finished = time + 1;
+		return;
+	}
 
 	myjob = self.job;
 	if (myjob & #JOB_THIEF)
@@ -1004,13 +1013,13 @@ void() UseJobSkill =
 		JobGuerilla();
 	else if (myjob & #JOB_JUDOKA)
 		JobJudoka();
-   	else if (myjob & #JOB_HACKER)
+	else if (myjob & #JOB_HACKER)
 		JobHacker();
-    else if (myjob & #JOB_MARTYR)
+	else if (myjob & #JOB_MARTYR)
 		JobMartyr();
-    else if (myjob & #JOB_ARMY)
+	else if (myjob & #JOB_ARMY)
 		JobArmy();
-    else if (myjob & #JOB_CRUSADER)
+	else if (myjob & #JOB_CRUSADER)
 		JobCrusader();
 	else {
 		sprint(self,#PRINT_HIGH,"You don't have a job. Go get employed.\n");
@@ -1024,7 +1033,8 @@ void() UseJobSkill =
 #define FULLH_NORELOAD_TIME 1.5
 void (entity targ, float pain) RevealThief =
 {
-	if (targ.classname != "player") return;
+	if (targ.classname != "player")
+		return;
 	targ.modelindex = modelindex_player;
 	if (pain) {
 		sprint(targ,#PRINT_HIGH,"You have been uncovered!\n");
@@ -1032,7 +1042,7 @@ void (entity targ, float pain) RevealThief =
 		targ.job_finished = time + #EXPOSURE_NOHIDE_TIME;
 	}
 	else {
-		sprint(targ,#PRINT_HIGH,"Μεαφιξη σθαδοχσ...\n");
+		sprint(targ,#PRINT_HIGH,"\sLeaving Shadows\s...\n");
 		targ.job_finished = time + #NOHIDE_TIME;
 		if (targ.job & #JOB_FULL_HIDE)
 			targ.attack_finished = time + #FULLH_NORELOAD_TIME;
@@ -1047,18 +1057,18 @@ void (entity targ, float pain) RevealThief =
 
 void() InitJobStuff =
 {
-    // Abort if already initialized
-    if (self.goal_activation) return;
+	// Abort if already initialized
+	if (self.goal_activation)
+		return;
 
-    // Initialize respective jobs
-    if (self.job & #JOB_ARMY)
-        ArmyInit(self);
-    else if (self.job & #JOB_GUERILLA)
-        GuerillaInit(self);
-    else
-        return; // If nothing done just return
+	// Initialize respective jobs
+	if (self.job & #JOB_ARMY)
+		ArmyInit(self);
+	else if (self.job & #JOB_GUERILLA)
+		GuerillaInit(self);
+	else
+		return; // If nothing done just return
 
-    // Set our "initialization done" flag to true
-    self.goal_activation = #TRUE;
+	// Set our "initialization done" flag to true
+	self.goal_activation = #TRUE;
 };
-

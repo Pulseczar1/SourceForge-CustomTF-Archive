@@ -62,7 +62,7 @@ void() NailGrenadeNailEm =
 void() NailGrenadeLaunchNail =
 {
 	local float i,j;
-	local float current_yaw;
+	local float current_yaw1;  //RJ appended 1 to fix warning of names == a global
 
 	i = 0;
 #ifdef QUAKEWORLD
@@ -72,8 +72,8 @@ void() NailGrenadeLaunchNail =
 #endif
 	{
 		j = (random() + 2) * 5;
-		current_yaw = anglemod(self.angles_y + j);
-		self.angles_y = current_yaw;
+		current_yaw1 = anglemod(self.angles_y + j);
+		self.angles_y = current_yaw1;
 		self.angles_x = 0;
 		self.angles_z = 0;
 		makevectors(self.angles);

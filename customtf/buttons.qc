@@ -1,6 +1,14 @@
-// button and multiple button
+/*
+==============================================================================
 
-#define BUTTON_START_OUT	32 
+buttons.qc
+
+button and multiple button
+
+==============================================================================
+*/
+
+#define BUTTON_START_OUT 32
 
 void() button_wait;
 void() button_return;
@@ -31,11 +39,9 @@ void() button_return =
 		self.takedamage = #DAMAGE_YES;	// can be shot again
 };
 
-
 void() button_blocked =
 {	// do nothing, just don't come all the way back out
 };
-
 
 void() button_fire =
 {
@@ -47,7 +53,6 @@ void() button_fire =
 	self.state = #STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, button_wait);
 };
-
 
 void() button_use =
 {
@@ -89,13 +94,13 @@ void() button_touch =
 	if (other.classname != "player")
 		return;
 
-    // OfN --------------------------------------//
-    //- BUGFIX Avoid observers touching buttons  //
+	// OfN --------------------------------------//
+	//- BUGFIX Avoid observers touching buttons  //
 	if (other.playerclass == #PC_UNDEFINED)
 		return;
-    if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
-        return;
-    //------------------------------------------//
+	if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
+		return;
+	//------------------------------------------//
 
 	if (self.goal_activation & #TFGA_SPANNER)
 		return;
@@ -129,7 +134,6 @@ void() button_killed =
 	button_fire ();
 };
 
-
 /*QUAKED func_button (0 .5 .8) ?
 When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again.
 
@@ -153,7 +157,7 @@ to light in the out position.
 */
 void() func_button =
 {
-	//local float		gtemp, ftemp;
+	//local float gtemp, ftemp;
 
 	if (CheckExistence() == #FALSE)
 	{
@@ -181,7 +185,7 @@ void() func_button =
 		precache_sound ("buttons/switch04.wav");
 		self.noise = "buttons/switch04.wav";
 	}
-	
+
 	SetMovedir ();
 
 	self.movetype = #MOVETYPE_PUSH;
@@ -215,5 +219,3 @@ void() func_button =
 	if (self.spawnflags & #BUTTON_START_OUT)
 		button_fire ();
 };
-
-

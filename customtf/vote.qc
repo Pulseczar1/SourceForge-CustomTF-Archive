@@ -312,7 +312,7 @@ void() Menu_VoteMap =
 		if (self.#cprint_fx & 1)
 			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," \{144}playing\{145}");
+			keyst = strcat(color," \{219}playing\{221}");
 		color = keyst;
 	}
 	else
@@ -338,7 +338,7 @@ void() Menu_VoteMap =
 		if (self.#cprint_fx & 1)
 			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," \{144}playing\{145}");
+			keyst = strcat(color," \{219}playing\{221}");
 		color = keyst;
 	}
 	else
@@ -354,7 +354,7 @@ void() Menu_VoteMap =
 		if (self.#cprint_fx & 1)
 			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," \{144}playing\{145}");
+			keyst = strcat(color," \{219}playing\{221}");
 		color = keyst;
 	}
 	else
@@ -370,7 +370,7 @@ void() Menu_VoteMap =
 		if (self.#cprint_fx & 1)
 			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," \{144}playing\{145}Ý");
+			keyst = strcat(color," \{219}playing\{221}");
 		color = keyst;
 	}
 	else
@@ -386,7 +386,7 @@ void() Menu_VoteMap =
 		if (self.#cprint_fx & 1)
 			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," \{144}playing\{145}");
+			keyst = strcat(color," \{219}playing\{221}");
 		color = keyst;
 	}
 	else
@@ -402,7 +402,7 @@ void() Menu_VoteMap =
 		if (self.#cprint_fx & 1)
 			keyst = strcat(color," [\sPlaying\s]");
 		else
-			keyst = strcat(color," \{144}playing\{145}");
+			keyst = strcat(color," \{219}playing\{221}");
 		color = keyst;
 	}
 	else
@@ -900,6 +900,31 @@ void(float nummap, string themap) StartVoteMap =
 	{
 		voteent.netname = themap;
 
+		// Is this map a bmodel? can't play bmodels!
+		if (voteent.netname == "rfort" || voteent.netname == "bfort" || voteent.netname == "control2" || // 2fort5p|| 2fort5p || colony1 i think?
+			voteent.netname == "b_batt0" || voteent.netname == "b_batt1" || voteent.netname == "b_bh10" || //id1 pak0.pak bmodels
+			voteent.netname == "b_bh100" || voteent.netname == "b_bh25" || voteent.netname == "b_explob" ||
+			voteent.netname == "b_nail0" || voteent.netname == "b_nail1" || voteent.netname == "b_rock0" ||
+			voteent.netname == "b_rock1" || voteent.netname == "b_shell0" || voteent.netname == "b_shell1" ||
+			voteent.netname == "b_exbox2") //id1 pak1.pak bmodel
+		{
+			sprint(self,#PRINT_HIGH,"You can't start voting for a bmodel!\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+			dremove(voteent);
+			voteent = world;
+			return;
+		}
+
+		// Non-playable maps
+		if (voteent.netname == "introseq")
+		{
+			sprint(self,#PRINT_HIGH,"Go watch the demo, this isn't a playable map!\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+			dremove(voteent);
+			voteent = world;
+			return;
+		}
+
 		#ifdef UNABLE_TOVOTE_FORSAME_MAP
 		// Don't let votes to switch to current map
 		if (voteent.netname == mapname && self.group_no == 1)
@@ -1237,8 +1262,6 @@ float() CheckVoting =
 
 				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been cuffed!\n");
 
-				local float uid;
-
 				uid = getuid(current_voteent.admin_kick);
 				st = ftos(uid);
 
@@ -1337,9 +1360,9 @@ void() bprintVotesLeft =
 	st = colstr(st,#COLSTR_NUMBER);
 
 	if (tmp > 1)
-		bprint(#PRINT_HIGH," \{144}",st," votes left\{144}\n");
+		bprint(#PRINT_HIGH," \{219}",st," votes left\{221}\n");
 	else
-		bprint(#PRINT_HIGH," \{144}\1 vote left!\{144}\n");
+		bprint(#PRINT_HIGH," \{219}\1 vote left!\{221}\n");
 };
 
 //======================================================================================

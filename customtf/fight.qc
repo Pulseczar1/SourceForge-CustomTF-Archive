@@ -1,11 +1,12 @@
-
 /*
+==============================================================================
 
 A monster is in fight mode if it thinks it can effectively attack its
 enemy.
 
 When it decides it can't attack, it goes into hunt mode.
 
+==============================================================================
 */
 
 float(float v) anglemod;
@@ -22,8 +23,8 @@ void() sham_swingr1;
 void() sham_swingl1;
 #endif
 
-float()	DemonCheckAttack;
-void(float side)	Demon_Melee;
+float() DemonCheckAttack;
+void(float side) Demon_Melee;
 
 void(vector dest) ChooseTurn;
 
@@ -34,11 +35,11 @@ void() ai_face;
 #ifdef COOP_MODE
 void() knight_attack =
 {
-	local float		len;
-	
-// decide if now is a good swing time
+	local float len;
+
+	// decide if now is a good swing time
 	len = vlen(self.enemy.origin+self.enemy.view_ofs - (self.origin+self.view_ofs));
-	
+
 	if (len < 80)
 		knight_atk1 ();
 	else
@@ -58,13 +59,13 @@ Returns FALSE if movement should continue
 */
 float() CheckAttack =
 {
-	local vector	spot1, spot2;	
-	local entity	targ;
-	local float		chance;
+	local vector spot1, spot2;
+	local entity targ;
+	local float chance;
 
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -72,7 +73,7 @@ float() CheckAttack =
 
 	if (trace_ent != targ)
 		return #FALSE;		// don't have a clear shot
-			
+
 	if (trace_inopen && trace_inwater)
 		return #FALSE;			// sight line crossed contents
 
@@ -89,17 +90,17 @@ float() CheckAttack =
 			return #TRUE;
 		}
 	}
-	
-// missile attack
+
+	// missile attack
 	if (!self.th_missile)
 		return #FALSE;
-		
+
 	if (time < self.attack_finished)
 		return #FALSE;
-		
+
 	if (enemy_range == #RANGE_FAR)
 		return #FALSE;
-		
+
 	if (enemy_range == #RANGE_MELEE)
 	{
 		chance = 0.9;
@@ -126,13 +127,12 @@ float() CheckAttack =
 	{
 		self.th_missile ();
 		//SUB_AttackFinished (2*random());
-        Attack_Finished(2*random());
+		Attack_Finished(2*random());
 		return #TRUE;
 	}
 
 	return #FALSE;
 };
-
 
 /*
 =============
@@ -151,21 +151,20 @@ void() ai_face =
 //WK Ai face for everyone
 void() ai_face =
 {
-    // OfN - Fixes 'yaw to world origin' bug when holos r targetted by a sentry and disappear
-    if (self.classname=="building_sentrygun" && self.enemy.classname == "holo" && self.enemy.has_holo == 0)
-        return;
-    
-    
-    self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
+	// OfN - Fixes 'yaw to world origin' bug when holos r targetted by a sentry and disappear
+	if (self.classname=="building_sentrygun" && self.enemy.classname == "holo" && self.enemy.has_holo == 0)
+		return;
+
+	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = anglemod(self.ideal_yaw);
 
 	//WK Turrets swivel instanter
 	/* if (self.tf_items & #NIT_TURRET) { //Auto-swivel
 		self.angles_y = self.ideal_yaw;
 	} */
-	//WK Fix a sentry stuck bug?               
+	//WK Fix a sentry stuck bug?
 	if (self.classname == "building_sentrygun") { //Auto-swivel
-         self.angles_y = self.ideal_yaw;
+		 self.angles_y = self.ideal_yaw;
 	}
 	else
 		ChangeYaw ();
@@ -184,7 +183,7 @@ float(entity targ) range;
 
 void(float d) ai_charge =
 {
-	ai_face ();	
+	ai_face ();
 	movetogoal (d);		// done in C code...
 };
 
@@ -192,8 +191,8 @@ void() ai_charge_side =
 {
 	local	vector	dtemp;
 	local	float	heading;
-	
-// aim to the left of the enemy for a flyby
+
+	// aim to the left of the enemy for a flyby
 
 	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
 	ChangeYaw ();
@@ -201,10 +200,9 @@ void() ai_charge_side =
 	makevectors (self.angles);
 	dtemp = self.enemy.origin - 30*v_right;
 	heading = vectoyaw(dtemp - self.origin);
-	
+
 	walkmove(heading, 20);
 };
-
 
 /*
 =============
@@ -214,32 +212,31 @@ ai_melee
 */
 void() ai_melee =
 {
-	local vector	delta;
-	local float 	ldmg;
+	local vector delta;
+	local float ldmg;
 
 	if (!self.enemy)
 		return;		// removed before stroke
-		
+
 	delta = self.enemy.origin - self.origin;
 
 	if (vlen(delta) > 60)
 		return;
-		
+
 	ldmg = (random() + random() + random()) * 3;
 	T_Damage (self.enemy, self, self, ldmg);
 };
 
-
 void() ai_melee_side =
 {
-	local vector	delta;
-	local float 	ldmg;
+	local vector delta;
+	local float ldmg;
 
 	if (!self.enemy)
 		return;		// removed before stroke
-		
+
 	ai_charge_side();
-	
+
 	delta = self.enemy.origin - self.origin;
 
 	if (vlen(delta) > 60)
@@ -266,13 +263,13 @@ CH removed due to not used?
 
 float() SoldierCheckAttack =
 {
-	local vector	spot1, spot2;	
+	local vector	spot1, spot2;
 	local entity	targ;
 	local float		chance;
 
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -283,15 +280,15 @@ float() SoldierCheckAttack =
 
 	if (trace_ent != targ)
 		return #FALSE;	// don't have a clear shot
-			
-	
-// missile attack
+
+
+	// missile attack
 	if (time < self.attack_finished)
 		return #FALSE;
-		
+
 	if (enemy_range == #RANGE_FAR)
 		return #FALSE;
-		
+
 	if (enemy_range == #RANGE_MELEE)
 		chance = 0.9;
 	else if (enemy_range == #RANGE_NEAR)
@@ -328,7 +325,7 @@ CH also removed from not used
 
 float() ShamCheckAttack =
 {
-	local vector	spot1, spot2;	
+	local vector	spot1, spot2;
 	local entity	targ;
 	local float		chance;
 	local float		enemy_yaw;
@@ -344,13 +341,13 @@ float() ShamCheckAttack =
 
 	if (time < self.attack_finished)
 		return #FALSE;
-	
+
 	if (!enemy_vis)
 		return #FALSE;
-		
+
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -366,11 +363,11 @@ float() ShamCheckAttack =
 	{
 		return #FALSE;	// don't have a clear shot
 	}
-			
-// missile attack
+
+	// missile attack
 	if (enemy_range == #RANGE_FAR)
 		return #FALSE;
-		
+
 	self.attack_state = #AS_MISSILE;
 	SUB_AttackFinished (2 + 2*random());
 	return #TRUE;
@@ -391,7 +388,7 @@ CH yet another remove from not used
 
 float() OgreCheckAttack =
 {
-	local vector	spot1, spot2;	
+	local vector	spot1, spot2;
 	local entity	targ;
 	local float		chance;
 
@@ -406,13 +403,13 @@ float() OgreCheckAttack =
 
 	if (time < self.attack_finished)
 		return #FALSE;
-	
+
 	if (!enemy_vis)
 		return #FALSE;
-		
+
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -425,14 +422,14 @@ float() OgreCheckAttack =
 	{
 		return #FALSE;	// don't have a clear shot
 	}
-			
-// missile attack
+
+	// missile attack
 	if (time < self.attack_finished)
 		return #FALSE;
-		
+
 	if (enemy_range == #RANGE_FAR)
 		return #FALSE;
-		
+
 	else if (enemy_range == #RANGE_NEAR)
 		chance = 0.10;
 	else if (enemy_range == #RANGE_MID)
@@ -445,4 +442,3 @@ float() OgreCheckAttack =
 	return #TRUE;
 };
 */
-//CH it needs this or else it wont compile?

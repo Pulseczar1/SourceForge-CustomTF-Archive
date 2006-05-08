@@ -529,7 +529,7 @@ void() W_FireSpanner =
 		else if (trace_ent.classname == "building_sentrygun_base")
 		{
 			if (trace_ent.oldenemy)
-				Engineer_UseSentryGun(trace_ent.oldenemy);
+			Engineer_UseSentryGun(trace_ent.oldenemy);
 			return;
 		}
 		else if (trace_ent.classname == "building_tesla")
@@ -910,7 +910,7 @@ void(float inAuto) W_FireMedikit =
 						{
 							trace_ent.items = trace_ent.items | #IT_SUPERHEALTH;
 							newmis = spawn();
-							newmis.classname == "medikit_rot";
+							newmis.classname = "medikit_rot";
 							newmis.nextthink = time + 20;
 							newmis.think = item_megahealth_rot;
 							newmis.owner = trace_ent;
@@ -1236,8 +1236,7 @@ SpawnMeatSpray
 */
 void(vector org, vector vel) SpawnMeatSpray =
 {
-	local	entity missile;
-	local	vector	org;
+	local entity missile;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -3560,9 +3559,6 @@ float() CheckForReload =
 
 	//---//
 	}
-
-
-	local entity tWeapon;
 
 	if (self.current_weapon == #WEAP_SHOTGUN)
 	{

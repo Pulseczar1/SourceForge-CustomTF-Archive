@@ -1,22 +1,30 @@
+/*
+==============================================================================
+
+fish.QC
+
+==============================================================================
+*/
+
 $cd id1/models/fish
 $origin 0 0 24
-$base base		
+$base base
 $skin skin
 
-$frame attack1 attack2 attack3 attack4 attack5 attack6 
-$frame attack7 attack8 attack9 attack10 attack11 attack12 attack13 
-$frame attack14 attack15 attack16 attack17 attack18 
+$frame attack1 attack2 attack3 attack4 attack5 attack6
+$frame attack7 attack8 attack9 attack10 attack11 attack12 attack13
+$frame attack14 attack15 attack16 attack17 attack18
 
-$frame death1 death2 death3 death4 death5 death6 death7 
-$frame death8 death9 death10 death11 death12 death13 death14 death15 
-$frame death16 death17 death18 death19 death20 death21 
+$frame death1 death2 death3 death4 death5 death6 death7
+$frame death8 death9 death10 death11 death12 death13 death14 death15
+$frame death16 death17 death18 death19 death20 death21
 
-$frame swim1 swim2 swim3 swim4 swim5 swim6 swim7 swim8 
-$frame swim9 swim10 swim11 swim12 swim13 swim14 swim15 swim16 swim17 
-$frame swim18 
+$frame swim1 swim2 swim3 swim4 swim5 swim6 swim7 swim8
+$frame swim9 swim10 swim11 swim12 swim13 swim14 swim15 swim16 swim17
+$frame swim18
 
-$frame pain1 pain2 pain3 pain4 pain5 pain6 pain7 pain8 
-$frame pain9 
+$frame pain1 pain2 pain3 pain4 pain5 pain6 pain7 pain8
+$frame pain9
 
 void() swimmonster_start;
 
@@ -73,30 +81,30 @@ void() fish_run9  =[      $swim17, fish_run1 ] {ai_run(28);};
 
 void() fish_melee =
 {
-	local vector	delta;
-	local float 	ldmg;
-                        // dont bite if enemy dead
+	local vector delta;
+	local float ldmg;
+						// dont bite if enemy dead
 	//if (!self.enemy || self.enemy.health <= 0 || self.enemy.has_disconnected)
-    if (!StillValidEnemy(self.enemy))
+	if (!StillValidEnemy(self.enemy))
 	{
-        self.enemy = world;
+		self.enemy = world;
 
-        fish_run2(); // not f_run1 cause we dont want idle sounds
-        return;		// removed before stroke
-    }
-		
+		fish_run2(); // not f_run1 cause we dont want idle sounds
+		return;		// removed before stroke
+	}
+
 	delta = self.enemy.origin - self.origin;
 
 	MonsterAuraPower();
-    
-    if (vlen(delta) > 85) // Original was 60 THEN 80
-		return;
-		
-	sound (self, #CHAN_VOICE, "fish/bite.wav", 1, #ATTN_NORM);
-    
-    ldmg = random()* 100 + 25;
 
-    TF_T_Damage(self.enemy, self, self, ldmg, #TF_TD_DONTGIB, #TF_TD_OTHER);
+	if (vlen(delta) > 85) // Original was 60 THEN 80
+		return;
+
+	sound (self, #CHAN_VOICE, "fish/bite.wav", 1, #ATTN_NORM);
+
+	ldmg = random()* 100 + 25;
+
+	TF_T_Damage(self.enemy, self, self, ldmg, #TF_TD_DONTGIB, #TF_TD_OTHER);
 	//T_Damage (self.enemy, self, self, ldmg);
 };
 
@@ -120,11 +128,11 @@ void() fish_attack17       =[      $attack17,      fish_attack18] {ai_charge(10)
 void() fish_attack18       =[      $attack18,      fish_run1    ] {ai_charge(10);};
 
 void() fish_death1 =[      $death1,        fish_death2        ] {
-    sound (self, #CHAN_VOICE, "fish/death.wav", 1, #ATTN_MONSTERDIE);
-    
-    // Hackish fix for visuals if outside water
-    if (pointcontents(self.origin) ==  #CONTENT_EMPTY)
-        self.movetype = #MOVETYPE_TOSS;
+	sound (self, #CHAN_VOICE, "fish/death.wav", 1, #ATTN_MONSTERDIE);
+
+	// Hackish fix for visuals if outside water
+	if (pointcontents(self.origin) ==  #CONTENT_EMPTY)
+		self.movetype = #MOVETYPE_TOSS;
 };
 void() fish_death2 =[      $death2,        fish_death3        ] {};
 void() fish_death3 =[      $death3,        fish_death4        ] {self.solid = #SOLID_NOT;};
@@ -146,11 +154,11 @@ void() fish_death18 =[      $death18,       fish_death19       ] {};
 void() fish_death19 =[      $death19,       fish_death20       ] {};
 void() fish_death20 =[      $death20,       fish_death21       ] {};
 void() fish_death21 =[      $death21,       fish_death21       ] {
-    //self.nextthink = time + 40 + 40*random();	
-    //self.think = SUB_Remove;
+	//self.nextthink = time + 40 + 40*random();
+	//self.think = SUB_Remove;
 
-    //self.solid = #SOLID_NOT;
-    MonsterCorpse();
+	//self.solid = #SOLID_NOT;
+	MonsterCorpse();
 };
 
 void() fish_pain1  =[      $pain1, fish_pain2 ] {};
@@ -164,55 +172,55 @@ void() fish_pain8  =[      $pain8, fish_pain9 ] {ai_pain(6);};
 void() fish_pain9  =[      $pain9, fish_run1 ] {ai_pain(6);};
 
 void(entity attacker, float damage)	fish_pain =
-{   
-    if (self.health <= 0)
+{
+	if (self.health <= 0)
 		return;
 
-    if (self.pain_finished > time)
-        return;
+	if (self.pain_finished > time)
+		return;
 
-// fish allways do pain frames - OfN - nope
-    if (random() > 0.85 || (damage > random()*50))
-        fish_pain1 ();
+	// fish allways do pain frames - OfN - nope
+	if (random() > 0.85 || (damage > random()*50))
+		fish_pain1 ();
 
-    AI_CheckAttacker(attacker);
-    
-    self.pain_finished = time +1 +random();
+	AI_CheckAttacker(attacker);
+
+	self.pain_finished = time +1 +random();
 };
 
 void() fish_death =
 {
-    if (self.real_owner.classname == "player")
-    {
-	    sprint(self.real_owner,#PRINT_HIGH,"Your piranha ");
-        sprint(self.real_owner,#PRINT_HIGH,self.netname);
-        sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
-	    self.real_owner.job_finished = time + 5; // delay between summons
-        ResetSlotPointer(self.real_owner, self.increase_team1);
-    }   
+	if (self.real_owner.classname == "player")
+	{
+		sprint(self.real_owner,#PRINT_HIGH,"Your piranha ");
+		sprint(self.real_owner,#PRINT_HIGH,self.netname);
+		sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
+		self.real_owner.job_finished = time + 5; // delay between summons
+		ResetSlotPointer(self.real_owner, self.increase_team1);
+	}
 
-// check for gib
-    if (self.health < -35) // was 30
+	// check for gib
+	if (self.health < -35) // was 30
 	{
 		//sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
-        
-        ThrowGib ("progs/gib2.mdl", self.health,#TRUE,0,#GIB2_KGS, #FALSE);
+
+		ThrowGib ("progs/gib2.mdl", self.health,#TRUE,0,#GIB2_KGS, #FALSE);
 		ThrowGib ("progs/gib3.mdl", self.health,#TRUE,0,#GIB3_KGS, #FALSE);
 
-        dremove(self);        
-        return;
+		dremove(self);
+		return;
 	}
-    
-    // show bubbles if fish is in liquid
-    if (pointcontents(self.origin) != #CONTENT_EMPTY)
-        DeathBubbles(4);
 
-    //self.classname = "monster_corpse";
-    MonsterDead();
-    self.think=SUB_Null;
-    self.nextthink = time + 0.1;
+	// show bubbles if fish is in liquid
+	if (pointcontents(self.origin) != #CONTENT_EMPTY)
+		DeathBubbles(4);
 
-    fish_death1();
+	//self.classname = "monster_corpse";
+	MonsterDead();
+	self.think=SUB_Null;
+	self.nextthink = time + 0.1;
+
+	fish_death1();
 };
 
 /*QUAKED monster_fish (1 0 0) (-16 -16 -24) (16 16 24) Ambush
@@ -238,20 +246,20 @@ void() monster_fish =
 
 	setsize (self, '-16 -16 -24', '16 16 24');
 	self.health = 25;
-	
+
 	self.th_stand = f_stand1;
 	self.th_walk = f_walk1;
 	self.th_run = f_run1;
 	self.th_die = fish_death;
 	self.th_pain = fish_pain;
 	self.th_melee = f_attack1;
-	
+
 	swimmonster_start ();
 };*/
 
 void() Fish_Precache =
 {
-    precache_model ("progs/fish.mdl");
+	precache_model ("progs/fish.mdl");
 
 	precache_sound ("fish/death.wav");
 	precache_sound ("fish/bite.wav");
@@ -260,39 +268,39 @@ void() Fish_Precache =
 
 void() fish_toss =
 {
-    local float contenttype;
-    contenttype = pointcontents(self.origin);
+	local float contenttype;
+	contenttype = pointcontents(self.origin);
 
-    if (contenttype != #CONTENT_EMPTY) // we have been tossed and now we got into water/slime or lava
-    {
-        if (contenttype == #CONTENT_SKY || contenttype == #CONTENT_SOLID) // on a invalid place
-        {
-            sprint(self.real_owner,#PRINT_HIGH,"Your piranha gets into the twilight zone!\n");
-            self.health = -50;
-            MonsterDie(self);
-            return;
-        }
+	if (contenttype != #CONTENT_EMPTY) // we have been tossed and now we got into water/slime or lava
+	{
+		if (contenttype == #CONTENT_SKY || contenttype == #CONTENT_SOLID) // on a invalid place
+		{
+			sprint(self.real_owner,#PRINT_HIGH,"Your piranha gets into the twilight zone!\n");
+			self.health = -50;
+			MonsterDie(self);
+			return;
+		}
 
-        // make splash sound (we got into liquid)
-        sound(self,#CHAN_BODY,"player/inh2o.wav",1,#ATTN_NORM);
+		// make splash sound (we got into liquid)
+		sound(self,#CHAN_BODY,"player/inh2o.wav",1,#ATTN_NORM);
 
-        DeathBubbles(3); // Not dying tho
-        
-        // ok, fish is ready to go..
-        self.movetype = #MOVETYPE_STEP;
-        self.velocity = '0 0 0';
-        self.think = swimmonster_start_go;
-        self.nextthink = time + 0.1;
-        return;
-    }
+		DeathBubbles(3); // Not dying tho
 
-    // are we on ground? if so, die (also die if 15 seconds passed since toss)
-    if (self.flags & #FL_ONGROUND || time > self.ltime + 15)
-    {
-        self.dmgtime = time; // check now
-        self.nextthink = time + 0.1;
-        self.think = swimmonster_start_go; // will call AI_check_contents
-    }
+		// ok, fish is ready to go..
+		self.movetype = #MOVETYPE_STEP;
+		self.velocity = '0 0 0';
+		self.think = swimmonster_start_go;
+		self.nextthink = time + 0.1;
+		return;
+	}
+
+	// are we on ground? if so, die (also die if 15 seconds passed since toss)
+	if (self.flags & #FL_ONGROUND || time > self.ltime + 15)
+	{
+		self.dmgtime = time; // check now
+		self.nextthink = time + 0.1;
+		self.think = swimmonster_start_go; // will call AI_check_contents
+	}
 };
 
 void() fish_toss1  =[      $swim1, fish_toss2 ] {fish_toss();};

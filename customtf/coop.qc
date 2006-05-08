@@ -1,10 +1,13 @@
-/*============================
-	coop.qc
+/*
+==============================================================================
+
+coop.qc
 
 This file handles all the
 cooperative mode functions
-============================*/
 
+==============================================================================
+*/
 
 void() DroppedKeyThink =
 {
@@ -14,15 +17,14 @@ void() DroppedKeyThink =
 	self.owner = world;
 };
 
-
 void() DropKey =
 {
 	if ((self.items & #IT_KEY1) || (self.items & #IT_KEY2))
 	{
 		newmis = spawn();
-	
+
 		if (self.items & #IT_KEY1)
-		{	
+		{
 			self.items = self.items - (self.items & #IT_KEY1);
 			newmis.items = #IT_KEY1;
 			if (world.worldtype == 0)
@@ -45,7 +47,7 @@ void() DropKey =
 			}
 		}
 		else if (self.items & #IT_KEY2)
-		{	
+		{
 			self.items = self.items - (self.items & #IT_KEY2);
 			newmis.items = #IT_KEY2;
 			if (world.worldtype == 0)
@@ -89,11 +91,11 @@ void() DropKey =
 
 /*==================================
 	DoorShouldOpen
-	
+
 This function is only for key doors in
 coop mode 2.
 
-It returns true	if all players have keyed
+It returns true if all players have keyed
 the door.
 ==================================*/
 

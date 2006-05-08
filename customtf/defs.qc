@@ -1,6 +1,14 @@
 /*
 ==============================================================================
 
+defs.qc
+
+==============================================================================
+*/
+
+/*
+==============================================================================
+
 			SOURCE FOR GLOBALVARS_T C STRUCTURE
 
 ==============================================================================
@@ -2454,6 +2462,7 @@ float old_grens; // Use old TF concussion grenades rather than the new uncheatab
 float spy_off;	// Spy class off/on
 float invis_only; // Spy invisible instead of color/skin changing
 float footsteps; //RJ MegaTF style footsteps
+float nofist; //RJ Air-Fist hater
 float allow_hook;	// Allow players to use the hook
 float jello;	//WK Jello water! If this is true, you bounce on water
 float light_damage; //WK Armor more expensive, damage at 75%

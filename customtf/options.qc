@@ -12,7 +12,7 @@ Defines for the compilable options within TF.
 #pragma DONT_COMPILE_THIS_FILE
 
 //#define COOP_MODE
-#define NET_SERVER
+//#define NET_SERVER //do this in qw
 //#define BOTS			// doesn't do anything yet
 //#define DEMO_STUFF
 #define STATUSBAR
@@ -20,8 +20,10 @@ Defines for the compilable options within TF.
 
 #ifdef QUAKE_WORLD
 	//#pragma PROGS_DAT "../qwprogs.dat"
-
+	#ifdef COOP_MODE
 	#undef COOP_MODE
+	#endif
+
 	#define NET_SERVER
 #endif
 
@@ -34,7 +36,7 @@ Defines for the compilable options within TF.
 	#define MAX_WORLD_AMMOBOXES	 6		// This is divided between teams - this is the most you should have on a net server
 	#define GR_TYPE_MIRV_NO		 4	 	// Number of Mirvs a Mirv Grenade breaks into
 	#define GR_TYPE_NAPALM_NO	 8 	 	// Number of flames napalm grenade breaks into (unused if net server)
-	#define MEDIKIT_IS_BIOWEAPON 	 	// WK THIS MUST BE DEFINED OR SHIT BREAKS NOW
+	//#define MEDIKIT_IS_BIOWEAPON 	 	// WK THIS MUST BE DEFINED OR SHIT BREAKS NOW //RJ then lets not put it in an ifdef
 	//#define RESTORE_DEAD_SPEEDS     	// If defined, we restore the cl_speeds
 #else
 	// LAN options
@@ -74,11 +76,7 @@ Defines for the compilable options within TF.
 #define MEDIKIT_IS_BIOWEAPON 	 	// WK THIS MUST BE DEFINED OR SHIT BREAKS NOW
 
 #ifdef QUAKE_WORLD
-	#undef COOP_MODE
-	//#undef NET_SERVER
 	#undef PLAYER_PUSHING
-
-	#define NET_SERVER
 #endif
 
 // Message Options

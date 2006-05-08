@@ -512,7 +512,8 @@ void(float inp) Menu_Demon_Input =
 	}
 	if (inp == 1 && soul != world) // Come here!
 	{
-		if (!IsMonster(soul)) return;
+		if (!IsMonster(soul))
+			return;
 
 		soul.penance_time = 1;
 
@@ -552,11 +553,11 @@ void(float inp) Menu_Demon_Input =
 	}
 	else if (inp == 2 && soul != world) // patrol!
 	{
-		if (!IsMonster(soul)) return;
+		if (!IsMonster(soul))
+			return;
 
 		soul.penance_time = 2;
 
-		local string st;
 		st=GetMonsterName(soul);
 
 		if (soul.enemy != world)
@@ -593,11 +594,11 @@ void(float inp) Menu_Demon_Input =
 	}
 	else if (inp == 3 && soul != world) // stop there!
 	{
-		if (!IsMonster(soul)) return;
+		if (!IsMonster(soul))
+			return;
 
 		soul.penance_time = 0;
 
-		local string st;
 		st=GetMonsterName(soul);
 
 		if (soul.enemy != world)
@@ -624,7 +625,7 @@ void(float inp) Menu_Demon_Input =
 		if (soul != world)
 		{
 			//if (soul.health < #MINHP_TOKILL_MONSTERS)
-			if (soul.health = 0) //pwn- changed this from < #MINHP_TOKILL_MONSTERS, was making problems.
+			if (soul.health == 0) //pwn- changed this from < #MINHP_TOKILL_MONSTERS, was making problems.
 			{
 				sprint(self,#PRINT_HIGH,"The mystic link between you and ");
 				sprint(self,#PRINT_HIGH,soul.netname);
@@ -807,7 +808,7 @@ void(float inp) Menu_Demon_Input =
 //================================================================
 // Returns TRUE if the given "name type" is free for given player
 
-void(entity player, float nametype) IsNameTypeFree =
+float(entity player, float nametype) IsNameTypeFree =
 {
 	if (player.demon_one)
 		if (player.demon_one.increase_team2 == nametype)
@@ -2244,7 +2245,6 @@ void (entity attacker) WarlockKnifeKill =
 			bprint(#PRINT_HIGH,attacker.netname);
 			bprint(#PRINT_HIGH," has collected #WARLOCK_BONUS2 hearts!!\n");
 
-			local float extras;
 			extras = GetJobExtras(attacker);
 
 			if (extras == 0) // this only would happen by toggling extras_mode but..

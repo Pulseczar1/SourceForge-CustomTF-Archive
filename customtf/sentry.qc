@@ -442,8 +442,6 @@ float() Sentry_FindTarget =
 	//if no player or monsters found lets scan for possible holo fakes.. (if has improved circuits no scan for holos)
 	if (!gotone && !(self.all_active & #IMPROVED_FOUR))
 	{
-		local entity te;
-
 		te = find(world, classname,"holo");
 
 		while (te != world && gotone == #FALSE)

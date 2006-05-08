@@ -2076,7 +2076,7 @@ void() TeamFortress_SetEquipment =
 	if (self.tf_items & #NIT_SCUBA) //WK We're a scuba commando!
 	{
 		self.items = self.items | #IT_SUIT;
-	 	self.rad_time = 1;
+		self.rad_time = 1;
 		self.tfstate = self.tfstate | #TFSTATE_RADSUIT;
 		self.radsuit_finished = time + 666;
 	}
@@ -2097,7 +2097,7 @@ void() TeamFortress_SetEquipment =
 		// Set their color
 		stuffcmd(self, "color ");
 		st = ftos(TeamFortress_TeamGetColor(self.team_no) - 1);
-		 //- OfN - Nice colors
+		//- OfN - Nice colors
 		if (nicecolors==1) st =TeamGetNiceColor(self.team_no);
 
 		stuffcmd(self, st);
@@ -2223,7 +2223,15 @@ void() TeamFortress_SetEquipment =
 	}
 	else if ( self.playerclass == #PC_SCOUT )
 	{
-		self.weapons_carried = self.weapons_carried | #PC_SCOUT_WEAPONS;
+		if (nofist == 1 || nofist == 3)
+		{
+			self.weapons_carried = self.weapons_carried | #PC_SCOUT_WEAPONS;
+			self.weapons_carried = self.weapons_carried - (self.weapons_carried & #WEAP_AIRF);
+		}
+		else
+		{
+			self.weapons_carried = self.weapons_carried | #PC_SCOUT_WEAPONS;
+		}
 		self.ammo_rockets = #PC_SCOUT_INITAMMO_ROCKET;
 		self.ammo_nails = #PC_SCOUT_INITAMMO_NAIL;
 		self.ammo_shells = #PC_SCOUT_INITAMMO_SHOT;
@@ -2237,7 +2245,15 @@ void() TeamFortress_SetEquipment =
 		self.no_grenades_2 = #PC_SCOUT_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_SCOUT_GRENADE_TYPE_1;
 		self.tp_grenades_2 = #PC_SCOUT_GRENADE_TYPE_2;
-		self.tf_items = #PC_SCOUT_TF_ITEMS;
+		if (nofist == 2 || nofist == 3)
+		{
+			self.tf_items = #PC_SCOUT_TF_ITEMS;
+			self.tf_items = self.tf_items - (self.tf_items & #NIT_HOVER_BOOTS | #NIT_HOVER_BOOTS_UPGRADE);
+		}
+		else
+		{
+			self.tf_items = #PC_SCOUT_TF_ITEMS;
+		}
 		self.cutf_items = #PC_SCOUT_CUTFITEMS;
 		self.job = self.job | #PC_SCOUT_JOB;
 
@@ -2453,7 +2469,15 @@ void() TeamFortress_SetEquipment =
 		self.no_grenades_2 = #PC_PYRO_GRENADE_INIT_2;
 		self.tp_grenades_1 = #PC_PYRO_GRENADE_TYPE_1;
 		self.tp_grenades_2 = #PC_PYRO_GRENADE_TYPE_2;
-		self.tf_items = #PC_PYRO_TF_ITEMS;
+		if (nofist == 2 || nofist == 3)
+		{
+			self.tf_items = #PC_PYRO_TF_ITEMS;
+			self.tf_items = self.tf_items - (self.tf_items & #NIT_HOVER_BOOTS | #NIT_HOVER_BOOTS_UPGRADE);
+		}
+		else
+		{
+			self.tf_items = #PC_PYRO_TF_ITEMS;
+		}
 		self.job = self.job | #PC_PYRO_JOB;
 
 		self.armorclass = self.armorclass | #PC_PYRO_INITARMORCLASS;
@@ -2610,8 +2634,8 @@ void() TeamFortress_SetEquipment =
 		setmodel(self, string_null);
 	}
 
-	/*if (stock_mode==1) //- OfN - Stock classes don't get a job when stock_mode is 1
-		self.job=0;*/
+	if (stock_mode==1) //- OfN - Stock classes don't get a job when stock_mode is 1
+		self.job=0;
 
 	//- OfN - Set initial grens number
 	self.no_grenades_1 = GetMaxGrens(self,1);
@@ -2769,7 +2793,7 @@ string(float pc) TeamFortress_GetJobName =
 	else if ( pc & #JOB_BERSERKER )
 		return "Nordish Berserker";
 	else if ( pc & #JOB_GUERILLA )
-		return "Terrorist";
+		return "Guerilla";
 	else if ( pc & #JOB_JUDOKA )
 		return "Judo Black Belt";
 	else if ( pc & #JOB_ARMY )
@@ -3419,7 +3443,7 @@ float (float tno) num_team_ammoboxes =
 // Remove enough old ammoboxes to bring the count down to the max level
 void(float tno) RemoveOldAmmobox =
 {
-	local entity old;
+	local entity old1; //RJ appended 1 to fix warning of names == a global
 	local float index;
 
 	if (tno != 0)
@@ -3432,29 +3456,29 @@ void(float tno) RemoveOldAmmobox =
 		index = num_world_ammoboxes - #MAX_WORLD_AMMOBOXES;
 	}
 
-	old = find(world, classname, "ammobox");
+	old1 = find(world, classname, "ammobox");
 	while (index > 0)
 	{
-		if (old == world)
+		if (old1 == world)
 		{
 			//RPrint("*** ERROR: RemoveOldAmmobox. ***\n");
 			//RPrint("*** Shaka thought he fixed this ***\n");
 			num_world_ammoboxes = num_world_ammoboxes - 1;
-			decrement_team_ammoboxes(old.team_no);
+			decrement_team_ammoboxes(old1.team_no);
 			return;
 		}
 
-		if (old.team_no == tno || tno == 0)
+		if (old1.team_no == tno || tno == 0)
 		{
-			old.think = SUB_Remove;
-			old.nextthink = time + 0.1;
+			old1.think = SUB_Remove;
+			old1.nextthink = time + 0.1;
 			index = index - 1;
 
 			num_world_ammoboxes = num_world_ammoboxes - 1;
-			decrement_team_ammoboxes(old.team_no);
+			decrement_team_ammoboxes(old1.team_no);
 		}
 
-		old = find(old, classname, "ammobox");
+		old1 = find(old1, classname, "ammobox");
 	}
 };
 

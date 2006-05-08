@@ -715,7 +715,6 @@ void(entity pl) RefreshStatusBar3 =
 				s2 = strcat(s2,": ");
 			else
 			{
-				local string tmp;
 				tmp = ftos(targnum+1);
 				tmp = colstr(tmp,#COLSTR_NUMBER);
 
@@ -880,7 +879,6 @@ string(entity pl) ClipSizeToString100 =
 	} //---// CLIP EXTENDER
 	else
 	{
-		local float num;
 
 		if (pl.current_weapon == #WEAP_SHOTGUN)
 		{
