@@ -195,8 +195,6 @@ float GetCircleWave (float inputnum)
 
 		return sqrt(1- (inputnum*inputnum));
 	}
-
-	return 0;
 }
 
 float GetLinearWave (float inputnum)
@@ -211,8 +209,6 @@ float GetLinearWave (float inputnum)
 		return - (inputnum-0.5)/0.25;
 	else
 		return -1 + (inputnum-0.75)/0.25;
-
-	return 0;
 }
 
 #define M_PI 3.1415926535897932384626433832795
