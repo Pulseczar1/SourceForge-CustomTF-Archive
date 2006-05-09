@@ -697,6 +697,7 @@ entity(float ino) Finditem =
 	st = ftos(ino);
 	RPrint(st);
 	RPrint(".\n");
+	return world;
 };
 
 //=========================================================================
@@ -723,6 +724,7 @@ entity(float gno) Findgoal =
 	st = ftos(gno);
 	RPrint(st);
 	RPrint(".\n");
+	return world;
 };
 
 //=========================================================================
@@ -747,6 +749,7 @@ entity(float gno) Findteamspawn =
 	st = ftos(gno);
 	RPrint(st);
 	RPrint(".\n");
+	return world;
 };
 
 //=========================================================================

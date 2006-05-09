@@ -630,6 +630,7 @@ entity() FindIntermission =
 
 
 	objerror ("FindIntermission: no spot");
+	return world;
 };
 
 /*===========================

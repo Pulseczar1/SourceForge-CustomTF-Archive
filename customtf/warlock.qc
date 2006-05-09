@@ -2781,7 +2781,7 @@ void(entity player, float slot) ResetSlotPointer =
 //============================================================================
 // Called on AI_Check_Contents to perform regeneration when needed
 
-float(entity ai_entity) AI_Regenerate =
+void(entity ai_entity) AI_Regenerate =
 {
 	local float heal, rate;
 	heal = 3;

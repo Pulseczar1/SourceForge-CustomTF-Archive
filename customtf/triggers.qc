@@ -9,7 +9,8 @@ Triggers.QC
 float(entity tester) IsBuilding;
 void(entity foo,float bar) makeImmune;
 
-entity stemp, otemp, s, old;
+// entity stemp, otemp, s, old;
+entity s;
 
 
 void() trigger_reactivate =

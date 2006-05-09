@@ -1501,6 +1501,7 @@ void() EarthquakeApply_think =
 	local vector movevec;
 
 	// shake all players in same direction
+	movevec = #VEC_ORIGIN; // shut the damn compiler up about movevec never being referred to directly
 	movevec_x = crandom()* #EARTHQUAKE_PUSHINTENSITY;
 	movevec_y = crandom()* #EARTHQUAKE_PUSHINTENSITY;
 

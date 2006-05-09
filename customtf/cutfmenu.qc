@@ -2887,6 +2887,9 @@ float() SpentOnJob =
 		return #COST_MARTYR;
 	if (self.job & #JOB_CRUSADER)
 		return #COST_CRUSADER;
+
+	// should never get here
+	return 0;
 };
 
 string(float itemnum, string itemdesc,float cost,float grentype) ConstructMenuGrenStr =

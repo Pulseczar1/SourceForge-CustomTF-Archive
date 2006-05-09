@@ -70,7 +70,7 @@ walkmove(angle, speed) primitive is all or nothing
 //
 // globals
 //
-float current_yaw;
+//float current_yaw;
 float enemy_yaw, enemy_vis;
 float enemy_infront, enemy_range;
 
@@ -79,8 +79,8 @@ float enemy_infront, enemy_range;
 // as the sight target the next frame so that monsters near that one
 // will wake up even if they wouldn't have noticed the player
 //
-entity sight_entity;
-float sight_entity_time;
+//entity sight_entity;
+//float sight_entity_time;
 
 float(float v) anglemod =
 {
@@ -96,7 +96,7 @@ float(entity test) AI_Check_Contents =
 	local float contval;
 
 	if (test.health <= 0)
-		return;
+		return #FALSE;
 
 	contval = pointcontents(test.origin);
 
@@ -805,7 +805,7 @@ float() FindTarget =
 	// spawn flag prior to the ambush flag, and I forgot about it, so the second
 	// spawn flag works as well
 	if (!AI_Check_Contents(self))
-		return; //CH check if in lava
+		return #FALSE; //CH check if in lava
 	/* if (sight_entity_time >= time - 0.1 && !(self.spawnflags & 3) )
 	{
 		client = sight_entity;
@@ -1139,7 +1139,7 @@ float() ShamCheckAttack;
 float() CheckAnyAttack =
 {
 	if (!enemy_vis)
-		return;
+		return 0;
 	if (self.classname == "monster_demon1")
 		return DemonCheckAttack ();
 	/* else if (self.classname == "monster_army")

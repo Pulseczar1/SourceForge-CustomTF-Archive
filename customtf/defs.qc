@@ -478,7 +478,7 @@ float	gameover;		// set when a rule exits
 #endif
 
 string	string_null;	// null string, nothing should be held here
-float		empty_float;
+//float		empty_float;
 vector	vector_null; //CH empty vector
 
 entity	activator;		// the entity that activated a trigger or brush
@@ -1194,7 +1194,7 @@ float	intermission_running; // OfN - moved from client.qc
 
 float sniper_factor;
 
-float isAGR; // PZ - for AGR mode
+//float isAGR; // PZ - for AGR mode
 
 float no_punish;
 float no_votemap;

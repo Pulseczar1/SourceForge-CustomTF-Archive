@@ -1332,7 +1332,7 @@ float(float tno, entity ignore, string st) teamsprint =
 {
 	// Don't do teamprints in DM
 	if (tno == 0)
-		return;
+		return #FALSE;
 
 	local entity te;
 
@@ -1346,4 +1346,6 @@ float(float tno, entity ignore, string st) teamsprint =
 
 		te = find(te, classname, "player");
 	}
+
+	return #TRUE;
 };
