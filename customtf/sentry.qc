@@ -825,7 +825,7 @@ float() Sentry_Fire =
 			WriteCoord (#MSG_BROADCAST, self.origin_z);
 			if (self.tf_items & #NIT_TURRET)
 				self.origin_z = self.origin_z + 40;
-			return;
+			return #FALSE;
 		}
 
 		newmis = spawn ();

@@ -1213,7 +1213,7 @@ void() KracGrenadeTouch =
 
 void() KracGrenadeExplode =
 {
-	local entity te//,newmis; //RJ hrmm
+	local entity te;//,newmis; //RJ hrmm
 	local entity oldself;
 	local float len, damg;
 

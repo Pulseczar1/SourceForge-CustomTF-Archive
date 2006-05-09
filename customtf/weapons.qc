@@ -141,7 +141,7 @@ void() TF_MovePlayer;
 
 //WK CustomTF Functions
 void() custom_demon_precache;
-void() custom_lay;
+//void() custom_lay;
 //void() CameraSwitchView;
 
 //CH dropitems

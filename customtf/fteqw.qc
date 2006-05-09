@@ -360,7 +360,7 @@ void() FigureOutClientVersion =
 var void() RealClientConnect;
 void() fteClientConnect =
 {
-	local float f;
+	//local float f;
 
 	FigureOutClientVersion();
 
@@ -457,5 +457,5 @@ void(string in) SV_ParseClientCommand =
 };
 
 //NQ-style rules.
-.float items2;
-var .float runes_owned = items2;
+//.float items2;
+//var .float runes_owned = items2;

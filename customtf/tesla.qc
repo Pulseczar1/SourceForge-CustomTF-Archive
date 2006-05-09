@@ -613,7 +613,7 @@ float() Tesla_Fire =
 		T_RadiusDamage(self, self, damg, world);
 		if (self.tf_items & #NIT_TURRET) self.origin_z = self.origin_z + 40; // 40
 		//else self.origin_z = self.origin_z - 24;
-		return;
+		return #FALSE;
 	}
 
 	deathmsg = #DMSG_TESLA;

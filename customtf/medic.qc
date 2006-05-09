@@ -432,4 +432,6 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 
 		//OfN - return #TRUE;
 	}
+
+	return #TRUE;
 };
