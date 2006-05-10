@@ -24,6 +24,7 @@ float (entity thing) canairpush =
 	{
 		#ifdef AIRFIST_DONT_PUSH_TEAMMATES
 		if (!Teammate(self.team_no,thing.team_no)) //WARNING: using self
+		if (!Teammate(self.team_no,thing.undercover_team)) // wfm: Fix airfist spy detection
 		#endif
 
 		return #TRUE;

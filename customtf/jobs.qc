@@ -849,7 +849,8 @@ void() JobJudoka =
 		return;
 	}
 
-	if (trace_ent.classname == "player" && !Teammate(trace_ent.team_no, self.team_no) && trace_ent.playerclass != #PC_UNDEFINED && !(trace_ent.invincible_finished > time))
+	// wfm: modded to remove judo spy detection
+	if (trace_ent.classname == "player" && !Teammate(trace_ent.team_no, self.team_no) && !Teammate(self.team_no, trace_ent.undercover_team) && trace_ent.playerclass != #PC_UNDEFINED && !(trace_ent.invincible_finished > time))
 	{
 		if (self.is_undercover) //Taking someone's weapon should give you away
 			Spy_RemoveDisguise(self);
