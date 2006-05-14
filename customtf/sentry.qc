@@ -205,6 +205,8 @@ void() Sentry_Rotate =
 		sound (self, #CHAN_ITEM, "weapons/trr2lost.wav", 0.25, #ATTN_NORM);
 	}
 
+	self.angles_x = 0;	// sentry face forward when not attacking
+
 	#ifdef SENTRY_SMOOTHROTATION
 
 	if (self.heat > #SENTRY_ROTATIONSTEPS - 1)
@@ -729,6 +731,7 @@ float() Sentry_Fire =
 
 	if (self.ammo_shells > 0)
 	{
+		self.angles = vectoangles (dir);		// look up and down at enemy
 		//WK muzzleflash();
 		self.effects = self.effects | #EF_DIMLIGHT;
 		/*if (self.tf_items & #NIT_TURRET)
