@@ -983,17 +983,17 @@ void() PrintProzacMOTD =
 
 	self.#cprint_fx = self.#cprint_fx + 1;
 };
-
+//pwn- added the 'cmd vote' part in for good measure.
 void() PrintProzacIntro =
 {
 	if (!no_votemap && !no_punish)
-		sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using the \{162}VoteMap\{162} and \{162}Punish\{162} aliases.\n");
+		sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using the \{162}VoteMap\{162} and \{162}Punish\{162} aliases. For more vote commands use \{162}cmd vote\{162}.\n");
 	else
 	{
 		if (!no_punish)
-			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}VoteMap\{162} alias.\n");
+			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}VoteMap\{162} alias. For more vote commands use \{162}cmd vote\{162}.\n");
 		else if (!no_votemap)
-			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}Punish\{162} alias.\n");
+			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}Punish\{162} alias. For more vote commands use \{162}cmd vote\{162}.\n");
 	}
 
 	local string st;
