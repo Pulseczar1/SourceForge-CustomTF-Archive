@@ -315,21 +315,21 @@ void() Menu_VoteMap =
 			keyst = strcat(color," \{219}playing\{221}");
 		color = keyst;
 	}
-	else
+	else //pwn- I changed these to classifications (ie, fragfest maps and such). it used to say Available Maps
 		color = keyst;
 	paddedstr = padstr(color,18);
 	if (self.goal_state == 0)
-		st1 = strcat("\sAvaliable Maps\s: \{168}page 1\{175}6\{169}\n\n\1.. ",paddedstr);
+		st1 = strcat("\sMaps With Flags\s: \{168}page 1\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 1)
-		st1 = strcat("\sAvaliable Maps\s: \{168}page 2\{175}6\{169}\n\n\1.. ",paddedstr);
+		st1 = strcat("\sFragfest Maps\s: \{168}page 2\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 2)
-		st1 = strcat("\sAvaliable Maps\s: \{168}page 3\{175}6\{169}\n\n\1.. ",paddedstr);
+		st1 = strcat("\sSpecialist Maps\s: \{168}page 3\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 3)
-		st1 = strcat("\sAvaliable Maps\s: \{168}page 4\{175}6\{169}\n\n\1.. ",paddedstr);
+		st1 = strcat("\sTraining Maps\s: \{168}page 4\{175}6\{169}\n\n\1.. ",paddedstr);
 	else if (self.goal_state == 4)
-		st1 = strcat("\sAvaliable Maps\s: \{168}page 5\{175}6\{169}\n\n\1.. ",paddedstr);
+		st1 = strcat("\sEscape or Civ Maps\s: \{168}page 5\{175}6\{169}\n\n\1.. ",paddedstr);
 	else
-		st1 = strcat("\sAvaliable Maps\s: \{168}page 6\{175}6\{169}\n\n\1.. ",paddedstr);
+		st1 = strcat("\sOther Maps\s: \{168}page 6\{175}6\{169}\n\n\1.. ",paddedstr);
 
 	keyst = GetMapString(self.goal_state*6+2);
 	if (mapname == keyst)

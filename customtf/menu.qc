@@ -81,7 +81,7 @@ void(entity pl, string s1, string s2, string s3, string s4, string s5, string s6
 #define MENU_REFRESH_RATE 			25
 
 //RJ - from prozac.qc
-#define MSG_OFTEN_CUTFVERSION strcat("Running progs built \{16}", #__DATE__)
+#define MSG_OFTEN_CUTFVERSION strcat("Running progs built \{16}", #__DATE__, "\{17}\n")
 
 #define MSG_INFO "\nType \{162}cmd help\{162} to see additional client commands.\n"
 
@@ -338,8 +338,7 @@ void() Player_Menu =
 
 	// determine which menu to display
 	// WK - Check to see if the custom class menu is overriding us
-	if ((self.done_custom & #CUSTOM_BUILDING) && !(self.done_custom & #CUSTOM_OVERRIDE) && self.playerclass == #PC_CUSTOM)
-	{
+	if ((self.done_custom & #CUSTOM_BUILDING) && !(self.done_custom & #CUSTOM_OVERRIDE) && self.playerclass == #PC_CUSTOM) {
 		self.current_menu = #MENU_PRIMARY_WEAPON;
 		self.done_custom = self.done_custom | #CUSTOM_OVERRIDE;
 	}
@@ -532,7 +531,7 @@ void() Player_Menu =
 	}
 	else if (self.current_menu == #MENU_ARMOR)
 	{
-		Menu_Armor();
+			Menu_Armor();
 	}
 	else if (self.current_menu == #MENU_SPECIAL)
 	{
@@ -642,7 +641,7 @@ void() Menu_Team =
 	else if (number_of_teams == 3)
 		CenterPrint(self, "\{157}\{158}\{159} \sChoose Your Team\s \{157}\{158}\{159}\n\n\1.. Team One  \n\2.. Team Two  \n\3.. Team Three\n              \n\n\5.. \sAuto Team\s \n");
 	else // if (number_of_teams == 4)
-		CenterPrint(self, "\{157}\{158}\{159} \sChoose Your Team\s \{157}\{158}\{159}\n\n\1.. Team One  \n\2.. Team Two  \n\3.. Team Three\n\4.. Team Four \n\n\5.. \sAuto Team\s \n");
+		CenterPrint(self, "\{157}\{158}\{159} \sChoose Your Team\s \{157}\{158}\{159}\n\n\1.. Team One  \n\2.. Team Two  \n\3.. Team Three\n.. Team Four \n\n\5.. \sAuto Team\s \n");
 };
 
 void(float inp) Menu_Team_Input =
@@ -983,27 +982,20 @@ void() PrintProzacMOTD =
 
 	self.#cprint_fx = self.#cprint_fx + 1;
 };
-
+//pwn- added the 'cmd vote' part in for good measure.
 void() PrintProzacIntro =
 {
 	if (!no_votemap && !no_punish)
-		sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using the \{162}VoteMap\{162} and \{162}Punish\{162} aliases.\n");
+		sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using the \{162}VoteMap\{162} and \{162}Punish\{162} aliases. For more vote commands use \{162}cmd vote\{162}.\n");
 	else
 	{
 		if (!no_punish)
-			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}VoteMap\{162} alias.\n");
+			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}VoteMap\{162} alias. For more vote commands use \{162}cmd vote\{162}.\n");
 		else if (!no_votemap)
-			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}Punish\{162} alias.\n");
+			sprint(self,#PRINT_HIGH,"\nVoting\{141} You can issue a vote by using \{162}Punish\{162} alias. For more vote commands use \{162}cmd vote\{162}.\n");
 	}
 
-	local string st;
-	st = strcat(#MSG_INFO,"\n");
-	st = strcat(st,#MSG_OFTEN_CUTFVERSION);
-	st = strcat(st,"\{17}\n");
-	st = strcat(st,"\n\{29}\{30}\{30}\{30}\{31} ");
-	st = strcat(st,#MSG_CUTFVERSION);
-	st = strcat(st," \{29}\{30}\{30}\{30}\{31}\n       \sInformation Homepage\s:\n  http:\s//\swww\s.\scustomtf\s.\scom\s/\sforums\n\{29}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{31}\n\n");
-	sprint (self, #PRINT_HIGH, st);
+	sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n\{29}\{30}\{30}\{30}\{31} ", #MSG_CUTFVERSION, " \{29}\{30}\{30}\{30}\{31}\n       \sInformation Homepage\s:\n  http:\s//\swww\s.\scustomtf\s.\scom\s/\sforums\n\{29}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{30}\{31}\n\n");
 };
 
 void() Menu_Intro =
@@ -2348,9 +2340,9 @@ void() Menu_EngineerFix_SentryGun =
 	else
 	{
 		if (!(self.tf_items & #NIT_TURRET))
-			CenterPrint(self, "\sAction\s:                            \n\n\1.. Put Ammo into Sentry Gun    \n\2.. Repair Sentry Gun           \n                                \n\n\4.. \sNothing\s                     \n\n\5.. Dismantle Sentry Gun        \n\6.. Rotate Clockwise            \n\7.. Rotate Counter-Clockwise    \n");
+			CenterPrint(self, "\sAction\s:                            \n\n\1.. Put Ammo into Sentry Gun    \n\2.. Repair Sentry Gun           \n                                \n\n\4.. Îןפטימח                     \n\n\5.. Dismantle Sentry Gun        \n\6.. Rotate Clockwise            \n\7.. Rotate Counter-Clockwise    \n");
 		else
-			CenterPrint(self, "\sAction\s:                            \n\n\1.. Put Ammo into Sentry Gun    \n\2.. Repair Sentry Gun           \n                                \n\n\4.. \sNothing\s                     \n\n\5.. Dismantle Sentry Gun        \n\6.. Rotate Clockwise            \n\7.. Rotate Counter-Clockwise    \n\8.. Create Turret               \n");
+			CenterPrint(self, "\sAction\s:                            \n\n\1.. Put Ammo into Sentry Gun    \n\2.. Repair Sentry Gun           \n                                \n\n\4.. Îןפטימח                     \n\n\5.. Dismantle Sentry Gun        \n\6.. Rotate Clockwise            \n\7.. Rotate Counter-Clockwise    \n\8.. Create Turret               \n");
 	}
 };
 
@@ -3631,6 +3623,7 @@ void(float inp) Menu_Dispenser_Input =
 			{
 				anydone = #TRUE;
 				tmpstr = ftos(floor(am));
+				local string desc;
 				desc = GetGrenadeText(self.tp_grenades_2);
 				sprint(self,#PRINT_LOW,"You get ",tmpstr," ",desc," grenades.\n");
 			}
