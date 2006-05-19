@@ -1,23 +1,29 @@
 #pragma PROGS_DAT "../qwprogs.dat"
 
+// uncomment based on desired compile
+//#define COOP_MODE
+//#define BOTS			// doesn't do anything yet
+//#define DEMO_STUFF
+#define STATUSBAR
+#define FTE
+#define QUAKE_WORLD
+//#define REPLACEMENTS	//Half-Life, Quake2, Quake3 map semi-supprt
+
 #ifdef FTE
 // if FTE, use FTE style progs and use fteprogs.dat file name
-#pragma target fte
-#pragma PROGS_DAT fteprogs.dat
+//#pragma TARGET fte
+#define CSQC
 #endif
 
 // includes
-#include "preopdef.qc"
-#include "options.qc"
-#include "skins.qc"
 
 #include "defs.qc"
-#include "qw.qc"
-#include "debug.qc"
-
-#include "optimize.qc"
-
 #include "ofndefs.qc"
+#include "options.qc"
+
+#include "debug.qc"
+#include "subs.qc"
+#include "optimize.qc"
 #include "sprites.qc"
 
 #include "environ.qc"
@@ -28,7 +34,6 @@
 #include "sbitems.qc"
 #include "jobs.qc"
 #include "guerilla.qc"
-#include "subs.qc"
 #include "combat.qc"
 #include "items.qc"
 #include "admin.qc"
@@ -101,3 +106,7 @@
 #include "megatf.qc"
 
 #include "fteqw.qc"
+
+#ifdef REPLACEMENTS
+#include "replace.qc"
+#endif

@@ -13,22 +13,45 @@ pr_tempstringsize 256
 ==============================================================================
 */
 
-#define CSQC
-
 #define func(x) x = fte##x
 
-#ifdef CSQC
-#include "csqc_ss.qc"
-#endif
-
-
-void(vector v1, vector v2, float nomonsters, entity forent) ftebi_traceline = #16;
 #define MOVE_NORMAL 0
 #define MOVE_NOMONSTERS 1	//ignores bsp entities
 #define MOVE_MISSILE 2		//a little extra size on bbox entities
 #define MOVE_HITMODEL 4
 #define MOVE_TRIGGER 16
 #define MOVE_EVERYTHING 32
+
+#define M_PI 3.1415926535897932384626433832795
+
+#ifdef CSQC
+#include "csqc_ss.qc"
+#endif
+
+float frikfile_works;
+var void() RealClientConnect;
+
+void(vector v1, vector v2, float nomonsters, entity forent) ftebi_traceline = #16;
+//DP_QC_SINCOSSQRTPOW
+float(float) sin				= #60;
+//float(float) cos				= #61;
+float(float) sqrt				= #62;
+//float(float x, float y) pow	= #97;
+float(string extname) ftebi_checkextension		= #99;
+float(string fname, float mode) ftebi_fopen		= #110;
+void(float handle) ftebi_fclose					= #111;
+float(string st) ftestrlen						= #114;
+string(string s1, string s2) ftestrcat			= #115;
+string(string st) ftemakestr					= #118;
+void(string st) ftedelstr						= #119;
+string(float ccase, float calpha, float cnumeric, string s, ...) ftebi_strconv = #224;
+string(float len, string str, ...) ftebi_padstr	= #225;
+float(string st1, string st2) ftestrcasecmp		= #229;
+entity(string st) ftegetclient					= #241;
+//KRIMZON_SV_PARSECLIENTCOMMAND
+void(entity e, string s) ftebi_clientcommand	= #440;
+float(string s) ftebi_tokenize					= #441;
+string(float n) ftebi_argv						= #442;
 
 void (vector v1, vector v2, float nomonsters, entity forent) ftetraceline =
 {
@@ -62,15 +85,11 @@ float (entity client) ftegetuid =
 	return stof(infokey(client, "*userid"));
 };
 
-string(string s1, string s2) ftestrcat = #115;
-
-string(float len, string str, ...) ftebi_padstr = #225;
 string(string st, float len) ftepadstr =
 {	//swap the parameters (fte allows multiple combined strings)
 	return ftebi_padstr(len, st);
 };
 
-string(float ccase, float calpha, float cnumeric, string s, ...) ftebi_strconv = #224;
 string(string srcstr, float action) ftecolstr =
 {
 	switch(action)
@@ -91,21 +110,12 @@ string(string srcstr, float action) ftecolstr =
 	}
 };
 
-
-float(string st1, string st2) ftestrcasecmp = #229;
-float(string st) ftestrlen = #114;
-
-entity(string st) ftegetclient = #241;
-
 float(entity client) ftemutedtime =
 {
 	dprint("mutedtime is not supported in FTE\n");
 	return 0;
 };
 
-float frikfile_works;
-float(string fname, float mode) ftebi_fopen = #110;
-void(float handle) ftebi_fclose = #111;
 float(string st) ftevalidatefile =
 {
 	local float h;
@@ -127,17 +137,6 @@ void(entity client) fteputsaytime =
 {
 	dprint("putsaytime is not supported in FTE\n");
 };
-
-string(string st) ftemakestr = #118;
-void(string st) ftedelstr = #119;
-
-
-
-//DP_QC_SINCOSSQRTPOW
-float(float) sin = #60;
-//float(float) cos = #61;
-float(float) sqrt = #62;
-//float(float x, float y) pow = #97;
 
 /*
 ==============
@@ -210,8 +209,6 @@ float GetLinearWave (float inputnum)
 	else
 		return -1 + (inputnum-0.75)/0.25;
 }
-
-#define M_PI 3.1415926535897932384626433832795
 
 float(float inputnum, float modes, float minnum, float maxnum, float balance, float offset, float shape) ftegetwave =
 {
@@ -353,7 +350,6 @@ void() FigureOutClientVersion =
 	}
 };
 
-var void() RealClientConnect;
 void() fteClientConnect =
 {
 	//local float f;
@@ -366,9 +362,6 @@ void() fteClientConnect =
 	SetupPlayerForCSQC();
 #endif
 };
-
-
-float(string extname) ftebi_checkextension = #99;
 
 //fteqwsv calls this function at map start, so it's a nice easy autodetection.
 //in an ideal world, for maximum portability, you'd rename this, and call it from worldspawn (note that the renaming is important, as this can only be called once)
@@ -431,9 +424,6 @@ void() init =
 };
 
 //KRIMZON_SV_PARSECLIENTCOMMAND
-void(entity e, string s) ftebi_clientcommand = #440;
-float(string s) ftebi_tokenize = #441;
-string(float n) ftebi_argv = #442;
 void(string in) SV_ParseClientCommand =
 {
 	float argcount;

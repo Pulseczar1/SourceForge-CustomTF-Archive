@@ -128,9 +128,6 @@ megahealth will add 100 health, then
 rot you down to your maximum health limit,
 one point per second.
 */
-
-#define H_ROTTEN	1
-#define H_MEGA	2
 .float	healamount, healtype;
 void() health_touch;
 void() item_megahealth_rot;

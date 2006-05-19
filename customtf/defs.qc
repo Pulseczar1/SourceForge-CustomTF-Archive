@@ -6,6 +6,11 @@ defs.qc
 ==============================================================================
 */
 
+#define FALSE 0
+#define TRUE  1
+#define OFF   0
+#define ON    1
+
 /*
 ==============================================================================
 
@@ -471,6 +476,10 @@ void end_sys_fields;			// flag for structure dumping
 #define CUSTOM_BUILDING		4  //Making a class
 #define CUSTOM_OVERRIDE		8  //Used internally by menu.qc
 #define CUSTOM_SELLING		16 //Person wants to sell his frags for money
+
+// heal defines
+#define H_ROTTEN	1
+#define H_MEGA		2
 
 
 #define MAX_HOVER_FUEL 5 //Boots will recharge up to this maximum
@@ -978,6 +987,21 @@ float(entity targ, entity inflictor) CanDamage;
 .float reload_laser_cannon;
 
 //----------------------------------------------//
+
+// Some of the toggleflags aren't used anymore, but the bits are still
+// there to provide compatability with old maps
+#define TFLAG_CLASS_PERSIST	1  		// Persistent Classes Bit
+#define TFLAG_CHEATCHECK	2 		// Cheatchecking Bit
+#define TFLAG_RESPAWNDELAY	4 		// RespawnDelay bit
+//#define TFLAG_UN			8		// NOT USED ANYMORE
+//#define TFLAG_UN2			16		// NOT USED ANYMORE
+//#define TFLAG_UN3			32		// NOT USED ANYMORE
+#define TFLAG_AUTOTEAM		64		// sets whether players are automatically placed in teams
+#define TFLAG_TEAMFRAGS		128		// Individual Frags, or Frags = TeamScore
+#define TFLAG_FIRSTENTRY	256		// Used to determine the first time toggleflags is set
+									// In a map. Cannot be toggled by players.
+#define TFLAG_SPYINVIS		512		// Spy invisible only
+#define TFLAG_GRAPPLE		1024	// Grapple on/off
 
 // TeamFortress State Flags
 .float 	tfstate;					  // State flags for TeamFortress
@@ -1842,6 +1866,65 @@ float		rj;					// Rocket Jump Modifier
 #define AT_SAVEEXPLOSION		4	// Blast	: Reduces explosion damage 15%
 #define AT_SAVEELECTRICITY		8	// Shock	: Reduces electricity damage by 15% // ceramic
 #define AT_SAVEFIRE				16	// Asbestos	: Reduces fire damage by 15%
+
+/*
+SKINS
+RJ- from  skins.qc
+
+ This file contains defines for the skins for each team.
+ The default is the same skins for all teams.
+
+ But, if you wish to have a clan battle, you can provide
+ different skins for each class for each team.
+ Edit this file to point to the correct skins, and recompile.
+
+ N.B. Make sure you have a \n on the end of each skin's name
+
+ These only work under QuakeWorld.
+*/
+
+#define TEAM1_SCOUT_SKIN	"tf_scout\n"
+#define TEAM1_SNIPER_SKIN	"tf_snipe\n"
+#define TEAM1_SOLDIER_SKIN	"tf_sold\n"
+#define TEAM1_DEMOMAN_SKIN	"tf_demo\n"
+#define TEAM1_MEDIC_SKIN	"tf_medic\n"
+#define TEAM1_HVYWEAP_SKIN	"tf_hwguy\n"
+#define TEAM1_PYRO_SKIN		"tf_pyro\n"
+#define TEAM1_SPY_SKIN		"tf_spy\n"
+#define TEAM1_ENGINEER_SKIN	"tf_eng\n"
+
+// Team 2 skins
+#define TEAM2_SCOUT_SKIN	"tf_scout\n"
+#define TEAM2_SNIPER_SKIN	"tf_snipe\n"
+#define TEAM2_SOLDIER_SKIN	"tf_sold\n"
+#define TEAM2_DEMOMAN_SKIN	"tf_demo\n"
+#define TEAM2_MEDIC_SKIN	"tf_medic\n"
+#define TEAM2_HVYWEAP_SKIN	"tf_hwguy\n"
+#define TEAM2_PYRO_SKIN		"tf_pyro\n"
+#define TEAM2_SPY_SKIN		"tf_spy\n"
+#define TEAM2_ENGINEER_SKIN	"tf_eng\n"
+
+// Team 3 skins
+#define TEAM3_SCOUT_SKIN	"tf_scout\n"
+#define TEAM3_SNIPER_SKIN	"tf_snipe\n"
+#define TEAM3_SOLDIER_SKIN	"tf_sold\n"
+#define TEAM3_DEMOMAN_SKIN	"tf_demo\n"
+#define TEAM3_MEDIC_SKIN	"tf_medic\n"
+#define TEAM3_HVYWEAP_SKIN	"tf_hwguy\n"
+#define TEAM3_PYRO_SKIN		"tf_pyro\n"
+#define TEAM3_SPY_SKIN		"tf_spy\n"
+#define TEAM3_ENGINEER_SKIN	"tf_eng\n"
+
+// Team 4 skins
+#define TEAM4_SCOUT_SKIN	"tf_scout\n"
+#define TEAM4_SNIPER_SKIN	"tf_snipe\n"
+#define TEAM4_SOLDIER_SKIN	"tf_sold\n"
+#define TEAM4_DEMOMAN_SKIN	"tf_demo\n"
+#define TEAM4_MEDIC_SKIN	"tf_medic\n"
+#define TEAM4_HVYWEAP_SKIN	"tf_hwguy\n"
+#define TEAM4_PYRO_SKIN		"tf_pyro\n"
+#define TEAM4_SPY_SKIN		"tf_spy\n"
+#define TEAM4_ENGINEER_SKIN	"tf_eng\n"
 
 /*==========================================================================*/
 /* TEAMFORTRESS CLASS DETAILS												*/
