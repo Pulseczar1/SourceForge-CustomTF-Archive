@@ -9,9 +9,6 @@ CustomTF 3.2.OfN
 ==============================================================================
 */
 
-// This file does not have any QuakeC, only preprocessor stuff, so..
-#pragma DONT_COMPILE_THIS_FILE
-
 //================================================================================//
 // MAIN BUILD CONFIGURATION  (un/comment any of the following lines to change it) //
 //________________________________________________________________________________//
