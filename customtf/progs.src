@@ -1,101 +1,103 @@
 #pragma PROGS_DAT "../qwprogs.dat"
-//#pragma target FTE
 
-#includelist
+#ifdef FTE
+// if FTE, use FTE style progs and use fteprogs.dat file name
+#pragma target fte
+#pragma PROGS_DAT fteprogs.dat
+#endif
 
-preopdef.qc
-options.qc
-skins.qc
+// includes
+#include "preopdef.qc"
+#include "options.qc"
+#include "skins.qc"
 
-defs.qc
-qw.qc
-debug.qc
+#include "defs.qc"
+#include "qw.qc"
+#include "debug.qc"
 
-optimize.qc
+#include "optimize.qc"
 
-ofndefs.qc
-sprites.qc
+#include "ofndefs.qc"
+#include "sprites.qc"
 
-environ.qc
+#include "environ.qc"
 
-menu.qc
-cutfmenu.qc
-custom.qc
-sbitems.qc
-jobs.qc
-guerilla.qc
-subs.qc
-combat.qc
-items.qc
-admin.qc
-weapons.qc
-world.qc
-status.qc
-client.qc
-obits.qc
-player.qc
-doors.qc
-buttons.qc
-triggers.qc
-tforttm.qc
-plats.qc
-misc.qc
-warlock.qc
-army.qc
-monsters.qc
-ai.qc
-fight.qc
+#include "menu.qc"
+#include "cutfmenu.qc"
+#include "custom.qc"
+#include "sbitems.qc"
+#include "jobs.qc"
+#include "guerilla.qc"
+#include "subs.qc"
+#include "combat.qc"
+#include "items.qc"
+#include "admin.qc"
+#include "weapons.qc"
+#include "world.qc"
+#include "status.qc"
+#include "client.qc"
+#include "obits.qc"
+#include "player.qc"
+#include "doors.qc"
+#include "buttons.qc"
+#include "triggers.qc"
+#include "tforttm.qc"
+#include "plats.qc"
+#include "misc.qc"
+#include "warlock.qc"
+#include "army.qc"
+#include "monsters.qc"
+#include "ai.qc"
+#include "fight.qc"
 
-demon.qc
-shambler.qc
-grunty.qc
-wizard.qc
-fish.qc
-gremlin.qc
+#include "demon.qc"
+#include "shambler.qc"
+#include "grunty.qc"
+#include "wizard.qc"
+#include "fish.qc"
+#include "gremlin.qc"
 
 
-haxxx.qc
+#include "haxxx.qc"
 
-sentry.qc
-tesla.qc
-field.qc
-security.qc
-teleport.qc
-boss.qc
+#include "sentry.qc"
+#include "tesla.qc"
+#include "field.qc"
+#include "security.qc"
+#include "teleport.qc"
+#include "boss.qc"
 
-airfist.qc
+#include "airfist.qc"
 
-pyro.qc
-spy.qc
-demoman.qc
-scout.qc
-engineer.qc
-tsoldier.qc
-sniper.qc
+#include "pyro.qc"
+#include "spy.qc"
+#include "demoman.qc"
+#include "scout.qc"
+#include "engineer.qc"
+#include "tsoldier.qc"
+#include "sniper.qc"
 
-speed.qc
+#include "speed.qc"
 
-tfort.qc
-tforthlp.qc
-tfortmap.qc
-hook.qc
-coop.qc
+#include "tfort.qc"
+#include "tforthlp.qc"
+#include "tfortmap.qc"
+#include "hook.qc"
+#include "coop.qc"
 
-actions.qc
+#include "actions.qc"
 
-medic.qc
-crusader.qc
-cpstuff.qc
-mtfents.qc
-rotate.qc
-spectate.qc
-ofnents.qc
+#include "medic.qc"
+#include "crusader.qc"
+#include "cpstuff.qc"
+#include "mtfents.qc"
+#include "rotate.qc"
+#include "spectate.qc"
+#include "ofnents.qc"
 
-vote.qc
-cmnd.qc
-runes.qc
-megatf.qc
+#include "vote.qc"
+#include "cmnd.qc"
+#include "runes.qc"
+#include "megatf.qc"
 
-fteqw.qc
-
-#endlist
+#include "fteqw.qc"
