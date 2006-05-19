@@ -105,7 +105,7 @@ void(entity who) MakeMeDebug =
 	{
 		sprint(debug_target,#PRINT_HIGH,"Debug: You are not the remote debugger anymore.\n");
 		sprint(debug_target,#PRINT_HIGH," New remote debugger is: '");
-		sprint(debug_target,who.netname);
+		sprint(debug_target,#PRINT_HIGH,who.netname);
 		sprint(debug_target,#PRINT_HIGH,"'\n");
 	}
 
