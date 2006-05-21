@@ -925,21 +925,21 @@ void() Menu_Health =
 	MenuResetCount();
 
 	l1 = eqstr(self.maxarmor, 75, 100,
-		"  \1.. 75 Green armor  ­  #COST_OHP1\n  \2.. 100 Yellow      ­  #COST_OHP2\n",
-		"\{11} \1.. 75 Green armor  ­  #COST_OHP1\n  \2.. 100 Yellow      ­  #COST_OHP2\n",
-		"  \1.. 75 Green armor  ­  #COST_OHP1\n\{11} \2.. 100 Yellow      ­  #COST_OHP2\n");
+		"  \1.. 75 Green armor    #COST_OHP1\n  \2.. 100 Yellow        #COST_OHP2\n",
+		"\{11} \1.. 75 Green armor    #COST_OHP1\n  \2.. 100 Yellow        #COST_OHP2\n",
+		"  \1.. 75 Green armor    #COST_OHP1\n\{11} \2.. 100 Yellow        #COST_OHP2\n");
 	
 	l2 = eqstr(self.maxarmor, 150, 200,
-		"  \3.. 150 Yellow      ­ #COST_OHP3\n  \4.. 200 Red         ­ #COST_OHP4\n",
-		"\{11} \3.. 150 Yellow      ­ #COST_OHP3\n  \4.. 200 Red         ­ #COST_OHP4\n",
-		"  \3.. 150 Yellow      ­ #COST_OHP3\n\{11} \4.. 200 Red         ­ #COST_OHP4\n");
+		"  \3.. 150 Yellow       #COST_OHP3\n  \4.. 200 Red          #COST_OHP4\n",
+		"\{11} \3.. 150 Yellow       #COST_OHP3\n  \4.. 200 Red          #COST_OHP4\n",
+		"  \3.. 150 Yellow       #COST_OHP3\n\{11} \4.. 200 Red          #COST_OHP4\n");
 	
-	l3 = "  \5.. 300 Red         ­ #COST_OHP5\n";
+	l3 = "  \5.. 300 Red          #COST_OHP5\n";
 	
 	if (self.maxarmor == 300 )
-		l3 = "\{11} \5.. 300 Red         ­ #COST_OHP5\n";
+		l3 = "\{11} \5.. 300 Red          #COST_OHP5\n";
 	
-	l4 =  "  \6.. +50 Health       ­ #COST_OHP6\n  \7.. +5 Health        ­  #COST_OHP7\n\8.. \sPrev\s    \n\9.. \sNext\s    \n\0.. \sDone\s!   \n";
+	l4 =  "  \6.. +50 Health        #COST_OHP6\n  \7.. +5 Health          #COST_OHP7\n\8.. \sPrev\s    \n\9.. \sNext\s    \n\0.. \sDone\s!   \n";
 
 	temp = ftos(self.money);
 	if (self.tfstate & #TFSTATE_NOTENOUGHMONEY)
@@ -1088,7 +1088,7 @@ void(float inp) Menu_Health_Input =
 				sprint(self,#PRINT_HIGH,"You reached maximum health allowed!\n");
 				CuTFMenuSound(#MENUSOUND_WRONG);
 
-				self.money = self.money + ((self.max_health - 50) / 5) * 100;
+				self.money = self.money + ((self.max_health - 50) / 5) * #COST_OHP7;
 				self.max_health = 50;
 				self.health = self.max_health;
 
@@ -1106,7 +1106,7 @@ void(float inp) Menu_Health_Input =
 			//     Buying #6 with <#7 money resets hp
 			if (self.money < #COST_OHP7 || self.max_health == #MAX_PLAYER_HP)
 			{
-				self.money = self.money + ((self.max_health - 50) / 5) * 100;
+				self.money = self.money + ((self.max_health - 50) / 5) * #COST_OHP7;
 				self.max_health = 50;
 				self.health = self.max_health;
 			}
@@ -1736,7 +1736,7 @@ void() Menu_Gren1 =
 	if (self.tfstate & #TFSTATE_NOTENOUGHMONEY)
 		temp = colstr(temp, #COLSTR_RED);
 
-	centerprint(self, "\{156}\{139}\{144} C\su\ss\st\so\sm\si\sz\se \sYourself\s \{145}\{139}\{156}\n\{139}\{156}\{144} Grenades ­ Combat  \{145}\{156}\{139}\n\n", str, temp, " dollars left\n");
+	centerprint(self, "\{156}\{139}\{144} C\su\ss\st\so\sm\si\sz\se \sYourself\s \{145}\{139}\{156}\n\{139}\{156}\{144} Grenades  Combat  \{145}\{156}\{139}\n\n", str, temp, " dollars left\n");
 };
 
 void(float inp) Menu_Gren1_Input =
@@ -1868,7 +1868,7 @@ void() Menu_Gren2 =
 	if (self.tfstate & #TFSTATE_NOTENOUGHMONEY)
 		temp = colstr(temp, #COLSTR_RED);
 
-	centerprint(self, "\{156}\{139}\{144} C\su\ss\st\so\sm\si\sz\se \sYourself\s \{145}\{139}\{156}\n\{139}\{156}\{144} Grenades ­ Utility \{145}\{156}\{139}\n\n", str, temp, " dollars left\n");
+	centerprint(self, "\{156}\{139}\{144} C\su\ss\st\so\sm\si\sz\se \sYourself\s \{145}\{139}\{156}\n\{139}\{156}\{144} Grenades  Utility \{145}\{156}\{139}\n\n", str, temp, " dollars left\n");
 };
 
 void(float inp) Menu_Gren2_Input =
