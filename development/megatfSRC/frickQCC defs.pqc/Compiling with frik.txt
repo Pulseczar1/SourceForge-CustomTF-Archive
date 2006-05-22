@@ -1,6 +1,0 @@
-Well here's the deal -- 
- Apparently FrikQCC hates my mod. The only way to compile with it is to replace the defs.pqc with the
-one in this folder, which may mess up strcat (I've only tried it in FTE Server so far). However, some
-servers may find a mod compiled with frik more "agreeable". I've cleaned up the code quite a bit, and
-will try to work out a lot of those warnings in future releases. Unless you have compatability issues
-though, I suggest using FTEQCCGUI. Peace,
