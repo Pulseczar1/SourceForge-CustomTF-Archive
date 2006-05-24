@@ -419,7 +419,7 @@ void() init =
 	#func(touchworld);
 
 	//RJ- a test to temp. fix menus as spike has previously suggested.
-	cvar_set("pr_tempstringcount","64");
+	//cvar_set("pr_tempstringcount","64");
 	//cvar_set("pr_tempstringsize","4096");
 };
 

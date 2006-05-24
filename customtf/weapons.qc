@@ -5803,11 +5803,9 @@ void() HIP_LaserTouch =
 	{
 		//other.deathtype = "hiplaser";
 		if (self.owner == other)
-		{
 			self.dmg = self.dmg / 2;
 
-			spawn_touchblood (self.dmg);
-		}
+		spawn_touchblood (self.dmg);
 
 		//- OfN laser hurts monsters a lot
 		if (IsMonsterNonArmy(other))
@@ -5815,12 +5813,10 @@ void() HIP_LaserTouch =
 
 		//- scrags get rapped by the laser
 		if (other.classname == "monster_wizard")
-		{
 			self.dmg = self.dmg * 2; // so.. this is *4
 
-			deathmsg = #DMSG_LASERCANNON;
-			TF_T_Damage (other, self, self.demon_one, self.dmg, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, #TF_TD_ELECTRICITY);
-		}
+		deathmsg = #DMSG_LASERCANNON;
+		TF_T_Damage (other, self, self.demon_one, self.dmg, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, #TF_TD_ELECTRICITY);
 	}
 	else if ((self.cnt >= 3) || (random()<0.15))
 	{
@@ -5842,29 +5838,23 @@ void() HIP_LaserTouch =
 		self.velocity = self.speed * self.velocity;
 		self.neworigin = self.velocity;
 		if (self.flags & #FL_ONGROUND)
-		{
-			self.flags = self.flags - #FL_ONGROUND;
-			//r = random();
-			//self.attack_finished = time + 7; //ofn - restart its life of 7 seconds
-		}
+		self.flags = self.flags - #FL_ONGROUND;
+		//r = random();
+		//self.attack_finished = time + 7; //ofn - restart its life of 7 seconds
 
 		if (other.classname == "force_field") //- OfN - Makes field explosion
-		{
 			FieldEvent(other,self.origin,self);
 			//FieldExplosion(other,self.origin,self);
 
-			sound (self, #CHAN_WEAPON, "weapons/laserric.wav", 1, #ATTN_STATIC);
-			return;
-		}
+		sound (self, #CHAN_WEAPON, "weapons/laserric.wav", 1, #ATTN_STATIC);
+		return;
 	}
 
 	if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-	{
 		FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
 
-		sound (self, #CHAN_WEAPON, "enforcer/enfstop.wav", 1, #ATTN_STATIC);
-		dremove(self);
-	}
+	sound (self, #CHAN_WEAPON, "enforcer/enfstop.wav", 1, #ATTN_STATIC);
+	dremove(self);
 };
 
 void() HIP_LaserThink =
@@ -5877,12 +5867,11 @@ void() HIP_LaserThink =
 		return;
 	}
 	if (self.flags & #FL_ONGROUND)
-	{
 		self.flags = self.flags - #FL_ONGROUND;
-		self.velocity = self.neworigin;
-		self.angles = vectoangles(self.velocity);
-		self.nextthink = time+0.15;
-	}
+
+	self.velocity = self.neworigin;
+	self.angles = vectoangles(self.velocity);
+	self.nextthink = time+0.15;
 };
 
 
