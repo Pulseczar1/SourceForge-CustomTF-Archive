@@ -205,6 +205,14 @@ void () Build_Chain =
 	self.goalentity.goalentity.goalentity = MakeLink();
 };
 
+// FTE_FixGrapple - fixes the grappling hook for FTE servers so that it will lock on when 
+//			  the player is on the ground (called after the tracelines)
+void () FTE_FixGrapple =
+{
+	if (trace_startsolid)
+		trace_fraction = 1;
+}
+
 //
 // Check_Overhead - Makes sure there is sufficient headroom above the player
 //                  so that setorigin doesn't stick them into a wall. I tried
@@ -226,30 +234,35 @@ float () Check_Overhead =
 	src = self.owner.origin - '0 0 24';
 	end = self.owner.origin - '0 0 24';
 	traceline (src, end, #TL_ANY_SOLID, self.owner);
+	FTE_FixGrapple();
 	if (trace_fraction != 1.0)
 		return #FALSE;
 
 	src = self.owner.origin - '0 0 24' - v_forward * 16;
 	end = self.owner.origin - '0 0 24' - v_forward * 16 + '0 0 58';
 	traceline (src, end, #TL_ANY_SOLID, self.owner);
+	FTE_FixGrapple();
 	if (trace_fraction != 1.0)
 		return #FALSE;
 
 	src = self.owner.origin - '0 0 24' + v_forward * 16;
 	end = self.owner.origin - '0 0 24' + v_forward * 16 + '0 0 58';
 	traceline (src, end, #TL_ANY_SOLID, self.owner);
+	FTE_FixGrapple();
 	if (trace_fraction != 1.0)
 		return #FALSE;
 
 	src = self.owner.origin - '0 0 24' - v_right * 16;
 	end = self.owner.origin - '0 0 24' - v_right * 16 + '0 0 58';
 	traceline (src, end, #TL_ANY_SOLID, self.owner);
+	FTE_FixGrapple();
 	if (trace_fraction != 1.0)
 		return #FALSE;
 
 	src = self.owner.origin - '0 0 24' + v_right * 16;
 	end = self.owner.origin - '0 0 24' + v_right * 16 + '0 0 58';
 	traceline (src, end, #TL_ANY_SOLID, self.owner);
+	FTE_FixGrapple();
 	if (trace_fraction != 1.0)
 		return #FALSE;
 
