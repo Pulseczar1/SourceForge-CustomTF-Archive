@@ -1698,8 +1698,12 @@ void(vector direction, float damage) FireSniperBullet =
 
 	ClearMultiDamage ();
 
-//		traceline (src, src + direction*4096, #TL_ANY_SOLID, self);
-	  traceline (src, src + direction*4096, MOVE_HITMODEL, self);
+#ifdef sniper_geo_check
+	traceline (src, src + direction*4096, MOVE_HITMODEL, self);
+#else
+	traceline (src, src + direction*4096, #TL_ANY_SOLID, self);
+#endif
+
 
 	if (trace_fraction != 1.0)
 	{
@@ -1737,8 +1741,11 @@ void() W_FireSniperRifle =
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	use_this = #FALSE;
-	//traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
+#ifdef sniper_geo_check
 	traceline (src, src + dir*8192, MOVE_HITMODEL, self);
+#else
+	traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
+#endif
 
 
 	if (trace_fraction != 1.0)
@@ -1758,8 +1765,11 @@ void() W_FireSniperRifle =
 	{
 		// aim, 'cause no entity in sights
 		dir = aim (self, 10000);	// this corrects the aiming slightly, for bad players
-		//traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
+#ifdef sniper_geo_check
 		traceline (src, src + dir*8192, MOVE_HITMODEL, self);
+#else
+		traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
+#endif
 	}
 
 	local float OTR;

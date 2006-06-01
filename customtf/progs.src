@@ -8,6 +8,7 @@
 #define FTE
 #define QUAKE_WORLD
 //#define REPLACEMENTS	//Half-Life, Quake2, Quake3 map semi-supprt
+//#define sniper_geo_check	// makes sniper rifle check against model geometry
 
 #ifdef FTE
 // if FTE, use FTE style progs and use fteprogs.dat file name
