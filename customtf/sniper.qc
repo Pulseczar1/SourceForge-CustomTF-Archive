@@ -180,7 +180,7 @@ void(float type) SniperSight_Create =
 	sight.nextthink = time + 0.05;
 
 	// Prevent theif snipers.
-	if (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE)
+	if (self.job & #JOB_THIEF && (self.job & #JOB_ACTIVE || self.job & #JOB_FULL_HIDE))
 		RevealThief(self,#FALSE);
 };
 
