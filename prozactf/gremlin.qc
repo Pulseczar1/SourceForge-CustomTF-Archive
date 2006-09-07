@@ -5,6 +5,8 @@ gremlin (from hipnotic mission pack)
 
 Modified by OfteN [cp] on 04/07/2004
 
+FiX0R3D
+
 ==============================================================================
 
 Usage of entity fields:
@@ -12,7 +14,7 @@ Usage of entity fields:
 
 For the gremlin entity:
 
-ORIGINAL FIELD   CURRENT FIELD
+ORIGINAL FIELD   CURRENT FIELD(and so much better, too!)
 
 .stoleweapon -> .has_fieldgen
 .gorging     -> .has_camera TOFIX: Used on targets for gorging (conflict with camera flag)
@@ -84,6 +86,210 @@ void (entity srcent, entity destent) SUB_CopyEntity;
 
 void(entity ent) MuzzleFlash;
 
+
+/*
+=======================
+UnstickRun.
+Sometimes the gremlin gets stuck while running.
+This should spectacularly unstick it.
+=======================
+*/
+void() UnstickRun =
+{
+ if(!checkbottom(self))
+ {
+  self.velocity_z = -400;
+  self.velocity_x = random()*350;
+  self.velocity_y = random()*350;
+ }
+};
+
+
+
+/*
+=======================
+SafeThink
+The think ruitine for WaterSafe.
+=======================
+*/
+void() SafeThink =
+{
+ if((self.owner.health <= 0) || (!self.owner))
+ {
+  remove(self);
+  return;
+ }
+
+ self.origin = self.owner.origin;
+
+ if(self.owner.flags & #FL_ONGROUND)
+ {
+  self.nextthink = time + 0.001;
+  return;
+ }
+
+ local float contents;
+
+ traceline(self.origin, self.origin + '0 0 -60', #FALSE, self);
+
+ contents = pointcontents(trace_endpos);
+ if((contents == #CONTENT_WATER) || (contents == #CONTENT_SLIME) || (contents == #CONTENT_LAVA))
+ {
+  if(self.owner.oldorigin != world.origin)
+  {
+   self.owner.velocity_y = 0;
+   self.owner.velocity_x = 0;
+
+   spawn_tfog(self.owner.origin);
+
+   self.owner.origin = self.owner.oldorigin;
+
+   spawn_tfog(self.owner.origin);
+   spawn_tdeath(self.owner.origin, self.owner);
+  }
+ }
+
+ self.nextthink = time + 0.001;
+};
+
+
+/*
+=======================
+WaterSafe
+Protects the gremlin from falling into liquid.
+=======================
+*/
+void() WaterSafe =
+{
+ if(self.count >= 1)
+ {
+  return;
+ }
+
+ local entity safe;
+
+ safe = spawn();
+ safe.owner = self;
+ safe.solid = #SOLID_TRIGGER;
+
+ setorigin(safe, self.origin);
+ safe.think = SafeThink;
+ safe.nextthink = time + 0.001;
+
+ self.count = 1;
+};
+
+
+/*
+=======================
+MeleeChase
+A very important ruitine that makes the gremlin chase their victim
+while doing a melee attack. Without this, they'd be next to worthless.
+=======================
+*/
+void(float sp) MeleeChase =
+{
+ local float target_yaw;
+
+ target_yaw = vectoyaw(self.enemy.origin - self.origin);
+ self.angles_y = target_yaw;
+
+ walkmove(self.angles_y, sp);
+};
+
+
+/*
+=======================
+Think ruitine for GremWeapTimer
+=======================
+*/
+void() GremWeapback =
+{
+ //SELF is the timer, SELF OWNER is the gremlin. SELF.ENEMY is the theft victim.
+ if((self.weapon != self.owner.weapon) || (self.enemy.health <= 0))
+ {
+
+  //Overkill? YES
+  self.enemy.weapons_carried = self.enemy.weapons_carried | self.weapon;
+  self.enemy.items = self.enemy.items | self.weapon;
+  self.enemy.current_weapon = self.enemy.current_weapon | self.weapon;
+
+
+  sprint(self.enemy, #PRINT_HIGH, "You get your weapon back from the filthy gremlin.\n");
+  remove(self);
+  return;
+ }
+
+ self.nextthink = time + 0.001;
+};
+
+/*
+=======================
+GremWeaptimer
+Gives back a stolen weapon. Adapted from
+a function of the Judo skill.
+=======================
+*/
+void() GremWeaptimer =
+{
+ local entity tWeapon;
+
+ tWeapon = spawn();
+ tWeapon.owner = self;
+ tWeapon.enemy = self.enemy;
+ tWeapon.weapon = self.weapon;
+ tWeapon.classname = "timer";
+ tWeapon.netname = "gremweaptimer";
+ tWeapon.think = GremWeapback;
+ tWeapon.nextthink = time + 0.001;
+};
+
+
+/*
+=======================
+GremlinGrenade
+A special grenade-firing ruitine just for the gremlin,
+because trying to make it use W_firegrenade crashes the server.
+=======================
+*/
+void() GremlinGrenade =
+{
+      local vector dir;
+
+	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	sound (self, #CHAN_WEAPON, "weapons/grenade.wav", 1, #ATTN_NORM);
+	newmis = spawn ();
+	newmis.owner = self;
+	newmis.movetype = #MOVETYPE_BOUNCE;
+	newmis.solid = #SOLID_BBOX;
+
+	newmis.weapon = #DMSG_GRENADEL;
+	newmis.classname = "grenade";
+	newmis.touch = GrenadeTouch;
+	newmis.nextthink = time + 2.5;
+
+      dir = normalize(self.enemy.origin - self.origin);
+      self.v_angle = vectoangles(dir);
+      makevectors(self.v_angle);
+      dir = normalize(dir);
+
+	// set newmis speed
+	makevectors (self.v_angle);
+      newmis.velocity = dir * 600;
+	newmis.velocity_z = 200;
+
+	newmis.avelocity = '300 300 300';
+	newmis.angles = vectoangles(newmis.velocity);
+
+	newmis.think = GrenadeExplode;
+	setmodel (newmis, "progs/grenade2.mdl");
+	setsize (newmis, '0 0 0', '0 0 0');
+	setorigin (newmis, self.origin);
+};
+
+
+
+
 /*
 ===========
 GremlinAttemptWeaponSteal
@@ -122,17 +328,41 @@ float() GremlinAttemptWeaponSteal =
    // we are within range so lets go for it
    //
    victim = self.enemy;
-   best = victim.weapon;
-   if (best == #IT_AXE || best == #IT_SHOTGUN)// || best == #IT_MJOLNIR)
+
+   //best = victim.weapon;
+   best = victim.current_weapon;
+
+   if ((best == #IT_AXE) || (best == #WEAP_SHOTGUN))// || best == #IT_MJOLNIR)
       return #FALSE;
+
+   //Don't let the gremlin steal weapons it can't use
+   if((best != #WEAP_NAILGUN) && (best != #WEAP_SUPER_SHOTGUN) && (best != #WEAP_GRENADE_LAUNCHER) && (best != #WEAP_ROCKET_LAUNCHER) && (best != #WEAP_SNG) && (best != #WEAP_LIGHTNING) && (best != #WEAP_LASERCANNON))
+   {
+    return #FALSE;
+   }
+
    // take that weapon from the entity
    victim.items = victim.items - (victim.items & best);
+   victim.weapons_carried = victim.weapons_carried - (victim.weapons_carried & best);
+
+   victim.attack_finished = time + #CANT_ATTACK_TIME;
+   victim.weaponmodel = string_null;
+   victim.weaponframe = 0;
+   victim.currentammo = 0;
+
+   victim.weapons_carried = victim.weapons_carried - (victim.weapons_carried & victim.current_weapon);
+   victim.current_weapon = 0;
+
+
    // give it to our gremlin
    self.items = self.items | best;
    self.weapon = best;
    // take some ammo while we are at it
    self.items = self.items - ( self.items & (#IT_SHELLS | #IT_NAILS | #IT_ROCKETS | #IT_CELLS ) );
-   if (best == #IT_SUPER_SHOTGUN)
+
+   GremWeaptimer();
+
+   if (best == #WEAP_SUPER_SHOTGUN)
       {
       amount = victim.ammo_shells;
       if (amount > 20)
@@ -143,7 +373,7 @@ float() GremlinAttemptWeaponSteal =
       self.currentammo = self.ammo_shells;
       sprint (victim,#PRINT_HIGH, "Gremlin stole your Super Shotgun\n");
       }
-   else if (best == #IT_NAILGUN)
+   else if (best == #WEAP_NAILGUN)
       {
       amount = victim.ammo_nails;
       if (amount > 40)
@@ -154,7 +384,7 @@ float() GremlinAttemptWeaponSteal =
       self.currentammo = self.ammo_nails;
       sprint (victim,#PRINT_HIGH, "Gremlin stole your Nailgun\n");
       }
-   else if (best == #IT_SUPER_NAILGUN)
+   else if (best == #WEAP_SNG)
       {
       amount = victim.ammo_nails;
       if (amount > 40)
@@ -165,7 +395,7 @@ float() GremlinAttemptWeaponSteal =
       self.currentammo = self.ammo_nails;
       sprint (victim,#PRINT_HIGH, "Gremlin stole your Super Nailgun\n");
       }
-   else if (best == #IT_GRENADE_LAUNCHER)
+   else if (best == #WEAP_GRENADE_LAUNCHER)
       {
       amount = victim.ammo_rockets;
       if (amount > 5)
@@ -176,7 +406,7 @@ float() GremlinAttemptWeaponSteal =
       self.currentammo = self.ammo_rockets;
       sprint (victim,#PRINT_HIGH, "Gremlin stole your Grenade Launcher\n");
       }
-   else if (best == #IT_ROCKET_LAUNCHER)
+   else if (best == #WEAP_ROCKET_LAUNCHER)
       {
       amount = victim.ammo_rockets;
       /*if (amount > 5)
@@ -184,14 +414,14 @@ float() GremlinAttemptWeaponSteal =
       amount = amount * 0.75;
       if (amount < 25)
         amount = victim.ammo_rockets;
-       
+
       victim.ammo_rockets = victim.ammo_rockets - amount;
       self.ammo_rockets = self.ammo_rockets + amount;
       self.items = self.items | #IT_ROCKETS;
       self.currentammo = self.ammo_rockets;
       sprint (victim,#PRINT_HIGH, "Gremlin stole your Rocket Launcher\n");
       }
-   else if (best == #IT_LIGHTNING)
+   else if (best == #WEAP_LIGHTNING)
       {
       amount = victim.ammo_cells;
       if (amount > 40)
@@ -202,7 +432,7 @@ float() GremlinAttemptWeaponSteal =
       self.currentammo = self.ammo_cells;
       sprint (victim,#PRINT_HIGH, "Gremlin stole your Lightning Gun\n");
       }
-   /*else if (best == #IT_LASER_CANNON)
+      else if (best == #WEAP_LASERCANNON)
       {
       amount = victim.ammo_cells;
       if (amount > 40)
@@ -212,7 +442,7 @@ float() GremlinAttemptWeaponSteal =
       self.items = self.items | #IT_CELLS;
       self.currentammo = self.ammo_cells;
       sprint (victim, "Gremlin stole your Laser Cannon\n");
-      }*/
+      }
    /*else if (best == #IT_PROXIMITY_GUN)
       {
       amount = victim.ammo_rockets;
@@ -255,6 +485,7 @@ float() GremlinAttemptWeaponSteal =
 //============================================================================
 
 /*
+/*
 ===========
 GremlinFindTarget
 
@@ -264,10 +495,19 @@ gremlin is currently not attacking anything, so try to find a target
 */
 float() GremlinFindTarget =
    {
+
+        /*
+          self.enemy = self.real_owner;
+           FoundTarget();
+          self.attack_finished = time;
+          self.search_time = time + 2.0;
+          return #TRUE;
+        */
+
    local entity   head;
    local entity   gorge;
    local float    dist, visible_distance;
-   local float    result;
+   local float    result, lazyfix2;
 
    if ((self.has_fieldgen==0) && time > self.wait)
       {
@@ -277,7 +517,7 @@ float() GremlinFindTarget =
       head = nextent(world);
       while (head!=world)
          {
-         if ((head.health < 1) && (head.flags & (#FL_MONSTER|#FL_CLIENT)))
+         if ((head.health <= 0) && (head.flags & (#FL_MONSTER|#FL_CLIENT)) && (lazyfix2 == 1))
             {
             result = fabs(head.origin_z - self.origin_z);
             visible_distance = vlen(self.origin - head.origin);
@@ -305,19 +545,27 @@ float() GremlinFindTarget =
    else if (self.has_fieldgen)
       {
       head = GremlinFindVictim();
-      if (head != world)
+      if ((head != world) && (head.team_no != self.team_no))
          {
-         self.enemy = head;
-         FoundTarget();
-         self.attack_finished = time;
-         self.search_time = time + 2.0;
-         return #TRUE;
+           //GREMFIX
+           //if((head.health <= 0) || (self.team_no > 0) && (head.team_no == self.team_no))
+           //{
+            //return world;
+           //}
+
+          self.enemy = head;
+          FoundTarget();
+          self.attack_finished = time;
+          self.search_time = time + 2.0;
+          return #TRUE;
          }
       }
    result = FindTarget();
    self.search_time = time + 2.0;
+
+
    return result;
-   };
+  };
 //============================================================================
 /*
 =============
@@ -348,7 +596,7 @@ The monster is staying in one place for a while, with slight angle turns
 */
 void() gremlin_stand =
    {
-   if (FindTarget ())
+     if (FindTarget ())
 		return;
 
 	if (time > self.pausetime)
@@ -370,6 +618,7 @@ The monster has an enemy it is trying to kill
 */
 void(float dist) gremlin_run =
    {
+
 //   local entity oldtarget;
    local float r;
    local vector d;
@@ -421,8 +670,9 @@ void(float dist) gremlin_run =
          if (GremlinFindTarget())
             return;
          }
+          local float lazyfix;
       // get away from player if we stole a weapon
-      if (self.has_fieldgen)
+      if ((self.has_fieldgen) && (lazyfix == 1))
          {
          if (self.enemy.health < 0 && self.enemy.classname == "player")
             {
@@ -512,95 +762,110 @@ void()   Gremlin_FlipTouch;
 void(float side)  Gremlin_Melee;
 void(float side)  Gremlin_Gorge;
 
-void()   gremlin_stand1  =[ $stand1.asc, gremlin_stand2  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand2  =[ $stand2.asc, gremlin_stand3  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand3  =[ $stand3.asc, gremlin_stand4  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand4  =[ $stand4.asc, gremlin_stand5  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand5  =[ $stand5.asc, gremlin_stand6  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand6  =[ $stand6.asc, gremlin_stand7  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand7  =[ $stand7.asc, gremlin_stand8  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand8  =[ $stand8.asc, gremlin_stand9  ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand9  =[ $stand9.asc, gremlin_stand10 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand10 =[ $stand10.asc,   gremlin_stand11 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand11 =[ $stand11.asc,   gremlin_stand12 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand12 =[ $stand12.asc,   gremlin_stand13 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand13 =[ $stand13.asc,   gremlin_stand14 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand14 =[ $stand14.asc,   gremlin_stand15 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand15 =[ $stand15.asc,   gremlin_stand16 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand16 =[ $stand16.asc,   gremlin_stand17 ] {gremlin_stand();self.nextthink = time + 0.2;};
-void()   gremlin_stand17 =[ $stand17.asc,   gremlin_stand1  ] {gremlin_stand();self.nextthink = time + 0.2;};
+void()   gremlin_stand1  =[ $stand1.asc, gremlin_stand2  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand2  =[ $stand2.asc, gremlin_stand3  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand3  =[ $stand3.asc, gremlin_stand4  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand4  =[ $stand4.asc, gremlin_stand5  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand5  =[ $stand5.asc, gremlin_stand6  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand6  =[ $stand6.asc, gremlin_stand7  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand7  =[ $stand7.asc, gremlin_stand8  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand8  =[ $stand8.asc, gremlin_stand9  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand9  =[ $stand9.asc, gremlin_stand10 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand10 =[ $stand10.asc,   gremlin_stand11 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand11 =[ $stand11.asc,   gremlin_stand12 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand12 =[ $stand12.asc,   gremlin_stand13 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand13 =[ $stand13.asc,   gremlin_stand14 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand14 =[ $stand14.asc,   gremlin_stand15 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand15 =[ $stand15.asc,   gremlin_stand16 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand16 =[ $stand16.asc,   gremlin_stand17 ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_stand17 =[ $stand17.asc,   gremlin_stand1  ] { gremlin_stand();GremlinFindTarget ();self.nextthink = time + 0.2;};
 
 void()   gremlin_walk1 =[ $walk1.asc,      gremlin_walk2 ] {
 if (random() < 0.1)
     sound (self, #CHAN_VOICE, "grem/idle.wav", 1, #ATTN_IDLE);
 gremlin_walk(8);};
-void()   gremlin_walk2 =[ $walk2.asc,      gremlin_walk3 ] {gremlin_walk(8);};
-void()   gremlin_walk3 =[ $walk3.asc,      gremlin_walk4 ] {gremlin_walk(8);};
-void()   gremlin_walk4 =[ $walk4.asc,      gremlin_walk5 ] {gremlin_walk(8);};
-void()   gremlin_walk5 =[ $walk5.asc,      gremlin_walk6 ] {gremlin_walk(8);};
-void()   gremlin_walk6 =[ $walk6.asc,      gremlin_walk7 ] {gremlin_walk(8);};
-void()   gremlin_walk7 =[ $walk7.asc,      gremlin_walk8 ] {gremlin_walk(8);};
-void()   gremlin_walk8 =[ $walk8.asc,      gremlin_walk9 ] {gremlin_walk(8);};
-void()   gremlin_walk9 =[ $walk9.asc,      gremlin_walk10 ] {gremlin_walk(8);};
-void()   gremlin_walk10 =[ $walk10.asc,      gremlin_walk11 ] {gremlin_walk(8);};
-void()   gremlin_walk11 =[ $walk11.asc,      gremlin_walk12 ] {gremlin_walk(8);};
-void()   gremlin_walk12 =[ $walk12.asc,      gremlin_walk1 ] {gremlin_walk(8);};
+void()   gremlin_walk2 =[ $walk2.asc,      gremlin_walk3 ] {gremlin_walk(8); GremlinFindTarget (); };
+void()   gremlin_walk3 =[ $walk3.asc,      gremlin_walk4 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk4 =[ $walk4.asc,      gremlin_walk5 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk5 =[ $walk5.asc,      gremlin_walk6 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk6 =[ $walk6.asc,      gremlin_walk7 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk7 =[ $walk7.asc,      gremlin_walk8 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk8 =[ $walk8.asc,      gremlin_walk9 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk9 =[ $walk9.asc,      gremlin_walk10 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk10 =[ $walk10.asc,      gremlin_walk11 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk11 =[ $walk11.asc,      gremlin_walk12 ] {gremlin_walk(8); GremlinFindTarget ();};
+void()   gremlin_walk12 =[ $walk12.asc,      gremlin_walk1 ] {gremlin_walk(8); GremlinFindTarget ();};
+
+// NOTE BELOW: code runs perfect with run speed of 55, but the animation is very very choppy.
+// 25 animation is almost acceptable but some bugs seem to happen.
 
 void()   gremlin_run1 =[ $run1.asc,      gremlin_run2 ] {
+UnstickRun();
+gremlin_run(25);
 if (random() < 0.1)
     sound (self, #CHAN_VOICE, "grem/idle.wav", 1, #ATTN_IDLE);
 gremlin_run(0);};
-void()   gremlin_run2 =[ $run2.asc,      gremlin_run3 ] {gremlin_run(12);}; // original 8
-void()   gremlin_run3 =[ $run3.asc,      gremlin_run4 ] {gremlin_run(16);}; // original 12
-void()   gremlin_run4 =[ $run4.asc,      gremlin_run5 ] {gremlin_run(20);}; // original 16
-void()   gremlin_run5 =[ $run5.asc,      gremlin_run6 ] {gremlin_run(20);}; // original 16
-void()   gremlin_run6 =[ $run6.asc,      gremlin_run7 ] {gremlin_run(16);}; // original 12
-void()   gremlin_run7 =[ $run7.asc,      gremlin_run8 ] {gremlin_run(12);}; // original 8
-void()   gremlin_run8 =[ $run8.asc,      gremlin_run9 ] {gremlin_run(0);}; // original 0
-void()   gremlin_run9 =[ $run9.asc,      gremlin_run10 ] {gremlin_run(12);}; // original 8
-void()   gremlin_run10 =[ $run10.asc,      gremlin_run11 ] {gremlin_run(16);}; // original 12
-void()   gremlin_run11 =[ $run11.asc,      gremlin_run12 ] {gremlin_run(20);}; // original 16
-void()   gremlin_run12 =[ $run12.asc,      gremlin_run13 ] {gremlin_run(20);}; // original 16
-void()   gremlin_run13 =[ $run13.asc,      gremlin_run14 ] {gremlin_run(16);}; // original 12
-void()   gremlin_run14 =[ $run14.asc,      gremlin_run15 ] {gremlin_run(12);}; // original 8
-void()   gremlin_run15 =[ $run15.asc,      gremlin_run1 ] {gremlin_run(0);}; // original 0
+void()   gremlin_run2 =[ $run2.asc,      gremlin_run3 ] {UnstickRun();gremlin_run(25);}; // original 8
+void()   gremlin_run3 =[ $run3.asc,      gremlin_run4 ] {UnstickRun();gremlin_run(25);}; // original 12
+void()   gremlin_run4 =[ $run4.asc,      gremlin_run5 ] {UnstickRun();gremlin_run(25);}; // original 16
+void()   gremlin_run5 =[ $run5.asc,      gremlin_run6 ] {UnstickRun();gremlin_run(25);}; // original 16
+void()   gremlin_run6 =[ $run6.asc,      gremlin_run7 ] {UnstickRun();gremlin_run(25);}; // original 12
+void()   gremlin_run7 =[ $run7.asc,      gremlin_run8 ] {UnstickRun();gremlin_run(25);}; // original 8
+void()   gremlin_run8 =[ $run8.asc,      gremlin_run9 ] {UnstickRun();gremlin_run(25);}; // original 0
+void()   gremlin_run9 =[ $run9.asc,      gremlin_run10 ] {UnstickRun();gremlin_run(25);}; // original 8
+void()   gremlin_run10 =[ $run10.asc,      gremlin_run11 ] {UnstickRun();gremlin_run(25);}; // original 12
+void()   gremlin_run11 =[ $run11.asc,      gremlin_run12 ] {UnstickRun();gremlin_run(25);}; // original 16
+void()   gremlin_run12 =[ $run12.asc,      gremlin_run13 ] {UnstickRun();gremlin_run(25);}; // original 16
+void()   gremlin_run13 =[ $run13.asc,      gremlin_run14 ] {UnstickRun();gremlin_run(25);}; // original 12
+void()   gremlin_run14 =[ $run14.asc,      gremlin_run15 ] {UnstickRun();gremlin_run(25);}; // original 8
+void()   gremlin_run15 =[ $run15.asc,      gremlin_run1 ] {UnstickRun();gremlin_run(25);}; // original 0
 
-void()   gremlin_jump1   =[ $jump1.asc,     gremlin_jump2   ] {ai_face();};
-void()   gremlin_jump2   =[ $jump2.asc,     gremlin_jump3   ] {ai_face();};
-void()   gremlin_jump3   =[ $jump3.asc,     gremlin_jump4   ] {ai_face();};
-void()   gremlin_jump4   =[ $jump4.asc,     gremlin_jump5   ] {ai_face();};
+void()   gremlin_jump1   =[ $jump1.asc,     gremlin_jump2   ] {  MeleeChase(60);ai_face();};
+void()   gremlin_jump2   =[ $jump2.asc,     gremlin_jump3   ] { MeleeChase(60);ai_face();};
+void()   gremlin_jump3   =[ $jump3.asc,     gremlin_jump4   ] { MeleeChase(60);ai_face();};
+void()   gremlin_jump4   =[ $jump4.asc,     gremlin_jump5   ] { MeleeChase(60);ai_face();};
 void()   gremlin_jump5   =[ $jump5.asc,     gremlin_jump6   ]
 {
 	ai_face();
 
    if (self.flags & #FL_ONGROUND)
       {
-      self.touch = Gremlin_JumpTouch;
-      makevectors (self.angles);
-      self.origin_z = self.origin_z + 1;
-      self.velocity = v_forward * 300 + '0 0 300';
-      self.flags = self.flags - #FL_ONGROUND;
+       self.oldorigin = self.origin; //Record our origin prior to jumping...
+
+       self.touch = Gremlin_JumpTouch;
+       makevectors (self.angles);
+       self.origin_z = self.origin_z + 1;
+
+       //self.velocity = v_forward * 300 + '0 0 300';
+       self.velocity = v_forward * 700 + '0 0 250';
+
+       self.flags = self.flags - #FL_ONGROUND;
       }
    else
       {
-      gremlin_run1();
+       self.velocity_z = -400;
+       self.velocity_x = random()*350;
+       self.velocity_y = random()*350;
+       gremlin_run1();
       }
 };
-void()   gremlin_jump6   =[ $jump6.asc,     gremlin_jump7   ] {};
-void()   gremlin_jump7   =[ $jump7.asc,     gremlin_jump8   ] {};
-void()   gremlin_jump8   =[ $jump8.asc,     gremlin_jump9   ] {};
-void()   gremlin_jump9   =[ $jump9.asc,     gremlin_jump10   ] {};
-void()   gremlin_jump10   =[ $jump10.asc,     gremlin_jump11   ] {};
+void()   gremlin_jump6   =[ $jump6.asc,     gremlin_jump7   ] {  MeleeChase(60);};
+void()   gremlin_jump7   =[ $jump7.asc,     gremlin_jump8   ] {  MeleeChase(60);};
+void()   gremlin_jump8   =[ $jump8.asc,     gremlin_jump9   ] {  MeleeChase(60);};
+void()   gremlin_jump9   =[ $jump9.asc,     gremlin_jump10   ] {  MeleeChase(60);};
+void()   gremlin_jump10   =[ $jump10.asc,     gremlin_jump11   ] {  MeleeChase(60);};
 void()   gremlin_jump11   =[ $jump11.asc,     gremlin_jump1   ]
    {
-   self.nextthink = time + 3;
+
+     MeleeChase(60);
+    self.nextthink = time + 3;
    // if three seconds pass, assume gremlin is stuck and jump again
    };
 
-void()   gremlin_jump12   =[ $jump12.asc,    gremlin_jump13  ] {};
-void()   gremlin_jump13   =[ $jump13.asc,    gremlin_jump14  ] {};
-void()   gremlin_jump14   =[ $jump14.asc,    gremlin_jump15  ] {};
-void()   gremlin_jump15   =[ $jump15.asc,    gremlin_jump16  ] {};
+void()   gremlin_jump12   =[ $jump12.asc,    gremlin_jump13  ] {  MeleeChase(60);};
+void()   gremlin_jump13   =[ $jump13.asc,    gremlin_jump14  ] {  MeleeChase(60);};
+void()   gremlin_jump14   =[ $jump14.asc,    gremlin_jump15  ] {  MeleeChase(60);};
+void()   gremlin_jump15   =[ $jump15.asc,    gremlin_jump16  ] {  MeleeChase(60);};
 void()   gremlin_jump16   =[ $jump16.asc,    gremlin_run1 ] {};
 
 void()   gremlin_shot1 = [$gfire1.asc, gremlin_shot2   ] {//self.effects = self.effects | #EF_MUZZLEFLASH;
@@ -727,52 +992,52 @@ void()   gremlin_rocket4 = [$gfire4.asc, gremlin_rocket5   ] {};
 void()   gremlin_rocket5 = [$gfire5.asc, gremlin_rocket6   ] {};
 void()   gremlin_rocket6 = [$gfire6.asc, gremlin_run1   ] {};
 
-void()   gremlin_lunge1   =[ $lunge1.asc,     gremlin_lunge2   ] {ai_charge(0);};
-void()   gremlin_lunge2   =[ $lunge2.asc,     gremlin_lunge3   ] {ai_charge(0);};
-void()   gremlin_lunge3   =[ $lunge3.asc,     gremlin_lunge4   ] {ai_charge(0);};
-void()   gremlin_lunge4   =[ $lunge4.asc,     gremlin_lunge5   ] {ai_charge(0);};
-void()   gremlin_lunge5   =[ $lunge5.asc,     gremlin_lunge6   ] {ai_charge(0);};
-void()   gremlin_lunge6   =[ $lunge6.asc,     gremlin_lunge7   ] {ai_charge(0);};
-void()   gremlin_lunge7   =[ $lunge7.asc,     gremlin_lunge8   ] {ai_charge(15);};
-void()   gremlin_lunge8   =[ $lunge8.asc,     gremlin_lunge9   ] {ai_charge(0);Gremlin_Melee(0);};
-void()   gremlin_lunge9   =[ $lunge9.asc,     gremlin_lunge10] {ai_charge(0);};
-void()   gremlin_lunge10  =[ $lunge10.asc,    gremlin_lunge11] {ai_charge(0);};
-void()   gremlin_lunge11  =[ $lunge11.asc,    gremlin_run1] {ai_charge(0);};
+void()   gremlin_lunge1   =[ $lunge1.asc,     gremlin_lunge2   ] {  MeleeChase(60); };
+void()   gremlin_lunge2   =[ $lunge2.asc,     gremlin_lunge3   ] {  MeleeChase(60);};
+void()   gremlin_lunge3   =[ $lunge3.asc,     gremlin_lunge4   ] { MeleeChase(60); };
+void()   gremlin_lunge4   =[ $lunge4.asc,     gremlin_lunge5   ] {  MeleeChase(60);};
+void()   gremlin_lunge5   =[ $lunge5.asc,     gremlin_lunge6   ] {  MeleeChase(60);};
+void()   gremlin_lunge6   =[ $lunge6.asc,     gremlin_lunge7   ] {  MeleeChase(60);};
+void()   gremlin_lunge7   =[ $lunge7.asc,     gremlin_lunge8   ] {  MeleeChase(60);}; //15
+void()   gremlin_lunge8   =[ $lunge8.asc,     gremlin_lunge9   ] {  MeleeChase(60); Gremlin_Melee(0); };
+void()   gremlin_lunge9   =[ $lunge9.asc,     gremlin_lunge10] {  MeleeChase(60);};
+void()   gremlin_lunge10  =[ $lunge10.asc,    gremlin_lunge11] {  MeleeChase(60); };
+void()   gremlin_lunge11  =[ $lunge11.asc,    gremlin_run1] { };
 
-void()   gremlin_claw1   =[ $attk1.asc,     gremlin_claw2   ] {ai_charge(0);};
-void()   gremlin_claw2   =[ $attk2.asc,     gremlin_claw3   ] {ai_charge(0);};
-void()   gremlin_claw3   =[ $attk3.asc,     gremlin_claw4   ] {ai_charge(0);};
-void()   gremlin_claw4   =[ $attk4.asc,     gremlin_claw5   ] {ai_charge(0);};
-void()   gremlin_claw5   =[ $attk5.asc,     gremlin_claw6   ] {ai_charge(0);};
-void()   gremlin_claw6   =[ $attk6.asc,     gremlin_claw7   ] {ai_charge(0);Gremlin_Melee(200);};
-void()   gremlin_claw7   =[ $attk7.asc,     gremlin_claw8   ] {ai_charge(15);};
-void()   gremlin_claw8   =[ $attk8.asc,     gremlin_claw9   ] {ai_charge(0);};
-void()   gremlin_claw9   =[ $attk9.asc,     gremlin_claw10] {ai_charge(0);};
-void()   gremlin_claw10  =[ $attk10.asc,    gremlin_claw11] {ai_charge(0);};
-void()   gremlin_claw11  =[ $attk11.asc,    gremlin_run1] {ai_charge(0);};
+void()   gremlin_claw1   =[ $attk1.asc,     gremlin_claw2   ] {  MeleeChase(60);};
+void()   gremlin_claw2   =[ $attk2.asc,     gremlin_claw3   ] {  MeleeChase(60);};
+void()   gremlin_claw3   =[ $attk3.asc,     gremlin_claw4   ] {  MeleeChase(60);};
+void()   gremlin_claw4   =[ $attk4.asc,     gremlin_claw5   ] {  MeleeChase(60);};
+void()   gremlin_claw5   =[ $attk5.asc,     gremlin_claw6   ] {  MeleeChase(60);};
+void()   gremlin_claw6   =[ $attk6.asc,     gremlin_claw7   ] {  MeleeChase(60);Gremlin_Melee(200); };
+void()   gremlin_claw7   =[ $attk7.asc,     gremlin_claw8   ] {  MeleeChase(60);}; //15
+void()   gremlin_claw8   =[ $attk8.asc,     gremlin_claw9   ] {  MeleeChase(60);};
+void()   gremlin_claw9   =[ $attk9.asc,     gremlin_claw10] {  MeleeChase(60);};
+void()   gremlin_claw10  =[ $attk10.asc,    gremlin_claw11] {  MeleeChase(60);};
+void()   gremlin_claw11  =[ $attk11.asc,    gremlin_run1] { };
 
-void()   gremlin_gorge1   =[ $maul1.asc,     gremlin_gorge2] {ai_charge(1);};
-void()   gremlin_gorge2   =[ $maul2.asc,     gremlin_gorge3] {ai_charge(1);};
-void()   gremlin_gorge3   =[ $maul3.asc,     gremlin_gorge4] {ai_charge(2);};
-void()   gremlin_gorge4   =[ $maul4.asc,     gremlin_gorge5] {ai_charge(0);};
-void()   gremlin_gorge5   =[ $maul5.asc,     gremlin_gorge6] {ai_charge(0);};
-void()   gremlin_gorge6   =[ $maul6.asc,     gremlin_gorge7] {ai_charge(0);Gremlin_Gorge(200);};
-void()   gremlin_gorge7   =[ $maul7.asc,     gremlin_gorge8] {ai_charge(0);};
-void()   gremlin_gorge8   =[ $maul8.asc,     gremlin_gorge9] {ai_charge(0);Gremlin_Gorge(-200);};
-void()   gremlin_gorge9   =[ $maul9.asc,     gremlin_gorge10] {ai_charge(0);};
-void()   gremlin_gorge10   =[ $maul10.asc,     gremlin_gorge11] {ai_charge(0);};
-void()   gremlin_gorge11   =[ $maul11.asc,     gremlin_gorge12] {ai_charge(0);};
-void()   gremlin_gorge12   =[ $maul12.asc,     gremlin_gorge13] {ai_charge(0);};
-void()   gremlin_gorge13   =[ $maul13.asc,     gremlin_gorge1] {ai_charge(0);};
+void()   gremlin_gorge1   =[ $maul1.asc,     gremlin_gorge2] {  MeleeChase(60);}; //1
+void()   gremlin_gorge2   =[ $maul2.asc,     gremlin_gorge3] {  MeleeChase(60);}; //1
+void()   gremlin_gorge3   =[ $maul3.asc,     gremlin_gorge4] {  MeleeChase(60);}; //2
+void()   gremlin_gorge4   =[ $maul4.asc,     gremlin_gorge5] {  MeleeChase(60);};
+void()   gremlin_gorge5   =[ $maul5.asc,     gremlin_gorge6] { MeleeChase(60); };
+void()   gremlin_gorge6   =[ $maul6.asc,     gremlin_gorge7] { MeleeChase(60); Gremlin_Gorge(200); };
+void()   gremlin_gorge7   =[ $maul7.asc,     gremlin_gorge8] { MeleeChase(60); };
+void()   gremlin_gorge8   =[ $maul8.asc,     gremlin_gorge9] { MeleeChase(60); Gremlin_Gorge(-200); };
+void()   gremlin_gorge9   =[ $maul9.asc,     gremlin_gorge10] { MeleeChase(60); };
+void()   gremlin_gorge10   =[ $maul10.asc,     gremlin_gorge11] { MeleeChase(60); };
+void()   gremlin_gorge11   =[ $maul11.asc,     gremlin_gorge12] {  MeleeChase(60);};
+void()   gremlin_gorge12   =[ $maul12.asc,     gremlin_gorge13] {  MeleeChase(60);};
+void()   gremlin_gorge13   =[ $maul13.asc,     gremlin_gorge1] {  MeleeChase(60);};
 
-void()   gremlin_look1   =[ $look1.asc,     gremlin_look2] {self.nextthink = time + 0.2;};
-void()   gremlin_look2   =[ $look2.asc,     gremlin_look3] {self.nextthink = time + 0.2;};
-void()   gremlin_look3   =[ $look3.asc,     gremlin_look4] {self.nextthink = time + 0.2;};
-void()   gremlin_look4   =[ $look4.asc,     gremlin_look5] {self.nextthink = time + 0.2;};
-void()   gremlin_look5   =[ $look5.asc,     gremlin_look6] {self.nextthink = time + 0.2;};
-void()   gremlin_look6   =[ $look6.asc,     gremlin_look7] {self.nextthink = time + 0.2;};
-void()   gremlin_look7   =[ $look7.asc,     gremlin_look8] {self.nextthink = time + 0.2;};
-void()   gremlin_look8   =[ $look8.asc,     gremlin_look9] {self.nextthink = time + 0.2;};
+void()   gremlin_look1   =[ $look1.asc,     gremlin_look2] {GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_look2   =[ $look2.asc,     gremlin_look3] {GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_look3   =[ $look3.asc,     gremlin_look4] {GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_look4   =[ $look4.asc,     gremlin_look5] {GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_look5   =[ $look5.asc,     gremlin_look6] {GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_look6   =[ $look6.asc,     gremlin_look7] {GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_look7   =[ $look7.asc,     gremlin_look8] {GremlinFindTarget ();self.nextthink = time + 0.2;};
+void()   gremlin_look8   =[ $look8.asc,     gremlin_look9] {GremlinFindTarget ();self.nextthink = time + 0.2;};
 void()   gremlin_look9   =[ $look9.asc,     gremlin_run1]
    {
    //if (self.oldenemy.health > 0)
@@ -793,30 +1058,30 @@ void()   gremlin_look9   =[ $look9.asc,     gremlin_run1]
 
 
 void() GremlinDropBackpack;
-void()   gremlin_glook1   =[ $glook1.asc,     gremlin_glook2] {};
-void()   gremlin_glook2   =[ $glook2.asc,     gremlin_glook3] {};
-void()   gremlin_glook3   =[ $glook3.asc,     gremlin_glook4] {};
-void()   gremlin_glook4   =[ $glook4.asc,     gremlin_glook5] {};
-void()   gremlin_glook5   =[ $glook5.asc,     gremlin_glook6] {};
-void()   gremlin_glook6   =[ $glook6.asc,     gremlin_glook7] {};
-void()   gremlin_glook7   =[ $glook7.asc,     gremlin_glook8] {};
-void()   gremlin_glook8   =[ $glook8.asc,     gremlin_glook9] {};
-void()   gremlin_glook9   =[ $glook9.asc,     gremlin_glook10] {};
-void()   gremlin_glook10   =[ $glook10.asc,     gremlin_glook11] {};
-void()   gremlin_glook11   =[ $glook11.asc,     gremlin_glook12] {};
-void()   gremlin_glook12   =[ $glook12.asc,     gremlin_glook13] {};
-void()   gremlin_glook13   =[ $glook13.asc,     gremlin_glook14] {};
-void()   gremlin_glook14   =[ $glook14.asc,     gremlin_glook15] {};
-void()   gremlin_glook15   =[ $glook15.asc,     gremlin_glook16] {};
-void()   gremlin_glook16   =[ $glook16.asc,     gremlin_glook17] {};
-void()   gremlin_glook17   =[ $glook17.asc,     gremlin_glook18] {};
-void()   gremlin_glook18   =[ $glook18.asc,     gremlin_glook19] {};
-void()   gremlin_glook19   =[ $glook19.asc,     gremlin_glook20] {};
+void()   gremlin_glook1   =[ $glook1.asc,     gremlin_glook2] {GremlinFindTarget ();};
+void()   gremlin_glook2   =[ $glook2.asc,     gremlin_glook3] {GremlinFindTarget ();};
+void()   gremlin_glook3   =[ $glook3.asc,     gremlin_glook4] {GremlinFindTarget ();};
+void()   gremlin_glook4   =[ $glook4.asc,     gremlin_glook5] {GremlinFindTarget ();};
+void()   gremlin_glook5   =[ $glook5.asc,     gremlin_glook6] {GremlinFindTarget ();};
+void()   gremlin_glook6   =[ $glook6.asc,     gremlin_glook7] {GremlinFindTarget ();};
+void()   gremlin_glook7   =[ $glook7.asc,     gremlin_glook8] {GremlinFindTarget ();};
+void()   gremlin_glook8   =[ $glook8.asc,     gremlin_glook9] {GremlinFindTarget ();};
+void()   gremlin_glook9   =[ $glook9.asc,     gremlin_glook10] {GremlinFindTarget ();};
+void()   gremlin_glook10   =[ $glook10.asc,     gremlin_glook11] {GremlinFindTarget ();};
+void()   gremlin_glook11   =[ $glook11.asc,     gremlin_glook12] {GremlinFindTarget ();};
+void()   gremlin_glook12   =[ $glook12.asc,     gremlin_glook13] {GremlinFindTarget ();};
+void()   gremlin_glook13   =[ $glook13.asc,     gremlin_glook14] {GremlinFindTarget ();};
+void()   gremlin_glook14   =[ $glook14.asc,     gremlin_glook15] {GremlinFindTarget ();};
+void()   gremlin_glook15   =[ $glook15.asc,     gremlin_glook16] {GremlinFindTarget ();};
+void()   gremlin_glook16   =[ $glook16.asc,     gremlin_glook17] {GremlinFindTarget ();};
+void()   gremlin_glook17   =[ $glook17.asc,     gremlin_glook18] {GremlinFindTarget ();};
+void()   gremlin_glook18   =[ $glook18.asc,     gremlin_glook19] {GremlinFindTarget ();};
+void()   gremlin_glook19   =[ $glook19.asc,     gremlin_glook20] {GremlinFindTarget ();};
 void()   gremlin_glook20   =[ $glook20.asc,     gremlin_glook20]
    {
    //GremlinDropBackpack();
    //self.has_fieldgen = #FALSE;
-   
+
    //if (self.oldenemy.health > 0)
    if (StillValidEnemy(self.oldenemy))
       {
@@ -854,13 +1119,19 @@ void(entity attacker, float damage) gremlin_pain =
       self.has_camera = #FALSE;
       self.enemy = attacker;
       FoundTarget();
-      }*/ 
+      }*/
    if (self.touch == Gremlin_JumpTouch)
 		return;
 
 	if (self.pain_finished > time)
 		return;
-    
+
+      //The gremlin now flinches rarely
+      if(random() <= 0.8)
+      {
+       return;
+      }
+
     AI_CheckAttacker(attacker);
 
 	self.pain_finished = time + 1;
@@ -912,9 +1183,9 @@ void()   gremlin_die9    =[ $death9.asc,    gremlin_die10 ] {ai_forward(2);};
 void()   gremlin_die10    =[ $death10.asc,    gremlin_die11 ] {ai_forward(1);};
 void()   gremlin_die11    =[ $death11.asc,    gremlin_die12 ] {ai_forward(2);};
 void()   gremlin_die12    =[ $death12.asc,    gremlin_die12 ] {
-    //self.nextthink = time + 40 + 40*random();	
+    //self.nextthink = time + 40 + 40*random();
 	//self.think = SUB_Remove;
-    MonsterCorpse();    
+    MonsterCorpse();
 };
 
 void() gremlin_gib=
@@ -954,10 +1225,10 @@ void()   gremlin_flip8    =[ $flip8.asc,    gremlin_flip8 ]
    self.solid = #SOLID_NOT;
    if (self.health <= 0) // dead?
    {
-        //self.nextthink = time + 40 + 40*random();	
+        //self.nextthink = time + 40 + 40*random();
     	//self.think = SUB_Remove;
         MonsterCorpse();
-   }    
+   }
    };
 
 /*
@@ -977,19 +1248,19 @@ void() GremlinDropBackpack =
 
    if (item.items & #IT_AXE)
 		item.netname = "Axe";
-   else if (item.items & #IT_SHOTGUN)
+   else if (item.items & #WEAP_SHOTGUN)
 		item.netname = "Shotgun";
-   else if (item.items & #IT_SUPER_SHOTGUN)
+   else if (item.items & #WEAP_SUPER_SHOTGUN)
 		item.netname = "Double-barrelled Shotgun";
-   else if (item.items & #IT_NAILGUN)
+   else if (item.items & #WEAP_NAILGUN)
 		item.netname = "Nailgun";
-   else if (item.items & #IT_SUPER_NAILGUN)
+   else if (item.items & #WEAP_SNG)
 		item.netname = "Super Nailgun";
-   else if (item.items & #IT_GRENADE_LAUNCHER)
+   else if (item.items & #WEAP_GRENADE_LAUNCHER)
 		item.netname = "Grenade Launcher";
-   else if (item.items & #IT_ROCKET_LAUNCHER)
+   else if (item.items & #WEAP_ROCKET_LAUNCHER)
 		item.netname = "Rocket Launcher";
-   else if (item.items & #IT_LIGHTNING)
+   else if (item.items & #WEAP_LIGHTNING)
 		item.netname = "Thunderbolt";
    /*else if (item.items & #IT_LASER_CANNON)
       item.netname = "Laser Cannon";
@@ -1027,21 +1298,21 @@ void() GremlinDropBackpack =
 void() gremlin_die =
 {
    self.effects=0;
-    
+
     if (self.real_owner.classname == "player")
 	{
 		sprint(self.real_owner,#PRINT_HIGH,"Your gremlin ");
-		sprint(self.real_owner,#PRINT_HIGH,self.netname);       
+		sprint(self.real_owner,#PRINT_HIGH,self.netname);
         sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
 		self.real_owner.job_finished = time + 5; //Can't summon streams of demons SB can so
         ResetSlotPointer(self.real_owner, self.increase_team1);
 	}
-   
+
    local vector   vec;
 	local float		dot;
 
 // check for gib OfN - Removed #|#IT_LASER_CANNON|#IT_PROXIMITY_GUN
-   if (self.items & (#IT_SUPER_NAILGUN | #IT_SUPER_SHOTGUN|#IT_NAILGUN|#IT_GRENADE_LAUNCHER|#IT_ROCKET_LAUNCHER|#IT_LIGHTNING))
+   if (self.items & (#WEAP_SNG | #WEAP_SUPER_SHOTGUN|#WEAP_NAILGUN|#WEAP_GRENADE_LAUNCHER|#WEAP_ROCKET_LAUNCHER|#WEAP_LIGHTNING))
       {
       GremlinDropBackpack();
       self.has_fieldgen = #FALSE;
@@ -1062,7 +1333,7 @@ void() gremlin_die =
         dremove(self);
 		return;
       }
-   
+
    // Spawn bubbles if under water/slime
     local float contres;
     contres = pointcontents(self.origin);
@@ -1077,7 +1348,7 @@ void() gremlin_die =
       return;
       }
 // regular death
-   //self.classname = "monster_corpse";   
+   //self.classname = "monster_corpse";
    MonsterDead();
    gremlin_die1 ();
 };
@@ -1097,7 +1368,7 @@ void() Gremlin_MeleeAttack =
          {
          objerror("gremlin meleeing with stolen weapon");
          }
-      else if ((self.enemy.flags & #FL_CLIENT) && random() < 0.4)
+      else if ((self.enemy.flags & #FL_CLIENT) && random() <= 0.7)
          {
          if (GremlinAttemptWeaponSteal())
             return;
@@ -1167,6 +1438,7 @@ float() GremlinCheckNoAmmo =
 		return #TRUE;
    else
       {
+      self.weapon = 0;
       self.has_fieldgen = #FALSE;
       return #FALSE;
       }
@@ -1492,9 +1764,10 @@ void()   gremlin_rocket1;
 
 float() GremlinWeaponAttack =
    {
+
 	/*local	float	r;
-   local entity targ;
-   local vector vec;*/
+    local entity targ;
+    local vector vec;*/
 
 
    if (!GremlinCheckNoAmmo ())
@@ -1504,52 +1777,55 @@ float() GremlinWeaponAttack =
 
     MonsterAuraPower();
 
-   if (self.weapon == #IT_SHOTGUN)
+   if (self.weapon == #WEAP_SHOTGUN)
       {
       gremlin_shot1 ();
       Gremlin_FireShotGun();
       Attack_Finished(1);
       }
-	else if (self.weapon == #IT_SUPER_SHOTGUN)
+	else if (self.weapon == #WEAP_SUPER_SHOTGUN)
       {
       gremlin_shot1 ();
       Gremlin_FireSuperShotGun();
       Attack_Finished(1);
       }
-	else if (self.weapon == #IT_NAILGUN)
+	else if (self.weapon == #WEAP_NAILGUN)
       {
       gremlin_nail3 ();
       Attack_Finished(1);
       }
-	else if (self.weapon == #IT_SUPER_NAILGUN)
+	else if (self.weapon == #WEAP_SNG)
       {
       gremlin_nail3 ();
       Attack_Finished(1);
       }
-	/*else if (self.weapon == #IT_GRENADE_LAUNCHER)
+	else if (self.weapon == #WEAP_GRENADE_LAUNCHER)
       {
       gremlin_rocket1();
-      OgreFireGrenade();
+      GremlinGrenade();
+      //OgreFireGrenade();
       self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
       Attack_Finished(1);
-      }*/
-	else if (self.weapon == #IT_ROCKET_LAUNCHER)
+      }
+	else if (self.weapon == #WEAP_ROCKET_LAUNCHER)
       {
       gremlin_rocket1();
       Gremlin_FireRocket();
       Attack_Finished(1);
       }
-	else if (self.weapon == #IT_LIGHTNING)
+	else if (self.weapon == #WEAP_LIGHTNING)
       {
       gremlin_light1();
       Attack_Finished(1);
       sound (self, #CHAN_AUTO, "weapons/lstart.wav", 1, #ATTN_NORM);
       }
-   /*else if (self.weapon == IT_LASER_CANNON)
+      else if (self.weapon == #WEAP_LASERCANNON)
       {
       gremlin_laser3();
       Attack_Finished(1);
       }
+
+   /*
    else if (self.weapon == IT_PROXIMITY_GUN)
       {
       gremlin_rocket1();
@@ -1694,6 +1970,10 @@ void(float side)  Gremlin_Melee =
 
     sound (self, #CHAN_WEAPON, "grem/attack.wav", 1, #ATTN_NORM);
 	ldmg = 40+40*random();//10 + 5*random();
+
+      //GREMFIX
+      ldmg = ceil(ldmg);
+
 	T_Damage (self.enemy, self, self, ldmg);
 
 	makevectors (self.angles);
@@ -1743,6 +2023,10 @@ void(float dm) Gremlin_ThrowHead =
 Gremlin_Damage
 
 The damage is coming from inflictor, but get mad at attacker
+Why the fuck does this exist? T_Damage does the same thing, and better.
+But to humour whoever decided to do this in their immense high, I'll
+just replace the relevent part with T_Damage and leave the rest of this
+alone.
 ============
 */
 void(entity targ, entity inflictor, entity attacker, float damage) Gremlin_Damage=
@@ -1765,7 +2049,8 @@ void(entity targ, entity inflictor, entity attacker, float damage) Gremlin_Damag
 		return;
 
 // do the damage
-   targ.health = targ.health - damage;
+    T_Damage(targ, inflictor, attacker, damage);
+   //targ.health = targ.health - damage; //NO NO NO BAD. NEVER DO THIS.
    };
 
 void() Gremlin_Split =
@@ -1779,6 +2064,7 @@ void() Gremlin_Split =
    local vector pos;
    local float proceed;
 
+   bprint(#PRINT_HIGH, "gremlin split\n");
    if (NumSpawnGremlins >= (NumGremlins*2))
       return;
    done = 0;
@@ -1849,13 +2135,27 @@ void() Gremlin_Split =
    temp = self;
    self = grem;
    gremlin_spawn1();
-   self.enemy = world;
+   //self.enemy = world;
    self.has_camera = #FALSE;
    self = temp;
    };
 
 void(float side)  Gremlin_Gorge =
    {
+     if(vlen(self.origin - self.enemy.origin) >= 70)
+     {
+      if(self.movetarget)
+      {
+       self.th_walk ();
+      }
+      else
+      {
+       self.th_stand ();
+      }
+
+      return;
+     }
+
 	local	float	ldmg;
 	local vector	delta;
    local entity temp;
@@ -1872,7 +2172,7 @@ void(float side)  Gremlin_Gorge =
         sound (self, #CHAN_WEAPON, "shambler/smack.wav", 1, #ATTN_NORM);
 
 //    sound (self, CHAN_WEAPON, "grem/attack.wav", 1, ATTN_NORM);
-   ldmg = 7+5*random();
+   ldmg = ceil(7+5*random());
    Gremlin_Damage (self.enemy, self, self, ldmg);
 
 	makevectors (self.angles);
@@ -1890,7 +2190,7 @@ void(float side)  Gremlin_Gorge =
 //         ThrowGib ("progs/gib2.mdl", -15);
 //         ThrowGib ("progs/gib3.mdl", -15);
          self = temp;
-         ldmg = 150 + 100*random();
+         ldmg = ceil(150 + 100*random());
          T_Heal(self,ldmg,#FALSE);
 //         if (self.health >= self.max_health)
             Gremlin_Split();
@@ -1949,19 +2249,36 @@ void()   Gremlin_JumpTouch =
 */
 	if (!checkbottom(self))
       {
-		if (self.flags & #FL_ONGROUND)
+         if (self.flags & #FL_ONGROUND)
          {
-         //self.touch = SUB_Null;
-             self.touch = MonsterTouch;
+          //self.touch = SUB_Null;
+
+          //self.touch = MonsterTouch;
+
          self.think = gremlin_jump1;
          self.nextthink = time + 0.1;
          }
-		return;	// not on ground yet
+		//return;	// not on ground yet
       }
 
 	//self.touch = SUB_Null;
         self.touch = MonsterTouch;
-   self.think = gremlin_jump12;
+
+   if(other.takedamage)
+   {
+    local float ldmg;
+    ldmg = ceil(40 + 10*random());
+    T_Damage (other, self, self, ldmg);
+
+    sound (self, #CHAN_WEAPON, "shambler/smack.wav", 1, #ATTN_NORM);
+    SpawnMeatSpray (self.origin, self.velocity * 2);
+   }
+
+
+   self.think = gremlin_jump1;
+   self.velocity = self.velocity * 2;
+   self.velocity_z = 150;
+
 	self.nextthink = time + 0.1;
 };
 
@@ -2152,7 +2469,7 @@ void (entity srcent, entity destent) SUB_CopyEntity =
    destent.volume=srcent.volume;
    destent.has_camera=srcent.has_camera;
    destent.has_fieldgen=srcent.has_fieldgen;
-   
+
    /*destent.spawnfunction=srcent.spawnfunction;
    destent.spawnthink=srcent.spawnthink;
    destent.spawnmodel=srcent.spawnmodel;
@@ -2164,54 +2481,57 @@ void (entity srcent, entity destent) SUB_CopyEntity =
 
 // OfN - Frame stuff added
 
-void()   gremlin_gstand1   =[ $glook1.asc,     gremlin_gstand2] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand2   =[ $glook2.asc,     gremlin_gstand3] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand3   =[ $glook3.asc,     gremlin_gstand4] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand4   =[ $glook4.asc,     gremlin_gstand5] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand5   =[ $glook5.asc,     gremlin_gstand6] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand6   =[ $glook6.asc,     gremlin_gstand7] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand7   =[ $glook7.asc,     gremlin_gstand8] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand8   =[ $glook8.asc,     gremlin_gstand9] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand9   =[ $glook9.asc,     gremlin_gstand10] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand10   =[ $glook10.asc,     gremlin_gstand11] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand11   =[ $glook11.asc,     gremlin_gstand12] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand12   =[ $glook12.asc,     gremlin_gstand13] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand13   =[ $glook13.asc,     gremlin_gstand14] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand14   =[ $glook14.asc,     gremlin_gstand15] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand15   =[ $glook15.asc,     gremlin_gstand16] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand16   =[ $glook16.asc,     gremlin_gstand17] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand17   =[ $glook17.asc,     gremlin_gstand18] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand18   =[ $glook18.asc,     gremlin_gstand19] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand19   =[ $glook19.asc,     gremlin_gstand20] {gremlin_stand();self.nextthink = time + 0.15;};
-void()   gremlin_gstand20   =[ $glook20.asc,     gremlin_gstand1] {gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand1   =[ $glook1.asc,     gremlin_gstand2] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand2   =[ $glook2.asc,     gremlin_gstand3] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand3   =[ $glook3.asc,     gremlin_gstand4] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand4   =[ $glook4.asc,     gremlin_gstand5] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand5   =[ $glook5.asc,     gremlin_gstand6] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand6   =[ $glook6.asc,     gremlin_gstand7] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand7   =[ $glook7.asc,     gremlin_gstand8] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand8   =[ $glook8.asc,     gremlin_gstand9] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand9   =[ $glook9.asc,     gremlin_gstand10] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand10   =[ $glook10.asc,     gremlin_gstand11] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand11   =[ $glook11.asc,     gremlin_gstand12] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand12   =[ $glook12.asc,     gremlin_gstand13] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand13   =[ $glook13.asc,     gremlin_gstand14] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand14   =[ $glook14.asc,     gremlin_gstand15] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand15   =[ $glook15.asc,     gremlin_gstand16] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand16   =[ $glook16.asc,     gremlin_gstand17] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand17   =[ $glook17.asc,     gremlin_gstand18] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand18   =[ $glook18.asc,     gremlin_gstand19] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand19   =[ $glook19.asc,     gremlin_gstand20] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
+void()   gremlin_gstand20   =[ $glook20.asc,     gremlin_gstand1] {GremlinFindTarget ();gremlin_stand();self.nextthink = time + 0.15;};
 
 void()   gremlin_gwalk1 =[ $grun1.asc,      gremlin_gwalk2 ] {
 if (random() < 0.1)
     sound (self, #CHAN_VOICE, "grem/idle.wav", 1, #ATTN_IDLE);
 gremlin_walk(0);};
-void()   gremlin_gwalk2 =[ $grun2.asc,      gremlin_gwalk3 ] {gremlin_walk(8);}; // original 8
-void()   gremlin_gwalk3 =[ $grun3.asc,      gremlin_gwalk4 ] {gremlin_walk(12);}; // original 12
-void()   gremlin_gwalk4 =[ $grun4.asc,      gremlin_gwalk5 ] {gremlin_walk(16);}; // original 16
-void()   gremlin_gwalk5 =[ $grun5.asc,      gremlin_gwalk6 ] {gremlin_walk(16);}; // original 16
-void()   gremlin_gwalk6 =[ $grun6.asc,      gremlin_gwalk7 ] {gremlin_walk(12);}; // original 12
-void()   gremlin_gwalk7 =[ $grun7.asc,      gremlin_gwalk8 ] {gremlin_walk(8);}; // original 8
-void()   gremlin_gwalk8 =[ $grun8.asc,      gremlin_gwalk9 ] {gremlin_walk(0);}; // original 0
-void()   gremlin_gwalk9 =[ $grun9.asc,      gremlin_gwalk10 ] {gremlin_walk(8);}; // original 8
-void()   gremlin_gwalk10 =[ $grun10.asc,      gremlin_gwalk11 ] {gremlin_walk(12);}; // original 12
-void()   gremlin_gwalk11 =[ $grun11.asc,      gremlin_gwalk12 ] {gremlin_walk(16);}; // original 16
-void()   gremlin_gwalk12 =[ $grun12.asc,      gremlin_gwalk13 ] {gremlin_walk(16);}; // original 16
-void()   gremlin_gwalk13 =[ $grun13.asc,      gremlin_gwalk14 ] {gremlin_walk(12);}; // original 12
-void()   gremlin_gwalk14 =[ $grun14.asc,      gremlin_gwalk15 ] {gremlin_walk(8);}; // original 8
-void()   gremlin_gwalk15 =[ $grun15.asc,      gremlin_gwalk1 ] {gremlin_walk(0);}; // original 0
+void()   gremlin_gwalk2 =[ $grun2.asc,      gremlin_gwalk3 ] {GremlinFindTarget ();gremlin_walk(8);}; // original 8
+void()   gremlin_gwalk3 =[ $grun3.asc,      gremlin_gwalk4 ] {GremlinFindTarget ();gremlin_walk(12);}; // original 12
+void()   gremlin_gwalk4 =[ $grun4.asc,      gremlin_gwalk5 ] {GremlinFindTarget ();gremlin_walk(16);}; // original 16
+void()   gremlin_gwalk5 =[ $grun5.asc,      gremlin_gwalk6 ] {GremlinFindTarget ();gremlin_walk(16);}; // original 16
+void()   gremlin_gwalk6 =[ $grun6.asc,      gremlin_gwalk7 ] {GremlinFindTarget ();gremlin_walk(12);}; // original 12
+void()   gremlin_gwalk7 =[ $grun7.asc,      gremlin_gwalk8 ] {GremlinFindTarget ();gremlin_walk(8);}; // original 8
+void()   gremlin_gwalk8 =[ $grun8.asc,      gremlin_gwalk9 ] {GremlinFindTarget ();gremlin_walk(0);}; // original 0
+void()   gremlin_gwalk9 =[ $grun9.asc,      gremlin_gwalk10 ] {GremlinFindTarget ();gremlin_walk(8);}; // original 8
+void()   gremlin_gwalk10 =[ $grun10.asc,      gremlin_gwalk11 ] {GremlinFindTarget ();gremlin_walk(12);}; // original 12
+void()   gremlin_gwalk11 =[ $grun11.asc,      gremlin_gwalk12 ] {GremlinFindTarget ();gremlin_walk(16);}; // original 16
+void()   gremlin_gwalk12 =[ $grun12.asc,      gremlin_gwalk13 ] {GremlinFindTarget ();gremlin_walk(16);}; // original 16
+void()   gremlin_gwalk13 =[ $grun13.asc,      gremlin_gwalk14 ] {GremlinFindTarget ();gremlin_walk(12);}; // original 12
+void()   gremlin_gwalk14 =[ $grun14.asc,      gremlin_gwalk15 ] {GremlinFindTarget ();gremlin_walk(8);}; // original 8
+void()   gremlin_gwalk15 =[ $grun15.asc,      gremlin_gwalk1 ] {GremlinFindTarget ();gremlin_walk(0);}; // original 0
 
 //================================================================
 // Stand and walk subs to route to correct animations
 
 void() gremlin_main_stand =
 {
+    WaterSafe();
+
     if (self.has_fieldgen)
         gremlin_gstand1();
     else
+
         gremlin_stand1();
 };
 
@@ -2220,7 +2540,7 @@ void() gremlin_main_walk =
     if (self.has_fieldgen)
         gremlin_gwalk1();
     else
-        gremlin_walk1();    
+        gremlin_walk1();
 };
 
 //===========================================================================
@@ -2236,16 +2556,16 @@ float(entity gremlin, entity player) GREM_BestWeaponToSteal =
         return #WEAP_LIGHTNING;
     // Super Shotgun
     if (player.weapons_carried & #WEAP_SUPER_SHOTGUN && !(gremlin.weapons_carried & #WEAP_SUPER_SHOTGUN))
-        return #WEAP_SUPER_SHOTGUN;    
+        return #WEAP_SUPER_SHOTGUN;
     // Shotgun
     if (player.weapons_carried & #WEAP_SHOTGUN && !(gremlin.weapons_carried & #WEAP_SHOTGUN))
         return #WEAP_SHOTGUN;
     // Super Nail Gun
     if (player.weapons_carried & #WEAP_SNG && !(gremlin.weapons_carried & #WEAP_SNG))
-        return #WEAP_SNG;    
+        return #WEAP_SNG;
     // Nailgun
     if (player.weapons_carried & #WEAP_NAILGUN && !(gremlin.weapons_carried & #WEAP_NAILGUN))
-        return #WEAP_NAILGUN;    
-    
+        return #WEAP_NAILGUN;
+
     return 0;
 };
