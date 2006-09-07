@@ -1,5 +1,5 @@
 /*======================================================
-	JOBS.QC			Custom TeamFortress v3.2SB1	
+	JOBS.QC			Custom TeamFortress v3.2SB1
 
 	(c) William Kerney			2/9/00
 	(c) SB-1 Tech				25/10/00
@@ -21,7 +21,7 @@ void(float cost, float type) BuyGren2;*/
 void() FragGrenadeTouch;
 void() FragGrenadeExplode;
 void() KracGrenadeTouch;
-void() KracGrenadeExplode; 
+void() KracGrenadeExplode;
 void(entity bastard,float threshold) createBastard;
 void() UseJobSkill; //Function for handling professions
 void (entity targ,float pain) RevealThief;
@@ -69,7 +69,7 @@ float(entity player) GetJobExtras =
     {
         if (player.job & #JOB_EXTRA2)
             return 3; // For future extra item
-        
+
         return 1;
     }
 
@@ -98,19 +98,19 @@ void(entity player, float extras) SetJobExtras =
     {
         player.job = player.job - (player.job & #JOB_EXTRA1);
         player.job = player.job | #JOB_EXTRA2;
-        return;    
+        return;
     }
 
     if (extras == 3) // Unused by now
     {
         player.job = player.job | #JOB_EXTRA2 | #JOB_EXTRA1;
-        return;    
+        return;
     }
 };
 
 //
 //	Functions for handling our "professions"
-//	which add some class-like behavior to this 
+//	which add some class-like behavior to this
 //	unclassy version of TF
 //
 
@@ -120,6 +120,18 @@ void(entity player, float extras) SetJobExtras =
 */
 void() JobThief =
 {
+	// don't hide if we are looking down our scope.
+	local entity sniperdot;
+
+	sniperdot = find(world, classname, "timer");
+
+	while(sniperdot) {
+		if(sniperdot.netname == "sniperdot" && sniperdot.owner == self) {
+			return;
+		}
+		sniperdot = find(sniperdot, classname, "timer");
+	}
+
 	//local float vel;
 	local entity te;
 	//local string st;
@@ -131,7 +143,7 @@ void() JobThief =
 		//}
 		else { //Become fully hidden
 			//RJM - Can't hide while carrying flags.
-			if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) { 
+			if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) {
 				sprint(self,#PRINT_HIGH,"Not while glowing, idiot.\n");
 				return;
 			}
@@ -155,7 +167,7 @@ void() JobThief =
 		//RJM - Can't hide while carrying flags.
 		//WK  - Allow them to go eyes invisible but not full hide
 		/*
-		if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) { 
+		if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) {
 			sprint(self, #PRINT_HIGH, "Not while glowing, gimp.\n");
 			return;
 		}
@@ -198,7 +210,7 @@ void() RunnerThink =
 		self.owner.job = self.owner.job | #JOB_TIRED;
 		TeamFortress_SetSpeed(self.owner);
 		self.nextthink = time + #PHASE2;
-	}	
+	}
 	else if (self.heat == 3) {
 		self.owner.job = self.owner.job - (self.owner.job & #JOB_ACTIVE);
 		self.owner.job = self.owner.job - (self.owner.job & #JOB_TIRED);
@@ -207,7 +219,7 @@ void() RunnerThink =
 	}
 	else {
 		dremove(self);
-	}	
+	}
 };
 void() JobRunner =
 {
@@ -236,7 +248,7 @@ void() JobWarlock =
 		self.job_finished = time + 2;
 		return;
 	}
-	
+
     if (self.current_menu == #MENU_DEMON)
     {
         Menu_Demon_Input(7);
@@ -265,7 +277,7 @@ void() ChaplanInspire = {
 	local entity head;
 	local float take;
 	head = findradius(self.origin, #CHAPLAN_RADIUS);
-	
+
 	while (head)
 	{
 		//Dispel enemy demons
@@ -326,7 +338,7 @@ void() ChaplanGuides = {
 	head = find(world,classname,"player");
 	while (head) {
 		if (head.inspirator == self) {
-			// Create the Lightning 
+			// Create the Lightning
 			msg_entity = self;
 			WriteByte (#MSG_ONE, #SVC_TEMPENTITY);
 			WriteByte (#MSG_ONE, #TE_LIGHTNING1);
@@ -453,19 +465,19 @@ void() JobMartyr =
 {
 	local entity tWeapon;
 	local float martyr_time;
-	
+
 	if (self.is_abouttodie)
 		return;
-	
+
 	martyr_time = #MARTYR_TIME; // don't need FORCED stuff since it's always automatic
-	
+
 	sprint(self,#PRINT_HIGH,"Beginning your suicide run...\n");
 	self.items = self.items | #IT_INVULNERABILITY;
 	self.invincible_time = 1;
 	self.invincible_finished = time + martyr_time + 1; //Overlap so we can't die till end
 	//self.job = self.job | #JOB_ACTIVE;
 	//self.job_finished = time + martyr_time + 1;
-	
+
 	tWeapon = spawn();
 	tWeapon.owner = self;
 	tWeapon.classname = "timer";
@@ -487,11 +499,11 @@ void() BerserkerKillTimer =
 {
 	if (!self.tfstate & #TFSTATE_CONCUSSIONED)
 		stuffcmd(self.owner, "v_idlescale 0\n");
-	
+
 	if (self.has_sensor)
 	{
 		deathmsg = #DMSG_BERSERK;
-		TF_T_Damage(self.owner, self.owner, self.owner, self.owner.health, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);	
+		TF_T_Damage(self.owner, self.owner, self.owner, self.owner.health, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 	}
 
 
@@ -506,13 +518,13 @@ void() JobBerserker =
 		return;
 	if (self.is_abouttodie)
 		return;
-	
+
 	newmis = spawn();
 	newmis.classname = "timer";
 	newmis.nextthink = time + #BERSERK_TIME + 1;
 	newmis.think = BerserkerKillTimer;
 	newmis.owner = self;
-	
+
 	if (self.health > #BERSERKER_HP_COST)
 		TF_T_Damage(self, self, self, #BERSERKER_HP_COST, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 	else
@@ -526,7 +538,7 @@ void() JobBerserker =
 	self.is_abouttodie = #TRUE;
     self.job = self.job | #JOB_ACTIVE; //- OfN
 	self.job_finished = time + #BERSERK_TIME * 3;
-	
+
 	stuffcmd(self, "v_idlescale 30\n");
 };
 
@@ -569,7 +581,7 @@ void() JudokaRearm =
 		}
 		////Fix double weapons
 		if (self.current_weapon == #WEAP_SNIPER_RIFLE) {
-			self.owner.weapons_carried = self.owner.weapons_carried | #WEAP_AUTO_RIFLE;				
+			self.owner.weapons_carried = self.owner.weapons_carried | #WEAP_AUTO_RIFLE;
 			self.enemy.weapons_carried = self.enemy.weapons_carried - (self.enemy.weapons_carried & #WEAP_AUTO_RIFLE);
 		}
 		////Fix weird weapons
@@ -602,7 +614,7 @@ void() JudokaRearm =
 		self.enemy.weapons_carried = self.enemy.weapons_carried - (self.enemy.weapons_carried & self.current_weapon);
 		//Fix for a bug that would let someone keep their weapon if they switched to autorifle before
 		//the weapon returned.
-		if (self.enemy.current_weapon == self.current_weapon || self.current_weapon == #WEAP_SNIPER_RIFLE || self.current_weapon == #WEAP_MEDIKIT) {	
+		if (self.enemy.current_weapon == self.current_weapon || self.current_weapon == #WEAP_SNIPER_RIFLE || self.current_weapon == #WEAP_MEDIKIT) {
 			oself = self;
 			self = self.enemy;
 			self.weaponframe = 0;
@@ -625,7 +637,7 @@ void() JobJudoka =
 	local vector	source;
 	local entity tWeapon,oself;
 	local entity te;
-	
+
 	makevectors(self.v_angle);
 	source = self.origin + '0 0 16';
 	traceline (source, source + v_forward*96, #TL_ANY_SOLID, self);
@@ -634,7 +646,7 @@ void() JobJudoka =
 		return;
 	}
 
-    
+
     if (trace_ent)
     if (trace_ent.classname == "player")
     if (trace_ent.#runes & #RUNE_RESIS)
@@ -697,7 +709,7 @@ void() JobJudoka =
 		else if (self.weapons_carried & trace_ent.current_weapon) {
 			sprint (self, #PRINT_HIGH, "You knock his weapon out of his hands\n");
 			tWeapon.heat = 0; //I.e., we didn't take a weapon
-			trace_ent.attack_finished = time + #DISARM_TIME;			
+			trace_ent.attack_finished = time + #DISARM_TIME;
 			deathmsg = #DMSG_JUDOKA;
 			TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER);
 		}
@@ -708,7 +720,7 @@ void() JobJudoka =
 
 			//Fix double weapons
 			if (trace_ent.current_weapon == #WEAP_SNIPER_RIFLE) {
-				self.weapons_carried = self.weapons_carried | #WEAP_AUTO_RIFLE;				
+				self.weapons_carried = self.weapons_carried | #WEAP_AUTO_RIFLE;
 				trace_ent.weapons_carried = trace_ent.weapons_carried - (trace_ent.weapons_carried & #WEAP_AUTO_RIFLE);
 			}
 			if (trace_ent.current_weapon == #WEAP_MEDIKIT) {
@@ -783,7 +795,7 @@ void() UseJobSkill =
 		if (HasFlag(self.team_no) == #FALSE)
 		{
 			CenterPrint(self, "No demons until your team has the flag!\n");
-			return;		
+			return;
 		}
 		JobWarlock();
 	}
@@ -847,7 +859,7 @@ void() InitJobStuff =
         GuerillaInit(self);
     else
         return; // If nothing done just return
-    
+
     // Set our "initialization done" flag to true
     self.goal_activation = #TRUE;
 };

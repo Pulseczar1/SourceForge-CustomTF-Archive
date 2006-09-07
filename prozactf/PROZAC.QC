@@ -5,7 +5,7 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs build 243 €26Ø06Ø2005›\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs build 245 €06Ø09Ø2006›\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
@@ -21,21 +21,21 @@
 
 
 //WK 152 Default, must be > 6.
-#define MOTD_FINISHED 420//242 		//Delay in 1/10th seconds for motd to show
+#define MOTD_FINISHED 152//420 		//Delay in 1/10th seconds for motd to show
 
 void() PrintProzacMOTD =
 {
-    local string st;   
+    local string st;
 
     st = "ùûü Celebrating  years !! ùûü\n\n";
-    
+
     if ((self.#cprint_fx & 3) == 3)
         st = colstr(st,#COLSTR_MIX1);
     else if (self.#cprint_fx & 2)
         st = colstr(st,#COLSTR_RED);
     else if (self.#cprint_fx & 1)
         st = colstr(st,#COLSTR_MIX2);
-    
+
     CenterPrint4(self,#MSG_INTRO,#MSG_INTRO2,st,#MSG_INTRO3);
 
     self.#cprint_fx = self.#cprint_fx + 1;
