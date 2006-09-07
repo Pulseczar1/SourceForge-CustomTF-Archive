@@ -1,0 +1,2 @@
+del *.qcp
+pause
