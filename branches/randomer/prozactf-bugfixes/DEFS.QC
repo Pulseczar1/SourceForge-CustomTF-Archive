@@ -1749,7 +1749,10 @@ float       rj;					// Rocket Jump Modifier
 
 
 // Maximum velocity you can move and fire the Sniper Rifle
-#define WEAP_SNIPER_RIFLE_MAX_MOVE	50 
+#define WEAP_SNIPER_RIFLE_MAX_MOVE  50 
+#define WEAP_SNIPER_RIFLE_MAX_TIME  3.8
+#define WEAP_SNIPER_RIFLE_MIN_DAMG  50
+#define WEAP_SNIPER_RIFLE_MAX_DAMG  400
 
 // Medikit
 #define WEAP_MEDIKIT_HEAL	200  // Amount medikit heals per hit
@@ -1786,11 +1789,8 @@ float       rj;					// Rocket Jump Modifier
 #define GR_TYPE_FLARE		6 
 #define GR_TYPE_GAS		7
 #define GR_TYPE_EMP		8
-#ifdef OLD_FLASH
 #define GR_TYPE_FLASH		9
-#else
-#define GR_TYPE_PSIONIC     9
-#endif
+#define GR_TYPE_PSIONIC     9 // Prozac replacement for flash grenades.
 #define GR_TYPE_FRAG		10
 #define GR_TYPE_KRAC		11
 #define GR_TYPE_ANTIGRAV	12
@@ -1803,12 +1803,36 @@ float       rj;					// Rocket Jump Modifier
 #define GL_PIPEBOMB	1 
 
 // Defines for Concussion Grenade
-#define GR_CONCUSS_TIME	5 
-#define GR_CONCUSS_DEC	20 
+#define GR_CONCUSS_START      800
+#define GR_CONCUSS_TIME       20
+#define GR_CONCUSS_THINK      0.25
+#define GR_CONCUSS_BUBBLE     5
+
+#define GR_CONCUSS_START_OLD  100
+#define GR_CONCUSS_TIME_OLD   20
+#define GR_CONCUSS_THINK_OLD  5
+
+// Defines for the Antigravity Grenade
+#define GR_ANTIGRAV_START     100
+#define GR_ANTIGRAV_TIME      10
+#define GR_ANTIGRAV_THINK     5
 
 // Defines for the Gas Grenade
 #define GR_HALLU_TIME	0.1
 #define GR_HALLU_DEC	2.5
+
+// Defines for Krac Grenade
+#define GR_KRAC_RANGE               200
+#define GR_KRAC_MALFUNCTION_RANGE   150
+#define GR_KRAC_DAMAGE_ARMOR        150
+#define GR_KRAC_DAMAGE_CELLS        100
+#define GR_KRAC_DAMAGE_SENTRY       200
+#define GR_KRAC_DAMAGE_TESLA        200
+#define GR_KRAC_DAMAGE_DISPENSER    500
+#define GR_KRAC_DAMAGE_CAMERA       400
+#define GR_KRAC_DAMAGE_TELEPAD      200
+#define GR_KRAC_DAMAGE_SENSOR       200
+#define GR_KRAC_DAMAGE_FIELDGEN     200
 
 #define NIT_SILVER_DOOR_OPENED 		#IT_KEY1	// 131072 
 #define NIT_GOLD_DOOR_OPENED 			#IT_KEY2	// 262144
@@ -1987,13 +2011,13 @@ float       rj;					// Rocket Jump Modifier
 //#define PC_MEDIC_ARMORCLASSES			11 		// ALL except EXPLOSION
 #define PC_MEDIC_INITARMORCLASS		0 
 #define PC_MEDIC_WEAPONS			#WEAP_MEDIKIT | #WEAP_SHOTGUN | #WEAP_SUPER_SHOTGUN | #WEAP_LIGHT_ASSAULT
-#define PC_MEDIC_MAXAMMO_SHOT			75 
-#define PC_MEDIC_MAXAMMO_NAIL			150 
+#define PC_MEDIC_MAXAMMO_SHOT			150
+#define PC_MEDIC_MAXAMMO_NAIL			0
 #define PC_MEDIC_MAXAMMO_CELL			50 
 #define PC_MEDIC_MAXAMMO_ROCKET		25 
 #define PC_MEDIC_MAXAMMO_MEDIKIT		100 
-#define PC_MEDIC_INITAMMO_SHOT		50 
-#define PC_MEDIC_INITAMMO_NAIL		50 
+#define PC_MEDIC_INITAMMO_SHOT		75
+#define PC_MEDIC_INITAMMO_NAIL		0
 #define PC_MEDIC_INITAMMO_CELL		0 
 #define PC_MEDIC_INITAMMO_ROCKET		0 
 #define PC_MEDIC_INITAMMO_MEDIKIT		50 
@@ -2403,8 +2427,9 @@ float num_team_ammoboxes_4;
 #define CTF_SCORE1   	5
 #define CTF_SCORE2   	6
 
-float	spy_off;	// Spy class off/on
-float	invis_only; // Spy invisible instead of color/skin changing
+float old_grens; // Use old TF concussion grenades rather than the new uncheatable ones.
+float spy_off;	// Spy class off/on
+float invis_only; // Spy invisible instead of color/skin changing
 float allow_hook;	// Allow players to use the hook
 float jello;	//WK Jello water! If this is true, you bounce on water
 float light_damage; //WK Armor more expensive, damage at 75%

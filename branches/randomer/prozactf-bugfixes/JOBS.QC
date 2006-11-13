@@ -649,7 +649,7 @@ void() JobJudoka =
 
     if (trace_ent)
     if (trace_ent.classname == "player")
-    if (trace_ent.#runes & #RUNE_RESIS)
+    if (trace_ent.#runes & #RUNE_RESIS || trace_ent.invincible_finished > time)
     {
         sprint (self, #PRINT_HIGH, "He is protected with a misterious power!\n");
         return;

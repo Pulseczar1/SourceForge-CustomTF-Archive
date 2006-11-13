@@ -29,9 +29,9 @@ void() TeamFortress_Discard =
 //and if you dont, throws it away
 	 if (self.playerclass != #PC_UNDEFINED)
 	{
-		if (!(self.weapons_carried & #WEAP_SNIPER_RIFLE || self.weapons_carried & #WEAP_AUTO_RIFLE || self.weapons_carried & #WEAP_SHOTGUN || self.weapons_carried & #WEAP_SUPER_SHOTGUN || self.weapons_carried & #WEAP_ASSAULT_CANNON || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER)))
+		if (!(self.weapons_carried & #WEAP_SNIPER_RIFLE || self.weapons_carried & #WEAP_AUTO_RIFLE || self.weapons_carried & #WEAP_SHOTGUN || self.weapons_carried & #WEAP_SUPER_SHOTGUN || self.weapons_carried & #WEAP_ASSAULT_CANNON || self.weapons_carried & #WEAP_LIGHT_ASSAULT || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER)))
 			newmis.ammo_shells = self.ammo_shells;
-		if (!(self.weapons_carried & #WEAP_NAILGUN || self.weapons_carried & #WEAP_SNG || self.weapons_carried & #WEAP_LIGHT_ASSAULT || self.weapons_carried & #WEAP_RAILGUN || self.weapons_carried & #WEAP_TRANQ || self.weapons_carried & #WEAP_MAUSER)) //CH is it just me or are there not many nail weapons? //WK It's just you
+		if (!(self.weapons_carried & #WEAP_NAILGUN || self.weapons_carried & #WEAP_SNG || self.weapons_carried & #WEAP_RAILGUN || self.weapons_carried & #WEAP_TRANQ || self.weapons_carried & #WEAP_MAUSER)) //CH is it just me or are there not many nail weapons? //WK It's just you
 			newmis.ammo_nails = self.ammo_nails;
 		if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_GRENADE_LAUNCHER || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || self.job & #JOB_GUERILLA))
 			newmis.ammo_rockets = self.ammo_rockets;
@@ -770,7 +770,7 @@ void() TeamFortress_ReloadCurrentWeapon =
                 return;
             }
 
-            if ( self.reload_light_assault < self.ammo_nails)
+            if ( self.reload_light_assault < self.ammo_shells)
             {
                 Attack_Finished(2);
 
@@ -782,8 +782,8 @@ void() TeamFortress_ReloadCurrentWeapon =
                     rt = rt * #SPEEDRUNE_RELOADMULT;
 
                 self.reload_light_assault = 0;
-                if (self.ammo_nails < #RE_LIGHT_ASSAULT_EX)
-                    self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_nails;
+                if (self.ammo_shells < #RE_LIGHT_ASSAULT_EX)
+                    self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_shells;
 
                 sprint (self, #PRINT_HIGH, "reloading...\n");
                 self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
@@ -1017,7 +1017,7 @@ void() TeamFortress_ReloadCurrentWeapon =
                 return;
             }
 
-            if ( self.reload_light_assault < self.ammo_nails)
+            if ( self.reload_light_assault < self.ammo_shells)
             {
                 Attack_Finished(2);
 
@@ -1029,8 +1029,8 @@ void() TeamFortress_ReloadCurrentWeapon =
                     rt = rt * #SPEEDRUNE_RELOADMULT;
 
                 self.reload_light_assault = 0;
-                if (self.ammo_nails < #RE_LIGHT_ASSAULT)
-                    self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_nails;
+                if (self.ammo_shells < #RE_LIGHT_ASSAULT)
+                    self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_shells;
 
                 sprint (self, #PRINT_HIGH, "reloading...\n");
                 self.tfstate = (self.tfstate | #TFSTATE_RELOADING);

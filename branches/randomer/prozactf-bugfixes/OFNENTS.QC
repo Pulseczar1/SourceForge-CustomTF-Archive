@@ -85,7 +85,13 @@ void() trigger_gravity_touch =
     if (other.gravity != self.gravity)
     {
         TriggerNotifyAndEffects(other);
-        other.gravity = self.gravity;
+        
+        // If other is a player and they are on_hook set the hook's gravity since the player's gravity is 0 while on_hook.
+        if (other.classname == "player" && other.on_hook) {
+			other.hook.gravity = self.gravity;
+		} else {
+	        other.gravity = self.gravity;
+		}
     }
 };
 

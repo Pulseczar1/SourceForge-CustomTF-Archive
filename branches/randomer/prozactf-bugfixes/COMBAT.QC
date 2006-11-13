@@ -841,17 +841,19 @@ void(vector place, entity inflictor, entity attacker, float damage, float firepr
             finaldmg = damage - vlen(place - head.origin);
 
             if (finaldmg > 0)
-            {                
-                TF_T_Damage(head, inflictor, attacker, finaldmg, #TF_TD_NOKNOCK | #TF_TD_DONTGIB, #TF_TD_FIRE);
-
-                if (random() <= fireprob)
-                {
-                    // set 'em on fire
-                    other = head; 
-                    Napalm_touch();
-                    if (other.classname == "player")
-                        stuffcmd(other, "bf\nbf\n");
-                }
+            {
+				if (CanDamage(head, inflictor)) { // Fire can no longer damage through walls. -randomer 2006-03-04
+	                TF_T_Damage(head, inflictor, attacker, finaldmg, #TF_TD_NOKNOCK | #TF_TD_DONTGIB, #TF_TD_FIRE);
+	
+	                if (head.invincible_finished <= time && random() <= fireprob)
+	                {
+	                    // set 'em on fire
+	                    other = head; 
+	                    Napalm_touch();
+	                    if (other.classname == "player")
+	                        stuffcmd(other, "bf\nbf\n");
+	                }
+				}
             }
         }
 

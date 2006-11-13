@@ -290,6 +290,23 @@ void() SecurityCameraTossTouch =
 		Security_Camera_Die();
 		return;
 	}
+	
+	// Check if the camera is inside a player.
+	// FIXME: Check for summons too? -randomer 2006-02-04
+	local entity te;
+	te = find(world, classname, "player");
+	while (te) {
+		if (self.origin_x - 16 < te.absmax_x && self.origin_x + 16 > te.absmin_x &&
+			self.origin_y - 16 < te.absmax_y && self.origin_y + 16 > te.absmin_y &&
+			self.origin_z -  6 < te.absmax_z && self.origin_z + 10 > te.absmin_z) {
+			
+			// FIXME: There should be a better way to handle this. -randomer 2006-02-10
+			Security_Camera_Die();
+			return;
+		}
+		te = find(te, classname, "player");
+	}
+	
 	sprint (self.real_owner, #PRINT_HIGH, "You finish building the Security Camera.\n");
 
     teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN

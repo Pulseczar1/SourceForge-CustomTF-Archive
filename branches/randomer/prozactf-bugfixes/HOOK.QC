@@ -45,6 +45,9 @@ void (entity rhook) Reset_Grapple =
     }
 
     sound (rhook.owner, #CHAN_WEAPON, "weapons/bounce.wav", 1, #ATTN_NONE);
+	if (rhook.owner.on_hook) {
+		rhook.owner.gravity = rhook.gravity;
+	}
 	rhook.owner.on_hook = #FALSE;
 	rhook.owner.hook_out = #FALSE;
 	rhook.owner.fire_held_down = #FALSE;
@@ -286,8 +289,11 @@ void () Anchor_Grapple =
 	// if you create new types of projectiles, make sure you use one of the
 	// classnames below or write code to exclude your new classname so
 	// grapples will not stick to them. OfN "rocket" was "missile"
-	if (other.classname == "rocket" || other.classname == "grenade" || other.classname == "spike" || other.classname == "hook" || other.classname == "pipebomb") //CH maybe fix crash?
+	if (other.classname == "rocket" || other.classname == "grenade" || other.classname == "spike" || other.classname == "hook" || other.classname == "pipebomb" || other.classname == "detpack") //CH maybe fix crash?
 			return;
+	
+	if (other.classname == "player" && other.invincible_finished > time)
+		return;
 
 	//if (isBuilding(other)) //WK don't hook onto buildings?
 	//	return;
@@ -302,7 +308,7 @@ void () Anchor_Grapple =
 	sound (self, #CHAN_WEAPON, "player/axhit2.wav", 1, #ATTN_NORM);
 	//WK Only deal the initial damage to buttons so we can open stuff
 	if (other.takedamage)
-		if (other.classname == "func_button")
+		if (other.classname == "func_button" || other.classname == "func_door" || other.classname == "trigger_multiple")
 			T_Damage (other, self, self.owner, 1);
 
 	self.velocity = '0 0 0';
@@ -331,6 +337,8 @@ void () Anchor_Grapple =
 	}
 
 	self.owner.on_hook = #TRUE;
+	self.gravity = self.owner.gravity;
+	self.owner.gravity = 0;
 
 	if (self.owner.flags & #FL_ONGROUND)
 	{
