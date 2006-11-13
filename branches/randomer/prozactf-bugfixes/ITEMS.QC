@@ -706,7 +706,7 @@ void() weapon_touch =
 		if (!TeamFortress_CanGetWeapon(other,#WEAP_LIGHT_ASSAULT))
 			return;
 		hadammo = other.ammo_rockets;			
-		new = #WEAP_LIGHT_ASSAULT;
+		new = #WEAP_SNG; //#WEAP_LIGHT_ASSAULT;
 		other.ammo_nails = other.ammo_nails + 90;
 	}
 	else if (self.classname == "weapon_supershotgun")

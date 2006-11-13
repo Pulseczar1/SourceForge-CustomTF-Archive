@@ -493,6 +493,7 @@ float (float item) countshells =
 		if (item == #WEAP_SPANNER) return 40;
 		if (item == #WEAP_SUPER_SHOTGUN) return 50;
 		if (item == #WEAP_ASSAULT_CANNON) return 100;
+		if (item == #WEAP_LIGHT_ASSAULT) return 150;
 	//}
 	return 0;
 };
@@ -512,7 +513,7 @@ float (float item) countnails =
 		if (item == #WEAP_TRANQ) return 30;
 		if (item == #WEAP_RAILGUN) return 50;
 		if (item == #WEAP_NAILGUN) return 100;
-		if (item == #WEAP_LIGHT_ASSAULT) return 150;
+//		if (item == #WEAP_LIGHT_ASSAULT) return 150;
 	//}
 	return 0;
 };
@@ -1231,82 +1232,91 @@ void() KracGrenadeExplode =
 {
 	local entity te,newmis;
 	local entity oldself;
-	te = findradius(self.origin, 150);
-	while (te)
-	{	
+	local float len, damg;
+	
+	te = findradius(self.origin, #GR_KRAC_RANGE);
+	while (te) {
+		// Linear damage falloff.
+		len = vlen(te.origin - self.origin);
+		if (len < 1)
+			len = 1;
+		damg = 1 - len / #GR_KRAC_RANGE;
+		
 		// Player?
-		if (te.classname == "player" && te.health > 0)
-		{
+		if (te.classname == "player" && te.health > 0 && te.invincible_finished <= time) {
 			//WW: Kracs disable detpack
 			oldself = self;
 			self = te;
 			TeamFortress_DetpackStop(#TRUE);
 			self = oldself;
-			//Gel armor makes kracs do less damage
+			
+			// Gel armor makes kracs do less damage.
 			if (te.armorclass & #AT_SAVEMELEE) {
-				if (te.armorvalue > 75)
-					te.armorvalue = 75;
+				te.armorvalue = te.armorvalue - damg * #GR_KRAC_DAMAGE_ARMOR * 0.5;
 			} else {
-				if (te.armorvalue > 10)
-					te.armorvalue = 10;
+				te.armorvalue = te.armorvalue - damg * #GR_KRAC_DAMAGE_ARMOR;
 			}
-			te.ammo_cells = 0; //Kill their metal supply too
-		}
-		else if (te.classname == "pipebomb")
+			
+			if (te.armorvalue < 0)
+				te.armorvalue = 0;
+			
+			te.ammo_cells = te.ammo_cells - damg * #GR_KRAC_DAMAGE_CELLS; // Kill their metal supply too.
+			if (te.ammo_cells < 0)
+				te.ammo_cells = 0;
+		} else if (te.classname == "pipebomb") {
 			te.nextthink = time + 0.1 + random();
-		else if (te.classname == "grenade" && te.netname == "land_mine")
-		{
+		} else if (te.classname == "grenade" && te.netname == "land_mine") {
 			te.think = GuerillaExplode;
 			te.nextthink = time + 0.1;
-		}
-		else if (te.classname == "building_sentrygun")
-			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-		else if (te.classname == "building_tesla")
-			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-		else if (te.classname == "building_dispenser")
-			TF_T_Damage(te, self, self.owner, 500, 0, 0);
-		else if (te.classname == "building_camera")
-			TF_T_Damage(te, self, self.owner, 400, 0, 0);
-		else if (te.classname == "building_teleporter")
-			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-        else if (te.classname == "building_sensor") //- Often - needed?
-			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-        else if (te.classname == "building_fieldgen") //- Often - needed?
-			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-		else if (te.classname == "item_armor1" || te.classname == "item_armor2" || te.classname == "item_armorInv") {
-			te.solid = #SOLID_NOT;
-			te.model = string_null;
-			te.nextthink = time + 45; //WK 20
-			te.think = SUB_regen;
-			//SUB_UseTargets();	
-		}
-		else if (te.classname == "detpack") {
-			if (te.owner.netname != self.owner.netname) {
-				bprint (#PRINT_MEDIUM, te.owner.netname);
-				bprint (#PRINT_MEDIUM, "'s detpack was Kraced by ");
-				bprint (#PRINT_MEDIUM, self.owner.netname);
-				bprint (#PRINT_MEDIUM, "\n");
-			} else {
-				sprint (te.owner, #PRINT_MEDIUM, "You Kraced your own detpack!\n");
+		} else if (te.classname == "building_sentrygun") {
+			TF_T_Damage(te, self, self.owner, damg * #GR_KRAC_DAMAGE_SENTRY, 0, 0);
+		} else if (te.classname == "building_tesla") {
+			TF_T_Damage(te, self, self.owner, damg * #GR_KRAC_DAMAGE_TESLA, 0, 0);
+		} else if (te.classname == "building_dispenser") {
+			TF_T_Damage(te, self, self.owner, damg * #GR_KRAC_DAMAGE_DISPENSER, 0, 0);
+		} else if (te.classname == "building_camera") {
+			TF_T_Damage(te, self, self.owner, damg * #GR_KRAC_DAMAGE_CAMERA, 0, 0);
+		} else if (te.classname == "building_teleporter") {
+			TF_T_Damage(te, self, self.owner, damg * #GR_KRAC_DAMAGE_TELEPAD, 0, 0);
+		} else if (te.classname == "building_sensor") { //- Often - needed?
+			TF_T_Damage(te, self, self.owner, damg * #GR_KRAC_DAMAGE_SENSOR, 0, 0);
+		} else if (te.classname == "building_fieldgen") { //- Often - needed?
+			TF_T_Damage(te, self, self.owner, damg * #GR_KRAC_DAMAGE_FIELDGEN, 0, 0);
+		}  else if (len <= #GR_KRAC_MALFUNCTION_RANGE) { // Give Kracs a maximum range for destroying some items.
+			if (te.classname == "item_armor1" || te.classname == "item_armor2" || te.classname == "item_armorInv") {
+				te.solid = #SOLID_NOT;
+				te.model = string_null;
+				te.nextthink = time + 45; //WK 20
+				te.think = SUB_regen;
+				//SUB_UseTargets();	
+			} else if (te.classname == "detpack") {
+				if (te.owner.netname != self.owner.netname) {
+					bprint (#PRINT_MEDIUM, te.owner.netname);
+					bprint (#PRINT_MEDIUM, "'s detpack was Kraced by ");
+					bprint (#PRINT_MEDIUM, self.owner.netname);
+					bprint (#PRINT_MEDIUM, "\n");
+				} else {
+					sprint (te.owner, #PRINT_MEDIUM, "You Kraced your own detpack!\n");
+				}
+				
+				// This code handles disarming a detpack
+				if (te.weaponmode == 1)	{ // Detpack was being disarmed
+					te.enemy.tfstate = te.enemy.tfstate - (te.enemy.tfstate & #TFSTATE_CANT_MOVE);
+					
+#ifdef QUAKE_WORLD
+					TeamFortress_SetSpeed(te.enemy);
+#else
+					te.enemy.pausetime = time;		
+#endif
+					
+					dremove(te.oldenemy);      // CountDown
+					dremove(te.observer_list); // Disarm timer
+				} else { // Not being disarmed
+					dremove(te.oldenemy);      // CountDown
+				}
+				te.think = BecomeExplosion;
+				te.nextthink = time + 0.1;
 			}
-			// This code handles disarming a detpack
-			if (te.weaponmode == 1)	// Detpack was being disarmed
-			{
-				te.enemy.tfstate = te.enemy.tfstate - (te.enemy.tfstate & #TFSTATE_CANT_MOVE);
-		#ifdef QUAKE_WORLD
-				TeamFortress_SetSpeed(te.enemy);
-		#else
-				te.enemy.pausetime = time;		
-		#endif
-
-				dremove(te.oldenemy);  	 // CountDown
-				dremove(te.observer_list); //	Disarm timer
-			}
-			else { //Not being disarmed
-				dremove(te.oldenemy);  	 // CountDown
-			}
-			te.think = BecomeExplosion;
-			te.nextthink = time + 0.1;
 		}
 		te = te.chain;
 	}

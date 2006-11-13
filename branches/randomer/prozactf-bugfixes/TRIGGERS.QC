@@ -500,6 +500,7 @@ void() teleport_touch =
 			other.fire_held_down = #FALSE;
 			other.weaponframe = 0;
 			other.attack_finished = time + 0.75;	// avoid instant rehook
+			other.gravity = other.hook.gravity;
 		}
 
 		//other.immune_to_check = time + 2; //WK Don't zap people for teleporting

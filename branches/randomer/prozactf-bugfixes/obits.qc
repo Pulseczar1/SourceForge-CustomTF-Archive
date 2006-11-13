@@ -60,7 +60,7 @@ void(entity targ, entity attacker) ClientObituary =
             else
             {
                 bprint (#PRINT_MEDIUM, targ.netname);
-                bprint (#PRINT_MEDIUM, " wastes his life hacking a \n");
+                bprint (#PRINT_MEDIUM, " wastes his life hacking a ");
                 bprint (#PRINT_MEDIUM, tst);
     			bprint (#PRINT_MEDIUM, "\n");
             }
