@@ -34,15 +34,14 @@
 #define VOTE_TIME_REFRESH   25
 #define VOTE_DELAY          240 // seconds to wait until another vote from same user is allowed
 
-// OBSOLETED -randomer 2006-02-24
-// Number of votes required for each action
-#define VOTESNEEDED_CURSE   0.51
-#define VOTESNEEDED_MUTE    0.51
-#define VOTESNEEDED_KICK    0.51
-#define VOTESNEEDED_CUFF    0.51
-#define VOTESNEEDED_BAN     0.51
-#define VOTESNEEDED_MAP     0.51
-#define VOTESNEEDED_NEXTMAP 0.51
+// Fraction of votes required for each action
+#define VOTESNEEDED_CURSE   0.5
+#define VOTESNEEDED_MUTE    0.5
+#define VOTESNEEDED_KICK    0.5
+#define VOTESNEEDED_CUFF    0.5
+#define VOTESNEEDED_BAN     0.5
+#define VOTESNEEDED_MAP     0.5
+#define VOTESNEEDED_NEXTMAP 0.5
 
 //#define BAN_VOTED_TIME        0 // permanent ban
 #define BAN_VOTED_TIME       60 // 60 minutes
@@ -1107,7 +1106,7 @@ float(float final) CheckVoting =
         
         if (current_voteent.g_a == #PUNISH_CURSE) // Curse
         {
-            if (num_for >= num_total * #VOTESNEEDED_CURSE) // success?
+            if (num_for > num_total * #VOTESNEEDED_CURSE) // success?
             {
                 local float tf;
                 
@@ -1142,7 +1141,7 @@ float(float final) CheckVoting =
         }
         else if (current_voteent.g_a == #PUNISH_KICK) // Kick
         {
-            if (num_for >= num_total * #VOTESNEEDED_KICK) // success?
+            if (num_for > num_total * #VOTESNEEDED_KICK) // success?
             {
                 bprint(#PRINT_HIGH,"Votingç Democracy says ");
                 bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
@@ -1174,7 +1173,7 @@ float(float final) CheckVoting =
         }
         else if (current_voteent.g_a == #PUNISH_BAN) // Ban!
         {
-            if (num_for >= num_total * #VOTESNEEDED_BAN) // success?
+            if (num_for > num_total * #VOTESNEEDED_BAN) // success?
             {
                 bprint(#PRINT_HIGH,"Votingç Democracy says ");
 
@@ -1231,7 +1230,7 @@ float(float final) CheckVoting =
         }
         else if (current_voteent.g_a == #PUNISH_MUTE) // Mute
         {
-            if (num_for >= num_total * #VOTESNEEDED_MUTE) // success? 
+            if (num_for > num_total * #VOTESNEEDED_MUTE) // success? 
             {
                 bprint(#PRINT_HIGH,"Votingç Democracy says ");
                 bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
@@ -1271,7 +1270,7 @@ float(float final) CheckVoting =
         }        
         else if (current_voteent.g_a == #PUNISH_CUFF) // Cuff
         {
-            if (num_for >= num_total * #VOTESNEEDED_CUFF) // success? 
+            if (num_for > num_total * #VOTESNEEDED_CUFF) // success? 
             {
                 bprint(#PRINT_HIGH,"Votingç Democracy says ");
                 bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
@@ -1312,7 +1311,7 @@ float(float final) CheckVoting =
     }
     else if (current_voteent.has_sentry == #VOTE_NEXTMAP)
     {
-		if (num_for >= num_total * #VOTESNEEDED_NEXTMAP) // success?
+		if (num_for > num_total * #VOTESNEEDED_NEXTMAP) // success?
 		{
             st = colstr(current_voteent.netname,#COLSTR_RED);
             
@@ -1341,7 +1340,7 @@ float(float final) CheckVoting =
     }
     else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
     {
-        if (num_for >= num_total * #VOTESNEEDED_MAP) // success?
+        if (num_for > num_total * #VOTESNEEDED_MAP) // success?
         {
             st = colstr(current_voteent.netname,#COLSTR_RED);
 
@@ -1355,7 +1354,7 @@ float(float final) CheckVoting =
 
             return #TRUE;
         }
-		else if (num_against >= num_total * (1 - #VOTE_SWITCHMAP))
+		else if (num_against >= num_total * (1 - #VOTESNEEDED_MAP))
 		{
 		    bprint(#PRINT_HIGH,"Votingç Map voting failed");
 			bprintVoteIssue();
