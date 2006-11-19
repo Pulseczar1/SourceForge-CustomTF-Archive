@@ -918,7 +918,7 @@ void() T_IncendiaryTouch =
 	{
 			if (head.takedamage && head.health > 0)
 			{
-				if (CanDamage(head, self)) { // Fire no longer goes through walls. -randomer 2006-03-04
+//				if (CanDamage(head, self)) { // Fire no longer goes through walls. -randomer 2006-03-04
 					deathmsg = #DMSG_FLAME;
 					TF_T_Damage (head, self, self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
 
@@ -929,7 +929,7 @@ void() T_IncendiaryTouch =
 //						stuffcmd(other, "bf\nbf\n");
 					if (IsBuilding(other)) 
 						TF_T_Damage (head, self, self.owner, 35, #TF_TD_NOTTEAM, #TF_TD_FIRE);
-				}
+//				}
 			}
             /*else TOFIX: if i use this to make corpses desptryable, coolexplosion later doesnt work?
             {
