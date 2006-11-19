@@ -1345,7 +1345,8 @@ void() TeamFortress_PrimeGrenade =
 	tGrenade = spawn();
 	tGrenade.owner = self;
 	tGrenade.weapon = gtype;
-	//tGrenade.classname = "timer"; //Ofn was comented, bug? - IT SHOULD BE COMMENTED :)
+	//tGrenade.classname = "timer"; //Ofn was comented, bug? - IT SHOULD BE COMMENTED :) -- Why should it be commented? -randomer 2006-02-11
+	tGrenade.classname = "grenade_timer";
 	tGrenade.nextthink = time + 0.8;
 	tGrenade.heat = time + #GR_PRIMETIME + 0.8;
 	tGrenade.think = TeamFortress_GrenadePrimed;
@@ -2842,7 +2843,7 @@ void() TeamFortress_RemoveTimers =
     {
         oself = self;
 
-        te = find(world,classname,"grenade");
+        te = find(world,classname,"grenade_timer");
 
         while (te)
         {
@@ -2853,7 +2854,7 @@ void() TeamFortress_RemoveTimers =
                 TeamFortress_GrenadePrimed();
             }
 
-            te = find(te,classname,"grenade");
+            te = find(te,classname,"grenade_timer");
         }
 
         self = oself;
@@ -3237,7 +3238,7 @@ void (float type) TeamFortress_DropAmmo =
 		newmis.ammo_rockets = ammo;
 	else if (newmis.weapon == 4)
 		newmis.ammo_cells = ammo;
-	newmis.enemy = self;
+	newmis.enemy = self; // Shouldn't this be self.real_owner? -randomer 2006-02-25
 	newmis.health = time;
 	newmis.movetype = #MOVETYPE_TOSS;
 	newmis.solid = #SOLID_TRIGGER;

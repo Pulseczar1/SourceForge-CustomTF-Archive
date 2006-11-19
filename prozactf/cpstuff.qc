@@ -87,7 +87,7 @@ void (float startup) UpdateInfos =
 		pay_msgs = 0;
 
     st = infokey(world, "team_prefix"); //
-	if (st == "0" || st =="off")
+	if (st == "0" || st == "off")
 		team_prefix = 0;
 	else
 		team_prefix = 1;
@@ -99,10 +99,22 @@ void (float startup) UpdateInfos =
 		headless = 0;*/
 
     st = infokey(world, "no_grapple"); //
-	if (st == "1" || st =="on" )
+	if (st == "1" || st == "on" )
 		no_grapple = 1;
 	else
 		no_grapple = 0;
+
+	st = infokey(world, "spy_off"); //
+	if (st == "1" || st == "on" )
+		spy_off = 1;
+	else
+		spy_off = 0;
+
+	st = infokey(world, "old_grens"); //
+	if (st == "1" || st == "on" )
+		old_grens = 1;
+	else
+		old_grens = 0;
 
     /*st = infokey(world, "smooth_sentry");
     if (st == "1" || st == "on")

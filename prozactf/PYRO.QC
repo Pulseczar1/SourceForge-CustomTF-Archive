@@ -298,20 +298,22 @@ void() NapalmGrenadeExplode =
 	{
 			if (head.takedamage && head.health > 0)
 			{
-				#ifdef OLD_FLAME
-                deathmsg = #DMSG_FLAME;
-				TF_T_Damage (head, self, self.owner, 120, #TF_TD_NOTTEAM, #TF_TD_FIRE);
-                #else
-                deathmsg = #DMSG_NAPALM;
-                TF_T_Damage (head, self, self.owner, #NAPALM_FIRSTDMG, #TF_TD_NOKNOCK | #TF_TD_DONTGIB | #TF_TD_NOTTEAM, #TF_TD_FIRE);
-                #endif
+				if (CanDamage(head, self)) {
+#ifdef OLD_FLAME
+					deathmsg = #DMSG_FLAME;
+					TF_T_Damage (head, self, self.owner, 120, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+#else
+					deathmsg = #DMSG_NAPALM;
+					TF_T_Damage (head, self, self.owner, #NAPALM_FIRSTDMG, #TF_TD_NOKNOCK | #TF_TD_DONTGIB | #TF_TD_NOTTEAM, #TF_TD_FIRE);
+#endif
 				
-                // set 'em on fire
-				other = head;  // i can't believe this works!
-				Napalm_touch();
-				if (other.classname == "player")
-					stuffcmd(other, "bf\nbf\n");
-				
+					// set 'em on fire
+					other = head;  // i can't believe this works!
+					Napalm_touch();
+					// A bf is already sent in Napalm_touch. -randomer 2006-02-22
+//					if (other.classname == "player")
+//						stuffcmd(other, "bf\nbf\n");
+				}
 			}
 		head = head.chain;
 	}
@@ -522,6 +524,9 @@ void() OnPlayerFlame_touch =
 
         if (other.classname == "player")
         {
+			if (other.invincible_finished > time)
+				return;
+			
 			if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other.team_no, self.owner.team_no))
 				return;
 
@@ -648,18 +653,15 @@ void() Flamer_stream_touch =
 
 			deathmsg = #DMSG_FLAME;
 			TF_T_Damage(other,self,self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+			
+			if (other.invincible_finished > time)
+				return;
 	
 			if (other.numflames >= #FLAME_MAXPLYRFLAMES)
 				return;
 
-			if (other.armorclass & #AT_SAVEFIRE)
-			{
-//				if ((random()*100) < other.armorvalue)
-				if (other.armorvalue > 0)
-				{
-					return;
-				}
-			}
+			if (other.armorclass & #AT_SAVEFIRE && other.armorvalue > 0)
+				return;
 
 	
             if (other.classname == "player")
@@ -735,7 +737,7 @@ void() Napalm_touch =
 
 	if (other != world)
 	{
-		if (other.takedamage == #DAMAGE_AIM && other.health > 0)
+		if (other.takedamage == #DAMAGE_AIM && other.health > 0 && other.invincible_finished <= time)
 		{
 			deathmsg = #DMSG_FLAME;
 			TF_T_Damage(other, self, self.owner, 6, #TF_TD_NOTTEAM, #TF_TD_FIRE);
@@ -916,17 +918,18 @@ void() T_IncendiaryTouch =
 	{
 			if (head.takedamage && head.health > 0)
 			{
-				deathmsg = #DMSG_FLAME;
-				TF_T_Damage (head, self, self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+//				if (CanDamage(head, self)) { // Fire no longer goes through walls. -randomer 2006-03-04
+					deathmsg = #DMSG_FLAME;
+					TF_T_Damage (head, self, self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
 
-				// set 'em on fire
-				other = head;  // i can't believe this works!
-				Napalm_touch();
-				if (other.classname == "player")
-					stuffcmd(other, "bf\nbf\n");
-				if (IsBuilding(other)) 
-				TF_T_Damage (head, self, self.owner, 35, #TF_TD_NOTTEAM, #TF_TD_FIRE);
-
+					// set 'em on fire
+					other = head;  // i can't believe this works!
+					Napalm_touch();
+//					if (other.classname == "player")
+//						stuffcmd(other, "bf\nbf\n");
+					if (IsBuilding(other)) 
+						TF_T_Damage (head, self, self.owner, 35, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+//				}
 			}
             /*else TOFIX: if i use this to make corpses desptryable, coolexplosion later doesnt work?
             {
