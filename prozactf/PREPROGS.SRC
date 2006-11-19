@@ -1,4 +1,6 @@
-//#pragma PROGS_DAT "../qwprogs.dat"
+#ifdef FTEQCC
+#pragma PROGS_DAT "../prozac.dat"
+#endif
 //#pragma PROGS_SRC "progs.src"
 
 #pragma CHECK_UNUSED_ON
@@ -104,3 +106,7 @@ runes.qc
 megatf.qc
 
 #endlist
+
+#ifdef FTEQCC
+#include "fteqw.qc"
+#endif

@@ -456,7 +456,7 @@ void() EMPGrenadeExplode =
 			}
 		}
 		// Backpack/Player?
-		else if ((te.classname == "player" && te.health > 0) || (te.classname=="monster_army") || (te.classname=="monster_gremlin") || (te.touch == BackpackTouch))
+		else if ((te.classname == "player" && te.health > 0 && te.invincible_finished <= time) || (te.classname=="monster_army") || (te.classname=="monster_gremlin") || (te.touch == BackpackTouch))
 		{
 			expsize = 0;
 			// calculate explosion size

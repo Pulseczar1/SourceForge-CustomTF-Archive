@@ -1,12 +1,9 @@
 @echo off
 echo ------------------------------------------------
-echo This will preprocess and compile Prozac CustomTF
+echo This will compile Prozac CustomTF
 echo ------------------------------------------------
-cppreqcc
-if errorlevel 1 exit
-echo ------------------------------------------------
-cpqccx /O2 /w
-if errorlevel 1 exit
+fteqcc -O2 -Fhashonly
+if errorlevel 1 exit /b
 echo ------------------------------------------------
 echo Prozac CustomTF has been compiled successfully!!
 echo ------------------------------------------------

@@ -97,8 +97,9 @@ void() SpectatorConnect =
 	bprint (#PRINT_MEDIUM, self.netname);
 	bprint (#PRINT_MEDIUM, " connected\n");
 
-    stuffcmd(self, "bind 9 \"impulse 9\"\n");
-	stuffcmd(self, "bind 0 \"impulse 10\"\n");
+	// Rebinding keys on the client is A Bad Thing. Don't do it. -randomer 2006-01-29
+//	stuffcmd(self, "bind 9 \"impulse 9\"\n");
+//	stuffcmd(self, "bind 0 \"impulse 10\"\n");
 
     TeamFortress_Alias("punish", #IMPULSE_PUNISH, 0);
     TeamFortress_Alias("votemap", #IMPULSE_VOTEMAP, 0);

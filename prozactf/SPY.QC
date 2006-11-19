@@ -201,22 +201,32 @@ void()  spy_upaxe9    = [   $axdeth1,   spy_upaxe9    ]
 void(float type) TeamFortress_SpyFeignDeath =
 {
 	local float i;
-	local entity at_spot;
+	local vector min1, max1, min2, max2;
+	local entity te;
 
 	if (self.is_feigning)
 	{
-		// Check to make sure there isn't anyone on top of us
-		at_spot = findradius(self.origin, 64);
 		i = #TRUE;
-
-		while (at_spot != world)
-		{
-			if (at_spot.classname == "player" && at_spot.health > 0 && at_spot.deadflag == #DEAD_NO && self != at_spot)
+		// Check to make sure there isn't anyone on top of us
+		// Bounds of the player after they unfeign.
+		min1 = self.origin + #VEC_HULL_MIN;
+		max1 = self.origin + #VEC_HULL_MAX;
+		
+		te = find(world, classname, "player");
+		while (te) {
+			// Bounds of the other player. It seems that origin + mins != absmin.
+			min2 = te.origin + te.mins;
+			max2 = te.origin + te.maxs;
+			if (te != self && te.health > 0 && te.deadflag == #DEAD_NO && te.takedamage &&
+				min2_x < max1_x && max2_x > min1_x &&
+				min2_y < max1_y && max2_y > min1_y &&
+				min2_z < max1_z && max2_z > min1_z) {
 				i = #FALSE;
-			
-			at_spot = at_spot.chain;			
+				break;
+			}
+			te = find(te, classname, "player");
 		}
-
+		
 		if (i == #TRUE)
 		{
 			i = 1 + floor(random()*5);
@@ -260,7 +270,7 @@ void(float type) TeamFortress_SpyFeignDeath =
 		}
 		else
 		{
-			sprint(self, #PRINT_HIGH, "You can't get up while someone\nis standing on you.\n");
+			sprint(self, #PRINT_HIGH, "You can't get up while someone is standing on you.\n");
 		}
 	}
 	else
@@ -316,17 +326,28 @@ void(float type) TeamFortress_SpyFeignDeath =
 			sprint (self, #PRINT_HIGH, "You can't pretend to die when you're not alive!\n");
 			return;
 		}
-
-		// Check to make sure there isn't anyone on top of us
-		at_spot = findradius(self.origin, 64);
-		while (at_spot != world)
-		{
-			if (at_spot.classname == "player" && at_spot.health > 0 && self != at_spot && at_spot.is_feigning == #TRUE)
-			{
+		
+		// Bounds of the player.
+		min1 = self.origin + self.mins;
+		max1 = self.origin + self.maxs;
+		
+		// Check a little below the player.
+		//max1_z = min1_z;
+		min1_z = min1_z - 32;
+		
+		te = find(world, classname, "player");
+		while (te) {
+			// Bounds of the other player.
+			min2 = te.origin + te.mins;
+			max2 = te.origin + te.maxs;
+			if (te != self && te.health > 0 && te.deadflag == #DEAD_NO && te.is_feigning == #TRUE && te.takedamage &&
+				min2_x < max1_x && max2_x > min1_x &&
+				min2_y < max1_y && max2_y > min1_y &&
+				min2_z < max1_z && max2_z > min1_z) {
 				sprint(self, #PRINT_HIGH, "You can't feign on top of another spy!\n");
+				return;
 			}
-			
-			at_spot = at_spot.chain;			
+			te = find(te, classname, "player");
 		}
 
 	#ifdef QUAKE_WORLD
@@ -365,7 +386,12 @@ void(float type) TeamFortress_SpyFeignDeath =
 		// testifying to that fact...
 		// Here's how you do it, moron:
  		// setsize (self, '0 0 -10', '0 0 0');
-		setsize (self, '-16 -16 -24', '16 16 4');
+		min1 = #VEC_HULL_MIN;
+		max1 = #VEC_HULL_MAX;
+		
+		max1_z = 4;
+		setsize (self, min1, max1);
+		
 		self.view_ofs = '0 0 4';
 		self.movetype = #MOVETYPE_TOSS;
 

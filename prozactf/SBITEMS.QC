@@ -217,6 +217,8 @@ void() ThrowC4Det =
 	newmis.solid = #SOLID_BBOX;
 	newmis.solid = #SOLID_TRIGGER;
 	newmis.classname = "detpack";
+	newmis.netname = "c4detpack"; // Needed for airfist code.
+	newmis.invincible_finished = time + 0.5; // Can't fist the det in the first half second.
 
 	// set grenade speed
 	makevectors (user.v_angle);
@@ -365,6 +367,22 @@ void() MotionSensorTossTouch =
 		return;
 	}
 
+	// Check if the sensor is inside a player.
+	// FIXME: Check for summons too? -randomer 2006-02-04
+	local entity te;
+	te = find(world, classname, "player");
+	while (te) {
+		if (self.origin_x - 16 < te.absmax_x && self.origin_x + 16 > te.absmin_x &&
+			self.origin_y - 16 < te.absmax_y && self.origin_y + 16 > te.absmin_y &&
+			self.origin_z -  6 < te.absmax_z && self.origin_z + 10 > te.absmin_z) {
+			
+			// FIXME: There should be a better way to handle this. -randomer 2006-02-10
+			MotionSensorDie();
+			return;
+		}
+		te = find(te, classname, "player");
+	}
+	
     teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
     teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
 	teamsprint(self.real_owner.team_no, self.real_owner, " has built a Motion Sensor.\n");
@@ -640,22 +658,27 @@ void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusAnt
 							te = find(te, classname, "timer");
 						if (te != world)
 						{
-							head.gravity = 0.3 * random();
-							te.health = 100;
-							te.nextthink = time + #GR_CONCUSS_TIME;
+							te.health = #GR_ANTIGRAV_START;
+							te.heat = time + #GR_ANTIGRAV_TIME;
+							te.nextthink = time + #GR_ANTIGRAV_THINK;
 						}
 						else
 						{
-							head.gravity = 0.3 * random();
 							stuffcmd(head,"bf\n");
 							// Create a timer entity
 							te = spawn();
-							te.nextthink = time + #GR_CONCUSS_TIME;
+							te.nextthink = time + #GR_ANTIGRAV_THINK;
 							te.think = AntiGravGrenadeTimer;
 							te.team_no = attacker.team_no;
 							te.classname = "timer";
 							te.owner = head;
-							te.health = 100;
+							te.health = #GR_ANTIGRAV_START;
+							te.heat = time + #GR_ANTIGRAV_TIME;
+						}
+						if (head.classname == "player" && head.on_hook) {
+							head.hook.gravity = 0.3 * random();
+						} else {
+							head.gravity = 0.3 * random();
 						}
 					}
 				}
@@ -670,27 +693,37 @@ void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusAnt
 void() AntiGravGrenadeTimer =
 {
 	//local string st;
+	local float dec;
 
 	if (self.owner.invincible_finished > time)
 	{
-		self.owner.gravity = 1;
+		if (self.owner.classname == "player" && self.owner.on_hook) {
+			self.owner.hook.gravity = 1;
+		} else {
+			self.owner.gravity = 1;
+		}
 		dremove(self);
 		return;
 	}
 
-	self.health = self.health - #GR_CONCUSS_DEC * 2;
+	dec = #GR_ANTIGRAV_START / #GR_ANTIGRAV_TIME * #GR_ANTIGRAV_THINK;
+	self.health = self.health - dec;
 	
 	// hwguy recovers twice as fast - heh heh
 	if (self.owner.cutf_items & #CUTF_HWGUY)
-		self.health = self.health - #GR_CONCUSS_DEC * 2;
+		self.health = self.health - dec;
 
 	if (self.health < 0)
 		self.health = 0;
-	self.nextthink = time + #GR_CONCUSS_TIME;
+	self.nextthink = time + #GR_ANTIGRAV_THINK;
 
-	if (self.health <= 0)
+	if (time >= self.heat)
 	{
-		self.owner.gravity = 1;
+		if (self.owner.classname == "player" && self.owner.on_hook) {
+			self.owner.hook.gravity = 1;
+		} else {
+			self.owner.gravity = 1;
+		}
 		sprint(self.owner, #PRINT_HIGH, "Your weight feels normal again.\n");
 		dremove(self);
 	}

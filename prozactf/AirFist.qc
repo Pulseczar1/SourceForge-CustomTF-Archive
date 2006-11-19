@@ -39,7 +39,7 @@ $cd id1/progs/s_ablast
 $frame ablast1 ablast2 ablast3 ablast4 ablast5 ablast6
 
 
-void (entity thing) canairpush =
+float (entity thing) canairpush =
 {
 	if (thing.classname == "player")
     {
@@ -85,7 +85,7 @@ void (entity thing) canairpush =
 		return #TRUE;    
     #endif
 
-  	else if (thing.classname == "detpack" && no_detpush == 0)
+  	else if (thing.classname == "detpack" && thing.netname == "c4detpack" && thing.invincible_finished <= time && no_detpush == 0)
     {
 		thing.avelocity = '300 300 300';
         thing.movetype = #MOVETYPE_BOUNCE;
@@ -357,10 +357,20 @@ void() launch_horn =
       }
       else
       {
-        // If we havent the upgrade reduce push on players
-        if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE) && e.classname=="player")
-            delta = delta * #AIRFIST_PUSH_REDUCTION;
+		// Modifications for players.
+		if (e.classname == "player") {
+			// If we havent the upgrade reduce push on players
+			if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE))
+				delta = delta * #AIRFIST_PUSH_REDUCTION;
+			
+			// If the other player has aspect of hwguy reduce the push.
+			if (e.cutf_items & #CUTF_HWGUY)
+				delta = delta * #AIRFIST_PUSH_HWGUY;
+		}
         
+		if (e.classname == "detpack")
+			delta = delta * #AIRFIST_PUSH_DETPACK;
+		
         // Apply the velocity adjustment
         e.velocity = e.velocity + delta;
 
@@ -469,6 +479,10 @@ void() launch_horn =
   // If we havent the upgrade reduce recoil
   if (!self.cutf_items & #CUTF_AIRFISTUPGRADE)
     recoil = recoil * #AIRFIST_RECOIL_REDUCTION;
+  
+  // If we have aspect of hwguy we don't take nearly as much recoil.
+  //if (self.cutf_items & #CUTF_HWGUY)
+  //	recoil = recoil * #AIRFIST_RECOIL_HWGUY;
 
   // recoil self
   self.velocity = self.velocity + v_forward * recoil * -1;

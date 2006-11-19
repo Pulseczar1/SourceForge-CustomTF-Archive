@@ -1557,10 +1557,19 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
         //traceline (src, src + direction*dist, #TL_ANY_SOLID, self); //WK 2048
         BulletTraceline(src, src + direction*dist);
 	}
+	else if (self.current_weapon & #WEAP_LIGHT_ASSAULT)
+	{
+		direction = dir + crandom() * 0.05 * v_right + crandom() * 0.025 * v_up;
+		//traceline (src, src + direction*2048, #TL_ANY_SOLID, self); //WK 2048
+        //traceline (src, src + direction*dist, #TL_ANY_SOLID, self); //WK 2048
+        BulletTraceline(src, src + direction * dist);
+	}
 	else
+	{
 		//traceline (src, src + dir*1024, #TL_ANY_SOLID, self); //WK 2048
         //traceline (src, src + dir*dist, #TL_ANY_SOLID, self); //WK 2048
         BulletTraceline(src, src + dir*dist);
+	}
 	
     #ifdef REALISTIC_SHOTGUN_PARTS 
     // OfN - Don't make particles if it doesnt hit anything!
@@ -1703,7 +1712,7 @@ TeamFortress : W_FireSniperRifle
 void() W_FireSniperRifle =
 {
 	local vector dir, src;
-	local float dam_mult, zdif, use_this;
+	local float dam_mult, zdif, use_this, damg;
 
 	sound (self ,#CHAN_WEAPON, "weapons/sniper.wav", 1, #ATTN_NORM);
 	KickPlayer(-2, self);
@@ -1714,7 +1723,7 @@ void() W_FireSniperRifle =
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	use_this = #FALSE;
-    traceline (src, src + dir*8092, #TL_ANY_SOLID, self);
+    traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
 	if (trace_fraction != 1.0)
 	{
 		if (trace_ent != world)
@@ -1732,7 +1741,7 @@ void() W_FireSniperRifle =
 	{
 		// aim, 'cause no entity in sights
 		dir = aim (self, 10000);	// this corrects the aiming slightly, for bad players
-	    traceline (src, src + dir*3072, #TL_ANY_SOLID, self);
+	    traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
 	}
 
     local float OTR;
@@ -1744,6 +1753,14 @@ void() W_FireSniperRifle =
 
 	deathmsg = #DMSG_SNIPERRIFLE;
 	dam_mult = 1;
+	
+	// Time since the rifle started powering up. -randomer 2005-08-27
+	damg = (time - self.heat) / #WEAP_SNIPER_RIFLE_MAX_TIME;
+	if (damg < 0)
+		damg = 0;
+	if (damg > 1)
+	   damg = 1;
+	damg = damg * (#WEAP_SNIPER_RIFLE_MAX_DAMG - #WEAP_SNIPER_RIFLE_MIN_DAMG) + #WEAP_SNIPER_RIFLE_MIN_DAMG; // Powerup * damage range + minimum damage.
 
     if (OTR > 1)
         self.currentammo = self.ammo_shells = self.ammo_shells - #OTR_AMMO_COST;
@@ -1752,7 +1769,7 @@ void() W_FireSniperRifle =
 
 	if (trace_ent)
 	{
-		if (trace_ent.classname == "player")
+		if (trace_ent.classname == "player" && trace_ent.invincible_finished <= time)
 		{
 			local float x;
 			local vector f, g, h;
@@ -1795,7 +1812,7 @@ void() W_FireSniperRifle =
 				//TeamFortress_SetSpeed(trace_ent); 
 				deathmsg = #DMSG_SNIPERLEGSHOT;
 				//WK Kevlar ignored for snipers again.
-				TF_T_Damage (trace_ent, self, self, self.heat * dam_mult * OTR, 0, 0);
+				TF_T_Damage (trace_ent, self, self, damg * dam_mult * OTR, 0, 0);
 
 
 				if (trace_ent.health > 0 && legdmgdone)
@@ -1826,7 +1843,7 @@ void() W_FireSniperRifle =
 
 				trace_ent.head_shot_vector = trace_ent.origin - self.origin;
 				deathmsg = #DMSG_SNIPERHEADSHOT;
-				TF_T_Damage (trace_ent, self, self, self.heat * dam_mult * OTR, 0, #TF_TD_SHOT);
+				TF_T_Damage (trace_ent, self, self, damg * dam_mult * OTR, 0, #TF_TD_SHOT);
 
 				if (trace_ent.health > 0)
 				{
@@ -1853,7 +1870,7 @@ void() W_FireSniperRifle =
 	ClearMultiDamage ();
 
 	if (trace_fraction != 1.0)	// if it hit something
-   		TraceAttack (self.heat * dam_mult * OTR * sniper_factor, dir);
+   		TraceAttack (damg * dam_mult * OTR * sniper_factor, dir);
 
     // OfN - Particle/sound stuff and dot removal
     local entity sight;
@@ -1933,7 +1950,7 @@ void() W_FireLightAssault =
 {
 	local vector dir;
 
-	if (self.ammo_nails < 1)
+	if (self.ammo_shells < 1)
 	{
 		self.current_weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1949,7 +1966,7 @@ void() W_FireLightAssault =
 
 	dir = v_forward;
 	deathmsg = #DMSG_LIGHT_ASSAULT;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
 	self.reload_light_assault = self.reload_light_assault + 1;
 
 	if (CheckForReload() == #TRUE) return;
@@ -3006,7 +3023,7 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
 	{
-		self.currentammo = self.ammo_nails;
+		self.currentammo = self.ammo_shells;
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
 			self.weaponmodel = "progs/v_nail2.mdl";
@@ -3014,7 +3031,7 @@ void() W_SetCurrentAmmo =
             
 			self.weaponframe = 0;
 		}
-		self.items = self.items | #IT_NAILS;
+		self.items = self.items | #IT_SHELLS;
 		self.weapon = #IT_LIGHT_ASSAULT;
 	}
 	else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
@@ -3159,7 +3176,7 @@ void() W_SetCurrentAmmo =
 			self.weaponframe = 0;
 		}
 
-		self.items = self.items | #IT_NAILS;
+		self.items = self.items | #IT_SHELLS;
 		self.weapon = #IT_LIGHT_ASSAULT;
 	}
     else if (self.current_weapon == #WEAP_AIRF)
@@ -3182,7 +3199,7 @@ void() W_SetCurrentAmmo =
 			self.weaponmodel = "progs/v_nail2.mdl";
 			self.weaponframe = 0;
 		}
-		self.items = self.items | #IT_NAILS;
+		self.items = self.items | #IT_SHELLS;
 		self.weapon = #IT_LIGHT_ASSAULT;//IT_SUPER_NAILGUN;
 	}
     else if (self.current_weapon == #WEAP_LASERCANNON)
@@ -3221,7 +3238,7 @@ float() W_BestWeapon =
 		return #WEAP_DAEDALUS;
 	else if (self.ammo_cells >= 6 && (self.ammo_shells >= 1) && (it  & #WEAP_ASSAULT_CANNON))
 		return #WEAP_ASSAULT_CANNON;
-	else if(self.ammo_nails >= 10 && (it & #WEAP_LIGHT_ASSAULT) )
+	else if(self.ammo_shells >= 10 && (it & #WEAP_LIGHT_ASSAULT) )
 		return #WEAP_LIGHT_ASSAULT;
 	else if(self.ammo_rockets >= 3 && (it & #WEAP_INCENDIARY) )
 		return #WEAP_INCENDIARY;
@@ -3420,11 +3437,11 @@ float() CheckForReload =
         }
         else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
         {
-            if (self.reload_light_assault >= #RE_LIGHT_ASSAULT_EX && self.ammo_nails > 0)
+            if (self.reload_light_assault >= #RE_LIGHT_ASSAULT_EX && self.ammo_shells > 0)
             {
                 self.reload_light_assault = 0;
-                if (self.ammo_nails < #RE_LIGHT_ASSAULT_EX)
-                    self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_nails;
+                if (self.ammo_shells < #RE_LIGHT_ASSAULT_EX)
+                    self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_shells;
 
                 sprint (self, #PRINT_HIGH, "reloading...\n");
                 self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
@@ -3567,11 +3584,11 @@ float() CheckForReload =
 	}
 	else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
 	{
-        if (self.reload_light_assault >= #RE_LIGHT_ASSAULT && self.ammo_nails > 0)
+        if (self.reload_light_assault >= #RE_LIGHT_ASSAULT && self.ammo_shells > 0)
         {
 			self.reload_light_assault = 0;
-			if (self.ammo_nails < #RE_LIGHT_ASSAULT)
-				self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_nails;
+			if (self.ammo_shells < #RE_LIGHT_ASSAULT)
+				self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_shells;
 
 			sprint (self, #PRINT_HIGH, "reloading...\n");
 			self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
@@ -4147,7 +4164,7 @@ void() W_ChangeWeapon =
 	}
 	else if (self.impulse == 2)
 	{
-		if (!(((it & #WEAP_SNIPER_RIFLE || it & #WEAP_SHOTGUN || it & #WEAP_TRANQ) && self.ammo_shells > 0) || (it & #WEAP_RAILGUN && self.ammo_nails > 0)|| (it & #WEAP_DAEDALUS && self.ammo_cells > 0)))
+		if (!(((it & #WEAP_SNIPER_RIFLE || it & #WEAP_SHOTGUN) && self.ammo_shells > 0) || ((it & #WEAP_RAILGUN || it & #WEAP_TRANQ) && self.ammo_nails > 0) /*|| (it & #WEAP_DAEDALUS && self.ammo_cells > 0)*/)) // Daedalus is under weapon slot 8, why check it here? -randomer 2006-02-12
 			have_weapon = #FALSE;
 		loopck = 0;
 		while (!usable && have_weapon)
@@ -4180,7 +4197,7 @@ void() W_ChangeWeapon =
 					usable = 1;
 			}
 		}
-		if (fl == #WEAP_RAILGUN)
+		if (fl == #WEAP_RAILGUN || fl == #WEAP_TRANQ)
 		{
 			if (self.ammo_nails < 1)
 				am = 1;
@@ -4303,7 +4320,7 @@ void() W_ChangeWeapon =
 		}
 		else if (fl == #WEAP_LIGHT_ASSAULT)
 		{
-			if (self.ammo_nails < 1)
+			if (self.ammo_shells < 1)
 				am = 1;
 		}
         //
@@ -4617,7 +4634,7 @@ void() CycleWeaponCommand =
         else if (self.current_weapon == #WEAP_LASERCANNON) // was WEAP_NAILGUN
 		{
 			self.current_weapon = #WEAP_LIGHT_ASSAULT;
-			if (self.ammo_nails < 2)
+			if (self.ammo_shells < 2)
 				am = 1;
 		}
 		else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
@@ -5414,8 +5431,8 @@ void() W_WeaponFrame =
 		{
 			if (self.tfstate & #TFSTATE_AIMING)
 			{
-				if (self.heat < 400)
-					self.heat = self.heat + 3;
+//				if (self.heat < 400)
+//					self.heat = self.heat + 3;
 
 				if (self.height > 30)
 				{
@@ -5433,9 +5450,9 @@ void() W_WeaponFrame =
 				{
 					// create the laser sight
 					SniperSight_Create(0);
-					self.heat = 50; // damage done
+					self.heat = time; // damage done
 					#ifdef WEINER_SNIPER
-						self.heat = 80;
+//						self.heat = 80;
 					#endif
 					
 					self.height = 90;
@@ -5470,7 +5487,10 @@ void() W_WeaponFrame =
 			}
 			else
 			{
-				sprint(self, #PRINT_MEDIUM, "You cannot fire the assault cannon without\nyour feet on the ground...\n");
+				if (self.option < time) {
+					sprint(self, #PRINT_MEDIUM, "You cannot fire the assault cannon in the air...\n");
+					self.option = time + 2;
+				}
 			}
 		}
 		else
@@ -5521,7 +5541,7 @@ void() T_DaedalusTouch =
 	head = findradius(self.origin, #BOUNCE);	
 	while (head) {
 		//Conc
-		if (head.takedamage && !IsBuilding(head) && head.health > 0)
+		if (head.takedamage && !IsBuilding(head) && head.health > 0 && head.invincible_finished <= time)
 		{
 			org = head.origin + (head.mins + head.maxs)*0.5;
 			points = 0.5*vlen (org - self.origin);
@@ -5537,7 +5557,7 @@ void() T_DaedalusTouch =
 					head.flags = head.flags - #FL_ONGROUND;
 			}
 		}
-		if (head.takedamage)
+		if (head.takedamage && head.invincible_finished <= time)
 		{
 			//Krac
 			if (IsBuilding(head))

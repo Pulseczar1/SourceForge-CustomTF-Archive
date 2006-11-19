@@ -295,6 +295,7 @@ void() TeamFortress_DetpackSet =
 	newmis.solid = #SOLID_TRIGGER;
 #endif
 	newmis.classname = "detpack";
+	newmis.netname = "detpack";
     newmis.flags = #FL_ITEM;
 		
 	newmis.angles = '90 0 0';

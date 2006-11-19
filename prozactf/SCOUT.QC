@@ -13,6 +13,7 @@ Functions for the SCOUT class and associated weaponry
 void() ConcussionGrenadeTouch;
 void() ConcussionGrenadeExplode;
 void() ConcussionGrenadeTimer;
+void() ConcussionGrenadeTimerOld;
 // Scanner Functions
 void(float scanrange,float inAuto) TeamFortress_Scan;
 void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusBounce;
@@ -420,7 +421,98 @@ void() ConcussionGrenadeExplode =
 // Concussion grenade timer to remove idlescale
 void() ConcussionGrenadeTimer =
 {
+	local float dec, stable;
+	local vector src, stumble;
+
+	if (self.owner.invincible_finished > time)
+	{
+		sprint (self.owner, #PRINT_HIGH, "Your head feels better now.\n");
+		self.owner.fixangle = #FALSE;
+		dremove(self);
+		return;
+	}
+
+	// Bubble
+	if (self.option < time) {
+		self.option = time + #GR_CONCUSS_BUBBLE;
+		
+		newmis = spawn();
+		setmodel (newmis, "progs/s_bubble.spr");
+		setorigin (newmis, self.owner.origin);
+		newmis.movetype = #MOVETYPE_NOCLIP;
+		newmis.solid = #SOLID_NOT;
+		newmis.velocity = '0 0 15';
+		newmis.nextthink = time + 0.5;
+		newmis.think = bubble_bob;
+		newmis.touch = bubble_remove;
+		newmis.classname = "bubble";
+		newmis.frame = 0;
+		newmis.cnt = 0;
+		setsize(newmis, '-8 -8 -8', '8 8 8');
+	}
+
+	dec = #GR_CONCUSS_START / #GR_CONCUSS_TIME * #GR_CONCUSS_THINK;
+	self.health = self.health - dec;
+	
+	// medic recovers twice as fast
+	if (self.owner.weapons_carried & #WEAP_MEDIKIT) //WK
+		self.health = self.health - dec;
+	if (self.owner.cutf_items & #CUTF_STEALTH)
+		self.health = self.health - dec;
+	if (self.owner.cutf_items & #CUTF_GYMNAST)
+		self.health = self.health - dec;
+
+	if (self.health < 0)
+		self.health = 0;
+	self.nextthink = time + #GR_CONCUSS_THINK;
+	
+	if (self.owner.flags & #FL_ONGROUND || self.owner.flags & #FL_INWATER && !self.owner.is_feigning) {
+		// Check around the player to see if they are "leaning" on a wall.
+		// Front
+		stable = 0;
+		src = self.owner.origin;
+		src_x = self.owner.absmax_x + 1;
+		if (pointcontents(src) == #CONTENT_SOLID)
+			stable = 1;
+		
+		// Back
+		src_x = self.owner.absmin_x - 1;
+		if (pointcontents(src) == #CONTENT_SOLID)
+			stable = 1;
+		
+		// Right
+		src_x = self.owner.origin;
+		src_y = self.owner.absmax_y + 1;
+		if (pointcontents(src) == #CONTENT_SOLID)
+			stable = 1;
+		
+		// Left
+		src_y = self.owner.absmin_y - 1;
+		if (pointcontents(src) == #CONTENT_SOLID)
+			stable = 1;
+		
+		makevectors (self.owner.v_angle);
+		if (!stable || self.owner.velocity != '0 0 0') {
+			stumble = crandom() * v_forward * self.health + crandom() * v_right * self.health;
+			self.owner.velocity = self.owner.velocity + stumble;
+			self.owner.fixangle = #TRUE;
+		}
+	}
+	
+	if (time >= self.heat) {
+		sprint (self.owner, #PRINT_HIGH, "Your head feels better now.\n");
+		self.owner.fixangle = #FALSE;
+		dremove(self);
+	}
+};
+
+
+//=========================================================================
+// Concussion grenade timer to remove idlescale
+void() ConcussionGrenadeTimerOld =
+{
 	local string st;
+	local float dec;
 
 	if (self.owner.invincible_finished > time)
 	{
@@ -444,27 +536,29 @@ void() ConcussionGrenadeTimer =
 	newmis.cnt = 0;
 	setsize(newmis, '-8 -8 -8', '8 8 8');
 
-	self.health = self.health - #GR_CONCUSS_DEC;
+	dec = #GR_CONCUSS_START_OLD / #GR_CONCUSS_TIME_OLD * #GR_CONCUSS_THINK_OLD;
+	self.health = self.health - dec;
 	
 	// medic recovers twice as fast
 	if (self.owner.weapons_carried & #WEAP_MEDIKIT) //WK
-		self.health = self.health - #GR_CONCUSS_DEC;
+		self.health = self.health - dec;
 	if (self.owner.cutf_items & #CUTF_STEALTH)
-		self.health = self.health - #GR_CONCUSS_DEC;
+		self.health = self.health - dec;
 	if (self.owner.cutf_items & #CUTF_GYMNAST)
-		self.health = self.health - #GR_CONCUSS_DEC;
+		self.health = self.health - dec;
 
 	if (self.health < 0)
 		self.health = 0;
-	self.nextthink = time + #GR_CONCUSS_TIME;
+	self.nextthink = time + #GR_CONCUSS_THINK_OLD;
 
 	st = ftos(self.health);
 	stuffcmd(self.owner, "v_idlescale ");
 	stuffcmd(self.owner, st);
 	stuffcmd(self.owner, "\n");
 
-	if (self.health == 0)
+	if (time >= self.heat) {
 		dremove(self);
+	}
 };
 
 //=========================================================================
@@ -919,7 +1013,7 @@ void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusBou
 						if(head.flags & #FL_ONGROUND)
 							head.flags = head.flags - #FL_ONGROUND;
 					}
-					else
+					else if (head.invincible_finished <= time)
 					{
 						if (!(head.#runes & #RUNE_RESIS))
                         {
@@ -930,26 +1024,47 @@ void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusBou
                             // If they are already concussed, set the concussion back up
                             // Try to find a concusstimer entity for this player
                             te = find(world, classname, "timer");
-                            while (((te.owner != head) || (te.think != ConcussionGrenadeTimer)) && (te != world))
+                            while (((te.owner != head) || (te.think != ConcussionGrenadeTimer) || (te.think != ConcussionGrenadeTimerOld)) && (te != world))
                                 te = find(te, classname, "timer");
                             if (te != world)
                             {
-                                stuffcmd(head,"v_idlescale 100\n");
-                                te.health = 100;
-                                te.nextthink = time + #GR_CONCUSS_TIME;
+								if (old_grens) {
+									stuffcmd(head,"v_idlescale 100\n");
+									te.health = #GR_CONCUSS_START_OLD;
+									te.heat = time + #GR_CONCUSS_TIME_OLD;
+									te.nextthink = time + #GR_CONCUSS_THINK_OLD;
+								} else {
+									te.health = #GR_CONCUSS_START;
+									te.heat = time + #GR_CONCUSS_TIME;
+									te.nextthink = time + #GR_CONCUSS_THINK;
+								}
                             }
                             else
                             {
-                                stuffcmd(head,"v_idlescale 100\n");
-                                stuffcmd(head,"bf\n");
-                                // Create a timer entity
-                                te = spawn();
-                                te.nextthink = time + #GR_CONCUSS_TIME;
-                                te.think = ConcussionGrenadeTimer;
-                                te.team_no = attacker.team_no;
-                                te.classname = "timer";
-                                te.owner = head;
-                                te.health = 100;
+								if (old_grens) {
+									stuffcmd(head,"v_idlescale 100\n");
+									stuffcmd(head,"bf\n");
+									
+									// Create a timer entity
+									te = spawn();
+									te.nextthink = time + #GR_CONCUSS_THINK_OLD;
+									te.think = ConcussionGrenadeTimerOld;
+									te.team_no = attacker.team_no;
+									te.classname = "timer";
+									te.owner = head;
+									te.health = #GR_CONCUSS_START_OLD;
+									te.heat = time + #GR_CONCUSS_TIME_OLD;
+								} else {
+									// Create a timer entity
+									te = spawn();
+									te.nextthink = time + #GR_CONCUSS_THINK;
+									te.think = ConcussionGrenadeTimer;
+									te.team_no = attacker.team_no;
+									te.classname = "timer";
+									te.owner = head;
+									te.health = #GR_CONCUSS_START;
+									te.heat = time + #GR_CONCUSS_TIME;
+								}
                             }
                         }
 					}
@@ -1216,7 +1331,7 @@ void() CaltropTouch =
 	if (self.heat > time)
 		return;
 	
-	if (other.takedamage && other.classname == "player")
+	if (other.takedamage && other.classname == "player" && other.invincible_finished <= time)
 	{
 		if (Teammate(self.owner.team_no, other.team_no) && other != self.owner)
 			return;

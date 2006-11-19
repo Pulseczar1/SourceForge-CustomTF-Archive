@@ -192,7 +192,10 @@
 
 #define AIRFIST_DMG_REDUCTION    0.7 // was 0.65
 #define AIRFIST_RECOIL_REDUCTION 0.6
+#define AIRFIST_RECOIL_HWGUY     0.6
 #define AIRFIST_PUSH_REDUCTION   0.5 // Only applies to players pushed
+#define AIRFIST_PUSH_DETPACK     0.5 // The amount to push detpacks.
+#define AIRFIST_PUSH_HWGUY       0.25
 
 #define DONT_SET_AURA_TO_ENEMIES // unless they r spies, of course..
 #define ALLOW_AURAS_ON_CRUSADERS
@@ -258,13 +261,13 @@
 //#define OLD_SBARLOOK
 
 // Napalm grens
-#define NAPALM_FIRSTDMG 40
-#define NAPALM_MINRATE 0.1
-#define NAPALM_MAXRATE 0.4
-#define NAPALM_BURNTIMES 8
-#define NAPALM_MINDMG 60
-#define NAPALM_MAXDMG 120
-#define NAPALM_MAINDMG 140
+#define NAPALM_FIRSTDMG   40
+#define NAPALM_MINRATE     0.1
+#define NAPALM_MAXRATE     0.4
+#define NAPALM_BURNTIMES   8
+#define NAPALM_MINDMG     40
+#define NAPALM_MAXDMG     80
+#define NAPALM_MAINDMG   100
 
 #define AIRFIST_CELLS_COST    5
 
