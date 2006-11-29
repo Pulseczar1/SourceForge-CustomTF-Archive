@@ -565,6 +565,7 @@ void PM_AirMove (void)
 }
 
 
+vec3_t	groundplanenormal;
 
 /*
 =============
@@ -591,10 +592,12 @@ void PM_CatagorizePosition (void)
 	else
 	{
 		tr = PM_PlayerMove (pmove.origin, point);
-		if ( tr.plane.normal[2] < 0.7)
+		if (tr.fraction == 1 || tr.plane.normal[2] < 0.7)
 			onground = -1;	// too steep
-		else
+		else {
 			onground = tr.ent;
+			VectorCopy(tr.plane.normal, groundplanenormal);
+		}
 		if (onground != -1)
 		{
 			pmove.waterjumptime = 0;
@@ -676,6 +679,13 @@ void JumpButton (void)
 
 	if ( pmove.oldbuttons & BUTTON_JUMP )
 		return;		// don't pogo stick
+	
+	// check for jump bug
+	// groundplane normal was set in the call to PM_CategorizePosition
+	if ( pmove.velocity[2] < 0 && DotProduct(pmove.velocity, groundplanenormal) < -0.1) {		
+		// pmove.velocity is pointing into the ground, clip it
+		PM_ClipVelocity (pmove.velocity, groundplanenormal, pmove.velocity, 1); 
+	}
 
 	onground = -1;
 	pmove.velocity[2] += 270;
