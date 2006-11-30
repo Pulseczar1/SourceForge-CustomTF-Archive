@@ -934,7 +934,7 @@ void SV_Say (qboolean team)
 		if(k>15) // For speed issues, we only want to look through the first 15 chars
 			k=15;
 		for(i=5; i<k; i++) {
-			if(p[i] != NULL && p[i] != '"' && p[i] != ' ') { //is this a textual character?
+			if(p[i] != '\0' && p[i] != '"' && p[i] != ' ') { //is this a textual character?
 				isme=true; //it is, so let's let it go
 				break;
 			}
