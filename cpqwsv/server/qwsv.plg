@@ -1,0 +1,116 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: qwsv - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "D:\DOCUME~1\Sergi\LOCALS~1\Temp\RSP2.tmp" with contents
+[
+/nologo /ML /GX /O2 /I "." /I "..\client" /D "NDEBUG" /D "SERVERONLY" /D "WIN32" /D "_CONSOLE" /FR".\Release/" /Fp".\Release/qwsv.pch" /YX /Fo".\Release/" /Fd".\Release/" /FD /c 
+"C:\MyProjects\Qw\server\sys_win.c"
+"C:\MyProjects\Qw\client\zone.c"
+"C:\MyProjects\Qw\client\pmove.c"
+"C:\MyProjects\Qw\client\pmovetst.c"
+"C:\MyProjects\Qw\server\sv_move.c"
+"C:\MyProjects\Qw\server\sv_phys.c"
+"C:\MyProjects\Qw\server\world.c"
+"C:\MyProjects\Qw\server\pr_cmds.c"
+"C:\MyProjects\Qw\server\pr_edict.c"
+"C:\MyProjects\Qw\server\pr_exec.c"
+"C:\MyProjects\Qw\client\cmd.c"
+"C:\MyProjects\Qw\client\common.c"
+"C:\MyProjects\Qw\client\crc.c"
+"C:\MyProjects\Qw\client\cvar.c"
+"C:\MyProjects\Qw\client\mathlib.c"
+"C:\MyProjects\Qw\client\md4.c"
+"C:\MyProjects\Qw\server\model.c"
+"C:\MyProjects\Qw\client\net_chan.c"
+"C:\MyProjects\Qw\client\net_wins.c"
+"C:\MyProjects\Qw\server\sv_ccmds.c"
+"C:\MyProjects\Qw\server\sv_ents.c"
+"C:\MyProjects\Qw\server\sv_init.c"
+"C:\MyProjects\Qw\server\sv_main.c"
+"C:\MyProjects\Qw\server\sv_nchan.c"
+"C:\MyProjects\Qw\server\sv_send.c"
+"C:\MyProjects\Qw\server\sv_user.c"
+]
+Creating command line "cl.exe @D:\DOCUME~1\Sergi\LOCALS~1\Temp\RSP2.tmp" 
+Creating temporary file "D:\DOCUME~1\Sergi\LOCALS~1\Temp\RSP3.tmp" with contents
+[
+ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /incremental:no /pdb:".\Release/qwsv.pdb" /machine:I386 /out:".\Release/qwsv.exe" 
+.\Release\sys_win.obj
+.\Release\zone.obj
+.\Release\pmove.obj
+.\Release\pmovetst.obj
+.\Release\sv_move.obj
+.\Release\sv_phys.obj
+.\Release\world.obj
+.\Release\pr_cmds.obj
+.\Release\pr_edict.obj
+.\Release\pr_exec.obj
+.\Release\cmd.obj
+.\Release\common.obj
+.\Release\crc.obj
+.\Release\cvar.obj
+.\Release\mathlib.obj
+.\Release\md4.obj
+.\Release\model.obj
+.\Release\net_chan.obj
+.\Release\net_wins.obj
+.\Release\sv_ccmds.obj
+.\Release\sv_ents.obj
+.\Release\sv_init.obj
+.\Release\sv_main.obj
+.\Release\sv_nchan.obj
+.\Release\sv_send.obj
+.\Release\sv_user.obj
+]
+Creating command line "link.exe @D:\DOCUME~1\Sergi\LOCALS~1\Temp\RSP3.tmp"
+<h3>Output Window</h3>
+Compiling...
+sys_win.c
+zone.c
+pmove.c
+pmovetst.c
+sv_move.c
+sv_phys.c
+world.c
+pr_cmds.c
+pr_edict.c
+pr_exec.c
+cmd.c
+common.c
+crc.c
+cvar.c
+mathlib.c
+md4.c
+model.c
+net_chan.c
+net_wins.c
+sv_ccmds.c
+sv_ents.c
+sv_init.c
+sv_main.c
+sv_nchan.c
+sv_send.c
+sv_user.c
+C:\MyProjects\Qw\server\sv_user.c(937) : warning C4047: '!=' : 'int ' differs in levels of indirection from 'void *'
+Linking...
+Creating temporary file "D:\DOCUME~1\Sergi\LOCALS~1\Temp\RSP5.bat" with contents
+[
+@echo off
+copy release\qwsv.exe c:\quake\cpqwsv.exe
+]
+Creating command line "D:\DOCUME~1\Sergi\LOCALS~1\Temp\RSP5.bat"
+Copying QWSV to Quake folder
+        1 file(s) copied.
+
+
+
+<h3>Results</h3>
+qwsv.exe - 0 error(s), 1 warning(s)
+</pre>
+</body>
+</html>
