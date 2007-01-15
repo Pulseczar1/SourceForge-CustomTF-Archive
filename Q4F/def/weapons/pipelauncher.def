@@ -1,0 +1,51 @@
+entityDef weapon_pipelauncher
+{
+	"inherit"					"weapon_grenadelauncher"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"With the ability to fire pipebombs that can be detonated remotely with the push of a button, this is the ideal weapon for home defense. Due to limited radio bandwidth, a team can only have a small amount of active pipebombs at once."
+
+	"weaponname"				"Pipe Launcher"
+	"inv_name"					"Pipe Launcher"
+	"inv_weapon"				"weapon_pipelauncher"
+	"inv_item"					"1"
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_grenadelauncher"
+	"inv_icon"					"gfx/guis/icons/gun_pipelauncher"
+	"mtr_icon"					"gfx/guis/icons/gun_pipelauncher"
+	"gui"						""
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+	
+	"def_projectile"			"projectile_pipebomb"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Projectile
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef projectile_pipebomb
+{
+	"inherit"					"projectile_grenade"
+	
+	"stat_group"				"Pipebomb"
+	"stat_category"				"Weapons"
+	
+	"spawnclass"				"Pipebomb"
+								
+	"model"						"models/weapons/grenadelauncher/w_grenade.lwo"
+	"skin"						"skins/models/weapons/grenadelauncher/pipe"
+	
+	"def_damage_splash"			"q4f_damage_pipeSplash"
+	"def_damage_direct"			""
+			
+	"fuse"						"120"
+								
+	"detonate_on_fuse"			"1"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"0"
+	"detonate_on_actor"			"0"
+}

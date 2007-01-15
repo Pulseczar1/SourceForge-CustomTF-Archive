@@ -1,0 +1,188 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//--------------------------------------------------------------------------------------------------------------------
+
+model weapon_grenadelauncher_view
+{
+	mesh						models/weapons/grenadelauncher/mesh.md5mesh
+	
+	anim idle 					models/weapons/grenadelauncher/idle.md5anim	
+	
+	anim fire 					models/weapons/grenadelauncher/fire.md5anim	
+	{
+		frame 1					sound_weapon	player_grenadelauncher_fire
+		frame 1					sound_item		player_grenadelauncher_fire_stereo
+		rate 1.5
+	}
+
+	anim reload_loop			models/weapons/grenadelauncher/reload.md5anim
+	{
+		//frame 2					sound_weapon	player_grenadelauncher_clipout
+		frame 25				sound_weapon	player_grenadelauncher_clipin
+		rate 3
+	}	
+}
+
+model weapon_grenadelauncher_world 
+{
+	mesh					models/weapons/grenadelauncher/world/grenadelauncher.md5mesh
+	anim idle				models/weapons/grenadelauncher/world/idle.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_grenadelauncher
+{
+	"inherit"					"weapon_default"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"If a grenade launcher grenade hits a player, it will explode on contact. Otherwise, it will bounce around a bit until its fuse runs out."
+	
+	"weaponname"				"Grenade Launcher"
+	"inv_name"					"Grenade Launcher"
+	"inv_weapon"				"weapon_grenadelauncher"
+	"inv_item"					"1"
+	
+	"animPrefix"				"grenadelauncher"
+	"weaponclass"				"rvWeapon"
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_grenadelauncher_view"
+ 	"model_world"				"weapon_grenadelauncher_world"
+ 	
+ 	"skin"						"skins/models/weapons/grenlauncher"
+
+	"joint_view_flash"			"barrel"
+	"joint_view_barrel"			"barrel"
+	"joint_world_flash"			"muzzle_flash"
+
+
+	// -------------------- View --------------------------------------
+	
+	//"viewoffset"				"-5.2 0.3 -1"
+  	//"viewangles"				"-9.7 4.6 -1.1"
+  	
+  	"viewoffset"				"-3.2 0.3 -2"
+  	"viewangles"				"-16 4.6 -1.1"
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".25"
+	"weaponAngleOffsetMax"		"5"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+
+	"foreshorten"				".55"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_grenadelauncher"
+	"inv_icon"					"gfx/guis/icons/gun_grenadelauncher"
+	"mtr_icon"					"gfx/guis/icons/gun_grenadelauncher"
+	"gui"						""
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					"0.6"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				"4"
+	"def_projectile"			"projectile_grenade"
+	"ammoType"					"ammo_rockets"
+	"ammoRequired"				"1"
+	"clipSize"					"6"
+	
+	// the direction of projectile launches will be modified by this
+	"dirOffset"					"0 0 .25"
+
+
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.5"
+	"muzzle_kick_maxtime"		"0.75"
+	"muzzle_kick_angles"		"-8 0 0"
+	"muzzle_kick_offset"		"8 0 0"
+
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+	//"snd_fire"					"player_grenadelauncher_fire"
+	
+	
+	"launchFromBarrel"			"0"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Projectile
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef projectile_grenade
+{
+	"stat_category"				"Weapons"
+	"stat_group"				"Grenade Launcher"
+	
+	"spawnclass"				"idProjectile"
+	"mins"						"-4 -4 -4"
+	"maxs"						"4 4 4"
+	"cone"						""
+	"noshadows"					"1"
+	"clipmask_largeshot"		"1"
+	
+	"no_contents"				"0"
+								
+	"model"						"models/weapons/grenadelauncher/w_grenade.lwo"
+	
+	"def_damage_direct"			"q4f_damage_grenadeDirect"
+	"def_damage_splash"			"q4f_damage_grenadeSplash"
+	
+	"clipRadius"				"1.85"
+																											
+	"speed"						"700"
+	"angular_velocity"			"-10 5 1"
+	"settle_duration"			"0.08"
+	
+	"linear_friction"			"0"
+	"angular_friction"			"0"
+	"contact_friction"			"50"
+	"bounce"					".52"
+	"gravity"					"1"
+	"fuse"						"2.5"
+								
+	"detonate_on_fuse"				"1"
+	"detonate_on_death"				"0"
+	"detonate_on_world"				"0"
+	"detonate_on_actor"				"1"
+	"detonateTestGroundMaterial"	"1"
+								
+	"impact_gib"				"1"								
+	"decal_size"				"75"
+
+	"flyEffectAttenuateSpeed"	"200"
+	
+	"airBurst_desc"				"midair_"
+
+	"fx_fly"				"effects/weapons/grenadelauncher/trail.fx"
+	"fx_fly_mp"				"effects/weapons/grenadelauncher/trail_mp.fx"
+	"fx_detonate"				"effects/weapons/grenadelauncher/detonate.fx"
+	"fx_detonate_mp"			"effects/weapons/rocketlauncher/detonate_mp.fx"
+	"fx_impact"				"effects/weapons/grenadelauncher/impact.fx"
+	"fx_impact_mp"				"effects/weapons/rocketlauncher/impact_mp.fx"
+	"fx_impact_concrete"			"effects/weapons/grenadelauncher/impact_concrete.fx"
+	"fx_impact_concrete_mp"			"effects/weapons/rocketlauncher/impact_mp.fx"
+	"fx_impact_rock"			"effects/weapons/grenadelauncher/impact_concrete.fx"
+	"fx_impact_rock_mp"			"effects/weapons/rocketlauncher/impact_mp.fx"
+	"fx_impact_water"			"effects/ambient/splash_med.fx"
+
+	"snd_ricochet"				"grenade_bounce"	
+
+	"net_syncPhysics"			"1"
+}

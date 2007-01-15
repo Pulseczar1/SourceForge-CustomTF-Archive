@@ -1,0 +1,158 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//-------------------------------------------------------------------------------------------------------------------0
+
+entityDef weapon_default
+{
+	"editor_ignore"				"1"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"no description"
+	
+	"weaponclass"				"rvWeapon"
+	"weaponname"				"Unnamed Weapon"
+	
+	"inv_name"					"UnnamedWeapon"
+	"inv_weapon"				"weapon_default"
+	"inv_item"					"1"
+
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				""
+ 	"model_world"				""
+
+	"joint_attach"				"SG_ATTACHER"
+	"joint_view_barrel"			"barrel"			// what barrel to shoot from
+	"joint_view_flash"			"flash"
+  	"joint_view_eject"			"eject"
+	"joint_view_guiLight"		"body"
+	"joint_world_flash"			"muzzle_flash"
+	
+	"def_ejectBrass"			""
+	"ejectOffset"				""
+	
+	
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"-1.6 3.8 3.7"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"viewangles"				"3 -8.5   2"			// < pitch, yaw, roll >
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				""
+	"inv_icon"					""
+	"mtr_icon"					""
+	"gui"						""	
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					""
+	"spread"					""
+	"num_attacks"				"1"
+	"reload_time"				""
+	"def_hitscan"				""
+	"def_projectile"			""
+	"ammoType"					"ammo_none"
+	"ammoRequired"				"1"
+	"clipSize"					"0"
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.5"
+	"muzzle_kick_maxtime"		"0.75"
+	"muzzle_kick_angles"		"-8 0 0"
+	"muzzle_kick_offset"		"15 0 0"
+
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	//"mtr_flashShader"			"lights/muzzleflash"
+	"flashColor"				"1 0.8 0.4"
+	"flashRadius"				"240"
+	"flashPointLight"			"1"
+	"flashTime"					".1"
+	"flashViewOffset"			"15 -5 -5"
+	
+	"fx_muzzleflash"			"effects/weapons/shotgun/muzzleflash.fx"		
+  	"fx_muzzleflash_world"		"effects/weapons/shotgun/muzzleflash_world.fx"
+
+
+	// -------------------- Effects --------------------------------------------
+
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+	"snd_quaddamage"			"weapon_quaddamage_fire"
+	"snd_noAmmo"				"weapon_shotgun_dryfire"
+	"snd_lower"					"weapon_switch"
+	
+	
+
+	"launchFromBarrel"			"0"
+	"net_syncPhysics"			"1"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//												HitScan
+//-------------------------------------------------------------------------------------------------------------------0
+
+entityDef hitscan_pellet
+{
+	"editor_ignore"				"1"
+	
+	"spawnclass"				"rvHitScan"
+
+	"range"						"40000"
+	
+	//"fx_path"					"effects/monsters/gunner/bullet_tracer.fx"
+	
+	"fx_tracer"					"effects/monsters/grunt/bullet_tracer.fx"
+	"tracerchance"				".3"
+	"doWhizz"					"1"
+	"reflect_powerup"			"1"
+
+	"fx_impact"					"effects/weapons/machinegun/impact_default_mp.fx"
+	"fx_impact_water"			"effects/ambient/splash_smll.fx"
+	"fx_impact_flesh"			"effects/weapons/machinegun/impact_flesh.fx"						
+	"fx_impact_glass"			"effects/weapons/machinegun/impact_glass.fx"
+	"fx_impact_bpglass"			"effects/weapons/machinegun/impact_bpglass.fx"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//												Casing
+//-------------------------------------------------------------------------------------------------------------------0
+
+entityDef debris_shells {
+	"model" 					"models/weapons/shotgun/sshell_bigger.lwo"
+	
+	"scale"						"0.3"
+	"scale_reset_duration"		"0.35"
+	
+	"linear_velocity"			"10 -55 75"
+	"linear_velocity_range"		"0.1 0.2 0.25"
+	"angular_velocity"			"0 16000 0"
+	"angular_velocity_range"	"0 0.5 0"
+	
+	"density"					"0.02"
+	"linear_friction"			"0.2"
+	"angular_friction"			"0.1"
+	"friction"					"0.2"
+	"bouncyness"				"0.1"
+	"snd_bounce"				"shotgun_shell"
+}

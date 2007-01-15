@@ -1,0 +1,136 @@
+
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//-------------------------------------------------------------------------------------------------------------------0
+
+entityDef weapon_incendiary
+{
+
+	"inherit"					"weapon_default"
+
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"The Incendiary Cannon fires fairly slow-moving rockets that set afire to anything within their damage radius."
+	
+	"weaponname"				"Incendiary Cannon"
+	
+	"inv_name"					"Incendiary Cannon"
+	"inv_weapon"				"weapon_incendiary"
+	
+	"animPrefix"				"weapon_pump"
+
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_rocketlauncher_view"
+ 	"model_world"				"weapon_rocketlauncher_world"
+
+	"joint_attach"				"RKT_ATTACHER"
+	"joint_view_flash"			"muzzle_flash"
+	"joint_view_barrel"			"muzzle_flash"
+	"joint_world_flash"			"muzzle_flash"
+	
+	"def_ejectBrass"			""
+	"ejectOffset"				""
+	
+	
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"-0.8 1 .7"		// where it is positioned on the screen // < forward/back , left/right, updown
+	"viewangles"				"5.7 -3.9 -1.2"		// < pitch, yaw, roll >	
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_rocketlauncher"
+	"inv_icon"					"gfx/guis/icons/gun_incendiary"
+	"mtr_icon"					"gfx/guis/icons/gun_incendiary"
+	"gui"						""	
+	
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					"1.2"
+	"spread"					"0 0"
+	"reload_time"				"5"
+	"def_projectile"			"projectile_incendiary"
+	"ammoType"					"ammo_rockets"
+	"ammoRequired"				"3"
+	"clipSize"					"0"
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.5"
+	"muzzle_kick_maxtime"		"0.75"
+	"muzzle_kick_angles"		"-4 0 0"
+	"muzzle_kick_offset"		"7 0 0"
+
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	"fx_muzzleflash"			"effects/weapons/rocketlauncher/muzzleflash.fx"
+ 	"fx_muzzleflash_world"		"effects/weapons/rocketlauncher/muzzleflash_world.fx"
+
+
+	// -------------------- Effects --------------------------------------------
+	
+
+	
+	// -------------------- Sounds ---------------------------------------------
+	"snd_fire"					"player_rocketlauncher_fire"
+	
+	"launchFromBarrel"			"0"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Projectile
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef projectile_incendiary
+{
+	"stat_category"				"Weapons"
+	"stat_group"				"Incendiary Cannon"
+	
+	"spawnclass"			"idProjectile"
+	"size"					"7 7 7"
+	"cone"					"2"
+	"noshadows"				"1"
+	"clipmask_largeshot"	"1"
+							
+	"model"					"models/weapons/rocketlauncher/rocket.lwo"
+	
+	"def_damage_splash"		"q4f_damage_incendiarySplash"
+	"def_damage_direct"		"q4f_damage_incendiaryDirect"
+																											
+	"speed"					"664"
+	"fuse"					"6"
+							
+	"detonate_on_fuse"			"1"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"1"
+	"detonate_on_actor"			"1"
+	"detonate_on_bounce"		"1"
+								
+	"impact_gib"				"1"								
+	"decal_size"				"75"
+	
+	"predictTime"				"50"
+
+	"fx_fly"					"effects/weapons/rocketlauncher/fly_mp.fx"
+	"fx_detonate"				"effects/weapons/rocketlauncher/detonate_mp.fx"
+	"fx_impact"					"effects/weapons/rocketlauncher/impact_mp.fx"
+	"fx_impact_water"			"effects/ambient/splash_med.fx"
+	
+	"snd_fly"					"player_rocketlauncher_fly"
+}

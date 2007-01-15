@@ -1,0 +1,33 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_knife
+{
+	"inherit"					"weapon_gauntlet"
+
+	// -------------------- Weapon Info ---------------------------------------
+	
+	"description"				"A tool of the assassin. The knife does 4x the damage of the axe, or even instant death if used on an enemy from behind."
+	"weaponname"				"Knife"
+	"inv_name"					"Knife"
+	"inv_weapon"				"weapon_knife"
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_icon"					"gfx/guis/icons/gun_knife"
+	"inv_icon"					"gfx/guis/icons/gun_knife"
+	
+  	
+  	// -------------------- Clip & Ammo ---------------------------------------
+
+	"def_melee"					"knife_melee"
+}
+
+entityDef knife_melee {
+	"stat_group"				"Knife"
+	"stat_category"				"Weapons"
+	
+	"def_damage_direct"		"q4f_damage_knife"
+	"def_damage_backstab"	"q4f_damage_knife_backstab"
+}

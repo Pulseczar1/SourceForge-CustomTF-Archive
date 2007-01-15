@@ -1,0 +1,178 @@
+
+
+
+
+//--------------------------------------------------------------------------------------------------------------------
+//										Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_nailgun_super
+{
+	"inherit"					"weapon_default"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"Often used as a 'sentry killer', the super nailgun can plaster enemies to the wall with solid steel nails. The high rate of fire come with a price of swift ammo depletion."
+	
+	"weaponclass"				"SpinWeapon"
+	"weaponname"				"Super Nailgun"
+	"inv_name"					"Super Nailgun"
+	"inv_weapon"				"weapon_nailgun_super"
+	
+	"animPrefix"				"weapon_repeater"
+	
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_supernailgun_view"
+ 	"model_world"				"weapon_supernailgun_world"
+ 	
+ 	"joint_view_flash"			"nailgun_rotating_firing_pins"
+	"joint_view_barrel"			"nailgun_rotating_firing_pins"			// what barrel to shoot from
+	"joint_world_flash"			"nailgun_rotating_firing_pins"
+	"joint_spin"				"nailgun_rotating_drum"
+	"joint_spin_world"			"nailgun_rotating_drum"
+	
+	"def_ejectBrass"			""
+	"ejectOffset"				""
+	
+	
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"0 0 -1"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"viewangles"				"0 0 22"				// < pitch, yaw, roll >
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_nailgun"
+	"inv_icon"					"gfx/guis/icons/gun_nailgun_super"
+	"mtr_icon"					"gfx/guis/icons/gun_nailgun_super"
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".18"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				""
+	"def_hitscan"				""
+	"def_projectile"			"projectile_nail_super"
+	"ammoType"					"ammo_nails"
+	"ammoRequired"				"1"
+	"clipSize"					"0"
+	
+	// barrel stuff
+	"barrel_speed"				"425"					// the fire rate is dependant of barrel speed;
+	"barrel_accel_time"			".1"
+	"barrel_decel_time"			"1"
+	"num_barrels"				"6"
+	
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.05"
+	"muzzle_kick_maxtime"		"0.15"
+	"muzzle_kick_angles"		"-2 0 0"
+	"muzzle_kick_offset"		"2 0 0"
+	
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	
+	// -------------------- Sounds ---------------------------------------------
+
+	"snd_spinup"				"weapon_nailgun_spinup"
+	"snd_spindown"				"weapon_nailgun_spindown"
+	"snd_spin"					"weapon_nailgun_spinfast"
+	"snd_fire"					"weapon_nailgun_fire"
+	
+	
+	"launchFromBarrel"			"0"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//--------------------------------------------------------------------------------------------------------------------
+
+model weapon_supernailgun_view
+{
+	mesh						models/weapons/nailgun/view.md5mesh
+
+	channel legs				( *lft_shldr *rt_elbo origin -nailgun_lft_clasp )
+	channel torso				( nailgun_lft_clasp )
+
+	anim idle		 			models/weapons/nailgun/idle.md5anim
+}
+
+model weapon_supernailgun_world 
+{
+	mesh					models/weapons/nailgun/world/nailgun.md5mesh
+	anim idle				models/weapons/nailgun/world/idle.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//													Projectile
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef projectile_nail_super
+{
+	"stat_group"				"Super Nailgun"
+	"stat_category"				"Weapons"
+
+	"spawnclass"				"idProjectile"
+	"mins"						"-1 -1 -1"
+	"maxs"						"1 1 1"
+	"noshadows"					"1"
+	"clipmask_largeshot"		"0"
+								
+	"model"						"models/weapons/nailgun/nail.ase"
+
+	"def_damage_direct"			"q4f_damage_nail_superDirect"
+	"def_damage_splash"			"q4f_damage_nail_superSplash"
+																											
+	"health"					"0"
+	"speed"						"1000"
+	"gravity"					"0"
+	"fuse"						"4"
+								
+	"detonate_on_fuse"			"1"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"1"
+	"detonate_on_actor"			"1"
+	"detonate_on_bounce"		"1"
+																
+	"decal_size"				"8"
+
+	//sigh... so that a splash damage projectile can still have it's impact effect suppressed on buddy corpses... :/
+	"bloodyImpactEffect"		"1"
+	
+	"fx_fly"			"effects/weapons/nailgun/fly.fx"
+	"fx_impact"			"effects/weapons/nailgun/impact_default.fx"
+	"fx_impact_water"		"effects/ambient/splash_smll.fx"
+	"fx_impact_concrete"		"effects/weapons/nailgun/impact_concrete.fx"
+	"fx_impact_rock"		"effects/weapons/nailgun/impact_concrete.fx"
+	"fx_impact_monstermetal"	"effects/weapons/machinegun/impact_monstermetal.fx"
+	"fx_impact_flesh"		"effects/weapons/machinegun/impact_flesh.fx"	
+	"fx_impact_glass"		"effects/weapons/nailgun/impact_glass.fx"					
+	"fx_impact_bpglass"		"effects/weapons/nailgun/impact_bpglass.fx"
+	"fx_impact_electronics"		"effects/weapons/nailgun/impact_electronics.fx"
+	"fx_impact_mp"			"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_concrete_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_rock_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_glass_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_bpglass_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_electronics_mp"	"effects/weapons/nailgun/impact_default_mp.fx"
+}

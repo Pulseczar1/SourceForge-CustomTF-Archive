@@ -1,0 +1,159 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_railgun
+{
+	"inherit"					"weapon_default"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	
+	"description"				"This railgun uses nails instead of rails, but functions like a railgun. It fires nails at a very high velocity, allowing penetration through player armor."
+
+	"weaponname"				"Railgun"
+	"inv_name"					"Railgun"
+	"inv_weapon"				"weapon_railgun"
+	
+	"animPrefix"				"railgun"
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_railgun_view"
+ 	"model_world"				"weapon_railgun_world"
+
+	"joint_attach"				"RG_ATTACHER"
+	"joint_view_flash"			"srocket_muzzle_flash"
+  	"joint_view_barrel"			"srocket_muzzle_flash"
+	"joint_world_flash"			"muzzle_flash"
+	
+	"def_ejectBrass"			""
+	"ejectOffset"				""
+	
+	
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"0 1.6 0"
+ 	"viewangles"				"-3 -9.4 2.3"
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".25"
+	"weaponAngleOffsetMax"		"5"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.003"
+	
+	"foreshorten"				".55"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_railgun"
+	"inv_icon"					"gfx/guis/hud/icons/item_railgun_colored"
+	"mtr_icon"					"gfx/guis/hud/icons/item_railgun_colored"
+	"gui"						"guis/weapons/railgun.gui"
+	
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".5"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				"0"
+	"def_hitscan"				"hitscan_railgun"
+	"def_projectile"			""
+	"ammoType"					"ammo_nails"
+	"ammoRequired"				"1"
+	"clipSize"					"0"
+	
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.0"
+	"muzzle_kick_maxtime"		"0.0"
+	"muzzle_kick_angles"		"0 0 0"
+	"muzzle_kick_offset"		"0 0 0"
+
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	"mtr_flashShader"			"lights/muzzleflash"
+	"flashColor"				"0.72 1 .9"
+	"flashRadius"				"260"
+	"flashPointLight"			"1"
+	"flashTime"					"1"
+	"flashViewOffset"			"15 -5 -5"
+	
+  	"fx_muzzleflash"			"effects/weapons/railgun/muzzleflash_mp.fx"
+  	"fx_muzzleflash_world"		"effects/weapons/railgun/muzzleflash_world.fx"
+  	
+  	//"snd_fire"					"weapon_railgun_fire"
+  	
+  	"snd_idle_hum"				"weapon_railgun_hum"
+  	
+  	"barrelPressure"			"250"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//-------------------------------------------------------------------------------------------------------------------0
+
+model weapon_railgun_view
+{
+	mesh						models/weapons/railgun/view.md5mesh
+
+	offset						(-3 1.65 .75)
+
+	anim idle 					models/weapons/railgun/idle.md5anim
+		
+	anim fire 					models/weapons/railgun/fire_fast_2.md5anim
+	{
+		frame 1					sound_weapon	weapon_railgun_fire
+		frame 1					sound_item		weapon_railgun_fire_stereo
+		//frame 3					sound			weapon_railgun_charge
+		frame 4					sound			weapon_railgun_readjust
+		frame 5					sound			weapon_railgun_readjust3
+		frame 21				sound			weapon_railgun_readjust2
+	}
+}
+
+model weapon_railgun_world
+{
+
+	mesh						models/weapons/railgun/world/railgun.md5mesh
+	anim idle 					models/weapons/railgun/world/idle.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Hitscan
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef hitscan_railgun
+{
+	"inherit"					"hitscan_pellet"
+	
+	"stat_category"				"Weapons"
+	"stat_group"				"Railgun"
+	
+	"def_damage_direct"			"q4f_damage_railgun"
+		
+	"fx_path"					"effects/weapons/railgun/trail_mp.fx"
+	
+	"fx_tracer"					"effects/monsters/grunt/bullet_tracer.fx"
+	"tracerchance"				".3"
+	"doWhizz"					"1"
+	"reflect_powerup"			"1"
+
+	"fx_impact"					"effects/weapons/railgun/impact_default_mp.fx"
+	"fx_impact_water"			"effects/ambient/splash_med.fx"
+	"fx_impact_bpglass"			"effects/weapons/railgun/impact_bpglass.fx"
+	"fx_impact_glass"			"effects/weapons/railgun/impact_glass.fx"
+	
+	"fxOriginOffset"			"0 -15 15"
+	
+	"penetrate"					"1.0"
+}

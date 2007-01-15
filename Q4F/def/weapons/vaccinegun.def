@@ -1,0 +1,37 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_vaccinegun
+{
+	"inherit"					"weapon_gauntlet"
+	
+	
+
+	// -------------------- Weapon Info ---------------------------------------
+	
+	"description"				"Use the vaccine gun on teammate to heal them, or use it on enemies to give them an infectious disease."
+	"weaponname"				"Vaccine Gun"
+	"inv_name"					"Vaccine Gun"
+	"inv_weapon"				"weapon_vaccinegun"
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_icon"					"gfx/guis/icons/gun_bioweapon"
+	"inv_icon"					"gfx/guis/icons/gun_bioweapon"
+	
+  	
+  	// -------------------- Clip & Ammo ---------------------------------------
+
+	"def_melee"					"vaccine_melee"
+	
+	"skip_spin_snd"				"1"
+}
+
+entityDef vaccine_melee {
+
+	"stat_category"				"Weapons"
+	"stat_group"				"Bioweapon"
+
+	"def_damage_direct"		"q4f_damage_vaccine"
+}

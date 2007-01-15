@@ -1,0 +1,186 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//--------------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//-------------------------------------------------------------------------------------------------------------------0
+
+model weapon_minigun_view
+{
+	mesh						models/weapons/nailgun/view.md5mesh
+
+	channel legs				( *lft_shldr *rt_elbo origin -nailgun_lft_clasp )
+	channel torso				( nailgun_lft_clasp )
+
+	anim idle		 			models/weapons/nailgun/idle.md5anim
+		
+	anim fire_slow 				models/weapons/nailgun/fire_slow.md5anim
+	{
+//		frame 1					sound_weapon	weapon_nailgun_fire
+//		frame 1					sound_item		weapon_nailgun_fire_stereo
+	}
+	anim fire_fast 				models/weapons/nailgun/fire_fast.md5anim
+	{
+//		frame 1					sound_weapon	weapon_nailgun_fire
+//		frame 1					sound_item		weapon_nailgun_fire_stereo
+	}
+	
+	anim spinup					models/weapons/nailgun/spinup.md5anim
+	{
+		rate .75
+	}
+	anim spindown				models/weapons/nailgun/spindown.md5anim
+}
+
+model weapon_minigun_world 
+{
+	mesh					models/weapons/nailgun/world/nailgun.md5mesh
+	anim idle				models/weapons/nailgun/world/idle.md5anim
+	anim fire				models/weapons/nailgun/world/fire.md5anim
+	anim spinup				models/weapons/nailgun/world/spinup.md5anim
+	anim spindown			models/weapons/nailgun/world/spindown.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//										Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_minigun
+{
+	"inherit"					"weapon_default"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"This fatty is slow to start but is relentless once it gets some momentum. It can mow down entire squads of players in just a few seconds. All this power requires the player to fire the gun while standing still."
+	
+	"weaponname"				"Minigun"
+	"inv_name"					"Minigun"
+	"inv_weapon"				"weapon_minigun"
+	
+	"animPrefix"				"minigun"
+	"weaponclass"				"Minigun"
+	
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_minigun_view"
+ 	"model_world"				"weapon_minigun_world"
+ 	
+ 	"skin"						"skins/models/weapons/minigun"
+
+	"joint_attach"				"NG_ATTACHER"
+ 	"joint_view_barrel"			"nailgun_rotating_firing_pins"
+	"joint_view_flash"			"nailgun_rotating_firing_pins"
+	"joint_view_guiLight"		"nailgun_body"
+	"joint_view_drum"			"nailgun_rotating_drum"
+	"joint_view_pins"			"nailgun_rotating_firing_pins"
+	"joint_view_steamRight"		"nailgun_rt_steam_nozzle"
+	"joint_view_steamLeft"		"nailgun_lft_steam_nozzle"
+
+	"joint_world_flash"			"nailgun_rotating_drum"
+	
+	
+	// -------------------- View --------------------------------------
+	
+	//"viewoffset"				"2 -8 3"
+	//"viewangles"				"-5 -2 0"
+	
+	"viewoffset"				"2 1.6 0.6"
+	"viewangles"				"3.1 -7.2 2"
+  	
+  	"lower_weapon_offset"		"0    0   0"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"30   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_nailgun"
+	"inv_icon"					"gfx/guis/icons/gun_minigun"
+	"mtr_icon"					"gfx/guis/icons/gun_minigun"
+	"gui"						"guis/weapons/minigun_heat.gui"
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".11"
+	"spread"					".09 .09"			// the final spread at highest heat
+	
+	"max_heat"					"312"
+	"heat_per_shot"				"32"
+	"heat_per_tic"				"2"
+	
+	"num_attacks"				"3"
+	"reload_time"				""
+	"def_hitscan"				"hitscan_minigun_bullet"
+	"def_projectile"			""
+	"ammoType"					"ammo_shells"
+	"ammoRequired"				"1"
+	"clipSize"					"0"
+	
+	// barrel stuff
+	"barrel_speed"				"525"
+	"barrel_accel_time"			".65"
+	"barrel_decal_time"			"2.0"
+	"num_barrels"				"5"
+	
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+
+	"muzzle_kick_time"			"0.2"
+	"muzzle_kick_maxtime"		"0.6"
+	"muzzle_kick_angles"		"0 0 0"
+	"muzzle_kick_offset"		"0.5 .15 .15"
+	
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	"mtr_flashShader"			"lights/muzzleflash"
+	"flashColor"				"1 0.8 0.4"
+	"flashRadius"				"200"
+	"flashPointLight"			"1"
+	"flashTime"					".1"
+	"flashViewOffset"			"15 -5 -5"
+	
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+	"snd_spinfast"				"weapon_nailgun_spinfast"
+	"snd_spinslow"				"weapon_nailgun_spinslow"
+	"snd_spinup"				"weapon_nailgun_spinup"
+	"snd_spindown"				"weapon_nailgun_spindown"
+	"snd_quaddamage"			"weapon_quaddamage_fire"
+	"snd_fire"					"weapon_nailgun_fire"
+	"snd_fireStereo"			"weapon_nailgun_fire_stereo"
+	"snd_acquire"				"pickup_weapon"
+	"snd_noAmmo"				"weapon_nailgun_dryfire"
+
+  	"fx_muzzleflash"			"effects/weapons/nailgun/muzzleflash.fx"
+  	"fx_muzzleflash_world"		"effects/weapons/nailgun/muzzleflash_world.fx"
+	"fx_exhaust"				"effects/weapons/nailgun/exhaust.fx"
+	"fx_respawn"				"effects/mp/itemrespawn.fx"
+	
+	"net_syncPhysics"			"1"
+}
+
+entityDef hitscan_minigun_bullet
+{
+	"inherit"				"hitscan_pellet"
+	
+	"stat_group"				"Minigun"
+	"stat_category"				"Weapons"
+	
+	"fxOriginOffset"			"45 1 1"
+	
+	"def_damage_direct"		"q4f_damage_minigun"
+}

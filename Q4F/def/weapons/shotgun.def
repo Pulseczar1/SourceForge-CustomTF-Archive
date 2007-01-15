@@ -1,0 +1,180 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//-------------------------------------------------------------------------------------------------------------------0
+
+entityDef weapon_shotgun
+{
+
+	"inherit"					"weapon_default"
+
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"Used by most classes, the single barrel shotgun is weak but precise. You'll find it very useful for finishing off weak opponents or for pestering people from long range."
+	
+	"weaponname"				"Shotgun"
+	
+	"weaponclass"				"rvWeapon"
+	
+	"inv_name"					"Shotgun"
+	"inv_weapon"				"weapon_shotgun"
+	
+	"animPrefix"				"shotgun"
+	
+	"clipreload"				"1"
+
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_shotgun_view"
+ 	"model_world"				"weapon_shotgun_world"
+ 	
+ 	"skin"						"skins/models/weapons/shotgun"
+
+	"joint_view_flash"			"flash"
+  	"joint_view_eject"			"eject"
+	"joint_view_guiLight"		"body"
+	"joint_world_flash"			"muzzle_flash"
+	
+	"def_ejectBrass"			"debris_shells"
+	"ejectOffset"				"6 -4 -3"
+	
+	
+	// -------------------- View --------------------------------------
+	
+	//"viewoffset"				"-4.6 3.8 3.7"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	//"viewangles"				"4 -8.5   2"			// < pitch, yaw, roll >
+  	
+  	"viewoffset"				"-1.6 3.8 3.7"  	
+  	"viewangles"				"3 -8.5 2"
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_shotgun"
+	"inv_icon"					"gfx/guis/icons/gun_shotgun"
+	"mtr_icon"					"gfx/guis/icons/gun_shotgun"
+	"gui"						"guis/weapons/shotgun_ammo.gui"
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".5"
+	"spread"					".04 .04"
+	"num_attacks"				"6"
+	"reload_time"				"2"
+	"def_hitscan"				"hitscan_shotgun"
+	"ammoType"					"ammo_shells"
+	"ammoRequired"				"1"
+	"clipSize"					"8"
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.0"
+	"muzzle_kick_maxtime"		"0.0"
+	"muzzle_kick_angles"		"0 0 0"
+	"muzzle_kick_offset"		"0 0 0"
+
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+
+
+	// -------------------- Effects --------------------------------------------
+
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+	//"snd_fire"					"weapon_shotgun_fire"
+}
+
+entityDef hitscan_shotgun {
+	"inherit"			"hitscan_pellet"
+	
+	"stat_category"				"Weapons"
+	"stat_group"				"Shotgun"
+	
+	"fxOriginOffset"			"30 12 -5"
+	
+	"def_damage_direct"		"q4f_damage_shotgun"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//-------------------------------------------------------------------------------------------------------------------0
+
+model weapon_shotgun_view
+{
+	mesh						models/weapons/shotgun/view.md5mesh
+
+	anim idle 					models/weapons/shotgun/idle.md5anim
+	{
+		rate	.25
+	}
+	anim raise					models/weapons/shotgun/raise.md5anim
+	{
+		frame 5					sound 	weapon_shotgun_pump1
+		frame 10				sound	weapon_shotgun_pump2
+	}
+	anim putaway				models/weapons/shotgun/lower.md5anim
+	{
+		frame 1					sound_weapon			weapon_switch
+	}
+
+	anim fire1 					models/weapons/shotgun/fire.md5anim
+	{
+		frame 1					sound_weapon	weapon_shotgun_fire
+		frame 1					sound_item		weapon_shotgun_fire_stereo
+		frame 12				sound	weapon_shotgun_pump1
+		frame 16				sound	weapon_shotgun_pump2
+	}
+
+	anim reload_start			models/weapons/shotgun/reload_start.md5anim
+	anim reload_loop			models/weapons/shotgun/reload_loop.md5anim
+	{
+		frame 4					sound_item		weapon_shotgun_shell
+	}
+
+	anim reload_end				models/weapons/shotgun/reload_end.md5anim
+	{
+		frame 4					sound			weapon_shotgun_pump1
+		frame 8					sound			weapon_shotgun_pump2
+	}
+
+	anim reload_clip			models/weapons/shotgun/reload_clip.md5anim
+	{
+		frame 9					sound			weapon_shotgun_clipout
+		frame 22				sound				weapon_shotgun_clipin
+		frame 35				sound			weapon_shotgun_pump1
+		frame 38				sound			weapon_shotgun_pump2
+	}
+}
+
+model weapon_shotgun_world
+{
+	mesh						models/weapons/shotgun/world/shotgun.md5mesh
+	anim idle					models/weapons/shotgun/world/idle.md5anim
+
+/*
+	anim idle 					models/weapons/shotgun/world/shotgun_idle.md5anim
+	anim aim 					models/weapons/shotgun/world/shotgun_idle.md5anim
+	anim fire1 					models/weapons/shotgun/world/shotgun_fire1.md5anim
+	anim fire2 					models/weapons/shotgun/world/shotgun_fire1.md5anim
+	anim fire3 					models/weapons/shotgun/world/shotgun_fire1.md5anim
+	anim fire4 					models/weapons/shotgun/world/shotgun_fire1.md5anim
+	anim fire5 					models/weapons/shotgun/world/shotgun_fire1.md5anim
+	anim reload_start 			models/weapons/shotgun/world/shotgun_reload_start.md5anim
+	anim reload_loop 			models/weapons/shotgun/world/shotgun_reload_loop.md5anim
+	anim reload_end 			models/weapons/shotgun/world/shotgun_reload_end.md5anim
+	anim putaway				models/weapons/shotgun/world/shotgun_idle.md5anim
+*/
+}
