@@ -1,0 +1,267 @@
+model model_pc_base {
+	inherit							model_player_marine
+}
+
+entityDef model_pc_head_default {
+	"inherit"		"char_marinehead_default"
+	"spawnclass"	"rvClientAFAttachment"
+	
+	"noclipmodel"	"1"
+}
+
+//--------------------------------------------------------------------------
+// Scout
+//--------------------------------------------------------------------------
+entityDef model_pc_scout_head {
+	"inherit"		"model_pc_head_default"
+	"model"			"model_pc_scout_head"
+}
+
+model model_pc_scout_head {		// bidwell
+	mesh						models/classes/scout/scout_head.md5mesh
+
+	channel legs				( *origin -*viseme_bone -*head_channel )
+	channel torso				( *viseme_bone  )
+	channel head				( *head_channel -ruplid -rlolid -luplid -llolid )
+	channel eyelids				( ruplid rlolid luplid llolid )
+
+	anim idle					models/classes/scout/scout_head_idle.md5anim
+}
+
+entityDef model_pc_scout {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_scout"
+	"def_head"		"model_pc_scout_head"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_scout {
+	inherit							model_pc_base
+	mesh							models/classes/scout/scout.md5mesh
+}
+
+//--------------------------------------------------------------------------
+// Sniper
+//--------------------------------------------------------------------------
+entityDef model_pc_sniper_head {
+	"inherit"		"model_pc_head_default"
+	"model"			"model_pc_sniper_head"
+}
+
+model model_pc_sniper_head {		// strassa	
+	mesh						models/classes/sniper/sniper_head.md5mesh
+
+	channel legs				( *origin -*viseme_bone -*head_channel )
+	channel torso				( *viseme_bone  )
+	channel head				( *head_channel -ruplid -rlolid -luplid -llolid )
+	channel eyelids				( ruplid rlolid luplid llolid )
+
+	anim idle					models/classes/sniper/sniper_head_idle.md5anim
+}
+
+entityDef model_pc_sniper {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_sniper"
+	"def_head"		"model_pc_sniper_head"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_sniper {
+	inherit							model_pc_base
+	mesh							models/classes/sniper/sniper.md5mesh
+}
+
+//--------------------------------------------------------------------------
+// Soldier
+//--------------------------------------------------------------------------
+entityDef model_pc_soldier_head {
+	"inherit"		"model_pc_head_default"
+	"model"			"model_pc_soldier_head"
+}
+
+model model_pc_soldier_head {
+	mesh						models/classes/soldier/soldier_head.md5mesh
+
+	channel legs				( *origin -*viseme_bone -*head_channel )
+	channel torso				( *viseme_bone  )
+	channel head				( *head_channel -ruplid -rlolid -luplid -llolid )
+	channel eyelids				( ruplid rlolid luplid llolid )
+
+	anim idle					models/classes/soldier/soldier_head_idle.md5anim
+}
+
+entityDef model_pc_soldier {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_soldier"
+	"def_head"		"model_pc_soldier_head"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_soldier {
+	inherit							model_pc_base
+	mesh							models/classes/soldier/soldier.md5mesh
+}
+
+//--------------------------------------------------------------------------
+// demoman
+//--------------------------------------------------------------------------
+
+entityDef model_pc_demoman {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_demoman"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_demoman {
+	inherit							model_pc_base
+	mesh							models/classes/demoman/demoman.md5mesh
+}
+
+//--------------------------------------------------------------------------
+// medic
+//--------------------------------------------------------------------------
+entityDef model_pc_medic_head {
+	"inherit"		"model_pc_head_default"
+	"model"			"model_pc_medic_head"
+}
+
+model model_pc_medic_head {
+	mesh						models/classes/medic/medic_head.md5mesh
+
+	channel legs				( *origin -*viseme_bone -*head_channel )
+	channel torso				( *viseme_bone  )
+	channel head				( *head_channel -ruplid -rlolid -luplid -llolid )
+	channel eyelids				( ruplid rlolid luplid llolid )
+
+	anim idle					models/classes/medic/medic_head_idle.md5anim
+}
+
+entityDef model_pc_medic {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_medic"
+	"def_head"		"model_pc_medic_head"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_medic {
+	inherit							model_pc_base
+	mesh							models/classes/medic/medic.md5mesh
+}
+
+//--------------------------------------------------------------------------
+// hwguy
+//--------------------------------------------------------------------------
+entityDef model_pc_hwguy_head {
+	"inherit"		"model_pc_head_default"
+	"model"			"model_pc_hwguy_head"
+}
+
+model model_pc_hwguy_head {
+	mesh						models/classes/hwguy/hwguy_head.md5mesh
+
+	channel legs				( *origin -*viseme_bone -*head_channel )
+	channel torso				( *viseme_bone  )
+	channel head				( *head_channel )
+//	channel eyelids				( ruplid rlolid luplid llolid )
+
+	anim idle					models/classes/hwguy/hwguy_head_idle.md5anim
+}
+
+entityDef model_pc_hwguy {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_hwguy"
+	"def_head"		"model_pc_hwguy_head"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_hwguy {
+	inherit							model_pc_base
+	mesh							models/classes/hwguy/hwguy.md5mesh
+}
+
+//--------------------------------------------------------------------------
+// pyro
+//--------------------------------------------------------------------------
+
+entityDef model_pc_pyro {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_pyro"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_pyro {
+	inherit							model_pc_base
+	mesh							models/classes/pyro/pyro.md5mesh
+}
+
+
+//--------------------------------------------------------------------------
+// spy
+//--------------------------------------------------------------------------
+entityDef model_pc_spy_head {
+	"inherit"		"model_pc_head_default"
+	"model"			"model_pc_spy_head"
+}
+
+model model_pc_spy_head {
+	mesh						models/classes/spy/spy_head.md5mesh
+
+	channel legs				( *origin -*viseme_bone -*head_channel )
+	channel torso				( *viseme_bone  )
+	channel head				( *head_channel -ruplid -rlolid -luplid -llolid )
+	channel eyelids				( ruplid rlolid luplid llolid )
+
+	anim idle					models/classes/spy/spy_head_idle.md5anim
+}
+
+entityDef model_pc_spy {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_spy"
+	"def_head"		"model_pc_spy_head"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_spy {
+	inherit							model_pc_base
+	mesh							models/classes/spy/spy.md5mesh
+}
+
+//--------------------------------------------------------------------------
+// engineer
+//--------------------------------------------------------------------------
+entityDef model_pc_engineer_head {
+	"inherit"		"model_pc_head_default"
+	"model"			"model_pc_engineer_head"
+}
+
+model model_pc_engineer_head {
+	mesh						models/classes/engineer/engineer_head.md5mesh
+
+	channel legs				( *origin -*viseme_bone -*head_channel )
+	channel torso				( *viseme_bone  )
+	channel head				( *head_channel -ruplid -rlolid -luplid -llolid )
+	channel eyelids				( ruplid rlolid luplid llolid )
+
+	anim idle					models/classes/engineer/engineer_head_idle.md5anim
+}
+
+entityDef model_pc_engineer {
+	"inherit"		"model_pc_base"
+	
+	"model"			"model_pc_engineer"
+	"def_head"		"model_pc_engineer_head"
+	"head_offset"	"0 0 0"
+}
+
+model model_pc_engineer {
+	inherit							model_pc_base
+	mesh							models/classes/engineer/engineer.md5mesh
+}

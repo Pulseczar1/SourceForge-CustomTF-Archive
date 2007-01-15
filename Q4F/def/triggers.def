@@ -1,0 +1,138 @@
+
+/***********************************************************************
+
+ trigger
+
+***********************************************************************/
+
+entityDef trigger_generic {
+	"inherit"					"tfent_default"
+	
+	"spawnclass"				"TFTrigger"
+	
+	"editor_ignore"				"0"
+	"editor_color"				".9 .9 .5"
+	"editor_mins"				"?"
+	"editor_maxs"				"?"
+	"editor_material"			"textures/common/trigmulti"
+	
+	"editor_usage"				"A general purpose trigger. All the real work is in the scripts."
+	
+	"editor_var wait"			"Seconds between triggerings. A value less than zero will disable the trigger. Default 0.5"
+	"editor_var random_wait"	"Wait variance.  Random amount of seconds to add to wait. Default is 0."
+	"editor_var delay"			"Seconds to wait before firing targets once triggered. Deafault 0."
+	"editor_var random_delay"	"Delay variance. Random amount of seconds to add to delay. Deafault 0."
+	"editor_var count"			"# of times to allow being triggered. Default is -1 ( unlimited )"
+	
+	"editor_var clientTouch"	"Who should be allowed to activate this trigger. -1 = non-clients, 0 = anyone ( default ), 1 = clients(players) only"
+	
+	"callOnActive"				"Q4FBase::genericTriggerActivate"
+	
+	"wait"						".5"
+	"random"					"0"
+	"delay"						"0"
+	"random_delay"				"0"
+	"count"						"-1"
+	"clientTouch"				"0"
+}
+
+entityDef ctf_capturepoint {
+	"inherit"					"tfent_default"
+	
+	"spawnclass"				"TFTrigger"
+	
+	"editor_ignore"				"0"
+	"editor_color"				".9 .9 .5"
+	"editor_mins"				"?"
+	"editor_maxs"				"?"
+	"editor_material"			"textures/common/trigmulti"
+	
+	"editor_usage"				"A capture point for flags"
+	
+	"editor_var carrying"		"The unique name of the flag that the player must be carrying."
+	"editor_var teamscore"		"the score to give to the carrier's team."
+	"editor_var playerscore"	"the score to distribute among the flag's carriers."
+	
+	"editor_var snd_capture_team"	"The sound to play to the flag's team on flag capture."
+	"editor_var snd_capture"		"The sound to play to the capturer's team."
+	
+	"teamscore"					"10"
+	"playerscore"				"10"
+	"snd_capture_team"			"announce_team_enemy_score"
+	"snd_capture"				"announce_team_you_score"
+	
+	"clientTouch"				"1"
+	"wait"						"5"			// make sure the 'GetFlag and bring here' message doesn't print
+	
+	"callOnActive"				"Q4FBase::flagCapture"
+}
+
+entityDef trigger_timer {
+	"editor_color"				"0.3 0.1 0.6"
+	"editor_mins"				"-8 -8 -8"
+	"editor_maxs"				"8 8 8"
+	"editor_material"			"textures/common/trigtimer"
+
+	"editor_usage"				"Repeatedly fires its targets.  Can be turned on or off by using.  " \
+								"The basic time between firing is a random time between (wait - random) and (wait + random)."
+								
+	"editor_var start_on"		"whether timer should be active when the level starts."
+	"editor_var wait"			"seconds between triggerings.  Use '-1' to indicate one time only."
+	"editor_var call"			"script function to call when triggered."
+	"editor_var random"			"wait variance."
+
+	"spawnclass"				"idTrigger_Timer"
+
+	"start_on"					"0"
+	"wait"						"0.5"
+	"random"					"0"
+}
+
+entityDef trigger_relay {
+	"editor_color"				"0.3 0.1 0.6"
+	"editor_mins"				"-8 -8 -8"
+	"editor_maxs"				"8 8 8"
+	"editor_material"			"textures/common/trigrelay"
+
+	"editor_usage"				"Non-touchable repeatable trigger.  Used as a proxy for triggering multiple targets in script, or " \
+								"from other entities.  Must be targeted at one or more entities.  " \
+								"The basic time between firing is a random time between (wait - random) and (wait + random)."
+								
+	"editor_var wait"			"seconds between triggerings.  Use '-1' to indicate one time only."
+	"editor_var delay"			"seconds to wait before firing after triggered."
+	"editor_var call"			"script function to call when triggered."
+	"editor_var requires"		"item required in players inventory to fire."
+	"editor_var removeItem"		"if above item is removed from inventory when used."
+	"editor_var random"			"wait variance."
+	"editor_var quakeChance"	"how likely this trigger_relay will be activated by func_earthquakes. value is 0...1, default is 0."
+// RAVEN BEGIN
+// nmckenzie:
+	"editor_var triggerWithSelf"	"Pass in the trigger for script functions rather than the entity that hit the trigger."
+// jdischler: for aweldon
+	"editor_var _callWithTargets"	"When set to 1, this trigger calls function specified by <call>, passing each of its attached targets to the function. NOTE: The targets are not actually triggered! default 0."
+// RAVEN END
+
+	"spawnclass"				"idTrigger_Multi"
+
+	"wait"						"0"
+	"random"					"0"
+	"delay"						"0"
+	"notouch"					"1"
+}
+
+entityDef trigger_hurt {
+	"editor_color"				"0.8 0.1 0.2"
+	"editor_mins"				"?"
+	"editor_maxs"				"?"
+	"editor_material"			"textures/common/trighurt"
+
+	"editor_usage"				"Damages the activator  Can be turned on or off by other triggers."
+	"editor_var on"				"whether or not it is active."
+	"editor_var def_damage"		"damage def to use, common ones are damage_painTrigger, damage_triggerhurt_100, damage_triggerhurt_1000"
+	"editor_var playerOnly"			"set to 1 and only the player will get hurt. default is 0."
+
+	"spawnclass"				"idTrigger_Hurt"
+
+	"on"						"1"
+	"def_damage"				"damage_painTrigger"
+}

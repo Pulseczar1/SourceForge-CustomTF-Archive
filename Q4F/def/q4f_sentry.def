@@ -1,0 +1,177 @@
+entityDef q4f_sentry_preview
+{
+	"model"						"models/sentry/sentry_preview.ase"
+	"skin"						"skins/models/sentry_preview"
+}
+
+entityDef q4f_sentry_level1 {
+	"model"						"models/sentry/sentry_top_l1.ase"
+	"skin"						"skins/models/sentry_l1"
+
+	
+	"search_forward_dist"		"1536.0"
+	"search_backward_dist"		"512.0"
+	"track_delay"				".25"			// delay to start tracking someone once the sentry sees them
+	
+	"machinegun_attack_delay"	"0.15"
+	
+	"max_attack_angle"			"12"
+	"turn_rate"					"3.25"
+	"scan_yaw_spread"			"90"
+	"scan_yaw_accel_time"		"2"
+	"scan_yaw_decel_time"		"2"
+	"scan_yaw_time"				"2"
+	"track_time"				".75"		// how long it should focus on a player when they get out of range/view
+	
+	"max_shells"				"75"
+	"max_rockets"				"0"
+	"max_armor"					"150"
+	
+	"sentry_pos"				"0 0 21"
+
+	"gun_pos_1"					"40.25 -1.66 31"
+	"gun_pos_2"					"40.25 -1.66 39"
+	"gun_pos_3"					"40.25 -1.66 31"
+	"gun_pos_4"					"40.25 -1.66 39"
+	
+	"rocket_pos_1"				"0 -9.66 46"
+	"rocket_pos_2"				"0 9.66 46"
+	
+	
+	"eye_pos"					"4.25 0 36.5"
+	
+	"def_hitscan"				"hitscan_sentry_l1"
+	"def_projectile"			""
+}
+
+entityDef q4f_sentry_level2 {
+	"inherit"					"q4f_sentry_level1"
+	
+	"model"						"models/sentry/sentry_top_l2_l3.ase"	
+	"skin"						"skins/models/sentry_l2"
+	
+	
+	"gun_pos_1"					"40.25 -11.66 39"
+	"gun_pos_2"					"40.25 11.66 39"
+	"gun_pos_3"					"40.25 -11.66 31"
+	"gun_pos_4"					"40.25 11.66 31"
+	
+	"machinegun_attack_delay"	"0.075"
+	
+	"max_shells"				"150"
+	"max_rockets"				"0"
+	"max_armor"					"180"
+	
+	"cells_required"			"130"
+	
+	"def_hitscan"				"hitscan_sentry_l2"
+}
+
+entityDef q4f_sentry_level3 {
+	"inherit"					"q4f_sentry_level2"
+	
+	"model"						"models/sentry/sentry_top_l2_l3.ase"	
+	"skin"						"skins/models/sentry_l3"
+	
+	"rocket_attack_delay"		"1.0"
+	
+	"max_shells"				"150"
+	"max_rockets"				"20"
+	"max_armor"					"220"
+	
+	"def_hitscan"				"hitscan_sentry_l3"
+	"def_projectile"			"projectile_sentry_rocket"
+}
+
+
+entityDef q4f_sentry
+{
+	"editor_ignore"				"1"
+	
+	"spawnclass"				"SentryGun"
+	
+	"model"						"models/sentry/sentry_base_coll.ase"
+	"skin"						"skins/models/sentry_base"
+	
+	"teamcolored"				"1"
+	
+	"def_level1"				"q4f_sentry_level1"
+	"def_level2"				"q4f_sentry_level2"
+	"def_level3"				"q4f_sentry_level3"
+		
+	// building stuff
+	
+	"start_build_dist"			"84.0"		// how far away the entity can be before a player can start building it
+	"max_build_dist"			"96.0"		// how far away the entity can be while the player is building
+	"build_time"				"5.0"		// time, in seconds, of how long it takes to construct the entity
+	"allow_class_flags"			"256"		// 1 << class nums that can use it
+	
+	"mins"					"-18 -18 -.25"
+	"maxs"					"18 18 50"
+	
+	"fx_build"					"effects/sentry_build_00.fx"	
+	"fx_buildfinished"			"effects/sentry_upgrade.fx"		
+	
+	"fx_rocketfire"				"effects/sentry_rocket.fx"	
+	
+	"fx_explode"				"effects/sentry_explode.fx"
+	
+	"ammo_type"					"ammo_cells"
+	"ammo_required"				"130"
+	
+	"msg_wrongclass"			"Only engineers can build sentry guns."
+	"msg_buildlimit"			"You can only have one sentry at a time."
+	"msg_notenoughammo"			"You need 130 cells to build a sentrygun."
+	
+	"snd_sight"					"control_room_spike_up_short"
+	
+	"def_damage_explode"		"q4f_damage_sentry_explode"
+	"def_empdamage"				"q4f_damage_emp_sentryExplode"
+	
+	"def_previewModel"			"q4f_sentry_preview"
+}
+
+entityDef hitscan_sentry_l1
+{
+	"stat_group"				"Sentry"
+	"stat_category"				"Class"
+	
+	"inherit"				"hitscan_pellet"
+	
+	"fx_fire"				"effects/sentry_mg.fx"
+	
+	"tracerchance"			".5"
+	
+	"def_damage_direct"		"q4f_damage_sentMG_lvl1"
+}
+
+entityDef hitscan_sentry_l2
+{
+	"stat_group"				"Sentry"
+	"stat_category"				"Class"
+	
+	"inherit"				"hitscan_sentry_l1"
+	
+	"def_damage_direct"		"q4f_damage_sentMG_lvl2"
+}
+
+entityDef hitscan_sentry_l3
+{
+	"stat_group"				"Sentry"
+	"stat_category"				"Class"
+	
+	"inherit"				"hitscan_sentry_l2"
+	
+	"def_damage_direct"		"q4f_damage_sentMG_lvl3"
+}
+
+entityDef projectile_sentry_rocket
+{
+	"inherit"				"projectile_rocket"
+	
+	"stat_group"			"Sentry"
+	"stat_category"			"Class"
+	
+	"def_damage_splash"		"q4f_damage_sentryRocketSplash"
+	"def_damage_direct"		"q4f_damage_sentryRocketDirect"																					
+}

@@ -1,0 +1,452 @@
+/***********************************************************************
+
+ q4f_items
+
+***********************************************************************/
+
+entityDef tf_item_common {
+	"editor_ignore"				"1"
+	"editor_color"				".3 .3 1"
+	"editor_mins"				"-8 -8 0"
+	"editor_maxs"				"8 8 16"
+	"editor_rotatable"			"1"
+	"editor_usage"				"Default TF Item"
+	
+	"editor_var name"			"The unique name this item is referred to by."
+	"editor_var groups"			"Comma separated list of group names that this item belongs to."
+	
+	"editor_var team"			"What team this item belongs to. Can either be a team #(1-4) or a team name ( red, blue, etc ). Map custom team names allowed."
+
+	"editor_var inv_icon"		"The icon to display on the player's hud when the item is picked up or carried."
+	"editor_var inv_name"		"The text to display on item pickup"
+	
+	"editor_var triggerbounds"	"A vector representing the x, y, and z lengths of the trigger box. If unset, the trigger will be the size of the specified model."
+	
+	"editor_model model"		"The visual model for this item"
+	"editor_var skin"			"The default skin."
+	
+	"editor_bool gravity"		"A percentage of the effect of world gravity on this item. 1 = 100%, 0 = no gravity ( stay in place )"
+	"editor_bool droptofloor"	"If true, this item will instantly drop to the floor when it spawns."
+	
+	"editor_var startstate"		"The state that this entity should start in. Default is idle."
+	
+	// defaults
+	"startstate"				"idle"
+	"team"						"-1"
+	"droptofloor"				"1"
+	"gravity"					"1"
+}
+
+entityDef tf_item_default {
+	"inherit"					"tf_item_common"
+	"editor_ignore"				"1"
+
+	"spawnclass"				"TFItem"
+	
+	"editor_menu"				"items"
+	
+	// editor vars	
+	"editor_var skin_pickup"	"The skin to display in the item's spawn position when it's picked up."
+	
+	"editor_var empdamage"		"If above zero, when this item gets hit with an emp it will explode with the specified damage"
+	
+	"editor_var spin"			"How fast this item should spin when idle. Default is zero."
+	"editor_var bounceScale"	"How much this item should bob up and down when idle. Default is zero"
+	
+	"editor_var callOnInvisible"		"The script function to call when our state is trying to change to invisible."
+	"editor_var callOnDisable"			"The script function to call when our state is trying to change to disabled."
+	"editor_var callOnIdle"				"The script function to call when our state is trying to change to idle."
+	"editor_var callOnActive"			"The script function to call when our state is trying to change to active."
+	
+	// defaults
+	"empdamage"					"0"
+	"spin"						"0"
+	"bounceScale"				"0"
+}
+
+entityDef tf_carry_item_default {
+	"inherit"					"tf_item_common"
+	"editor_ignore"				"1"
+	"editor_usage"				"Carryable TF Item"
+	
+	"spawnclass"				"TFCarryItem"
+	
+	"editor_var showcarry"		"If true, the model will follow behind the player."
+	"editor_var allowdrop"		"If true, this item can be dropped with the 'dropflag' command. Default is false."
+	
+	"editor_var friction"		"How much linear friction this item has. Default is 6.0."
+	"editor_var bounce"			"How much this entity should bounce of walls. 0.0 = full stop, 1.0 = perfect reflection"
+	
+	"editor_var callOnInvisible"		"The script function to call when our state is trying to change to invisible."
+	"editor_var callOnDisable"			"The script function to call when our state is trying to change to disabled."
+	"editor_var callOnIdle"				"The script function to call when our state is trying to change to idle."
+	"editor_var callOnActive"			"The script function to call when our state is trying to change to active."
+	"editor_var callOnCarry"			"The script function to call when our state is trying to change to carried."
+	
+	//defaults
+	"friction"					"6.0"
+	"showcarry"					"0"
+	"allowdrop"					"0"
+	"gravity"					"1"
+}
+
+
+entityDef generic_item_default {
+	"inherit"					"tf_item_default"
+	"editor_ignore"				"1"
+	"editor_var inv_name"		"The name displayed on pickup."
+	"editor_var snd_acquire"	"Used by scripts, plays this sound on pickup."
+	"editor_var give"			"Used by scripts; what to give the player."
+	"editor_var giveAmount"		"How much to give"
+	
+	"editor_var idleDelay"		"Used by scripts; says how long an item waits to return after being picked up. < 0 means never return."
+	
+	"callOnActive"				"Q4FBase::pickupInvItem"
+	"gravity"					"1"
+	
+	"triggerbounds"				"32 32 32"
+}
+
+
+entitydef ammo_default {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"1"
+	
+	"model"						"models/items/ammo/ammo_box.lwo"
+
+	"fx_impact_water"			"effects/ambient/splash_med.fx"
+	"fx_detonate"				"effects/weapons/grenadelauncher/detonate_mp.fx"
+	
+	"def_empdamage"				"q4f_damage_emp_ammo"
+	
+	"snd_acquire"				"items_ammo_default"
+	"idleDelay"					"15"
+	
+	"triggerbounds"				"24 24 18"
+}
+
+entityDef ammo_shells {
+	"inherit"					"ammo_default"
+	
+	"editor_ignore"				"0"
+	"editor_usage"				"Ammo box for shells"
+	
+	"inv_name"					"Shells"
+	"inv_icon"					"gfx/guis/hud/icons/item_shotgun.tga"
+	
+	"skin"						"skins/items/ammo/shotgun"
+	"skin_pickup"				"skins/items/ammo/shotgun_pickup"
+	
+	"give_ammo_shells"			"25"
+}
+
+entityDef ammo_nails {
+	"inherit"					"ammo_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Ammo box for nails"
+	
+	"inv_name"					"Nails"
+	"inv_icon"					"gfx/guis/hud/icons/item_nailgun.tga"
+	
+	"skin"						"skins/items/ammo/nailgun"
+	"skin_pickup"				"skins/items/ammo/nailgun_pickup"
+	
+	"give_ammo_nails"			"25"
+}
+
+entityDef ammo_rockets {
+	"inherit"					"ammo_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Ammo box for rockets"
+	
+	"inv_name"					"Rockets"
+	"inv_icon"					"gfx/guis/hud/icons/item_rocket.tga"
+	
+	"skin"						"skins/items/ammo/rocketlauncher"
+	"skin_pickup"				"skins/items/ammo/rocketlauncher_pickup"
+	
+	"give_ammo_rockets"			"10"
+}
+
+entityDef ammo_cells {
+	"inherit"					"ammo_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Ammo box for cells"
+	
+	"inv_name"					"Cells"
+	"inv_icon"					"gfx/guis/hud/icons/item_lightning.tga"
+	
+	"skin"						"skins/items/ammo/lightninggun"
+	"skin_pickup"				"skins/items/ammo/lightninggun_pickup"
+	
+	"give_ammo_cells"			"30"
+}
+
+entityDef ammo_backpack {
+	"inherit"					"ammo_default"
+	"editor_ignore"				"1"
+	"editor_usage"				"dropped backpack"
+	
+	"inv_name"					"Backpack"
+	"inv_icon"					"gfx/guis/hud/icons/item_lightning.tga"
+	
+	"model"						"models/mapobjects/marine/equipment/backpack/sp_backpack.lwo"
+	
+	"idleDelay"					"-1"
+	
+	"snd_acquire"				"items_ammo_default"
+	
+	"dropped"					"1"
+	
+	"triggerbounds"				"48 48 48"
+}
+
+entityDef ammo_backpack_resupply {
+	"inherit"					"ammo_backpack"
+	
+	"editor_ignore"				"0"
+	"editor_usage"				"Ressuply Backpack"
+	
+	"editor_var give_ammo_shells"	"How many shells to give."
+	"editor_var give_ammo_nails"	"How many nails to give."
+	"editor_var give_ammo_rockets"	"How many rokets to give."
+	"editor_var give_ammo_cells"	"How many cells to give."
+	
+	"editor_var give_ammo_grenade1"	"How many primary grenades to give."
+	"editor_var give_ammo_grenade2"	"How many secondary grenades to give."
+	
+	"editor_var give_ammo_detpack"	"How many detpacks to give."
+	
+	"editor_var give_health"		"How much health to give."
+	"editor_var give_armor"			"How much armor to give."
+	
+	"idleDelay"					"5"
+	
+	"empdamage"					"0"
+	"spin"						"1"
+	"bouncescale"				"1"
+	
+	"give_ammo_shells"			"200"
+	"give_ammo_nails"			"200"
+	"give_ammo_rockets"			"200"
+	"give_ammo_cells"			"200"
+	
+	"give_ammo_grenade1"		"200"
+	"give_ammo_grenade2"		"200"
+	
+	"give_health"				"200"
+	"give_armor"				"300"
+	
+	"droptofloor"				"0"
+	"dropped"					"0"
+	"gravity"					"0"
+	
+	"def_empdamage"				""
+}
+
+entityDef ammo_grenade1 {
+	"inherit"					"ammo_default"
+	"editor_ignore"				"1"
+}
+
+entityDef ammo_grenade2 {
+	"inherit"					"ammo_default"
+	"editor_ignore"				"1"
+}
+
+entityDef ammo_detpack {
+	"inherit"					"ammo_default"
+	"editor_ignore"				"1"
+}
+
+
+
+entityDef item_health_shard {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Health shard"
+	
+	"inv_name"					"Health Shard"
+	"inv_icon"					"gfx/guis/hud/icons/item_health.tga"
+	
+	"give_health"				"5"
+	
+	"snd_acquire"				"pickup_health_shard"
+	"idleDelay"					"15"
+	
+	"model"						"models/pick_ups/mp_pickups/mp_healthb.lwo"
+	
+	"callOnActive"				"Q4FBase::pickupInvItemForce"
+}
+
+entityDef item_health_small {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Small Health"
+	
+	"inv_name"					"Small Health"
+	"inv_icon"					"gfx/guis/hud/icons/item_health.tga"
+	
+	"give_health"				"25"
+	
+	"snd_acquire"				"pickup_health_small"
+	"idleDelay"					"15"
+	
+	"model"						"models/pick_ups/mp_pickups/mp_healthc.lwo"
+}
+
+entityDef item_health_large {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Large Health"
+	
+	"inv_name"					"Large Health"
+	"inv_icon"					"gfx/guis/hud/icons/item_health.tga"
+	
+	"give_health"				"50"
+	
+	"snd_acquire"				"pickup_health_large"
+	"idleDelay"					"25"
+	
+	"model"						"models/pick_ups/mp_pickups/mp_healthd.lwo"
+}
+
+entityDef item_health_mega {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Mega Health"
+	
+	"inv_name"					"Mega Health"
+	"inv_icon"					"gfx/guis/hud/icons/item_health.tga"
+	
+	"snd_acquire"				"pickup_health_mega"
+	
+	"model"						"models/pick_ups/mp_pickups/mp_mega_health.lwo"
+	
+	"give_health"				"100"
+	
+	"idleDelay"					"35"
+	
+	"callOnActive"				"Q4FBase::pickupInvItemForce"
+}
+
+
+
+entityDef item_armor_shard {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Armor Shard"
+	
+	"inv_name"					"Armor Shard"
+	"inv_icon"					"gfx/guis/hud/icons/item_armor.tga"
+	
+	"give_armor"				"5"
+	
+	"model"						"models/items/armor/shard.lwo"
+	
+	"snd_acquire"				"pickup_armor_shard"
+	
+	"idleDelay"					"15"
+
+	"callOnActive"				"Q4FBase::pickupInvItemForce"
+}
+
+entityDef item_armor_small {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Small Armor"
+	
+	"inv_name"					"Small Armor"
+	"inv_icon"					"gfx/guis/hud/icons/item_armor.tga"
+	
+	"give_armor"				"50"
+	
+	"model"						"models/items/armor/armor.lwo"
+	
+	"snd_acquire"				"pickup_armor"
+	
+	"idleDelay"					"20"
+}
+
+entityDef item_armor_large {
+	"inherit"					"generic_item_default"
+	"editor_ignore"				"0"
+	"editor_usage"				"Large Armor"
+	
+	"inv_name"					"Large Armor"
+	"inv_icon"					"gfx/guis/hud/icons/item_armor.tga"
+	
+	"give_armor"				"100"
+	
+	"model"						"models/items/armor/armor.lwo"
+	
+	"skin"						"skins/items/armor/base_red"
+	
+	"snd_acquire"				"pickup_armor"
+	
+	"idleDelay"					"35"
+}
+
+
+
+entityDef ctf_flag {
+	"inherit"					"tf_carry_item_default"
+	
+	"editor_ignore"				"0"
+	
+	"editor_var snd_pickup"				"Sound played to activator when he picks up the flag"
+	"editor_var snd_pickup_team"		"Sound played to activator's team"
+	"editor_var snd_pickup_flag_team"	"Sound played to flag's team"
+	
+	"editor_var snd_drop"				"Sound played to activator on flag drop"
+	"editor_var snd_drop_team"			"Sound played to activator's team on flag drop"
+	"editor_var snd_drop_flag_team"		"Sound played to flag's team on flag drop"
+	
+	"editor_var snd_return"				"sound played to activator and his team on flag return"
+	"editor_var snd_return_flag_team"	"sound played to flag's team on flag return"
+	
+	"editor_var idleDelay"		"Used by scripts; Delay for flag to return to base once dropped."
+	
+	"editor_var grabscore"		"The score to give a player on an initial grab. Default 2"
+	"editor_var savescore"		"If the carrier is killed by an enemy player, add this to their score. If the player is killed by a teammate, subtract this from the teammate's score. Default 3"
+	
+	"startstate"				"idle"
+	"team"						"-1"
+	"droptofloor"				"1"
+	"gravity"					"1"
+	"friction"					"6.0"
+	
+	"showcarry"					"1"
+	"allowdrop"					"1"
+	
+	"model" 					"models/mp/mp_flag.lwo"
+	"skin"						"skins/items/ctf_flag"
+	
+	"snd_pickup"				"announce_ctf_you_have_flag"
+	"snd_pickup_team"			"announce_ctf_your_team_has_flag"
+	"snd_pickup_flag_team"		"announce_ctf_enemy_has_flag"
+	
+	"snd_drop"					"announce_ctf_your_team_drops_flag"
+	"snd_drop_team"				"announce_ctf_your_team_drops_flag"
+	"snd_drop_flag_team"		"announce_ctf_enemy_drops_flag"
+	
+	"snd_return"				"announce_ctf_enemy_returns_flag"
+	"snd_return_flag_team"		"announce_ctf_your_flag_returned"
+	
+	"triggerbounds"				"42 42 72"
+	
+	"teamcolored"				"1"
+	
+	"fx_carry"					"effects/carryflag.fx"
+	
+	"callOnActive"				"Q4FBase::dropCTFFlag"
+	"callOnIdle"				"Q4FBase::returnCTFFlag"
+	"callOnCarry"				"Q4FBase::pickupCTFFlag"
+	"grabscore"					"2"
+	"savescore"					"3"
+	"idleDelay"					"60"
+}
+
+
+
+

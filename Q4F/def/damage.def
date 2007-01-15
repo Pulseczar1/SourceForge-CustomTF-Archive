@@ -1,0 +1,1202 @@
+// 3j: so we don't have to hunt around to find our damage types
+
+// deathmsg: %v is victim name, %k is attacker/killer name
+// deathicon: a name in the icon list. must be exactly 3 characters in order to be printable
+// death icons are in q4f_player.def, dunno why but they wont print unless they're there
+
+//======================================================================================================================================================
+// Weapons
+//======================================================================================================================================================
+
+entityDef q4f_damage_dispSplode {
+	"stat_group"				"Dispenser"
+	"stat_type"					"Dispenser"
+	
+	"push"						"300"
+	
+	"radius"					"256"
+	
+	"deathmsg"					"%v didn't have the correct change for %k's dispenser."
+	"deathmsg_self"				"%v forgot the manual for his dispenser."
+	"deathicon"					"d17"
+}
+
+entityDef q4f_damage_detpack {
+	"stat_group"				"Detpack"
+	"stat_type"					"Detpack"
+	
+	"detpack"					"1"				// for ents that only respond to detpack damage
+	
+	"radius"					"256"
+	
+	"damage"					"500"
+	"gib"						"1"
+	
+	"push"						"900"
+	
+	"deathPush"					"300"
+	"deathPushMin"				"3000 2000"
+	"deathPushMax"				"5000 3000"
+	
+	"deathmsg"					"%v was blown away by %k's detpack charge."
+	"deathmsg_self"				"%v forgot the time on his detpack."
+	"deathicon"					"d20"
+}
+
+entityDef q4f_damage_detpack_old {
+	"inherit"				"q4f_damage_detpack"
+	
+	"radius"				"1280"
+	"damage"				"512"
+}
+
+entityDef q4f_damage_sentry_explode {
+	"inherit"					"q4f_damage_sentryRocketSplash"
+	
+	"damage"					"60"
+	
+	"stat_group"				"Sentry"
+	"stat_type"					"Explosion"
+}
+
+entityDef q4f_damage_sentryRocketDirect 
+{
+	"stat_group"				"Sentry"
+	"stat_type"					"Rocket Direct"
+
+	"damage"					"100"
+	"gib"						"1"
+	
+	"push"						"320"
+
+	"deathPush"					"200"
+	"deathPushMin"				"3000 2000"
+	"deathPushMax"				"5000 3000"
+	
+	"allowjuggle"				"1"
+	
+	"deathmsg"					"%v couldn't avoid %k's sentry rocket."
+	"deathmsg_self"				"%v ate his own sentry's rocket."
+	"deathicon"					"d18"
+}
+
+entityDef q4f_damage_sentryRocketSplash 
+{
+	"stat_group"				"Sentry"
+	"stat_type"					"Rocket Splash"
+	
+	"damage"					"100"
+	"gib"						"0"
+	
+	"radius"					"160"
+	"push"						"320"
+
+	"deathPush"					"100"
+	"deathPushMin"				"5000 6000"
+	"deathPushMax"				"7000 8000"
+	
+	"deathmsg"					"%v almost got away from  %k's sentry rocket."
+	"deathmsg_self"				"%v ate his own sentry's rocket."
+	"deathicon"					"d18"
+}
+
+entityDef q4f_damage_sentMG_lvl1
+{	
+	"stat_group"				"Sentry"
+	"stat_type"					"MG Level 1"
+	
+	"damage"					"8"
+	
+	"push"						"26"
+	
+	"deathPush"					"100"
+	"deathPushMin"				"3000 350"
+	"deathPushMax"				"5000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v was pecked to death by %k's level 1 sentry."
+	"deathmsg_self"				"%v forgot where his sentry was."
+	"deathicon"					"d18"
+}
+
+entityDef q4f_damage_sentMG_lvl2
+{	
+	"inherit"					"q4f_damage_sentMG_lvl1"
+	
+	"stat_group"				"Sentry"
+	"stat_type"					"MG Level 2"
+	
+	"deathmsg"					"%v was mowed down by %k's level 2 sentry."
+	"deathmsg_self"				"%v got between his sentry and its prey."
+	"deathicon"					"d18"
+}
+
+entityDef q4f_damage_sentMG_lvl3
+{	
+	"inherit"					"q4f_damage_sentMG_lvl2"
+	
+	"stat_group"				"Sentry"
+	"stat_type"					"MG Level 3"
+	
+	"deathmsg"					"%v was mowed down by %k's level 3 sentry."
+	"deathmsg_self"				"%v got between his sentry and its prey."
+	"deathicon"					"d18"
+}
+
+entityDef q4f_damage_axe
+{
+	"stat_group"				"Axe"
+	"stat_type"					"Axe"
+	
+	"damage"					"15"
+	"gib"						"1"
+	
+	"push"						"11"
+
+	"deathPush"					"200"
+	"deathPushMin"				"2000 400"
+	"deathPushMax"				"4000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v was chopped down to size by %k."
+	"deathicon"					"d01"
+}
+
+
+entityDef q4f_damage_gauntlet
+{
+	"stat_group"				"Gauntlet"
+	"stat_type"					"Gauntlet"
+	
+	"damage"					"15"
+	"gib"						"1"
+	
+	"push"						"11"
+
+	"deathPush"					"200"
+	"deathPushMin"				"2000 400"
+	"deathPushMax"				"4000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v was chopped down to size by %k."
+	"deathicon"					"d01"
+}
+
+entityDef q4f_damage_bullet 
+{
+	"damage"					"8"
+	"gib"						"1"
+	
+	"push"						"11"
+
+	"kickDir"					"1 0 0"
+	"kick_time"					"100"
+	"kick_amplitude"			".4"
+	
+	"deathPush"					"100"
+	"deathPushMin"				"3000 350"
+	"deathPushMax"				"5000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v killed by %k."
+	"deathicon"					""
+}
+
+entityDef q4f_damage_autorifle
+{	
+	"stat_group"				"Auto Rifle"
+	"stat_type"					"Auto Rifle"
+	
+	"damage"					"8"
+	
+	"push"						"11"
+
+	"kickDir"					"1 0 0"
+	"kick_time"					"100"
+	"kick_amplitude"			".4"
+	
+	"deathPush"					"100"
+	"deathPushMin"				"3000 350"
+	"deathPushMax"				"5000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v was turned into swiss cheese by %k's autorifle."
+	"deathicon"					"d02"
+}
+
+entityDef q4f_damage_flameDirect
+{
+	"stat_group"				"Flamethrower"
+	"stat_type"					"Direct"
+	
+	"damage"					"6"
+	
+	"push"						"0"
+									
+	"ignoreArmor"				"0"				// set if armor has no affect on this damage
+	
+	"affliction"				"fire"
+	"def_affl_damage"			"q4f_damage_affl_fire_ft"
+	"affliction_scale"			"1"
+										
+	"deathmsg"					"%v was burnt to a crisp by %k."
+	"deathicon"					"d03"
+}
+
+
+
+entityDef q4f_damage_incendiaryDirect
+{	
+	"stat_group"				"Incendiary Cannon"
+	"stat_type"					"Direct"
+	
+	"damage"					"75"
+	
+	"push"						"160"
+	
+	"ignoreArmor"				"0"				// set if armor has no affect on this damage
+	
+	"affliction"				"fire"
+	"def_affl_damage"			"q4f_damage_affl_fire_inc"
+	"affliction_scale"			"1"
+	
+	"deathmsg"					"%v got a hot enema from %k."
+	"deathicon"					"d15"
+}
+
+entityDef q4f_damage_incendiarySplash
+{	
+	"stat_group"				"Incendiary Cannon"
+	"stat_type"					"Splash"
+	
+	"damage"					"55"
+	"gib"						"0"
+	
+	"radius"					"160"
+	"push"						"160"
+	
+	
+	"ignoreArmor"				"0"				// set if armor has no affect on this damage
+	
+	"affliction"				"fire"
+	"def_affl_damage"			"q4f_damage_affl_fire_inc"
+	"affliction_scale"			"1"
+	
+	"deathmsg"					"%v felt the heat from %k's incendiary rocket."
+	"deathmsg_self"				"%v took his fire immunity for granted."
+	"deathicon"					"d15"
+}
+
+entityDef q4f_damage_grenadeDirect 
+{
+	"stat_group"				"Grenade Launcher"
+	"stat_type"					"Direct"
+	
+	"damage"					"125"			// ?????
+	"gib"						"1"
+	
+	"push"						"440"
+
+	"deathPush"					"200"
+	"deathPushMin"				"3000 2000"
+	"deathPushMax"				"5000 3000"
+	
+	"allowjuggle"				"1"
+	
+	"deathmsg"					"%v tried to swallow %k's grenade."
+	"deathicon"					"d04"
+}
+
+entityDef q4f_damage_grenadeSplash 
+{
+	"stat_group"				"Grenade Launcher"
+	"stat_type"					"Splash"
+	
+	"damage"					"95"
+	"gib"						"0"
+	
+	"radius"					"160"
+	"push"						"320"
+
+	"deathPush"					"100"
+	"deathPushMin"				"7000 9000"
+	"deathPushMax"				"10000 12000"
+	
+	"deathmsg"					"%v was caught staring at %k's grenade."
+	"deathmsg_self"				"%v was mesmerized by his own grenade."
+	"deathicon"					"d04"
+}
+
+entityDef q4f_damage_pipeSplash
+{
+	"stat_group"				"Pipebomb"
+	"stat_type"					"Pipebomb"
+	
+	"inherit"					"q4f_damage_grenadeSplash"
+	
+	"deathmsg"					"%v tripped over %k's pineapple."
+	"deathmsg_self"				"%v fell victim to his own trap."
+	"deathicon"					"d05"
+}
+
+entityDef q4f_damage_minigun 
+{
+	"stat_group"				"Minigun"
+	"stat_type"					"Minigun"
+	
+	"damage"					"11"
+	"gib"						"0"
+	
+	"push"						"32"
+	
+	"deathPush"					"150"
+	"deathPushMin"				"2000 350"
+	"deathPushMax"				"4000 500"
+
+	"bleed"						"1"
+	
+	"deathmsg"					"%v was sawn in half by %k."
+	"deathicon"					"d06"
+}
+
+entityDef q4f_damage_nailDirect 
+{
+	"stat_group"				"Nailgun"
+	"stat_type"					"Direct"
+	
+	"damage"					"10"
+	"gib"						"0"
+	
+	"push"						"90"
+	
+	"deathPush"					"150"
+	"deathPushMin"				"2000 350"
+	"deathPushMax"				"4000 500"
+
+	"bleed"						"1"
+	
+	"deathmsg"					"%v was nailed by %k."
+	"deathicon"					"d07"
+}
+
+entityDef q4f_damage_nailSplash 
+{
+	"stat_group"				"Nailgun"
+	"stat_type"					"Splash"
+	
+	"damage"					"10"
+	"gib"						"0"
+	
+	"radius"					"60"
+	"push"						"90"
+
+	"deathPush"					"100"
+	"deathPushMin"				"2000 350"
+	"deathPushMax"				"4000 500"
+	
+	"deathmsg"					"%v stood too close to %k's nail."
+	"deathmsg_self"				"%v nailed himself."
+	"deathicon"					"d07"
+}
+
+entityDef q4f_damage_hyperblaster_direct
+{
+	"stat_group"				"Hyperblaster"
+	"stat_type"					"Direct"
+	
+	"damage"					"13"
+	"gib"						"0"
+	
+	"push"						"11"
+
+	"deathPush"					"150"
+	"deathPushMin"				"2000 350"
+	"deathPushMax"				"4000 500"
+
+	"bleed"						"0"
+	
+	"deathmsg"					"%v was blasted to the wall by %k."
+	"deathicon"					"d08"
+}
+
+entityDef q4f_damage_hyperblaster_splash
+{
+	"stat_group"				"Hyperblaster"
+	"stat_type"					"Splash"
+	
+	"damage"					"13"
+	
+	"radius"					"85"
+	"push"						"45"
+
+	"gib"						"0"
+
+	"deathPush"					"100"
+	"deathPushMin"				"2000 350"
+	"deathPushMax"				"4000 500"
+	
+	"bleed"						"0"
+	
+	"deathmsg"					"%v sucked on %k's blue balls of death."
+	"deathmsg_self"				"%v melted himself to the wall."
+	"deathicon"					"d08"
+}
+
+entityDef q4f_damage_rocketDirect 
+{
+	"stat_group"				"Rocket Launcher"
+	"stat_type"					"Direct"
+	
+	"damage"					"100"
+	"gib"						"1"
+	
+	"push"						"45000"
+	"knockback"					"110"
+
+	"deathPush"					"200"
+	"deathPushMin"				"3000 2000"
+	"deathPushMax"				"5000 3000"
+	
+	"allowjuggle"				"1"
+	
+	"deathmsg"					"%v ate a rocket from %k."
+	"deathicon"					"d09"
+}
+
+entityDef q4f_damage_rocketSplash 
+{
+	"stat_group"				"Rocket Launcher"
+	"stat_type"					"Splash"
+	
+	"damage"					"90"
+	"gib"						"0"
+	
+	"radius"					"180"
+	
+	"push"						"360"
+
+	"deathPush"					"100"
+	"deathPushMin"				"5000 6000"
+	"deathPushMax"				"7000 8000"
+	
+	"deathmsg"					"%v almost dodged a rocket from  %k."
+	"deathmsg_self"				"%v forgot he was mortal."
+	"deathicon"					"d09"
+}
+
+entityDef q4f_damage_shotgun
+{
+	"stat_group"				"Shotgun"
+	"stat_type"					"Shotgun"
+	
+	"inherit"					"q4f_damage_bullet"
+	"damage"					"4"
+	
+	"push"						"11"
+
+	//"splatSize"				"128"
+	
+	"deathPush"					"100"
+	"deathPushMin"				"4000 500"
+	"deathPushMax"				"9000 600"
+	
+	"deathmsg"					"%k used %v as his clay pigeon."
+	"deathicon"					"d10"
+}
+
+entityDef q4f_damage_shotgun_double
+{
+	"stat_group"				"Super Shotgun"
+	"stat_type"					"Super Shotgun"
+	
+	"inherit"					"q4f_damage_shotgun"
+	
+	"push"						"11"
+	
+	"deathmsg"					"%v felt the power of %k's boomstick."
+	"deathicon"					"d11"
+}
+
+entityDef q4f_damage_sniperrifle
+{
+	"stat_group"				"Sniper Rifle"
+	"stat_type"					"Body"
+	
+	"damage"					"300"				// most amount of damage the rifle can do
+	
+	"push"						"11"
+	
+	"kickDir"					"1 0 0"
+	"kick_time"					"100"
+	"kick_amplitude"			".4"
+	
+	"deathPush"					"100"
+	"deathPushMin"				"3000 350"
+	"deathPushMax"				"5000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v took a chest shot from %k."
+	"deathicon"					"d12"
+}
+
+entityDef q4f_damage_sniperrifle_head
+{
+	"stat_group"				"Sniper Rifle"
+	"stat_type"					"Head"
+	
+	"damage"					"500"				// most amount of damage the rifle can do
+	
+	"push"						"11"
+	
+	"kickDir"					"1 0 0"
+	"kick_time"					"100"
+	"kick_amplitude"			".4"
+	
+	"deathPush"					"100"
+	"deathPushMin"				"3000 350"
+	"deathPushMax"				"5000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v was shot between the eyes by %k."
+	"deathicon"					"d12"
+}
+
+entityDef q4f_damage_sniperrifle_legs
+{
+	"stat_group"				"Sniper Rifle"
+	"stat_type"					"Legs"
+	
+	"damage"					"100"				// most amount of damage the rifle can do
+	
+	"push"						"11"
+	
+	"kickDir"					"1 0 0"
+	"kick_time"					"100"
+	"kick_amplitude"			".4"
+	
+	"deathPush"					"100"
+	"deathPushMin"				"3000 350"
+	"deathPushMax"				"5000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v lost his legs to %k's sniper round."
+	"deathicon"					"d12"
+}
+
+entityDef q4f_damage_tranquilizer
+{
+	"stat_group"				"Tranquilizer"
+	"stat_type"					"Tranquilizer"
+	
+	"damage"					"20"
+	
+	"affliction"				"tranquilize"
+	"affliction_scale"			"1"
+
+	"kickDir"					"1 0 0"
+	"kick_time"					"100"
+	"kick_amplitude"			".4"
+	
+	"deathPush"					"0"
+	//"deathPushMin"				"3000 350"
+	//"deathPushMax"				"5000 500"
+	
+	"bleed"						"0"
+	
+	"deathmsg"					"%v was put to sleep by %k."
+	"deathicon"					"d13"
+}
+
+entityDef q4f_damage_wrench
+{
+	"stat_group"				"Wrench"
+	"stat_type"					"Wrench"
+	
+	"damage"					"20"
+	"gib"						"0"
+	
+	"heal_armor"				"10"
+	"repair"					"1"
+	
+	"push"						"11"
+
+	//"dv_time"					"100"
+	//"dv_scale"					".05"
+
+	"deathPush"					"0"
+	//"deathPushMin"			"2000 400"
+	//"deathPushMax"			"4000 500"
+	
+	"bleed"						"1"
+	
+	"deathmsg"					"%v got his skull broken by %k's wrench."
+	"deathicon"					"d14"
+}
+
+entityDef q4f_damage_railgun 
+{
+	"stat_group"				"Railgun"
+	"stat_type"					"Railgun"
+	
+	"damage"					"10"
+	"gib"						"0"
+	
+	"ignoreArmor"				"1"
+	
+	"push"						"0"
+
+	"fx_wound"					"effects/wounds/energy.fx"
+
+	"deathPush"					"400"
+	"deathPushMin"				"4000 400"
+	"deathPushMax"				"7000 500"
+	
+	"bleed"						"1"
+	
+		
+	"deathmsg"					"%v got a hot piece of lead from %k."
+	"deathicon"					"d00"
+}
+
+entityDef q4f_damage_knife
+{
+	"stat_group"				"Knife"
+	"stat_type"					"Direct"
+	
+	"damage"					"50"
+	"gib"						"0"
+	
+	"deathPush"					"0"
+	"bleed"						"1"
+
+	"deathmsg"					"%v didn't see that knife in %k's hands."
+	"deathicon"					"d19"
+}
+
+
+entityDef q4f_damage_knife_backstab
+{
+	"stat_group"				"Knife"
+	"stat_type"					"Backstab"
+	
+	"damage"					"125"
+	"gib"						"1"
+	
+	"deathPush"					"0"
+	"bleed"						"1"
+
+	"deathmsg"					"%v was stabbed in the back by %k."
+	"deathicon"					"d19"
+}
+
+entityDef q4f_damage_vaccine
+{
+	"stat_group"				"Bioweapon"
+	"stat_type"					"Direct"
+	
+	"damage"					"10"
+	"gib"						"0"
+	
+	"push"						"11"
+	
+	"heal_health"				"5"
+
+	"deathPush"					"0"
+	"bleed"						"1"
+
+	"affliction"				"infection"
+	"def_affl_damage"			"q4f_damage_infection"
+	"affliction_scale"			"1"
+
+	"deathmsg"					"%v didn't survive %k's BioAxe surgery."
+	"deathicon"					"d16"
+}
+
+//======================================================================================================================================================
+// Grenades
+//======================================================================================================================================================
+
+entityDef q4f_damage_fragGrenade
+{
+	"stat_group"				"Frag Grenade"
+	"stat_type"					"Frag Grenade"
+	
+	"damage"					"175"
+	"gib"						"1"
+	
+	"radius"					"160"
+	"push"						"640"
+	
+	"deathmsg"					"%v was fragged by %k's hand grenade."
+	"deathmsg_self"				"%v forgot about his grenade."
+	"deathicon"					"g00"
+}
+
+entityDef q4f_damage_flashGrenade
+{
+	"stat_group"				"Flash Grenade"
+	"stat_type"					"Flash Grenade"
+	
+	"damage"					"30"
+	"gib"						"0"
+
+	"radius"					"160"			// radius of effect
+	"push"						"90"
+	
+	"deathmsg"					"%v went into the light from %k's flash grenade."
+	"deathmsg_self"				"%v blinded himself."
+	"deathicon"					"g01"
+	
+	"affliction"				"flash"
+	"affliction_scale"			"1"
+}
+
+entityDef q4f_damage_concGrenade
+{
+	"stat_group"				"Conc Grenade"
+	"stat_type"					"Conc Grenade"
+	
+	"radius"					"300"
+	"push"						""
+	
+	"damage"					"0"
+	
+	"affliction"				"conc"
+	"affliction_scale"			"1"
+}
+
+entityDef q4f_damage_nailGrenade
+{
+	"stat_group"				"Nail Grenade"
+	"stat_type"					"Splash"
+	
+	"damage"					"200"
+	"radius"					"140"
+	"push"						"20"
+	
+	"deathmsg"					"%v stood a little too close to %k's nail grenade."
+	"deathmsg_self"				"%v stood too close to his own nail grenade."
+	"deathicon"					"g02"
+}
+
+entityDef q4f_damage_nailGrenadeSpike
+{
+	"stat_group"				"Nail Grenade"
+	"stat_type"					"Projectile"
+	
+	"inherit"					"q4f_damage_nailDirect"
+	
+	"damage"					"35"
+	
+	"deathmsg"					"%v couldn't zig-zag past %k's nail grenade."
+	"deathmsg_self"				"%v got bit in the ass by his own nail grenade."
+	"deathicon"					"g02"
+}
+
+entityDef q4f_damage_clusterGrenade
+{
+	"stat_group"				"Cluster Grenade"
+	"stat_type"					"Splash"
+	
+	"inherit"					"q4f_damage_rocketSplash"
+	
+	"damage"					"100"
+	"gib"						"1"
+	
+	"deathmsg"					"%v tried to juggle %k's cluster grenade."
+	"deathmsg_self"				"%v was caught staring at his cluster grenade."
+	"deathicon"					"g03"
+}
+
+entityDef q4f_damage_clusterGrenade_child
+{
+	"stat_group"				"Cluster Grenade"
+	"stat_type"					"Projectile"
+	
+	"inherit"					"q4f_damage_fragGrenade"
+	
+	"deathmsg"					"%v was cluster-fucked by %k."
+	"deathmsg_self"				"%v swallowed his own spam."
+	"deathicon"					"g03"
+}
+
+entityDef q4f_damage_napalmGrenade
+{
+	"stat_group"				"Napalm Grenade"
+	"stat_type"					"Splash"
+	
+	"inherit"					"q4f_damage_rocketSplash"
+	
+	"damage"					"100"
+	"gib"						"1"
+	
+	"deathmsg"					"%v felt the heat from %k's napalm grenade."
+	"deathmsg_self"				"%v tried to repress his napalm grenade."
+	"deathicon"					"g04"
+	
+	"affliction"				"fire"
+	"def_affl_damage"			"q4f_damage_affl_fire_napalm"
+	"affliction_scale"			"1"
+}
+
+
+entityDef q4f_damage_napalmfire
+{
+	"stat_group"				"Napalm Grenade"
+	"stat_type"					"Fire Direct"
+	
+	"damage"					"12"
+	"gib"						"0"
+	
+	"deathmsg"					"%v got stuck in %k's napalm."
+	"deathmsg_self"				"%v couldn't put out his own fire."
+	"deathicon"					"g04"
+	
+	"affliction"				"fire"
+	"def_affl_damage"			"q4f_damage_affl_fire_napalm"
+	"affliction_scale"			"1"
+	
+}
+
+entityDef q4f_damage_empGrenade			// the emp grenade never does any exact damage, this def is just used for throw counts
+{
+	"stat_group"				"EMP Grenade"
+	"stat_type"					"Feh..."
+	
+	"damage"					"0"		// doesn't matter, gets set by code
+	"gib"						"1"
+	
+	"deathmsg"					"%v received a jolt from %k's EMP grenade."
+	"deathicon"					"g05"
+}
+
+entityDef q4f_damage_detpack_emp {
+	"inherit"				"q4f_damage_detpack_old"
+	
+	"stat_group"				"EMP Grenade"
+	"stat_type"					"Detpacks"
+	
+	"deathmsg"					"%v was blown away by %k's EMP'd detpack charge."
+	"deathmsg_self"				"%v EMP'd the wrong detpack."
+}
+
+entityDef q4f_damage_emp_ammo {
+	"stat_group"				"EMP Grenade"
+	"stat_type"					"Ammo"
+	
+	"damage"					"100"		// doesn't matter, gets set by code
+	"radius"					"180"
+	
+	"gib"						"1"
+	
+	"deathmsg"					"%v tried to pick up %k's exploding ammunition."
+	"deathmsg_self"				"%v forgot to run from his EMP grenade."
+	"deathicon"					"g05"
+}
+
+entityDef q4f_damage_emp_playerExplode
+{
+	"stat_group"				"EMP Grenade"
+	"stat_type"					"Players"
+	
+	"radius"					"180"
+	
+	"damage"					"100"		// doesn't matter, gets set by code
+	"gib"						"1"
+	
+	"deathmsg"					"%v received a jolt from %k's EMP grenade."
+	"deathmsg_self"				"%v blew up his own ammunition."
+	"deathicon"					"g05"
+}
+
+entityDef q4f_damage_emp_dispExplode
+{
+	"stat_group"				"EMP Grenade"
+	"stat_type"					"Dispensers"
+	
+	"radius"					"180"
+	
+	"damage"					"100"		// doesn't matter, gets set by code
+	"gib"						"1"
+	
+	"deathmsg"					"%v was shocked by %k's EMP'd dispenser."
+	"deathmsg_self"				"%v shocked himself with a dispenser."
+	"deathicon"					"g05"
+}
+
+entityDef q4f_damage_emp_sentryExplode
+{
+	"stat_group"				"EMP Grenade"
+	"stat_type"					"Sentries"
+	
+	"radius"					"180"
+	
+	"damage"					"40"		// doesn't matter, gets set by code
+	"gib"						"1"
+	
+	"deathmsg"					"%v found that %k's EMP and sentres don't mix."
+	"deathmsg_self"				"%v found that EMP's and senties dont mix."
+	"deathicon"					"g05"
+}
+
+entityDef q4f_damage_spygas
+{
+	"stat_group"				"Gas Grenade"
+	"stat_type"					"Splash"
+	
+	"damage"					"5"
+	"gib"						"0"
+	
+	"affliction"				"hallucinate"
+	"affliction_scale"			"1"
+	
+	"deathmsg"					"%v inhaled too many of %k's obnoxious fumes."
+	"deathmsg_self"				"%v couldn't stand his own gas."
+	"deathicon"					"g05"
+}
+
+//======================================================================================================================================================
+// Misc
+//======================================================================================================================================================
+
+entityDef q4f_damage_antiteam {
+	"gib"					"1"
+	"damage"				"9999"
+	"ignoreArmor"			"1"
+	
+	"deathmsg"						"%v tried to go where he doesn't belong."
+	"deathicon"						"dm4"
+}
+
+entityDef damage_telefrag {
+	"stat_group"						"Telefrag"
+	"damage"						"9999"
+	"ignoreArmor"					"1"
+	"noGod"							"1"
+ 	"noTeam"						"1"		// no subject to team damage rules
+ 	"telefrag"						"1"		// use telefrag messages in MP
+ 	
+ 	"deathicon"						"dm4"
+}
+
+entityDef damage_suicide {
+	"stat_group"						"Suicide"
+	"damage"						"9999"
+	"ignoreArmor"						"1"
+	"noGod"							"1"
+	
+	"gib"							"1"
+	
+	"deathmsg"						"%v saw no reason to live."
+	"deathicon"						"dm1"
+}
+
+entityDef damage_crush {			
+	"damage"						"9999"
+	"gib"							"1"
+ 	"gibNonSolid"					"1"
+	"ignoreArmor"						"1"
+	"noGod"							"1"
+	
+	"deathicon"						"dm3"
+}
+
+entityDef damage_gib {			
+	"damage"						"9999"
+	"gib"							"1"
+	"ignoreArmor"						"1"
+	"noGod"							"1"
+}
+
+entityDef damage_explosion {
+	"damage"						"70"
+	"radius"						"200"
+	"push"							"10000"
+}
+
+entityDef damage_explodingbarrel {
+	"damage"						"300"
+	"radius"						"140"
+	"push"							"2000"
+	"gib"							"1"
+}
+
+entityDef damage_Smallexplosion {
+	"damage"						"50"
+	"radius"						"50"
+	"push"							"5000"
+}
+
+entityDef damage_HugeExplosion {
+	"damage"						"500"
+	"radius"						"256"
+	"push"							"10000"
+}
+
+entityDef damage_moverCrush {
+	"damage"						"1"
+	"gib"							"1"
+ 	"gibNonSolid"					"1"
+ 	
+ 	"deathmsg"						"%v died."
+	"deathicon"						"dm3"
+}
+
+entityDef damage_painTrigger {
+	"damage"						"10"
+	
+	"deathmsg"						"%v died."
+	"deathicon"						"dm3"
+}
+
+entityDef damage_triggerhurt_1000 {
+	"damage"						"1000"
+	
+	"deathmsg"						"%v died."
+	"deathicon"						"dm3"
+	
+}
+
+entityDef damage_softfall {
+	"stat_group"						"Soft Fall"
+	"damage"						"5"
+	"kickDir"						"0 0 -1"
+	"ignoreArmor"						"0"
+	"knockback"						"0"
+	"kick_time"						"100"
+	"kick_amplitude"				"1"
+	
+	"deathmsg"						"%v got a love tap from the ground."
+	"deathicon"						"dm4"
+}
+
+entityDef damage_hardfall {
+	"stat_group"						"Hard Fall"
+	"damage"						"10"
+	"kickDir"						"0 0 -1"
+	"ignoreArmor"						"0"
+	"knockback"						"0"
+	"kick_time"						"300"
+	"kick_amplitude"				"1"
+	
+	"deathmsg"						"%v got a love tap from the ground."
+	"deathicon"						"dm4"
+}
+
+entityDef damage_fatalfall {
+	"stat_group"						"Fatal Fall"
+	"damage"						"70"
+	"kickDir"						"0 0 -1"
+	"ignoreArmor"						"1"
+	"knockback"						"0"
+	"kick_time"						"300"
+	"kick_amplitude"				"1"
+	
+	"deathmsg"						"%v forgot how to fly."
+	"deathicon"						"dm4"
+}
+
+entityDef damage_lightBreak {
+	"damage"						"1"
+	"radius"						"5"
+	"push"							"20000"
+	"knockback"						"20"
+}
+
+entityDef damage_lightBreak2 {
+	"damage"						"1"
+	"radius"						"8"
+	"push"							"30000"
+	"knockback"						"20"
+}
+
+
+entityDef damage_VagaryObject {
+	"damage"						"10"
+	"radius"						"5"
+	"push"							"20000"
+	"knockback"						"20"
+}
+
+entityDef damage_cinematicFoom {
+	"inherit"						"damage_gib"
+	"damage"						"800"
+	"radius"						"256"
+	"gib"							"1"
+}
+
+//======================================================================================================================================================
+// Afflictions
+//======================================================================================================================================================
+
+entityDef q4f_damage_infection {
+	"stat_group"				"Bioweapon"
+	"stat_type"					"Infection"
+	
+	"ignoreArmor"				"1"
+	"bleed"						"0"
+	"gib"						"0"
+
+	"damage"					"5"
+	
+	"deathmsg"					"%v died a slow painful death from %k's infectious disease."
+	"deathicon"					"d16"
+}
+
+entityDef q4f_damage_affl_fire_ft {
+	"stat_group"				"Flamethrower"
+	"stat_type"					"Residual Fire"
+	
+	"damage"					"3"
+									
+	"ignoreArmor"				"0"
+	
+	"deathmsg"					"%v was burnt to a crisp by %k."
+	"deathmsg_self"				"%v tried to fight fire with fire."
+	"deathicon"					"d03"
+}
+
+entityDef q4f_damage_affl_fire_inc {
+	"stat_group"				"Incendiary Cannon"
+	"stat_type"					"Residual Fire"
+	
+	"damage"					"3"
+									
+	"ignoreArmor"				"0"
+	
+	"deathmsg"					"%v was burnt to a crisp by %k."
+	"deathmsg_self"				"%v tried to fight fire with fire."
+	"deathicon"					"d03"
+}
+
+entityDef q4f_damage_affl_fire_napalm {
+	"stat_group"				"Napalm Grenade"
+	"stat_type"					"Residual Fire"
+	
+	"damage"					"3"
+									
+	"ignoreArmor"				"0"
+	
+	"deathmsg"					"%v was burnt to a crisp by %k."
+	"deathmsg_self"				"%v tried to fight fire with fire."
+	"deathicon"					"d03"
+}
+
+entityDef q4f_damage_noair {
+	"damage"						"10"
+	
+	"ignoreArmor"					"1"
+	"no_air"						"1"
+	
+	"deathmsg"						"%v got a mouthful of water."
+	"deathicon"						"dm4"
+}
+

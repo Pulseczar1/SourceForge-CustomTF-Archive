@@ -1,0 +1,594 @@
+/*
+===============================================================================
+
+	Player
+
+===============================================================================
+*/
+
+/*
+===============================================================================
+
+	Player Model
+
+===============================================================================
+*/
+
+model model_player_marine
+{
+	offset							( 0 0 1 )
+
+	mesh							models/characters/player/player.md5mesh
+
+	channel torso					( *waist)
+	channel legs					( *origin *hips -*waist )
+
+	anim head						models/characters/player/idle.md5anim
+	anim af_pose					models/characters/player/af_pose.md5anim
+	anim initial					models/characters/player/idle.md5anim
+
+	anim idle_loadscreen			models/characters/player/idle_loadscreen.md5anim
+
+	anim teleport					models/characters/player/idle.md5anim
+	anim exit						models/characters/player/idle.md5anim
+
+	anim idle						models/characters/player/idle.md5anim
+	anim crouch_down				models/characters/player/crouch_down.md5anim
+	anim crouch						models/characters/player/crouch.md5anim
+	anim crouch_up					models/characters/player/crouch_up.md5anim
+	anim crouch_walk				models/characters/player/crouch_walk_forward.md5anim
+	anim crouch_walk_backward		models/characters/player/crouch_walk_backward.md5anim
+	
+	anim mp_crouch_walk				models/characters/player/mp_crouch_walk.md5anim
+	anim mp_crouch_walk_backward	models/characters/player/mp_crouch_walk_backward.md5anim
+	anim strafe_jump_right			models/characters/player/strafe_jump_right.md5anim
+	anim strafe_jump_left			models/characters/player/strafe_jump_left.md5anim
+
+	anim run_forward				models/characters/player/run.md5anim	{
+		frame 2						sound	snd_gear2
+		frame 2						leftfoot
+		frame 9						sound	snd_gear2
+		frame 9						rightfoot
+	}
+	anim run_backwards				models/characters/player/run_backwards.md5anim {
+		frame 4						sound	snd_gear2
+		frame 4						rightfoot
+		frame 10					sound	snd_gear2
+		frame 10					leftfoot
+	}
+	anim run_strafe_left			models/characters/player/strafe_left.md5anim	{
+		frame 1						leftfoot
+		frame 1						sound	snd_gear2
+		frame 10					sound	snd_gear2
+		frame 10					rightfoot
+	}
+	anim run_strafe_right			models/characters/player/strafe_right.md5anim	{
+		frame 1						leftfoot
+		frame 1						sound	snd_gear2
+		frame 10					sound	snd_gear2
+		frame 10					rightfoot
+	}
+	
+	anim walk_forward				models/characters/player/walk.md5anim	
+	anim walk_backwards				models/characters/player/walk_backwards.md5anim	
+	anim walk_right					models/characters/player/walk_right.md5anim	
+	anim walk_left					models/characters/player/walk_left.md5anim	
+	anim jump						models/characters/player/jump.md5anim {
+		frame 1						sound	snd_jump
+	}
+	anim run_jump					models/characters/player/jump.md5anim {
+		frame 1						sound	snd_jump
+	}
+	anim soft_land					models/characters/player/soft_land.md5anim
+	anim hard_land					models/characters/player/idle.md5anim
+	
+	anim fall						models/characters/player/fall.md5anim
+
+	anim turn_left					models/characters/player/idle.md5anim
+	anim turn_right					models/characters/player/idle.md5anim
+
+	anim pain						models/characters/player/pain.md5anim
+	anim pain_head					models/characters/player/pain.md5anim
+	anim pain_right_arm				models/characters/player/pain.md5anim
+	anim pain_left_arm				models/characters/player/pain.md5anim
+	anim pain_chest					models/characters/player/pain.md5anim
+
+
+	//-  - - - - --- --- - -- - - -- - --  -- - - -- - - -
+	// weapons
+	// - -- - -- - --- - - -- --- - - - -- - - - -- - -- -
+	
+	anim gauntlet_fire			models/characters/player/gauntlet_fire_down.md5anim, models/characters/player/gauntlet_fire.md5anim, models/characters/player/gauntlet_fire_up.md5anim
+	anim gauntlet_aim			models/characters/player/gauntlet_aim_down.md5anim, models/characters/player/gauntlet_aim.md5anim, models/characters/player/gauntlet_aim_up.md5anim
+	anim gauntlet_idle			models/characters/player/gauntlet_aim_down.md5anim, models/characters/player/gauntlet_aim.md5anim, models/characters/player/gauntlet_aim_up.md5anim
+	anim gauntlet_lower			models/characters/player/machinegun_lower.md5anim
+	{
+		rate 1.3
+	}
+	anim gauntlet_raise			models/characters/player/machinegun_raise.md5anim
+	{
+		rate 1.3
+	}
+	
+	anim shotgun_idle				models/characters/player/shotgun_aim_down.md5anim, models/characters/player/shotgun_aim.md5anim, models/characters/player/shotgun_aim_up.md5anim
+	anim shotgun_aim				models/characters/player/shotgun_aim_down.md5anim, models/characters/player/shotgun_aim.md5anim, models/characters/player/shotgun_aim_up.md5anim
+	anim shotgun_fire				models/characters/player/shotgun_fire_down.md5anim, models/characters/player/shotgun_fire.md5anim, models/characters/player/shotgun_fire_up.md5anim
+	{
+		rate	2.0
+	}
+	anim shotgun_reload				models/characters/player/shotgun_reload.md5anim
+	{
+		rate .9
+	}
+	anim shotgun_lower				models/characters/player/grenadelauncher_lower.md5anim
+	{
+		rate 1.3
+	}
+	anim shotgun_raise				models/characters/player/grenadelauncher_raise.md5anim
+	{
+		rate 1.3
+	}
+	
+	anim shotgun_double_idle				models/characters/player/shotgun_aim_down.md5anim, models/characters/player/shotgun_aim.md5anim, models/characters/player/shotgun_aim_up.md5anim
+	anim shotgun_double_aim				models/characters/player/shotgun_aim_down.md5anim, models/characters/player/shotgun_aim.md5anim, models/characters/player/shotgun_aim_up.md5anim
+	anim shotgun_double_fire				models/characters/player/shotgun_fire_down.md5anim, models/characters/player/shotgun_fire.md5anim, models/characters/player/shotgun_fire_up.md5anim
+	anim shotgun_double_reload				models/characters/player/shotgun_reload.md5anim
+	{
+		rate	1.65
+	}
+	anim shotgun_double_lower				models/characters/player/grenadelauncher_lower.md5anim
+	{
+		rate 1.3
+	}
+	anim shotgun_double_raise				models/characters/player/grenadelauncher_raise.md5anim
+	{
+		rate 1.3
+	}
+	
+	anim rocketlauncher_raise		models/characters/player/rocketlauncher_raise.md5anim
+	{
+		rate 1.3
+	}
+	anim rocketlauncher_idle		models/characters/player/rocketlauncher_aim_down.md5anim, models/characters/player/rocketlauncher_aim.md5anim, models/characters/player/rocketlauncher_aim_up.md5anim
+	anim rocketlauncher_aim			models/characters/player/rocketlauncher_aim_down.md5anim, models/characters/player/rocketlauncher_aim.md5anim, models/characters/player/rocketlauncher_aim_up.md5anim
+	anim rocketlauncher_fire1		models/characters/player/rocketlauncher_fire_down.md5anim, models/characters/player/rocketlauncher_fire.md5anim, models/characters/player/rocketlauncher_fire_up.md5anim
+	anim rocketlauncher_reload		models/characters/player/rocketlauncher_reload.md5anim
+	{
+		rate .65
+	}
+	anim rocketlauncher_lower		models/characters/player/rocketlauncher_lower.md5anim
+	{
+		rate 1.3
+	}
+	
+	anim grenadelauncher_raise		models/characters/player/grenadelauncher_raise.md5anim
+		{
+	rate 1.3
+	}
+	anim grenadelauncher_idle		models/characters/player/grenadelauncher_aim_down.md5anim, models/characters/player/grenadelauncher_aim.md5anim, models/characters/player/grenadelauncher_aim_up.md5anim
+	anim grenadelauncher_aim		models/characters/player/grenadelauncher_aim_down.md5anim, models/characters/player/grenadelauncher_aim.md5anim, models/characters/player/grenadelauncher_aim_up.md5anim
+	anim grenadelauncher_fire1		models/characters/player/grenadelauncher_fire_down.md5anim, models/characters/player/grenadelauncher_fire.md5anim, models/characters/player/grenadelauncher_fire_up.md5anim
+	anim grenadelauncher_reload		models/characters/player/grenadelauncher_reload.md5anim
+	anim grenadelauncher_lower		models/characters/player/grenadelauncher_lower.md5anim
+		{
+	rate 1.3
+	}
+	
+	anim hyperblaster_raise			models/characters/player/machinegun_raise.md5anim
+	{
+		rate 1.3
+	}
+	anim hyperblaster_idle			models/characters/player/hyperblaster_aim_down.md5anim, models/characters/player/hyperblaster_aim.md5anim, models/characters/player/hyperblaster_aim_up.md5anim
+	anim hyperblaster_aim			models/characters/player/hyperblaster_aim_down.md5anim, models/characters/player/hyperblaster_aim.md5anim, models/characters/player/hyperblaster_aim_up.md5anim
+	anim hyperblaster_fire1			models/characters/player/hyperblaster_fire_down.md5anim, models/characters/player/hyperblaster_fire.md5anim, models/characters/player/hyperblaster_fire_up.md5anim
+	anim hyperblaster_lower			models/characters/player/machinegun_lower.md5anim
+	{
+		rate 1.3
+	}
+	
+	anim minigun_raise				models/characters/player/grenadelauncher_raise.md5anim
+	{
+		rate 1.3
+	}
+	anim minigun_idle				models/characters/player/nailgun_aim_down.md5anim, models/characters/player/nailgun_aim.md5anim, models/characters/player/nailgun_aim_up.md5anim
+	anim minigun_aim				models/characters/player/nailgun_aim_down.md5anim, models/characters/player/nailgun_aim.md5anim, models/characters/player/nailgun_aim_up.md5anim
+	anim minigun_fire1				models/characters/player/nailgun_fire_down.md5anim, models/characters/player/nailgun_fire.md5anim, models/characters/player/nailgun_fire_up.md5anim
+	anim minigun_lower				models/characters/player/grenadelauncher_lower.md5anim
+	{
+		rate 1.3
+	}
+	
+	anim machinegun_raise			models/characters/player/machinegun_raise.md5anim
+	{
+		rate 1.3
+	}
+	anim machinegun_idle			models/characters/player/machinegun_aim_down.md5anim, models/characters/player/machinegun_aim.md5anim, models/characters/player/machinegun_aim_up.md5anim
+	anim machinegun_aim				models/characters/player/machinegun_aim_down.md5anim, models/characters/player/machinegun_aim.md5anim, models/characters/player/machinegun_aim_up.md5anim
+	anim machinegun_fire1			models/characters/player/machinegun_fire_down.md5anim, models/characters/player/machinegun_fire.md5anim, models/characters/player/machinegun_fire_up.md5anim
+	anim machinegun_lower			models/characters/player/machinegun_lower.md5anim
+	{
+		rate 1.3
+	}
+	
+	anim blaster_raise				models/characters/player/machinegun_raise.md5anim
+	{
+	rate 1.3
+	}
+	anim blaster_idle				models/characters/player/pistol_aim_down.md5anim, models/characters/player/pistol_aim.md5anim, models/characters/player/pistol_aim_up.md5anim
+	anim blaster_aim				models/characters/player/pistol_aim_down.md5anim, models/characters/player/pistol_aim.md5anim, models/characters/player/pistol_aim_up.md5anim
+	anim blaster_fire1				models/characters/player/pistol_fire_down.md5anim, models/characters/player/pistol_fire.md5anim, models/characters/player/pistol_fire_up.md5anim
+	anim blaster_lower				models/characters/player/machinegun_lower.md5anim
+		{
+	rate 1.3
+	}
+	
+	anim railgun_raise				models/characters/player/grenadelauncher_raise.md5anim
+		{
+	rate 1.3
+	}
+	anim railgun_idle				models/characters/player/railgun_aim_down.md5anim, models/characters/player/railgun_aim.md5anim, models/characters/player/railgun_aim_up.md5anim
+	anim railgun_aim				models/characters/player/railgun_aim_down.md5anim, models/characters/player/railgun_aim.md5anim, models/characters/player/railgun_aim_up.md5anim
+	anim railgun_fire1				models/characters/player/railgun_fire_down.md5anim, models/characters/player/railgun_fire.md5anim, models/characters/player/railgun_fire_up.md5anim
+	anim railgun_lower				models/characters/player/grenadelauncher_lower.md5anim
+		{
+	rate 1.3
+	}
+
+	anim cheer				models/characters/player/cheer.md5anim
+	anim salute				models/characters/player/salute.md5anim
+	anim taunt				models/characters/player/taunt_1.md5anim
+	anim grab_a				models/characters/player/grab_a.md5anim
+	anim grab_b				models/characters/player/grab_b.md5anim
+}
+
+/*
+===============================================================================
+
+	PlayerView Definition
+
+===============================================================================
+*/
+entityDef playerView_marine {
+	"mtr_doubleVision"					"view/doublevision"
+	"mtr_doubleVisionBlend"				"view/doublevisionblend"
+	"mtr_tunnel"						"textures/decals/tunnelvision"
+	"mtr_armourEffect"					"armorViewEffect"
+	"mtr_bloodspray"					"textures/decals/bloodspray"
+}
+
+/*
+===============================================================================
+
+	Player Entity Definition
+
+===============================================================================
+*/
+
+entityDef player_marine 
+{
+	"spawnclass"						"idPlayer"
+
+	"hud"								"guis/q4fhud.gui"			// main hud
+	"mphud"								"guis/q4fmphud.gui"			// mp game stuff, spectators only draw this hud
+	"cursor"							"guis/cursor.gui"
+	"cinematicHud"						"guis/cinematic.gui"
+	"wristcomm"							"guis/wristcomm.gui"
+
+	"blink_min"							"0.5"
+	"blink_max"							"4.8"
+
+	"bleed"								"1"
+	"gib"								"1"
+	
+	"joint_head"						"chest"
+	"joint_hips"						"hips"
+	"joint_chest"						"chest"
+	"joint_eyeOffset"					""
+	"joint_chestOffset"					"chest"
+
+	"model"								"model_player_marine"
+	"articulatedFigure"					"player"
+	"ragdoll"							"player"
+
+	"def_head"							"char_marinehead_kane2"
+	//NOTE: fov really only used to determine if a monster spawner spawn point is visible to the player
+	// on second thought, let's leave these alone unless we NEED to override the defaults
+	//-MCG
+	//"fov"								"200"
+	//"fovClose"							"200"
+
+	"copy_joint neckcontrol"			"neckcontrol"
+	"copy_joint shoulders"				"shoulders"
+	"copy_joint legs_channel"			"legs_channel"
+
+	"mtr_wound"							"textures/decals/hurt02"
+	"mtr_splat"							"textures/decals/dsplat2"
+	"mtr_splat2"						"textures/decals/dsplat5"
+	"mtr_splat3"						"textures/decals/dsplat7"
+	"mtr_splat4"						"textures/decals/dsplat11"
+
+	"pm_stepsize"						"16"
+	"pm_noclipspeed"					"270"	
+	"pm_minviewpitch"					"-89"	// looking up
+	"pm_maxviewpitch"					"89"	// looking down
+	"pm_crouchheight"					"38"
+	"pm_crouchviewheight"				"35"
+	"pm_normalheight"					"74"
+	"pm_normalviewheight"				"72"
+	"pm_deadheight"						"20"
+	"pm_deadviewheight"					"10"
+	"pm_crouchrate"						"0.87"
+	"pm_bboxwidth"						"32"
+	"pm_modelview"						"0"			// 0 == normal, 1 == view inside model, 2 == view inside model when dead
+	"pain_delay"						"0.5"		// how long to wait before playing pain sound
+	"respawn_delay"						"1.7"		// minimum delay for respawning after death
+
+	"snd_death"							"player_sounds_death"
+	"snd_pain_small"					"player_sounds_pain_small"
+	"snd_pain_medium"					"player_sounds_pain_medium"
+	"snd_pain_large"					"player_sounds_pain_large"
+	"snd_pain_huge"						"player_sounds_pain_huge"
+	"snd_pain_low_health"				"player_sounds_pain_lowhealth"
+	"snd_pain_water"					"player_sounds_airGasp_q4f"
+	
+	"snd_footstep"						"player_sounds_footstep"
+	"snd_footstep_sand"					"player_steps_dirt"
+	"snd_footstep_dirt"					"player_steps_dirt"
+	"snd_footstep_hollowmetal"			"player_steps_hollow_metal"
+	"snd_footstep_rock"					"player_sounds_footstep"
+	"snd_footstep_flesh"				"player_steps_liquid"
+	"snd_footstep_water"				"player_sounds_water"
+	"snd_gear2"							"player_gear_movement2"
+	
+	"snd_jump"							"player_gear_movement"
+	
+	"snd_powerup_regen"					"player_sounds_powerup_regen"
+
+	"snd_stepladder"					"player_steps_ladder"
+
+	"snd_land_hard"						"player_jump_land_hard"
+	"snd_land_soft"						"player_jump_land"
+	"snd_type"							"weapon_blaster_fire"
+	
+	"snd_guienter"						"player_sounds_guienter"
+	"snd_guiexit"						"player_sounds_guiexit"
+	
+	"fx_whizby"							"effects/weapons/bullet/whizby.fx"
+
+	// these used to be hard coded values from id
+	// doom 3 SP values, fatal 65, hard 45, soft 30, no fall 7
+	"fatal_fall_delta"					"65"
+	"hard_fall_delta"					"45"
+	"soft_fall_delta"					"30"
+	"no_fall_delta"						"7" 
+	
+	"def_playerView"					"playerView_marine"
+}
+
+/*
+===============================================================================
+
+	Multiplayer Player Entity Definition
+
+===============================================================================
+*/
+
+model model_player_marine_ui {
+	offset							( 0 0 1 )
+
+	mesh							models/characters/player/player.md5mesh
+
+	channel torso					( *waist)
+	channel legs					( *origin *hips -*waist )
+
+	anim head						models/characters/player/idle.md5anim
+	anim af_pose					models/characters/player/af_pose.md5anim
+//	anim ik_pose					models/characters/player/idle.md5anim
+	anim initial					models/characters/player/idle.md5anim
+
+	anim teleport					models/characters/player/idle.md5anim
+	anim exit						models/characters/player/idle.md5anim
+
+	anim idle						models/characters/player/idle.md5anim
+}
+
+entityDef player_marine_mp  
+{
+	"inherit"			"player_marine"
+
+	"fx_teleport"			"effects/mp/player/teleport.fx"
+	"fx_spawn"				"effects/mp/player/spawn.fx"
+
+	// Gib FX
+	"fx_gib"				"effects/q4fgib.fx"
+	
+	"joint_leftEye"			"Lfteye_Focus"
+	"joint_rightEye"		"Rteye_Focus"
+	
+	"articulatedFigure"		"player"
+	"ragdoll"				"player"
+
+	// Gib information
+	"skin_gibskin"			"skins/characters/player/marine_mp_death"
+
+	"def_clientgib1"		"moveable_gib_head_pork"
+	"clientgib1_joint"		"head_channel"
+
+	"def_clientgib2"		"moveable_gib_torso_pork"
+	"clientgib2_joint"		"chest"
+
+	"def_clientgib3"		"moveable_gib_rup_arm_pork"
+	"clientgib3_joint"		"r_up_arm"
+
+	"def_clientgib4"		"moveable_gib_left_waist_pork"
+	"clientgib4_joint"		"waist"
+
+	"def_clientgib5"		"moveable_gib_lup_leg_pork"
+	"clientgib5_joint"		"l_upleg"
+
+	"def_clientgib6"		"moveable_gib_rup_leg_pork"
+	"clientgib6_joint"		"r_upleg"
+
+	"def_clientgib7"		"moveable_gib_rup2_leg_pork"
+	"clientgib7_joint"		"r_loleg"
+
+	"def_clientgib8"		"moveable_gib_pelvis_pork"
+	"clientgib8_joint"		"hips"
+
+	"def_clientgib9"		"moveable_gib_skull"
+	"clientgib9_joint"		"shoulders"
+
+	"snd_weaponHit"			"weapon_hit"
+	"snd_armorHit"			"armor_hit"
+	
+	"snd_chat"				"mp_incoming_message"
+	"snd_teamchat"			"mp_incoming_message_team"
+
+	"snd_land_hard"			"player_jump_land_hard_mp"
+	"snd_land_hard_pain"	"player_jump_land_hard_pain_mp"
+	
+	"snd_footstep"				"player_mp_footstep"
+	"snd_footstep_sand"			"player_mp_footstep"
+	"snd_footstep_dirt"			"player_mp_footstep"
+	"snd_footstep_hollowmetal"	"player_mp_footstep"
+	"snd_footstep_rock"			"player_mp_footstep"
+	"snd_footstep_flesh"		"player_mp_footstep"
+	"snd_footstep_water"		"player_mp_footstep"
+	"snd_jump"					"player_jump_mp"
+	
+	// these are new values for mp
+	// quake3 values: FAR fall = 60, Medium = 40, Short = 7
+	"fatal_fall_delta"		"0"
+	"hard_fall_delta"		"60"
+	"soft_fall_delta"		"40"
+	"no_fall_delta"			"7" 
+	
+	// snd_award_X, X must match an award name as in StatManager.cpp/inGameAwardInfo
+	"snd_award_capture"		"mp_announce_award_capture"
+	"snd_award_humiliation"		"mp_announce_award_humiliation"
+	"snd_award_impressive"		"mp_announce_award_impressive"
+	"snd_award_excellent"		"mp_announce_award_excellent"
+	"snd_award_assist"		"mp_announce_award_assist"
+	"snd_award_defense"		"mp_announce_award_defense"
+	"snd_award_combo_kill"		"mp_announce_award_combo_kill"
+	"snd_award_rampage"		"mp_announce_award_rampage"
+	"snd_award_holy_shit"		"mp_announce_award_holy_shit"
+
+	"snd_teleport_enter"	"mp_player_sounds_teleport"
+	
+	// mtr_award_X, X must match an award name as in StatManager.cpp/inGameAwardInfo
+	"mtr_award_capture"		"textures/mp/awards/capture"
+	"mtr_award_humiliation"		"textures/mp/awards/humiliation"
+	"mtr_award_impressive"		"textures/mp/awards/impressive"
+	"mtr_award_excellent"		"textures/mp/awards/excellent"
+	"mtr_award_assist"		"textures/mp/awards/assist"
+	"mtr_award_defense"		"textures/mp/awards/defense"
+	"mtr_award_combo_kill"		"textures/mp/awards/combo_kill"
+	"mtr_award_rampage"		"textures/mp/awards/rampage"
+	"mtr_award_holy_shit"		"textures/mp/awards/holy_shit"
+
+
+	// Custom Crosshairs
+	"mtr_crosshair1"		"gfx/guis/crosshairs/crosshair_blaster.tga"
+	"mtr_crosshair2"		"gfx/guis/crosshairs/crosshair_grenadelauncher.tga"
+	"mtr_crosshair3"		"gfx/guis/crosshairs/crosshair_lightninggun.tga"
+	"mtr_crosshair4"		"gfx/guis/crosshairs/crosshair_machinegun.tga"
+	"mtr_crosshair5"		"gfx/guis/crosshairs/crosshair_nailgun.tga"
+	"mtr_crosshair6"		"gfx/guis/crosshairs/crosshair_railgun.tga"
+	"mtr_crosshair7"		"gfx/guis/crosshairs/crosshair_rocketlauncher.tga"
+	"mtr_crosshair8"		"gfx/guis/crosshairs/crosshair_shotgun.tga"
+	"mtr_crosshair9"		"gfx/guis/crosshairs/crosshair_q3_1.tga"
+	"mtr_crosshair10"		"gfx/guis/crosshairs/crosshair_q3_2.tga"
+	"mtr_crosshair11"		"gfx/guis/crosshairs/crosshair_q3_3.tga"
+	"mtr_crosshair12"		"gfx/guis/crosshairs/crosshair_q3_4.tga"
+	"mtr_crosshair13"		"gfx/guis/crosshairs/crosshair_q3_5.tga"
+	"mtr_crosshair14"		"gfx/guis/crosshairs/crosshair_q3_6.tga"
+	"mtr_crosshair15"		"gfx/guis/crosshairs/crosshair_q3_7.tga"
+	"mtr_crosshair16"		"gfx/guis/crosshairs/crosshair_q3_8.tga"
+	"mtr_crosshair17"		"gfx/guis/crosshairs/crosshair_q3_9.tga"
+	"mtr_crosshair18"		"gfx/guis/crosshairs/crosshair_q3_10.tga"
+	
+	// enabled friend icon
+	"icon fde"			"gfx/guis/hud/icons/icon_friend.tga"
+	// disabled friend icon
+	"icon fdd"			"gfx/guis/hud/icons/icon_friend_disabled.tga"
+	// enabled voice chat icon
+	"icon vce"			"gfx/guis/hud/icons/icon_speaker.tga"
+	// disabled voice chat icon (mute)
+	"icon vcd"			"gfx/guis/hud/icons/icon_speaker_disabled.tga"
+	
+	"mtr_team_icon"		"textures/mp/team_icon"
+	
+	// chat bubble over head
+	"mtr_icon_chatting"		"gfx/guis/hud/chat"
+	
+	"pm_crouchheight"		"49"
+	"pm_normalheight"		"77"
+
+	"anim crouch_walk"			"mp_crouch_walk"
+	"anim crouch_walk_backward"	"mp_crouch_walk_backward"
+}
+
+entityDef player_ui_anims {
+	"model"								"model_player_marine_ui"
+}
+
+entityDef player_marine_mp_ui
+{
+	"joint_head"						"chest"
+	"joint_hips"						"hips"
+	"joint_chest"						"chest"
+	"joint_eyeOffset"					""
+	"joint_chestOffset"					"chest"
+	
+	"powerup_effect_joints"				"*body -*r_wrist r_wrist -*l_wrist l_wrist"
+
+	"joint_leftEye"						"Lfteye_Focus"
+	"joint_rightEye"						"Rteye_Focus"
+
+	"articulatedFigure"					"player"
+	"ragdoll"							"player"
+	
+	// Custom Crosshairs
+	"mtr_crosshair1"					"gfx/guis/crosshairs/crosshair_blaster.tga"
+	"mtr_crosshair2"					"gfx/guis/crosshairs/crosshair_grenadelauncher.tga"
+	"mtr_crosshair3"					"gfx/guis/crosshairs/crosshair_lightninggun.tga"
+	"mtr_crosshair4"					"gfx/guis/crosshairs/crosshair_machinegun.tga"
+	"mtr_crosshair5"					"gfx/guis/crosshairs/crosshair_nailgun.tga"
+	"mtr_crosshair6"					"gfx/guis/crosshairs/crosshair_railgun.tga"
+	"mtr_crosshair7"					"gfx/guis/crosshairs/crosshair_rocketlauncher.tga"
+	"mtr_crosshair8"					"gfx/guis/crosshairs/crosshair_shotgun.tga"
+	"mtr_crosshair9"					"gfx/guis/crosshairs/crosshair_q3_1.tga"
+	"mtr_crosshair10"					"gfx/guis/crosshairs/crosshair_q3_2.tga"
+	"mtr_crosshair11"					"gfx/guis/crosshairs/crosshair_q3_3.tga"
+	"mtr_crosshair12"					"gfx/guis/crosshairs/crosshair_q3_4.tga"
+	"mtr_crosshair13"					"gfx/guis/crosshairs/crosshair_q3_5.tga"
+	"mtr_crosshair14"					"gfx/guis/crosshairs/crosshair_q3_6.tga"
+	"mtr_crosshair15"					"gfx/guis/crosshairs/crosshair_q3_7.tga"
+	"mtr_crosshair16"					"gfx/guis/crosshairs/crosshair_q3_8.tga"
+	"mtr_crosshair17"					"gfx/guis/crosshairs/crosshair_q3_9.tga"
+	"mtr_crosshair18"					"gfx/guis/crosshairs/crosshair_q3_10.tga"
+
+	"spawnclass"						"idPlayer"
+
+	"blink_min"							"0.5"
+	"blink_max"							"8.0"
+	
+	"model"								"model_player_marine_ui"
+	"def_head"							"char_marinehead_default"
+
+	"copy_joint neckcontrol"			"neckcontrol"
+	"copy_joint shoulders"				"shoulders"
+	"copy_joint legs_channel"			"legs_channel"
+
+	"weapon"							"weapon_blaster_gui"
+}
+
+entityDef player_viewweapon {
+	"spawnclass"				"rvViewWeapon"
+}
+
+entityDef player_animatedentity {
+	"spawnclass"				"idAnimatedEntity"
+	"networkSync"				"1"
+}

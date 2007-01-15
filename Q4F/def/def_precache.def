@@ -1,0 +1,23 @@
+//======================================================================================================================================================
+// misc precache
+//======================================================================================================================================================
+
+entityDef def_q4f_precache {
+	"def_backpack"					"ammo_backpack"
+	"def_sentry"					"q4f_sentry"
+	"def_disp"						"q4f_dispenser"
+	
+	"def_pc_base"					"q4f_pc_base"
+	"def_class0"					"q4f_pc_scout"
+	"def_class1"					"q4f_pc_snioer"
+	"def_class2"					"q4f_pc_soldier"
+	"def_class3"					"q4f_pc_demoman"
+	"def_class4"					"q4f_pc_medic"
+	"def_class5"					"q4f_pc_hwguy"
+	"def_class6"					"q4f_pc_pyro"
+	"def_class7"					"q4f_pc_spy"
+	"def_class8"					"q4f_pc_engineer"
+	"def_class9"					"q4f_pc_civilian"
+	
+	"def_detpack"					"q4f_detpak"
+}

@@ -1,0 +1,73 @@
+entityDef q4f_disp_preview
+{
+	"model"						"models/mapobjects/strogg/monitors/kev_gui/gui_monitor03_lo.lwo"
+	"skin"						"skins/models/disp_preview"
+}
+
+entityDef q4f_dispenser
+{
+	"editor_ignore"				"1"
+	
+	"spawnclass"				"Dispenser"
+	
+	"model"						"models/mapobjects/strogg/monitors/kev_gui/gui_monitor03_lo.lwo"
+	"skin"						"skins/models/disp"
+	
+	"teamcolored"				"1"
+	
+	// building stuff
+	
+	"start_build_dist"			"68.0"		// how far away the entity can be before a player can start building it
+	"max_build_dist"			"74.0"		// how far away the entity can be while the player is building
+	"build_time"				"3.0"		// time, in seconds, of how long it takes to construct the entity
+	"allow_class_flags"			"256"		// 1 << class nums that can use it
+	
+	"mins"					"0 -11 -.25"
+	"maxs"					"16 11 50"
+	
+	"fx_build"					"effects/sentry_build_00.fx"	
+	"fx_buildfinished"			"effects/sentry_upgrade.fx"		
+	
+	"fx_explode"				"effects/sentry_explode.fx"
+	
+	"ammo_type"					"ammo_cells"
+	"ammo_required"				"100"
+	
+	"msg_wrongclass"			"Only engineers can build dispensers."
+	"msg_buildlimit"			"You can only have one dispenser at a time."
+	"msg_notenoughammo"			"You need 100 cells to build a dispenser."
+
+	"def_previewModel"			"q4f_disp_preview"
+	
+	
+	// disp-specific
+	"max_ammo_shells"			"400"
+	"max_ammo_nails"			"600"
+	"max_ammo_rockets"			"300"
+	"max_ammo_cells"			"400"
+	"max_armor"					"500"
+	
+	"max_health"				"100"
+	
+	// damage on explode
+	"dmg_shells"				".25"
+	"dmg_nails"					"0"
+	"dmg_rockets"				".5"
+	"dmg_cells"					".5"
+	"dmg_armor"					"0"
+	
+	"refill_take_shells"		"20"
+	"refill_take_nails"			"20"
+	"refill_take_rockets"		"20"
+	"refill_take_cells"			"20"
+	"refill_take_armor"			"10"
+	
+	"refill_delay"				"10"
+	"refill_pct"				"0.05"
+	
+	"def_damage_splode"			"q4f_damage_dispSplode"
+	"def_empdamage"				"q4f_damage_emp_dispExplode"
+	
+	"snd_healing"				"health_station_loop"
+	"snd_heal_stop"				"health_station_stop"
+}
