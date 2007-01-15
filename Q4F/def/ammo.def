@@ -1,0 +1,15 @@
+
+// Define the types of ammo that are used in the game.
+// This entityDef is required by the game code.
+// Up to 16 ammo types can be defined.
+entityDef ammo_types 
+{
+	"ammo_none"			"0"
+	"ammo_shells"		"1"
+	"ammo_nails"		"2"
+	"ammo_rockets"		"3"
+	"ammo_cells"		"4"
+	"ammo_grenade1"		"5"
+	"ammo_grenade2"		"6"
+	"ammo_detpack"		"7"
+}

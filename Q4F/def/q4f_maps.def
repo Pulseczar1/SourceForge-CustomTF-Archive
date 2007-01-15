@@ -1,0 +1,47 @@
+mapDef _defaultmap {
+	"DM"							"1"
+	"Team DM"						"1"
+	"Tourney"						"1"
+	"CTF"							"1"
+	"Arena CTF"						"1"
+	"Gametype_Deathmatch"			"1"
+	"Gametype_TeamDeathmatch"		"1"
+	"Gametype_Tourney"				"1"
+	"Gametype_CaptureTheFlag"		"1"
+	"Gametype_ArenaCaptureTheFlag"	"1"
+	
+	"loadimage"				""
+	"mp_thumb"				""
+}
+
+mapDef q4f_bases {
+	"name"		"Bases"
+	"inherit"	"_defaultmap"
+		
+	"loadimage"	"gfx/guis/loadscreens/bases"
+	"mp_thumb"	"gfx/guis/loadscreens/bases_thumb"
+}
+
+mapDef q4f_mach {
+	"name"		"Mach"
+	"inherit"	"_defaultmap"
+	
+	"loadimage"	"gfx/guis/loadscreens/mach2"
+	"mp_thumb"	"gfx/guis/loadscreens/mach2_thumb"
+}
+
+mapDef q4f_bam {
+	"name"		"BaM"
+	"inherit"	"_defaultmap"
+	
+	"loadimage"	"gfx/guis/loadscreens/bam"
+	"mp_thumb"	"gfx/guis/loadscreens/bam_thumb"
+}
+
+mapDef q4f_1v1 {
+	"name"			"One versus One"
+	"inherit"		"_defaultmap"
+	
+	"loadimage"		""
+	"mp_thumb"		""
+}

@@ -1,0 +1,192 @@
+/***********************************************************************
+
+ q4f pc base
+ 
+***********************************************************************/
+
+entityDef q4f_pc_base
+{
+	"inherit"							"player_marine_mp"
+	
+	"pc_name"							"pc_base"
+	
+	"pm_jumpheight"						"55"
+	
+	"teamcolored"						"1"
+	
+	"def_model"							""	
+	"def_head"							""
+	"health"							"1"
+	"maxhealth"							"1"
+	"armor"								"0"
+	"maxarmor"							"0"
+	"deplete_armor"						"0"
+	"crouchspeed"						"650"
+	"walkspeed"							"650"
+	"runspeed"							"650"
+	"def_weapon1"						""
+	"def_weapon2"						""
+	"def_weapon3"						""
+	"def_weapon4"						""
+	"weapon"							""	
+	"current_weapon"					""
+	"def_gren0"							""
+	"def_gren1"							""
+	"ammo_shells"						"0"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"0"	
+	"ammo_grenade2"						"0"	
+	"ammo_detpack"						"0"	
+		
+	"max_ammo_shells"					"0"		
+	"max_ammo_nails"					"0"		
+	"max_ammo_rockets"					"0"		
+	"max_ammo_cells"					"0"
+	"max_ammo_grenade1"					"0"	
+	"max_ammo_grenade2"					"0"	
+	"max_ammo_detpack"					"0"	
+
+	// sounds
+	"snd_water_step"					"player_sounds_water"
+	"snd_water_wade"					"player_sounds_water_wade"
+	"snd_water_swim"					"player_sounds_water_wade"
+	"snd_water_exit"					"player_sounds_water_wade"
+	"snd_water_exit_gasp"				"player_sounds_gasp_small"
+	"snd_water_exit_drowning"			"player_sounds_gasp_large"
+	"snd_water_enter"					"ambient_water_splash_small"
+	
+	"snd_heal_health"					"pickup_health_mega"
+	"snd_heal_armor"					"hangar1_latchdoor_unlock"
+	
+	"snd_hl"							"player_sounds_hl"
+	
+	//======================================================================================================================================================
+	// Death icons
+	//======================================================================================================================================================
+	// normal weapons / projectiles
+	"icon d00"						"gfx/guis/hud/icons/item_railgun_colored"		// railgun
+	"icon d01"						"gfx/guis/icons/gun_axe"						// axe
+	"icon d02"						"gfx/guis/icons/gun_autorifle"					// autorifle
+	"icon d03"						"gfx/guis/icons/gun_flamethrower"				// flamethrower
+	"icon d04"						"gfx/guis/icons/gun_grenadelauncher"			// normal grenade
+	"icon d05"						"gfx/guis/icons/gun_pipelauncher"				// pipebomb
+	"icon d06"						"gfx/guis/icons/gun_minigun"					// minigun
+	"icon d07"						"gfx/guis/icons/gun_nailgun"					// nailgun
+	"icon d08"						"gfx/guis/icons/gun_nailgun_super"				// super nailgun
+	"icon d09"						"gfx/guis/icons/gun_rocketlauncher"				// rocket
+	"icon d10"						"gfx/guis/icons/gun_shotgun"					// shotgun
+	"icon d11"						"gfx/guis/icons/gun_shotgun_super"				// super shotgun
+	"icon d12"						"gfx/guis/icons/gun_sniperrifle"				// sniper rifle
+	"icon d13"						"gfx/guis/icons/gun_tranquilizer"				// tranquilizer
+	"icon d14"						"gfx/guis/icons/gun_wrench"						// wrench
+	"icon d15"						"gfx/guis/icons/gun_incendiary"					// incindiary
+	"icon d16"						"gfx/guis/icons/gun_bioweapon"					// bioewapon
+	"icon d17"						"gfx/guis/icons/disp"							// dispenser
+	"icon d18"						"gfx/guis/icons/sent_l1"						// sentry
+	"icon d19"						"gfx/guis/icons/gun_knife"						// knife
+	"icon d20"						"gfx/guis/icons/detpack"						// detpack
+
+	// hand grenades
+	"icon g00"						"gfx/guis/icons/gren_frag"						// frag grenade
+	"icon g01"						"gfx/guis/icons/gren_flash"						// flash grenade
+	"icon g02"						"gfx/guis/icons/gren_nail"						// nail grenade
+	"icon g03"						"gfx/guis/icons/gren_mirv"					// cluster grenade
+	"icon g04"						"gfx/guis/icons/gren_napalm"					// napalm grenade
+	"icon g05"						"gfx/guis/icons/gren_emp"						// emp grenade
+	"icon g06"						"gfx/guis/icons/gren_gas"						// gas grenade
+
+	// misc
+
+	"icon dm1"						"gfx/guis/hud/icons/kill_self.tga"				// suicide
+	"icon dm2"						"gfx/guis/hud/icons/kill_telefrag.tga"			// telefrag
+	"icon dm3"						"gfx/guis/hud/icons/kill_self.tga"				// world kill
+	"icon dm4"						"gfx/guis/hud/icons/kill_self.tga"				// fall death
+	
+	//======================================================================================================================================================
+	// Afflictions
+	//======================================================================================================================================================
+	"flash_fade_start"				"6"				// time the the solid color should start to fade
+	"flash_fade_time"				"12"			// tiem it takes for flash to fade
+	"fx_affl_flash"					"effects/affl_flash.fx"
+	
+	"conc_yaw"					"30"			// drunkify the view pitch by x degrees
+	"conc_pitch"				"40"			// drunkify the view yaw by x degress
+	"conc_time"					"20"			// how long we should be drunk for
+	"conc_rate_pitch"			".001"		
+	"conc_rate_yaw"				".002"
+	"fx_affl_conc"				"effects/affl_conc.fx"
+	
+	"infection_delay"			"1.5"
+	"fx_affl_infection"			"effects/affl_disease.fx"
+	
+	"fire_count"				"6"
+	"fire_delay"				".75"
+	"fx_affl_fire"				"effects/affl_fire.fx"
+	
+	"tranq_speed_start"			".35"
+	"tranq_speed_end"			".65"
+	"tranq_time"				"15"
+	"fx_affl_tranq"				""
+	
+	"def_dmg_noair"				"q4f_damage_noair"
+	"noair_delay"				"1"
+	
+	"hallucinate_time"			"10"
+	"fx_affl_hallucinate"		""
+	
+	
+	"def_empdamage"				"q4f_damage_emp_playerExplode"
+	
+	//======================================================================================================================================================
+	// Grenade sounds
+	//======================================================================================================================================================
+	
+	"snd_grentimer00"				"grentimer_gren_crank_01"
+	"snd_grentimer01"				"grentimer_321_01"
+	"snd_grentimer02"				"grentimer_2beep_01"
+	"snd_grentimer03"				"grentimer_2tone_01"
+	"snd_grentimer04"				"grentimer_3beep_01"
+	
+	//======================================================================================================================================================
+	// Chat Sounds
+	//======================================================================================================================================================
+	
+	// status
+	"snd_vo_man_down"				"vo_9_2_80_3"			// "Man down!"
+	"snd_vo_where_medic"			"vo_1_1_0_0001"			// "Medic! Medic! Where's the damn medic?"
+	"snd_vo_need_medic"				"vo_1_1_2_0003"			// "Medic! I NEED A MEDIC!"
+	"snd_vo_on_way"					"vo_1_2_1_108_2"		// "On my way!" (radio)
+	"snd_vo_ready_go"				"vo_1_1_5_114_1"		// "Ready? . . . Go!"
+	"snd_vo_go_go_go"				"vo_1_1_0_01_4"			// "Go, go, go!"
+	"snd_vo_we_clear"				"vo_1_1_0_01_5"			// "We're clear!"
+	"snd_vo_all_clear"				"vo_1_2_14_52_2"		// "All clear."
+	"snd_vo_wait"					"vo_2_1_1_10_8"			// "Wait."
+	
+	"snd_inc_left"					"vo_9_11_210_1"			// "They're flanking left"
+	"snd_inc_right"					"vo_9_14_220_1"			// "They're flanking right"
+	"snd_inc_high"					"vo_9_11_230_2"			// "Up above!"
+	
+	// taunt
+	"snd_vo_didnt_know"				"vo_9_2_90_3"			// "Didn't know who he was fuckin' with."
+	"snd_vo_kill_ya_again"			"vo_9_2_90_6"			// "C'mon, get up! I'll kill ya again!"
+	"snd_vo_closer"					"vo_1_2_0_60_1"			// "C'mon, bitch! Get a little closer!!"
+	"snd_vo_aint_gettin_up"			"vo_9_14_140_5"			// "Shit. He ain't gettin' up from that."
+	
+	"snd_vo_woo_haa"				"vo_9_17_90_2"			// "Wooo Haaaa!"
+	"snd_vo_feel_burn"				"vo_9_17_90_3"			// "Feel the burn!"
+	"snd_vo_ha_ha_ha"				"vo_9_17_90_8"			// "Ha, ha, haaaa!"
+	
+	
+	// compliment
+	"snd_vo_thats_the_way"			"vo_9_2_140_1"			// "That's the way to do it!"
+	"snd_vo_haha_nice"				"vo_9_2_140_2"			// "Ha ha! Nice!"
+	"snd_vo_damn_nice"				"vo_9_17_140_1"			// "That was pretty damn nice!"
+	"snd_vo_not_bad"				"vo_9_17_140_2"			// "Not bad."
+	"snd_vo_sweet"					"vo_9_17_140_4"			// "Hey, that was sweet!"
+
+	
+	// vo_1_2_9_68_1 "Detonation in 3 . . 2 . . . 1."
+	
+}

@@ -1,0 +1,17 @@
+
+
+// The lowest number of players is 4 and assumed if less than the first entry.
+// The first column is GHz and the second column is max players.  Note that the
+// code driving this system compares against the max players in the server.
+entityDef MPCPUIntelPlayerLimit {
+	"1.8"				"8"
+	"2.4"				"12"
+	"2.8"				"16"
+}
+
+entityDef MPCPUAMDPlayerLimit {
+	"1.4"				"8"
+	"1.8"				"12"
+	"2.0"				"16"
+}
+

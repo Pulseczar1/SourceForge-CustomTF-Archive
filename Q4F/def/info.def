@@ -1,0 +1,105 @@
+/***********************************************************************
+
+ info
+
+***********************************************************************/
+
+entityDef tfent_default {
+	"editor_ignore"			"1"
+	
+	"editor_var team"			"The team this entity belongs to. Should probably use #'s ( 1 - 4 ), but can also use red, blue, green, orange. No team if empty or invalid #"
+	"editor_var name"			"The unique name this item is referred to by."
+	"editor_var groups"			"Comma separated list of group names that this item belongs to."
+
+	"editor_var callOnInvisible"		"The script function to call when our state is trying to change to invisible."
+	"editor_var callOnDisable"			"The script function to call when our state is trying to change to disabled."
+	"editor_var callOnIdle"				"The script function to call when our state is trying to change to idle."
+	"editor_var callOnActive"			"The script function to call when our state is trying to change to active."
+	
+	"editor_var startstate"		"The state that this entity should start in. Default is idle."
+	
+	// defaults
+	"startstate"				"idle"
+	"team"						"-1"
+}
+
+entityDef info_player_spawn {
+	"inherit"				"tfent_default"
+	
+	"editor_ignore"			"0"
+	"editor_color"			"1 0 1"
+	"editor_mins"			"-16 -16 0"
+	"editor_maxs"			"16 16 64"
+	"editor_showangle"		"1"
+
+	"editor_usage"			"Spawning position for players. A player activating this entity will cause him to spawn here."
+	
+	"editor_var push"		"How much to push player's velocity. Default 0"
+	"editor_var spawntype"	"A name representing the spawn group for this spawn point. Usually used to separate offense from defense, players can select what spawn group they want to spawn from."
+	
+	"editor_var snd_activate"		"Sound to play on teleport activation"
+	"editor_var fx_activate"		"fx to play on teleport activation"
+	
+	"editor_var team"		"Team that can spawn here. Should probably use #'s ( 1 - 4 ), but can also use red, blue, green, orange. No team if empty or invalid #"
+
+	"spawnclass"			"q4fPlayerStart"
+	"snd_activate"			"mp_player_sounds_teleport"
+	"fx_activate"			"effects/mp/player/spawn.fx"
+	"push"					"0"
+}
+
+
+entityDef info_teleport_destination {
+	"inherit"				"tfent_default"
+	
+	"editor_ignore"			"0"
+	"editor_color"			"1 0 1"
+	"editor_mins"			"-16 -16 0"
+	"editor_maxs"			"16 16 64"
+	"editor_showangle"		"1"
+
+	"editor_usage"			"Destination position for teleports."
+	
+	"editor_var push"		"How much to push player's velocity. Default 50000"
+	
+	"editor_var snd_activate"		"Sound to play on teleport activation"
+	"editor_var fx_activate"		"fx to play on teleport activation"
+
+	"spawnclass"			"q4fPlayerStart"
+	"snd_activate"			"mp_player_sounds_teleport"
+	"fx_activate"			"effects/mp/player/spawn.fx"
+}
+
+entityDef info_path {
+	"editor_color"			"0 0.5 0"
+	"editor_mins"			"-16 -16 0"
+	"editor_maxs"			"16 16 16"
+	"editor_showangle"		"1"
+
+	"editor_usage"			"Creates a path node for AI route calculations.\n" \
+							"\n" \
+							"'name'		text name of node for scripts\n" \
+							"'action'	animation to play when node is target of move\n" \
+							"'count'	how many times to play animation (default 1)\n" \
+							"'angle'	angle to face when character uses node\n" \
+							"'target'	target to trigger when finished action"
+	
+	"spawnclass"			"rvNavNode"
+
+	"count"					"1"
+}
+
+
+
+entityDef info_player_assault {
+	"editor_color"			"1 0 1"
+	"editor_mins"			"-16 -16 0"
+	"editor_maxs"			"16 16 64"
+	"editor_showangle"		"1"
+
+	"editor_usage"			"Spawning position for team games."
+	"editor_var target"		"targets to fire when someone spawns in."
+	"editor_var team"		"Team that will spawn here, strogg or marine"
+
+	"spawnclass"			"rvCTFAssaultPlayerStart"
+}

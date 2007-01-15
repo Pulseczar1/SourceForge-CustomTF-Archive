@@ -1,0 +1,4 @@
+// Trying to generate aas files for guys who are too big for a map results in tiny AAS files that crash the game.
+
+entityDef aas_types {
+}

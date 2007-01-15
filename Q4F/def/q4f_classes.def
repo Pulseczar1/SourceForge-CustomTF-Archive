@@ -1,0 +1,771 @@
+/***********************************************************************
+
+ q4f_classes
+ 
+***********************************************************************/
+
+entityDef q4f_pc_blank {
+	"def_model"							""	
+	"def_head"							""
+	"health"							"1"
+	"maxhealth"							"1"
+	"armor"								"0"
+	"maxarmor"							"0"
+	"deplete_armor"						"0"
+	"crouchspeed"						"650"
+	"walkspeed"							"650"
+	"runspeed"							"650"
+	
+	"def_weapon0"						"weapon_gauntlet"
+	"weapon0_best"						"1"
+	"weapon0_cycle"						"1"
+	"weapon0_toggle"					"0"
+	"weapon0_flashlight"				"0"
+	
+	"def_weapon2"						""
+	"def_weapon3"						""
+	"def_weapon4"						""
+	"weapon"							""	
+	"current_weapon"					""
+	"def_gren0"							""
+	"def_gren1"							""
+	"ammo_shells"						"0"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"0"	
+	"ammo_grenade2"						"0"	
+	"ammo_detpack"						"0"	
+		
+	"max_ammo_shells"					"0"		
+	"max_ammo_nails"					"0"		
+	"max_ammo_rockets"					"0"		
+	"max_ammo_cells"					"0"
+	"max_ammo_grenade1"					"0"	
+	"max_ammo_grenade2"					"0"	
+	"max_ammo_detpack"					"0"	
+}
+
+//--------------------------------------------------------------------------
+// Scout
+//--------------------------------------------------------------------------
+entityDef q4f_pc_scout
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Scout"				// the name of the class
+	"pc_shortname"						"Scout"				// short name of class
+	"description"						"The fastest and weakest class in the game. Useful for sprinting past defenses with as little direct confrontation as possible. He can see enemy players on his radar and disarm detpacks."
+	
+	"def_model"							"model_pc_scout"	
+	"def_head"							"model_pc_scout_head"
+	
+	// stats
+	"health"							"75"
+	"maxhealth"							"75"
+	"armor"								"25"
+	"maxarmor"							"50"
+	"deplete_armor"						"50"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"249"
+	"walkspeed"							"249"
+	"runspeed"							"498"		// QW->Q4 ~ 1.107
+	
+	"def_weapon1"						"weapon_shotgun"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_nailgun"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_gauntlet,weapon_shotgun,weapon_nailgun"	
+	"current_weapon"					"2"
+	
+	"def_gren0"							"q4f_hg_flash"			// flash grenade
+	"def_gren1"							"q4f_hg_conc"			// conc grenade
+	
+	// ammo
+	"ammo_shells"						"25"	
+	"ammo_nails"						"100"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"50"
+	"ammo_grenade1"						"2"	
+	"ammo_grenade2"						"3"	
+		
+	"max_ammo_shells"					"50"		
+	"max_ammo_nails"					"200"		
+	"max_ammo_rockets"					"25"		
+	"max_ammo_cells"					"100"
+	"max_ammo_grenade1"					"3"	
+	"max_ammo_grenade2"					"3"	
+}
+
+//--------------------------------------------------------------------------
+// Sniper
+//--------------------------------------------------------------------------
+entityDef q4f_pc_sniper
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Sniper"				// the name of the class
+	"pc_shortname"						"Sniper"				// short name of class
+	"description"						"As the name implies, the sniper is useful at long range for outer base defense. She also has a backup autorifle and nailgun for close encounters."
+	
+	"model"								"model_pc_sniper"
+	"skin"								"skins/models/characters/marine/fatigues5_armsb"
+	
+	"def_model"							"model_pc_sniper"	
+	"def_head"							"model_pc_sniper_head"
+	
+	// stats
+	"health"							"90"
+	"maxhealth"							"90"
+	"armor"								"0"
+	"maxarmor"							"50"
+	"deplete_armor"						"50"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"166"
+	"walkspeed"							"166"
+	"runspeed"							"332"		// QW->Q4 ~ 1.107
+	
+	// available weapons	
+	"def_weapon1"						"weapon_sniperrifle"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_autorifle"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+	
+	"def_weapon3"						"weapon_nailgun"
+	"weapon3_best"						"1"
+	"weapon3_cycle"						"1"
+	"weapon3_toggle"					"1"
+	"weapon3_flashlight"				"0"
+	
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_gauntlet,weapon_sniperrifle,weapon_autorifle,weapon_nailgun"
+	"current_weapon"					"1"
+	
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_flash"			// flash grenade
+	
+	// ammo
+	"ammo_shells"						"60"	
+	"ammo_nails"						"50"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"2"	
+	"ammo_grenade2"						"3"	
+		
+	"max_ammo_shells"					"75"		
+	"max_ammo_nails"					"100"		
+	"max_ammo_rockets"					"25"		
+	"max_ammo_cells"					"50"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"4"	
+}
+
+//--------------------------------------------------------------------------
+// Soldier
+//--------------------------------------------------------------------------
+entityDef q4f_pc_soldier
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Soldier"				// the name of the class
+	"pc_shortname"						"Soldier"				// short name of class
+	"description"						"The most versatile class in the game. He is heavily armored and has the firepower to back it up. His well-roundedness makes him an important asset for both offense and defense."
+	
+	"def_model"							"model_pc_soldier"	
+	"def_head"							"model_pc_soldier_head"
+	
+	// stats
+	"health"							"100"
+	"maxhealth"							"100"
+	"armor"								"100"
+	"maxarmor"							"200"
+	"deplete_armor"						"200"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"132"
+	"walkspeed"							"132"
+	"runspeed"							"265"		// QW->Q4 ~ 1.107
+	
+	// available weapons	
+	"def_weapon1"						"weapon_shotgun"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_shotgun_double"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+	
+	"def_weapon3"						"weapon_rocketlauncher"
+	"weapon3_best"						"1"
+	"weapon3_cycle"						"1"
+	"weapon3_toggle"					"1"
+	"weapon3_flashlight"				"0"
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_gauntlet,weapon_shotgun,weapon_shotgun_double,weapon_rocketlauncher"	
+	"current_weapon"					"3"
+	
+	// grenades
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_nail"			// nail grenade
+
+	// ammo
+	"ammo_shells"						"50"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"12"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"4"	
+	"ammo_grenade2"						"1"	
+		
+	"max_ammo_shells"					"100"		
+	"max_ammo_nails"					"100"		
+	"max_ammo_rockets"					"50"		
+	"max_ammo_cells"					"50"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"2"	
+}
+
+//--------------------------------------------------------------------------
+// Demoman
+//--------------------------------------------------------------------------
+entityDef q4f_pc_demoman
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Demoman"				// the name of the class
+	"pc_shortname"						"Demo"					// short name of class
+	"description"						"The demolotions expert is no strager to heavy explosives. He can launch regular grenades, deploy and detonate pipebomb traps, and toss frag and cluster grendes. On top of all this, he can lay detpack charges or enormous explosive power that can open new entrances to an enemy base or clear out a good portion of the map."
+	
+	"def_model"							"model_pc_demoman"	
+	//"def_head"							"model_pc_demoman_head"
+	
+	// stats
+	"health"							"90"
+	"maxhealth"							"90"
+	"armor"								"50"
+	"maxarmor"							"120"
+	"deplete_armor"						"120"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"155"
+	"walkspeed"							"155"
+	"runspeed"							"310"			// QW->Q4 ~ 1.107
+	
+	"def_weapon1"						"weapon_shotgun"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	// available weapons
+	"def_weapon2"						"weapon_grenadelauncher"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+	
+	"def_weapon3"						"weapon_pipelauncher"
+	"weapon3_best"						"1"
+	"weapon3_cycle"						"1"
+	"weapon3_toggle"					"1"
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_gauntlet,weapon_shotgun,weapon_grenadelauncher,weapon_pipelauncher"	
+	"current_weapon"					"2"
+	
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_cluster"			// cluster grenade
+	
+	// ammo
+	"ammo_shells"						"30"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"24"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"4"	
+	"ammo_grenade2"						"4"	
+	"ammo_detpack"						"1"
+		
+	"max_ammo_shells"					"75"		
+	"max_ammo_nails"					"50"		
+	"max_ammo_rockets"					"50"		
+	"max_ammo_cells"					"50"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"4"
+	"max_ammo_detpack"					"1"
+}
+
+//--------------------------------------------------------------------------
+// Medic
+//--------------------------------------------------------------------------
+entityDef q4f_pc_medic
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Medic"				// the name of the class
+	"pc_shortname"						"Medic"				// short name of class
+	"description"						"The medic has the ability to heal her own teammates and infect enemies. She also regenerates her own health over time. She's useful anywhere that's far from a resupply area."
+	
+	"def_model"							"model_pc_medic"	
+	"def_head"							"model_pc_medic_head"
+	
+	// stats
+	"health"							"90"
+	"maxhealth"							"90"
+	"armor"								"50"
+	"maxarmor"							"100"
+	"deplete_armor"						"100"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"177"
+	"walkspeed"							"177"
+	"runspeed"							"354"		// QW->Q4 ~ 1.107
+	
+	// available weapons
+	"def_weapon0"						"weapon_vaccinegun"
+	"weapon0_best"						"0"			// whether weapon should be chosen when out of ammo
+	"weapon0_cycle"						"1"			// whether weapon should be selected when using next/prev weapon
+	"weapon0_toggle"					"1"			// whether selecting weapon twice switches between current and previous weapons
+	"weapon0_flashlight"				"0"			// allow flashlight
+	
+	"def_weapon1"						"weapon_shotgun_double"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_hyperblaster"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_vaccinegun,weapon_shotgun_double,weapon_hyperblaster"	
+	"current_weapon"					"2"
+	
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_conc"			// conc grenade
+	
+	// ammo
+	"ammo_shells"						"50"	
+	"ammo_nails"						"50"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"3"	
+	"ammo_grenade2"						"2"	
+		
+	"max_ammo_shells"					"75"		
+	"max_ammo_nails"					"150"		
+	"max_ammo_rockets"					"25"		
+	"max_ammo_cells"					"50"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"3"	
+}
+
+//--------------------------------------------------------------------------
+// HWGuy
+//--------------------------------------------------------------------------
+entityDef q4f_pc_hwguy
+{
+	"inherit"						"q4f_pc_blank"
+	
+	"pc_name"						"Heavy Weapons Guy"				// the name of the class
+	"pc_shortname"					"HWGuy"							// short name of class
+	"description"					"This fatty overwhelms the other classes in both size and durability. He's heaviliy armored and heavily powered, but also very slow, making him ideal for defensive positions close to a resupply area."
+	
+	"def_model"							"model_pc_hwguy"	
+	"def_head"							"model_pc_hwguy"
+	
+	// stats
+	"health"						"100"
+	"maxhealth"						"100"
+	"armor"							"150"
+	"maxarmor"						"250"
+	"deplete_armor"					"250"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"					"100"
+	"walkspeed"						"100"
+	"runspeed"						"200"		// QW->Q4 ~ 1.107
+	
+	// available weapons
+	
+	"def_weapon1"						"weapon_shotgun"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_shotgun_double"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+	
+	"def_weapon3"						"weapon_minigun"
+	"weapon3_best"						"1"
+	"weapon3_cycle"						"1"
+	"weapon3_toggle"					"1"
+	"weapon3_flashlight"				"0"
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_gauntlet,weapon_shotgun,weapon_shotgun_double,weapon_minigun"	
+	"current_weapon"					"3"
+	
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_cluster"		// cluster grenade
+	
+	// ammo
+	"ammo_shells"						"200"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"24"
+	"ammo_grenade1"						"4"	
+	"ammo_grenade2"						"1"	
+		
+	"max_ammo_shells"					"200"		
+	"max_ammo_nails"					"200"		
+	"max_ammo_rockets"					"25"		
+	"max_ammo_cells"					"50"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"4"	
+}
+
+//--------------------------------------------------------------------------
+// Pyro
+//--------------------------------------------------------------------------
+entityDef q4f_pc_pyro
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Pyromaniac"				// the name of the class
+	"pc_shortname"						"Pyro"				// short name of class
+	"description"						"If you were always catching things on fire as a kid, then this is the class for you. It doesn't matter if it's a friend or foe, they all burn the same."
+	
+	"def_model"							"model_pc_pyro"	
+	//"def_head"						"model_pc_soldier_head"
+	
+	// stats
+	"health"							"100"
+	"maxhealth"							"100"
+	"armor"								"50"
+	"maxarmor"							"150"
+	"deplete_armor"						"150"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"166"
+	"walkspeed"							"166"
+	"runspeed"							"332"		// QW->Q4 ~ 1.107
+	
+	// available weapons	
+	"def_weapon1"						"weapon_shotgun"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_flamethrower"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+	
+	"def_weapon3"						"weapon_incendiary"
+	"weapon3_best"						"1"
+	"weapon3_cycle"						"1"
+	"weapon3_toggle"					"1"
+	"weapon3_flashlight"				"0"
+	
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_gauntlet,weapon_shotgun,weapon_flamethrower,weapon_incendiary"	
+	"current_weapon"					"2"
+	
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_napalm"			// napalm grenade
+	
+	// ammo
+	"ammo_shells"						"20"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"15"
+	"ammo_cells"						"120"
+	"ammo_grenade1"						"1"	
+	"ammo_grenade2"						"4"	
+		
+	"max_ammo_shells"					"40"		
+	"max_ammo_nails"					"50"		
+	"max_ammo_rockets"					"50"		
+	"max_ammo_cells"					"200"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"4"	
+}
+
+//--------------------------------------------------------------------------
+// Spy
+//--------------------------------------------------------------------------
+entityDef q4f_pc_spy
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Spy"				// the name of the class
+	"pc_shortname"						"Spy"				// short name of class
+	"description"						"The spy's job is to slip into enemy defenses undetected. He can disguise as a different class and also as an enemy player. If this isn't enough, he can also cloak to near invisibility. The spy is the reason why defenses have to rely on more than just team colors to distinguish friend from foe."
+	
+	"def_model"							"model_pc_spy"	
+	"def_head"							"model_pc_spy_head"
+	
+	// stats
+	"health"							"90"
+	"maxhealth"							"90"
+	"armor"								"25"
+	"maxarmor"							"100"
+	"deplete_armor"						"100"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"166"
+	"walkspeed"							"166"
+	"runspeed"							"332"		// QW->Q4 ~ 1.107
+	
+	// available weapons	
+	"def_weapon0"						"weapon_knife"
+	"weapon0_best"						"1"
+	"weapon0_cycle"						"1"
+	"weapon0_toggle"					"1"
+	"weapon0_flashlight"					"0"
+	
+	"def_weapon1"						"weapon_tranquilizer"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_shotgun_double"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+
+	"def_weapon3"						"weapon_nailgun"
+	"weapon3_best"						"1"
+	"weapon3_cycle"						"1"
+	"weapon3_toggle"					"1"
+	"weapon3_flashlight"				"0"
+
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_knife,weapon_tranquilizer,weapon_shotgun,weapon_nailgun"	
+	"current_weapon"					"1"
+	
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_gas"			// gas grenade
+	
+	// ammo
+	"ammo_shells"						"40"	
+	"ammo_nails"						"50"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"10"
+	"ammo_grenade1"						"2"	
+	"ammo_grenade2"						"2"	
+		
+	"max_ammo_shells"					"40"		
+	"max_ammo_nails"					"100"		
+	"max_ammo_rockets"					"15"		
+	"max_ammo_cells"					"30"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"4"	
+}
+
+//--------------------------------------------------------------------------
+// Engineer
+//--------------------------------------------------------------------------
+entityDef q4f_pc_engineer
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Engineer"				// the name of the class
+	"pc_shortname"						"Engy"					// short name of class
+	"description"						"The Engineer has the unique ability to build stationary sentry guns and ammo/armor dispensers. The sentry gun is the backbone for almost all defenses and has the ability to be upgraded for more firepower and armor."
+	
+	"def_model"							"model_pc_engineer"	
+	"def_head"							"model_pc_engineer_head"
+	
+	// stats
+	"health"							"80"
+	"maxhealth"							"80"
+	"armor"								"25"
+	"maxarmor"							"50"
+	"deplete_armor"						"50"	// deplete the armor when above this
+	
+	// speed
+	"crouchpeed"						"166"
+	"walkspeed"							"166"
+	"runspeed"							"332"		// QW->Q4 ~ 1.107
+	
+	// available weapons
+	"def_weapon0"						"weapon_wrench"
+	"weapon0_best"						"1"			// whether weapon should be chosen when out of ammo
+	"weapon0_cycle"						"1"			// whether weapon should be selected when using next/prev weapon
+	"weapon0_toggle"					"1"			// whether selecting weapon twice switches between current and previous weapons
+	"weapon0_flashlight"				"0"			// allow flashlight
+
+	"def_weapon1"						"weapon_railgun"
+	"weapon1_best"						"1"
+	"weapon1_cycle"						"1"
+	"weapon1_toggle"					"1"
+	"weapon1_flashlight"				"0"
+	
+	"def_weapon2"						"weapon_shotgun_double"
+	"weapon2_best"						"1"
+	"weapon2_cycle"						"1"
+	"weapon2_toggle"					"1"
+	"weapon2_flashlight"				"0"
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_wrench,weapon_railgun,weapon_shotgun_double"	
+	"current_weapon"					"1"
+	
+	"def_gren0"							"q4f_hg_frag"			// frag grenade
+	"def_gren1"							"q4f_hg_emp"			// emp grenade
+	
+	// ammo
+	"ammo_shells"						"20"	
+	"ammo_nails"						"25"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"100"
+	"ammo_grenade1"						"2"	
+	"ammo_grenade2"						"2"	
+		
+	"max_ammo_shells"					"50"		
+	"max_ammo_nails"					"50"		
+	"max_ammo_rockets"					"40"		
+	"max_ammo_cells"					"200"
+	"max_ammo_grenade1"					"4"	
+	"max_ammo_grenade2"					"4"	
+}
+
+//--------------------------------------------------------------------------
+// Civilian
+//--------------------------------------------------------------------------
+entityDef q4f_pc_civilian
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"Civilian"				// the name of the class
+	"pc_shortname"						"Civilian"					// short name of class
+	"description"						"This class is usually only enabled in non-CTF gameplay modes. It's a gimp class where the challenge is to survive against other classes. Getting killed by a civilian is by far the most embarrassing event in all of gaming."
+	
+	"def_model"							"model_pc_soldier"	
+	"def_head"							"model_pc_soldier_head"
+	
+	// stats
+	"health"							"50"
+	"maxhealth"							"50"
+	"armor"								"0"
+	"maxarmor"							"0"
+	"deplete_armor"						"0"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"132"
+	"walkspeed"							"132"
+	"runspeed"							"265"		// QW->Q4 ~ 1.107
+	
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							"weapon_gauntlet"	
+	"current_weapon"					"0"
+	
+	"def_gren0"							""
+	"def_gren1"							""
+		
+	// ammo
+	"ammo_shells"						"0"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"0"	
+	"ammo_grenade2"						"0"	
+		
+	"max_ammo_shells"					"0"		
+	"max_ammo_nails"					"0"		
+	"max_ammo_rockets"					"0"		
+	"max_ammo_cells"					"0"
+	"max_ammo_grenade1"					"0"	
+	"max_ammo_grenade2"					"0"	
+}
+
+// empty class
+entityDef q4f_pc_spec
+{
+	"inherit"							"q4f_pc_blank"
+	
+	"pc_name"							"None"				// the name of the class
+	
+	// stats
+	"health"							"1"
+	"maxhealth"							"1"
+	"armor"								"0"
+	"maxarmor"							"0"
+	"deplete_armor"						"0"	// deplete the armor when above this
+	
+	// speed
+	"crouchspeed"						"300"
+	"walkspeed"							"300"
+	"runspeed"							"300"		// QW->Q4 ~ 1.107
+	
+	"def_weapon0"						""
+	"def_weapon1"						""
+	"def_weapon2"						""
+	"def_weapon3"						""
+
+	// default weapons
+	// seperate multiple weapons with commas (no spaces).	
+	"weapon"							""	
+	"current_weapon"					""
+	
+	"def_gren0"							"q4f_hg_flash"			// flash grenade
+	"def_gren1"							"q4f_hg_conc"			// conc grenade
+	
+	// ammo
+	"ammo_shells"						"0"	
+	"ammo_nails"						"0"	
+	"ammo_rockets"						"0"
+	"ammo_cells"						"0"
+	"ammo_grenade1"						"0"	
+	"ammo_grenade2"						"0"	
+		
+	"max_ammo_shells"					"0"		
+	"max_ammo_nails"					"0"		
+	"max_ammo_rockets"					"0"		
+	"max_ammo_cells"					"0"
+	"max_ammo_grenade1"					"0"	
+	"max_ammo_grenade2"					"0"	
