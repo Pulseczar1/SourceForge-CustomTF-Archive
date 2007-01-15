@@ -3046,7 +3046,8 @@ void rvWeapon::StateError( const char* msg ) {
 //--------------------------------------------------------------------------
 // Reload
 //--------------------------------------------------------------------------
-//stateResult_t rvWeapon::State_Reload ( const stateParms_t& parms ) {
+// XavioR: No more reload anims, these are just Q3F style.
+// This code is based on an older reload function that 3j gave me.
 void rvWeapon::State_Reload() {
 	enum
 	{
@@ -3067,10 +3068,9 @@ void rvWeapon::State_Reload() {
 				wsfl.reloading = true;
 
 				SetStatus( WP_RELOAD );
-				//SetState( "Lower", 0 );
 				SetState ( WEAP_STATE_LOWER );
-				SetStage( STAGE_INIT ); // xavior: I'm not sure about this.. STAGE_DONE's value is 2 tho..
-				return/* SRESULT_DONE*/;
+				SetStage( STAGE_INIT ); // xavior: I'm not 100% sure about these..
+				return;
 			}
 			
 			nextReloadTime = gameLocal.time + reloadTime;
@@ -3079,7 +3079,7 @@ void rvWeapon::State_Reload() {
 			raiselower_endtime = gameLocal.time + raiselower_time;
 
 			SetStage( STAGE_WAIT );
-			return/* SRESULT_STAGE( STAGE_WAIT )*/;
+			return;
 
 		case STAGE_WAIT:
 			if ( gameLocal.time > nextReloadTime ) {
@@ -3088,30 +3088,27 @@ void rvWeapon::State_Reload() {
 				if( AmmoInClip() < ClipSize() && AmmoAvailable() > AmmoInClip() ) {
 					nextReloadTime = gameLocal.time + reloadTime;
 					SetStage( STAGE_WAIT );
-					return/* SRESULT_WAIT*/;
+					return;
 				}
 
 				SetStatus( WP_RELOADDONE );
 
 				if ( wsfl.lowerWeapon ) {
 					SetStatus( WP_HOLSTERED );
-					//SetState( "Lower", 0 );
 					SetState ( WEAP_STATE_LOWER );
 					SetStage( STAGE_INIT );
-					return/* SRESULT_DONE*/;;
+					return;;
 				}
-
-				//SetState( "Raise", 0 );
 				SetState ( WEAP_STATE_RAISE );
 				SetStage( STAGE_INIT );
 				wsfl.reloading =	false;
-				return/* SRESULT_DONE*/;
+				return;
 			}
 			SetStage( STAGE_WAIT );
-			return/* SRESULT_WAIT*/;
+			return;
 		}
 	StateError( "Unknown stage #" );	//xavior: this looks like what 3j tried to do with the above states
-	return/* SRESULT_ERROR*/;			//in place of SRESULT_ERROR
+	return;								//in place of SRESULT_ERROR
 }
 
 // </q4f>
