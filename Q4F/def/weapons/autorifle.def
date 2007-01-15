@@ -1,0 +1,74 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_autorifle
+{
+	"inherit"					"weapon_sniperrifle"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"Similar to a machine gun, the Autorifle has a fast firing rate with high precision and low damage."
+	
+	"weaponclass"				"rvWeapon"
+	"weaponname"				"Auto Rifle"
+	"inv_name"					"Auto Rifle"
+	"inv_weapon"				"weapon_autorifle"
+	
+	"skin"						"skins/models/weapons/autorifle"
+	
+	"viewoffset"				"0.1 0.5 -.5"
+	"viewangles"				"-2.5 -9 -4.9"
+	
+	"animPrefix"				"machinegun"
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_machinegun"
+	"inv_icon"					"gfx/guis/icons/gun_autorifle"
+	"mtr_icon"					"gfx/guis/icons/gun_autorifle"
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+	
+	"fireRate"					".1"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				"0"
+	"def_hitscan"				"hitscan_auto_rifle"
+	"ammoRequired"				"1"
+	"ammoType"					"ammo_shells"
+	"clipSize"					"0"
+	
+	"fireOnGround"				"0"				// whether or not the player has to be on the ground to fire this weapon
+	"attack_limit_speed"		"-1"			// when holding fire, limit the player's speed to this %
+	"allow_attack_speed"		"-1"			// don't let the player fire his weapon if his speed is > this %
+	"charge"					"0"				// if true, weapon charges on attack press and fires on attack release. Max damage & multipliers are set in the damage def
+	"charge_time"				"0"				// damage given is 'damage' * charged time / 'charge_time'
+	
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.05"
+	"muzzle_kick_maxtime"		"0.12"
+	"muzzle_kick_angles"		"-12 0 0"
+	"muzzle_kick_offset"		"2 0 2"
+	
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	"snd_fire"					"weapon_machinegun_fire"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//												HitScan
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef hitscan_auto_rifle
+{
+	"inherit"				"hitscan_pellet"
+	
+	"stat_category"				"Weapons"
+	"stat_group"				"Auto Rifle"
+	
+	"def_damage_direct"		"q4f_damage_autorifle"
+}

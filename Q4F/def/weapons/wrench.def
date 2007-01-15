@@ -1,0 +1,38 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_wrench
+{
+	"inherit"					"weapon_gauntlet"
+
+	// -------------------- Weapon Info ---------------------------------------
+	
+	"description"				"The wrench has multiple purposes. Use it to repear/upgrade a sentry gun or repair/refill an ammo dispenser. Hit a teammate with the wrench to repair their armor, or hit an enemy to give 'em a lump on the head."
+	"weaponname"				"Wrench"
+	"inv_name"					"Wrench"
+	"inv_weapon"				"weapon_wrench"
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_icon"					"gfx/guis/icons/gun_wrench"
+	"inv_icon"					"gfx/guis/icons/gun_wrench"
+	
+  	
+  	// -------------------- Clip & Ammo ---------------------------------------
+
+	"def_melee"					"wrench_melee"
+	
+	"skip_spin_snd"				"1"
+	
+	"range"						"48"
+}
+
+entityDef wrench_melee {
+	"stat_category"				"Weapons"
+	"stat_group"				"Wrench"
+	
+	"wrench"					"1"			// so big sentry clip responds
+
+	"def_damage_direct"			"q4f_damage_wrench"
+}

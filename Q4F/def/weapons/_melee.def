@@ -1,0 +1,83 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Default melee
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef melee_default
+{
+	"editor_ignore"				"1"
+	
+	// -------------------- Weapon Info ---------------------------------
+	
+	"description"				"no description"
+	
+	"weaponclass"				"MeleeWeapon"
+	"weaponname"				"Melee Weapon"
+	
+	"inv_name"					"MeleeWeapon"
+	"inv_weapon"				"melee_default"
+	"inv_item"					"1"
+	
+	
+	// -------------------- Models --------------------------------------
+
+  	//"model_view"				"viewmodel_axe"
+ 	//"model_world"				"models/weapons/axe/w_axe.ase"
+
+	"joint_attach"				"GNT_ATTACHER"
+	
+	
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"-2 2 -4"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"viewangles"				"0 0 0"				// < pitch, yaw, roll >
+  	
+  	"lower_weapon_offset"		"0    0   -8"		// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".25"
+	"weaponAngleOffsetMax"		"10"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.003"
+	
+	"foreshorten"				".65"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				""
+	"mtr_icon"					"gfx/guis/hud/icons/gun_gauntlet"
+	"inv_icon"					"gfx/guis/hud/icons/item_gauntlet_colored"
+	
+  	
+  	// -------------------- Clip & Ammo ---------------------------------------
+
+	"clipSize"					"-1"
+	"ammoRequired"				"0"
+	"ammoType"					"ammo_none"
+	"def_melee"					""
+	"range"						"48"
+
+
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+
+	"muzzle_kick_time"			"0"
+	"muzzle_kick_maxtime"		"0"
+	"muzzle_kick_angles"		"0 0 0"
+	"muzzle_kick_offset"		"0 0 0"
+	
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	// -------------------- Effects --------------------------------------------
+	
+	"fx_impact"					"effects/weapons/shotgun/impact_default_mp.fx"
+	"fx_impact_water"			"effects/ambient/splash_smll.fx"
+	"fx_impact_flesh"			"effects/weapons/shotgun/impact_flesh.fx"						
+	"fx_impact_glass"			"effects/weapons/shotgun/impact_glass.fx"
+	"fx_impact_bpglass"			"effects/weapons/shotgun/impact_bpglass.fx"
+	
+	// -------------------- Sounds ---------------------------------------------
+
+	"snd_hit"				"weapon_mp_gauntlet_impact"
+}

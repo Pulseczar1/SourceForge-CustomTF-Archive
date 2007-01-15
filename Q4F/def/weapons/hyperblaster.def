@@ -1,0 +1,195 @@
+
+
+
+
+//--------------------------------------------------------------------------------------------------------------------
+//										Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_hyperblaster
+{
+	"inherit"					"weapon_default"
+	
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"Often used as a 'sentry killer', the hyperblaster can plaster enemies to the wall. The high rate of fire come with a price of swift ammo depletion."
+	
+	"weaponclass"				"HyperBlaster"
+	"weaponname"				"HyperBlaster"
+	"inv_name"					"HyperBlaster"
+	"inv_weapon"				"weapon_hyperblaster"
+	
+	"animPrefix"				"hyperblaster"
+	
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_hyperblaster_view"
+ 	"model_world"				"weapon_hyperblaster_world"
+ 	
+ 	"skin"						"skins/weapons/hyperblaster/q4f"
+ 	
+ 	"joint_attach"				"HB_ATTACHER"
+	"joint_view_guiLight"		"body"
+	"joint_view_flash"			"barrel"
+	"joint_world_flash"			"muzzle_flash"
+	"joint_view_battery"		"ammo_can"
+	
+	"def_ejectBrass"			""
+	"ejectOffset"				""
+	
+	
+	// -------------------- View --------------------------------------
+	
+	//"viewoffset"				"0 0 -1"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	//"viewangles"				"0 0 22"				// < pitch, yaw, roll >
+  	
+  	"viewoffset"				"-3 0.6 0"
+  	"viewangles"				"-6.6 5 6.2"
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_blaster"
+	"inv_icon"					"gfx/guis/icons/gun_nailgun_super"
+	"mtr_icon"					"gfx/guis/icons/gun_nailgun_super"
+	"gui"						"guis/weapons/hyperblaster_ammo.gui"
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".08"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				""
+	"def_hitscan"				""
+	"def_projectile"			"projectile_hyperblaster"
+	"ammoType"					"ammo_nails"
+	"ammoRequired"				"1"
+	"clipSize"					"0"
+	
+	// barrel stuff
+	"barrel_speed"				"425"					// the fire rate is dependant of barrel speed;
+	"barrel_accel_time"			".1"
+	"barrel_decel_time"			"1"
+	"num_barrels"				"6"
+	
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.05"
+	"muzzle_kick_maxtime"		"0.15"
+	"muzzle_kick_angles"		"-2 0 0"
+	"muzzle_kick_offset"		"2 0 0"
+	
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	"mtr_flashShader"			"lights/muzzleflash"
+	"flashColor"				"0.7 0.8 1"
+	"flashRadius"				"200"
+	"flashPointLight"			"1"
+	"flashTime"					".1"
+	"flashViewOffset"			"15 -2 5"
+
+	"mtr_guiLightShader"		"lights/viewWeaponGuiLight"
+	"glightRadius"				"1.3"
+	"glightOffset"				"0 2 0"
+	
+	
+	// -------------------- Sounds ---------------------------------------------
+
+	"snd_battery_spinup"		"weapon_hyperblaster_spinup"
+	"snd_battery_spindown"		"weapon_hyperblaster_spindown"
+	"snd_battery_spin"			"weapon_hyperblaster_spinfast"
+	
+	"fx_muzzleflash"			"effects/weapons/hyperblaster/muzzleflash.fx"
+ 	"fx_muzzleflash_world"		"effects/weapons/hyperblaster/muzzleflash.fx"
+	
+	
+	"launchFromBarrel"			"0"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//--------------------------------------------------------------------------------------------------------------------
+
+model weapon_hyperblaster_view
+{
+	mesh						models/weapons/hyperblaster/mesh.md5mesh
+
+	anim idle 					models/weapons/hyperblaster/idle.md5anim	
+	anim fire 					models/weapons/hyperblaster/fire.md5anim	
+	{
+		frame 1					sound_weapon	weapon_hyperblaster_fire
+		frame 1					sound_item		weapon_hyperblaster_fire_stereo
+	}
+}
+
+model weapon_hyperblaster_world 
+{
+	mesh					models/weapons/hyperblaster/world/hyperblaster.md5mesh
+	anim idle				models/weapons/hyperblaster/world/idle.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//													Projectile
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef projectile_hyperblaster
+{
+	"fuse"						"4"
+	
+	"stat_group"				"Hyperblaster"
+	"stat_category"				"Weapons"
+
+	"spawnclass"				"idProjectile"
+	"mins"						"-1 -1 -1"
+	"maxs"						"1 1 1"
+	"noshadows"					"1"
+
+	"def_damage_direct"			"q4f_damage_hyperblaster_direct"
+	"def_damage_splash"			"q4f_damage_hyperblaster_splash"
+																											
+	"size"						"3 3 3"
+	"cone"						"2"
+	"clipmask_largeshot"		"0"
+	
+	"speed"						"1800"
+	"orient_towards_motion"		"1"
+	
+	"detonate_on_fuse"			"1"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"1"
+	"detonate_on_actor"			"1"
+	"detonate_on_bounce"		"1"
+
+	"fx_impact"			"effects/weapons/hyperblaster/impact_default.fx"
+	"fx_fly"			"effects/weapons/hyperblaster/fly.fx"
+	"fx_impact_concrete"		"effects/weapons/hyperblaster/impact_concrete.fx"
+	"fx_impact_rock"		"effects/weapons/hyperblaster/impact_concrete.fx"
+	"fx_impact_glass"		"effects/weapons/hyperblaster/impact_glass.fx"					
+	"fx_impact_bpglass"		"effects/weapons/hyperblaster/impact_bpglass.fx"
+	"fx_impact_electronics"		"effects/weapons/hyperblaster/impact_electronics.fx"	
+	"fx_impact_flesh"		"effects/weapons/hyperblaster/impact_flesh.fx"
+	"fx_impact_monstermetal"	"effects/weapons/hyperblaster/impact_flesh.fx"	
+	"fx_trail"			""
+	"fx_impact_mp"			"effects/weapons/hyperblaster/impact_default_mp.fx"
+	"fx_impact_concrete_mp"		"effects/weapons/hyperblaster/impact_default_mp.fx"
+	"fx_impact_rock_mp"		"effects/weapons/hyperblaster/impact_default_mp.fx"
+	"fx_impact_glass_mp"		"effects/weapons/hyperblaster/impact_default_mp.fx"
+	"fx_impact_bpglass_mp"		"effects/weapons/hyperblaster/impact_default_mp.fx"
+	"fx_impact_electronics_mp"	"effects/weapons/hyperblaster/impact_default_mp.fx"
+}

@@ -1,0 +1,151 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef laserdot {
+	"spawnclass"		"SniperDot"
+	"model"				"models/weapons/sniperdot.ase"
+	"teamcolored"		"1"
+}
+
+entityDef weapon_sniperrifle
+{
+	"inherit"					"weapon_default"
+
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"To use the sniper rifle, you have to press and hold the attack button to charge the rifle. The longer you hold it, the more powerful your shot will be."
+	
+	"weaponclass"				"SniperRifle"
+	"weaponname"				"Sniper Rifle"
+	"inv_name"					"Sniper Rifle"
+	"inv_weapon"				"weapon_sniperrifle"
+	
+	"animPrefix"				"machinegun"
+
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_sniperrifle_view"
+ 	"model_world"				"weapon_sniperrifle_world"
+ 	
+ 	"skin"						"skins/models/weapons/sniperrifle"
+ 	
+
+	"joint_attach"				"MG_ATTACHER"
+  	"joint_view_flash"			"barrel_2"
+	"joint_view_flashlight"		"flashlight"
+	"joint_view_guiLight"		"gun_jt"
+	"joint_view_eject"			"eject"
+	"joint_world_flash"			"muzzle_flash"
+	
+	"def_ejectBrass"			"debris_shells"
+	"ejectOffset"				"0.5 -1 -1"
+	
+	
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"1.0 1.7 2"
+	"viewangles"				"8 -30 -4.9"
+  	
+  	"lower_weapon_offset"		"0    0   0"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".65"
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_machinegun"
+	"inv_icon"					"gfx/guis/icons/gun_sniperrifle"
+	"mtr_icon"					"gfx/guis/icons/gun_sniperrifle"
+	"gui"						"guis/weapons/machinegun_ammo.gui"
+	"gui2"						"guis/weapons/machinegun_inview_scope.gui"
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					"1.5"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				"0"
+	"def_hitscan"				"hitscan_sniper_rifle"
+	"ammoRequired"				"1"
+	"ammoType"					"ammo_shells"
+	"clipSize"					"0"
+	
+	"def_dot"					"laserdot"		// if set, will draw a laser on charge
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"1.5"
+	"muzzle_kick_maxtime"		"1.5"
+	"muzzle_kick_angles"		"-30 0 0"
+	"muzzle_kick_offset"		"4 2 0"
+	
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	"mtr_flashShader"			"lights/muzzleflash"
+	"flashColor"				"1 0.8 0.4"
+	"flashRadius"				"200"
+	"flashPointLight"			"1"
+	"flashTime"					".1"
+	"flashViewOffset"			"15 -5 -5"
+
+
+	// -------------------- Effects --------------------------------------------
+	
+	"fx_muzzleflash"			"effects/weapons/machinegun/muzzleflash.fx"
+  	"fx_muzzleflash_world"		"effects/weapons/machinegun/muzzleflash.fx"
+
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+	"snd_fire"					"weapon_sniperrifle_fire"
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//-------------------------------------------------------------------------------------------------------------------0
+
+model weapon_sniperrifle_view
+{
+	mesh						models/weapons/machinegun/view.md5mesh
+
+	offset						(-1.5 1.7 .25)
+
+	anim idle					models/weapons/machinegun/idle.md5anim
+}
+
+model weapon_sniperrifle_world 
+{
+	mesh		 				models/weapons/machinegun/world/machinegun_world.md5mesh
+
+	anim idle 					models/weapons/machinegun/world/machinegun_idle.md5anim
+	anim fire1 					models/weapons/machinegun/world/machinegun_fire1.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//												HitScan
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef hitscan_sniper_rifle
+{
+	"inherit"				"hitscan_pellet"				
+	"penetrate"				"1"
+	
+	"stat_category"				"Weapons"
+	"stat_group"				"Sniper Rifle"
+	
+	"def_damage_direct"		"q4f_damage_sniperrifle"
+	"def_damage_head"		"q4f_damage_sniperrifle_head"
+	"def_damage_legs"		"q4f_damage_sniperrifle_legs"
+}

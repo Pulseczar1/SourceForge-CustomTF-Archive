@@ -1,0 +1,272 @@
+// currently just for placement testing
+
+entityDef q4f_hg_base
+{				
+	"stat_category"				"Grenades"
+																						
+	"speed"						"750"
+	"angular_velocity"			"8 4 2"
+	"settle_duration"			"0.30"
+	
+	"clipRadius"				"2.1"
+	
+	"linear_friction"			"0"
+	"angular_friction"			"0"
+	"contact_friction"			"50"
+	"bounce"					".52"
+	"gravity"					"1"
+	
+	"detonate_on_fuse"			"1"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"0"
+	"detonate_on_actor"			"0"
+	
+	"fuse"						"4"
+	
+	
+	"mins"						"-6 -6 -6"
+	"maxs"						"6 6 6"
+	"cone"						""
+	
+	"noshadows"					"1"
+
+	"fx_detonate"				"effects/weapons/grenadelauncher/detonate_mp.fx"
+	"fx_impact_water"			"effects/ambient/splash_med.fx"
+
+	"snd_ricochet"				"grenade_bounce"
+	
+	"net_syncphysics"			"1"
+}
+
+entityDef q4f_hg_frag
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"Frag Grenade"
+	
+	"spawnclass"				"FragGrenade"
+	"model"						"models/grenades/q4f_flashgren.ase"
+	"skin"						"skins/models/grenades/frag"
+	
+	"inv_icon"					"gfx/guis/icons/gren_frag"
+
+	"def_damage_splash"			"q4f_damage_fragGrenade"
+	
+	"grenadeName"				"Frag"
+	"description"				"The standard grenade for most classes, its effect is very straightforward. Prime, hold, throw, boom. The splash damage from these grenades is useful to propel players to ordinarily unattainable heights."
+}
+
+entityDef q4f_hg_flash
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"Flash Grenade"
+		
+	"spawnclass"				"FragGrenade"
+	"model"						"models/grenades/q4f_flashgren.ase"
+	
+	"inv_icon"					"gfx/guis/icons/gren_flash"
+	
+	"def_damage_splash"			"q4f_damage_flashGrenade"
+	
+	"grenadeName"				"Flash"
+	"description"				"Flash grenades do a small amount of damage upon explosion. More importantly, they blind players for a short period of time."
+}
+
+
+entityDef q4f_hg_conc
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"Conc Grenade"
+
+	"spawnclass"				"ConcussionGrenade"
+	"model"						"models/grenades/q4f_flashgren.ase"
+	"skin"						"skins/models/grenades/conc"
+	
+	"inv_icon"					"gfx/guis/icons/gren_conc"
+	
+	"points_divisor"			"27"
+	
+	"def_damage_splash"			"q4f_damage_concGrenade"
+
+	"grenadeName"				"Concussion"
+	"description"				"Concussion grenades cause you to feel dizzy and drunk for a short time. Most players use the push effect of the grenade explosion to launch themselves great distances."
+
+	"fx_detonate"				"effects/q4f_exp_conc.fx"
+}
+
+entityDef q4f_hg_nail
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"Nail Grenade"
+	
+	"spawnclass"				"NailGrenade"
+	"model"						"models/grenades/q4f_nailgren.ase"
+	
+	"inv_icon"					"gfx/guis/icons/gren_nail"
+	
+	"def_damage_splash"			"q4f_damage_nailGrenade"
+
+	"def_projectile"			"q4f_hg_nail_spike"
+
+	"snd_launch_nail"			"nail_gren_fire"
+	
+	"grenadeName"				"Nail"
+	"description"				"The classic solution to clearing rooms, blocking bottlenecks, or thrashing sentry guns. Nail grenades rise off the ground and spin rapidly, shooting nails in every direction. After a few seconds, they explode like a frag grenade."
+}
+
+entityDef q4f_hg_nail_spike
+{
+	"inherit"					"projectile_nail"
+	
+	"speed"						"1200"
+	
+	"stat_category"				"Grenades"
+	"stat_group"				"Nail Grenade"
+	
+	"hurt_owner"				"1"
+	
+	"def_damage_direct"			"q4f_damage_nailGrenadeSpike"
+	"def_damage_splash"			""
+}
+
+entityDef q4f_hg_cluster
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"Cluster Grenade"
+	
+	"spawnclass"				"ClusterGrenade"
+	"model"						"models/weapons/grenadelauncher/w_grenade.lwo"
+	
+	"inv_icon"					"gfx/guis/icons/gren_mirv"
+	
+	"def_damage_splash"			"q4f_damage_clusterGrenade"
+	
+	"def_projectile"			"q4f_hg_cluster_child"
+	
+	"grenadeName"				"Cluster"
+	"description"				"The cluster grenade launches multiple frag grenades, pretty much erradicating anything in the area."
+}
+
+entityDef q4f_hg_cluster_child
+{
+	"inherit"					"q4f_hg_frag"
+	
+	"speed"						"300"
+	
+	"stat_group"				"Cluster Grenade"
+	
+	"def_damage_splash"			"q4f_damage_clusterGrenade_child"
+}
+
+entityDef q4f_hg_napalm
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"Napalm Grenade"
+	
+	"spawnclass"				"NapalmGrenade"
+	"model"						"models/grenades/q4f_flamegren.ase"
+	
+	"inv_icon"					"gfx/guis/icons/gren_napalm"
+	
+	"def_damage_splash"			"q4f_damage_napalmGrenade"
+	
+	"def_projectile"			"q4f_napalmfire"
+	
+	"grenadeName"				"Napalm"
+	"description"				"Upon detonation, the napalm grenade spews red hot napalm all around, creating a temporary barbeque for any unsuspecting players."
+}
+
+entityDef q4f_napalmfire
+{
+	"stat_group"				"Napalm Grenade"
+	
+	"spawnclass"				"NapalmFire"
+	
+	"fx_fly"					"effects/napalm.fx"
+	//"fx_fuse"					"effects/napalm.fx"
+	
+	//"remove_time"				"500"
+	//"stop_fly_effect_delay"		"300"
+	
+	"def_damage_direct"			"q4f_damage_napalmfire"
+																						
+	"speed"						"350"
+	"angular_velocity"			"8 4 2"
+	"settle_duration"			"0.30"
+	
+	"linear_friction"			"0"
+	"angular_friction"			"0"
+	"contact_friction"			"50"
+	"bounce"					"0"
+	"gravity"					".75"
+	
+	"detonate_on_fuse"			"0"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"0"
+	"detonate_on_actor"			"0"
+	
+	"fuse"						"8"
+	"fuse_random"				"4"
+	
+	"hurt_owner"				"1"
+	
+	
+	"mins"						"-22 -22 0"
+	"maxs"						"22 22 22"
+	
+	"noshadows"					"1"
+
+	"snd_ricochet"				""
+	
+	"nowater"					"1"
+	
+	"net_syncphysics"			"1"
+}
+
+entityDef q4f_hg_gas
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"Gas Grenade"
+	
+	"spawnclass"				"GasGrenade"
+	"model"						"models/grenades/q4f_gasgren.ase"
+	
+	"inv_icon"					"gfx/guis/icons/gren_gas"
+	
+	"def_damage_splash"			"q4f_damage_spygas"
+	
+	"effect_time"				"10"
+	"effect_radius"				"128"
+	
+	"fx_gas"					"effects/gas_gren.fx"
+	
+	"grenadeName"				"Spy Gas"
+	"description"				"... spy gas..."
+}
+
+entityDef q4f_hg_emp
+{
+	"inherit"					"q4f_hg_base"
+	
+	"stat_group"				"EMP Grenade"
+	
+	"spawnclass"				"EmpGrenade"
+	"model"						"models/grenades/q4f_empgren.ase"
+	
+	"inv_icon"					"gfx/guis/icons/gren_emp"
+	
+	"radius"					"340"
+	
+	"def_damage_splash"			"q4f_damage_empGrenade"
+	
+	"grenadeName"				"EMP"
+	"description"				"The Electromagnetic Pulse Grenade weaks havoc on technology. Ammunition, backpacks, pipebombs, detpacks, grenades, sentries, dispensers, players... all of these can be vapourized, the EMP doesn't pick favorites."
+
+	"fx_detonate"				"effects/q4f_exp_emp.fx"
+}

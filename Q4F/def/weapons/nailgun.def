@@ -1,0 +1,157 @@
+
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//--------------------------------------------------------------------------------------------------------------------
+
+model viewmodel_nailgun {
+	mesh 						models/weapons/nailgun_tf/viewnailgun.md5mesh
+	
+	anim fire 					models/weapons/nailgun_tf/fire.md5anim
+	anim idle 					models/weapons/nailgun_tf/idle.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//										Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_nailgun {
+
+	"inherit"					"weapon_default"
+
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"The nailgun has twin barrels that launch steel spikes at a fairly slow speed and low rate of fire. It's ideal for paving a path when acting as part of a larger team."
+	
+	"weaponclass"				"Nailgun"
+	"weaponname"				"Nailgun"
+	
+	"inv_name"					"Nailgun"
+	"inv_weapon"				"weapon_nailgun"
+	
+	"animPrefix"				"minigun"
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"viewmodel_nailgun"
+ 	//"model_world"				"weapon_nailgun_world"
+ 	"model_world"				"weapon_minigun_world"
+
+	"joint_attack_0"			"barrel1"
+	"joint_attack_1"			"barrel2"
+	
+	"startoffset"				"0 6 -1"
+	"startoffset2"				"0 -6 -1"
+	
+	"def_ejectBrass"			""
+
+
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"2 0.0 4"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"viewangles"				"-15 0 0"				// < pitch, yaw, roll >
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_nailgun"
+	"inv_icon"					"gfx/guis/icons/gun_nailgun"
+	"mtr_icon"					"gfx/guis/icons/gun_nailgun"
+	"gui"						""	
+
+
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".18"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				""
+	"def_hitscan"				""
+	"def_projectile"			"projectile_nail"
+	"ammoType"					"ammo_nails"
+	"ammoRequired"				"1"
+	"clipSize"					"0"
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.25"
+	"muzzle_kick_maxtime"		"0.35"
+	"muzzle_kick_angles"		"-1 0 0"
+	"muzzle_kick_offset"		"2 0 0"
+	
+	"recoilTime"				"0"
+	"recoilAngles"				"0 0 0"
+	
+	"launchFromBarrel"			"0"
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+	"snd_fire"				"weapon_nailgun_fire"	
+	
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+//													Projectile
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef projectile_nail
+{
+	"stat_category"				"Weapons"
+	"stat_group"				"Nailgun"
+	
+	
+	"spawnclass"				"idProjectile"
+	"mins"						"-1 -1 -1"
+	"maxs"						"1 1 1"
+	"noshadows"					"1"
+	"clipmask_largeshot"		"0"
+								
+	"model"						"models/weapons/nailgun/nail.ase"
+	
+	"def_damage_direct"		"q4f_damage_nailDirect"
+	"def_damage_splash"		"q4f_damage_nailSplash"
+																											
+	"health"					"0"
+	"speed"						"1200"
+	"gravity"					"0"
+	"fuse"						"4"
+								
+	"detonate_on_fuse"			"1"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"1"
+	"detonate_on_actor"			"1"
+	"detonate_on_bounce"		"1"
+																
+	"decal_size"				"8"
+
+	//sigh... so that a splash damage projectile can still have it's impact effect suppressed on buddy corpses... :/
+	"bloodyImpactEffect"		"1"
+	
+	"fx_fly"			"effects/weapons/nailgun/fly.fx"
+	"fx_impact"			"effects/weapons/nailgun/impact_default.fx"
+	"fx_impact_water"		"effects/ambient/splash_smll.fx"
+	"fx_impact_concrete"		"effects/weapons/nailgun/impact_concrete.fx"
+	"fx_impact_rock"		"effects/weapons/nailgun/impact_concrete.fx"
+	"fx_impact_monstermetal"	"effects/weapons/machinegun/impact_monstermetal.fx"
+	"fx_impact_flesh"		"effects/weapons/machinegun/impact_flesh.fx"	
+	"fx_impact_glass"		"effects/weapons/nailgun/impact_glass.fx"					
+	"fx_impact_bpglass"		"effects/weapons/nailgun/impact_bpglass.fx"
+	"fx_impact_electronics"		"effects/weapons/nailgun/impact_electronics.fx"
+	"fx_impact_mp"			"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_concrete_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_rock_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_glass_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_bpglass_mp"		"effects/weapons/nailgun/impact_default_mp.fx"
+	"fx_impact_electronics_mp"	"effects/weapons/nailgun/impact_default_mp.fx"
+}

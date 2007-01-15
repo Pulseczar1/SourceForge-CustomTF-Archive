@@ -1,0 +1,163 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Definition
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_flamethrower
+{
+	"inherit"					"weapon_default"
+
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"				"It's big, it's bright, it catches people on fire... what more could you want? Useful at close and medium range, the flamethrower turns any enemy from cookie dough into crispy tenders."
+	
+	"weaponclass"				"Flamethrower"
+	"weaponname"				"Flamethrower"
+	
+	"inv_name"					"Flamethrower"
+	"inv_weapon"				"weapon_flamethrower"
+	
+	"animPrefix"				"machinegun"
+
+	
+	// -------------------- Models --------------------------------------
+	
+	"model_view"				"weapon_sniperrifle_view"
+ 	"model_world"				"weapon_sniperrifle_world"
+ 	
+ 	"skin"						"skins/models/weapons/flamethrower"
+
+	"joint_view_flash"			"barrel_2"
+	"joint_view_flashlight"		"flashlight"
+	"joint_view_guiLight"		"gun_jt"
+	"joint_view_eject"			"eject"
+	"joint_world_flash"			"muzzle_flash"
+	
+	"def_ejectBrass"			""
+	"ejectOffset"				""
+	
+	
+	// -------------------- View --------------------------------------
+	
+	"viewoffset"				"1.1 -0.5 -1.0"
+  	"viewangles"				"-0.7 -7.4 -4.9"
+  	
+  	"lower_weapon_offset"		"0    0   -8"			// where it is positioned on the screen // < forward/back , left/right, updown
+  	"lower_weapon_angles"		"60   -30   0"			// < pitch, yaw, roll >
+  	
+  	"weaponAngleOffsetAverages" "10"
+	"weaponAngleOffsetScale" 	".10"
+	"weaponAngleOffsetMax"		"2"
+	"weaponOffsetTime"			"600"
+	"weaponOffsetScale"			"0.002"
+	
+	"foreshorten"				".44"
+	
+	"hidesurface"				"models/weapons/machinegun/scope"
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_machinegun"
+	"inv_icon"					"gfx/guis/icons/gun_flamethrower"
+	"mtr_icon"					"gfx/guis/icons/gun_flamethrower"
+	"gui"						""	
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".10"
+	"spread"					"0 0"
+	"num_attacks"				"1"
+	"reload_time"				""
+	"def_hitscan"				""
+	"def_projectile"			"projectile_flamethrower"
+	"ammoType"					"ammo_cells"
+	"ammoRequired"				"1"
+	"clipSize"					"0"
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+	
+	"muzzle_kick_time"			"0.0"
+	"muzzle_kick_maxtime"		"0 0"
+	"muzzle_kick_angles"		"0 0 0"
+	"muzzle_kick_offset"		"0 0 0"
+
+	"recoilTime"				"4"
+	"recoilAngles"				"-6 -4 -2"
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+	
+	"mtr_flashShader"			""
+	"flashColor"				"1 0.8 0.4"
+	"flashRadius"				"240"
+	"flashPointLight"			"1"
+	"flashTime"					".1"
+	"flashViewOffset"			"15 -5 -5"
+	
+	"fx_muzzleflash"			""		
+  	"fx_muzzleflash_world"		""
+
+
+	// -------------------- Effects --------------------------------------------
+
+	"fx_fire"					"effects/ft_fire.fx"
+	"fx_idle"					"effects/ft_idle.fx"
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+	"snd_quaddamage"			"weapon_quaddamage_fire"
+	"snd_noAmmo"				"weapon_shotgun_dryfire"
+	"snd_fire_start"			"weapon_ft_fireStart"
+	"snd_fire_loop"				"weapon_ft_fireLoop"
+	
+	
+
+	"launchFromBarrel"			"0"
+	
+	"water_disabled"			"1"
+}
+
+entityDef projectile_flamethrower
+{
+	"stat_category"				"Weapons"
+	"stat_group"				"Flamethrower"
+	
+	"spawnclass"				"idProjectile"
+	"size"						"15 15 15"
+	"cone"						""
+	"noshadows"					"1"
+	"clipmask_largeshot"		"1"
+	
+	"nowater"					"1"
+
+	"linear_friction"			"0"
+	"angular_friction"			"0"
+	"contact_friction"			"0"
+	"bounce"					".25"
+	"anglebounce"				"1"					// amount of bounce inversely proportional to angle to surface
+	"bounce_only_on_world"		"1"
+								
+	"detonate_on_fuse"			"0"
+	"detonate_on_death"			"0"
+	"detonate_on_world"			"0"
+	"detonate_on_actor"			"1"
+						
+	"def_damage_direct"			"q4f_damage_flameDirect"
+																																			
+	"speed"						"1066"
+	"speed_duration"			".5"
+	"speed_end"					"100"
+	"fuse"						"2"
+	"push"						"0"
+	
+	"fly_noloop"				"1"
+	"fx_fly"					"effects/ft_proj_1.fx"
+	"fx_detonate"				""
+	"fx_impact"					""
+	"fx_impact_water"			""
+								
+	"impact_gib"				"0"								
+	"decal_size"				"75"
+	
+	"net_syncphysics"			"1"
+	
+}

@@ -1,0 +1,67 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//-------------------------------------------------------------------------------------------------------------------0
+
+entityDef weapon_shotgun_double
+{
+	"inherit"					"weapon_shotgun"
+
+	// -------------------- Weapon Info ----------------------------------
+	
+	"description"			"The double barrel shotgun is an ideal backup weapon for heavier classes. Up close it packs a whallop of pain, but its accuracy diminishes with distance."
+	
+	"weaponname"				"Super Shotgun"
+	
+	"inv_name"					"Super Shotgun"
+	"inv_weapon"				"weapon_shotgun_double"
+	
+	"animPrefix"				"shotgun_double"
+	
+	"clipreload"				"0"
+
+	
+	// -------------------- Models --------------------------------------
+	
+	
+	// -------------------- View --------------------------------------
+	
+	
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_crosshair"				"gfx/guis/crosshairs/crosshair_shotgun"
+	"inv_icon"					"gfx/guis/icons/gun_shotgun_super"
+	"mtr_icon"					"gfx/guis/icons/gun_shotgun_super"
+	"skin"						"skins/models/weapons/shotgun_super"
+	
+	// -------------------- Clip & Ammo ---------------------------------------
+
+	"fireRate"					".7"
+	"spread"					".14 .08"
+	"num_attacks"				"14"
+	"reload_time"				"3"
+	"def_hitscan"				"hitscan_shotgun_double"
+	"ammoRequired"				"2"
+	
+	// -------------------- Recoil and Muzzle Kick -----------------------------
+
+	
+	// -------------------- Muzzle Flash & Light -------------------------------
+
+
+	// -------------------- Effects --------------------------------------------
+
+	
+	// -------------------- Sounds ---------------------------------------------
+	
+}
+
+
+entityDef hitscan_shotgun_double {
+	"inherit"			"hitscan_shotgun"
+	
+	"stat_category"				"Weapons"
+	"stat_group"				"Super Shotgun"
+	
+	"def_damage_direct"		"q4f_damage_shotgun_double"
+}

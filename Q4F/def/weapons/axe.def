@@ -1,0 +1,76 @@
+//--------------------------------------------------------------------------------------------------------------------
+// Models
+//--------------------------------------------------------------------------------------------------------------------
+
+model viewmodel_axe
+{
+	mesh						models/weapons/axe_tf/viewaxe.md5mesh
+
+	anim raise					models/weapons/axe_tf/raise.md5anim {
+		frame	1				sound_weapon axe_raise
+	}
+	anim idle 					models/weapons/axe_tf/idle.md5anim
+	anim berserk_idle 			models/weapons/axe_tf/axe_idle.md5anim
+	anim aim 					models/weapons/axe_tf/idle.md5anim
+	
+	anim punch_left1			models/weapons/axe_tf/axe_swing1.md5anim {
+		frame	7				object_call Attack
+	}
+	
+	anim punch_left2			models/weapons/axe_tf/axe_swing3.md5anim {
+		frame	7				object_call Attack
+	}
+	
+	anim punch_right1			models/weapons/axe_tf/axe_swing2.md5anim {
+		frame	7				object_call Attack
+	}
+	
+	anim punch_right2			models/weapons/axe_tf/axe_swing4.md5anim {
+		frame	7				object_call Attack
+	}
+	
+	anim putaway 				models/weapons/axe_tf/lower.md5anim
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+// Weapon Defintion
+//--------------------------------------------------------------------------------------------------------------------
+
+entityDef weapon_axe
+{
+	"inherit"					"melee_default"
+	
+	
+
+	// -------------------- Weapon Info ---------------------------------------
+	
+	"description"				"The basic last resort that most classes have. It's very weak and very humiliating to die from this weapon."
+	"weaponname"				"Axe"
+	"inv_name"					"Axe"
+	"inv_weapon"				"weapon_axe"
+	
+	
+	// -------------------- Models --------------------------------------
+
+  	"model_view"				"viewmodel_axe"
+  	"model_view_strogg"			"viewmodel_axe"
+ 	"model_world"				"models/weapons/axe/w_axe.ase"
+	
+	// -------------------- Images & Icons ------------------------------------
+	
+	"mtr_icon"					"gfx/guis/icons/gun_axe"
+	"inv_icon"					"gfx/guis/icons/gun_axe"
+	
+  	
+  	// -------------------- Clip & Ammo ---------------------------------------
+
+	"def_melee"					"axe_melee"
+}
+
+entityDef axe_melee {
+
+	"stat_category"				"Weapons"
+	"stat_group"				"Axe"
+
+	"def_damage_direct"		"q4f_damage_axe"
+}
