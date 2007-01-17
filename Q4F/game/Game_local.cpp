@@ -4787,6 +4787,20 @@ void idGameLocal::SpawnMapEntities() {
 		mapEnt = mapFile->GetEntity( i );
 		args = mapEnt->epairs;
 
+		// xavior: lets try to convert q4 ctf spawn points to q4f (thx AnthonyJ)
+		if (idStr::Cmp(args.GetString("classname"), "info_player_team") == 0) 
+		{
+			// change classname
+			args.Delete("classname");
+			args.Set("classname", "info_player_spawn");
+			// convert team #
+			if (idStr::Cmp(args.GetString("team"), "Strogg") == 0)
+				args.Set("team", "1");
+			else if (idStr::Cmp(args.GetString("team"), "Marine") == 0)
+				args.Set("team", "2");
+			else
+				args.Set("team", "-1");
+		}
 
 // ddynerman: merge the dicts ahead of SpawnEntityDef() so we can inhibit using merged info
 		const idDeclEntityDef* entityDef = FindEntityDef( args.GetString( "classname" ), false );
