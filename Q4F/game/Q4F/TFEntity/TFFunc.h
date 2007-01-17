@@ -43,5 +43,4 @@ private:
 
 	idStr				spawnType;
 };
-
 #endif
