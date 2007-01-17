@@ -13,7 +13,7 @@
 //--------------------------------------------------------------------------
 // Spawning position for players
 // Triggering this will cause the player to be spawned to this spot
-// unline idPlayerStart, this is instant
+// unlike idPlayerStart, this is instant
 //--------------------------------------------------------------------------
 class q4fPlayerStart : public TFEntity {
 public:
