@@ -455,7 +455,8 @@ entityDef q4f_damage_rocketDirect
 	"damage"					"100"
 	"gib"						"1"
 	
-	"push"						"45000"
+	//"push"						"45000"		// xav: um.. no.
+	"push"						"500"
 	"knockback"					"110"
 
 	"deathPush"					"200"
