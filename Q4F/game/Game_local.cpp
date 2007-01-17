@@ -4794,12 +4794,38 @@ void idGameLocal::SpawnMapEntities() {
 			args.Delete("classname");
 			args.Set("classname", "info_player_spawn");
 			// convert team #
-			if (idStr::Cmp(args.GetString("team"), "Strogg") == 0)
-				args.Set("team", "1");
-			else if (idStr::Cmp(args.GetString("team"), "Marine") == 0)
-				args.Set("team", "2");
+			if (idStr::Cmp(args.GetString("team"), "strogg") == 0)
+				args.Set("team", "red");
+			else if (idStr::Cmp(args.GetString("team"), "marine") == 0)
+				args.Set("team", "blue");
 			else
 				args.Set("team", "-1");
+		}
+		else if (idStr::Cmp(args.GetString("classname"), "mp_ctf_marine_flag") == 0) 
+		{
+			// change classname
+			args.Delete("classname");
+			args.Set("classname", "ctf_flag");
+			args.Set("name", "blue_flag");
+			args.Set("team", "1");
+			args.Set("carrying", "red_flag");
+			args.Set("teamscore", "10");
+			args.Set("callOnCarry", "Q4FBase::pickupCTFFlag_regular");
+			args.Set("snd_capture_team", "announce_team_enemy_score");
+			args.Set("snd_capture", "announce_team_you_score");
+		}
+		else if (idStr::Cmp(args.GetString("classname"), "mp_ctf_strogg_flag") == 0) 
+		{
+			// change classname
+			args.Delete("classname");
+			args.Set("classname", "ctf_flag");
+			args.Set("name", "red_flag");
+			args.Set("team", "2");
+			args.Set("carrying", "blue_flag");
+			args.Set("teamscore", "10");
+			args.Set("callOnCarry", "Q4FBase::pickupCTFFlag_regular");
+			args.Set("snd_capture_team", "announce_team_enemy_score");
+			args.Set("snd_capture", "announce_team_you_score");
 		}
 
 // ddynerman: merge the dicts ahead of SpawnEntityDef() so we can inhibit using merged info
