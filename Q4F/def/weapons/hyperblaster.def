@@ -167,7 +167,9 @@ entityDef projectile_hyperblaster
 	"cone"						"2"
 	"clipmask_largeshot"		"0"
 	
-	"speed"						"1800"
+//	"speed"						"1800"
+	"speed"						"1200"		// slower projectiles (tf 2.9's is 1000)
+
 	"orient_towards_motion"		"1"
 	
 	"detonate_on_fuse"			"1"
