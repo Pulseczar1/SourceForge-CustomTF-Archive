@@ -823,8 +823,8 @@ void idPlayer::SetupWeaponEntity( void ) {
  	}
 }
 
-#define HEAL_SELF_DELAY 1000
-#define HEAL_SELF_AMOUNT 3
+#define HEAL_SELF_DELAY 3000
+#define HEAL_SELF_AMOUNT 4
 
 /*
 ==============
