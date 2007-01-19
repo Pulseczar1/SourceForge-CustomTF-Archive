@@ -3067,7 +3067,7 @@ void rvWeapon::State_Reload() {
 
 				wsfl.reloading = true;
 
-				SetStatus( WP_RELOAD );
+				//SetStatus( WP_RELOAD );		// just made "reload" blink on the HUD..
 				SetState ( WEAP_STATE_LOWER );
 				SetStage( STAGE_INIT ); // xavior: I'm not 100% sure about these..
 				return;
@@ -3078,6 +3078,7 @@ void rvWeapon::State_Reload() {
 			raiselower_time = WEAPON_RAISELOWER_TIME;
 			raiselower_endtime = gameLocal.time + raiselower_time;
 
+			SetStatus( WP_RELOAD );
 			SetStage( STAGE_WAIT );
 			return;
 
@@ -3087,6 +3088,7 @@ void rvWeapon::State_Reload() {
 
 				if( AmmoInClip() < ClipSize() && AmmoAvailable() > AmmoInClip() ) {
 					nextReloadTime = gameLocal.time + reloadTime;
+					SetStatus( WP_RELOAD );
 					SetStage( STAGE_WAIT );
 					return;
 				}
