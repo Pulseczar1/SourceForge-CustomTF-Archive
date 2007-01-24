@@ -2995,6 +2995,11 @@ void rvWeapon::State_Fire() {
 			}
 
 			nextAttackTime = gameLocal.time + fireRate;
+
+			if ( owner->HasAffliction( AFFL_TRANQ ) )
+			{
+				nextAttackTime = gameLocal.time + ( fireRate * 2 );
+			}
 			Attack( num_attacks );
 			PlayAnim( ANIMCHANNEL_ALL, "fire", 0 );	
 			SetStage( STAGE_WAIT );
