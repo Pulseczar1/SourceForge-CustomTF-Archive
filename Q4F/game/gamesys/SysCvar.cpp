@@ -27,7 +27,8 @@ idCVar g_version(					"g_version",				gameVersion.string,	CVAR_GAME | CVAR_ROM, 
 idCVar si_name(						"si_name",					"Q4F Server",	CVAR_GAME | CVAR_SERVERINFO | PC_CVAR_ARCHIVE | CVAR_CASE_SENSITIVE | CVAR_SPECIAL_CONCAT, "name of the server" );
 
 idCVar si_gameType(					"si_gameType",				"Q4F",	CVAR_GAME | CVAR_SERVERINFO | PC_CVAR_ARCHIVE | CVAR_ROM, "" );
-
+// xavior: allow servers to disable pogo bunnyhop
+idCVar si_allowPogo(				"si_allowPogo",				"1",	CVAR_GAME | CVAR_SERVERINFO | PC_CVAR_ARCHIVE | CVAR_INTEGER, "enable (1) or disable (0) pogo bunnyhopping for players on the server" );
 // ddynerman: new gametype strings
 idCVar si_map(						"si_map",					"q4f_mach",				CVAR_GAME | CVAR_SERVERINFO | PC_CVAR_ARCHIVE, "map to be played next on server", idCmdSystem::ArgCompletion_MapName );
 idCVar si_mapCycle(					"si_mapCycle",				"q4f_mach;q4f_bases;q4f_bam",				CVAR_GAME | CVAR_SERVERINFO | PC_CVAR_ARCHIVE, "Map and gametype cycle list. Ex: bases:1;mach2:2;" );

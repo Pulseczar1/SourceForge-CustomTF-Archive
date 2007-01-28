@@ -1345,23 +1345,37 @@ const idTraceModel *idClip::TraceModelForClipModel( const idClipModel *mdl ) con
 idClip::TestHugeTranslation
 ============
 */
+#define EVIL_FIX			// read "MAJOR FIXME" below
 ID_INLINE bool TestHugeTranslation( trace_t &results, const idClipModel *mdl, const idVec3 &start, const idVec3 &end, const idMat3 &trmAxis ) {
 	if ( mdl != NULL && ( end - start ).LengthSqr() > Square( CM_MAX_TRACE_DIST ) ) {
-		//assert( 0 );
+#ifdef EVIL_FIX
+		// MAJOR FIXME: I know, it's an evil wrap but until i figure out what is causing the
+		// huge translation error for ctf_flag, this is the only thing I can do at
+		// the moment to stop the crashes (or so I hope). 3j thinks it may have something
+		// to do with the way the flag is attached to the player model. Check it out,
+		//		- Xav
+		if (idStr::Cmp(mdl->GetEntity()->GetClassname(), "ctf_flag") != 0) 
+		{
+#endif
+			//assert( 0 );
 
-		results.fraction = 0.0f;
-		results.endpos = start;
-		results.endAxis = trmAxis;
-		memset( &results.c, 0, sizeof( results.c ) );
-		results.c.point = start;
-		results.c.entityNum = ENTITYNUM_WORLD;
+			results.fraction = 0.0f;
+			results.endpos = start;
+			results.endAxis = trmAxis;
+			memset( &results.c, 0, sizeof( results.c ) );
+			results.c.point = start;
+			results.c.entityNum = ENTITYNUM_WORLD;
 
-		if ( mdl->GetEntity() ) {
-			gameLocal.Error( "huge translation for clip model %d on entity %d '%s'\n", mdl->GetId(), mdl->GetEntity()->entityNumber, mdl->GetEntity()->GetName() );
-		} else {
-			gameLocal.Error( "huge translation for clip model %d\n", mdl->GetId() );
+			if ( mdl->GetEntity() ) {
+				gameLocal.Error( "huge translation for clip model %d on entity %d '%s'\n", mdl->GetId(), mdl->GetEntity()->entityNumber, mdl->GetEntity()->GetName() );
+			} else {
+				gameLocal.Error( "huge translation for clip model %d\n", mdl->GetId() );
+			}
+			return true;
+#ifdef EVIL_FIX
 		}
-		return true;
+		else { return false; }	// FIXME FIXME FIXME
+#endif		
 	}
 	return false;
 }
