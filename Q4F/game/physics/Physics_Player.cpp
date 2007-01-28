@@ -1684,7 +1684,8 @@ bool idPhysics_Player::CheckJump( void ) {
 
 	// must wait for jump to be released
 	// 3j: easybunny
-	if ( ( current.movementFlags & PMF_JUMP_HELD ) && ( !pogo || skipNextPogo ) ) {
+	int phop = gameLocal.serverInfo.GetInt( "si_allowPogo" );
+	if ( ( current.movementFlags & PMF_JUMP_HELD ) && ( !pogo || skipNextPogo || !phop ) ) {
 		return false;
 	}
 
