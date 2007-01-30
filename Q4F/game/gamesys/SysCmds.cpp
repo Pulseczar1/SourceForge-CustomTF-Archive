@@ -520,7 +520,8 @@ void Cmd_Kill_f( const idCmdArgs &args ) {
 			player->Kill( false, false );
 
 // rhummer: localized this string.. (killed client)
-			cmdSystem->BufferCommandText( CMD_EXEC_NOW, va( "say %s %d '%s^0'\n", common->GetLocalizedString( "#str_108022" ), player->entityNumber, gameLocal.userInfo[ player->entityNumber ].GetString( "ui_name" ) ) );
+			// xavior: is there a reason the players says that he killed himself?
+			//cmdSystem->BufferCommandText( CMD_EXEC_NOW, va( "say %s %d '%s^0'\n", common->GetLocalizedString( "#str_108022" ), player->entityNumber, gameLocal.userInfo[ player->entityNumber ].GetString( "ui_name" ) ) );
 
 		}
 	} else {

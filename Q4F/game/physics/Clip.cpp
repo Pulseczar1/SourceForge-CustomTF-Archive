@@ -1354,8 +1354,12 @@ ID_INLINE bool TestHugeTranslation( trace_t &results, const idClipModel *mdl, co
 		// the moment to stop the crashes (or so I hope). 3j thinks it may have something
 		// to do with the way the flag is attached to the player model. Check it out,
 		//		- Xav
-		if (idStr::Cmp(mdl->GetEntity()->GetClassname(), "ctf_flag") != 0) 
+		int is_tfItem = mdl->GetEntity()->spawnArgs.GetBool( "showcarry", "0" );
+		//if (idStr::Cmp(mdl->GetEntity()->GetClassname(), "ctf_flag") != 0) // xav: old - doesnt work
+		if ( is_tfItem != 1 )
 		{
+			//idMultiplayerGame::PrintChatMessage( "%s is about to crash someone.\n", mdl->GetEntity()->GetClassname() );
+			//AddChatLine( "%s is about to crash someone.\n", mdl->GetEntity()->GetClassname() );
 #endif
 			//assert( 0 );
 
@@ -1367,7 +1371,7 @@ ID_INLINE bool TestHugeTranslation( trace_t &results, const idClipModel *mdl, co
 			results.c.entityNum = ENTITYNUM_WORLD;
 
 			if ( mdl->GetEntity() ) {
-				gameLocal.Error( "huge translation for clip model %d on entity %d '%s'\n", mdl->GetId(), mdl->GetEntity()->entityNumber, mdl->GetEntity()->GetName() );
+				gameLocal.Error( "huge translation for clip model %d on entity %d '%s' classname '%s'\n", mdl->GetId(), mdl->GetEntity()->entityNumber, mdl->GetEntity()->GetName(), mdl->GetEntity()->GetClassname() );
 			} else {
 				gameLocal.Error( "huge translation for clip model %d\n", mdl->GetId() );
 			}
