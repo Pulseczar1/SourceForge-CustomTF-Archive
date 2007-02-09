@@ -1568,8 +1568,14 @@ void idGameLocal::MapRestart() {
 				( !keyval->GetKey().Icmp( "si_pure" ) || !keyval->GetKey().Icmp( "si_map" ) ) ) {
 				break;
 			}
-
+			// some calculations about time are done from the frame, and
+			// that changes when si_fps changes.  full restart resets to 0.
+			if ( keyval->GetValue().Icmp( keyval2->GetValue() ) &&
+				!keyval->GetKey().Icmp( "si_fps" ) ) {
+				break;
+			}
 		}
+
 		cmdSystem->BufferCommandText( CMD_EXEC_NOW, "rescanSI" " " __FILE__ " " __LINESTR__ );
 
 		SetGameType( si_map.GetString() );
@@ -6734,7 +6740,8 @@ bool idGameLocal::NeedRestart() {
 			return true;
 		}
 		// a select set of si_ changes will cause a full restart of the server
-		if ( keyval->GetValue().Icmp( keyval2->GetValue() ) && ( !keyval->GetKey().Icmp( "si_pure" ) || !keyval->GetKey().Icmp( "si_map" ) ) ) {
+//		if ( keyval->GetValue().Icmp( keyval2->GetValue() ) && ( !keyval->GetKey().Icmp( "si_pure" ) || !keyval->GetKey().Icmp( "si_map" ) ) ) {
+		if ( keyval->GetValue().Icmp( keyval2->GetValue() ) && ( !keyval->GetKey().Icmp( "si_pure" ) || !keyval->GetKey().Icmp( "si_map" ) || !keyval->GetKey().Icmp( "si_fps" ) ) ) {
 			return true;
 		}
 	}
