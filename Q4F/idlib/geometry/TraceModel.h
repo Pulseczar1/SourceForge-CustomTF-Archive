@@ -72,7 +72,7 @@ public:
 						// axial bounding box
 						idTraceModel( const idBounds &boxBounds );
 						// cylinder approximation
-						idTraceModel( const idBounds &cylBounds, const int numSides );
+						idTraceModel( const idBounds &cylBounds, const int numSides, const bool alt_alignment = false );
 						// bone
 						idTraceModel( const float length, const float width );
 
@@ -86,7 +86,7 @@ public:
 	void				SetupDodecahedron( const idBounds &dodBounds );
 	void				SetupDodecahedron( const float size );
 						// cylinder approximation
-	void				SetupCylinder( const idBounds &cylBounds, const int numSides );
+	void				SetupCylinder( const idBounds &cylBounds, const int numSides, const bool alt_alignment = false );
 	void				SetupCylinder( const float height, const float width, const int numSides );
 						// cone approximation
 	void				SetupCone( const idBounds &coneBounds, const int numSides );
@@ -153,8 +153,8 @@ ID_INLINE idTraceModel::idTraceModel( const idBounds &boxBounds ) {
 	SetupBox( boxBounds );
 }
 
-ID_INLINE idTraceModel::idTraceModel( const idBounds &cylBounds, const int numSides ) {
-	SetupCylinder( cylBounds, numSides );
+ID_INLINE idTraceModel::idTraceModel( const idBounds &cylBounds, const int numSides, const bool alt_alignment ) {
+	SetupCylinder( cylBounds, numSides, alt_alignment );
 }
 
 ID_INLINE idTraceModel::idTraceModel( const float length, const float width ) {

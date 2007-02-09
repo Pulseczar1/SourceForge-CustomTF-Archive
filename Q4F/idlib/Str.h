@@ -70,6 +70,9 @@ const int C_COLOR_CONSOLE			= ':';
 // bdube: added
 #define S_COLOR_CONSOLE				"^:"
 // ddynerman: team colors
+//#define S_COLOR_MARINE				"^c683"
+//#define S_COLOR_STROGG				"^c950"
+//#define S_COLOR_ALERT				"^c920"
 #define S_COLOR_MARINE				"^c999"
 #define S_COLOR_STROGG				"^c999"
 #define S_COLOR_ALERT				"^c905"
@@ -350,6 +353,8 @@ public:
 	static idStr		FormatNumber( int number );
 
 	static void			Split( const char* source, idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\''  );
+
+	idStr				GetLastColorCode( void ) const;
 
 protected:
 	int					len;
