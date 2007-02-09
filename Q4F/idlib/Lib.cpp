@@ -548,7 +548,7 @@ void AssertFailed( const char *file, int line, const char *expression ) {
 	if ( idLib::sys ) {
 		idLib::sys->DebugPrintf( "\n\nASSERTION FAILED!\n%s(%d): '%s'\n", file, line, expression );
 	}
-	if ( common ) {
+	if ( common ) {			// Q4F
 		//common->Printf( "\n\nASSERTION FAILED!\n%s(%d): '%s'\n", file, line, expression );
 		common->Error( "\n\nASSERTION FAILED!\n%s(%d): '%s'\n", file, line, expression );
 	}

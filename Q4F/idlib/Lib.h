@@ -56,12 +56,41 @@ if ( !verify(game) ) {
 */
 
 //#ifdef _DEBUG
-void AssertFailed( const char *file, int line, const char *expression );
-#undef assert
-#define assert( x )		if ( x ) { } else AssertFailed( __FILE__, __LINE__, #x )
-#define verify( x )		( ( x ) ? true : ( AssertFailed( __FILE__, __LINE__, #x ), false ) )
+
+	#define ID_CONDITIONAL_ASSERT
+
+	void AssertFailed( const char *file, int line, const char *expression );
+	#undef assert
+	#ifdef ID_CONDITIONAL_ASSERT
+		// lets you disable an assertion at runtime when needed
+		// could extend this to count and produce an assert log - useful for 'release with asserts' builds
+		#define assert( x ) \
+		{ \
+			volatile static bool assert_enabled = true; \
+			if ( assert_enabled ) { \
+				if ( x ) { } else AssertFailed( __FILE__, __LINE__, #x );	\
+			} \
+		}
+		#define verify( x ) \
+		( \
+			( ( x ) ? true : ( \
+				( { \
+					volatile static bool assert_enabled = true; \
+					if ( assert_enabled ) { AssertFailed( __FILE__, __LINE__, #x ); } \
+				} ) \
+				, false ) ) \
+		)
+	#else
+		#define assert( x )		if ( x ) { } else AssertFailed( __FILE__, __LINE__, #x )
+		#define verify( x )		( ( x ) ? true : ( AssertFailed( __FILE__, __LINE__, #x ), false ) )
+	#endif
+
 //#else
-//#define verify( x )		( ( x ) ? true : false )
+
+//	#undef assert
+//	#define assert( x )
+//	#define verify( x )		( ( x ) ? true : false )
+
 //#endif
 
 #define assert_8_byte_aligned( pointer )		assert( (((UINT_PTR)(pointer))&7) == 0 );

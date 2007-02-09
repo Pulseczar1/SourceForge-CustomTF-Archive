@@ -89,6 +89,7 @@ typedef idSIMD_Xenon idSIMDProcessor;
 class idSIMDProcessor {
 public:
 									idSIMDProcessor( void ) { cpuid = CPUID_NONE; }
+									virtual ~idSIMDProcessor( void ) { }
 
 	cpuid_t							cpuid;
 

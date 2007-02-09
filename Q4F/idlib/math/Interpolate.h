@@ -14,6 +14,7 @@ template< class type >
 class idInterpolate {
 public:
 						idInterpolate();
+						virtual ~idInterpolate() { }
 
 	void				Init( const float startTime, const float duration, const type &startValue, const type &endValue );
 	void				SetStartTime( float time ) { this->startTime = time; }

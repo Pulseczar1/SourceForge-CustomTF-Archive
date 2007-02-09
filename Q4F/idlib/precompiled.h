@@ -152,7 +152,9 @@ class ThreadedAlloc;		// class that is only used to expand the AutoCrit template
 #include <float.h>				// for FLT_MIN
 
 	// SMP support for running the backend on a 2nd thread
+#ifndef ENABLE_INTEL_SMP
 	#define ENABLE_INTEL_SMP
+#endif
 	// Enables the batching of vertex cache request in SMP mode.
 	// Note (TTimo): is tied to ENABLE_INTEL_SMP
 	#define ENABLE_INTEL_VERTEXCACHE_OPT
@@ -352,7 +354,11 @@ const float MAX_BOUND_SIZE = 65536.0f;
 
 #if defined( Q4SDK ) || defined( GAME_DLL ) || defined( GAME_MONO )
 
+#ifdef GAME_MPAPI
+#include "../mpgame/Game_local.h"
+#else
 #include "../game/Game_local.h"
+#endif
 
 #else
 

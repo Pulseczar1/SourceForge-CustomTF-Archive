@@ -514,9 +514,10 @@ void idTraceModel::InitDodecahedron( void ) {
 /*
 ============
 idTraceModel::SetupCylinder
+alt_alignment makes even-sided cylinders align faces with the x/y axes
 ============
 */
-void idTraceModel::SetupCylinder( const idBounds &cylBounds, const int numSides ) {
+void idTraceModel::SetupCylinder( const idBounds &cylBounds, const int numSides, const bool alt_alignment ) {
 	int i, n, ii, n2;
 	float angle;
 	idVec3 halfSize;
@@ -538,6 +539,8 @@ void idTraceModel::SetupCylinder( const idBounds &cylBounds, const int numSides 
 		n = MAX_TRACEMODEL_POLYS - 2;
 	}
 
+	float angle_bias = alt_alignment ? (idMath::PI / n) : 0.0f;
+
 	type = TRM_CYLINDER;
 	numVerts = n * 2;
 	numEdges = n * 3;
@@ -546,7 +549,7 @@ void idTraceModel::SetupCylinder( const idBounds &cylBounds, const int numSides 
 	halfSize = cylBounds[1] - offset;
 	for ( i = 0; i < n; i++ ) {
 		// verts
-		angle = idMath::TWO_PI * i / n;
+		angle = (idMath::TWO_PI * i / n) + angle_bias;
 // RAVEN BEGIN
 		verts[i].x = idMath::Cos( angle ) * halfSize.x + offset.x;
 		verts[i].y = idMath::Sin( angle ) * halfSize.y + offset.y;

@@ -54,6 +54,7 @@ public:
 	void			WriteChar( int c );
 	void			WriteByte( int c );
 	void			WriteShort( int c );
+	void			WriteUShort( int c );
 	void			WriteLong( int c );
 	void			WriteFloat( float f );
 	void			WriteFloat( float f, int exponentBits, int mantissaBits );
@@ -81,6 +82,7 @@ public:
 	int				ReadChar( void ) const;
 	int				ReadByte( void ) const;
 	int				ReadShort( void ) const;
+	int				ReadUShort( void ) const;
 	int				ReadLong( void ) const;
 	float			ReadFloat( void ) const;
 	float			ReadFloat( int exponentBits, int mantissaBits ) const;
@@ -113,7 +115,6 @@ private:
 	int				writeBit;			// number of bits written to the last written byte
 	mutable int		readCount;			// number of bytes read so far
 	mutable int		readBit;			// number of bits read from the last read byte
-	int				numValueOverflows;	// number of bit value overflows
 	bool			allowOverflow;		// if false, generate an error when the message is overflowed
 	bool			overflowed;			// set to true if the buffer size failed (with allowOverflow set)
 
@@ -129,14 +130,12 @@ ID_INLINE void idBitMsg::Init( byte *data, int length ) {
 	writeData = data;
 	readData = data;
 	maxSize = length;
-	numValueOverflows = 0;
 }
 
 ID_INLINE void idBitMsg::Init( const byte *data, int length ) {
 	writeData = NULL;
 	readData = data;
 	maxSize = length;
-	numValueOverflows = 0;
 }
 
 ID_INLINE byte *idBitMsg::GetData( void ) {
@@ -273,6 +272,10 @@ ID_INLINE void idBitMsg::WriteShort( int c ) {
 	WriteBits( c, -16 );
 }
 
+ID_INLINE void idBitMsg::WriteUShort( int c ) {
+	WriteBits( c, 16 );
+}
+
 ID_INLINE void idBitMsg::WriteLong( int c ) {
 	WriteBits( c, 32 );
 }
@@ -343,6 +346,10 @@ ID_INLINE int idBitMsg::ReadByte( void ) const {
 
 ID_INLINE int idBitMsg::ReadShort( void ) const {
 	return (short)ReadBits( -16 );
+}
+
+ID_INLINE int idBitMsg::ReadUShort( void ) const {
+	return (unsigned short)ReadBits( 16 );
 }
 
 ID_INLINE int idBitMsg::ReadLong( void ) const {
@@ -422,6 +429,7 @@ public:
 	void			WriteChar( int c );
 	void			WriteByte( int c );
 	void			WriteShort( int c );
+	void			WriteUShort( int c );
 	void			WriteLong( int c );
 	void			WriteFloat( float f );
 	void			WriteFloat( float f, int exponentBits, int mantissaBits );
@@ -457,6 +465,7 @@ public:
 	int				ReadChar( void ) const;
 	int				ReadByte( void ) const;
 	int				ReadShort( void ) const;
+	int				ReadUShort( void ) const;
 	int				ReadLong( void ) const;
 	float			ReadFloat( void ) const;
 	float			ReadFloat( int exponentBits, int mantissaBits ) const;
@@ -538,6 +547,10 @@ ID_INLINE void idBitMsgDelta::WriteByte( int c ) {
 
 ID_INLINE void idBitMsgDelta::WriteShort( int c ) {
 	WriteBits( c, -16 );
+}
+
+ID_INLINE void idBitMsgDelta::WriteUShort( int c ) {
+	WriteBits( c, 16 );
 }
 
 ID_INLINE void idBitMsgDelta::WriteLong( int c ) {
@@ -652,6 +665,10 @@ ID_INLINE int idBitMsgDelta::ReadByte( void ) const {
 
 ID_INLINE int idBitMsgDelta::ReadShort( void ) const {
 	return (short)ReadBits( -16 );
+}
+
+ID_INLINE int idBitMsgDelta::ReadUShort( void ) const {
+	return (unsigned short)ReadBits( 16 );
 }
 
 ID_INLINE int idBitMsgDelta::ReadLong( void ) const {
@@ -804,6 +821,7 @@ public:
 	int				GetLast( void ) const { return last; }
 	void			CopyToBuffer( byte *buf ) const;
 
+	void			WriteTo( idBitMsg &msg );
 	void			FlushTo( idBitMsg &msg );
 	void			ReadFrom( const idBitMsg &msg );
 
@@ -820,7 +838,9 @@ private:
 	void			WriteByte( byte b );
 	byte			ReadByte( void );
 	void			WriteShort( int s );
+	void			WriteUShort( int s );
 	int				ReadShort( void );
+	int				ReadUShort( void );
 	void			WriteLong( int l );
 	int				ReadLong( void );
 	void			WriteData( const byte *data, const int size );

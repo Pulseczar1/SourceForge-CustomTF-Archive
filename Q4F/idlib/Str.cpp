@@ -33,7 +33,8 @@ idVec4	g_color_table[16] =
 	idVec4(0.0f, 0.0f, 0.0f, 1.0f), // S_COLOR_BLACK
 // RAVEN BEGIN
 // bdube: console color
-	idVec4(0.03f, 0.08f, 0.942f, 1.0f),	// S_COLOR_CONSOLE
+	idVec4(0.03f, 0.08f, 0.942f, 1.0f),	// S_COLOR_CONSOLE		// Q4F
+	//idVec4(0.94f, 0.62f, 0.05f, 1.0f),	// S_COLOR_CONSOLE
 // RAVEN END	
 	idVec4(0.0f, 0.0f, 0.0f, 1.0f),
 	idVec4(0.0f, 0.0f, 0.0f, 1.0f),
@@ -2215,3 +2216,18 @@ void idStr::Split( idList<idStr>& list, const char delimiter, const char groupDe
 	Split( c_str(), list, delimiter, groupDelimiter );
 }
 // RAVEN END
+
+idStr idStr::GetLastColorCode( void ) const {
+	for ( int i = Length(); i > 0; i-- ) {
+		int escapeType = 0;
+		int escapeLength = idStr::IsEscape( &data[i-1], &escapeType );
+
+		if ( escapeLength && ( escapeType == S_ESCAPE_COLORINDEX || S_ESCAPE_COLOR ) ) {
+			idStr result = "";
+			result.Append( &data[i-1], escapeLength );
+			return result;
+		}
+	}
+
+	return "";
+} 
