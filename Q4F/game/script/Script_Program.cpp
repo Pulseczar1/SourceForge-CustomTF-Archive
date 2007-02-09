@@ -1504,6 +1504,7 @@ idVarDef *idProgram::AllocDef( idTypeDef *type, const char *name, idVarDef *scop
 	def->scope		= scope;
 	def->numUsers	= 1;
 	def->num		= varDefs.Append( def );
+	def->compileStamp = compileStamp;
 
 	// add the def to the list with defs with this name and set the name pointer
 	AddDefToNameList( def, name );
@@ -2093,7 +2094,8 @@ size_t idProgram::ScriptSummary( const idCmdArgs &args ) {
 idProgram::CompileText
 ================
 */
-bool idProgram::CompileText( const char *source, const char *text, bool console ) {
+//bool idProgram::CompileText( const char *source, const char *text, bool console ) {
+bool idProgram::CompileText( const char *source, const char *text, bool console, bool fatal ) {
 	idCompiler	compiler;
 	int			i;
 	idVarDef	*def;
@@ -2110,6 +2112,8 @@ bool idProgram::CompileText( const char *source, const char *text, bool console 
 	ospath = fileSystem->RelativePathToOSPath( source );
 	filenum = GetFilenum( ospath );
 
+	++compileStamp;
+
 	try {
 		compiler.CompileFile( text, filename, console );
 
@@ -2125,7 +2129,17 @@ bool idProgram::CompileText( const char *source, const char *text, bool console 
 	}
 	
 	catch( idCompileError &err ) {
-		if ( console ) {
+		// attempt to recover by deleting anything new in the script
+		for( i = 0; i < varDefs.Num(); i++ ) {
+			def = varDefs[ i ];
+
+			if ( def->compileStamp == compileStamp ) {
+				FreeDef( def, def->scope );
+				i--;
+			}
+		}
+
+		if ( console || !fatal ) {
 			gameLocal.Printf( "%s\n", err.error );
 			return false;
 		} else {
@@ -2161,7 +2175,8 @@ const function_t *idProgram::CompileFunction( const char *functionName, const ch
 idProgram::CompileFile
 ================
 */
-void idProgram::CompileFile( const char *filename ) {
+bool idProgram::CompileFile( const char *filename, bool fatal ) {
+
 	char *src;
 	bool result;
 
@@ -2169,13 +2184,20 @@ void idProgram::CompileFile( const char *filename ) {
 		gameLocal.Error( "Couldn't load %s\n", filename );
 	}
 
-	result = CompileText( filename, src, false );
+	result = CompileText( filename, src, false, fatal );
 
 	fileSystem->FreeFile( src );
 
 	if ( !result ) {
-		gameLocal.Error( "Compile failed in file %s.", filename );
+		if ( fatal ) {
+			gameLocal.Error( "Compile failed in file %s.", filename );
+		} else {
+			gameLocal.Warning( "Compile failed in file %s.", filename );
+		}
+		return false;
 	}
+
+	return true;
 }
 
 /*
@@ -2220,6 +2242,8 @@ void idProgram::FreeData( void ) {
 	top_files		= 0;
 
 	filename = "";
+
+	compileStamp	= 0;
 }
 
 /*

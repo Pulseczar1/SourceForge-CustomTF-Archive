@@ -29,6 +29,8 @@
 
 static const unsigned	FILE_NOT_FOUND_TIMESTAMP	= 0xFFFFFFFF;
 static const int		MAX_PURE_PAKS				= 128;
+// master server can keep server updated with a list of allowed paks per OS
+static const int		MAX_GAMEPAK_PER_OS			= 10;
 static const int		MAX_OSPATH					= 256;
 
 // modes for OpenFileByMode. used as bit mask internally
@@ -259,11 +261,12 @@ public:
 							// with the sole exception of .cfg files.
 							// the function tries to configure pure mode from the paks already referenced and this new list
 							// it returns wether the switch was successfull, and sets the missing checksums
-							// the process is verbosive when fs_debug 1
-	virtual fsPureReply_t	SetPureServerChecksums( const int pureChecksums[ MAX_PURE_PAKS ], int gamePakChecksum, int missingChecksums[ MAX_PURE_PAKS ], int *missingGamePakChecksum ) = 0;
+							// use fs_debug 1 to verbose
+	virtual fsPureReply_t	SetPureServerChecksums( const int pureChecksums[ MAX_PURE_PAKS ], int gamePakChecksum[ MAX_GAMEPAK_PER_OS ], int missingChecksums[ MAX_PURE_PAKS ], int *missingGamePakChecksum, int *restartGamePakChecksu ) = 0;
 							// fills a 0-terminated list of pak checksums for a client
 							// if OS is -1, give the current game pak checksum. if >= 0, lookup the game pak table (server only)
-	virtual void			GetPureServerChecksums( int checksums[ MAX_PURE_PAKS ], int OS, int *gamePakChecksum ) = 0;
+							// indexes > 0 may be provided on servers when the master is giving additional game paks to let in
+	virtual void			GetPureServerChecksums( int checksums[ MAX_PURE_PAKS ], int OS, int gamePakChecksum[ MAX_GAMEPAK_PER_OS ] ) = 0;
 							// before doing a restart, force the pure list and the search order
 							// if the given checksum list can't be completely processed and set, will error out
 	virtual void			SetRestartChecksums( const int pureChecksums[ MAX_PURE_PAKS ], int gamePakChecksum ) = 0;
@@ -342,7 +345,13 @@ public:
 	virtual void			ClearDirCache( void ) = 0;
 
 							// lookup a relative path, return the size or 0 if not found
+	virtual int				RelativeDownloadPathForChecksum( int checksum, char path[ MAX_STRING_CHARS ] ) = 0;
+
+							// verify the file can be downloaded, lookup a relative path, return the size or 0 if not found
 	virtual int				ValidateDownloadPakForChecksum( int checksum, char path[ MAX_STRING_CHARS ], bool isGamePak ) = 0;
+
+							// verify the file can be downloaded, lookup an absolute (OS) path, return the size or 0 if not found
+	virtual int				ValidateDownloadPakForRelativePath( const char *relativePath, char path[ MAX_STRING_CHARS ], bool &isGamePakReturn ) = 0;
 
 	virtual idFile *		MakeTemporaryFile( void ) = 0;
 
@@ -368,7 +377,9 @@ public:
 							// get map/addon decls and take into account addon paks that are not on the search list
 							// the decl 'name' is in the "path" entry of the dict
 	virtual int				GetNumMaps() = 0;
+	virtual int				GetMapDeclIndex( const char *mapName ) = 0;
 	virtual const idDict *	GetMapDecl( int i ) = 0;
+	virtual const idDict *	GetMapDecl( const char *mapName ) = 0;
 	virtual void			FindMapScreenshot( const char *path, char *buf, int len ) = 0;
 
 // RAVEN BEGIN
@@ -391,6 +402,13 @@ public:
 	// new in 1.3
 	// indicates if the filesystem is currently running with pak files restrictions or addons
 	virtual bool			IsRunningWithRestrictions( void ) = 0;
+
+	// new in 1.4
+	virtual void			ReadCodePakLists( const idBitMsg &msg ) = 0;
+	virtual bool			HaveCodePakLists( void ) const = 0;
+
+	// pick best language - used by the core to pick a good default language based on present zpaks
+	virtual void			SelectDefaultLanguage( void ) = 0;
 };
 
 extern idFileSystem *		fileSystem;
