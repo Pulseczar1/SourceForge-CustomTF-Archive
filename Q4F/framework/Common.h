@@ -329,6 +329,12 @@ public:
 								// Returns the binding bound to the key
 	virtual const char *		BindingFromKey( const char *key ) = 0; 
 
+								// Directly sample a button.
+	virtual int					ButtonState( int key ) = 0;
+	
+								// Directly sample a keystate.
+	virtual int					KeyState( int key ) = 0;
+
 // mekberg: added
 	virtual int					GetRModeForMachineSpec( int machineSpec ) const = 0;
 	virtual void				SetDesiredMachineSpec( int machineSpec ) = 0;

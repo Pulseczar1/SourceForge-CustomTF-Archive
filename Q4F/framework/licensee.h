@@ -18,14 +18,15 @@
 #elif defined(_MPBETA)
 #define GAME_BUILD_TYPE					"MPBeta"
 #elif defined(_FINAL)
-#define GAME_BUILD_TYPE					"Final"
+#define GAME_BUILD_TYPE					""
 #elif defined(_RELEASE)
-#define	GAME_BUILD_TYPE					"Release"
+#define	GAME_BUILD_TYPE					""
 #endif
 
 // paths
 #define	CD_BASEDIR						"Quake4"
 #define	BASE_GAMEDIR					"q4base"
+#define	BASE_MPGAMEDIR					"q4mp"
 #define	DEMO_GAMEDIR					"demo"
 
 // filenames
@@ -70,6 +71,15 @@
 //RAVEN BEGIN
 #define	PORT_SERVER					28004
 //RAVEN END
+#endif
+
+// Q4TV default network repeater port
+#ifndef PORT_REPEATER
+#define PORT_REPEATER					28104
+#endif
+
+#ifndef PORT_HTTP
+#define PORT_HTTP					28004
 #endif
 
 // broadcast scan this many ports after PORT_SERVER so a single machine can run multiple servers

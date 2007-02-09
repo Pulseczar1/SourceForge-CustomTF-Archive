@@ -3,6 +3,15 @@
 
 #include "Game_local.h"
 
+struct game_name_s {
+	game_name_s( void ) {
+		sprintf( string, "Q4MP %s", VERSION_STRING_DOTTED );
+	}
+	char string[256];
+} game_name;
+
+idCVar gamename( "gamename", game_name.string, CVAR_GAME | CVAR_SERVERINFO | CVAR_ROM, "" );
+
 
 #include "../bse/BSEInterface.h"
 #include "Projectile.h"
@@ -162,6 +171,73 @@ void TestGameAPI( void ) {
 
 	testExport = *GetGameAPI( &testImport );
 }
+
+/*
+================
+idGameLocal::BuildModList
+================
+*/
+void idGameLocal::BuildModList( ) {
+	int i;
+	idStr currentMod;
+
+	int numServers = networkSystem->GetNumScannedServers();
+
+	if ( filterMod >= 0 && filterMod < modList.Num() ) {
+		currentMod = modList[ filterMod ];
+	} else {
+		currentMod = "";
+	}
+
+	modList.Clear();
+	for (i = 0; i < numServers; i++) {
+		const scannedServer_t *server;
+		idStr modname;
+
+		server = networkSystem->GetScannedServerInfo( i );
+
+		server->serverInfo.GetString( "fs_game", "", modname );
+		modname.ToLower();
+		modList.AddUnique( modname );
+	}
+
+	modList.Sort();
+
+	if ( modList.Num() > 0 && (modList[ 0 ].Cmp( "" ) == 0) ) {
+		modList.RemoveIndex( 0 );
+	}
+
+	filterMod = modList.Num();
+	for (i = 0; i < modList.Num(); i++) {
+		if ( modList[ i ].Icmp( currentMod ) == 0 ) {
+			filterMod = i;
+		}
+	}
+}
+
+/*
+================
+FilterByMod
+================
+*/
+static int FilterByMod( const int* serverIndex ) {
+	const scannedServer_t *server;
+
+	if ( gameLocal.filterMod < 0 || gameLocal.filterMod >= gameLocal.modList.Num() ) {
+		return (int)false;
+	}
+
+	server = networkSystem->GetScannedServerInfo( *serverIndex );
+
+	return (int)(gameLocal.modList[ gameLocal.filterMod ].Icmp( server->serverInfo.GetString( "fs_game" ) ) != 0);
+}
+
+static sortInfo_t filterByMod = {
+	SC_ALL,
+	NULL,
+	FilterByMod,
+	"#str_123006"
+};
 
 /*
 ===========
@@ -330,6 +406,16 @@ void idGameLocal::Clear( void ) {
 	demo_cursor = NULL;
 
 	demo_protocol = 0;
+
+//	instancesEntityIndexWatermarks.Clear();			// xav: SBH (Should Be Here)?
+//	clientInstanceFirstFreeIndex = MAX_CLIENTS;
+//	minSpawnIndex = MAX_CLIENTS;
+
+	modList.Clear();
+	filterMod = -1;
+	if ( networkSystem ) {
+		networkSystem->UseSortFunction( filterByMod, false );
+	}
 }
 
 /*
@@ -503,6 +589,7 @@ void idGameLocal::Init( void ) {
 	players.SetAllocatorHeap(rvGetSysHeap(RV_HEAP_ID_LEVEL));
 	//clip.SetAllocatorHeap(rvGetSysHeap(RV_HEAP_ID_LEVEL));
 #endif
+	networkSystem->AddSortFunction( filterByMod );
 
 }
 
@@ -530,6 +617,8 @@ void idGameLocal::Shutdown( void ) {
 
 
 	Printf( "--------------- Game Shutdown ---------------\n" );
+
+	networkSystem->RemoveSortFunction( filterByMod );
 
 	mpGame.Shutdown();
 
@@ -1491,7 +1580,8 @@ void idGameLocal::MapRestart() {
 		}*/
 
 		if ( i != newInfo.GetNumKeyVals() ) {
-			cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "nextMap" );
+			gameLocal.sessionCommand = "nextMap";
+			//cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "nextMap" );
 		} else {
 			outMsg.Init( msgBuf, sizeof( msgBuf ) );
 			outMsg.WriteByte( GAME_RELIABLE_MESSAGE_RESTART );

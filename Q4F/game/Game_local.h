@@ -57,7 +57,7 @@ const int CONTENTS_FORCEFIELD		= BIT(26);
 #endif
 
 extern idRenderWorld *				gameRenderWorld;
-
+#include "../sys/AutoVersion.h"
 // the "gameversion" client command will print this plus compile date
 #define	GAME_VERSION		"q4f"
 
@@ -572,6 +572,8 @@ public:
 
 	idFreeView				freeView;
 
+	int filterMod;
+	idList<idStr> modList;
 
 
 	// ---------------------- Public idGame Interface -------------------
@@ -595,6 +597,8 @@ public:
 
 	virtual bool			IsClientActive( int clientNum );
 
+	virtual const idDict *	RepeaterSetUserInfo( int clientNum, const idDict &userInfo ) { assert(false); return NULL; }
+
 	virtual const idDict &	GetPersistentPlayerInfo( int clientNum );
 	virtual void			SetPersistentPlayerInfo( int clientNum, const idDict &playerInfo );
 	virtual void			InitFromNewMap( const char *mapName, idRenderWorld *renderWorld, bool isServer, bool isClient, int randSeed );
@@ -610,22 +614,33 @@ public:
 	virtual gameReturn_t	RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame );
 	virtual	void			MenuFrame( void );
 
+	virtual void			RepeaterFrame( const userOrigin_t *clientOrigins, bool lastCatchupFrame ) {};
+
 	virtual bool			Draw( int clientNum );
 	virtual escReply_t		HandleESC( idUserInterface **gui );
 	virtual idUserInterface	*StartMenu( void );
 	virtual const char *	HandleGuiCommands( const char *menuCommand );
 	virtual void			HandleMainMenuCommands( const char *menuCommand, idUserInterface *gui );
 	virtual allowReply_t	ServerAllowClient( int clientId, int numClients, const char *IP, const char *guid, const char *password, const char *privatePassword, char reason[MAX_STRING_CHARS] );
-	virtual void			ServerClientConnect( int clientNum );
+	virtual void			ServerClientConnect( int clientNum, const char *guid );
 	virtual void			ServerClientBegin( int clientNum );
 	virtual void			ServerClientDisconnect( int clientNum );
 	virtual void			ServerWriteInitialReliableMessages( int clientNum );
 
+	virtual allowReply_t	RepeaterAllowClient( int clientId, int numClients, const char *IP, const char *guid, bool repeater, const char *password, const char *privatePassword, char reason[MAX_STRING_CHARS] ) { idStr::Copynz( reason, "#str_107239" /* zinx - FIXME - not banned... */, sizeof(reason) ); return ALLOW_NO; };
+	virtual void			RepeaterClientConnect( int clientNum ) {assert(false);};
+	virtual void			RepeaterClientBegin( int clientNum ) {assert(false);};
+	virtual void			RepeaterClientDisconnect( int clientNum ) {assert(false);};
+	virtual void			RepeaterWriteInitialReliableMessages( int clientNum ) {assert(false);};
 // jnewquist: Use dword array to match pvs array so we don't have endianness problems.
 	virtual void			ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients );
 
 	virtual bool			ServerApplySnapshot( int clientNum, int sequence );
 	virtual void			ServerProcessReliableMessage( int clientNum, const idBitMsg &msg );
+
+	virtual bool			RepeaterApplySnapshot( int clientNum, int sequence ) { assert(false); return false; }
+	virtual void			RepeaterProcessReliableMessage( int clientNum, const idBitMsg &msg ) { assert(false); }
+
 	virtual void			ClientReadSnapshot( int clientNum, int sequence, const int gameFrame, const int gameTime, const int dupeUsercmds, const int aheadOfServer, const idBitMsg &msg );
 	virtual bool			ClientApplySnapshot( int clientNum, int sequence );
 	virtual void			ClientProcessReliableMessage( int clientNum, const idBitMsg &msg );
@@ -644,6 +659,8 @@ public:
 	virtual void			SwitchTeam( int clientNum, int team );
 
 	virtual bool			DownloadRequest( const char *IP, const char *guid, const char *paks, char urls[ MAX_STRING_CHARS ] );
+
+	virtual bool			HTTPRequest( const char *IP, const char *file, bool isGamePak );
 
 
 // bdube: client hitscan
@@ -696,12 +713,26 @@ public:
 
 
 	virtual void			SetDemoState( demoState_t state, bool serverDemo, bool timeDemo );
+
+	virtual void			SetRepeaterState( bool isRepeater, bool serverIsRepeater ) {if (isRepeater || serverIsRepeater) Warning("Repeater does not work for single player.");};
+
 	virtual void			WriteNetworkInfo( idFile* file, int clientNum );
 	virtual void			ReadNetworkInfo( int gameTime, idFile* file, int clientNum );
 	virtual bool			ValidateDemoProtocol( int minor_ref, int minor );
 
 	virtual void			ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg );
 	virtual void			ClientReadServerDemoSnapshot( int sequence, const int gameFrame, const int gameTime, const idBitMsg &msg );
+
+	virtual void			RepeaterWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, const userOrigin_t &pvs_origin ) {assert(false);};
+	virtual void			RepeaterEndSnapshots( void ) {};
+	virtual void			ClientReadRepeaterSnapshot( int sequence, const int gameFrame, const int gameTime, const int aheadOfServer, const idBitMsg &msg ) {assert(false);};
+
+	virtual int				GetDemoFollowClient( void ) { return serverDemo ? followPlayer : -1; }
+
+	virtual void			GetBotInput( int clientNum, usercmd_t &userCmd ) { Error( "Bot input requested\n" ); };
+
+	virtual const char *	GetLoadingGui( const char *mapDeclName ) { return NULL; }
+	virtual void			SetupLoadingGui( idUserInterface *gui ) {}
 
 	// ---------------------- Public idGameLocal Interface -------------------
 
@@ -1094,6 +1125,8 @@ private:
 
 	bool					IsDemoReplayInAreas( int area1, int area2 );
 
+	void					BuildModList( void );
+
 public:
 	void					LoadBanList();
 	void					SaveBanList();
@@ -1249,45 +1282,6 @@ ID_INLINE const idDecl* idGameLocal::ReadDecl( const idBitMsgDelta &msg, declTyp
 }
 
 //============================================================================
-
-class idGameError : public idException {
-public:
-	idGameError( const char *text ) : idException( text ) {}
-};
-
-//============================================================================
-
-
-//
-// these defines work for all startsounds from all entity types
-// make sure to change script/doom_defs.script if you add any channels, or change their order
-//
-typedef enum {
-	SND_CHANNEL_ANY = SCHANNEL_ANY,
-	SND_CHANNEL_VOICE = SCHANNEL_ONE,
-	SND_CHANNEL_VOICE2,
-	SND_CHANNEL_BODY,
-	SND_CHANNEL_BODY2,
-	SND_CHANNEL_BODY3,
-	SND_CHANNEL_WEAPON,
-	SND_CHANNEL_ITEM,
-	SND_CHANNEL_HEART,
-	SND_CHANNEL_DEMONIC,
-	SND_CHANNEL_RADIO,
-
-	// internal use only.  not exposed to script or framecommands.
-	SND_CHANNEL_AMBIENT,
-	SND_CHANNEL_DAMAGE
-
-
-// bdube: added custom to tell us where the end of the predefined list is
-	,
-	SND_CHANNEL_POWERUP,
-	SND_CHANNEL_POWERUP_IDLE,
-	SND_CHANNEL_MP_ANNOUNCER,
-	SND_CHANNEL_CUSTOM
-
-} gameSoundChannel_t;
 
 // content masks
 #define	MASK_ALL					(-1)

@@ -170,7 +170,8 @@ allowReply_t idGameLocal::ServerAllowClient( int clientId, int numClients, const
 idGameLocal::ServerClientConnect
 ================
 */
-void idGameLocal::ServerClientConnect( int clientNum ) {
+//void idGameLocal::ServerClientConnect( int clientNum ) {
+void idGameLocal::ServerClientConnect( int clientNum, const char *guid ) {
 	// make sure no parasite entity is left
 	if ( entities[ clientNum ] ) {
 		common->DPrintf( "ServerClientConnect: remove old player entity\n" );
@@ -2519,6 +2520,31 @@ bool idGameLocal::DownloadRequest( const char *IP, const char *guid, const char 
 		idStr::Copynz( urls, reply, MAX_STRING_CHARS );
 		return true;
 	}
+}
+
+/*
+===============
+idGameLocal::HTTPRequest
+===============
+*/
+bool idGameLocal::HTTPRequest( const char *IP, const char *file, bool isGamePak ) {
+	idStrList	dlTable;
+	int			i;
+
+	if ( !idStr::Icmp( cvarSystem->GetCVarString( "net_serverDlTable" ), "*" ) ) {
+		return true;
+	}
+
+	Tokenize( dlTable, cvarSystem->GetCVarString( "net_serverDlTable" ) );
+	while ( *file == '/' ) ++file; // net_serverDlTable doesn't include the initial /
+
+	for ( i = 0; i < dlTable.Num(); i++ ) {
+		if ( !dlTable[ i ].Icmp( file ) ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /*

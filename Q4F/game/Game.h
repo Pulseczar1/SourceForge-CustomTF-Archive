@@ -9,12 +9,12 @@
 ===============================================================================
 */
 
-
+// RAVEN BEGIN
 // bgeisler: moved into scripts directory
 // default scripts
 #define SCRIPT_DEFAULTDEFS			"scripts/defs.script"
 #define SCRIPT_DEFAULT				"scripts/main.script"
-
+// RAVEN END
 #define SCRIPT_DEFAULTFUNC			"doom_main"
 
 struct gameReturn_t {
@@ -53,10 +53,41 @@ enum demoReliableGameMessage_t {
 	DEMO_RECORD_COUNT
 };
 
+//
+// these defines work for all startsounds from all entity types
+// make sure to change script/doom_defs.script if you add any channels, or change their order
+//
+typedef enum {
+	SND_CHANNEL_ANY = SCHANNEL_ANY,
+	SND_CHANNEL_VOICE = SCHANNEL_ONE,
+	SND_CHANNEL_VOICE2,
+	SND_CHANNEL_BODY,
+	SND_CHANNEL_BODY2,
+	SND_CHANNEL_BODY3,
+	SND_CHANNEL_WEAPON,
+	SND_CHANNEL_ITEM,
+	SND_CHANNEL_HEART,
+	SND_CHANNEL_DEMONIC,
+	SND_CHANNEL_RADIO,
 
+	// internal use only.  not exposed to script or framecommands.
+	SND_CHANNEL_AMBIENT,
+	SND_CHANNEL_DAMAGE
+
+// RAVEN BEGIN
+// bdube: added custom to tell us where the end of the predefined list is
+	,
+	SND_CHANNEL_POWERUP,
+	SND_CHANNEL_POWERUP_IDLE,
+	SND_CHANNEL_MP_ANNOUNCER,
+	SND_CHANNEL_CUSTOM
+// RAVEN END
+} gameSoundChannel_t;
+
+// RAVEN BEGIN
 // bdube: forward reference
 class rvClientEffect;
-
+// RAVEN END
 
 struct ClientStats_t {
 	bool	isLastPredictFrame;
@@ -64,12 +95,17 @@ struct ClientStats_t {
 	bool	isNewFrame;
 };
 
+typedef struct userOrigin_s {
+	idVec3	origin;
+	int		followClient;
+} userOrigin_t;
+
 class idGame {
 public:
 	virtual						~idGame() {}
 
 	// Initialize the game for the first time.
-
+// RAVEN BEGIN
 // jsinger: attempt to eliminate cross-DLL allocation issues
 #ifdef RV_UNIFIED_ALLOCATOR
 	virtual void				Init( void *(*allocator)( size_t size ), void (*deallocator)( void *ptr ), size_t (*msize)( void *ptr ) ) = 0;
@@ -89,6 +125,10 @@ public:
 
 	// Retrieve the game's userInfo dict for a client.
 	virtual const idDict *		GetUserInfo( int clientNum ) = 0;
+
+	// Sets the user info for a viewer.
+	// The game can modify the user info in the returned dictionary pointer.
+	virtual const idDict *		RepeaterSetUserInfo( int clientNum, const idDict &userInfo ) = 0;
 
 	// Checks to see if a client is active
 	virtual bool				IsClientActive( int clientNum ) = 0;
@@ -112,10 +152,10 @@ public:
 	virtual bool				InitFromSaveGame( const char *mapName, idRenderWorld *renderWorld, idFile *saveGameFile ) = 0;
 
 	// Saves the current game state, the session may have written some data to the file already.
-
+// RAVEN BEGIN
 // mekberg: added saveTypes
 	virtual void				SaveGame( idFile *saveGameFile, saveType_t saveType = ST_REGULAR ) = 0;
-
+// RAVEN END
 
 	// Shut down the current map.
 	virtual void				MapShutdown( void ) = 0;
@@ -126,7 +166,7 @@ public:
 	// Spawns the player entity to be used by the client.
 	virtual void				SpawnPlayer( int clientNum ) = 0;
 
-
+// RAVEN BEGIN
 	// Runs a game frame, may return a session command for level changing, etc
 	// lastCatchupFrame is always true except if we are running several game frames in a row and this one is not the last one
 	// subsystems which can tolerate skipping frames will not run during those catchup frames
@@ -134,7 +174,10 @@ public:
 	virtual gameReturn_t		RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame ) = 0;
 
 	virtual void				MenuFrame( void ) = 0;
+// RAVEN END
 
+	// Runs a repeater frame
+	virtual void				RepeaterFrame( const userOrigin_t *clientOrigins, bool lastCatchupFrame ) = 0;
 
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool				Draw( int clientNum ) = 0;
@@ -156,7 +199,7 @@ public:
 	virtual allowReply_t		ServerAllowClient( int clientId, int numClients, const char *IP, const char *guid, const char *password, const char *privatePassword, char reason[MAX_STRING_CHARS] ) = 0;
 
 	// Connects a client.
-	virtual void				ServerClientConnect( int clientNum ) = 0;
+	virtual void				ServerClientConnect( int clientNum, const char *guid ) = 0;
 
 	// Spawns the player entity to be used by the client.
 	virtual void				ServerClientBegin( int clientNum ) = 0;
@@ -167,17 +210,38 @@ public:
 	// Writes initial reliable messages a client needs to recieve when first joining the game.
 	virtual void				ServerWriteInitialReliableMessages( int clientNum ) = 0;
 
-	// Writes a snapshot of the server game state for the given client.
+	// Early check to deny connect.
+	virtual allowReply_t		RepeaterAllowClient( int clientId, int numClients, const char *IP, const char *guid, bool repeater, const char *password, const char *privatePassword, char reason[MAX_STRING_CHARS] ) = 0;
 
+	// Connects a client.
+	virtual void				RepeaterClientConnect( int clientNum ) = 0;
+
+	// Spawns the player entity to be used by the client.
+	virtual void				RepeaterClientBegin( int clientNum ) = 0;
+
+	// Disconnects a client and removes the player entity from the game.
+	virtual void				RepeaterClientDisconnect( int clientNum ) = 0;
+
+	// Writes initial reliable messages a client needs to recieve when first joining the game.
+	virtual void				RepeaterWriteInitialReliableMessages( int clientNum ) = 0;
+
+	// Writes a snapshot of the server game state for the given client.
+// RAVEN BEGIN
 // jnewquist: Use dword array to match pvs array so we don't have endianness problems.
 	virtual void				ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients ) = 0;
-
+// RAVEN END
 
 	// Patches the network entity states at the server with a snapshot for the given client.
 	virtual bool				ServerApplySnapshot( int clientNum, int sequence ) = 0;
 
 	// Processes a reliable message from a client.
 	virtual void				ServerProcessReliableMessage( int clientNum, const idBitMsg &msg ) = 0;
+
+	// Patches the network entity states at the server with a snapshot for the given client.
+	virtual bool				RepeaterApplySnapshot( int clientNum, int sequence ) = 0;
+
+	// Processes a reliable message from a client.
+	virtual void				RepeaterProcessReliableMessage( int clientNum, const idBitMsg &msg ) = 0;
 
 	// Reads a snapshot and updates the client game state.
 	virtual void				ClientReadSnapshot( int clientNum, int sequence, const int gameFrame, const int gameTime, const int dupeUsercmds, const int aheadOfServer, const idBitMsg &msg ) = 0;
@@ -191,7 +255,7 @@ public:
 	// Runs prediction on entities at the client.
 	virtual gameReturn_t		ClientPrediction( int clientNum, const usercmd_t *clientCmds, bool lastPredictFrame = true, ClientStats_t *cs = NULL ) = 0;
 
-
+// RAVEN BEGIN
 // ddynerman: client game frame
 	virtual void				ClientRun( void ) = 0;
 	virtual void				ClientEndFrame( void ) = 0;
@@ -199,7 +263,7 @@ public:
 // jshepard: rcon password check
 	virtual void				ProcessRconReturn( bool success ) = 0;
 
-
+// RAVEN END
 
 	virtual bool				ValidateServerSettings( const char *map, const char *gameType ) = 0;
 
@@ -211,7 +275,10 @@ public:
 
 	virtual bool				DownloadRequest( const char *IP, const char *guid, const char *paks, char urls[ MAX_STRING_CHARS ] ) = 0;
 
+	// return true to allow download from the built-in http server
+	virtual bool				HTTPRequest( const char *IP, const char *file, bool isGamePak ) = 0;
 
+// RAVEN BEGIN
 // jscott: for the effects system
 	virtual void				StartViewEffect( int type, float time, float scale ) = 0;
 	virtual rvClientEffect*		PlayEffect ( const idDecl *effect, const idVec3& origin, const idMat3& axis, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false, effectCategory_t category = EC_IGNORE, const idVec4& effectTint = vec4_one ) = 0;
@@ -254,17 +321,20 @@ public:
 // jshepard: updating player post-menu
 	virtual void				UpdatePlayerPostMainMenu( void ) = 0;
 	virtual void				ResetRconGuiStatus( void ) = 0;
+// RAVEN END
 
-
-
+// RAVEN BEGIN
 // mwhitlock: Dynamic memory consolidation
 #if defined(_RV_MEM_SYS_SUPPORT)
 	virtual void				FlushBeforelevelLoad( void ) = 0;
 #endif
-
+// RAVEN END
 
 	// Set the demo state.
 	virtual void				SetDemoState( demoState_t state, bool serverDemo, bool timeDemo ) = 0;
+
+	// Set the repeater state; engine will call this with true for isRepeater if this is a repeater, and true for serverIsRepeater if we are connected to a repeater
+	virtual void				SetRepeaterState( bool isRepeater, bool serverIsRepeater ) = 0;
 
 	// Writes current network info to a file (used as initial state for demo recording).
 	virtual void				WriteNetworkInfo( idFile* file, int clientNum ) = 0;
@@ -280,6 +350,27 @@ public:
 
 	// Read a snapshot from a server demo stream.
 	virtual void				ClientReadServerDemoSnapshot( int sequence, const int gameFrame, const int gameTime, const idBitMsg &msg ) = 0;
+
+	// Write a snapshot for repeater clients.
+	virtual void				RepeaterWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, const userOrigin_t &pvs_origin ) = 0;
+
+	// Done writing snapshots for repeater clients.
+	virtual void				RepeaterEndSnapshots( void ) = 0;
+
+	// Read a snapshot from a repeater stream.
+	virtual void				ClientReadRepeaterSnapshot( int sequence, const int gameFrame, const int gameTime, const int aheadOfServer, const idBitMsg &msg ) = 0;
+
+	// Get the currently followed client in demo playback
+	virtual int					GetDemoFollowClient( void ) = 0;
+
+	// Build a bot's userCmd
+	virtual void				GetBotInput( int clientNum, usercmd_t &userCmd ) = 0;
+
+	// Return the name of a gui to override the loading screen
+	virtual const char *		GetLoadingGui( const char *mapDeclName ) = 0;
+
+	// Set any additional gui variables needed by the loading screen
+	virtual void				SetupLoadingGui( idUserInterface *gui ) = 0;
 };
 
 extern idGame *					game;
@@ -294,15 +385,15 @@ extern idGame *					game;
 */
 
 struct refSound_t {
-
+// RAVEN BEGIN
 	int							referenceSoundHandle;	// this is the interface to the sound system, created
 														// with idSoundWorld::AllocSoundEmitter() when needed
-
+// RAVEN END
 	idVec3						origin;
-
+// RAVEN BEGIN
 // jscott: for Miles doppler
 	idVec3						velocity;
-
+// RAVEN END
 	int							listenerId;		// SSF_PRIVATE_SOUND only plays if == listenerId from PlaceListener
 												// no spatialization will be performed if == listenerID
 	const idSoundShader *		shader;			// this really shouldn't be here, it is a holdover from single channel behavior
@@ -322,14 +413,14 @@ enum {
 
 class idEntity;
 class idMD5Anim;
-
+// RAVEN BEGIN
 // bdube: more forward declarations
 class idProgram;
 class idInterpreter;
 class idThread;
 
 typedef void (*debugInfoProc_t) ( const char* classname, const char* name, const char* value, void *userdata );
-
+// RAVEN END
 
 // FIXME: this interface needs to be reworked but it properly separates code for the time being
 class idGameEdit {
@@ -347,31 +438,31 @@ public:
 	virtual idRenderModel *		ANIM_GetModelFromEntityDef( const idDict *args );
 	virtual idRenderModel *		ANIM_GetModelFromName( const char *modelName );
 	virtual const idMD5Anim *	ANIM_GetAnimFromEntityDef( const char *classname, const char *animname );
-
+// RAVEN BEGIN
 // bdube: added
 // scork: added 'const' qualifiers so other stuff would compile
 	virtual const idMD5Anim *	ANIM_GetAnimFromEntity( const idEntity* ent, int animNum );
 	virtual float				ANIM_GetAnimPlaybackRateFromEntity ( idEntity* ent, int animNum );
 	virtual const char*			ANIM_GetAnimNameFromEntity ( const idEntity* ent, int animNum );
-
+// RAVEN END
 	virtual int					ANIM_GetNumAnimsFromEntityDef( const idDict *args );
 	virtual const char *		ANIM_GetAnimNameFromEntityDef( const idDict *args, int animNum );
 	virtual const idMD5Anim *	ANIM_GetAnim( const char *fileName );
 	virtual int					ANIM_GetLength( const idMD5Anim *anim );
 	virtual int					ANIM_GetNumFrames( const idMD5Anim *anim );
-
+// RAVEN BEGIN
 // bdube: added
 	virtual const char *		ANIM_GetFilename( const idMD5Anim* anim );
 	virtual int					ANIM_ConvertFrameToTime ( const idMD5Anim* anim, int frame );
 	virtual int					ANIM_ConvertTimeToFrame ( const idMD5Anim* anim, int time );
-
+// RAVEN END
 	virtual void				ANIM_CreateAnimFrame( const idRenderModel *model, const idMD5Anim *anim, int numJoints, idJointMat *frame, int time, const idVec3 &offset, bool remove_origin_offset );
 	virtual idRenderModel *		ANIM_CreateMeshForAnim( idRenderModel *model, const char *classname, const char *animname, int frame, bool remove_origin_offset );
 
-
+// RAVEN BEGIN
 // mekberg: access to animationlib functions for radiant
 	virtual void				FlushUnusedAnims( void );
-
+// RAVEN END
 
 	// Articulated Figure calls for AF editor and Radiant.
 	virtual bool				AF_SpawnEntity( const char *fileName );
@@ -400,10 +491,10 @@ public:
 	virtual void				EntitySetOrigin( idEntity *ent, const idVec3 &org );
 	virtual void				EntitySetAxis( idEntity *ent, const idMat3 &axis );
 	virtual void				EntityTranslate( idEntity *ent, const idVec3 &org );
-
+// RAVEN BEGIN
 // scork: const-qualified 'ent' so other things would compile
 	virtual const idDict *		EntityGetSpawnArgs( const idEntity *ent ) const;
-
+// RAVEN END
 	virtual void				EntityUpdateChangeableSpawnArgs( idEntity *ent, const idDict *dict );
 	virtual void				EntityChangeSpawnArgs( idEntity *ent, const idDict *newArgs );
 	virtual void				EntityUpdateVisuals( idEntity *ent );
@@ -411,7 +502,7 @@ public:
 	virtual void				EntityStopSound( idEntity *ent );
 	virtual void				EntityDelete( idEntity *ent );
 	virtual void				EntitySetColor( idEntity *ent, const idVec3 color );
-
+// RAVEN BEGIN
 // bdube: added
 	virtual const char*			EntityGetName ( idEntity* ent ) const;
 	virtual int					EntityToSafeId( idEntity* ent ) const;
@@ -434,7 +525,7 @@ public:
 	virtual void				GetPlayerInfo( idVec3 &v3Origin, idMat3 &mat3Axis, int PlayerNum = -1, idAngles *deltaViewAngles = NULL ) const;
 	virtual void				SetPlayerInfo( idVec3 &v3Origin, idMat3 &mat3Axis, int PlayerNum = -1 ) const;
 	virtual void				EntitySetName( idEntity* pEnt, const char *psName );
-
+// RAVEN END
 
 	// Player methods.
 	virtual bool				PlayerIsValid() const;
@@ -442,7 +533,7 @@ public:
 	virtual void				PlayerGetAxis( idMat3 &axis ) const;
 	virtual void				PlayerGetViewAngles( idAngles &angles ) const;
 	virtual void				PlayerGetEyePosition( idVec3 &org ) const;
-
+// RAVEN BEGIN
 // bdube: new game edit stuff
 	virtual bool				PlayerTraceFromEye ( trace_t &results, float length, int contentMask );
 
@@ -458,7 +549,7 @@ public:
 	virtual bool				TracePoint ( trace_t &results, const idVec3 &start, const idVec3 &end, int contentMask ) const;
 	virtual void				CacheDictionaryMedia ( const idDict* dict ) const;
 	virtual void				SetCamera ( idEntity* camera ) const;
-
+// RAVEN BEGIN
 // bdube: added
 	virtual int					GetGameEntityRegisterTime ( void ) const;
 	virtual idEntity*			GetFirstSpawnedEntity ( void ) const;
@@ -468,7 +559,7 @@ public:
 	virtual	void				RecordPlayback( const usercmd_t &cmd, idEntity *source );
 	virtual	bool				PlayPlayback( void );
 	virtual	void				ShutdownPlaybacks( void );
-	
+// RAVEN END	
 	
 	// Script methods
 	virtual int					ScriptGetStatementLineNumber ( idProgram* program, int instructionPointer ) const;
@@ -497,7 +588,7 @@ public:
 	// In game map editing support.
 	virtual const idDict *		MapGetEntityDict( const char *name ) const;
 	virtual void				MapSave( const char *path = NULL ) const;
-
+// RAVEN BEGIN
 // rjohnson: added entity export
 	virtual bool				MapHasExportEntities( void ) const;
 // scork: simple func for the sound editor
@@ -509,7 +600,7 @@ public:
 	virtual size_t				ScriptSummary( const idCmdArgs &args ) const;
 	virtual size_t				ClassSummary( const idCmdArgs &args ) const;
 	virtual size_t				EntitySummary( const idCmdArgs &args ) const;
-
+// RAVEN END
 	virtual void				MapSetEntityKeyVal( const char *name, const char *key, const char *val ) const ;
 	virtual void				MapCopyDictToEntity( const char *name, const idDict *dict ) const;
 	virtual int					MapGetUniqueMatchingKeyVals( const char *key, const char *list[], const int max ) const;
@@ -521,7 +612,7 @@ public:
 
 extern idGameEdit *				gameEdit;
 
-
+// RAVEN BEGIN
 // bdube: game logging
 /*
 ===============================================================================
@@ -557,7 +648,7 @@ extern rvGameLog *				gameLog;
 #define GAMELOG_SET_IF(x,y,z)	{if(g_gamelog.GetBool()&&(z))gameLog->Set ( x, y );}
 #define GAMELOG_ADD_IF(x,y,z)	{if(g_gamelog.GetBool()&&(z))gameLog->Add ( x, y );}
 
-
+// RAVEN END
 
 /*
 ===============================================================================
@@ -576,7 +667,8 @@ extern rvGameLog *				gameLog;
 // 9: Q4 Gold
 // 10: Patch 2 changes
 // 14: 1.3
-const int GAME_API_VERSION		= 14;
+// 26: 1.4
+const int GAME_API_VERSION		= 26;
 
 struct gameImport_t {
 
@@ -595,18 +687,18 @@ struct gameImport_t {
 	idAASFileManager *			AASFileManager;			// AAS file manager
 	idCollisionModelManager *	collisionModelManager;	// collision model manager
 
-
+// RAVEN BEGIN
 // jscott:
 	rvBSEManager *				bse;					// Raven effects system
+// RAVEN END
 
-
-
+// RAVEN BEGIN
 // dluetscher: added the following members to exchange memory system data
 #ifdef _RV_MEM_SYS_SUPPORT
 	rvHeapArena *				heapArena;								// main heap arena that all other heaps use
 	rvHeap *					systemHeapArray[MAX_SYSTEM_HEAPS];		// array of pointers to rvHeaps that are common to idLib, Game, and executable 
 #endif
-
+// RAVEN END
 };
 
 struct gameExport_t {
@@ -614,10 +706,10 @@ struct gameExport_t {
 	int							version;				// API version
 	idGame *					game;					// interface to run the game
 	idGameEdit *				gameEdit;				// interface for in-game editing
-
+// RAVEN BEGIN
 // bdube: added
 	rvGameLog *					gameLog;				// interface for game logging
-	
+// RAVEN END	
 };
 
 extern "C" {

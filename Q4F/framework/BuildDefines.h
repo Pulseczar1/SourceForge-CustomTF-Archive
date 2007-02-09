@@ -23,7 +23,7 @@
 #endif
 
 #ifndef ID_ENABLE_CURL
-	#if !defined( _XENON ) && !defined( ID_DEDICATED )
+	#if !defined( _XENON )
 		#define ID_ENABLE_CURL 1
 	#else
 		#define ID_ENABLE_CURL 0
@@ -69,15 +69,6 @@
 //#define ID_DEMO_BUILD
 
 #if !defined( _WIN32 )
-	// DOA? didn't see the pbuffer code used at all through the game
+	// DOA? didn't see the pbuffer code used at all through the code
 	#define TMP_PBUFFSTUB
-#endif
-
-// string patchlevel, so I can tag my local modifications from the win32 build tree ( have no access to AutoVersion.h stuff )
-#ifndef ID_PATCHLEVEL
-	#if defined( __linux__ ) || defined( MACOS_X )
-		#define ID_PATCHLEVEL ".0"
-	#else
-		#define ID_PATCHLEVEL ""
-	#endif
 #endif

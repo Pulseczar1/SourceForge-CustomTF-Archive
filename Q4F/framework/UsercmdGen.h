@@ -18,8 +18,8 @@ const int USERCMD_MSEC_SP		= 1000 / USERCMD_HZ_SP;
 //const int USERCMD_HZ_MP			= 30;			// 30 frames per second
 //const int USERCMD_MSEC_MP		= 1000 / USERCMD_HZ_MP;
 
-const int USERCMD_HZ_MP			= 60;			// 60 frames per second
-const int USERCMD_MSEC_MP		= 1000 / USERCMD_HZ_MP;
+//const int USERCMD_HZ_MP			= 60;			// 60 frames per second
+//const int USERCMD_MSEC_MP		= 1000 / USERCMD_HZ_MP;
 
 // usercmd_t->button bits
 const int BUTTON_ATTACK			= BIT(0);
@@ -209,7 +209,7 @@ public:
 	virtual int			KeyState( int key ) = 0;
 
 	// Directly sample a usercmd.
-	virtual usercmd_t	GetDirectUsercmd( void ) = 0;
+	virtual usercmd_t	GetUsercmd( void ) = 0;
 
 //RAVEN BEGIN
 //asalmon: slow down the joystick movement for aim assist on xenon

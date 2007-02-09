@@ -2375,6 +2375,10 @@ void Cmd_FadeSound_f( const idCmdArgs &args )	{
 
 void Cmd_CheckSave_f( const idCmdArgs &args );
 
+void Cmd_ListMaps_f( const idCmdArgs& args ) {
+//	gameLocal.mpGame.ListMaps();		// xavior: i say.. ADD THEE!
+}
+
 /*
 =================
 idGameLocal::InitConsoleCommands
@@ -2396,6 +2400,7 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand( "listEntities",			Cmd_EntityList_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"lists game entities" );
 	cmdSystem->AddCommand( "listActiveEntities",	Cmd_ActiveEntityList_f,		CMD_FL_GAME|CMD_FL_CHEAT,	"lists active game entities" );
 	cmdSystem->AddCommand( "listSpawnArgs",			Cmd_ListSpawnArgs_f,		CMD_FL_GAME|CMD_FL_CHEAT,	"list the spawn args of an entity", idGameLocal::ArgCompletion_EntityName );
+	cmdSystem->AddCommand( "listMaps",				Cmd_ListMaps_f,				CMD_FL_GAME,				"list the available maps" );
 	cmdSystem->AddCommand( "say",					Cmd_Say_f,					CMD_FL_GAME,				"text chat" );
 	cmdSystem->AddCommand( "sayTeam",				Cmd_SayTeam_f,				CMD_FL_GAME,				"team text chat" );
 	//cmdSystem->AddCommand( "addChatLine",			Cmd_AddChatLine_f,			CMD_FL_GAME,				"internal use - core to game chat lines" );

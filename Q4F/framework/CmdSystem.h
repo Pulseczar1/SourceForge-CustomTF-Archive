@@ -78,6 +78,8 @@ public:
 						// Adds to the command buffer in tokenized form ( CMD_EXEC_NOW or CMD_EXEC_APPEND only )
 	virtual void		BufferCommandArgs( cmdExecution_t exec, const idCmdArgs &args ) = 0;
 
+						// Restore these cvars when the next reloadEngine is done
+	virtual void		SetupCVarsForReloadEngine( const idDict &dict ) = 0;
 						// Setup a reloadEngine to happen on next command run, and give a command to execute after reload
 	virtual void		SetupReloadEngine( const idCmdArgs &args ) = 0;
 	virtual bool		PostReloadEngine( void ) = 0;
