@@ -273,7 +273,7 @@
 				BrowseInformationFile="$(IntDir)/$(ProjectName)/"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
+				DebugInformationFormat="1"
 				CompileAs="0"
 			/>
 			<Tool
@@ -1108,11 +1108,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\Q4f\VoteSystem.cpp"
+					RelativePath=".\game\Q4F\VoteSystem.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\Q4f\VoteSystem.h"
+					RelativePath=".\game\Q4F\VoteSystem.h"
 					>
 				</File>
 				<File
