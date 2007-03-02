@@ -167,10 +167,11 @@ bool q4fServerBrowser::ParseServerString( const char* serverStr, int listIndex )
 	// 3 = punkbuster
 	// 4 = name
 	// 5 = ping
-	// 6 = players
-	// 7 = gametype
-	// 8 = map
-	// XavioR: Ok the above is moot because of QTV. "gametype" is now 8 instead of 7 (see below)
+	// 6 = QuakeTV (unsupported in Q4F browser at the moment)
+	// 7 = players
+	// 8 = gametype
+	// 9 = map
+	// XavioR: Updated the above to include 1.4's qtv
 
 	// first check if its our mod
 
@@ -232,26 +233,26 @@ bool q4fServerBrowser::ParseServerString( const char* serverStr, int listIndex )
 	//players
 	bool doingMax = false;
 	int index = 0;
-	while( vals[6][index] ) {
+	while( vals[7][index] ) {
 		if ( doingMax ) {
 			maxPlayers *= 10;
-			maxPlayers += ( vals[6][index] - '0' );
+			maxPlayers += ( vals[7][index] - '0' );
 		}
 		else {
-			if ( vals[6][index] == '/' ) {
+			if ( vals[7][index] == '/' ) {
 				doingMax = true;
 			}
 			else {
 				players *= 10;
-				players += ( vals[6][index] - '0' );
+				players += ( vals[7][index] - '0' );
 			}
 		}
 		index++;
 	}
-	strListCpy(6);
+	strListCpy(7);
 
 	// add map to listStr
-	strListCpy(8);
+	strListCpy(9);
 	strPos++;
 	*listStrPos = '\0';
 
