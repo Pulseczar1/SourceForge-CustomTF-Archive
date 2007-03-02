@@ -314,7 +314,7 @@ void TFGameState::Run( void ) {
 			tfStatManager->ClearRound();
 
 			if ( networkSystem->ServerGetServerTime() > 8*60*60*1000 ) {
-				cmdSystem->BufferCommandText( CMD_EXEC_NOW, "nextMap\n" );
+				cmdSystem->BufferCommandText( CMD_EXEC_NOW, "serverNextMap\n" );
 				return;
 			}
 
