@@ -5,7 +5,7 @@
 
 struct game_name_s {
 	game_name_s( void ) {
-		sprintf( string, "Q4MP %s", VERSION_STRING_DOTTED );
+		sprintf( string, "Q4F %s", "1.1c" );
 	}
 	char string[256];
 } game_name;
