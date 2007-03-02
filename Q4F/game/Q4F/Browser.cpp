@@ -170,10 +170,11 @@ bool q4fServerBrowser::ParseServerString( const char* serverStr, int listIndex )
 	// 6 = players
 	// 7 = gametype
 	// 8 = map
+	// XavioR: Ok the above is moot because of QTV. "gametype" is now 8 instead of 7 (see below)
 
 	// first check if its our mod
 
-	if ( idStr::Icmp( vals[7], "Q4F" ) ) {
+	if ( idStr::Icmp( vals[8], "Q4F" ) ) {
 		return false;
 	}
 
