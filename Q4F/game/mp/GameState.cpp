@@ -271,7 +271,10 @@ TFGameState::Run
 */
 void TFGameState::Run( void ) {
 	if ( currentState == INACTIVE ) {
-		NewState( WARMUP );
+		if( !gameLocal.serverInfo.GetBool( "si_warmup" ) )
+			NewState( GAMEON );
+		else
+			NewState( WARMUP );
 	}
 
 	if ( nextState != INACTIVE && gameLocal.time > nextStateTime ) {
@@ -340,6 +343,10 @@ void TFGameState::Run( void ) {
 					nextState = GAMEON;
 					nextStateTime = gameLocal.time;
 				}
+				//else if( !gameLocal.serverInfo.GetBool( "si_warmup" )/* && gameLocal.gameType != GAME_TOURNEY*/ ) {
+				//	nextState = GAMEON;
+				//	nextStateTime = gameLocal.time;
+				//}
 				else {
 					NewState( COUNTDOWN );
 					nextState = GAMEON;
@@ -411,7 +418,8 @@ void TFGameState::NewState( mpGameState_t newState ) {
 				p = GET_PLAYER( i );
 				if ( p ) {
 					if ( i != gameLocal.localClientNum )
-						gameLocal.mpGame.ServerWriteInitialReliableMessages( p->entityNumber );
+						gameLocal.mpGame.ServerWriteInitialReliableMessages( serverReliableSender.To( p->entityNumber, true ), p->entityNumber );
+						//gameLocal.mpGame.ServerWriteInitialReliableMessages( p->entityNumber );
 
 					p->ServerSpectate( p->wantSpectate || 
 						!gameLocal.mpGame.CanPlay( p ) );
