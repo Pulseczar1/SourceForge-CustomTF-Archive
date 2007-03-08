@@ -8626,8 +8626,15 @@ void idPlayer::RunAfflictions() {
 		if ( !gameLocal.isClient ) {
 			if ( dmgFireCount <= 0 ) {
 				afflictions &= ~AFFL_FIRE;
-				fxAfflFire->Stop( true );
-				fxAfflFire = NULL;
+				if ( !fxAfflFire )
+				{
+					//return;
+				}
+				else
+				{
+					fxAfflFire->Stop( true );
+					fxAfflFire = NULL;
+				}
 			}
 			else {
 				if ( gameLocal.time > ( lastDmgFire + fire_delay ) ) {
