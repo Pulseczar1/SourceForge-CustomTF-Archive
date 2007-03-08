@@ -418,8 +418,8 @@ void TFGameState::NewState( mpGameState_t newState ) {
 				p = GET_PLAYER( i );
 				if ( p ) {
 					if ( i != gameLocal.localClientNum )
-						gameLocal.mpGame.ServerWriteInitialReliableMessages( serverReliableSender.To( p->entityNumber, true ), p->entityNumber );
-						//gameLocal.mpGame.ServerWriteInitialReliableMessages( p->entityNumber );
+						//gameLocal.mpGame.ServerWriteInitialReliableMessages( serverReliableSender.To( p->entityNumber, true ), p->entityNumber );
+						gameLocal.mpGame.ServerWriteInitialReliableMessages( p->entityNumber );
 
 					p->ServerSpectate( p->wantSpectate || 
 						!gameLocal.mpGame.CanPlay( p ) );

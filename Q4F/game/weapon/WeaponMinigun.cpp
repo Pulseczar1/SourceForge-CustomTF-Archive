@@ -309,15 +309,15 @@ int Minigun::GetSpeedLimit() {
 	if ( !wsfl.attack ) {
 		return idMath::INT_MAX;
 	}
-
-	float speed = GetOwnerSpeed();
+	return (int)MAX_MOVE_SPEED;	// XavioR: fixes bug w/ minigunner where jumping resets to normal speed
+/*	float speed = GetOwnerSpeed();
 
 	if ( speed <= MAX_MOVE_SPEED ) {
 		return (int)MAX_MOVE_SPEED;
 	}
 	else {
 		return (int)(speed) - 5.0f;
-	}
+	}*/
 }
 
 bool Minigun::AllowFire() {
