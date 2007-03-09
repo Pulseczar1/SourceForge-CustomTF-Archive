@@ -123,5 +123,5 @@ void CrashLog_End();
 #define CLTYPE_EZQUAKE    8
 void SetConsoleToUserColor(client_t* theclient);
 
-#define QWSVVERSION  2.40
-#define CPSVVERSION  1.02
+#define QWSVVERSION  2.42
+#define CPSVVERSION  1.03

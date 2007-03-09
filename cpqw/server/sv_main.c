@@ -332,6 +332,7 @@ void SV_FullClientUpdate (client_t *client, sizebuf_t *buf)
 
 	strcpy (info, client->userinfo);
 	Info_RemovePrefixedKeys (info, '_');	// server passwords, etc
+//WK Alter Color info here! WOWOW!
 
 	MSG_WriteByte (buf, svc_updateuserinfo);
 	MSG_WriteByte (buf, i);
@@ -808,7 +809,7 @@ void SV_RetrieveClientVersion(client_t* theclient)
 			return;
 		}
 
-		if (!Q_strncasecmp(Info_ValueForKey(theclient->userinfo,"*ver"),"fte",99999))
+		if (!Q_strncasecmp(Info_ValueForKey(theclient->userinfo,"*ver"),"fte",3))
 		{
 			*(float*)((char*)&theclient->edict->v + cltype_offset) = (float)CLTYPE_FTEQUAKE;
 			*(float*)((char*)&theclient->edict->v + clversion_offset) = (float)0;

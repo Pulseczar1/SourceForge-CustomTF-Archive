@@ -651,6 +651,7 @@ void SV_Map_f (void)
 
 	SV_SpawnServer (level);
 
+	//WK WOWOW -- This is how you can access variables in the progs
 	// KK code setup start
 	team_no_offset = 0;			// setup team number code
 	if ((def = ED_FindField("team_no")))
@@ -667,9 +668,14 @@ void SV_Map_f (void)
 	runes_owned_offset = 0;
 	if ((def = ED_FindField("runes_owned")))
 		runes_owned_offset = def->ofs * 4;
+	job_offset = 0;
+	if ((def = ED_FindField("job")))
+		job_offset = def->ofs * 4;
 	KK_Setup_Color();	
 
-	Con_DPrintf("team_no_offset=0x%X\n", team_no_offset);
+	
+	//Sys_Printf("job_offset=0x%X\n",job_offset); //WK Print debug info for job
+	Con_DPrintf("team_no_offset=0x%X\n", team_no_offset); //Goes to server console
     Con_DPrintf("real_owner_offset=0x%X\n", real_owner_offset);
 	
 	SV_PrecacheUsage_f();

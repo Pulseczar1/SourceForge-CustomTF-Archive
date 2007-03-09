@@ -306,7 +306,7 @@ void SV_Multicast (vec3_t origin, int to)
 		SV_Error ("SV_Multicast: bad to:%i", to);
 	}
 
-	// send the data to all relevent clients
+	// send the data to all relevant clients
 	for (j = 0, client = svs.clients; j < MAX_CLIENTS; j++, client++)
 	{
 		if (client->state != cs_spawned)
@@ -696,6 +696,7 @@ void SV_UpdateToReliableMessages (void)
 		if (client->state < cs_connected)
 			continue;	// reliables go to all connected or spawned
 
+		//WK Hack the spy and thief fix here?? WOWOW
 		ClientReliableCheckBlock(client, sv.reliable_datagram.cursize);
 		ClientReliableWrite_SZ(client, sv.reliable_datagram.data, sv.reliable_datagram.cursize);
 
