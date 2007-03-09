@@ -507,6 +507,11 @@ void() monster_ogre =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_ogre;
 	COOP_SetLives ();
+
+	self.#npc_spikemult = 1.30;
+	self.#npc_explosionmult = 0.40;
+	self.#npc_electricitymult = 1.50;
+	self.#npc_firemult = 0.50;
 	
 	coop_walkmonster_start();
 };

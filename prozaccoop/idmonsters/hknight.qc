@@ -530,6 +530,12 @@ void() monster_hell_knight =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_hell_knight;
 	COOP_SetLives ();
+
+	self.#npc_bulletmult = 0.40;
+	self.#npc_spikemult = 0.40;
+	self.#npc_explosionmult = 0.60;
+	self.#npc_electricitymult = 2.10;
+	self.#npc_firemult = 0.50;
 	
 	coop_walkmonster_start ();
 };

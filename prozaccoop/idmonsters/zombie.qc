@@ -552,6 +552,12 @@ void() monster_zombie =
 	self.#npc_spawnfunc = monster_zombie;
 	COOP_SetLives ();
 
+	self.#npc_bulletmult = 0.50;
+	self.#npc_spikemult = 0.50;
+	self.#npc_explosionmult = 2.15;
+	self.#npc_electricitymult = 0.20;
+	self.#npc_firemult = 3.96;
+
 	if (self.spawnflags & #SPAWN_CRUCIFIED)
 	{
 		self.movetype = #MOVETYPE_NONE;

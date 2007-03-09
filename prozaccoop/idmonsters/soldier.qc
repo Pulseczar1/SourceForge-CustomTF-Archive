@@ -354,6 +354,8 @@ void() monster_army =
 	self.#npc_spawnfunc = monster_army;
 	COOP_SetLives ();
 
+	self.#npc_bulletmult = 0.80;
+
 	coop_walkmonster_start ();
 };
 
