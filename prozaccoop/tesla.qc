@@ -322,8 +322,8 @@ void() Tesla_Idle =
 	//self.waitmax holds if we have a target
 	if (self.waitmax) { //If we have target, shoot it
 		self.waitmax = Tesla_Fire();
-		if (!self.waitmax)
-			bprint (#PRINT_HIGH, "LOST TARGET!\n");
+//		if (!self.waitmax)
+//			bprint (#PRINT_HIGH, "LOST TARGET!\n");
 	}
 	
 	if (!self.waitmax)
