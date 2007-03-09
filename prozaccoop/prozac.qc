@@ -60,5 +60,5 @@ void() PrintProzacIntro =
     }
 
     //sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n ", #MSG_CUTFVERSION, " \n       Ιξζοςνατιοξ θονεπαηε:\n     www®telefragged®com―shaka\n\n\n");
-    sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n ", #MSG_CUTFVERSION, " \n       Ιξζοςνατιοξ θονεπαηε:\n  http:――www®customtf®com―forums\n\n\n");
+    sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n ", #MSG_CUTFVERSION, " \n       Ιξζοςνατιοξ θονεπαηε:\n  http:――customtf®sf®net―prozaccoop\n\n\n");
 };
