@@ -946,7 +946,7 @@ void rvWeapon::Think ( void ) {
 	}
 
 	// Clear reload and flashlight flags
-	wsfl.reload		= false;
+	//wsfl.reload		= false;
 	
 	// deal with the third-person visible world model 
 	// don't show shadows of the world model in first person
@@ -1388,9 +1388,15 @@ NOTE: this is only for impulse-triggered reload, auto reload is scripted
 ================
 */
 void rvWeapon::Reload( void ) {
+	if (wsfl.reload == true || wsfl.reloading == true )
+		return;
 	if ( ClipSize() > 0 ) {
 		//SetState ( WEAP_STATE_LOWER );	// xavior: fix the lack of gun lowering anim?
-		wsfl.reload = true;
+		if ( AmmoInClip() == ClipSize() )
+			return;
+		SetStage( 0 );		// 0 = STAGE_INIT
+		SetState ( WEAP_STATE_RELOAD );
+	//wsfl.reload = true;
 	}
 }
 
@@ -2167,6 +2173,14 @@ void rvWeapon::Attack( int num_attacks, float fuseOffset, float power, float spr
 
 	assert( owner );
 
+	if ( wsfl.reload == true || wsfl.reloading == true )
+	{
+		//gameLocal.mpGame.AddChatLine("state is.. %d\n", (int)currentState );
+		SetState ( WEAP_STATE_RAISE );
+		SetStage( 0 );
+		return;
+	}
+
 	// avoid all ammo considerations on an MP client
 	if ( !gameLocal.isClient ) {
 		// check if we're out of ammo or the clip is empty
@@ -2721,6 +2735,9 @@ void rvWeapon::GetDebugInfo ( debugInfoProc_t proc, void* userData ) {
 // <q4f> 
 
 void rvWeapon::AttackPressed() {
+	if ( wsfl.reloading == true || wsfl.reload == true )
+		return;
+
 	SetState( WEAP_STATE_FIRE );
 }
 
@@ -2810,8 +2827,13 @@ void rvWeapon::State_Raise() {
 
 		case STAGE_WAIT:
 			if ( gameLocal.time >= raiselower_endtime ) {
+//				if ( wsfl.reloading == false )
+//					nextAttackTime = gameLocal.time + 300;
 				lowerAmount = 0.0f;
+				SetStage( STAGE_INIT );
 				SetState ( WEAP_STATE_IDLE );
+				wsfl.reloading = false;
+				wsfl.reload = false;
 				return;
 			}
 
@@ -2879,6 +2901,7 @@ void rvWeapon::State_Lower() {
 		case STAGE_WAITRAISE:
 			if ( wsfl.raiseWeapon ) {
 				SetState ( WEAP_STATE_RAISE );
+				SetStage( STAGE_INIT );
 			}
 			return;
 	}
@@ -2897,7 +2920,8 @@ void rvWeapon::State_Idle() {
 			if ( !AmmoAvailable( ) ) {
 				SetStatus( WP_OUTOFAMMO );
 			} else {
-				SetStatus( WP_READY );
+				if ( wsfl.reloading == false && wsfl.reload == false )
+					SetStatus( WP_READY );
 			}
 
 			wsfl.attackPressed = false;
@@ -2919,33 +2943,35 @@ void rvWeapon::State_Idle() {
 			}
 
 			//stateResult_t next = SRESULT_WAIT;	// xav: ?
-
-			if ( wsfl.attack ) {
-				if ( gameLocal.time > nextAttackTime ) {
-					if ( AmmoInClip() != 0 ) {
-						if ( !wsfl.attackPressed ) {
-							wsfl.attackPressed = true;
-							AttackPressed();
-						}
-						else {
-							AttackHeld();
-						}
-					}
-					else {			// out of ammo
-						if ( ClipSize() > 0 ) {
-							if ( AutoReload() && AmmoAvailable() > AmmoInClip() ) {
-								SetState( WEAP_STATE_RELOAD );
-								SetStage( STAGE_INIT );
-								return/* SRESULT_DONE*/;	
+			if ( wsfl.reloading == false && wsfl.reload == false )
+			{
+				if ( wsfl.attack ) {
+					if ( gameLocal.time > nextAttackTime ) {
+						if ( AmmoInClip() != 0 ) {
+							if ( !wsfl.attackPressed ) {
+								wsfl.attackPressed = true;
+								AttackPressed();
+							}
+							else {
+								AttackHeld();
 							}
 						}
+						else {			// out of ammo
+							if ( ClipSize() > 0 ) {
+								if ( AutoReload() && AmmoAvailable() > AmmoInClip() ) {
+									SetState( WEAP_STATE_RELOAD );
+									SetStage( STAGE_INIT );
+									return/* SRESULT_DONE*/;	
+								}
+							}
+						}
+					}	// can't attack yet
+				}
+				else {	// not holding fire
+					if ( wsfl.attackPressed ) {
+						wsfl.attackPressed = false;
+						AttackReleased();
 					}
-				}	// can't attack yet
-			}
-			else {	// not holding fire
-				if ( wsfl.attackPressed ) {
-					wsfl.attackPressed = false;
-					AttackReleased();
 				}
 			}
 			// xavior: not sure if the below is needed
@@ -2985,6 +3011,10 @@ void rvWeapon::State_Fire() {
 		STAGE_INIT,
 		STAGE_WAIT,
 	};	
+
+	if ( wsfl.reloading == true || wsfl.reload == true )
+		// do something here
+		return;
 
 	switch ( currentStage ) {
 		case STAGE_INIT:
@@ -3071,6 +3101,7 @@ void rvWeapon::State_Reload() {
 					NetReload();
 
 				wsfl.reloading = true;
+				wsfl.reload = true;
 
 				//SetStatus( WP_RELOAD );		// just made "reload" blink on the HUD..
 				SetState ( WEAP_STATE_LOWER );
@@ -3088,7 +3119,7 @@ void rvWeapon::State_Reload() {
 			return;
 
 		case STAGE_WAIT:
-			if ( gameLocal.time > nextReloadTime ) {
+			if ( gameLocal.time >= nextReloadTime ) {
 				AddToClip( 1 );
 
 				if( AmmoInClip() < ClipSize() && AmmoAvailable() > AmmoInClip() ) {
@@ -3108,8 +3139,16 @@ void rvWeapon::State_Reload() {
 				}
 				SetState ( WEAP_STATE_RAISE );
 				SetStage( STAGE_INIT );
-				wsfl.reloading =	false;
+//				wsfl.reloading =	false;
 				return;
+			}
+			if ( gameLocal.isClient ) {
+				if ( AmmoInClip() >= ClipSize() ) {
+					SetStatus( WP_RELOADDONE );
+					SetState ( WEAP_STATE_RAISE );
+					SetStage( STAGE_INIT );
+					return;
+				}
 			}
 			SetStage( STAGE_WAIT );
 			return;
