@@ -4373,8 +4373,12 @@ void(entity targ, entity attacker) ClientObituary =
 	}
 
 	//- Miscellaneous monster/army deaths
+#ifdef COOP_MODE_ENHANCED
+	else if (IsMonster(targ)) {
+#else
 	if (IsMonster(targ))
 	{
+#endif
 		if (attacker.classname == "explo_box")
 		{
 			deathstring = " blew up\n";
