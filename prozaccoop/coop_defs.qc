@@ -1,0 +1,41 @@
+/*
+	coop_defs.qc
+*/
+
+#ifndef COOP_MODE_ENHANCED
+#pragma DONT_COMPILE_THIS_FILE
+#else
+
+
+// alternate teams
+#define TEAMNO_MONSTERS				100				// team number for monsters
+
+// monster weights, a monster can be inbetween these
+#define MWEIGHT_SMALL				80				// small monster
+#define MWEIGHT_NORMAL				160
+#define MWEIGHT_MEDIUM				290
+#define MWEIGHT_LARGE				500
+#define MWEIGHT_HUGE				1000
+
+// monster flags
+#define MFLAG_HASWEAPON				1				// used for judo, determines if he can be stunned
+#define MFLAG_HUMANOID				2				// dogs and other similar monsters won't have this flag
+#define MFLAG_ALMOSTHUMANOID			4				// almost looks like a humanoid
+#define MFLAG_BITER				8				// the monster can bite (IE: dogs)
+#define MFLAG_NOHEART				16				// mainly for warlock heart grabbing
+
+// macros for certain variables so we can reuse unused variables and still give it a unique name
+#define npc_speedfactor				speed
+#define npc_noticedelay				invisible_finished
+#define npc_spawnfunc				think1			// safe to use?
+#define npc_spawndelay				gravity
+#define npc_originalloc				pos1
+
+// globals
+float server_spawned;								// TRUE if server is spawned and ready to go
+
+// coop monster fields
+.float monsterweight;
+.float monsterflags;								// MFLAG_*** flags
+
+#endif
