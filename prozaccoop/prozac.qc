@@ -18,7 +18,7 @@
 #define MSG_CUTFVERSION		"ĞÒÏÚÁÃ CustomÔÆ VERSION 3-??-07"
 #endif
 
-#define MSG_INTRO  "Welcome to ĞÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®telefragged®com¯shaka\n\nŸ\n\n"
+#define MSG_INTRO  "Welcome to ĞÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®telefragged®com¯shaka\nModified for COOP By Ôèå Çéúíï\n\nŸ\n\n"
 #define MSG_INTRO2 "Based on the aussie ver by SB-1\nModified version by Clan Prozac\n\n" // Ÿ\n\n
 //#define MSG_INTRO3 "¨Lot of the stuff under test!!©\n\nClan¯Admin issuesº ask Pirivan!\nGeneral bitchingº ask your mom! :P"
 //#define MSG_INTRO3 "Send bug reports and comments to:\ngrunwÀcopc®es (àQuakeà as subject¡)"
