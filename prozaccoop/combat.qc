@@ -318,6 +318,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 ============
 */
 
+float (entity targ, float indmg, float attacktype) COOP_CalcEntityDamage;
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage =
 {
     local	vector	dir;
@@ -347,6 +348,12 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	if (!targ.takedamage)
         return;
+
+#ifdef COOP_MODE_ENHANCED
+	// certain monsters are weaker/stronger against certain types of attack
+	if (targ.team_no == #TEAMNO_MONSTERS)
+		damage = COOP_CalcEntityDamage (targ, damage, T_AttackType);
+#endif
 
 	//WK Set off land mines
 	if (targ.classname == "grenade" && targ.netname == "land_mine")

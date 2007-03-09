@@ -258,6 +258,8 @@ void() monster_demon1 =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_demon1;
 	COOP_SetLives ();
+
+	self.#npc_electricitymult = 1.40;
 		
 	coop_walkmonster_start();
 };

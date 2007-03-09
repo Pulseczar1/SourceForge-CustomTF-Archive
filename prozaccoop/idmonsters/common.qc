@@ -491,4 +491,42 @@ void (float respawntime, void() spawn_func) COOP_SetupRespawn =
 	newmon.think1 = spawn_func;
 };
 
+
+/*
+	COOP_CalcEntityDamage - calculates how much damage an entity should take based on it's damage multipliers
+
+	attacktype is the same as the last field on TF_T_Damage
+*/
+
+float (entity targ, float indmg, float attacktype) COOP_CalcEntityDamage =
+{
+	if (!targ.#npc_bulletmult)
+		targ.#npc_bulletmult = 1;
+	if (!targ.#npc_spikemult)
+		targ.#npc_spikemult = 1;
+	if (!targ.#npc_explosionmult)
+		targ.#npc_explosionmult = 1;
+	if (!targ.#npc_electricitymult)
+		targ.#npc_electricitymult = 1;
+	if (!targ.#npc_firemult)
+		targ.#npc_firemult = 1;
+	if (!targ.#npc_othermult)
+		targ.#npc_othermult = 1;
+
+	if (attacktype == #TF_TD_SHOT)
+		indmg = indmg * targ.#npc_bulletmult;
+	else if (attacktype == #TF_TD_NAIL)
+		indmg = indmg * targ.#npc_spikemult;
+	else if (attacktype == #TF_TD_EXPLOSION)
+		indmg = indmg * targ.#npc_explosionmult;
+	else if (attacktype == #TF_TD_ELECTRICITY)
+		indmg = indmg * targ.#npc_electricitymult;
+	else if (attacktype == #TF_TD_FIRE)
+		indmg = indmg * targ.#npc_firemult;
+	else if (attacktype == #TF_TD_OTHER)
+		indmg = indmg * targ.#npc_othermult;
+
+	return indmg;
+};
+
 #endif
