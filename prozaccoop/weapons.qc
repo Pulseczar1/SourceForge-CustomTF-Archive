@@ -5354,6 +5354,10 @@ void() DeadImpulses =
 		self.got_aliases = #TRUE;
 		self.impulse = 0;
 	}
+
+	// Gizmo - allow dead players to call for medic now that medics can resurrect
+	else if (self.impulse == #TF_MEDIC_HELPME && self.modelindex == modelindex_player)
+		TeamFortress_SaveMe();
 };
 
 
