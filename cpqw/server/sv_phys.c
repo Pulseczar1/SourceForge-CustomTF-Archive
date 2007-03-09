@@ -39,11 +39,11 @@ solid_edge items only clip against bsp models.
 
 */
 
-cvar_t	sv_maxvelocity = {"sv_maxvelocity","2000"}; 
+cvar_t	sv_maxvelocity = {"sv_maxvelocity","4000"}; //WK 1600. Increased so that things like nailguns work better
 
 cvar_t	sv_gravity			 = { "sv_gravity", "800"};    
 cvar_t	sv_stopspeed		 = { "sv_stopspeed", "100"};    
-cvar_t	sv_maxspeed			 = { "sv_maxspeed", "320"};    
+cvar_t	sv_maxspeed			 = { "sv_maxspeed", "500"}; //WK 320 (Cheetah is 410, want room for sprinters)
 cvar_t	sv_spectatormaxspeed = { "sv_spectatormaxspeed", "500"};
 cvar_t	sv_accelerate		 = { "sv_accelerate", "10"};     
 cvar_t	sv_airaccelerate	 = { "sv_airaccelerate", "0.7"};    

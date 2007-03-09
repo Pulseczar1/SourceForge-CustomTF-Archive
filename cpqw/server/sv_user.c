@@ -934,7 +934,8 @@ void SV_Say (qboolean team)
 		if(k>15) // For speed issues, we only want to look through the first 15 chars
 			k=15;
 		for(i=5; i<k; i++) {
-			if(p[i] != '\0' && p[i] != '"' && p[i] != ' ') { //is this a textual character?
+			//WK 1/7/7 if(p[i] != NULL && p[i] != '"' && p[i] != ' ') { //is this a textual character?
+			if(p[i] && p[i] != '"' && p[i] != ' ') { //is this a textual character?
 				isme=true; //it is, so let's let it go
 				break;
 			}
@@ -1338,9 +1339,18 @@ Allow clients to change userinfo
 */
 void SV_SetInfo_f (void)
 {
-	int i;
+	int i,j,k;
 	char oldval[MAX_INFO_STRING];
+	char info[MAX_INFO_STRING];
+	client_t *cl;
 
+	//WK Variables for the spy color hack logic, most can be eliminated...
+	int playing_tf = 1;
+	int	teams	= (int) KK_Global_Float("number_of_teams");
+	int same_team = 0; //Set TRUE if players are on the same team
+	int chosen_color = 0; //The color the client is changing to
+	int right_color = 0; //If resetting, set to the reset color of the team
+	int myteam = 0; //Holds the team number of the active client
 
 	if (Cmd_Argc() == 1)
 	{
@@ -1373,13 +1383,85 @@ void SV_SetInfo_f (void)
 	// process any changed values
 	SV_ExtractFromUserinfo (host_client);
 
-	i = host_client - svs.clients;
-	MSG_WriteByte (&sv.reliable_datagram, svc_setinfo);
-	MSG_WriteByte (&sv.reliable_datagram, i);
-	MSG_WriteString (&sv.reliable_datagram, Cmd_Argv(1));
-	MSG_WriteString (&sv.reliable_datagram, Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)));
-}
+	/* WK 1/7/7 Spy Color Hack WOWOW
+	   Send spy color changes to enemies only.
+	   Yourself and teammates see you in your team's colors (bottomcolor), with a topcolor of the enemy,
+	   so that you and your friends know that you are indeed disguised.
+	   Has enough logic to enable itself only during TF games.
+	*/
+	#define COLOR_TEAM_0	0
+	#define S_COLOR_TEAM_0 "0"
+	#define COLOR_TEAM_1	13
+	#define S_COLOR_TEAM_1 "13"
+	#define COLOR_TEAM_2	4
+	#define S_COLOR_TEAM_2 "4"
+	#define COLOR_TEAM_3	12
+	#define S_COLOR_TEAM_3 "12"
+	#define COLOR_TEAM_4	11
+	#define S_COLOR_TEAM_4 "11"
+	#define COLOR_TEAMKILLER 8
 
+	if (!strcmp(Cmd_Argv(1),"topcolor") || !strcmp(Cmd_Argv(1),"bottomcolor")) {
+		
+		//Figure out the logic, we only do the spy color hack in TF games with people on a team
+		myteam = KK_Team_No(host_client);
+		if (teams < 1 || teams > 4) playing_tf = 0;
+		if (strcmp(Info_ValueForKey(svs.info,"*gamedir"),"fortress")) playing_tf = 0;
+		chosen_color = atoi(Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)));
+
+		//Right_color only gets set if we're resetting our color to where it should be
+		//(If we are switching to our right color, we allow everyone to see the reset)
+		if (myteam == 0 && chosen_color == COLOR_TEAM_0 ||
+			myteam == 1 && chosen_color == COLOR_TEAM_1 ||
+			myteam == 2 && chosen_color == COLOR_TEAM_2 ||
+			myteam == 3 && chosen_color == COLOR_TEAM_3 ||
+			myteam == 4 && chosen_color == COLOR_TEAM_4) right_color = 1;
+		if (chosen_color == COLOR_TEAMKILLER) right_color = 1; //Handle TKers
+		
+		//Sys_Printf("Color Change to %i. (myteam: %i)\n",chosen_color,myteam);
+		//if (right_color) Sys_Printf("(Colors Reset)\n");
+		//else Sys_Printf("(Disguising)\n");
+
+		//"info" holds the userinfo array to be sent out to his team
+		//"host_client->userinfo", the real data, gets sent to his enemies instead
+		strcpy (info, host_client->userinfo);
+		Info_SetValueForKey(info,"topcolor",Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)),MAX_INFO_STRING);
+		if (myteam == 0) Info_SetValueForKey(info,"bottomcolor",S_COLOR_TEAM_0,MAX_INFO_STRING);
+		if (myteam == 1) Info_SetValueForKey(info,"bottomcolor",S_COLOR_TEAM_1,MAX_INFO_STRING);
+		if (myteam == 2) Info_SetValueForKey(info,"bottomcolor",S_COLOR_TEAM_2,MAX_INFO_STRING);
+		if (myteam == 3) Info_SetValueForKey(info,"bottomcolor",S_COLOR_TEAM_3,MAX_INFO_STRING);
+		if (myteam == 4) Info_SetValueForKey(info,"bottomcolor",S_COLOR_TEAM_4,MAX_INFO_STRING);
+		//Handle Resetting Colors correctly
+		if (right_color) Info_SetValueForKey(info,"bottomcolor",Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)),MAX_INFO_STRING);
+
+		//Now broadcast the info array to all teammates, and the normal array to all enemies
+		for (i=0, cl = svs.clients; i < MAX_CLIENTS; i++, cl++) {
+			j = KK_Team_No(cl);
+			same_team = (j == myteam);
+			if (same_team && j && playing_tf) {
+				//Sys_Printf("Client %i is on same team (team %i) as color changer, info sent\n",cl->userid,myteam);
+				k = host_client - svs.clients;
+				ClientReliableWrite_Begin(cl,svc_setinfo,18);
+				ClientReliableWrite_Byte(cl,k);
+				ClientReliableWrite_String(cl,Cmd_Argv(1));
+				ClientReliableWrite_String(cl,Info_ValueForKey(info, Cmd_Argv(1)));
+			} else {
+				k = host_client - svs.clients;
+				ClientReliableWrite_Begin(cl,svc_setinfo,18);
+				ClientReliableWrite_Byte(cl,k);
+				ClientReliableWrite_String(cl,Cmd_Argv(1));
+				ClientReliableWrite_String(cl,Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)));
+			}
+		}
+	} else {
+		//Not a color change, so pass it on as before
+		k = host_client - svs.clients;
+		MSG_WriteByte (&sv.reliable_datagram, svc_setinfo);
+		MSG_WriteByte (&sv.reliable_datagram, k);
+		MSG_WriteString (&sv.reliable_datagram, Cmd_Argv(1));
+		MSG_WriteString (&sv.reliable_datagram, Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)));
+	}
+}
 /*
 ==================
 SV_ShowServerinfo_f

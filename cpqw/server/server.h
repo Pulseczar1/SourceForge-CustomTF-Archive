@@ -229,6 +229,7 @@ extern int real_owner_offset;             // offset of "real_owner" in edict
 extern int cltype_offset;
 extern int clversion_offset;
 extern int runes_owned_offset;
+extern int job_offset;
 
 // a client can leave the server in one of four ways:
 // dropping properly by quiting or disconnecting

@@ -177,21 +177,22 @@ void SV_WriteDelta (entity_state_t *from, entity_state_t *to, sizebuf_t *msg, qb
 	if ( to->angles[2] != from->angles[2] )
 		bits |= U_ANGLE3;
 		
-	if ( to->colormap != from->colormap )
+	if ( to->colormap != from->colormap ) {
 		bits |= U_COLORMAP;
-		
-	if ( to->skinnum != from->skinnum )
+	}
+	if ( to->skinnum != from->skinnum ) {
 		bits |= U_SKIN;
-		
+	}
 	if ( to->frame != from->frame )
 		bits |= U_FRAME;
 	
 	if ( to->effects != from->effects )
 		bits |= U_EFFECTS;
 	
-	if ( to->modelindex != from->modelindex )
+	if ( to->modelindex != from->modelindex ) {
+		//printf("Test3\n");
 		bits |= U_MODEL;
-
+	}
 	if (bits & 511)
 		bits |= U_MOREBITS;
 
@@ -316,7 +317,7 @@ void SV_EmitPacketEntities (client_t *client, packet_entities_t *to, sizebuf_t *
 /*
 =============
 SV_WritePlayersToClient
-
+WK WOWOW
 =============
 */
 void SV_WritePlayersToClient (client_t *client, edict_t *clent, byte *pvs, sizebuf_t *msg)

@@ -196,6 +196,7 @@ void PF_setmodel (void)
 int team_no_offset;      // enitity offset of field 'team_no'
 int real_owner_offset;   // enitity offset of field 'real_owner'
 int runes_owned_offset;
+int job_offset; //WK
 
 int cltype_offset;
 int clversion_offset;

@@ -913,7 +913,7 @@ void ED_LoadFromFile (char *data)
 		data = ED_ParseEdict (data, ent);
 		
 // remove things from different skill levels or deathmatch
-		if (deathmatch.value && ((int)ent->v.spawnflags & SPAWNFLAG_NOT_DEATHMATCH))
+		if (((int)ent->v.spawnflags & SPAWNFLAG_NOT_DEATHMATCH))
 		{
 			ED_Free (ent);	
 			inhibit++;
@@ -974,7 +974,7 @@ void PR_LoadProgs (void)
 	if (!progs)
 		progs = (dprograms_t *)COM_LoadHunkFile ("qwprogs.dat");
 	if (!progs)
-		SV_Error ("PR_LoadProgs: couldn't load qwprogs.dat");
+		SV_Error ("PR_LoadProgs: couldn't load prozac.dat (qwprogs.dat)"); //WK 1/7/7
 	Con_DPrintf ("Programs occupy %iK.\n", com_filesize/1024);
 
 // add prog crc to the serverinfo
