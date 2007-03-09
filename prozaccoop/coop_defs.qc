@@ -31,6 +31,14 @@
 #define npc_spawndelay				gravity
 #define npc_originalloc				pos1
 
+// damage multipliers
+#define npc_bulletmult				money
+#define npc_spikemult				custom_speed
+#define npc_explosionmult			ff_count
+#define npc_electricitymult			hover_time
+#define npc_firemult				penance_time
+#define npc_othermult				has_cheated
+
 // globals
 float server_spawned;								// TRUE if server is spawned and ready to go
 
