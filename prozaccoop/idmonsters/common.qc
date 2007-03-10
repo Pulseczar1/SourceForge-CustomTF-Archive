@@ -514,10 +514,9 @@ float (entity targ, float indmg, float attacktype) COOP_CalcEntityDamage =
 		targ.#npc_othermult = 1;
 
 	// make summons and army soldiers stronger
-	if (GetMonsterName(targ) != "unknown monster" && targ.team_no != #TEAMNO_MONSTERS) {
-		bprint (#PRINT_HIGH, "TEST!\n");
+	if (GetMonsterName(targ) != "unknown monster" && targ.team_no != #TEAMNO_MONSTERS)
 		return indmg * 0.33;
-	} else if (targ.team_no != #TEAMNO_MONSTERS)
+	else if (targ.team_no != #TEAMNO_MONSTERS)
 		return indmg;
 
 	if (attacktype == #TF_TD_SHOT)
