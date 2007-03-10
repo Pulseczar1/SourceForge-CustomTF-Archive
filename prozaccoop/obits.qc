@@ -858,10 +858,27 @@ void(entity targ, entity attacker) ClientObituary =
 /*			targ.real_frags = targ.real_frags - 1;
 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
 				targ.frags = targ.real_frags;
-			
+
 #ifdef QUAKE_WORLD
 			logfrag (targ, targ);
 #endif
+*/
+			return;
+		}
+
+		// Gizmo - added idsoftware qw deathmatch code for double 666 telefrag, see tdeath_touch also
+		// double 666 telefrag (can happen often in deathmatch 4)
+		if (attacker.classname == "teledeath3") 
+		{
+			bprint (#PRINT_MEDIUM, targ.netname);
+			bprint (#PRINT_MEDIUM, " was telefragged by ");
+			bprint (#PRINT_MEDIUM, attacker.owner.netname);
+			bprint (#PRINT_MEDIUM, "'s Satan's power\n");
+
+			Give_Frags_Out (targ, targ, -1, 1, 1, 1, 0);
+/*
+			targ.frags = targ.frags - 1;
+			logfrag (targ, targ);
 */
 			return;
 		}

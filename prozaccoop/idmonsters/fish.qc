@@ -228,6 +228,8 @@ void() monster_fish =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_fish;
 	COOP_SetLives ();
+
+	self.#npc_electricitymult = 2.6;
 	
 	coop_swimmonster_start ();
 };

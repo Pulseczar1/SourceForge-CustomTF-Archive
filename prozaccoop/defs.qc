@@ -1766,9 +1766,9 @@ float		rj; 				// Rocket Jump Modifier
 
 // Maximum velocity you can move and fire the Sniper Rifle
 #define WEAP_SNIPER_RIFLE_MAX_MOVE	20
-#define WEAP_SNIPER_RIFLE_MAX_TIME	11
-#define WEAP_SNIPER_RIFLE_MIN_DAMG	50
-#define WEAP_SNIPER_RIFLE_MAX_DAMG	450		// 380
+#define WEAP_SNIPER_RIFLE_MAX_TIME	11.5
+#define WEAP_SNIPER_RIFLE_MIN_DAMG	60
+#define WEAP_SNIPER_RIFLE_MAX_DAMG	600		// 380
 
 // Medikit
 #define WEAP_MEDIKIT_HEAL	200  // Amount medikit heals per hit

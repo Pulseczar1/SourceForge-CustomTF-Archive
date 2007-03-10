@@ -357,6 +357,9 @@ void() TeamFortress_ChangeClass =
 		self.invincible_time = 1;
 		self.invincible_finished = time + #RESPAWN_GUARD_TIME;
 	}
+
+	// Gizmo - enable telefragging when chosing a stock class
+	spawn_tdeath (self.origin, self);
 };
 
 //=========================================================================
