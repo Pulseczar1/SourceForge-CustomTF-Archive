@@ -7,9 +7,9 @@
 #else
 
 
-#define IDMON_DOG_HEALTH		200
-#define IDMON_DOG_BITEDMG		50
-#define IDMON_DOG_JUMPDMG		140
+#define IDMON_DOG_HEALTH		120
+#define IDMON_DOG_BITEDMG		60
+#define IDMON_DOG_JUMPDMG		80
 #define IDMON_DOG_JUMPVEL		700
 
 

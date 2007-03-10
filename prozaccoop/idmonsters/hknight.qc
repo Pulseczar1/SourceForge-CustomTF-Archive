@@ -10,8 +10,8 @@
 #else
 
 
-#define IDMON_HKNIGHT_HEALTH		600
-#define IDMON_HKNIGHT_SPIKEDMG	75
+#define IDMON_HKNIGHT_HEALTH		350
+#define IDMON_HKNIGHT_SPIKEDMG	70	// was 85
 
 
 /*
@@ -136,7 +136,7 @@ void(float offset) hknight_shot =
 	newmis.owner = self;
 	setmodel (newmis, "progs/k_spike.mdl");
 	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
-	newmis.velocity = vec*900;
+	newmis.velocity = vec*820;		// was 900
 	sound (self, #CHAN_WEAPON, "hknight/attack1.wav", 1, #ATTN_NORM);
 };
 

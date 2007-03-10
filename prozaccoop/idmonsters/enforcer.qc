@@ -8,7 +8,7 @@
 #else
 
 
-#define IDMON_ENFORCER_HEALTH		500
+#define IDMON_ENFORCER_HEALTH		300
 #define IDMON_ENFORCER_ZAPDMG		60
 
 

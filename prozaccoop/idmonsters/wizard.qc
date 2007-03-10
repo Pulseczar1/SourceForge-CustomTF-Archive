@@ -7,7 +7,7 @@
 #else
 
 
-#define IDMON_WIZARD_HEALTH		239
+#define IDMON_WIZARD_HEALTH		220
 #define IDMON_WIZARD_SPIKEDMG		100		// 150
 
 

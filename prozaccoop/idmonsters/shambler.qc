@@ -8,9 +8,9 @@
 
 
 #define IDMON_SHAMBLER_HEALTH		3000
-#define IDMON_SHAMBLER_LIGHTNINGDMG	50
-#define IDMON_SHAMBLER_CLAWDMG	400
-#define IDMON_SHAMBLER_SMASHDMG	600
+#define IDMON_SHAMBLER_LIGHTNINGDMG	25
+#define IDMON_SHAMBLER_CLAWDMG	125
+#define IDMON_SHAMBLER_SMASHDMG	220
 
 #define _sham_healtime			invincible_finished
 
@@ -479,6 +479,8 @@ void() monster_shambler =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_shambler;
 	COOP_SetLives ();
+
+	self.#npc_electricitymult = 0.25;
 
 	coop_walkmonster_start();
 };

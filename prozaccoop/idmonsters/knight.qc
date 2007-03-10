@@ -9,7 +9,7 @@
 #else
 
 
-#define IDMON_KNIGHT_HEALTH		500
+#define IDMON_KNIGHT_HEALTH		300
 #define IDMON_KNIGHT_SLASHDMG		14
 
 
