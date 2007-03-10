@@ -931,7 +931,7 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 
 #ifdef COOP_MODE_ENHANCED
 			// teslas always target coop monsters in coop mode
-			else if (head.team_no == #TEAMNO_MONSTERS && head.health > 0)
+			else if (head.team_no == #TEAMNO_MONSTERS && head.health > 0 && head.takedamage)
 				gotatarget = 1;
 #endif
 			else if (scanner.tf_items & #NIT_SCANNER && scanner.team_no > 0) //Improved targeter targets monsters and soldiers
