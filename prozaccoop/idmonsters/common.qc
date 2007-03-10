@@ -498,8 +498,18 @@ void (float respawntime, void() spawn_func) COOP_SetupRespawn =
 	attacktype is the same as the last field on TF_T_Damage
 */
 
-float (entity targ, float indmg, float attacktype) COOP_CalcEntityDamage =
+float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEntityDamage =
 {
+	local float monster_mode;
+
+	// check for insane mode, thought about putting this in StartFrame, but I'd bet T_Damage gets called less overall
+	monster_mode = stof (infokey(world, "monster_mode"));
+	if (monster_mode == 1) {
+		if (attacker.team_no == #TEAMNO_MONSTERS && targ.classname == "player")
+			return indmg * 2;
+	}
+
+
 	if (!targ.#npc_bulletmult)
 		targ.#npc_bulletmult = 1;
 	if (!targ.#npc_spikemult)
@@ -515,7 +525,7 @@ float (entity targ, float indmg, float attacktype) COOP_CalcEntityDamage =
 
 	// make summons and army soldiers stronger
 	if (GetMonsterName(targ) != "unknown monster" && targ.team_no != #TEAMNO_MONSTERS)
-		return indmg * 0.33;
+		return indmg * 0.50;
 	else if (targ.team_no != #TEAMNO_MONSTERS)
 		return indmg;
 

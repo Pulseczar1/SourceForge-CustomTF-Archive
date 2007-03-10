@@ -20,8 +20,8 @@
 #else
 
 
-#define IDMON_GRUNT_HEALTH		240
-#define IDMON_GRUNT_SGUNBULLETS	12
+#define IDMON_GRUNT_HEALTH		200
+#define IDMON_GRUNT_SGUNBULLETS	10
 
 #define IDMON_GRUNT_EXPAINTIME	8
 
@@ -234,7 +234,7 @@ void() army_fire =
 	
 	// FIXME: distance, and possibly make damage multiplied by number of players?
 	deathmsg = #DMSG_SHOTGUN;
-	FireBullets (#IDMON_GRUNT_SGUNBULLETS, dir, '0.14 0.14 0', 9999);
+	FireBullets (#IDMON_GRUNT_SGUNBULLETS, dir, '0.11 0.11 0', 9999);
 };
 
 
