@@ -353,7 +353,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 #ifdef COOP_MODE_ENHANCED
 	// certain monsters are weaker/stronger against certain types of attack
-	if (targ.team_no == #TEAMNO_MONSTERS)
+	//if (targ.team_no == #TEAMNO_MONSTERS)
 		damage = COOP_CalcEntityDamage (targ, damage, T_AttackType);
 #endif
 
