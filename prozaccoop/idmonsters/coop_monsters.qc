@@ -145,6 +145,11 @@ void() coop_walkmonster_start_go =
 
 void() coop_walkmonster_start =
 {
+	if (CheckExistence() == #FALSE) {
+		remove(self);
+		return;
+	}
+
 	self.#npc_originalloc = self.origin;
 
 // delay drop to floor to make sure all doors have been spawned
@@ -211,6 +216,11 @@ void() coop_flymonster_start_go =
 
 void() coop_flymonster_start =
 {
+	if (CheckExistence() == #FALSE) {
+		remove(self);
+		return;
+	}
+
 	self.#npc_originalloc = self.origin;
 
 // spread think times so they don't all happen at same time
@@ -263,6 +273,11 @@ void() coop_swimmonster_start_go =
 
 void() coop_swimmonster_start =
 {
+	if (CheckExistence() == #FALSE) {
+		remove(self);
+		return;
+	}
+
 	self.#npc_originalloc = self.origin;
 
 // spread think times so they don't all happen at same time

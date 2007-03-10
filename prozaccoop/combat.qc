@@ -318,7 +318,9 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 ============
 */
 
+#ifdef COOP_MODE_ENHANCED
 float (entity targ, float indmg, float attacktype) COOP_CalcEntityDamage;
+#endif
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage =
 {
     local	vector	dir;

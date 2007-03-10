@@ -821,6 +821,12 @@ void() weapon_supershotgun =
 		return;
 	}
 
+#ifdef COOP_MODE_ENHANCED
+	// always remove single player weapons in coop
+	remove (self);
+	return;
+#else
+
 	precache_model ("progs/g_shot.mdl");
 	setmodel (self, "progs/g_shot.mdl");
 	self.weapon = #WEAP_SUPER_SHOTGUN;
@@ -828,6 +834,7 @@ void() weapon_supershotgun =
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
+#endif
 };
 
 /*QUAKED weapon_nailgun (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -841,6 +848,12 @@ void() weapon_nailgun =
 		return;
 	}
 
+#ifdef COOP_MODE_ENHANCED
+	// always remove single player weapons in coop
+	remove (self);
+	return;
+#else
+
 	precache_model ("progs/g_nail.mdl");
 	setmodel (self, "progs/g_nail.mdl");
 	self.weapon = #WEAP_NAILGUN;
@@ -848,6 +861,7 @@ void() weapon_nailgun =
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
+#endif
 };
 
 /*QUAKED weapon_supernailgun (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -861,6 +875,12 @@ void() weapon_supernailgun =
 		return;
 	}
 
+#ifdef COOP_MODE_ENHANCED
+	// always remove single player weapons in coop
+	remove (self);
+	return;
+#else
+
 	precache_model ("progs/g_nail2.mdl");
 	setmodel (self, "progs/g_nail2.mdl");
 	self.weapon = #WEAP_LIGHT_ASSAULT;
@@ -868,6 +888,7 @@ void() weapon_supernailgun =
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
+#endif
 };
 
 /*QUAKED weapon_grenadelauncher (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -881,6 +902,12 @@ void() weapon_grenadelauncher =
 		return;
 	}
 
+#ifdef COOP_MODE_ENHANCED
+	// always remove single player weapons in coop
+	remove (self);
+	return;
+#else
+
 	precache_model ("progs/g_rock.mdl");
 	setmodel (self, "progs/g_rock.mdl");
 	self.weapon = 3;
@@ -888,6 +915,7 @@ void() weapon_grenadelauncher =
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
+#endif
 };
 
 /*QUAKED weapon_rocketlauncher (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -901,6 +929,12 @@ void() weapon_rocketlauncher =
 		return;
 	}
 
+#ifdef COOP_MODE_ENHANCED
+	// always remove single player weapons in coop
+	remove (self);
+	return;
+#else
+
 	precache_model ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
 	self.weapon = 3;
@@ -908,6 +942,7 @@ void() weapon_rocketlauncher =
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
+#endif
 };
 
 
@@ -923,6 +958,12 @@ void() weapon_lightning =
 		return;
 	}
 
+#ifdef COOP_MODE_ENHANCED
+	// always remove single player weapons in coop
+	remove (self);
+	return;
+#else
+
 	precache_model ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
 	self.weapon = 3;
@@ -930,6 +971,7 @@ void() weapon_lightning =
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
+#endif
 };
 
 

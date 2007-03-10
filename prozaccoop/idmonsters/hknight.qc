@@ -11,7 +11,7 @@
 
 
 #define IDMON_HKNIGHT_HEALTH		600
-#define IDMON_HKNIGHT_SPIKEDMG	85
+#define IDMON_HKNIGHT_SPIKEDMG	75
 
 
 /*
@@ -534,7 +534,7 @@ void() monster_hell_knight =
 	self.#npc_bulletmult = 0.40;
 	self.#npc_spikemult = 0.40;
 	self.#npc_explosionmult = 0.60;
-	self.#npc_electricitymult = 2.10;
+	self.#npc_electricitymult = 3;
 	self.#npc_firemult = 0.50;
 	
 	coop_walkmonster_start ();
