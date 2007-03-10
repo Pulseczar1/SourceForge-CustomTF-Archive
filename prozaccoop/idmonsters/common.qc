@@ -28,6 +28,7 @@ float (entity start, entity end) COOP_SightBlocked =
 	if (trace_inopen && trace_inwater)
 		return #TRUE;
 
+/*
 	traceline (start.origin + (v_right * start.mins_y), end.origin, #TL_ANY_SOLID, start);
 	if (trace_ent != end)
 		return #TRUE;
@@ -39,6 +40,7 @@ float (entity start, entity end) COOP_SightBlocked =
 		return #TRUE;
 	if (trace_inopen && trace_inwater)
 		return #TRUE;
+*/
 
 	return #FALSE;
 };
