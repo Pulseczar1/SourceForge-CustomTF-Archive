@@ -156,20 +156,10 @@ void() coop_walkmonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = coop_walkmonster_start_go;
-	total_monsters = total_monsters + 1;
-};
 
-/*
-void() coop_walkmonster_start_specific =
-{
-// delay drop to floor to make sure all doors have been spawned
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*3;
-	self.think = coop_walkmonster_start_go;
-	total_monsters = total_monsters + 1;
-	self.solid = #SOLID_SLIDEBOX;
+	// make up for monster respawns on total monsters
+	total_monsters = total_monsters + (self.lives + 1);
 };
-*/
 
 
 
@@ -226,7 +216,9 @@ void() coop_flymonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = coop_flymonster_start_go;
-	total_monsters = total_monsters + 1;
+
+	// make up for monster respawns on total monsters
+	total_monsters = total_monsters + (self.lives + 1);
 };
 
 
@@ -283,7 +275,10 @@ void() coop_swimmonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = coop_swimmonster_start_go;
-	total_monsters = total_monsters + 1;
+	//total_monsters = total_monsters + 1;
+
+	// make up for monster respawns on total monsters
+	total_monsters = total_monsters + (self.lives + 1);
 };
 
 #endif

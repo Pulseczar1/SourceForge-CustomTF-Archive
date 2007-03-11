@@ -468,7 +468,7 @@ void() monster_wizard =
 	self.th_die = _wiz_die;
 
 
-	self.netname = "scarag";
+	self.netname = "scrag";
 
 	self.monsterweight = #MWEIGHT_SMALL;
 	self.monsterflags = 0;

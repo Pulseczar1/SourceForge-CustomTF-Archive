@@ -2031,34 +2031,9 @@ void(entity targ, entity attacker) ClientObituary =
 */
 #endif
 
-			if (rnum == -3)
-			{
-				if (random() < 0.5)
-					deathstring = " sleeps with the fishes\n";
-				else
-					deathstring = " ate before swimming\n"; //CH
-			}
-			else if (rnum == -4)
-			{
-				if (random() < 0.5)
-					deathstring = " gulped a load of slime\n";
-				else
-					deathstring = " can't exist on slime alone\n";
-			}
-			else if (rnum == -5)
-			{
-				if (targ.health < -15)
-				{
-					deathstring = " burst into flames\n";
-				}
-				else if (random() < 0.5)
-					deathstring = " turned into hot slag\n";
-				else
-					deathstring = " visits the Volcano God\n";
-			}
-
 #ifdef COOP_MODE_ENHANCED
-			else if (attacker.flags & #FL_MONSTER && attacker.team_no == #TEAMNO_MONSTERS)
+			// Gizmo - moved this first for obvious reasons
+			if (attacker.flags & #FL_MONSTER && attacker.team_no == #TEAMNO_MONSTERS)
 			{
 				if (attacker.classname == "idmonster_army")
 					deathstring = " was shot by a Grunt\n";
@@ -2093,8 +2068,35 @@ void(entity targ, entity attacker) ClientObituary =
 				else if (attacker.classname == "idmonster_zombie")
 					deathstring = " joins the Zombies\n";
 			}
-#endif
 
+			else if (rnum == -3)
+#else
+			if (rnum == -3)
+#endif
+			{
+				if (random() < 0.5)
+					deathstring = " sleeps with the fishes\n";
+				else
+					deathstring = " ate before swimming\n"; //CH
+			}
+			else if (rnum == -4)
+			{
+				if (random() < 0.5)
+					deathstring = " gulped a load of slime\n";
+				else
+					deathstring = " can't exist on slime alone\n";
+			}
+			else if (rnum == -5)
+			{
+				if (targ.health < -15)
+				{
+					deathstring = " burst into flames\n";
+				}
+				else if (random() < 0.5)
+					deathstring = " turned into hot slag\n";
+				else
+					deathstring = " visits the Volcano God\n";
+			}
 			else if (attacker.classname == "explo_box")
 			{
 				deathstring = " blew up\n";

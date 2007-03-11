@@ -3226,7 +3226,7 @@ void(float inp) Menu_Dispenser_Input =
             TF_T_Damage(self.building, self.building, self.building, 500, 0, #TF_TD_OTHER);
             return;
         }
-			
+
 		if (self.building.armorvalue == 0)
 		{
 			empty = #TRUE;
@@ -3238,7 +3238,7 @@ void(float inp) Menu_Dispenser_Input =
 			if (am > self.building.armorvalue)
 				am = self.building.armorvalue; 
 
-			if (self.armortype == 0)
+			if (self.armortype == 0 || self.armortype != self.armor_allowed)
 			{
 				self.armortype = self.armor_allowed;
 				//self.items = self.items | #IT_ARMOR1;
