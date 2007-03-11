@@ -2053,7 +2053,9 @@ void() TeamFortress_SetEquipment =
 	if (self.classname != "player")
 		return;
 
+#ifndef COOP_MODE_ENHANCED
 	kept_items = self.tf_items & (#IT_KEY1 | #IT_KEY2);
+#endif
 	
 	if (self.playerclass != #PC_CUSTOM) { //WK -----v
 		self.items = 0;

@@ -238,7 +238,7 @@ void() monster_tarbaby =
 	self.th_die = tbaby_die1;
 
 
-	self.netname = "tarbaby";
+	self.netname = "spawn";
 
 	self.monsterweight = #MWEIGHT_SMALL;
 	self.monsterflags = #MFLAG_NOHEART;
