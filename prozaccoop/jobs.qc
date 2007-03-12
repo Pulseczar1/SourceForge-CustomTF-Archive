@@ -1,5 +1,5 @@
 /*======================================================
-	JOBS.QC			Custom TeamFortress v3.2SB1	
+	JOBS.QC 		Custom TeamFortress v3.2SB1 
 
 	(c) William Kerney			2/9/00
 	(c) SB-1 Tech				25/10/00
@@ -65,47 +65,47 @@ void(entity player) ArmyInit;
 
 float(entity player) GetJobExtras =
 {
-    if (player.job & #JOB_EXTRA1)
-    {
-        if (player.job & #JOB_EXTRA2)
-            return 3; // For future extra item
-        
-        return 1;
-    }
+	if (player.job & #JOB_EXTRA1)
+	{
+		if (player.job & #JOB_EXTRA2)
+			return 3; // For future extra item
+		
+		return 1;
+	}
 
-    if (player.job & #JOB_EXTRA2)
-        return 2;
+	if (player.job & #JOB_EXTRA2)
+		return 2;
 
-    return 0;
+	return 0;
 };
 
 void(entity player, float extras) SetJobExtras =
 {
-    if (!extras)
-    {
-        player.job = player.job - (player.job & (#JOB_EXTRA1 | #JOB_EXTRA2));
-        return;
-    }
+	if (!extras)
+	{
+		player.job = player.job - (player.job & (#JOB_EXTRA1 | #JOB_EXTRA2));
+		return;
+	}
 
-    if (extras == 1)
-    {
-        player.job = player.job - (player.job & #JOB_EXTRA2);
-        player.job = player.job | #JOB_EXTRA1;
-        return;
-    }
+	if (extras == 1)
+	{
+		player.job = player.job - (player.job & #JOB_EXTRA2);
+		player.job = player.job | #JOB_EXTRA1;
+		return;
+	}
 
-    if (extras == 2)
-    {
-        player.job = player.job - (player.job & #JOB_EXTRA1);
-        player.job = player.job | #JOB_EXTRA2;
-        return;    
-    }
+	if (extras == 2)
+	{
+		player.job = player.job - (player.job & #JOB_EXTRA1);
+		player.job = player.job | #JOB_EXTRA2;
+		return;    
+	}
 
-    if (extras == 3) // Unused by now
-    {
-        player.job = player.job | #JOB_EXTRA2 | #JOB_EXTRA1;
-        return;    
-    }
+	if (extras == 3) // Unused by now
+	{
+		player.job = player.job | #JOB_EXTRA2 | #JOB_EXTRA1;
+		return;    
+	}
 };
 
 //
@@ -251,11 +251,11 @@ void() JobWarlock =
 		return;
 	}
 	
-    if (self.current_menu == #MENU_DEMON)
-    {
-        Menu_Demon_Input(7);
-        return;
-    }
+	if (self.current_menu == #MENU_DEMON)
+	{
+		Menu_Demon_Input(7);
+		return;
+	}
 
 	self.current_menu = #MENU_DEMON;
 	self.menu_count = #MENU_REFRESH_RATE;
@@ -282,32 +282,36 @@ void() ChaplanInspire = {
 	
 	while (head)
 	{
+#ifndef COOP_MODE_ENHANCED
 		//Dispel enemy demons
 		//- OfN - if (head.classname == "monster_demon1" || head.classname == "monster_shambler")
-        if (IsMonsterNonArmy(head))
+		if (IsMonsterNonArmy(head))
 		{ //No short circuit evaluation, so...
-		      if (!Teammate(head.real_owner.team_no,self.team_no))
-		      { //...to avoid a crash from deref
+			if (!Teammate(head.real_owner.team_no,self.team_no))
+			{ //...to avoid a crash from deref
 				/*if ((head.health <= 200 && head.classname == "monster_demon1") || head.health < 500 && head.classname == "monster_shambler") {
 					sprint(self,#PRINT_HIGH,"You dispel a demon\n");
 					self.real_frags = self.real_frags + 1;
-	 				if (!(toggleflags & #TFLAG_TEAMFRAGS))
+					if (!(toggleflags & #TFLAG_TEAMFRAGS))
 						self.frags = self.real_frags;
 				}
 				if (head.classname == "monster_shambler")
 					TF_T_Damage(head, self, self, 500, 0, 0);
 				else if (head.classname == "monster_demon1")
 					TF_T_Damage(head, self, self, 200, 0, 0);*/
-                TF_T_Damage(head, self, self, 220, 0, 0); // OfN
+				TF_T_Damage(head, self, self, 220, 0, 0); // OfN
 			}
 		}
-		else if (head.classname == "player" &&	//Person who is...
-               head.health > 0 && // OfN Alive
+		else
+#endif
+
+		if (head.classname == "player" &&	//Person who is...
+			   head.health > 0 && // OfN Alive
 			   Teammate(head.team_no,self.team_no) && //Same Team
 			   head != self &&			//Not me
 			   !(head.is_undercover)  &&		//Not a spy
 			   !(head.job & #JOB_CHAPLAN)  &&	//Not a chaplan
-			   head.playerclass != #PC_CIVILIAN &&  //KK
+			   head.playerclass != #PC_CIVILIAN &&	//KK
 			   //... and not Quadded
 			   !(head.items & #IT_QUAD && !(head.tfstate & #TFSTATE_INSPIRED))
 			)
@@ -381,7 +385,7 @@ void() ChaplanThink = {
 			//sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
 			//WK 1/7/7 Better music stopping
 			sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, 0);
-            self.effects = self.effects - (self.effects & #EF_BRIGHTLIGHT);
+			self.effects = self.effects - (self.effects & #EF_BRIGHTLIGHT);
 			//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_RELOADING);
 			self.current_weapon = self.weapon;
 			W_SetCurrentAmmo();
@@ -457,7 +461,7 @@ void() MartyrThink =
 		deathmsg = #DMSG_MARTYR;
 	//else
 	//	deathmsg = self.owner.stored_deathmsg;
-	                                                                                          //- OfN was 20
+																							  //- OfN was 20
 	TF_T_Damage(self.owner, self.owner.martyr_enemy, self.owner.martyr_enemy, self.owner.health + 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 
 	self.think = SUB_Remove;
@@ -511,8 +515,8 @@ void() BerserkerKillTimer =
 	}
 
 
-    self.job = self.job - (self.job & #JOB_ACTIVE); //- OfN
-    self.owner.is_abouttodie = #FALSE;
+	self.job = self.job - (self.job & #JOB_ACTIVE); //- OfN
+	self.owner.is_abouttodie = #FALSE;
 	dremove(self);
 };
 
@@ -540,7 +544,7 @@ void() JobBerserker =
 	self.super_damage_finished = time + #BERSERK_TIME + 1;
 	self.items = self.items | #IT_QUAD;
 	self.is_abouttodie = #TRUE;
-    self.job = self.job | #JOB_ACTIVE; //- OfN
+	self.job = self.job | #JOB_ACTIVE; //- OfN
 	self.job_finished = time + #BERSERK_TIME * 3;
 	
 	stuffcmd(self, "v_idlescale 20\n"); //WK 30
@@ -585,7 +589,7 @@ void() JudokaRearm =
 		}
 		////Fix double weapons
 		if (self.current_weapon == #WEAP_SNIPER_RIFLE) {
-			self.owner.weapons_carried = self.owner.weapons_carried | #WEAP_AUTO_RIFLE;				
+			self.owner.weapons_carried = self.owner.weapons_carried | #WEAP_AUTO_RIFLE; 			
 			self.enemy.weapons_carried = self.enemy.weapons_carried - (self.enemy.weapons_carried & #WEAP_AUTO_RIFLE);
 		}
 		////Fix weird weapons
@@ -650,14 +654,14 @@ void() JobJudoka =
 		return;
 	}
 
-    
-    if (trace_ent)
-    if (trace_ent.classname == "player")
-    if (trace_ent.#runes & #RUNE_RESIS)
-    {
-        sprint (self, #PRINT_HIGH, "He is protected with a misterious power!\n");
-        return;
-    }
+	
+	if (trace_ent)
+	if (trace_ent.classname == "player")
+	if (trace_ent.#runes & #RUNE_RESIS)
+	{
+		sprint (self, #PRINT_HIGH, "He is protected with a misterious power!\n");
+		return;
+	}
 
 #ifdef COOP_MODE_ENHANCED
 	if (trace_ent.team_no == #TEAMNO_MONSTERS) {
@@ -673,10 +677,10 @@ void() JobJudoka =
 			trace_ent.attack_finished = time + #DISARM_TIME;
 			sprint (self, #PRINT_HIGH, "You knock his weapon out of his hands\n");
 		} else if (trace_ent.monsterflags & #MFLAG_HUMANOID) {
-			jdmg = 125;
+			jdmg = 200;
 			sprint (self, #PRINT_HIGH, "You throw him with a mighty Seoi Otoshi\n");
 		} else {
-			jdmg = 65;
+			jdmg = 165;
 			if (trace_ent.monsterflags & #MFLAG_BITER) {
 				sprint (self, #PRINT_HIGH, "The beast bites back!\n");
 
@@ -761,7 +765,7 @@ void() JobJudoka =
 
 			//Fix double weapons
 			if (trace_ent.current_weapon == #WEAP_SNIPER_RIFLE) {
-				self.weapons_carried = self.weapons_carried | #WEAP_AUTO_RIFLE;				
+				self.weapons_carried = self.weapons_carried | #WEAP_AUTO_RIFLE; 			
 				trace_ent.weapons_carried = trace_ent.weapons_carried - (trace_ent.weapons_carried & #WEAP_AUTO_RIFLE);
 			}
 			if (trace_ent.current_weapon == #WEAP_MEDIKIT) {
@@ -818,13 +822,13 @@ void() UseJobSkill =
 	if (self.done_custom & #CUSTOM_BUILDING) return;
 	if (self.job_finished > time) return;
 
-    // OfN - Psionized guys can't use skill
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You hardly can do anything psionized!\n");
-        self.job_finished = time + 1;
-        return;
-    }
+	// OfN - Psionized guys can't use skill
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You hardly can do anything psionized!\n");
+		self.job_finished = time + 1;
+		return;
+	}
 
 	myjob = self.job;
 	if (myjob & #JOB_THIEF)
@@ -836,7 +840,7 @@ void() UseJobSkill =
 		if (HasFlag(self.team_no) == #FALSE)
 		{
 			CenterPrint(self, "No demons until your team has the flag!\n");
-			return;		
+			return; 	
 		}
 		JobWarlock();
 	}
@@ -848,13 +852,13 @@ void() UseJobSkill =
 		JobGuerilla();
 	else if (myjob & #JOB_JUDOKA)
 		JobJudoka();
-   	else if (myjob & #JOB_HACKER)
+	else if (myjob & #JOB_HACKER)
 		JobHacker();
-    else if (myjob & #JOB_MARTYR)
+	else if (myjob & #JOB_MARTYR)
 		JobMartyr();
-    else if (myjob & #JOB_ARMY)
+	else if (myjob & #JOB_ARMY)
 		JobArmy();
-    else if (myjob & #JOB_CRUSADER)
+	else if (myjob & #JOB_CRUSADER)
 		JobCrusader();
 	else {
 		sprint(self,#PRINT_HIGH,"You don't have a job. Go get employed.\n");
@@ -890,18 +894,18 @@ void (entity targ, float pain) RevealThief = {
 
 void() InitJobStuff =
 {
-    // Abort if already initialized
-    if (self.goal_activation) return;
+	// Abort if already initialized
+	if (self.goal_activation) return;
 
-    // Initialize respective jobs
-    if (self.job & #JOB_ARMY)
-        ArmyInit(self);
-    else if (self.job & #JOB_GUERILLA)
-        GuerillaInit(self);
-    else
-        return; // If nothing done just return
-    
-    // Set our "initialization done" flag to true
-    self.goal_activation = #TRUE;
+	// Initialize respective jobs
+	if (self.job & #JOB_ARMY)
+		ArmyInit(self);
+	else if (self.job & #JOB_GUERILLA)
+		GuerillaInit(self);
+	else
+		return; // If nothing done just return
+	
+	// Set our "initialization done" flag to true
+	self.goal_activation = #TRUE;
 };
 
