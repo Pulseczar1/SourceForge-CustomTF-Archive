@@ -4824,6 +4824,8 @@ void idGameLocal::SpawnMapEntities() {
 	idDict		args;
 	idDict		items;
 	int			latchedSpawnCount = -1;
+	int			spawn_ctf_packs, bluePacks, redPacks, spawnOK;
+	idDict		pack_info;
 
 	Printf( "Spawning entities\n" );
 	
@@ -4876,6 +4878,11 @@ void idGameLocal::SpawnMapEntities() {
 	num = 2;
 	inhibit = 0;
 
+	spawn_ctf_packs = gameLocal.serverInfo.GetInt( "si_ctf_spawnPacks" );
+	if( spawn_ctf_packs > 0 ) {
+		bluePacks = 0;
+		redPacks = 0;
+	}
 
 	// finally spawn all the map entities
 	for ( i = 1 ; i < numEntities ; i++ ) {
@@ -4884,18 +4891,65 @@ void idGameLocal::SpawnMapEntities() {
 		args = mapEnt->epairs;
 
 		// xavior: lets try to convert q4 ctf spawn points to q4f (thx AnthonyJ)
-		if (idStr::Cmp(args.GetString("classname"), "info_player_team") == 0) 
-		{
+		if (idStr::Cmp(args.GetString("classname"), "info_player_team") == 0) {
+
+			if ( spawn_ctf_packs ) {
+				idVec3 org;
+				spawnOK = 0;
+				pack_info.Set("classname","ammo_backpack_resupply");
+				pack_info.Set("give_ammo_grenade1","2");
+				pack_info.Set("give_ammo_grenade2","1");
+				pack_info.Set("rotation","0 -1 0 1 0 0 0 0 1");
+				pack_info.Set("origin", args.GetString("origin"));
+				org = pack_info.GetVector("origin");
+				org[2] += 25;
+				pack_info.Set("origin", org.ToString() );
+				//pack_info.SetVector("origin", 
+				//pack_info.Set("origin", args.GetS("origin") );
+				
+//				pack_info.GetVector("origin") 
+			}
 			// change classname
 			args.Delete("classname");
 			args.Set("classname", "info_player_spawn");
 			// convert team #
-			if (idStr::Cmp(args.GetString("team"), "strogg") == 0)
+			if (idStr::Cmp(args.GetString("team"), "strogg") == 0) {
 				args.Set("team", "red");
-			else if (idStr::Cmp(args.GetString("team"), "marine") == 0)
+				if ( redPacks < spawn_ctf_packs ) {
+					pack_info.Set("team", "red");
+					spawnOK = 1;
+					redPacks += 1;
+				}
+			}
+			else if (idStr::Cmp(args.GetString("team"), "marine") == 0) {
 				args.Set("team", "blue");
-			else
+				if ( bluePacks < spawn_ctf_packs ) {
+					pack_info.Set("team", "blue");
+					spawnOK = 1;
+					bluePacks += 1;
+				}
+			}
+			else {
 				args.Set("team", "-1");
+			}
+			// spawn the ctf resupply entity..
+			if ( spawn_ctf_packs ) {
+				if ( spawnOK ) {
+					spawnOK = 0;
+					const idDeclEntityDef* entityDef = FindEntityDef( pack_info.GetString( "classname" ), false );
+					pack_info.SetDefaults( &(entityDef->dict) );
+					// precache any media specified in the map entity
+					CacheDictionaryMedia( &pack_info );
+
+					idEntity* ent = NULL;
+					//SpawnEntityDef( ctf_pack->epairs, &ent, );
+					SpawnEntityDef( pack_info, &ent, false );
+
+					//if ( ent ) {
+					//	isMapEntity[ ent->entityNumber ] = true;
+					//}
+				}
+			}
 		}
 		else if (idStr::Cmp(args.GetString("classname"), "mp_ctf_marine_flag") == 0) 
 		{
