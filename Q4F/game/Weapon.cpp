@@ -1388,7 +1388,10 @@ NOTE: this is only for impulse-triggered reload, auto reload is scripted
 ================
 */
 void rvWeapon::Reload( void ) {
-	if (wsfl.reload == true || wsfl.reloading == true )
+	//gameLocal.mpGame.AddChatLine("Clip Size: %d  Ammo Available: %d  Ammo In Clip: %d\n", ClipSize(), AmmoInClip(), AmmoInClip() );
+	if ( wsfl.reload == true || wsfl.reloading == true )
+		return;
+	if ( AmmoAvailable() == AmmoInClip() )		// don't reload if you dont have enough ammo
 		return;
 	if ( ClipSize() > 0 ) {
 		//SetState ( WEAP_STATE_LOWER );	// xavior: fix the lack of gun lowering anim?

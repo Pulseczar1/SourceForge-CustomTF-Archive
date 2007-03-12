@@ -1,4 +1,4 @@
-
+#pragma warning( disable : 4996 )
 #ifndef __GAME_LOCAL_H__
 #define	__GAME_LOCAL_H__
 
