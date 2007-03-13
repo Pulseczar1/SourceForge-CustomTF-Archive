@@ -4929,6 +4929,10 @@ void idGameLocal::SpawnMapEntities() {
 					bluePacks += 1;
 				}
 			}
+			else if (idStr::Cmp(args.GetString("team"), "red") == 0) {
+			}
+			else if (idStr::Cmp(args.GetString("team"), "blue") == 0) {
+			}
 			else {
 				args.Set("team", "-1");
 			}
@@ -4976,6 +4980,24 @@ void idGameLocal::SpawnMapEntities() {
 			args.Set("callOnCarry", "Q4FBase::pickupCTFFlag_regular");
 			args.Set("snd_capture_team", "announce_team_enemy_score");
 			args.Set("snd_capture", "announce_team_you_score");
+		}
+		// Convert Weapons Factory Revolution (wfr) stuff
+		if (idStr::Cmp(args.GetString("classname"), "wfr_water") == 0) {
+			//gameLocal.mpGame.AddChatLine( "GENERIC1\nGENERIC2\nGENERIC3\n");
+			args.Set("spawnclass", "q4fWater");
+			args.Set("classname", "func_water");
+		}
+		if (idStr::Cmp(args.GetString("spawnclass"), "WFR_Water") == 0) {
+			args.Set("spawnclass", "q4fWater");
+		}
+		if (idStr::Cmp(args.GetString("spawnclass"), "idTrigger_Multi") == 0) {
+		}
+		if (idStr::Cmp(args.GetString("classname"), "trigger_multiple") == 0) {
+			args.Set("classname", "trigger_generic");
+		}
+		if (idStr::Cmp(args.GetString("classname"), "trigger_hurt") == 0) {
+			
+//			args.Set("classname", "trigger_generic");
 		}
 
 // ddynerman: merge the dicts ahead of SpawnEntityDef() so we can inhibit using merged info

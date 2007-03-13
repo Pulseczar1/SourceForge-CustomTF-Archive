@@ -999,7 +999,9 @@ void TFDamage::Create( const AttackerInfo &attInfo, const idDeclEntityDef* damag
 
 void TFDamage::Init() {
  	if ( damageDef == NULL ) {
-		gameLocal.Error( "TFDamage: no damage def specified or could not be found." );
+		gameLocal.mpGame.AddChatLine( "SEVERE WARNING: TFDamage: no damage def specified or could not be found." );
+		//gameLocal.Error( "TFDamage: no damage def specified or could not be found." );
+		return;
 	}
 
 	damage = damageDef->dict.GetInt( "damage", "0" );
