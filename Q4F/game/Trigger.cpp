@@ -3,6 +3,7 @@
 #pragma hdrstop
 
 #include "Game_local.h"
+//#include "ai/AI_Manager.h"
 
 /*
 ===============================================================================
@@ -115,14 +116,14 @@ idTrigger::CallScript
 ================
 */
 void idTrigger::CallScript( idEntity* scriptEntity ) {
-
+// RAVEN BEGIN
 // abahr
 	for( int ix = scriptFunctions.Num() - 1; ix >= 0; --ix ) {
 		scriptFunctions[ix].InsertEntity( scriptEntity, 0 );//We could pass both the activator and self if wanted
 		scriptFunctions[ix].CallFunc( &spawnArgs );
 		scriptFunctions[ix].RemoveIndex( 0 );
 	}
-
+// RAVEN END
 
 }
 
@@ -132,10 +133,10 @@ idTrigger::GetScriptFunction
 ================
 */
 const function_t *idTrigger::GetScriptFunction( void ) const {
-
+// RAVEN BEGIN
 // abahr: 
 	return (scriptFunctions.Num()) ? scriptFunctions[0].GetFunc() : NULL;
-
+// RAVEN END
 }
 
 /*
@@ -144,13 +145,13 @@ idTrigger::Save
 ================
 */
 void idTrigger::Save( idSaveGame *savefile ) const {
-
+// RAVEN BEGIN
 // abahr
 	savefile->WriteInt( scriptFunctions.Num() );
 	for( int ix = scriptFunctions.Num() - 1; ix >= 0; --ix ) {
 		scriptFunctions[ix].Save( savefile );
 	}
-
+// RAVEN END
 }
 
 /*
@@ -159,7 +160,7 @@ idTrigger::Restore
 ================
 */
 void idTrigger::Restore( idRestoreGame *savefile ) {
-
+// RAVEN BEGIN
 // abahr
 	int numScripts = 0;
 	savefile->ReadInt( numScripts );
@@ -167,7 +168,7 @@ void idTrigger::Restore( idRestoreGame *savefile ) {
 	for( int ix = scriptFunctions.Num() - 1; ix >= 0; --ix ) {
 		scriptFunctions[ix].Restore( savefile );
 	}
-
+// RAVEN END
 }
 
 /*
@@ -194,10 +195,10 @@ idTrigger::idTrigger
 ================
 */
 idTrigger::idTrigger() {
-
+// RAVEN BEGIN
 // abahr: scriptFunction init's itself
 	//scriptFunction = NULL;
-
+// RAVEN END
 }
 
 /*
@@ -209,8 +210,6 @@ void idTrigger::Spawn( void ) {
 	GetPhysics()->SetContents( CONTENTS_TRIGGER );
 
 	attInfo.Create( this );
-
-
 // abahr:
 	scriptFunctions.SetGranularity( 1 );
 	for( const idKeyValue* kv = spawnArgs.MatchPrefix("call"); kv; kv = spawnArgs.MatchPrefix("call", kv) ) {
@@ -223,7 +222,7 @@ void idTrigger::Spawn( void ) {
 			gameLocal.Warning( "Trigger '%s' at (%s) trying to call an unknown function.", name.c_str(), GetPhysics()->GetOrigin().ToString(0) );
 		}
 	}
-
+// RAVEN END
 }
 
 
@@ -235,16 +234,19 @@ void idTrigger::Spawn( void ) {
 ===============================================================================
 */
 
-
+// RAVEN BEGIN
 // abahr: changed to 'E' to allow NULL entities
 const idEventDef EV_TriggerAction( "<triggerAction>", "E" );
-
+// RAVEN END
 
 CLASS_DECLARATION( idTrigger, idTrigger_Multi )
 	EVENT( EV_Touch,			idTrigger_Multi::Event_Touch )
 	EVENT( EV_Activate,			idTrigger_Multi::Event_Trigger )
 	EVENT( EV_TriggerAction,	idTrigger_Multi::Event_TriggerAction )
 
+// RAVEN BEGIN
+// kfuller: respond to earthquakes
+// RAVEN END
 END_CLASS
 
 
@@ -360,6 +362,8 @@ void idTrigger_Multi::Spawn( void ) {
 	} else {
 		GetPhysics()->SetContents( CONTENTS_TRIGGER );
 	}
+
+	BecomeActive( TH_THINK );
 }
 
 /*
@@ -399,7 +403,7 @@ idTrigger_Multi::TriggerAction
 ================
 */
 void idTrigger_Multi::TriggerAction( idEntity *activator ) {
-
+// RAVEN BEGIN
 // jdischler: added for Aweldon.  The trigger, when activated, will call the listed func with all attached targets, then return.
 	if ( spawnArgs.GetBool( "_callWithTargets", "0" )) 
 	{
@@ -415,7 +419,7 @@ void idTrigger_Multi::TriggerAction( idEntity *activator ) {
 		}
 		return;
 	}
-
+// RAVEN END
 	ActivateTargets( triggerWithSelf ? this : activator );
 	CallScript( triggerWithSelf ? this : activator );
 
@@ -449,7 +453,7 @@ so wait for the delay time before firing
 ================
 */
 void idTrigger_Multi::Event_Trigger( idEntity *activator ) {
-
+// RAVEN BEGIN
 // bdube: moved trigger first 
 	if ( triggerFirst ) {
 		triggerFirst = false;
@@ -469,7 +473,7 @@ void idTrigger_Multi::Event_Trigger( idEntity *activator ) {
 	if ( !CheckFacing( activator ) ) {
 		return;
 	}
-
+// RAVEN END
 
 	// don't allow it to trigger twice in a single frame
 	nextTriggerTime = gameLocal.time + 1;
@@ -483,6 +487,10 @@ void idTrigger_Multi::Event_Trigger( idEntity *activator ) {
 	}
 }
 
+
+
+
+
 /*
 ================
 idTrigger_Multi::Event_Touch
@@ -492,7 +500,6 @@ void idTrigger_Multi::Event_Touch( idEntity *other, trace_t *trace ) {
 	if( triggerFirst ) {
 		return;
 	}
-
 
 	bool player = other->IsType( idPlayer::GetClassType() );
 	if ( player ) {
@@ -524,12 +531,12 @@ void idTrigger_Multi::Event_Touch( idEntity *other, trace_t *trace ) {
 		triggerFirst = true;
 	}
 
-
+// RAVEN BEGIN
 // rjohnson: added block
 	if ( developer.GetBool() && *spawnArgs.GetString ( "message" ) ) {
 		gameLocal.DPrintf ( "Trigger: %s\n", spawnArgs.GetString ( "message" ) );
 	}
-
+// RAVEN END
 
 	nextTriggerTime = gameLocal.time + 1;
 	if ( delay > 0 ) {
@@ -541,6 +548,8 @@ void idTrigger_Multi::Event_Touch( idEntity *other, trace_t *trace ) {
 	}
 }
 
+
+// RAVEN END
 
 /*
 ===============================================================================
@@ -641,12 +650,12 @@ idTrigger_EntityName::TriggerAction
 ================
 */
 void idTrigger_EntityName::TriggerAction( idEntity *activator ) {
-
+// RAVEN BEGIN
 // abahr: want same functionality as trigger_multi.  Need to move this code into these two function calls
 	idEntity* scriptEntity = spawnArgs.GetBool("triggerWithSelf") ? this : activator;
 	ActivateTargets( scriptEntity );
 	CallScript( scriptEntity );
-
+// RAVEN END
 
 	if ( wait >= 0 ) {
 		nextTriggerTime = gameLocal.time + SEC2MS( wait + random * gameLocal.random.CRandomFloat() );
@@ -683,7 +692,7 @@ void idTrigger_EntityName::Event_Trigger( idEntity *activator ) {
 		return;
 	}
 
-
+// RAVEN BEGIN
 // abahr: so we can exclude an entity by name
 	if( !activator ) {
 		return;
@@ -696,7 +705,7 @@ void idTrigger_EntityName::Event_Trigger( idEntity *activator ) {
 	if( !spawnArgs.GetBool("excludeEntityName") && activator->name != entityName ) {
 		return;
 	}
-
+// RAVEN END
 
 	if ( triggerFirst ) {
 		triggerFirst = false;
@@ -730,7 +739,7 @@ void idTrigger_EntityName::Event_Touch( idEntity *other, trace_t *trace ) {
 		return;
 	}
 
-
+// RAVEN BEGIN
 // abahr: so we can exclude an entity by name
 	if( !other ) {
 		return;
@@ -743,7 +752,7 @@ void idTrigger_EntityName::Event_Touch( idEntity *other, trace_t *trace ) {
 	if( !spawnArgs.GetBool("excludeEntityName") && other->name != entityName ) {
 		return;
 	}
-
+// RAVEN END
 
 	nextTriggerTime = gameLocal.time + 1;
 	if ( delay > 0 ) {
@@ -1022,10 +1031,10 @@ void idTrigger_Hurt::Save( idSaveGame *savefile ) const {
 	savefile->WriteBool( on );
 	savefile->WriteFloat( delay );
 	savefile->WriteInt( nextTime );
-
+// RAVEN BEGIN
 // bdube: playeronly flag
 	savefile->WriteBool ( playerOnly );
-	
+// RAVEN END	
 }
 
 /*
@@ -1037,10 +1046,10 @@ void idTrigger_Hurt::Restore( idRestoreGame *savefile ) {
 	savefile->ReadBool( on );
 	savefile->ReadFloat( delay );
 	savefile->ReadInt( nextTime );
-
+// RAVEN BEGIN
 // bdube: playeronly flag
 	savefile->ReadBool( playerOnly );
-	
+// RAVEN END	
 }
 
 /*
@@ -1055,10 +1064,10 @@ void idTrigger_Hurt::Spawn( void ) {
 	spawnArgs.GetBool( "on", "1", on );
 	spawnArgs.GetFloat( "delay", "1.0", delay );
 
-
+// RAVEN BEGIN
 // kfuller: playeronly flag
 	spawnArgs.GetBool( "playerOnly", "0", playerOnly );
-
+// RAVEN END
 
 	myDmg.Create( attInfo, spawnArgs.GetString( "def_damage", "damage_painTrigger" ) );
 
@@ -1073,17 +1082,28 @@ idTrigger_Hurt::Event_Touch
 */
 void idTrigger_Hurt::Event_Touch( idEntity *other, trace_t *trace ) {
 //	const char *damage;
+	int dmg_team;
 
-
+// RAVEN BEGIN
 // kfuller: playeronly flag
 // jnewquist: Use accessor for static class type 
 	if ( playerOnly && !other->IsType( idPlayer::GetClassType() ) ) {
 		return;
 	}
+// RAVEN END
+	dmg_team = tfGame.GetTeamNumFromString( spawnArgs.GetString( "team", "-1" ) );
+	//gameLocal.mpGame.AddChatLine( "dmg team is %d\n", dmg_team );
+	// xavior: wfr seems to specify the "team" property in trigger_hurt as what team NOT to injure.
+	if ( dmg_team > -1 && dmg_team != NULL ) {
+		if ( dmg_team != other->team )
+			return;
+	}
 
 
 
 	if ( on && other && gameLocal.time >= nextTime ) {
+		//damage = spawnArgs.GetString( "def_damage", "damage_painTrigger" );
+		//other->Damage( this, NULL, vec3_origin, damage, 1.0f, INVALID_JOINT );
 		other->Damage_TF( myDmg, 1.0f );
 
 		ActivateTargets( other );
@@ -1176,15 +1196,15 @@ idTrigger_Touch::Spawn
 */
 void idTrigger_Touch::Spawn( void ) {
 	// get the clip model
-
+// RAVEN BEGIN
 // mwhitlock: Dynamic memory consolidation
 	RV_PUSH_HEAP_MEM(this);
-
+// RAVEN END
 	clipModel = new idClipModel( GetPhysics()->GetClipModel() );
-
+// RAVEN BEGIN
 // mwhitlock: Dynamic memory consolidation
 	RV_POP_HEAP();
-
+// RAVEN END
 	// remove the collision model from the physics object
 	GetPhysics()->SetClipModel( NULL, 1.0f );
 
@@ -1229,15 +1249,15 @@ void idTrigger_Touch::TouchEntities( void ) {
 	idBounds bounds;
 	idClipModel *cm, *clipModelList[ MAX_GENTITIES ];
 
-
+// RAVEN BEGIN
 // abahr: now scriptFunction list
 	if ( clipModel == NULL || !scriptFunctions.Num() ) {
-
+// RAVEN END
 		return;
 	}
 
 	bounds.FromTransformedBounds( clipModel->GetBounds(), GetBindMaster()!=NULL?GetPhysics()->GetOrigin():clipModel->GetOrigin(), GetBindMaster()!=NULL?GetPhysics()->GetAxis():clipModel->GetAxis() );
-
+// RAVEN BEGIN
 // MCG: filterTeam
 	if ( filterTeam != -1 )
 	{
@@ -1245,6 +1265,7 @@ void idTrigger_Touch::TouchEntities( void ) {
 		for ( int i = 0; i < gameLocal.numClients; i++ ) {
 			p = GET_PLAYER( i );
 			if ( !p || p->IsHidden() )
+
 				continue;
 
 			if ( !bounds.IntersectsBounds ( p->GetPhysics()->GetAbsBounds ( ) ) ) {
@@ -1266,7 +1287,8 @@ void idTrigger_Touch::TouchEntities( void ) {
 	}
 // ddynerman: multiple clip worlds
 	numClipModels = gameLocal.clip.ClipModelsTouchingBounds( bounds, -1, clipModelList, MAX_GENTITIES );
-
+	//numClipModels = gameLocal.ClipModelsTouchingBounds( this, bounds, -1, clipModelList, MAX_GENTITIES );
+// RAVEN END
 
 	for ( i = 0; i < numClipModels; i++ ) {
 		cm = clipModelList[ i ];
@@ -1281,7 +1303,10 @@ void idTrigger_Touch::TouchEntities( void ) {
 			continue;
 		}
 		
-
+// RAVEN BEGIN
+// ddynerman: multiple clip worlds
+//		if ( !gameLocal.ContentsModel( this, cm->GetOrigin(), cm, cm->GetAxis(), -1,
+//									clipModel->GetCollisionModel(), clipModel->GetOrigin(), clipModel->GetAxis() ) ) {
 // ddynerman: multiple clip worlds
 		if ( !gameLocal.clip.ContentsModel( cm->GetOrigin(), cm, cm->GetAxis(), -1,
 									clipModel->GetCollisionModel(), clipModel->GetOrigin(), clipModel->GetAxis() ) ) {
@@ -1291,10 +1316,10 @@ void idTrigger_Touch::TouchEntities( void ) {
 
 		ActivateTargets( entity );
 
-
+// RAVEN BEGIN
 // abahr: changed to be compatible with new script function utility
 		CallScript( entity );
-
+// RAVEN END
 	}
 }
 
