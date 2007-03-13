@@ -753,6 +753,16 @@ void() GasGrenadeMakeGas =
 	te = findradius(self.origin, 200);
 	while (te != world)
 	{
+#ifdef COOP_MODE_ENHANCED
+		if (te.team_no == #TEAMNO_MONSTERS && te.takedamage && te.health > 0) {
+			// only effect monsters that breathe
+			if (!(te.monsterflags & #MFLAG_NOBREATHING)) {
+				deathmsg = #DMSG_GREN_GAS;
+				TF_T_Damage (te, world, self.owner, 40, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
+			}
+		} else
+#endif
+
 		if (te.classname == "player" && te.deadflag == #DEAD_NO && te.health > 0)
 		{
 			//Dont affect those with gas masks or invincible or biosuits

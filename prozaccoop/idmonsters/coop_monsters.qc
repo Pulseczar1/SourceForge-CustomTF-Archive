@@ -92,7 +92,7 @@ void() coop_walkmonster_start_go =
 {
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 	droptofloor();
-	
+
 	if (!walkmove(0,0))
 	{
 		dprint ("walkmonster in wall at: ");
@@ -158,7 +158,8 @@ void() coop_walkmonster_start =
 	self.think = coop_walkmonster_start_go;
 
 	// make up for monster respawns on total monsters
-	total_monsters = total_monsters + (self.lives + 1);
+	if (!server_spawned)
+		total_monsters = total_monsters + (self.lives + 1);
 };
 
 
@@ -218,7 +219,8 @@ void() coop_flymonster_start =
 	self.think = coop_flymonster_start_go;
 
 	// make up for monster respawns on total monsters
-	total_monsters = total_monsters + (self.lives + 1);
+	if (!server_spawned)
+		total_monsters = total_monsters + (self.lives + 1);
 };
 
 
@@ -278,7 +280,8 @@ void() coop_swimmonster_start =
 	//total_monsters = total_monsters + 1;
 
 	// make up for monster respawns on total monsters
-	total_monsters = total_monsters + (self.lives + 1);
+	if (!server_spawned)
+		total_monsters = total_monsters + (self.lives + 1);
 };
 
 #endif

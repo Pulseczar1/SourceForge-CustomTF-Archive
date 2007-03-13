@@ -465,7 +465,7 @@ void() monster_shambler =
 	self.netname = "shambler";
 
 	self.monsterweight = #MWEIGHT_LARGE;
-	self.monsterflags = 0;
+	self.monsterflags = #MFLAG_NOBREATHING;
 
 	// Monsters have a team of their own
 	self.team_no = #TEAMNO_MONSTERS;

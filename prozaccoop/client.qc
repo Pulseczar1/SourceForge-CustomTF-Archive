@@ -1784,12 +1784,12 @@ entity() SelectSpawnPoint =
 #ifdef COOP_MODE_ENHANCED
 //	if (coop)
 //	{
-		lastspawn = find(lastspawn, classname, "info_player_coop");
-		if (lastspawn == world)
-			lastspawn = find (world, classname, "info_player_coop");
+			lastspawn = find(lastspawn, classname, "info_player_coop");
+			if (lastspawn == world)
+				lastspawn = find (world, classname, "info_player_coop");
 				
-		if (lastspawn != world)
-			return lastspawn;
+			if (lastspawn != world)
+				return lastspawn;
 //	}
 
 #else

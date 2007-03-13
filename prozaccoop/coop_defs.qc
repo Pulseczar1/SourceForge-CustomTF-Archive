@@ -23,6 +23,7 @@
 #define MFLAG_ALMOSTHUMANOID			4				// almost looks like a humanoid
 #define MFLAG_BITER				8				// the monster can bite (IE: dogs)
 #define MFLAG_NOHEART				16				// mainly for warlock heart grabbing
+#define MFLAG_NOBREATHING			32				// monster doesn't breathe, (IE: shambler, enforcer (has suit))
 
 // macros for certain variables so we can reuse unused variables and still give it a unique name
 #define npc_speedfactor				speed
