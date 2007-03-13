@@ -173,8 +173,70 @@ void() main =
 
 
 #ifdef COOP_MODE_ENHANCED
+/*
+	ValidSpawnPoint - checks if the given spawn point is in anyway inside the world
+	for maps with bad coops spawns like terra6
+*/
+
+float (entity point) ValidSpawnPoint =
+{
+	local entity tent, oself;
+	local float ret;
+
+	tent = spawn ();
+	tent.solid = #SOLID_SLIDEBOX;
+	tent.movetype = #MOVETYPE_STEP;
+	setsize (tent, #VEC_HULL_MIN, #VEC_HULL_MAX);
+	setorigin (tent, point.origin);
+
+	oself = self;
+	self = tent;
+
+	self.origin_z = self.origin_z + 1;
+	droptofloor ();
+
+	ret = walkmove (0, 0);
+
+	self = oself;
+
+	remove (tent);
+	return ret;
+};
+
+/*
+	ValidateCoopsSpawns - runs through all the coop spawns and deletes the ones that are in the world
+*/
+
+void () ValidateCoopsSpawns =
+{
+	local entity le, re;
+
+	// always start from world
+
+	do {
+		le = find (le, classname, "info_player_coop");
+
+		// this is just to prevent using find with entities that we removed
+		// technically it should still work on entities that were removed
+		// but there's no guarantee that will always be true on future versions of qwsv
+		if (re != world) {
+			dprint ("bad coop spawn (the spawn has been removed) at: ");
+			dprint (vtos(re.origin));
+			dprint ("\n");
+			remove (re);
+			re = world;
+		}
+
+		if (le != world && !ValidSpawnPoint(le))
+			re = le;
+	} while (le != world);
+};
+
 void () spawn_think =
 {
+	// remove coop spawns that are in walls (like terra6.bsp)
+	ValidateCoopsSpawns ();
+
 	server_spawned = #TRUE;
 	remove (self);
 };
@@ -210,8 +272,9 @@ void() worldspawn =
 	skill = 5;
 
 	// create an entity that will let us know when everything's finished spawning
+	// and to also remove bad coop spawns
 	e = spawn ();
-	e.nextthink = time + 0.1;
+	e.nextthink = time + 0.2;
 	e.think = spawn_think;
 #endif
 

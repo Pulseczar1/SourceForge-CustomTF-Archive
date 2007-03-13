@@ -398,7 +398,7 @@ void() monster_enforcer =
 	self.netname = "enforcer";
 
 	self.monsterweight = #MWEIGHT_NORMAL;
-	self.monsterflags = #MFLAG_HASWEAPON | #MFLAG_HUMANOID;
+	self.monsterflags = #MFLAG_HASWEAPON | #MFLAG_HUMANOID | #MFLAG_NOBREATHING;
 
 	// Monsters have a team of their own
 	self.team_no = #TEAMNO_MONSTERS;

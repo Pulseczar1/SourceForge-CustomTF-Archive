@@ -538,7 +538,7 @@ void() monster_zombie =
 	self.netname = "zombie";
 
 	self.monsterweight = #MWEIGHT_SMALL;
-	self.monsterflags = #MFLAG_HUMANOID | #MFLAG_NOHEART;
+	self.monsterflags = #MFLAG_HUMANOID | #MFLAG_NOHEART | #MFLAG_NOBREATHING;
 
 	// Monsters have a team of their own
 	self.team_no = #TEAMNO_MONSTERS;
