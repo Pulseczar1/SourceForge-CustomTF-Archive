@@ -1393,6 +1393,7 @@ void rvWeapon::Reload( void ) {
 		return;
 	if ( AmmoAvailable() == AmmoInClip() )		// don't reload if you dont have enough ammo
 		return;
+
 	if ( ClipSize() > 0 ) {
 		//SetState ( WEAP_STATE_LOWER );	// xavior: fix the lack of gun lowering anim?
 		if ( AmmoInClip() == ClipSize() )
@@ -2835,10 +2836,8 @@ void rvWeapon::State_Raise() {
 				lowerAmount = 0.0f;
 				SetStage( STAGE_INIT );
 				SetState ( WEAP_STATE_IDLE );
-				if ( wsfl.reloading || wsfl.reload ) {
-					wsfl.reloading = false;
-					wsfl.reload = false;
-				}
+				wsfl.reloading = false;
+				wsfl.reload = false;
 				return;
 			}
 

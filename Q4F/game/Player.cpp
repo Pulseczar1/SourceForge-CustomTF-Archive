@@ -7124,10 +7124,6 @@ void idPlayer::WritePlayerStateToSnapshot( idBitMsgDelta &msg ) const {
 	}
 
 	for ( i = 0; i < MAX_WEAPONS; i++ ) {
-		if ( inventory.clip[i] < 0 )
-			// xavior: FIXME: inventory.clip[i] shouldn't have a value -1 here but it does when player spawns as sold
-			msg.WriteBits( 0, ASYNC_PLAYER_INV_CLIP_BITS );
-		else
 			msg.WriteBits( inventory.clip[i], ASYNC_PLAYER_INV_CLIP_BITS );
 	}
 }
