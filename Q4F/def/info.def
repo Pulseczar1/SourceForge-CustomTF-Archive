@@ -103,3 +103,21 @@ entityDef info_player_assault {
 
 	"spawnclass"			"rvCTFAssaultPlayerStart"
 }
+
+entityDef info_player_teleport {
+	"editor_color"				"1 0 0"
+	"editor_mins"				"-16 -16 0"
+	"editor_maxs"				"16 16 64"
+	"editor_showangle"			"1"
+
+	"editor_usage"				"Spawning position player after cinematic.  When triggered, player will be moved to this location."
+	"editor_var push"			"How much of a push to give to the player when he is teleported."
+	"editor_var visualView"		"Camera to set player's view to when he is teleported."
+	"editor_var visualEffect"	"How long to show the view from the visualView."
+
+	"spawnclass"				"q4fPlayerStart"
+	
+	"push"						"50000"
+	"visualEffect"				"0"
+	"visualView"				""
+}
