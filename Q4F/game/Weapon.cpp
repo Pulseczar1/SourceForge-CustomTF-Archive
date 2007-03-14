@@ -2835,8 +2835,10 @@ void rvWeapon::State_Raise() {
 				lowerAmount = 0.0f;
 				SetStage( STAGE_INIT );
 				SetState ( WEAP_STATE_IDLE );
-				wsfl.reloading = false;
-				wsfl.reload = false;
+				if ( wsfl.reloading || wsfl.reload ) {
+					wsfl.reloading = false;
+					wsfl.reload = false;
+				}
 				return;
 			}
 
