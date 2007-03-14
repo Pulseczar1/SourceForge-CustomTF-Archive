@@ -1058,6 +1058,30 @@ entityDef damage_painTrigger {
 	"deathicon"						"dm3"
 }
 
+entityDef damage_triggerhurt_10 {
+	"damage"						"10"
+	
+	"deathmsg"						"%v died."
+	"deathicon"						"dm3"
+	
+}
+
+entityDef damage_triggerhurt_20 {
+	"damage"						"20"
+	
+	"deathmsg"						"%v died."
+	"deathicon"						"dm3"
+	
+}
+
+entityDef damage_triggerhurt_100 {
+	"damage"						"100"
+	
+	"deathmsg"						"%v died."
+	"deathicon"						"dm3"
+	
+}
+
 entityDef damage_triggerhurt_1000 {
 	"damage"						"1000"
 	

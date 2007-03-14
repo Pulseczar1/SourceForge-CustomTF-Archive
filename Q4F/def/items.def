@@ -447,6 +447,81 @@ entityDef ctf_flag {
 	"idleDelay"					"60"
 }
 
+entityDef item_wfr_armor_light
+{
+	"classname"				"item_armor_small"
+	"inherit"				"item_armor_small"
+	"inherit2"				"item_triggersize_MP"
+	"inherit3"				"wfr_item_teamed"
+	"editor_ignore"			"1"
+	"fx_idle"				"effects/mp/armor_yellow"
+	"inv_icon"				"gfx/guis/hud/icons/item_armorsmall_colored"
+	"inv_armor"				"100"
+	"respawn"				"5"
+	"editor_ignore"			"0"
+	"nodrop"				"1"
+}
 
 
+entityDef item_wfr_armor_heavy
+{
+	"classname"				"item_armor_large"
+	"inherit"				"item_armor_large"
+	"inherit2"				"item_triggersize_MP"
+	"inherit3"				"wfr_item_teamed"
+	"editor_ignore"			"1"
+	"fx_idle"				"effects/mp/armor_red"
+	"inv_icon"				"gfx/guis/hud/icons/item_armorlarge_colored"
+	"inv_armor"				"250"
+	"respawn"				"5"
+	"editor_ignore"			"0"
+	"nodrop"				"1"
+}
 
+entityDef item_backpack 
+{
+   "inherit"                        "ammo_backpack_resupply"
+
+   "editor_color"                    ".3 .3 1"
+   "editor_mins"                    "-16 -16 0"
+   "editor_maxs"                    "16 16 32"
+   "editor_ignore"					"0"
+
+   "editor_usage"                    "Backpack.  Gives player multiple items at once. 20 ammo each, so designer must choose amounts."
+   "editor_var inv_ammo_blaster"    "gives pistol ammo"
+   "editor_var inv_ammo_shotgun"    "gives shotgun ammo"
+   "editor_var inv_ammo_machinegun"        "gives machinegun ammo"
+   "editor_var inv_ammo_grenadelauncher"    "gives grenade ammo"
+   "editor_var inv_ammo_rocketlauncher"    "gives rocket launcher ammo"
+   "editor_var inv_ammo_hyperblaster"        "gives hyperblaster ammo"
+   "editor_var inv_ammo_nailgun"        "gives nailgun ammo"
+   "editor_var inv_ammo_railgun"        "gives railgun ammo"
+   "editor_var inv_ammo_lightninggun"        "gives lightning gun ammo"
+   "editor_var inv_ammo_dmg"        "gives dmg ammo"
+   "editor_var inv_health"            "gives health"
+   "editor_var inv_armor"             "gives armor"
+   "editor_var inv_air"				  "gives air to breath"
+  
+   "model"							"models/mapobjects/marine/equipment/backpack/sp_backpack.lwo"
+   "size"                            "32 32 32"
+   
+   "snd_acquire"				"items_ammo_default"
+   
+   "respawn"						 "10"
+
+   "inv_ammo_machinegun"             "20"
+   "inv_ammo_shotgun"                "20"
+   "inv_ammo_blaster"                "20"
+   "inv_ammo_grenadelauncher"        "20"
+   "inv_ammo_rocketlauncher"         "20"
+   "inv_ammo_hyperblaster"           "20"
+   "inv_ammo_railgun"                "20"
+   "inv_ammo_nailgun"                "20"
+   "inv_ammo_lightninggun"           "20"
+   "inv_ammo_dmg"				     "20"
+   "inv_health"						 "20"
+   "inv_armor"						 "0"
+   "inv_air"						 "0"
+
+   "nodrop"							"1"
+}
