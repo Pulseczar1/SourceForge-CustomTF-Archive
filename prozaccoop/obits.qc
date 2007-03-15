@@ -2035,7 +2035,9 @@ void(entity targ, entity attacker) ClientObituary =
 			// Gizmo - moved this first for obvious reasons
 			if (attacker.flags & #FL_MONSTER && attacker.team_no == #TEAMNO_MONSTERS)
 			{
-				if (attacker.classname == "idmonster_army")
+				if (attacker == targ)
+					deathstring = " killed itself\n";
+				else if (attacker.classname == "idmonster_army")
 					deathstring = " was shot by a Grunt\n";
 				else if (attacker.classname == "idmonster_demon1")
 					deathstring = " was eviscerated by a Fiend\n";
