@@ -3925,6 +3925,10 @@ void() BioInfection_MonsterDecay =
         drmg = self.enemy.health + 29;
 
 	//T_Damage(self.enemy, self, self.owner, drmg);
+#ifdef COOP_MODE_ENHANCED
+	if (self.enemy.team_no == #TEAMNO_MONSTERS)
+		deathmsg = #DMSG_BIOWEAPON;
+#endif
     TF_T_Damage(self.enemy, self, self.owner, drmg, #TF_TD_NOPAIN,0);
 
 	SpawnBlood(self.enemy.origin, drmg+10);
