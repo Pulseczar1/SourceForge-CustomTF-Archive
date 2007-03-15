@@ -64,9 +64,11 @@ float (entity us, entity test) COOP_IsValidTarget =
 		test.classname == "monster_wizard" || test.classname == "monster_fish" || test.classname == "monster_gremlin") {
 		if (!Teammate(test.real_owner.team_no, us.team_no))
 			return #TRUE;
+/*
 	} else if (test.classname == "grenade" && test.netname == "land_mine") {
 		if (!Teammate(test.owner.team_no, us.team_no))
 			return #TRUE;
+*/
 	} else if (!Teammate(test.team_no, us.team_no)) {
 		if (IsBuilding(test) && test.classname != "building_sentrygun_base")
 			return #TRUE;
