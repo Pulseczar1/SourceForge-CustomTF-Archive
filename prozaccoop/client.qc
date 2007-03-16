@@ -898,81 +898,72 @@ void() SetCycleTimeoutTimer;
 void() SetCycleErrorCheck;
 void() SetCycleTimer;
 
-//- OfN - super new map cycling code :)
 float() DoExtraCycle =
 {
 	local string nfmap, temp;
+	local float minplayers, maxplayers, itsok, currentpl;
+
 	nfmap = infokey(world, "nmap");
-	if (nfmap != string_null)
-	{
-		local float minplayers, maxplayers, itsok, currentpl;
-		
-		if (infokey(world,"minp")!="")
-			minplayers = stof(infokey(world,"minp"));
-		else
-			minplayers = 0;
 
-		if (infokey(world,"maxp")!="")
-			maxplayers = stof(infokey(world,"maxp"));
-		else
-			maxplayers = 32;
+	// if null then return
+	if (nfmap == string_null)
+		return #FALSE;
 
-		itsok = #TRUE;
-		
-		currentpl = GetNoPlayers(#FALSE, #FALSE);
+	if (infokey(world,"minp")!="")
+		minplayers = stof(infokey(world,"minp"));
+	else
+		minplayers = 0;
 
-		//check conditions
-		
-		if (minplayers > currentpl)
-		{
-			bprint(#PRINT_HIGH,"Map ");
-			nfmap = infokey(world, "nmap");
-			bprint(#PRINT_HIGH, nfmap);
-			bprint(#PRINT_HIGH," skipped ­ minimum players ");
-			temp = ftos(minplayers);
-			bprint(#PRINT_HIGH, temp);
-			bprint(#PRINT_HIGH," ¨currently ");
-			temp = ftos(currentpl);
-			bprint(#PRINT_HIGH, temp);
-			bprint(#PRINT_HIGH,"©\n");
-			itsok = #FALSE;
-		}
-		else 
-		{
-			if (maxplayers < currentpl)
-			{
-				bprint(#PRINT_HIGH,"Map ");
-				nfmap = infokey(world, "nmap");
-				bprint(#PRINT_HIGH, nfmap);
-				bprint(#PRINT_HIGH," skipped ­ maximum players ");
-				temp = ftos(maxplayers);
-				bprint(#PRINT_HIGH,temp);
-				bprint(#PRINT_HIGH," ¨currently ");
-				temp = ftos(currentpl);
-				bprint(#PRINT_HIGH,temp);
-				bprint(#PRINT_HIGH,"©\n");
-				itsok = #FALSE;
-			}		  
-		}
-  
-		//cleanup..
-		localcmd("localinfo minp \"\"\n");
-		localcmd("localinfo maxp \"\"\n");
-		//locals clean
+	if (infokey(world,"maxp")!="")
+		maxplayers = stof(infokey(world,"maxp"));
+	else
+		maxplayers = 32;
 
-		//execute map conditions ok
-		if (itsok)
-		{
-			nfmap = infokey(world, "nmap"); 		   
-			LaunchMap(nfmap);
+	itsok = #TRUE;
 
-			return #TRUE;
-		}
-		else //conditions not passed...
-		{
-			localcmd("localinfo nmap \"\"\n");
-			return #FALSE;
-		}
+	currentpl = GetNoPlayers(#FALSE, #FALSE);
+
+	// check conditions
+	if (minplayers > currentpl) {
+		bprint(#PRINT_HIGH,"Map ");
+		nfmap = infokey(world, "nmap");
+		bprint(#PRINT_HIGH, nfmap);
+		bprint(#PRINT_HIGH," skipped ­ minimum players ");
+		temp = ftos(minplayers);
+		bprint(#PRINT_HIGH, temp);
+		bprint(#PRINT_HIGH," ¨currently ");
+		temp = ftos(currentpl);
+		bprint(#PRINT_HIGH, temp);
+		bprint(#PRINT_HIGH,"©\n");
+		itsok = #FALSE;
+	} else if (maxplayers < currentpl) {
+		bprint(#PRINT_HIGH,"Map ");
+		nfmap = infokey(world, "nmap");
+		bprint(#PRINT_HIGH, nfmap);
+		bprint(#PRINT_HIGH," skipped ­ maximum players ");
+		temp = ftos(maxplayers);
+		bprint(#PRINT_HIGH,temp);
+		bprint(#PRINT_HIGH," ¨currently ");
+		temp = ftos(currentpl);
+		bprint(#PRINT_HIGH,temp);
+		bprint(#PRINT_HIGH,"©\n");
+		itsok = #FALSE;
+	}
+
+	// cleanup
+	localcmd("localinfo minp \"\"\n");
+	localcmd("localinfo maxp \"\"\n");
+	//locals clean
+
+	// execute map conditions ok
+	if (itsok) {
+		nfmap = infokey(world, "nmap");
+		LaunchMap(nfmap);
+
+		return #TRUE;
+	} else {
+		localcmd("localinfo nmap \"\"\n");
+		return #FALSE;
 	}
 
 	return #FALSE;
@@ -1053,6 +1044,28 @@ void() SetCycleErrorCheck =
 	newmis.think = cycle_error_think;
 };
 
+
+/*
+	CheckFailedMapChange - used to check if a changelevel() call failed
+
+	By Gizmo
+*/
+
+void () fail_think =
+{
+	bprint (#PRINT_HIGH, "Map change failed! Defaulting to start...\n");
+	changelevel ("start");
+	remove (self);
+};
+
+void () CheckFailedMapChange =
+{
+	newmis = spawn();
+	newmis.nextthink = time + 5;
+	newmis.think = fail_think;
+};
+
+
 void() GotoNextMap =
 {
 	local float nextlevel;
@@ -1060,55 +1073,54 @@ void() GotoNextMap =
 	//local entity te;
 	local string cyc;
 
-	if (nextmap != mapname)
-	{
-		changelevel(nextmap);
+	if (nextmap != mapname) {
+		changelevel (nextmap);
+		CheckFailedMapChange ();
 		already_chosen_map = #TRUE;
 	}
 
-	if (already_chosen_map == #FALSE)
-	{
-		if (DoExtraCycle()) // Checks for NMAP info
-			already_chosen_map = #TRUE;
-		else
-			already_chosen_map = #FALSE;
-	}
-
-	if (already_chosen_map == #FALSE)
-	{
+	if (!already_chosen_map) {
 		if (#AGR_ROTATION_OFF) // PZ - AGR off on map triggered by rotation
-			localcmd("localinfo agr \"\"\n");
+			localcmd ("localinfo agr \"\"\n");
 
-		sl = infokey(world, "n");
-		nextlevel = stof(sl);
+		sl = infokey (world, "n");
+		nextlevel = stof (sl);
 
 		nextlevel = nextlevel + 1;	// next level
-		sl = ftos(nextlevel);
-		localcmd("serverinfo n ");
-		localcmd(sl);
-		localcmd("\n");
+		sl = ftos (nextlevel);
+		localcmd ("serverinfo n ");
+		localcmd (sl);
+		localcmd ("\n");
 		
 		
 		// change map
-		cyc = infokey(world, "cycledir");
-		if ( cyc == string_null )
-			localcmd("exec #DEFAULT_CYCLEDIR/map");
-		else
-		{
-			localcmd("exec ");
-			localcmd(cyc);
-			localcmd("/map");
+		cyc = infokey (world, "cycledir");
+
+		if (cyc == string_null)
+			localcmd ("exec #DEFAULT_CYCLEDIR/map");
+		else {
+			localcmd ("exec ");
+			localcmd (cyc);
+			localcmd ("/map");
 		}
 
-		localcmd(sl);
-		localcmd(".cfg\n");
+		localcmd (sl);
+		localcmd (".cfg\n");
 	}
+
+	// Gizmo - if the above didn't produce a serverinfo/localinfo nmap then default to start
+	if (!already_chosen_map && infokey(world, "nmap") != string_null)
+		already_chosen_map = DoExtraCycle ();
+	else if (!already_chosen_map && infokey(world, "nmap") == string_null)
+		changelevel ("start");
 
 	if (infokey(world, "n") == "0")
 		already_chosen_map = #FALSE;
 
+	// Gizmo - this is only called if the map wasn't changed to for min/max player reasons
+	// Gizmo - all this does is set a timer to call GotoNextMap again and try the next map from the infokey(world, "n") number
 	if (already_chosen_map == #FALSE) // nothing was done yet, so set the damn timer..
-		SetCycleTimer();
+		SetCycleTimer ();
 };
 
 
@@ -1221,8 +1233,6 @@ void() IntermissionThink =
 
 	if (ServerUpdating())
 		return;
-
-#ifdef QUAKE_WORLD
 	
 	if (!triggered_cycle)
 	{
@@ -1230,54 +1240,17 @@ void() IntermissionThink =
 		triggered_cycle = #TRUE;
 		GotoNextMap();
 	}
-#else
-	ExitIntermission ();
-#endif
 };
 
-#ifndef QUAKE_WORLD
-void() execute_changelevel =
-{
-	local entity	pos;
+/*
+============
+execute_changelevel
 
-	intermission_running = 1;
-	
-// enforce a wait time before allowing changelevel
-	if (deathmatch)
-		intermission_exittime = time + #INTERMISSION_LENFORCED;
-	else
-		intermission_exittime = time + 2;
-
-// OfN TODO: remove this?
-
-/*	  WriteByte (#MSG_ALL, #SVC_CDTRACK);
-	WriteByte (#MSG_ALL, 3);
-	WriteByte (#MSG_ALL, 3);*/
-	
-	pos = FindIntermission ();
-
-	other = find (world, classname, "player");
-	while (other != world)
-	{
-		other.view_ofs = '0 0 0';
-		other.angles = other.v_angle = pos.mangle;
-		other.fixangle = #TRUE; 	// turn this way immediately
-		other.nextthink = time + 0.5;
-		other.takedamage = #DAMAGE_NO;
-		other.solid = #SOLID_NOT;
-		other.movetype = #MOVETYPE_NONE;
-		other.modelindex = 0;
-		setorigin (other, pos.origin);
-		other = find (other, classname, "player");
-	}	
-
-	WriteByte (#MSG_ALL, #SVC_INTERMISSION);
-};
-
-#else
-
+The global "nextmap" has been set previously.
+Take the players to the intermission spot
+============
+*/
 void() PrintResults;
-
 void() execute_changelevel =
 {
 	local entity	pos;
@@ -1318,7 +1291,7 @@ void() execute_changelevel =
 	}	
 
 };
-#endif
+
 
 void() changelevel_touch =
 {
@@ -1329,16 +1302,10 @@ void() changelevel_touch =
 	if (other.classname != "player")
 		return;
 
-#ifndef QUAKE_WORLD
-	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
-	{
+	if (cvar("samelevel") == 2 || (cvar("samelevel") == 3 && mapname != "start")) {
 		T_Damage (other, self, self, 50000);
 		return;
 	}
-#else
-	if (cvar("samelevel") == 2 || (cvar("samelevel") == 3 && mapname != "start"))
-		return;
-#endif
 
 	bprint (#PRINT_HIGH, other.netname);
 	bprint (#PRINT_HIGH, " exited the level\n");
