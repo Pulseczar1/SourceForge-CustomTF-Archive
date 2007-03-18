@@ -282,8 +282,7 @@ void(entity player) UpdateArmorItem;
 
 // Char used to visually indicate a purchased item (DO NOT USE QUOTES!)
 //#define CHAR_BOUGHT * // <-- Classic "*" char
-#define CHAR_BOUGHT 
- // <-- White Square on original and most charsets
+#define CHAR_BOUGHT œ	// small yellow dot
 
 //==============================================================================
 // The following "ancient" functions have been there doing the work for years
@@ -2338,7 +2337,7 @@ void(float inp) Menu_Option_Input =
 		if (!(self.weapons_carried & #WEAP_SNIPER_RIFLE) && !(self.cutf_items & #CUTF_OTR))
 		{
 			CuTFMenuSound(#MENUSOUND_WRONG);
-			sprint(self,#PRINT_HIGH,"You will need a sniper rifle for these bullets!\n");
+			sprint (self, #PRINT_HIGH, "Are you going to throw these bullets at them or something?\n");
 			self.impulse = 0;
 			return;
 		}
