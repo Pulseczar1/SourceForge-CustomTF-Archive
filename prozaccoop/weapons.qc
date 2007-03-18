@@ -2395,20 +2395,10 @@ void() W_FireLightning =
 
 	KickPlayer(-2, self);
 
-	//WK Allow 6 seconds MAX of firing the lightning gun
 #define BIGLIGHT
 #ifdef BIGLIGHT
-	//We do this by capping the maximum ammo at 100, and using all
-	//cells above that in one tremendous shot
-	if (self.ammo_cells > 100) {
-		excess = floor((self.ammo_cells - 100) * 2 / 3.1); //WK 1/7/7 Nerfed slightly from 3
-		if (excess < 50) excess = 50;
-		self.ammo_cells = 100;
-	}
-	else {
-		excess = 0;
-		self.ammo_cells = self.ammo_cells - 0.75;
-	}
+	// Gizmo - no more discharging all your cells
+	self.ammo_cells = self.ammo_cells - 0.75;
 #else
 	//Or this method, which consumes cells at a rate to ensure we run out
 	//In a few seconds, no matter what. But resupplying is a bitch.
@@ -2463,15 +2453,9 @@ void() W_FireLightning =
 	multicast (org, #MULTICAST_PHS);
 #endif
 
-	//WK Either way of firing the gun, we handle it here
-	//WK2 - Tone it down a LOT
-	if (excess) {
-		sprint(self,#PRINT_HIGH,"You discharge your excess cells\n");
-		LightningDamage (self.origin, trace_endpos + v_forward*4, self, excess);
-	}
-	else
 //WK 30. Lowered damage to make it a $2200 weapon
-		LightningDamage (self.origin, trace_endpos + v_forward*4, self, 12);
+	// Gizmo - increased damage to 18
+	LightningDamage (self.origin, trace_endpos + v_forward*4, self, 18);
 };
 
 //=============================================================================

@@ -145,7 +145,7 @@ local float 	ldmg;
 
 	delta = self.enemy.origin - self.origin;
 
-	if (vlen(delta) > 250)
+	if (vlen(delta) > 175 || !visible(self.enemy))
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
@@ -173,7 +173,7 @@ local float 	ldmg;
 
 	delta = self.enemy.origin - self.origin;
 
-	if (vlen(delta) > 250)
+	if (vlen(delta) > 175 || !visible(self.enemy))
 		return;
 		
 	ldmg = (random() + random() + random()) * #IDMON_SHAMBLER_CLAWDMG;
@@ -481,6 +481,7 @@ void() monster_shambler =
 	COOP_SetLives ();
 
 	self.#npc_electricitymult = 0.25;
+	self.#npc_spikemult = 1.60;
 
 	coop_walkmonster_start();
 };

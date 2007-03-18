@@ -1584,6 +1584,11 @@ void(entity targ, entity attacker) ClientObituary =
 					{
 						if (attacker.job & #JOB_WARLOCK)
 						{
+#ifdef COOP_MODE_ENHANCED
+							if (targ.team_no == #TEAMNO_MONSTERS && targ.monsterflags & #MFLAG_NOHEART)
+								deathstring = " was knife-murdered by ";
+							else
+#endif
 							if (rnum < 0.33)
 								deathstring = " is forced to donate his blood by ";
 							else if (rnum < 0.66)
@@ -1596,24 +1601,28 @@ void(entity targ, entity attacker) ClientObituary =
 								return;
 							}
 							else
-								deathstring = "'s heart is now a prized possession of ";							
+								deathstring = "'s heart is now a prized possession of ";
 						}
 						else
 						{
-							deathstring = " was knife-murdered by "; 
+							deathstring = " was knife-murdered by ";
 						}
 					}
 					else
 						deathstring = " was axe-murdered by ";
-					
+
 					//if (attacker.demon_blood < 0) //WK Sanity Check
 					//	attacker.demon_blood = 0;
 					// if the above ever happens you've got a serious bug that needs fixing
 					// don't get around it by cheap hacks - SB
-					
+
 					/*if (attacker.demon_blood < #MAX_KNIFE_BLOOD) //SB - OfN defined max now
 						attacker.demon_blood = attacker.demon_blood + 1;*/
-					WarlockKnifeKill(attacker);
+
+#ifdef COOP_MODE_ENHANCED
+					if ((targ.team_no == #TEAMNO_MONSTERS && !(targ.monsterflags & #MFLAG_NOHEART)) || targ.team_no != #TEAMNO_MONSTERS)
+#endif
+						WarlockKnifeKill(attacker);
 				}
 				else if (deathmsg == #DMSG_SPANNER)
 				{
@@ -1820,7 +1829,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 				else if (deathmsg == #DMSG_BACKSTAB)
 				{
+#ifdef COOP_MODE_ENHANCED
+					if (attacker.job & #JOB_WARLOCK && random() < 0.33 && ((targ.team_no == #TEAMNO_MONSTERS && !(targ.monsterflags & #MFLAG_NOHEART)) || targ.team_no != #TEAMNO_MONSTERS))
+#else
 					if (attacker.job & #JOB_WARLOCK && random() < 0.33)
+#endif
 					{
 						bprint(#PRINT_MEDIUM,attacker.netname);
 						bprint(#PRINT_MEDIUM," extirpates ");
@@ -1829,7 +1842,7 @@ void(entity targ, entity attacker) ClientObituary =
 						WarlockKnifeKill(attacker);
 						return;
 					}
-					
+
 					if (rnum < 0.5)
 					{
 						deathstring = " gets assassinated by ";
@@ -1846,8 +1859,11 @@ void(entity targ, entity attacker) ClientObituary =
 					// See previous comment - SB
 					/*if (attacker.demon_blood < #MAX_KNIFE_BLOOD) //SB
 						attacker.demon_blood = attacker.demon_blood + 1;*/
-					
-					WarlockKnifeKill(attacker);
+
+#ifdef COOP_MODE_ENHANCED
+					if ((targ.team_no == #TEAMNO_MONSTERS && !(targ.monsterflags & #MFLAG_NOHEART)) || targ.team_no != #TEAMNO_MONSTERS)
+#endif
+						WarlockKnifeKill(attacker);
 				}
 				else if (deathmsg == #DMSG_TRANQ)
 				{

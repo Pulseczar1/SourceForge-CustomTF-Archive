@@ -621,7 +621,20 @@ void(float inAuto) TeamFortress_ID =
 				else
 					centerprint(self, spacer,trace_ent.netname,"\n\nεξενω Scrag summoned by\n\n", trace_ent.real_owner.netname);
 			}
-		}         
+		}
+
+#ifdef COOP_MODE_ENHANCED
+		else if (trace_ent.team_no == #TEAMNO_MONSTERS) {
+			// Gizmo - wouldn't this be easier to do this one time before these if statements?
+			self.StatusRefreshTime = time + 1.5;
+			st = ftos (trace_ent.health);
+
+			if (self.cutf_items & #CUTF_DEMONLORE)
+				centerprint (self, spacer, "An εξενω ", trace_ent.netname, "\n\n", st, " health");
+			else
+				centerprint (self, spacer, "An εξενω ", trace_ent.netname);
+		}
+#endif
 	}
 };
 

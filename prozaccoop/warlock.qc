@@ -2193,7 +2193,7 @@ void(entity warlock) GibPickSound =
 };
 
 //=====================================================================
-// We killed some1 with knife, so give us a heart (if we r a warlock)
+// We killed someone with knife, so give us a heart (if we are a warlock)
 
 void (entity attacker) WarlockKnifeKill =
 {
