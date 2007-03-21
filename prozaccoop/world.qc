@@ -271,6 +271,10 @@ void() worldspawn =
 	coop = 1;
 	skill = 5;
 
+	// turn off grapple
+	if (infokey(world, "g") == string_null)
+		localcmd ("localinfo g off\n");
+
 	// create an entity that will let us know when everything's finished spawning
 	// and to also remove bad coop spawns
 	e = spawn ();
@@ -281,11 +285,11 @@ void() worldspawn =
 	lastspawn = world;
 	
 // custom map attributes
-#ifndef QUAKE_WORLD
-	if (self.model == "maps/e1m8.bsp")
-		cvar_set ("sv_gravity", "100");
-	else
-		cvar_set ("sv_gravity", "800");
+#ifdef COOP_MODE_ENHANCED
+	//if (self.model == "maps/e1m8.bsp")
+	//	cvar_set ("sv_gravity", "100");
+	//else
+	//	cvar_set ("sv_gravity", "800");
 #endif
 
 #ifdef QUAKE_WORLD
@@ -300,6 +304,21 @@ void() worldspawn =
 
     // Retrieve prozac main localinfos
     UpdateInfos(#TRUE);
+
+#ifdef COOP_MODE_ENHANCED
+	// turn off grapple and those sort of things by default if nothing is already set
+	// this overrides UpdateInfos from above
+	// This might be a little easier/cleaner than UpdateInfos
+	// TODO: modify UpdateInfos instead?
+	if (infokey(world, "no_grapple") == string_null) {
+		localcmd ("localinfo no_grapple 1\n");
+		no_grapple = 1;
+	}
+	if (infokey(world, "allow_watermonsters") == string_null) {
+		localcmd ("localinfo allow_watermonsters 1\n");
+		allow_watermonsters = 1;
+	}
+#endif
 
     // Init the body queue for corpses and heads of players
     InitBodyQue ();
