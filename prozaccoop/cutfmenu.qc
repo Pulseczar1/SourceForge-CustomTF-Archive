@@ -44,8 +44,10 @@ void(entity player) UpdateArmorItem;
 #define STR_DAEDALUS		   "Impulse Rifle   "
 #define STR_LASERCANNON 	   "Laser Cannon    "
 #define STR_HOLO			   "Holo Device     "
-#define STR_CLIPEXTEND		   "Clip Extender   "
-// PAGE 4 - Leg Enhancements
+#define STR_CLIPEXTEND			"Clip Extender   "
+// PAGE 4 - Tools
+#define STR_ZEROGRAVITY 		"Zero-Gravity Gun"
+// PAGE 5 - Leg Enhancements
 #define STR_SPEED1			   "Cheetah         "
 #define STR_SPEED2			   "Cougar          "
 #define STR_SPEED3			   "White Rhino     "
@@ -53,7 +55,7 @@ void(entity player) UpdateArmorItem;
 #define STR_SPEED5			   "KGB Officer     "
 #define STR_SPEED6			   "Black Mamba     "
 #define STR_SPEED7			   "ImperialPenguin "
-// PAGE 5 - Health/Armor
+// PAGE 6 - Health/Armor
 #define STR_HP1 			   "50Ø75 Green     "
 #define STR_HP2 			   "50Ø90 Green     "
 #define STR_HP3 			   "100Ø80 Yellow   "
@@ -61,7 +63,7 @@ void(entity player) UpdateArmorItem;
 #define STR_HP5 			   "150Ø100 Yellow  "
 #define STR_HP6 			   "200Ø100 Red     "
 #define STR_HP7 			   "300Ø100 Red     "
-// PAGE 6 - Special Armors & Ammo
+// PAGE 7 - Special Armors & Ammo
 #define STR_CERAMIC 		   "Ceramic Armor   "
 #define STR_GET 			   "Impact Armor    "
 #define STR_ASBESTOS		   "Asbestos Armor  "
@@ -69,7 +71,7 @@ void(entity player) UpdateArmorItem;
 #define STR_BLAST			   "Blast Armor     "
 #define STR_AMMOBACKPACK	   "Ammo Backpack   "
 #define STR_AMMOBANDOLIER	   "Ammo Bandolier  "
-// PAGE 7 - Special Items
+// PAGE 8 - Special Items
 #define STR_SCANNER 		   "Scanner         "
 #define STR_AUTOSCANNER 	   "  Auto-Scanner  "
 #define STR_DETPACK 		   "Detpack         "
@@ -77,7 +79,7 @@ void(entity player) UpdateArmorItem;
 #define STR_SPYKIT			   "Spy Kit         "
 #define STR_SCUBA			   "Scuba Gear      "
 #define STR_HOOK			   "Grapple         "
-// PAGE 8 - More Special Items
+// PAGE 9 - More Special Items
 #define STR_JAMMER			   "Scanner Jammer  "
 #define STR_CYBERAUG		   "CyberAug Unit   "
 #define STR_SENSOR			   "Motion Sensor   "
@@ -85,7 +87,7 @@ void(entity player) UpdateArmorItem;
 #define STR_FULLARMOUR		   "Full Armour     "
 #define STR_TOSSABLEDET 	   "C4 Tossable Det "
 #define STR_DISPENSER		   "Dispenser       "
-// PAGE 9 - Combat Grenades
+// PAGE 10 - Combat Grenades
 #define STR_GR_NORMAL		   "Normal          "
 #define STR_GR_NAPALM		   "Napalm          "
 #define STR_GR_GAS			   "Gas             "
@@ -93,7 +95,7 @@ void(entity player) UpdateArmorItem;
 #define STR_GR_FRAG 		   "Frag            "
 #define STR_GR_NAIL 		   "Nail            "
 #define STR_GR_MIRV 		   "MIRV            "
-// PAGE 10 - Utility Grenades
+// PAGE 11 - Utility Grenades
 #define STR_GR_FLARE		   "Flare           "
 #define STR_GR_CALTROP		   "Caltrop         "
 #define STR_GR_CONCUSSION	   "Concussion      "
@@ -101,7 +103,7 @@ void(entity player) UpdateArmorItem;
 #define STR_GR_ANTIGRAV 	   "AntiGrav        "
 #define STR_GR_BIOLOGICAL	   "Biological      "
 #define STR_GR_KRAC 		   "Krac            "
-// PAGE 11 - Engineering
+// PAGE 12 - Engineering
 #define STR_SPANNER 		   "Spanner         "
 #define STR_SENTRYGUN		   "Sentry Gun      "
 #define STR_SENTRYUPGRADE	   " Sentry Upgrade "
@@ -109,7 +111,7 @@ void(entity player) UpdateArmorItem;
 #define STR_TESLAUPGRADE	   "  Tesla Upgrade "
 #define STR_SECURITYCAMERA	   "Security Camera "
 #define STR_TELEPORTER		   "Teleporter Pads "
-// PAGE 12 - Professions
+// PAGE 13 - Professions
 #define STR_THIEF			   "Thief     ®Hide©"
 #define STR_RUNNER			   "Runner  ®Sprint©"
 #define STR_WARLOCK 		   "Warlock ®Summon©"
@@ -121,14 +123,14 @@ void(entity player) UpdateArmorItem;
   #define STR_GUERILLA_EXTRA1  "Mine Technician "
   #define STR_GUERILLA_EXTRA2  "Mine Specialist "
 #define STR_JUDOKA			   "Judoka  ®Disarm©"
-// PAGE 13 - More Professions
+// PAGE 14 - More Professions
 #define STR_ARMY			   "Army  ®Soldiers©"
   #define STR_ARMY_EXTRA1	   "Extra Reserve 2 "
   #define STR_ARMY_EXTRA2	   "Extra Reserve 3 "
 #define STR_HACKER			   "CyberNet  ®Hack©"
 #define STR_MARTYR			   "Martyr ®Suicide©"
 #define STR_CRUSADER		   "Crusader ®Auras©"
-// PAGE 14 - Proficiencies
+// PAGE 15 - Proficiencies
 #define STR_STEALTH 		   "Stealth         "
 #define STR_HIGHJUMP		   "Highjump        "
 #define STR_HWGUY			   "Aspect of HWGuy "
@@ -136,7 +138,7 @@ void(entity player) UpdateArmorItem;
 #define STR_GYMNAST 		   "Gymnast         "
 #define STR_DEMONLORE		   "Demon Lore      "
 #define STR_CLOSECOMBAT 	   "Close Combat    "
-// PAGE 15 - Optional Equipment
+// PAGE 16 - Optional Equipment
 #define STR_AUTOID			   "Auto-ID         "
 #define STR_RESPAWNGUARD	   "Respawn Guard   "
 #define STR_HOVERBOOTS		   "Hover Boots     "
@@ -172,14 +174,16 @@ void(entity player) UpdateArmorItem;
 #define COST_LASERCANNON		1400
 #define COST_HOLO				1200
 #define COST_CLIPEXTEND 		 600
-// PAGE 4 - Leg Enhancements
+// PAGE 4 - Tools
+#define COST_ZEROGRAVITY		1000
+// PAGE 5 - Leg Enhancements
 #define COST_SPEED1 			9000
 #define COST_SPEED2 			6000
 #define COST_SPEED3 			3250
 #define COST_SPEED4 			2500
 #define COST_SPEED5 			1250
 #define COST_SPEED6 			 500
-// PAGE 5 - Health/Armor
+// PAGE 6 - Health/Armor
 #define COST_HP1				 150
 #define COST_HP2				 450
 #define COST_HP3				 700
@@ -187,7 +191,7 @@ void(entity player) UpdateArmorItem;
 #define COST_HP5				1800
 #define COST_HP6				2700
 #define COST_HP7				4100
-// PAGE 6 - Special Armors & Ammo
+// PAGE 7 - Special Armors & Ammo
 #define COST_CERAMIC			 575
 #define COST_GET				 625
 #define COST_ASBESTOS			 750
@@ -195,7 +199,7 @@ void(entity player) UpdateArmorItem;
 #define COST_BLAST				1500
 #define COST_AMMOBACKPACK		 300
 #define COST_AMMOBANDOLIER		 200
-// PAGE 7 - Special Items
+// PAGE 8 - Special Items
 #define COST_SCANNER			 650
 #define COST_AUTOSCANNER		 250
 #define COST_DETPACK			 800
@@ -203,7 +207,7 @@ void(entity player) UpdateArmorItem;
 #define COST_SPYKIT 			2000
 #define COST_SCUBA				1000
 #define COST_HOOK				3000
-// PAGE 8 - More Special Items
+// PAGE 9 - More Special Items
 #define COST_JAMMER 			1000
 #define COST_CYBERAUG			 800
 #define COST_SENSOR 			 450
@@ -211,7 +215,7 @@ void(entity player) UpdateArmorItem;
 #define COST_FULLARMOUR 		 250
 #define COST_TOSSABLEDET		1200
 #define COST_DISPENSER			 600
-// PAGE 9 - Combat Grenades
+// PAGE 10 - Combat Grenades
 #define COST_GR_NORMAL			 500
 #define COST_GR_NAPALM			1400
 #define COST_GR_GAS 			1300
@@ -219,7 +223,7 @@ void(entity player) UpdateArmorItem;
 #define COST_GR_FRAG			1300
 #define COST_GR_NAIL			1400
 #define COST_GR_MIRV			1500
-// PAGE 10 - Utility Grenades
+// PAGE 11 - Utility Grenades
 #define COST_GR_FLARE			 300
 #define COST_GR_CALTROP 		 500
 #define COST_GR_CONCUSSION		1000
@@ -227,7 +231,7 @@ void(entity player) UpdateArmorItem;
 #define COST_GR_ANTIGRAV		1000
 #define COST_GR_BIOLOGICAL		1100
 #define COST_GR_KRAC			1400
-// PAGE 11 - Engineering
+// PAGE 12 - Engineering
 #define COST_SPANNER			1200
 #define COST_SENTRYGUN			1500
 #define COST_SENTRYUPGRADE		 700
@@ -235,7 +239,7 @@ void(entity player) UpdateArmorItem;
 #define COST_TESLAUPGRADE		1650
 #define COST_SECURITYCAMERA 	 350
 #define COST_TELEPORTER 		1100
-// PAGE 12 - Professions
+// PAGE 13 - Professions
 #define COST_THIEF				 950
 #define COST_RUNNER 			 400
 #define COST_WARLOCK			1150
@@ -247,14 +251,14 @@ void(entity player) UpdateArmorItem;
   #define COST_GUERILLA_EXTRA1	 700
   #define COST_GUERILLA_EXTRA2	 950
 #define COST_JUDOKA 			1250
-// PAGE 13 - More Professions
+// PAGE 14 - More Professions
 #define COST_ARMY				1250
   #define COST_ARMY_EXTRA1		 700
   #define COST_ARMY_EXTRA2		 950
 #define COST_HACKER 			1200
 #define COST_MARTYR 			1000
 #define COST_CRUSADER			1600
-// PAGE 14 - Proficiencies
+// PAGE 15 - Proficiencies
 #define COST_STEALTH			 400
 #define COST_HIGHJUMP			 500 // Original was 200
 #define COST_HWGUY				 450
@@ -262,7 +266,7 @@ void(entity player) UpdateArmorItem;
 #define COST_GYMNAST			 450
 #define COST_DEMONLORE			 300
 #define COST_CLOSECOMBAT		 600
-// PAGE 15 - Optional Equipment
+// PAGE 16 - Optional Equipment
 #define COST_AUTOID 			  25
 #define COST_RESPAWNGUARD		  25
 #define COST_HOVERBOOTS 		 850
@@ -676,6 +680,65 @@ void(float inp) Menu_MiscWeapon_Input =
 		if (inp == 9)
 		{
 			CuTFMenuSound(#MENUSOUND_BROWSE);
+			self.current_menu = #MENU_TOOLS;
+			Menu_ToolWeapon();			
+		}
+		if (inp == 10)
+		{
+			DropFromCustomClassGen();
+		}
+		
+	 self.impulse = 0;
+  }
+};
+
+
+// ====================================================================
+//	Tools - Gizmo
+// ====================================================================
+void() Menu_ToolWeapon =
+{
+	local string temp;
+	temp = ftos(self.money);
+	
+	if (self.tfstate & #TFSTATE_NOTENOUGHMONEY)
+		temp = colstr(temp,#COLSTR_RED);
+	
+	local string l1,l2,l3,l4, str;
+
+	MenuResetCount();
+
+	l1 = ConstructMenuItemStr(1,#STR_ZEROGRAVITY,#COST_ZEROGRAVITY,self.weapons_carried,#WEAP_ZEROGRAVITY);
+	str = "\n";
+	l1 = strcat(l1,str);
+
+	l2 = l3 = "\n\n";
+
+	l4 = "\n";
+	l4 = strcat(l4,".. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n");
+
+	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãúê Tools              úã\n\n", l1, l2, l3, l4, temp," dollars left\n");
+};
+
+void(float inp) Menu_ToolWeapon_Input =
+{ 
+  if (inp <= 10 && inp >= 1)
+  {
+
+		if (inp == 1) {
+			BuyWeapon(#COST_ZEROGRAVITY, #WEAP_ZEROGRAVITY);
+			Menu_ToolWeapon ();
+		}
+	   
+		if (inp == 8) {
+			CuTFMenuSound(#MENUSOUND_BROWSE);
+			self.current_menu = #MENU_MISC_WEAPON;
+			Menu_MiscWeapon();
+			
+		}
+		if (inp == 9)
+		{
+			CuTFMenuSound(#MENUSOUND_BROWSE);
 			self.current_menu = #MENU_LEGS;
 			Menu_Legs();			
 		}
@@ -687,6 +750,7 @@ void(float inp) Menu_MiscWeapon_Input =
 	 self.impulse = 0;
   }
 };
+
 
 // =============================
 //	Prints Menu of Legs for Sale
@@ -850,8 +914,8 @@ void(float inp) Menu_Legs_Input =
 	}
 	if (inp == 8) {
 		CuTFMenuSound(#MENUSOUND_BROWSE);
-		self.current_menu = #MENU_MISC_WEAPON;
-		Menu_MiscWeapon();		  
+		self.current_menu = #MENU_TOOLS;
+		Menu_ToolWeapon();		  
 	}
 	if (inp == 9)
 	{
