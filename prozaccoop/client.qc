@@ -1054,7 +1054,9 @@ void() SetCycleErrorCheck =
 void () fail_think =
 {
 	bprint (#PRINT_HIGH, "Map change failed! Defaulting to start...\n");
-	changelevel ("start");
+	//changelevel ("start");
+	// fix changelevel bug?
+	localcmd ("map start\n");
 	remove (self);
 };
 
