@@ -4559,6 +4559,10 @@ void() W_ChangeWeapon =
 		return;
 	}
 
+	// Gizmo - drop anything picked up
+	if (self.current_weapon == #WEAP_ZEROGRAVITY && self.pickedupobject_hands != world)
+		zg_drop (self, #FALSE);
+
 	// set weapon, set ammo
 	self.current_weapon = fl;
 	W_SetCurrentAmmo ();
