@@ -76,6 +76,11 @@ float(float checkIP, float noIdlers) GetNoPlayers;
 #define MENU_PROFESSION2			    48
 #define MENU_PROFICIENCY			    49
 #define MENU_OPTION					    50
+#define MENU_TOOLS					51
+
+// Gizmo - added
+#define MENU_CUSTOM_MIN					36
+#define MENU_CUSTOM_MAX					51
 
 
 //If we extend this, search for "MENU_OPTION" below
@@ -211,6 +216,9 @@ void(float inp) Menu_Proficiency_Input;
 void() Menu_Option;
 void(float inp) Menu_Option_Input;
 
+void() Menu_ToolWeapon;
+void(float inp) Menu_ToolWeapon_Input;
+
 //WK Needed for rotate
 float(float v) anglemod;
 //WK Needed to det sentries et al.
@@ -327,7 +335,8 @@ void() Player_Menu =
 	}
 
 	//Don't flash status bars
-	if (self.current_menu >= #MENU_PRIMARY_WEAPON && self.current_menu <= #MENU_OPTION)
+	//if (self.current_menu >= #MENU_PRIMARY_WEAPON && self.current_menu <= #MENU_OPTION)
+	if (self.current_menu >= #MENU_CUSTOM_MIN && self.current_menu <= #MENU_CUSTOM_MAX)
 		self.StatusRefreshTime = time + 1.5;
 
     //- OfN - Checks for destroyed buildings - NEEDED?
@@ -547,7 +556,8 @@ void() Player_Menu =
 	else if (self.current_menu == #MENU_OPTION)
 	{
 		Menu_Option();
-	}    
+	} else if (self.current_menu == #MENU_TOOLS)
+		Menu_ToolWeapon ();
     
     //WK ----------------
 	else if (self.team_no == 0 && teamplay && (self.lives != 0))
@@ -913,7 +923,8 @@ void(float inp) Menu_DoBindings_Input =
 
 void(float inp) Menu_Input =
 {
-    if (self.current_menu >= #MENU_PRIMARY_WEAPON && self.current_menu <= #MENU_OPTION)
+    //if (self.current_menu >= #MENU_PRIMARY_WEAPON && self.current_menu <= #MENU_OPTION)
+	if (self.current_menu >= #MENU_CUSTOM_MIN && self.current_menu <= #MENU_CUSTOM_MAX)
     if (inp >= 1 && inp <= 7)
     {
         if (!CanBuyItem(inp))
@@ -1015,6 +1026,8 @@ void(float inp) Menu_Input =
 		Menu_Proficiency_Input(inp);
 	else if (self.current_menu == #MENU_OPTION)
 		Menu_Option_Input(inp); //WK --
+	else if (self.current_menu == #MENU_TOOLS)
+		Menu_ToolWeapon_Input (inp);
 };
 
 void() Menu_Intro =

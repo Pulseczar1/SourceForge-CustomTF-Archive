@@ -3230,6 +3230,10 @@ void() W_SetCurrentAmmo =
 
 		self.items = self.items | #IT_CELLS;
 		self.weapon = #WEAP_LASERCANNON;
+	} else if (self.current_weapon == #WEAP_ZEROGRAVITY) {
+		self.currentammo = 0;
+		self.weaponmodel = "progs/v_light.mdl";
+		self.weaponframe = 0;
 	}
 	else
 	{
@@ -3293,6 +3297,8 @@ float() W_BestWeapon =
 
 float() W_CheckNoAmmo =
 {
+	if (self.current_weapon == #WEAP_ZEROGRAVITY)
+		return #TRUE;
 	if (self.current_weapon == #WEAP_MEDIKIT)
 		return #TRUE;
 	if (self.current_weapon == #WEAP_AIRF)
@@ -3987,6 +3993,11 @@ void() W_Attack =
 	{
 		launch_horn();
 	}
+	// Gizmo - zero-gravity tool
+	else if (self.current_weapon == #WEAP_ZEROGRAVITY) {
+		zg_togglepickup (self, #FALSE);
+		Attack_Finished (0.4);
+	}
 	if (self.current_weapon == #WEAP_LASERCANNON)
 	{
 		if (CheckForReload() == #TRUE)
@@ -4080,6 +4091,9 @@ void() W_PrintWeaponMessage =
 		sprint(self, #PRINT_MEDIUM, "Super Shotgun selected\n");
 	else if (self.current_weapon == #WEAP_RAILGUN)
 		sprint(self, #PRINT_MEDIUM, "Railgun selected\n");
+	// Gizmo -
+	else if (self.current_weapon == #WEAP_ZEROGRAVITY)
+		sprint (self, #PRINT_MEDIUM, "Zero-Gravity Gun selected\n");
 };
 
 
@@ -4457,9 +4471,10 @@ void() W_ChangeWeapon =
 				am = 1;
 		}
 	}
+	// Gizmo - modified for zero-gravity
 	else if (self.impulse == 8)
 	{
-		if (!(it & #WEAP_LIGHTNING || it & #WEAP_DAEDALUS || it & #WEAP_AIRF))
+		if (!(it & #WEAP_LIGHTNING || it & #WEAP_DAEDALUS || it & #WEAP_AIRF || it & #WEAP_ZEROGRAVITY))
 			have_weapon = #FALSE;
 		loopck = 0;
 		while (!usable && have_weapon)
@@ -4479,8 +4494,12 @@ void() W_ChangeWeapon =
 				if (it & #WEAP_AIRF) //WEAP_DAEDALUS
 					usable = 1;
 			}
-			else
+			else if (fl == #WEAP_AIRF)
 			{
+				fl = #WEAP_ZEROGRAVITY;
+				if (it & #WEAP_ZEROGRAVITY)
+					usable = 1;
+			} else {
 				fl = #WEAP_DAEDALUS;
 				if (it & #WEAP_DAEDALUS)
 					usable = 1;

@@ -1625,6 +1625,7 @@ float		rj; 				// Rocket Jump Modifier
 #define WEAP_AIRF				2097152 //- OfN - airfist
 #define WEAP_LASERCANNON		4194304 //- OfN - LASER CANNON
 #define WEAP_SNG				8388608 // Last BIT!!!
+#define WEAP_ZEROGRAVITY		16777216	// Last BIT, Gizmo - add another weapons flag var
 //MAX 24 BITS OF PRECISION IN FLOAT!
 
 /*====================================================*/
