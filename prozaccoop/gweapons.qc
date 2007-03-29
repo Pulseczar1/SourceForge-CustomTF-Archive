@@ -88,6 +88,8 @@ float (entity tester, entity test) zg_invalidtarget =
 		return 2;
 	if (test.flags & #FL_ITEM)
 		return 3;
+	if (test.flags & #FL_CLIENT)
+		return #TRUE;
 
 	return #FALSE;
 };
