@@ -35,6 +35,7 @@ subs.qc
 combat.qc
 items.qc
 admin.qc
+gweapons.qc
 weapons.qc
 world.qc
 status.qc   
