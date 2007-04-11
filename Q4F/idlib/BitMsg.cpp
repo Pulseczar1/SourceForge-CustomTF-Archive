@@ -1349,3 +1349,117 @@ void idMsgQueue::Restore( idFile *file ) {
 	file->ReadInt( endIndex );
 	file->Read( buffer + startIndex, endIndex - startIndex );
 }
+
+/*
+===============
+idBitMsgQueue::idBitMsgQueue
+===============
+*/
+idBitMsgQueue::idBitMsgQueue( void ) {
+	Init();
+}
+
+/*
+===============
+idBitMsgQueue::Init
+===============
+*/
+void idBitMsgQueue::Init( void ) {
+	readTimestamp = false;
+	writeList.Clear();
+	readList.Clear();
+}
+
+/*
+===============
+idBitMsgQueue::Add
+===============
+*/
+void idBitMsgQueue::Add( const idBitMsg &msg, const int timestamp ) {
+	while ( writeList.NextNode() && writeList.Next()->GetSpaceLeft() < ( msg.GetSize() + 8+4 ) ) {
+		writeList.NextNode()->AddToEnd( readList );
+	}
+
+	if ( !writeList.NextNode() ) {
+		idLinkList< idMsgQueue > *node = new idLinkList< idMsgQueue >;
+		node->SetOwner( new idMsgQueue );
+		node->AddToEnd( writeList );
+	}
+
+	writeList.Next()->WriteLong( timestamp );
+	if ( !writeList.Next()->Add( msg.GetData(), msg.GetSize(), false ) ) {
+		assert( false );
+	}
+}
+
+/*
+===============
+idBitMsgQueue::Get
+===============
+*/
+bool idBitMsgQueue::Get( idBitMsg &msg, int &timestamp ) {
+	while ( readList.NextNode() && !readList.Next()->GetTotalSize() ) {
+		readList.Next()->Init( 0 );
+		readList.NextNode()->AddToEnd( writeList );
+	}
+
+	if ( readList.NextNode() ) {
+		int size;
+
+		timestamp = readTimestamp ? nextTimestamp : readList.Next()->ReadLong();
+		readTimestamp = true;
+		if ( readList.Next()->Get( msg.GetData(), msg.GetMaxSize(), size, false ) ) {
+			msg.SetSize( size );
+			msg.BeginReading();
+			readTimestamp = false;
+			return true;
+		}
+
+		assert( false );
+	} else if ( writeList.NextNode() && writeList.Next()->GetTotalSize() ) {
+		int size;
+
+		timestamp = readTimestamp ? nextTimestamp : writeList.Next()->ReadLong();
+		readTimestamp = true;
+		if ( writeList.Next()->Get( msg.GetData(), msg.GetMaxSize(), size, false ) ) {
+			msg.SetSize( size );
+			msg.BeginReading();
+			readTimestamp = false;
+			return true;
+		}
+
+		assert( false );
+	}
+
+	msg.SetSize( 0 );
+	return false;
+}
+
+/*
+===============
+idBitMsgQueue::GetTimestamp
+===============
+*/
+bool idBitMsgQueue::GetTimestamp( int &timestamp ) {
+	if ( readTimestamp ) {
+		timestamp = nextTimestamp;
+		return true;
+	}
+
+	while ( readList.NextNode() && !readList.Next()->GetTotalSize() ) {
+		readList.Next()->Init( 0 );
+		readList.NextNode()->AddToEnd( writeList );
+	}
+
+	if ( readList.NextNode() ) {
+		timestamp = nextTimestamp = readList.Next()->ReadLong();
+		readTimestamp = true;
+		return true;
+	} else if ( writeList.NextNode() && writeList.Next()->GetTotalSize() ) {
+		timestamp = nextTimestamp = writeList.Next()->ReadLong();
+		readTimestamp = true;
+		return true;
+	}
+
+	return false;
+}
