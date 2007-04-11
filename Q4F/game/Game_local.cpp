@@ -5,7 +5,7 @@
 
 struct game_name_s {
 	game_name_s( void ) {
-		sprintf( string, "Q4F %s", "1.3" );
+		sprintf( string, "Q4F %s", "1.4" );
 	}
 	char string[256];
 } game_name;
@@ -4980,6 +4980,19 @@ void idGameLocal::SpawnMapEntities() {
 			args.Set("callOnCarry", "Q4FBase::pickupCTFFlag_regular");
 			args.Set("snd_capture_team", "announce_team_enemy_score");
 			args.Set("snd_capture", "announce_team_you_score");
+		}
+		// WFR backpack
+		if (idStr::Cmp(args.GetString("classname"), "item_backpack") == 0) {
+			// ammo types are diff so lets convert them..
+			//args.Copy("inv_ammo_shotgun","ammo_shells");
+			args.Set("give_ammo_shells", args.GetString("inv_ammo_shotgun"));
+			args.Set("give_ammo_nails", args.GetString("inv_ammo_nailgun"));
+			args.Set("give_ammo_rockets", args.GetString("inv_ammo_rocketlauncher"));
+			args.Set("give_ammo_cells", args.GetString("inv_ammo_lightninggun"));
+
+			args.Set("give_health", args.GetString("inv_health"));
+			args.Set("give_armor", args.GetString("inv_armor"));
+			
 		}
 
 		if (idStr::Cmp(args.GetString("classname"), "trigger_multiple") == 0) {
