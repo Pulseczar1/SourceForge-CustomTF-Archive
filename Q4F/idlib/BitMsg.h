@@ -46,7 +46,7 @@ public:
 	int				GetRemainingData( void ) const;			// number of bytes left to read
 	int				GetRemainingReadBits( void ) const;		// number of bits left to read
 	void			SaveReadState( int &c, int &b ) const;	// save the read state
-	void			RestoreReadState( int c, int b );		// restore the read state
+	void			RestoreReadState( int c, int b ) const;		// restore the read state
 
 	void			BeginWriting( void );					// begin writing
 	void			WriteByteAlign( void );					// write up to the next byte boundary
@@ -245,7 +245,7 @@ ID_INLINE void idBitMsg::SaveReadState( int &c, int &b ) const {
 	b = readBit;
 }
 
-ID_INLINE void idBitMsg::RestoreReadState( int c, int b ) {
+ID_INLINE void idBitMsg::RestoreReadState( int c, int b ) const {
 	readCount = c;
 	readBit = b & 7;
 }
@@ -835,6 +835,7 @@ private:
 	int				startIndex;		// index pointing to the first byte of the first message
 	int				endIndex;		// index pointing to the first byte after the last message
 
+public:
 	void			WriteByte( byte b );
 	byte			ReadByte( void );
 	void			WriteShort( int s );
@@ -845,6 +846,23 @@ private:
 	int				ReadLong( void );
 	void			WriteData( const byte *data, const int size );
 	void			ReadData( byte *data, const int size );
+};
+
+class idBitMsgQueue {
+public:
+					idBitMsgQueue();
+
+	void			Init( void );
+
+	void			Add( const idBitMsg &msg, const int timestamp );
+	bool			Get( idBitMsg &msg, int &timestamp );
+	bool			Get( idBitMsg &msg ) { int dummy; return Get( msg, dummy); }
+	bool			GetTimestamp( int &timestamp );
+
+private:
+	int				nextTimestamp;
+	bool			readTimestamp;
+	idLinkList<idMsgQueue>	writeList, readList;
 };
 
 #endif /* !__BITMSG_H__ */
