@@ -667,8 +667,9 @@ extern rvGameLog *				gameLog;
 // 9: Q4 Gold
 // 10: Patch 2 changes
 // 14: 1.3
-// 26: 1.4
-const int GAME_API_VERSION		= 26;
+// 26: 1.4 beta
+// 30: 1.4
+const int GAME_API_VERSION		= 30;
 
 struct gameImport_t {
 
