@@ -147,7 +147,7 @@ void () zg_think =
 	if (pickupee == world)
 		remove (self);
 
-	// check if the pickuper is dead
+	// check if the pickuper is dead, FIXME: change if pickuper left
 	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "")
 		zg_drop (pickuper, #FALSE);
 
@@ -200,7 +200,7 @@ void (entity pickuper, float toss) zg_drop =
 		if (pickupee.oldmovetype != #MOVETYPE_FLY && pickupee.oldmovetype != #MOVETYPE_FLYMISSILE)
 			pickupee.velocity = pickupee.velocity + v_up * 200;
 	} else
-		pickupee.velocity_z = 10;
+		pickupee.velocity_z = 10;		// FIXME
 
 	pickupee.solid = pickupee.oldsolid;
 	pickupee.movetype = pickupee.oldmovetype;

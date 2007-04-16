@@ -512,6 +512,9 @@ void() monster_ogre =
 	self.#npc_explosionmult = 0.40;
 	self.#npc_electricitymult = 1.50;
 	self.#npc_firemult = 0.50;
+
+	// set ammo for emp
+	self.ammo_rockets = 450;
 	
 	coop_walkmonster_start();
 };
