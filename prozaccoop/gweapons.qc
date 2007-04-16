@@ -13,9 +13,12 @@ Zero-Gravity gun
 =============================
 */
 
+#define ZG_PICKUPDIST_EXTRA			48				// extra distance added to pickupee's maxs, was 32
+
+// FIXME: change some of these to macros
 .entity pickedupobject_hands;
 .entity pickupthink_hands;
-.float oldsolid;
+.float _oldowner;
 .float oldmovetype;
 
 void (entity pickuper, float toss) zg_drop;
@@ -46,11 +49,11 @@ float (entity pickupee) zg_getpickupdist =
 {
 	local float sizex, sizey;
 
-	if (pickupee.oldsolid == #SOLID_NOT || pickupee.oldsolid == #SOLID_TRIGGER || (!pickupee.mins_x && !pickupee.maxs_x))
-		return 32;
+	if (pickupee.solid == #SOLID_NOT || pickupee.solid == #SOLID_TRIGGER || (!pickupee.mins_x && !pickupee.maxs_x))
+		return #ZG_PICKUPDIST_EXTRA;
 
-	sizex = pickupee.maxs_x + 32/*(pickupee.mins_x * -1) + pickupee.maxs_x*/;
-	sizey = pickupee.maxs_y + 32/*(pickupee.mins_y * -1) + pickupee.maxs_y*/;
+	sizex = pickupee.maxs_x + #ZG_PICKUPDIST_EXTRA/*(pickupee.mins_x * -1) + pickupee.maxs_x*/;
+	sizey = pickupee.maxs_y + #ZG_PICKUPDIST_EXTRA/*(pickupee.mins_y * -1) + pickupee.maxs_y*/;
 
 	// go for the biggest side
 	if (sizex >= sizey)
@@ -148,7 +151,7 @@ void () zg_think =
 		remove (self);
 
 	// check if the pickuper is dead, FIXME: change if pickuper left
-	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "")
+	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "" || !pickuper.is_connected)	// *
 		zg_drop (pickuper, #FALSE);
 
 	makevectors (pickuper.v_angle);
@@ -200,9 +203,9 @@ void (entity pickuper, float toss) zg_drop =
 		if (pickupee.oldmovetype != #MOVETYPE_FLY && pickupee.oldmovetype != #MOVETYPE_FLYMISSILE)
 			pickupee.velocity = pickupee.velocity + v_up * 200;
 	} else
-		pickupee.velocity_z = 10;		// FIXME
+		pickupee.velocity_z = pickupee.velocity_z + 10;	// *
 
-	pickupee.solid = pickupee.oldsolid;
+	pickuper.owner = pickuper._oldowner;
 	pickupee.movetype = pickupee.oldmovetype;
 
 
@@ -252,11 +255,13 @@ void (entity pickuper) zg_pickup =
 	*/
 
 	// setup pickuper and pickupee
-	trace_ent.oldsolid = trace_ent.solid;
-	trace_ent.solid = #SOLID_NOT;
+	pickuper._oldowner = pickuper.owner;			// *
+	pickuper.owner = trace_ent;					// *
 
 	trace_ent.oldmovetype = trace_ent.movetype;
 	trace_ent.movetype = #MOVETYPE_FLY;
+
+	trace_ent.flags = trace_ent.flags - #FL_ONGROUND;	// *
 
 	// fire the onpickup event on the pickupee
 	//if (trace_ent.onpickup)
