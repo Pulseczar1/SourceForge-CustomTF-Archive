@@ -18,7 +18,7 @@ Zero-Gravity gun
 // FIXME: change some of these to macros
 .entity pickedupobject_hands;
 .entity pickupthink_hands;
-.float _oldowner;
+.entity _oldowner;
 .float oldmovetype;
 
 void (entity pickuper, float toss) zg_drop;
