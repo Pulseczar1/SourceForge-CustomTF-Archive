@@ -411,10 +411,13 @@ void() monster_enforcer =
 	self.#npc_spawnfunc = monster_enforcer;
 	COOP_SetLives ();
 
-	coop_walkmonster_start ();
-
 	self.#npc_electricitymult = 0.50;
 	self.#npc_firemult = 0.70;
+
+	// set ammo for emp
+	self.ammo_cells = 125;
+
+	coop_walkmonster_start ();
 };
 
 #endif

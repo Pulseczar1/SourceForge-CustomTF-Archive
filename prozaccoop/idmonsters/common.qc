@@ -8,7 +8,7 @@
 
 
 .float() OnNoticeEnemy;						// self.enemy is the enemy noticed, return false for invalid targets
-.void() OnRespawn;						// self is the new entity respawning
+//.void() OnRespawn;						// self is the new entity respawning
 .float() OnPreAttack;						// self is about to attack self.enemy, return false to prevent
 
 

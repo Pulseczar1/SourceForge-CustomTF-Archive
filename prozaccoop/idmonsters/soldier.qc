@@ -356,6 +356,9 @@ void() monster_army =
 
 	self.#npc_bulletmult = 0.80;
 
+	// set ammo for emp
+	self.ammo_shells = 75;
+
 	coop_walkmonster_start ();
 };
 
