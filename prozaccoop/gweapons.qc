@@ -15,6 +15,7 @@ Zero-Gravity gun
 
 #define ZG_PICKUPDIST_EXTRA			48				// extra distance added to pickupee's maxs, was 32
 
+
 // FIXME: change some of these to macros
 .entity pickedupobject_hands;
 .entity pickupthink_hands;
@@ -23,6 +24,49 @@ Zero-Gravity gun
 
 void (entity pickuper, float toss) zg_drop;
 float (entity pickupee) zg_getpickupdist;
+
+
+/*
+	NotInSolid - checks if the entity is inside the world or another entity
+
+	FIXME: use this for validating spawn points too?
+*/
+
+float (entity ent) NotInSolid =
+{
+	local entity tent, oself;
+	local float ret, oldsolid;
+
+	// first make sure the entity won't get in the way
+	oldsolid = ent.solid;
+	ent.solid = #SOLID_NOT;
+
+	// create an entity to test with
+	tent = spawn ();
+	tent.solid = #SOLID_SLIDEBOX;
+	tent.movetype = #MOVETYPE_STEP;
+	setsize (tent, ent.mins, ent.maxs);
+	setorigin (tent, ent.origin);
+
+	oself = self;
+	self = tent;
+
+	self.origin_z = self.origin_z + 1;
+	ret = droptofloor ();
+
+	//ret = walkmove (0, 0);
+
+	self = oself;
+
+	// reset the entity's solid state
+	ent.solid = oldsolid;
+
+	remove (tent);
+	return ret;
+};
+
+
+//=======================
 
 
 void (entity pickuper, entity pickupee, vector destt) zg_movetowards =
@@ -83,7 +127,7 @@ float (entity source, entity targ) zg_infront =
 
 float (entity tester, entity test) zg_invalidtarget =
 {
-	if (test.solid == #SOLID_BSP || test == world || test.movetype == #MOVETYPE_NONE)
+	if (test.solid == #SOLID_BSP || test == world || test.movetype == #MOVETYPE_NONE || test.pickedupobject_hands == test)
 		return #TRUE;
 	if (test.flags & #FL_MONSTER || !zg_infront(tester, test))
 		return #TRUE;
@@ -139,6 +183,9 @@ entity (entity source) zg_findtarget =
 };
 
 
+//=======================
+
+
 void () zg_think =
 {
 	local entity pickuper, pickupee;
@@ -166,7 +213,6 @@ void () zg_think =
 	zg_movetowards (pickuper, pickupee, trace_endpos);
 
 	self.nextthink = time + 0.05;
-	self.think = zg_think;
 };
 
 
@@ -205,9 +251,19 @@ void (entity pickuper, float toss) zg_drop =
 	} else
 		pickupee.velocity_z = pickupee.velocity_z + 10;	// *
 
+	// before we reset owner, check if we're inside him
+	if (!NotInSolid(pickupee)) {
+		oldself = self;
+		self = pickupee;
+		self.velocity = '0 0 0';
+		droptofloor ();
+		self = oldself;
+	}
+
 	pickuper.owner = pickuper._oldowner;
 	pickupee.movetype = pickupee.oldmovetype;
 
+	pickupee.pickedupobject_hands = world;			// *
 
 	pickuper.pickedupobject_hands = world;
 
@@ -260,6 +316,7 @@ void (entity pickuper) zg_pickup =
 
 	trace_ent.oldmovetype = trace_ent.movetype;
 	trace_ent.movetype = #MOVETYPE_FLY;
+	trace_ent.pickedupobject_hands = trace_ent;		// * for knowing if it's picked up, FIXME: need to somehow know the pickuper entity
 
 	trace_ent.flags = trace_ent.flags - #FL_ONGROUND;	// *
 
