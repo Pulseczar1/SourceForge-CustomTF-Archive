@@ -2263,7 +2263,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 			}
 		}
+#ifdef COOP_MODE_ENHANCED
+		else if (attacker.classname == "player" || attacker.team_no == #TEAMNO_MONSTERS)
+#else
 		else if (attacker.classname == "player")
+#endif
 		{
 			if ((teamplay) && (attacker.team_no > 0) && (targ.real_owner.team_no > 0))
 			{
@@ -2583,7 +2587,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 			}
 		}
+#ifdef COOP_MODE_ENHANCED
+		else if (attacker.classname == "player" || attacker.team_no == #TEAMNO_MONSTERS)
+#else
 		else if (attacker.classname == "player")
+#endif
 		{
 			if ((teamplay) && (attacker.team_no > 0) && (targ.real_owner.team_no > 0))
 			{
@@ -2911,7 +2919,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 			}
 		}
+#ifdef COOP_MODE_ENHANCED
+		else if (attacker.classname == "player" || attacker.team_no == #TEAMNO_MONSTERS)
+#else
 		else if (attacker.classname == "player")
+#endif
 		{
 			if ((teamplay) && (attacker.team_no > 0) && (targ.real_owner.team_no > 0))
 			{
@@ -3219,7 +3231,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 			}
 		}
+#ifdef COOP_MODE_ENHANCED
+		if (attacker.classname == "player" || attacker.team_no == #TEAMNO_MONSTERS)
+#else
 		if (attacker.classname == "player")
+#endif
 		{
 			if ((teamplay) && (attacker.team_no > 0) && (targ.real_owner.team_no > 0))
 			{
@@ -3551,7 +3567,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 			}
 		}
+#ifdef COOP_MODE_ENHANCED
+		if (attacker.classname == "player" || attacker.team_no == #TEAMNO_MONSTERS)
+#else
 		if (attacker.classname == "player")
+#endif
 		{
 			if ((teamplay) && (attacker.team_no > 0) && (targ.real_owner.team_no > 0))
 			{
@@ -3870,7 +3890,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 			}
 		}
+#ifdef COOP_MODE_ENHANCED
+		if (attacker.classname == "player" || attacker.team_no == #TEAMNO_MONSTERS)
+#else
 		if (attacker.classname == "player")
+#endif
 		{
 			if ((teamplay) && (attacker.team_no > 0) && (targ.real_owner.team_no > 0))
 			{
@@ -4289,7 +4313,11 @@ void(entity targ, entity attacker) ClientObituary =
 			return;
 		}
 
+#ifdef COOP_MODE_ENHANCED
+		if (attacker.classname == "player" || attacker.team_no == #TEAMNO_MONSTERS)
+#else
 		if (attacker.classname == "player")
+#endif
 		{
 			if (attacker == targ.real_owner)
 			{
