@@ -1051,6 +1051,9 @@ void(float inAuto) W_FireMedikit =
 			{
 				trace_ent.axhitme = 1;
 				SpawnBlood(org, 20);
+#ifdef COOP_MODE_ENHANCED
+				deathmsg = #DMSG_BIOWEAPON_ATT;
+#endif
 				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
 					T_Damage (trace_ent, self, self, 10);
 				else
