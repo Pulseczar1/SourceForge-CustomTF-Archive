@@ -29,7 +29,7 @@
 #define npc_speedfactor				speed
 #define npc_noticedelay				invisible_finished
 #define npc_spawnfunc				think1			// safe to use?
-#define npc_spawndelay				gravity
+#define npc_spawndelay				walkframe			// was gravity
 #define npc_originalloc				pos1
 
 // damage multipliers
