@@ -79,7 +79,7 @@ float (entity us, entity test) COOP_IsValidTarget =
 			if (Pharse_Client(test, us, 0, 0, 0, 0) && r < 2000) {
 				if (!(test.flags & #FL_NOTARGET) && !(test.items & #IT_INVISIBILITY)) {
 					// Check if he's a theif
-					if (test.job & #JOB_THIEF && test.job & #JOB_ACTIVE && r >= 200)	// #JOB_FULL_HIDE
+					if (test.job & #JOB_THIEF && ((test.job & #JOB_ACTIVE && !(test.job & #JOB_FULL_HIDE) && r >= 140) || test.job & #JOB_FULL_HIDE))
 						return #FALSE;
 
 					return #TRUE;

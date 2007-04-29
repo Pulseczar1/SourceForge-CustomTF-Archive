@@ -754,7 +754,8 @@ void() Tesla_Touch =
 		self.no_grenades_2 = time + 2;
 	}
 
-	if (other.takedamage && !(self.tf_items & #NIT_TURRET))  // OfN - fixme: doesn't check for enemy disguised spies
+	// Gizmo - because of gravgun don't shock while we're moving
+	if (other.takedamage && !(self.tf_items & #NIT_TURRET) && !self.velocity)  // OfN - fixme: doesn't check for enemy disguised spies
 	{
 		deathmsg = #DMSG_BUG_ZAPPER;
 		

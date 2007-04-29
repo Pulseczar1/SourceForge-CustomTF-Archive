@@ -12,7 +12,7 @@
 #define IDMON_SHAMBLER_CLAWDMG	125
 #define IDMON_SHAMBLER_SMASHDMG	220
 
-#define _sham_healtime			invincible_finished
+#define _sham_healtime			delay
 
 
 /*
