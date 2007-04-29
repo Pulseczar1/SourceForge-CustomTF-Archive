@@ -936,7 +936,8 @@ void() Sentry_Touch =
 		return;
 	}
 
-	if (other.takedamage && !(self.tf_items & #NIT_TURRET)) // OfN - fixme: doesn't check for enemy disguised spies
+	// Gizmo - because of gravgun, don't shock people when we're moving
+	if (other.takedamage && !(self.tf_items & #NIT_TURRET) && !self.velocity) // OfN - fixme: doesn't check for enemy disguised spies
 	{
 		deathmsg = #DMSG_BUG_ZAPPER;
 

@@ -6,7 +6,7 @@
 
 /*==============================================
  Weapons and functions for the PYRO class and 
- associated weaponry                          
+ associated weaponry						  
 ==============================================*/
 void() NapalmGrenadeTouch;
 
@@ -151,7 +151,7 @@ float (string id_flame) RemoveFlameFromQueue =
 					return #FALSE;
 
 				tmp = find(world, flame_id, "1");
-			 	if (!tmp)
+				if (!tmp)
 				{
 					// oh shit, no flames found!
 					// the queue must be wrong
@@ -192,9 +192,9 @@ void() NapalmGrenadeFollow =
 	traceline(self.origin,self.origin,#TL_BSP_ONLY,self);
 
 	//WK Bugfix
-    if (self.enemy.waterlevel > 1)
+	if (self.enemy.waterlevel > 1)
 	{
-        sound (self, #CHAN_VOICE, "misc/vapeur2.wav", 1, #ATTN_NORM);
+		sound (self, #CHAN_VOICE, "misc/vapeur2.wav", 1, #ATTN_NORM);
 
 		FlameDestroy(self);
 	}
@@ -215,53 +215,53 @@ void() NapalmGrenadeTouch =
 
 void() NapalmGrenThink =
 {
-    local vector exporg;
-    local float damage, nexttime;
+	local vector exporg;
+	local float damage, nexttime;
 
-    self.heat = self.heat - 1;
-       
-    exporg_x = self.origin_x + crandom()*50;
-    exporg_y = self.origin_y + crandom()*50;
-    exporg_z = self.origin_z + random()*25;
+	self.heat = self.heat - 1;
+	   
+	exporg_x = self.origin_x + crandom()*50;
+	exporg_y = self.origin_y + crandom()*50;
+	exporg_z = self.origin_z + random()*25;
 
-    damage = #NAPALM_MINDMG + (#NAPALM_MAXDMG * random());
+	damage = #NAPALM_MINDMG + (#NAPALM_MAXDMG * random());
 
-    if (random() < 0.5)
-    {
-        if (random() < 0.75)
-            sound (self, #CHAN_MISC, "weapons/flmgrexp.wav", 1, #ATTN_NORM);
+	if (random() < 0.5)
+	{
+		if (random() < 0.75)
+			sound (self, #CHAN_MISC, "weapons/flmgrexp.wav", 1, #ATTN_NORM);
 
 	   //WK 2/26/7 Was doing 120 half the time, 260 half the time.
- 	   deathmsg = #DMSG_NAPALM;
+	   deathmsg = #DMSG_NAPALM;
 	   T_RadiusFireDamage(exporg,self,self.owner,damage,0.7);
-    }
-    else
-    {
-        WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-        WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
-        WriteCoord (#MSG_BROADCAST, self.origin_x);
-        WriteCoord (#MSG_BROADCAST, self.origin_y);
-        WriteCoord (#MSG_BROADCAST, self.origin_z);
-    #ifdef QUAKE_WORLD
-        multicast (self.origin, #MULTICAST_PHS);
-    #endif
-        
-        deathmsg = #DMSG_NAPALM;
-        T_RadiusFireDamage(self.origin,self,self.owner,#NAPALM_MAINDMG,0.85);
-    }
-    
-    if (random() < 0.3)
-        SpawnSprite(1,#SPRITE_AIRBURST,exporg,'0 0 0',#SPRITEMOVE_UPSLOW,0.15);
-    else
-        SpawnSprite(1,#SPRITE_AIRBURST,exporg,'0 0 0',#SPRITEMOVE_UP,0.1);
+	}
+	else
+	{
+		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
+		WriteCoord (#MSG_BROADCAST, self.origin_x);
+		WriteCoord (#MSG_BROADCAST, self.origin_y);
+		WriteCoord (#MSG_BROADCAST, self.origin_z);
+	#ifdef QUAKE_WORLD
+		multicast (self.origin, #MULTICAST_PHS);
+	#endif
+		
+		deathmsg = #DMSG_NAPALM;
+		T_RadiusFireDamage(self.origin,self,self.owner,#NAPALM_MAINDMG,0.85);
+	}
+	
+	if (random() < 0.3)
+		SpawnSprite(1,#SPRITE_AIRBURST,exporg,'0 0 0',#SPRITEMOVE_UPSLOW,0.15);
+	else
+		SpawnSprite(1,#SPRITE_AIRBURST,exporg,'0 0 0',#SPRITEMOVE_UP,0.1);
 
-    if (self.heat <= 0)
-        dremove(self);
-    else
-    {
-        nexttime = #NAPALM_MINRATE + ((#NAPALM_MAXRATE - #NAPALM_MINRATE) * random());
-        self.nextthink = time + nexttime;   
-    }
+	if (self.heat <= 0)
+		dremove(self);
+	else
+	{
+		nexttime = #NAPALM_MINRATE + ((#NAPALM_MAXRATE - #NAPALM_MINRATE) * random());
+		self.nextthink = time + nexttime;	
+	}
 };
 
 void() NapalmGrenadeExplode =
@@ -269,15 +269,15 @@ void() NapalmGrenadeExplode =
 	// Launch flames
 	traceline(self.origin,self.origin,#TL_BSP_ONLY,self);
 
-    if (trace_inwater == #TRUE)
+	if (trace_inwater == #TRUE)
 	{
-        // OfN - Some FX's added
-        sound(self, #CHAN_MISC, "misc/vapeur2.wav",1,#ATTN_NORM);
-        SpawnBubbles(2,self.origin); // Spawn some bubbles
-        SpawnSprite(1,#SPRITE_ABLAST,self.origin,'0 0 0',#SPRITEMOVE_UPSLOW,0.3);
+		// OfN - Some FX's added
+		sound(self, #CHAN_MISC, "misc/vapeur2.wav",1,#ATTN_NORM);
+		SpawnBubbles(2,self.origin); // Spawn some bubbles
+		SpawnSprite(1,#SPRITE_ABLAST,self.origin,'0 0 0',#SPRITEMOVE_UPSLOW,0.3);
 
 		dremove(self);
-    	return;
+		return;
 	}
 
 #ifdef DEMO_STUFF
@@ -300,14 +300,14 @@ void() NapalmGrenadeExplode =
 			if (head.takedamage && head.health > 0)
 			{
 				#ifdef OLD_FLAME
-                deathmsg = #DMSG_FLAME;
+				deathmsg = #DMSG_FLAME;
 				TF_T_Damage (head, self, self.owner, 120, #TF_TD_NOTTEAM, #TF_TD_FIRE);
-                #else
-                deathmsg = #DMSG_NAPALM;
-                TF_T_Damage (head, self, self.owner, #NAPALM_FIRSTDMG, #TF_TD_NOKNOCK | #TF_TD_DONTGIB | #TF_TD_NOTTEAM, #TF_TD_FIRE);
-                #endif
+				#else
+				deathmsg = #DMSG_NAPALM;
+				TF_T_Damage (head, self, self.owner, #NAPALM_FIRSTDMG, #TF_TD_NOKNOCK | #TF_TD_DONTGIB | #TF_TD_NOTTEAM, #TF_TD_FIRE);
+				#endif
 				
-                // set 'em on fire
+				// set 'em on fire
 				other = head;  // i can't believe this works!
 				Napalm_touch();
 				if (other.classname == "player")
@@ -317,7 +317,7 @@ void() NapalmGrenadeExplode =
 		head = head.chain;
 	}
 
-    #ifdef OLD_FLAME
+	#ifdef OLD_FLAME
 
 	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
@@ -331,9 +331,9 @@ void() NapalmGrenadeExplode =
 	BecomeExplosion ();
 #endif
 
-    #else // new napalm
-    
-    WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+	#else // new napalm
+	
+	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
 	WriteCoord (#MSG_BROADCAST, self.origin_x);
 	WriteCoord (#MSG_BROADCAST, self.origin_y);
@@ -342,14 +342,14 @@ void() NapalmGrenadeExplode =
 	multicast (self.origin, #MULTICAST_PHS);
 #endif
 
-    self.think = NapalmGrenThink;
-    self.nextthink = time + #NAPALM_MINRATE + ((#NAPALM_MAXRATE - #NAPALM_MINRATE)*random());
+	self.think = NapalmGrenThink;
+	self.nextthink = time + #NAPALM_MINRATE + ((#NAPALM_MAXRATE - #NAPALM_MINRATE)*random());
 
-    if (self.netname == "special_mine")
-        self.heat = #MINE_NAPALM_BURNTIMES;
-    else
-        self.heat = #NAPALM_BURNTIMES;
-    #endif // Flame/napalm
+	if (self.netname == "special_mine")
+		self.heat = #MINE_NAPALM_BURNTIMES;
+	else
+		self.heat = #NAPALM_BURNTIMES;
+	#endif // Flame/napalm
 };
 
 //=========================================================================
@@ -476,7 +476,7 @@ void() FlameFollow =
 	else if (self.model == "progs/flame2.mdl")
 	{
 		self.model = string_null;
-		setmodel(self, self.model);		
+		setmodel(self, self.model); 	
 	}
 
 #endif
@@ -484,9 +484,9 @@ void() FlameFollow =
 	//traceline(self.origin,self.origin,#TL_BSP_ONLY,self);
 
 	//WK Bugfix
-    if (self.enemy.waterlevel > 1)
+	if (self.enemy.waterlevel > 1)
 	{
-        sound (self, #CHAN_VOICE, "misc/vapeur2.wav", 1, #ATTN_NORM);
+		sound (self, #CHAN_VOICE, "misc/vapeur2.wav", 1, #ATTN_NORM);
 		self.enemy.numflames = self.enemy.numflames - 1;
 		FlameDestroy(self);
 		return;
@@ -522,17 +522,17 @@ void() OnPlayerFlame_touch =
 		if (other.numflames >= #FLAME_MAXPLYRFLAMES)
 			return;
 
-        if (other.classname == "player")
-        {
+		if (other.classname == "player")
+		{
 			if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other.team_no, self.owner.team_no))
 				return;
 
-             CenterPrint(other,"You are on fire!\n");
-             stuffcmd (other,"bf\n");
-        }
+			 CenterPrint(other,"You are on fire!\n");
+			 stuffcmd (other,"bf\n");
+		}
 
 		if (other.numflames < #FLAME_NUMLIGHTS)
-		{						    
+		{							
 			flame = FlameSpawn ("1", other);
 			sound (flame, #CHAN_VOICE, "ambience/fire1.wav", 1, #ATTN_NORM);
 		}
@@ -577,13 +577,13 @@ void() WorldFlame_touch =
 		if (other.numflames >= #FLAME_MAXPLYRFLAMES)
 			return;
 
-        if (other.classname == "player")
-        {
+		if (other.classname == "player")
+		{
 			if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other.team_no, self.owner.team_no))
 					return;
-        	CenterPrint(other,"You are on fire!\n");
-            stuffcmd (other,"bf\n");
-        }
+			CenterPrint(other,"You are on fire!\n");
+			stuffcmd (other,"bf\n");
+		}
 
 		if (other.numflames < #FLAME_NUMLIGHTS)
 		{
@@ -645,8 +645,11 @@ void() Flamer_stream_touch =
 
 	if (other != world)
 	{
-		if (other.takedamage == #DAMAGE_AIM && other.health > 0)
+		if (other.takedamage == #DAMAGE_AIM && other.health > 0 && time >= self.attack_finished)
 		{
+			// Gizmo - prevent flame from damaging the enemy a shitload of times if they run into the flame
+			// FIXME: change to a macro?
+			self.attack_finished = time + 0.50;
 
 			deathmsg = #DMSG_FLAME;
 			TF_T_Damage(other,self,self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
@@ -664,14 +667,14 @@ void() Flamer_stream_touch =
 			}
 
 	
-            if (other.classname == "player")
-            {
+			if (other.classname == "player")
+			{
 				if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other.team_no, self.owner.team_no))
 						return;
 
-            	CenterPrint(other,"You are on fire!\n");
-	            stuffcmd (other,"bf\n");
-        	}
+				CenterPrint(other,"You are on fire!\n");
+				stuffcmd (other,"bf\n");
+			}
 
 			if (other.numflames < #FLAME_NUMLIGHTS)
 			{
@@ -748,14 +751,14 @@ void() Napalm_touch =
 			if (other.armorclass & #AT_SAVEFIRE && other.armorvalue > 0)
 				return;
 	
-	        if (other.classname == "player")
-	        {
+			if (other.classname == "player")
+			{
 				if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other.team_no, self.owner.team_no))
 						return;
 
-	        	CenterPrint(other,"You are on fire!\n");
-	            stuffcmd (other,"bf\n");
-        	}
+				CenterPrint(other,"You are on fire!\n");
+				stuffcmd (other,"bf\n");
+			}
 
 			if (other.numflames < #FLAME_NUMLIGHTS) // = 0
 			{
@@ -815,17 +818,17 @@ void(float num_bubbles, vector bub_origin) NewBubbles =
 local entity	bubble_spawner;
 
 	bubble_spawner = spawn();
-    setorigin (bubble_spawner, bub_origin);
+	setorigin (bubble_spawner, bub_origin);
 	bubble_spawner.movetype = #MOVETYPE_NONE;
 	bubble_spawner.solid = #SOLID_NOT;
 	bubble_spawner.nextthink = time + 0.1;
 
-    if (self.classname == "player")
+	if (self.classname == "player")
 		bubble_spawner.owner = self;
-    else
-        bubble_spawner.owner = self.enemy;
+	else
+		bubble_spawner.owner = self.enemy;
 
-    bubble_spawner.think = DeathBubblesSpawn;
+	bubble_spawner.think = DeathBubblesSpawn;
 	bubble_spawner.bubble_count = num_bubbles;
 	return;
 };
@@ -833,52 +836,52 @@ local entity	bubble_spawner;
 
 void() W_FireFlame =
 {
-    local   entity flame;
-    local   float rn;
+	local	entity flame;
+	local	float rn;
 
-    if (self.waterlevel > 2)
-    {
-            makevectors (self.v_angle);
-            NewBubbles(2, self.origin+v_forward*64);
+	if (self.waterlevel > 2)
+	{
+			makevectors (self.v_angle);
+			NewBubbles(2, self.origin+v_forward*64);
 
-            rn = random();
-            if (rn < 0.5)
-                    sound (self, #CHAN_WEAPON, "misc/water1.wav", 1, #ATTN_NORM);
-            else
-                    sound (self, #CHAN_WEAPON, "misc/water2.wav", 1, #ATTN_NORM);
+			rn = random();
+			if (rn < 0.5)
+					sound (self, #CHAN_WEAPON, "misc/water1.wav", 1, #ATTN_NORM);
+			else
+					sound (self, #CHAN_WEAPON, "misc/water2.wav", 1, #ATTN_NORM);
 
-            return;
-    }
+			return;
+	}
 
-    // Take away a cell
-    self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+	// Take away a cell
+	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
-    sound (self, #CHAN_AUTO, "weapons/flmfire2.wav", 1, #ATTN_NORM);
+	sound (self, #CHAN_AUTO, "weapons/flmfire2.wav", 1, #ATTN_NORM);
 
-    flame = spawn ();
+	flame = spawn ();
 
-    flame.owner = self;
-    flame.movetype = #MOVETYPE_FLYMISSILE;
-    flame.solid = #SOLID_BBOX;
-    flame.classname = "flamerflame";
+	flame.owner = self;
+	flame.movetype = #MOVETYPE_FLYMISSILE;
+	flame.solid = #SOLID_BBOX;
+	flame.classname = "flamerflame";
 
 	// set flame speed
 
 	makevectors (self.v_angle);
 
-    flame.velocity = aim(self, 10000);
-    flame.velocity = flame.velocity * 600;
+	flame.velocity = aim(self, 10000);
+	flame.velocity = flame.velocity * 600;
 
-    flame.touch = Flamer_stream_touch;
+	flame.touch = Flamer_stream_touch;
 
-    flame.think = s_explode1;
-    flame.nextthink = time + 0.15;
+	flame.think = s_explode1;
+	flame.nextthink = time + 0.15;
 
-    flame.effects = #EF_DIMLIGHT;
+	flame.effects = #EF_DIMLIGHT;
 
-    setmodel (flame, "progs/s_explod.spr");
-    setsize (flame, '0 0 0', '0 0 0');
-    setorigin (flame, self.origin + v_forward * 16 + '0 0 16');
+	setmodel (flame, "progs/s_explod.spr");
+	setsize (flame, '0 0 0', '0 0 0');
+	setorigin (flame, self.origin + v_forward * 16 + '0 0 16');
 };
 
 
@@ -887,13 +890,13 @@ Touch function for incendiary cannon rockets
 ======================*/
 void() T_IncendiaryTouch =
 {
-	local 	float	damg;
-	//local	float 	points;
+	local	float	damg;
+	//local float	points;
 	local	entity	head; 
-	//local	vector	org;
+	//local vector	org;
 
 	if (other == self.owner)
-		return;		// don't explode on owner
+		return; 	// don't explode on owner
 
 	if (pointcontents(self.origin) == #CONTENT_SKY)
 	{
@@ -930,21 +933,21 @@ void() T_IncendiaryTouch =
 				TF_T_Damage (head, self, self.owner, 35, #TF_TD_NOTTEAM, #TF_TD_FIRE);
 
 			}
-            /*else TOFIX: if i use this to make corpses desptryable, coolexplosion later doesnt work?
-            {
-                if (head.#corpseflag = #STRFLAG_CORPSE)
-                    TF_T_Damage (head, self, self.owner, 10 + random()*10, #TF_TD_NOTTEAM, #TF_TD_FIRE);
-            }*/
+			/*else TOFIX: if i use this to make corpses desptryable, coolexplosion later doesnt work?
+			{
+				if (head.#corpseflag = #STRFLAG_CORPSE)
+					TF_T_Damage (head, self, self.owner, 10 + random()*10, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+			}*/
 
 		head = head.chain;
 	}
-    
+	
 //	sound (self, #CHAN_WEAPON, "weapons/r_exp3.wav", 1, #ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
 
-    #ifdef COOL_GIBS    
-    CoolExplosion(self, 50,10);
-    #endif
+	#ifdef COOL_GIBS	
+	CoolExplosion(self, 50,10);
+	#endif
 
 #ifdef DEMO_STUFF
 	// Remove any camera's locks on this missile
@@ -960,13 +963,13 @@ void() T_IncendiaryTouch =
 #ifdef QUAKE_WORLD
 	multicast (self.origin, #MULTICAST_PHS);
 
-    head = SpawnSprite(1,#SPRITE_AIRBURST,self.origin,'0 0 0',#SPRITEMOVE_UPSLOW,0.1);
+	head = SpawnSprite(1,#SPRITE_AIRBURST,self.origin,'0 0 0',#SPRITEMOVE_UPSLOW,0.1);
 
-    if (head)
-        head.effects = #EF_DIMLIGHT;
+	if (head)
+		head.effects = #EF_DIMLIGHT;
 
-    if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-        FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+	if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+		FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
 
 	dremove(self);
 #else
@@ -997,7 +1000,7 @@ void() W_FireIncendiaryCannon =
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
 	newmis.solid = #SOLID_BBOX;
 		
-	// set newmis speed	
+	// set newmis speed 
 	makevectors (self.v_angle);
 	newmis.velocity = aim(self, 1000);
 	newmis.velocity = newmis.velocity * 650; // original 600
@@ -1005,8 +1008,8 @@ void() W_FireIncendiaryCannon =
 	
 	newmis.touch = T_IncendiaryTouch;
 
-    //- OfN - For airfist
-    newmis.classname = "rocket";
+	//- OfN - For airfist
+	newmis.classname = "rocket";
 
 	// set newmis duration
 	newmis.nextthink = time + 5;
@@ -1015,7 +1018,7 @@ void() W_FireIncendiaryCannon =
 	newmis.weapon = #DMSG_INCENDIARY;
 	
 	setmodel (newmis, "progs/missile.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0'); 	
 	setorigin (newmis, self.origin + v_forward*8 + '0 0 16');
 
 #ifdef DEMO_STUFF
