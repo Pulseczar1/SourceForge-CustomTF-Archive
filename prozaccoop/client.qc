@@ -1074,8 +1074,16 @@ void() GotoNextMap =
 	local string sl;
 	//local entity te;
 	local string cyc;
+	local string nmap;
 
-	if (nextmap != mapname) {
+	// Gizmo - this enables nextmap voting on coop
+	nmap = infokey (world, "nmap");
+	localcmd ("localinfo nmap \"\"\n");
+
+	if (nextmap != mapname || nmap != string_null) {
+		if (nmap != string_null)
+			nextmap = nmap;
+
 		changelevel (nextmap);
 		CheckFailedMapChange ();
 		already_chosen_map = #TRUE;
