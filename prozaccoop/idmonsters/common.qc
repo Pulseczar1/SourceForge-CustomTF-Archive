@@ -179,6 +179,9 @@ void () COOP_SmoothFrame =
 
 void (float dist) COOP_WalkSmooth =
 {
+	if (!dist)
+		return;
+
 	// save old stuff
 	self.#npc_oldthink = self.think;
 	self.#npc_smoothtime = time + #NPC_FRAMETIME;
