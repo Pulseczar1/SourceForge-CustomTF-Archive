@@ -40,6 +40,15 @@
 #define npc_firemult				penance_time
 #define npc_othermult				has_cheated
 
+// used for smooth movement of monsters, FIXME: change vars I just made up some crap to see if it compiles
+.void() npc_oldthink;
+
+#define npc_oldthink				npc_oldthink
+#define npc_smoothtime				maxspeed			// this is the time when we need to give back control to monster and stop lerping
+#define npc_smoothdist				demon_blood			// total distance we need to go
+#define npc_lastruntime				done_custom			// last time our lerp function was called
+#define npc_attemptednextthink		cnt
+
 // globals
 float server_spawned;								// TRUE if server is spawned and ready to go
 
