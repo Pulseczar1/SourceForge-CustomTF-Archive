@@ -590,7 +590,8 @@ void() walkmonster_start_go =
 	test_x = test_x - self.maxs_x + self.mins_x;
 
 	if (pointcontents(test) == #CONTENT_SOLID)
-		failure = 0;*/
+		failure = 0;
+*/
 	
 	if (!walkmove(0,0))
 //	if (failure)

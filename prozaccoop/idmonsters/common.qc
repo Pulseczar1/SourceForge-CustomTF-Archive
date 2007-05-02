@@ -129,6 +129,74 @@ entity (entity scanner) COOP_FindTarget =
 //====================================
 
 
+#define NPC_FRAMETIME			0.1
+#define NPC_LERPTIME			0.031
+
+
+/*
+	COOP_SmoothFrame
+*/
+
+void () COOP_SmoothFrame =
+{
+	local float end;
+
+	if (time >= self.#npc_smoothtime) {
+		// FIXME: is it ok to call #npc_oldthink directly here?
+		self.nextthink = time;
+		self.think = self.#npc_oldthink;
+		self.#npc_lastruntime = 0;
+		return;
+	}
+
+	// make sure lastruntime is set to something
+	if (!self.#npc_lastruntime) {
+		self.#npc_lastruntime = self.lastruntime;
+
+		self.nextthink = time + #NPC_LERPTIME;
+		return;
+	}
+
+	movedist = (self.#npc_smoothdist / #NPC_FRAMETIME) * (self.lastruntime - self.#npc_lastruntime);
+
+	// movetogoal if there's distance to move, it should only be zero if SV_RunThink is in an infinite loop
+	// this prevents infinite SV_RunThink loops in the engine
+	if (movedist) {
+		movetogoal (movedist);
+
+		self.#npc_lastruntime = self.lastruntime;
+		self.#npc_attemptednextthink = self.nextthink = time + #NPC_LERPTIME;
+	} else if (self.#npc_smoothdist) {
+		//bprint (#PRINT_HIGH, "infinite loop prevented!\n");
+		self.#npc_attemptednextthink = self.nextthink = self.#npc_attemptednextthink + 0.01;
+	}
+};
+
+
+/*
+	COOP_WalkSmooth - this is called, in sort of like a wrapper to movetogoal, to provide lerping movement
+*/
+
+void (float dist) COOP_WalkSmooth =
+{
+	// save old stuff
+	self.#npc_oldthink = self.think;
+	self.#npc_smoothtime = time + #NPC_FRAMETIME;
+
+	self.#npc_smoothdist = dist;
+
+	// set think function
+//	self.nextthink = time + 0.031;
+	self.think = COOP_SmoothFrame;
+
+	// do one right away
+	COOP_SmoothFrame ();
+};
+
+
+//====================================
+
+
 /*
 	COOP_CanAttackEnemy
 */
@@ -364,9 +432,10 @@ void (float dist) COOP_Run =
 
 	// increase our speed by the factor if there is one set
 	if (self.#npc_speedfactor)
-		movetogoal (dist * self.#npc_speedfactor);
+		COOP_WalkSmooth (dist * self.#npc_speedfactor);
+		//movetogoal (dist * self.#npc_speedfactor);
 	else
-		movetogoal (dist);
+		COOP_WalkSmooth (dist);
 };
 
 
