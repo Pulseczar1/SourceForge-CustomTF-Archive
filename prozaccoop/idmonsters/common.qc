@@ -139,7 +139,7 @@ entity (entity scanner) COOP_FindTarget =
 
 void () COOP_SmoothFrame =
 {
-	local float end;
+	local float end, oldyaw;
 
 	if (time >= self.#npc_smoothtime) {
 		// FIXME: is it ok to call #npc_oldthink directly here?
@@ -162,7 +162,10 @@ void () COOP_SmoothFrame =
 	// movetogoal if there's distance to move, it should only be zero if SV_RunThink is in an infinite loop
 	// this prevents infinite SV_RunThink loops in the engine
 	if (movedist) {
+		oldyaw = self.yaw_speed;
+		self.yaw_speed = (oldyaw / #NPC_FRAMETIME) * (self.lastruntime - self.#npc_lastruntime);
 		movetogoal (movedist);
+		self.yaw_speed = oldyaw;
 
 		self.#npc_lastruntime = self.lastruntime;
 		self.#npc_attemptednextthink = self.nextthink = time + #NPC_LERPTIME;
@@ -542,6 +545,16 @@ void () respawn_think =
 	savedlives = self.lives;
 	self.think1 ();
 	self.lives = savedlives;
+
+	// check if he's in a wall
+	// FIXME: move and rename NotInSolid
+	if (!NotInSolid(self)) {
+		// This is kind of like a hack, but it works to ensure monster count is bumped
+		self.flags = self.flags | #FL_MONSTER;
+		self.deathtype = "monster_respawn";
+		self.health = -60;
+		Killed (self, world);
+	}
 };
 
 void (float respawntime, void() spawn_func) COOP_SetupRespawn =

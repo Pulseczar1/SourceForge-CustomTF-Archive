@@ -2158,6 +2158,12 @@ void(entity targ, entity attacker) ClientObituary =
 				targ.deathtype = "";
 				deathstring = " fell to his death\n";
 			}
+#ifdef COOP_MODE_ENHANCED
+			else if (targ.deathtype == "monster_respawn" && attacker == world) {
+				targ.deathtype = "";
+				deathstring = " died in a transporter accident\n";
+			}
+#endif
 			else //- OfN - unknown death by himself
 			{
 				rnum = random();

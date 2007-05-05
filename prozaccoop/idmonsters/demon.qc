@@ -115,7 +115,9 @@ self.nextthink = time + 3;
 };
 
 void()	_demon1_jump11	=[ 	$leap11,	_demon1_jump12	] {};
-void()	_demon1_jump12	=[ 	$leap12,	_demon1_run1	] {};
+void()	_demon1_jump12	=[ 	$leap12,	_demon1_run1	] {
+self.attack_finished = time + random()*2;
+};
 
 
 void()	_demon1_atta1	=[	$attacka1,		_demon1_atta2	] {ai_charge(4);};
