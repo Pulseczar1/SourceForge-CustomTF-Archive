@@ -367,15 +367,9 @@ float() Sentry_FindTarget =
 			gotone = #FALSE;
 		//----------------------//
 
-/*
 		//WK Solve a bug in sentry targetting?
-		if (gotone) loopc = 1000;
-*/
-
-		// Gizmo - ever heard of break?
-		// don't confuse break() with break; though... damn id software
 		if (gotone)
-			break;
+			loopc = 1000;
 
 		loopc = loopc + 1;
 	}

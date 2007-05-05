@@ -247,7 +247,11 @@ void(entity targ, entity attacker) Killed =
 	self.enemy = attacker;
 
 	// bump the monster counter
+#ifdef COOP_MODE_ENHANCED
+	if (self.flags & #FL_MONSTER && self.team_no == #TEAMNO_MONSTERS)
+#else
 	if (self.flags & #FL_MONSTER)
+#endif
 	{
 		killed_monsters = killed_monsters + 1;
 		WriteByte (#MSG_ALL, #SVC_KILLEDMONSTER);

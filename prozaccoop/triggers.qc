@@ -404,8 +404,11 @@ void() tdeath_touch =
 			T_Damage (other2, self, self, 50000);
 		}
 
-		if (other.invincible_finished > time)
+		if (other.invincible_finished > time) {
 			self.classname = "teledeath2";
+			T_Damage (self.owner, self, self, 50000);
+			return;
+		}
 
 		if (self.owner.classname != "player")
 		{	
@@ -430,7 +433,8 @@ void(vector org, entity death_owner) spawn_tdeath =
 	death.movetype = #MOVETYPE_NONE;
 	death.solid = #SOLID_TRIGGER;
 	death.angles = '0 0 0';
-	setsize (death, death_owner.mins - '1 1 1', death_owner.maxs + '1 1 1');
+	// Gizmo - CPQWSV bug? this used to be - '1 1 1' + '1 1 1' but it sometimes wouldn't catch someone under them
+	setsize (death, death_owner.mins - '1 1 8', death_owner.maxs + '1 1 8');
 	setorigin (death, org);
 	death.touch = tdeath_touch;
 	death.nextthink = time + 0.2;

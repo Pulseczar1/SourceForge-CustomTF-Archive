@@ -1633,7 +1633,8 @@ void() GibPlayer =
 		sound (self, #CHAN_VOICE, "player/teledth1.wav", 1, #ATTN_NONE);
 
 		// if telefragged, extend respawn delay to prevent chaining telefrags
-		self.respawn_time = self.respawn_time + 2;
+		// Gizmo - added a random respawn amount to minimize telefrags that keep happening
+		self.respawn_time = self.respawn_time + (1 + (random() * 2));
 
 		return;
 	}
@@ -1643,7 +1644,17 @@ void() GibPlayer =
 		sound (self, #CHAN_VOICE, "player/teledth1.wav", 1, #ATTN_NONE);
 
 		// if telefragged, extend respawn delay to prevent chaining telefrags
-		self.respawn_time = self.respawn_time + 2;
+		// Gizmo - added a random respawn amount to minimize telefrags that keep happening
+		self.respawn_time = self.respawn_time + (1 + (random() * 2));
+
+		return;
+	}
+
+	if (damage_attacker.classname == "teledeath3") {
+		sound (self, #CHAN_VOICE, "player/teledth1.wav", 1, #ATTN_NONE);
+
+		// Gizmo - added a random respawn amount to minimize telefrags that keep happening
+		self.respawn_time = self.respawn_time + (1 + (random() * 2));
 
 		return;
 	}
