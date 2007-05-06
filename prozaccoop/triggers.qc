@@ -434,7 +434,7 @@ void(vector org, entity death_owner) spawn_tdeath =
 	death.solid = #SOLID_TRIGGER;
 	death.angles = '0 0 0';
 	// Gizmo - CPQWSV bug? this used to be - '1 1 1' + '1 1 1' but it sometimes wouldn't catch someone under them
-	setsize (death, death_owner.mins - '1 1 8', death_owner.maxs + '1 1 8');
+	setsize (death, death_owner.mins - '1 1 1', death_owner.maxs + '1 1 8');
 	setorigin (death, org);
 	death.touch = tdeath_touch;
 	death.nextthink = time + 0.2;
