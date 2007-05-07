@@ -2073,9 +2073,6 @@ void() PutClientInServer =
 	
 	spot = SelectSpawnPoint ();
 
-	if (self.playerclass != #PC_UNDEFINED)
-		spawn_tdeath (spot.origin, self);
-
 	self.observer_list = spot;
 	self.origin = spot.origin + '0 0 1';
 	self.angles = spot.angles;
@@ -2185,8 +2182,10 @@ void() PutClientInServer =
 	if (deathmatch || coop)
 	{
 		makevectors(self.angles);
-		if (self.playerclass != #PC_UNDEFINED)
+		if (self.playerclass != #PC_UNDEFINED) {
 			spawn_tfog (self.origin + v_forward*10);
+			spawn_tdeath (self.origin, self);
+		}
 	}
 
 #ifdef QUAKE_WORLD
