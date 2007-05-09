@@ -27,7 +27,7 @@ float (entity pickupee) zg_getpickupdist;
 
 
 /*
-	NotInSolid - checks if the entity is inside the world or another entity
+	NotInSolid - checks if the entity is inside the world or another entity, if
 
 	FIXME: use this for validating spawn points too?
 */
@@ -35,7 +35,11 @@ float (entity pickupee) zg_getpickupdist;
 float (entity ent) NotInSolid =
 {
 	local entity tent, oself;
-	local float ret, oldsolid;
+	local vector oldorg, neworg;
+	local float ret;
+
+/*
+	local float oldsolid;
 
 	// first make sure the entity won't get in the way
 	oldsolid = ent.solid;
@@ -60,6 +64,33 @@ float (entity ent) NotInSolid =
 
 	// reset the entity's solid state
 	ent.solid = oldsolid;
+
+	remove (tent);
+	return ret;
+*/
+
+	tent = spawn ();
+	tent.owner = ent;
+	tent.solid = #SOLID_SLIDEBOX;
+	tent.movetype = #MOVETYPE_STEP;
+	//tent.flags = #FL_FLY;
+	tent.flags = #FL_ONGROUND | #FL_PARTIALGROUND;
+	setsize (tent, ent.mins, ent.maxs);
+	setorigin (tent, ent.origin);
+
+// check if we're inside something
+	oself = self;
+	self = tent;
+
+	oldorg = tent.origin;
+	ret = walkmove (0, 0);
+	neworg = tent.origin;
+	setorigin (tent, oldorg);
+
+	if (oldorg != neworg && !droptofloor())
+		ret = #FALSE;
+
+	self = oself;
 
 	remove (tent);
 	return ret;
