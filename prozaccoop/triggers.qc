@@ -682,14 +682,12 @@ void() trigger_onlyregistered_touch =
 	self.attack_finished = time + 2;
 	if (cvar("registered"))
 	{
-		local float rem = self.targetname != self.killtarget;
-		
 		self.message = "";
 		SUB_UseTargets ();
-		
-		if(rem) {
+
+		// if == it's going to be removed somewhere else
+		if (self.killtarget != self.targetname)
 			remove (self);
-		}
 	}
 	else
 	{
