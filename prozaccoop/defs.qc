@@ -1689,6 +1689,8 @@ float		rj; 				// Rocket Jump Modifier
 #define CUTF_AIRFISTUPGRADE 	1048576
 #define CUTF_OTR				2097152
 #define CUTF_DOUBLESENTRY		4194304 // OfN - Player gets 2 sentries 
+#define CUTF_MTFROCKETS			8388608	// XavioR: Use MegaTF rocket speed
+#define CUTF_ANTISTICKY			16777216	// XavioR: Sticky Nade fix (check weapons.qc - this shouldnt even need an upgrade >.<)
 
 //Time to be invincible from the respawn guard
 #ifdef COOP_MODE_ENHANCED
