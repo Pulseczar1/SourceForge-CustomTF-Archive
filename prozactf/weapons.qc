@@ -4169,7 +4169,7 @@ void() W_ChangeWeapon =
 	}
 	else if (self.impulse == 2)
 	{
-		if (!(((it & #WEAP_SNIPER_RIFLE || it & #WEAP_SHOTGUN || it & #WEAP_TRANQ) && self.ammo_shells > 0) || (it & #WEAP_RAILGUN && self.ammo_nails > 0)|| (it & #WEAP_DAEDALUS && self.ammo_cells > 0)))
+		if (!(((it & #WEAP_SNIPER_RIFLE || it & #WEAP_SHOTGUN) && self.ammo_shells > 0) || ((it & #WEAP_RAILGUN || it & #WEAP_TRANQ) && self.ammo_nails > 0 )|| (it & #WEAP_DAEDALUS && self.ammo_cells > 0)))
 			have_weapon = #FALSE;
 		loopck = 0;
 		while (!usable && have_weapon)
@@ -4202,7 +4202,7 @@ void() W_ChangeWeapon =
 					usable = 1;
 			}
 		}
-		if (fl == #WEAP_RAILGUN)
+		if (fl == #WEAP_RAILGUN || fl == #WEAP_TRANQ)
 		{
 			if (self.ammo_nails < 1)
 				am = 1;
