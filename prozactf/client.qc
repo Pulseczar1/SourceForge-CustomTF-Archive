@@ -2481,10 +2481,10 @@ void() PlayerDeathThink =
 void() PlayerJump =
 {
 	if (self.done_custom & #CUSTOM_BUILDING) // OfN
-    {
-        self.velocity = '0 0 0';
-        return; // Dont jump if customizing
-    }
+	{
+		self.velocity = '0 0 0';
+		return; // Dont jump if customizing
+	}
 
     if (self.flags & #FL_FINALIZED)
         return;
@@ -2515,7 +2515,7 @@ void() PlayerJump =
 		if (self.tf_items & #NIT_SCUBA)
 			self.velocity_z = 250;
 
-// play swiming sound
+		// play swiming sound
 		if (self.cutf_items & #CUTF_STEALTH) // SB no noise if we have stealth
 			return;
 		
@@ -2537,9 +2537,13 @@ void() PlayerJump =
 	if (!(self.flags & #FL_JUMPRELEASED) )
 		return;		// don't pogo stick
 
+	//WK Note this allows jumping on down ramps, which has always been disallowed in QW...
+	if (self.velocity_z < 0) self.velocity_z = 0; //Gizmo's jump bug fix
+
 	self.flags = self.flags - (self.flags & #FL_JUMPRELEASED);
 	self.button2 = 0;
-// player jumping sound
+
+	// player jumping sound
 	if (!self.cutf_items & #CUTF_STEALTH) // Only play it if we don't have stealth
 		sound (self, #CHAN_BODY, "player/plyrjmp8.wav", 1, #ATTN_NORM);
 
