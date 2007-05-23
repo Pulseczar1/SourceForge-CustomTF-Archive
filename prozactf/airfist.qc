@@ -366,8 +366,8 @@ void() launch_horn =
         // If its a missile, change the direction but keep the same speed.
         eSpeed = vlen(e.velocity);
         e.velocity = normalize(delta) * eSpeed;
-	  //WK Canairpush() should ensure only valid things will hit the line below...
-	  e.owner = self; //WK 2/26/7 Make reflected rockets hit their owners. <<Careful not to reflect something bad...>>
+	  if (e.classname == "rocket" || e.classname == "grenade" || e.classname == "spike") //WK 3/1/7 Safety Measure, reowning some things... bad.
+	  	e.owner = self; //WK 2/26/7 Make reflected rockets hit their owners.
       }
       else
       {

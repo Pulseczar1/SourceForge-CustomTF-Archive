@@ -2020,14 +2020,14 @@ void() T_MissileTouch =
 		}
 	*/
 	if (self.has_tesla) //Cluster rockets do less
-		damg = damg - 20; //WK 2/26/7 Lowered from -15 //WK 1/7/7 -25, they need to do a little more
+		damg = damg - 30; //WK 3/1/7 -25, they need to do a little less now they control better
 
 	deathmsg = self.weapon;
 	if (other.health)
 	{
 		bonus = 10 + random()*20;
 		if (self.has_tesla)
-			bonus = 10; //WK 0, have direct cluster hits mean a little something, since they're hard as hell to steer.
+			bonus = 0; //WK
 		TF_T_Damage (other, self, self.owner, damg+bonus, 0, #TF_TD_EXPLOSION);
 	}
 
