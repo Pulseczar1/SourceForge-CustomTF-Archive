@@ -115,7 +115,7 @@
 
 #define SCRAG_DMG              42 // damage the scrag does // was 29
 #define WAYPOINT_LIFE         240 // 120 after this amount of seconds any unused waypoint will be removed
-#define MAXAMMO_CELLS         275 // was 320 // Engineer max is set on defs.qc PC_ENGINNER_XX
+#define MAXAMMO_CELLS         300 //WK Was 275 // was 320 // Engineer max is set on defs.qc PC_ENGINNER_XX
 #define SENTRY_UNLOCKTIME       2.5 // (must be greater than 1.1) time for the sentries to begin to rotate after they have no target (+/- 1 second)
 #define HAX_UNSTABLEDIST      300 // distance at which enemy hacks take longer cause of "unstable connection"
 #define WAYPOINT_AI_LIFE       10 // life for grunty ai created waypoints - last seen enemy mark

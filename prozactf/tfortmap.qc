@@ -499,21 +499,6 @@ void() item_tfgoal =
 	// don't spawn Red's flag in AGR
 	if (agr) if (self.team_no == 1) return; // team_no indicates which team can use the item
 		
-//DELETE_ME
-/*	if (agr)
-	{
-		if (mapname == "canyon1")
-		{
-			if (self.goal_no == 1)
-				return;
-		}
-		else
-		{
-			if (self.goal_no == 2)
-				return;
-		}
-	} */
-
 	if (CheckExistence() == #FALSE)
 	{
 		dremove(self);
@@ -977,8 +962,18 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 				// Display short team scores
 				TeamFortress_TeamShowScores(2,Player.team_no,Goal.count);
 				// Attackers Go Red mode -PZ
-				if (agr) if (Player.team_no == 2)
+				if (agr) if (Player.team_no == 2) if (Goal.count >= 10)
+				{
+					local entity player;
+					player = find(world, classname, "player");
+					while (player)
+					{
+						CenterPrint(player, " Red Captures Blue's Flag! \n");
+						player = find(player, classname, "player");
+					}
+					BroadcastSound("boss2/pop2.wav");
 					AGR_resetTimer();
+				}
 			}
 		}
 	}
@@ -2298,7 +2293,18 @@ void(entity Goal, entity AP, float addb) DoResults =
 		TeamFortress_TeamIncreaseScore(2, Goal.increase_team2);
 
 		// Attackers Go Red mode -PZ
-		if (agr) AGR_resetTimer();
+		if (agr) if (Goal.increase_team2 >= 10)
+		{
+			local entity player;
+			player = find(world, classname, "player");
+			while (player)
+			{
+				CenterPrint(player, " Red Captures Blue's Flag! \n");
+				player = find(player, classname, "player");
+			}
+			BroadcastSound("boss2/pop2.wav");
+			AGR_resetTimer();
+		}
 
 		//if (chris)
 		//	RoundStop(2);
@@ -2742,7 +2748,7 @@ void() item_tfgoal_touch =
 
 	// Attackers Go Red mode -PZ
 	// don't let Red have flag if Blue has no players
-	if (agr) if (self.team_no == 2) if(!agrTimerRunning) //DELETE_MEwas (self.goal_no == 1) in middle
+	if (agr) if (self.team_no == 2) if(!agrTimerRunning)
 		return;
 
     //local string st;

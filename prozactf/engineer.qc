@@ -127,6 +127,7 @@ void() LaserBolt_Touch =
 
 //=========================================================================
 // Fire a laserbolt
+//WK 1/7/7 Note: This is the railgun, not the thunderbolt, nor the lasercannon
 void() W_FireLaser =
 {
 	local	vector	vec, org;

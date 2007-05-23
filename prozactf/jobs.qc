@@ -123,6 +123,20 @@ void() JobThief =
 	//local float vel;
 	local entity te;
 	//local string st;
+
+	//PZ don't hide if we are looking down our scope.
+	local entity sniperdot;
+	sniperdot = find(world, classname, "timer");
+
+	while(sniperdot) {
+		if(sniperdot.netname == "sniperdot" && sniperdot.owner == self) {
+			sprint(self,#PRINT_HIGH,"No more thief sniping, sorry!\n");
+			return;
+		}
+
+		sniperdot = find(sniperdot, classname, "timer");
+	}
+
 	if (self.job & #JOB_ACTIVE) { //We are hiding
 		//If we hit "skill" again and we are moving, we leave shadows
 		//vel = vlen(self.velocity);
@@ -364,7 +378,9 @@ void() ChaplanThink = {
 			//Sync CHAN_MUSIC with disconnect and sound below
 			self.job = self.job - (self.job & #JOB_ACTIVE);
 			//sound (self, #CHAN_MUSIC, "items/r_item1.wav", 0.1, #ATTN_NORM);
-			sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
+			//sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
+			//WK 1/7/7 Better music stopping
+			sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, 0);
             self.effects = self.effects - (self.effects & #EF_BRIGHTLIGHT);
 			//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_RELOADING);
 			self.current_weapon = self.weapon;
@@ -527,7 +543,7 @@ void() JobBerserker =
     self.job = self.job | #JOB_ACTIVE; //- OfN
 	self.job_finished = time + #BERSERK_TIME * 3;
 	
-	stuffcmd(self, "v_idlescale 30\n");
+	stuffcmd(self, "v_idlescale 20\n"); //WK 30
 };
 
 

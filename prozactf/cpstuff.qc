@@ -966,24 +966,112 @@ float (vector spot1, vector spot2) vis2orig =
 
 //=========================================================================
 // Return the number of players in game
-
-float() GetNoPlayers =
+// PZ - use checkIP option to differentiate IP's of users 
+//      (counts unique IP's instead of counting players)
+// PZ - use noIdlers option to not count players not on a team 
+//      (has no effect if checkIP is off)
+float(float checkIP, float noIdlers) GetNoPlayers =
 {
-	return num_players;
-    
-    /*local float num_players;
-	local entity search;
+	if (!checkIP)
+		return num_players;
 
-	search = find (world, classname, "player");
-	while (search != world)
+	// PZ - one part stolen from Often's modified bodyque
+	// linked list of ip addresses
+	local entity ipList; ipList = world; // always the first entity in the list
+	local entity element; element = world; // varies with traversal of the list
+	local entity player; player = world;
+	local string ip;
+	local float ipCount; ipCount = 0;
+	local float counter;
+	local entity pt; pt = world; // first empty slot in list
+	local float listed; // bool
+
+	/*
+	construct the list
+	*/
+
+	counter = 1;
+	element = spawn();
+	element.ltime = 0;
+	element.classname = "playerIP";
+	element.modelindex = modelindex_null;
+	ipList = element;
+
+	while (counter < num_players)
 	{
-    	if (search.has_disconnected != #TRUE)
-            num_players = num_players + 1;
+		element.owner = spawn();
+		element.owner.ltime = 0;
+		element.owner.classname = "playerIP";
+		element.owner.modelindex = modelindex_null;
+		
+		element = element.owner;
 
-		search = find (search, classname, "player");
+		counter = counter + 1;
+	}
+	element.owner = world;
+
+	/*
+	enter IP's into the list - only if they're not already listed
+	*/
+
+	player = find(world, classname, "player");
+	while (player != world)
+	{
+		if (!noIdlers || player.team_no)
+		{
+			pt = world; // first empty slot in list
+			ip = infokey(player, "ip");
+			ip = strcat(ip, ""); // this is simply to get around Quake string buffer issue..
+								 // a problem which I don't completely understand at the moment
+
+			counter = 1;
+			element = ipList;
+			listed = #FALSE;
+			while (counter <= num_players)
+			{
+				// is this an empty slot?
+				if (element.netname == string_null)
+				{
+					if (pt == world) // only set pt to this element if pt isn't already set
+						pt = element;
+				}
+				// if this element of the list holds this player's IP ..
+				else if (!strcasecmp(element.netname, ip))
+				{
+					listed = #TRUE;
+					break;
+				}
+				// else continue looking through list
+				element = element.owner;
+				counter = counter + 1;
+			}
+			if (!listed) // if the player's IP is not listed, list in first empty slot
+			{
+				pt.netname = ip;
+				ipCount = ipCount + 1;
+			}
+		}
+
+		player = find(player, classname, "player");
 	}
 
-	return num_players;*/
+	/*
+	clean-up.. remove list
+	*/
+	
+	element = find(world, classname, "playerIP");
+	while (element != world)
+	{
+		dremove(element);
+		element = find(element, classname, "playerIP");
+	}
+
+	/*
+	return the number of individual IP addresses
+	*/
+
+	return ipCount;
+	// PZ - end
 };
 
 //==================================================================

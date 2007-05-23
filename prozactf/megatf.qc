@@ -14,6 +14,7 @@
 
 void () MegaTF_Precaches =
 {
+/* WK Get rid of this, it's unused
     if (megatf & #MEGATF_STEPS)
     {
         precache_sound("player/step1l.wav");
@@ -21,6 +22,7 @@ void () MegaTF_Precaches =
         precache_sound("player/step2l.wav");
         precache_sound("player/step2r.wav");
     }
+*/
 
     if (megatf & #MEGATF_SIGHTS)
     {

@@ -564,17 +564,19 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			//WK The purpose being to cut down on the power of snipers
 			if(targ.classname == "player") // SB kevlar fixed so it caps damage now, also spacing much nicer :)
 			{
-                if (light_damage)
+				//WK 1/7/7 Fixed SB's spacing, pfft. Removed caps now that sniper damage is nerfed.
+/*
+				if (light_damage)
 				{
-					if (damage > 75)
-						damage = 75;
+					if (damage > 125)
+						damage = 125;
 				}
 				else
-                    if (damage > 100) damage = 100;
-
+					if (damage > 150) damage = 150;
+*/
 				if (attacker.classname == "player" && (deathmsg == #DMSG_SNIPERRIFLE || deathmsg == #DMSG_SNIPERHEADSHOT || deathmsg == #DMSG_SNIPERLEGSHOT))
 				    sprint(attacker,#PRINT_HIGH,"You hit kevlar\n");
-            }
+	            }
 		}
 		else if ((targ.armorclass & #AT_SAVEMELEE) && (deathmsg == #DMSG_JUDOKA || deathmsg == #DMSG_AXE || deathmsg == #DMSG_BACKSTAB || deathmsg == #DMSG_SPANNER))
 		{
@@ -653,39 +655,40 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	// KNOCKATION CALCULATION
 	if (!(T_flags & #TF_TD_NOKNOCK)) // OfN - No knockation if the appropiate flag is set
-    if ( (inflictor != world) && (targ.movetype == #MOVETYPE_WALK) )
-	{
-		// Nail Gren doesn't knock ppl
-		//WK People with Aspect of HWGUY are immune to knockation
-		//WK Martyrs are immune to bullet damage, so AC's and Turrets
-		// can't be annoying and just simply stop them.
-		//SB That's annoying. They can now :)
-		knockem = 1;
-		if (targ.cutf_items & #CUTF_HWGUY) knockem = 0;
-		//if (targ.job & #JOB_MARTYR && targ.job & #JOB_ACTIVE && T_AttackType != #TF_TD_SHOT) knockem = 1;
-        if (deathmsg == #DMSG_GREN_NAIL) knockem = 0;
-		if (knockem)
+    		if ( (inflictor != world) && (targ.movetype == #MOVETYPE_WALK) )
 		{
-			// give them some immunity to cheat check
-			//targ.immune_to_check = time + (damage / 20);
-			makeImmune(targ,time+(damage/20));
+			// Nail Gren doesn't knock ppl
+			//WK People with Aspect of HWGUY are immune to knockation
+			//WK Martyrs are immune to bullet damage, so AC's and Turrets
+			// can't be annoying and just simply stop them.
+			//SB That's annoying. They can now :)
+			knockem = 1;
+			if (targ.cutf_items & #CUTF_HWGUY) knockem = 0;
+			//if (targ.job & #JOB_MARTYR && targ.job & #JOB_ACTIVE && T_AttackType != #TF_TD_SHOT) knockem = 1;
+		      if (deathmsg == #DMSG_GREN_NAIL) knockem = 0;
+			if (deathmsg == #DMSG_CLUSTER_ROCKET) knockem = 0; //WK 1/7/7 Clusters are ineffective since they push people away
+			if (knockem)
+			{
+				// give them some immunity to cheat check
+				//targ.immune_to_check = time + (damage / 20);
+				makeImmune(targ,time+(damage/20));
 
-			dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
-			dir = normalize(dir);
+				dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
+				dir = normalize(dir);
 
-	#ifdef QUAKE_WORLD
-			// Increase kickback for smaller weapons
-			if ( (damage < 60) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname != targ.netname)) 
-				targ.velocity = targ.velocity + dir * damage * 11;
-			else                        
+			#ifdef QUAKE_WORLD
+				// Increase kickback for smaller weapons
+				if ( (damage < 60) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname != targ.netname)) 
+					targ.velocity = targ.velocity + dir * damage * 11;
+				else                        
+					targ.velocity = targ.velocity + dir*damage*8;
+				if ( (rj > 1) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname == targ.netname)) 
+					targ.velocity = targ.velocity + dir * damage * rj;
+				if (targ.classname == "player" && targ.cutf_items & #CUTF_GYMNAST)
+					targ.velocity = targ.velocity + dir * damage * 4; //WK 1/7/7 Gymnast Nerf: 8
+			#else
 				targ.velocity = targ.velocity + dir*damage*8;
-			if ( (rj > 1) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname == targ.netname)) 
-				targ.velocity = targ.velocity + dir * damage * rj;
-			if (targ.classname == "player" && targ.cutf_items & #CUTF_GYMNAST)
-				targ.velocity = targ.velocity + dir * damage * 8;
-	#else
-			targ.velocity = targ.velocity + dir*damage*8;
-	#endif
+			#endif
 		}
 	}
 

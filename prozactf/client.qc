@@ -881,7 +881,7 @@ void() TF_MovePlayer =
 };
 
 //- OfN - Map cycling code modified to match TF2.8 standard
-float() GetNoPlayers;
+float(float checkIP, float noIdlers) GetNoPlayers;
 void() SetCycleTimeoutTimer;
 void() SetCycleErrorCheck;
 void() SetCycleTimer;
@@ -907,7 +907,7 @@ float() DoExtraCycle =
 
         itsok = #TRUE;
         
-        currentpl = GetNoPlayers();
+        currentpl = GetNoPlayers(#FALSE, #FALSE);
 
         //check conditions
         
@@ -2813,7 +2813,7 @@ void() PlayerPreThink =
 			if (ping < 300) {
 				self.velocity_x = floor((3 * self.velocity_x) / 4);
 				self.velocity_y = floor((3 * self.velocity_y) / 4);
-				self.velocity_z = floor((3 * self.velocity_z) / 4);
+				self.velocity_z = 0; //WK 1-7-7 Change so that observers don't fall at all
 			}
 		}
 		if (self.button2)
@@ -2903,9 +2903,11 @@ void() PlayerPreThink =
 			self.velocity_z = 10;	//WK Allow more creative physics with hook
 	}
 	
+
 	//WK Add Hover Boot Support
-	if (self.tf_items & #NIT_HOVER_BOOTS) {
-		if (self.button2 && self.velocity_z < 0 && self.hover_time > 0 && self.waterlevel == 0)
+ 	//WK 1/7/7 Allow people to jump when wearing boots
+  	if (self.tf_items & #NIT_HOVER_BOOTS) { 
+ 		if (self.button2 && self.velocity_z < 0 && self.hover_time > 0 && self.waterlevel == 0 && !(self.flags & #FL_ONGROUND))
 		{ 	//Try to hover
 			self.velocity_z = 100; //+10 == hover
 			self.hover_time = self.hover_time - 0.25; //0.1 == tick time

@@ -14,8 +14,7 @@ void(float zoom_level) TF_zoom;
 void() SniperSight_Update;
 void() SniperSight_Update2;
 void(float type) SniperSight_Create;
-
-
+void(entity targ, float pain) RevealThief;
 
 //=========================================================================
 // Sniper/Auto Rifle selection function
@@ -33,7 +32,7 @@ void() TeamFortress_SniperWeapon =
 
 	if (self.ammo_shells < 1)
 	{	// don't have the ammo
-		sprint (self, #PRINT_HIGH, "not enough ammo.\n");
+		sprint (self, #PRINT_HIGH, "Not enough ammo.\n");
 		return;
 	}
 
@@ -172,6 +171,10 @@ void(float type) SniperSight_Create =
 	else
 		sight.think = SniperSight_Update;
 	sight.nextthink = time + 0.05;
+
+	// Prevent theif snipers.
+	if (self.job & #JOB_THIEF && (self.job & #JOB_ACTIVE || self.job & #JOB_FULL_HIDE))
+		RevealThief(self,#FALSE);
 };
 
 // this toggles the snipers autozoom on/off

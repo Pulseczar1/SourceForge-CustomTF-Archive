@@ -319,7 +319,10 @@ void() DropFromCustomClassGen =
 		self.maxammo_nails = 350;
       if (self.maxammo_shells > 300)
 		self.maxammo_shells = 300;
-      
+      if (self.maxammo_cells > #MAXAMMO_CELLS)
+		self.maxammo_cells = #MAXAMMO_CELLS;
+
+/* WK 1/7/7 We don't need all this complication
       //- ofn
       if (self.tf_items & #NIT_AMMO_BANDOLIER && self.tf_items & #NIT_AMMO_BACKPACK)
       {
@@ -336,7 +339,7 @@ void() DropFromCustomClassGen =
         if (self.maxammo_cells > #MAXAMMO_CELLS) // was 320
 		    self.maxammo_cells = #MAXAMMO_CELLS;
       }
-      
+*/
 
 	//- OFN HERE FRONTLIN HELI BUG FIX ---//
     local entity spot;
@@ -715,21 +718,21 @@ void(float cost, float type) BuyJob =
 		/*if (self.job & #JOB_WARLOCK)
 		{
 			if (!self.cutf_items & #CUTF_DEMONLORE)
-				cost = cost - 300; // sync with demonlore cost
+				cost = cost - #COST_DEMONLORE; // sync with demonlore cost
 			else
 				self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);
 		}
 		if (self.job & #JOB_RUNNER)
 		{
 			if (!self.cutf_items & #CUTF_HIGHJUMP)
-				cost = cost - 200; // sync with highjump cost
+				cost = cost - #COST_HIGHJUMP; // sync with highjump cost
 			else
 				self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_HIGHJUMP);
 		}
 		if (self.job & #JOB_JUDOKA)
 		{
 			if (!self.cutf_items & #CUTF_STEALTH)
-				cost = cost - 400; // sync with stealth cost
+				cost = cost - #COST_STEALTH; // sync with stealth cost
 			else
 				self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_STEALTH);
 		}*/
@@ -755,21 +758,22 @@ void(float cost, float type) BuyJob =
 	}
 	/*if (type == #JOB_WARLOCK)
 		if (self.cutf_items & #CUTF_DEMONLORE)
-			self.money = self.money + 300; // sync this with demonlore cost
+			self.money = self.money + #COST_DEMONLORE; // sync this with demonlore cost
 		else
 			self.cutf_items = self.cutf_items | #CUTF_DEMONLORE; // warlocks see demon health
 	
 	if (type == #JOB_RUNNER)
 		if (self.cutf_items & #CUTF_HIGHJUMP)
-			self.money = self.money + 200; // sync with highjump cost
+			self.money = self.money + #COST_HIGHJUMP; // sync with highjump cost
 		else
 			self.cutf_items = self.cutf_items | #CUTF_HIGHJUMP; // runner jumps high
 	
 	if (type == #JOB_JUDOKA)
 		if (self.cutf_items & #CUTF_STEALTH)
-			self.money = self.money + 400; // sync with stealth price
+			self.money = self.money + #COST_STEALTH; // sync with stealth price
 		else
-			self.cutf_items = self.cutf_items | #CUTF_STEALTH; // Judo is a master of stealth by default*/
+			self.cutf_items = self.cutf_items | #CUTF_STEALTH; // Judo is a master of stealth by default
+	*/
 	
 	//Ok we buy it
 	self.job = type;
@@ -791,7 +795,7 @@ void (float cost1, float cost2) BuyExtra =
                 allcost = #COST_WARLOCK + cost1;
 
                 /*if (!self.cutf_items & #CUTF_DEMONLORE)
-                    allcost = allcost - 300; // sync with demonlore cost
+                    allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
                 else
                     self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
             }
@@ -805,7 +809,7 @@ void (float cost1, float cost2) BuyExtra =
             }
 
             self.job = 0;
-       		PrintNotEnoughMoney(cost1);
+       	PrintNotEnoughMoney(cost1);
             PrintRefund(allcost);
             return;
         }
@@ -825,7 +829,7 @@ void (float cost1, float cost2) BuyExtra =
             allcost = (cost1+cost2)+#COST_WARLOCK;
 
             /*if (!self.cutf_items & #CUTF_DEMONLORE)
-                allcost = allcost - 300; // sync with demonlore cost
+                allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
             else
                 self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
         }
@@ -851,7 +855,7 @@ void (float cost1, float cost2) BuyExtra =
                 allcost = #COST_WARLOCK;
 
                 /*if (!self.cutf_items & #CUTF_DEMONLORE)
-                    allcost = allcost - 300; // sync with demonlore cost
+                    allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
                 else
                     self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
             }
@@ -1231,6 +1235,7 @@ void() KracGrenadeExplode =
 {
 	local entity te,newmis;
 	local entity oldself;
+	local float damage;
 	te = findradius(self.origin, 150);
 	while (te)
 	{	
@@ -1242,6 +1247,33 @@ void() KracGrenadeExplode =
 			self = te;
 			TeamFortress_DetpackStop(#TRUE);
 			self = oldself;
+
+			//WK 1/7/7 Krac nerf
+			//Deals 200, tapers off linearly with radius (min 75)
+			damage = 200 - vlen(te.origin - self.origin);
+			if (damage > 200 || damage < 0) {
+				bprint(#PRINT_MEDIUM,"Logic error in krac occured.\n");
+				dremove(self);
+				return;
+			}
+			if (damage < 75) damage = 75;
+			if (te.armorclass & #AT_SAVEMELEE) damage = floor(damage / 2);
+			te.armorvalue = te.armorvalue - damage;
+			if (te.armorvalue < 10) te.armorvalue = 10;
+
+			//Damage is now dealt to cells instead of killing it all at once.
+			//Do this before we adjust for armor damage
+			te.ammo_cells = te.ammo_cells - damage; 
+			if (te.ammo_cells < 0) te.ammo_cells = 0;
+
+			//WK 1/7/7 Fix the "dead thunderbolt" bug when you get kraced.
+			//This should force a weapon switch on the next frame.
+			if (te.current_weapon == #WEAP_LIGHTNING || te.current_weapon == #WEAP_LASERCANNON ||
+			    te.current_weapon == #WEAP_DAEDALUS || te.current_weapon == #WEAP_AIRF ||
+			    te.current_weapon == #WEAP_FLAMETHROWER)
+				te.currentammo = te.ammo_cells;
+
+			/* WK 1/7/7 Old damage code:
 			//Gel armor makes kracs do less damage
 			if (te.armorclass & #AT_SAVEMELEE) {
 				if (te.armorvalue > 75)
@@ -1251,18 +1283,19 @@ void() KracGrenadeExplode =
 					te.armorvalue = 10;
 			}
 			te.ammo_cells = 0; //Kill their metal supply too
+			*/
 		}
 		else if (te.classname == "pipebomb")
-			te.nextthink = time + 0.1 + random();
+			te.nextthink = time + 0.1 + random() / 4; //WK 1/7/7 Speed up kracs breaking pipebombs, since a 1.1 second delay is too long
 		else if (te.classname == "grenade" && te.netname == "land_mine")
 		{
 			te.think = GuerillaExplode;
 			te.nextthink = time + 0.1;
 		}
 		else if (te.classname == "building_sentrygun")
-			TF_T_Damage(te, self, self.owner, 200, 0, 0);
+			TF_T_Damage(te, self, self.owner, damage, 0, 0); //WK 1/7/7 Teslas and sentries take less now
 		else if (te.classname == "building_tesla")
-			TF_T_Damage(te, self, self.owner, 200, 0, 0);
+			TF_T_Damage(te, self, self.owner, damage, 0, 0);
 		else if (te.classname == "building_dispenser")
 			TF_T_Damage(te, self, self.owner, 500, 0, 0);
 		else if (te.classname == "building_camera")
@@ -1422,9 +1455,8 @@ void(entity bastard,float threshold) createBastard =
 #ifdef QUAKE_WORLD
 		st = infokey(world,"curseserver");
 #endif
-		//if (st == string_null) st = "207.171.0.74";
-		if (st == string_null) st = "209.39.192.74:27500";
-        stuffcmd(bastard, "connect ");
+		if (st == string_null) st = "amnesia.matrux.net:27502"; //WK 1/7/7 Updated ip
+        	stuffcmd(bastard, "connect ");
 		stuffcmd(bastard, st);
 		stuffcmd(bastard, "\n");
 

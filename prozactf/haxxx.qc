@@ -735,7 +735,7 @@ void() SBFireInterface =
                 local float num;                
                 
                 num=targ.health/targ.max_health;
-                targ.max_health=targ.max_health*2;
+                targ.max_health=floor(targ.max_health*1.5); //WK 1-7-7 Toned down hacking, 2
                 targ.health=num*targ.max_health;
                 
             }

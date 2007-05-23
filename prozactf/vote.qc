@@ -5,47 +5,47 @@
  Voting system functions and stuff...
  (Requires PROZAC qwsv, uses special built-ins)
 =========================================================*/
+// modified vote system provided by randomer. -Pulseczar (1/15/07)
+//=======================================================
 
 // Flag defines
 
 // vote entity types
-#define VOTE_PUNISH         0
-#define VOTE_NEXTMAP        1
-#define VOTE_SWITCHMAP      2
-#define VOTE_NEXTMAP_AGR	3 // PZ - AGR mode
-#define VOTE_SWITCHMAP_AGR  4 // PZ - AGR mode
+#define VOTE_NONE           0
+#define VOTE_PUNISH         1
+#define VOTE_NEXTMAP        2
+#define VOTE_SWITCHMAP      3
+#define VOTE_NEXTMAP_AGR	4 // PZ - AGR mode
+#define VOTE_SWITCHMAP_AGR  5 // PZ - AGR mode
 
 // punish types
-#define PUNISH_CURSE        0
-#define PUNISH_KICK         1
-#define PUNISH_BAN          2
-#define PUNISH_MUTE         3
-#define PUNISH_CUFF         4
+#define PUNISH_NONE         0
+#define PUNISH_CURSE        1
+#define PUNISH_KICK         2
+#define PUNISH_BAN          3
+#define PUNISH_MUTE         4
+#define PUNISH_CUFF         5
 
 // player voting status
-#define VOTED_JUSTJOINED    0
-#define VOTED_READY         1
-#define VOTED_YES           2
-#define VOTED_NO            3
+#define VOTED_READY         0
+#define VOTED_YES           1
+#define VOTED_NO            2
 
 // Settings defines
 
-#define VOTE_TIME           40
+#define VOTE_TIME           60
+#define VOTE_MIN_TIME       10
 #define VOTE_TIME_REFRESH   25
 #define VOTE_DELAY          240 // seconds to wait until another vote from same user is allowed
 
-// Number of votes required for each action
-
-#define VOTESNEEDED_CURSE   4
-#define VOTESNEEDED_MUTE    4
-#define VOTESNEEDED_KICK    5
-#define VOTESNEEDED_CUFF    5
-#define VOTESNEEDED_BAN     6
-#define VOTESNEEDED_MAP     6
-#define VOTESNEEDED_NEXTMAP 4
-
-#define NEEDEDVOTES_NEXTMAP_FACTOR  0.51 // 0.50
-#define NEEDEDVOTES_MAP_FACTOR      0.51 // 0.60  // 0.65
+// Fraction of votes required for each action
+#define VOTESNEEDED_CURSE   0.5
+#define VOTESNEEDED_MUTE    0.5
+#define VOTESNEEDED_KICK    0.5
+#define VOTESNEEDED_CUFF    0.5
+#define VOTESNEEDED_BAN     0.5
+#define VOTESNEEDED_MAP     0.5
+#define VOTESNEEDED_NEXTMAP 0.5
 
 //#define BAN_VOTED_TIME        0 // permanent ban
 #define BAN_VOTED_TIME       60 // 60 minutes
@@ -77,7 +77,7 @@ For player entity:
 .group_no         - Flag determines if we are choosing next map, or switch to modes
 					PZ - 0 = nextmap, 1 = map, 2 = nextmap AGR, 3 = map AGR
 .goal_state       - Determines what page of maps to be shown for voting
-.owned_by         - Contains #VOTED_XXXX, yes, no or NOT_VOTED
+.owned_by         - Contains #VOTED_XXXX, yes, no or none
 
 For vote entity:
 ----------------
@@ -88,6 +88,7 @@ For vote entity:
 .all_active          - Number of affirmative votes
 .has_holo            - Number of negative votes
 .group_no            - Type of votemap, nextmap or switchmap
+					   PZ - 0 = nextmap, 1 = map, 2 = nextmap AGR, 3 = map AGR
 .has_tesla           - Number of map beeing voted
 .dont_do_triggerwork - If TRUE, means the player to be banned has left
     (when banning a user that left)
@@ -103,11 +104,11 @@ void() StartPunishmentVote;
 void() CleanClientVotes;
 void() ResetClientsMenu;
 float() ValidVoteEnt;
-float() CheckVoting;
+float(float final) CheckVoting;
 void(float nummap, string themap) StartVoteMap;
 string(float themap) GetMapString;
 void() bprintVotesLeft;
-float() GetRemainingVotes;
+//float() GetRemainingVotes;
 void() CleanUpSleepVote;
 void() VoteSleep_think;
 
@@ -269,7 +270,7 @@ void() Player_VoteMap =
         return;
     }
 
-    if (time/60 < 1)
+    if (time < #VOTE_MIN_TIME)
     {
         sprint(self,#PRINT_HIGH,"Too early for a map vote!\n");
         return;
@@ -562,20 +563,15 @@ void() Player_VoteYes =
         return;
     }
 
-    //if (current_voteent.has_sentry == #VOTE_PUNISH)
-    if (self.owned_by == #VOTED_JUSTJOINED)
-    {
-        sprint(self,#PRINT_HIGH,"You weren't in game when this vote started!\n");
-        return;
-    }
     #ifndef VOTING_TEST
-    else if (current_voteent.admin_kick == self)
+    if (current_voteent.admin_kick == self)
     {
         sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
         return;
     }
     else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
     {
+		// FIXME: Allow the person to change their vote. -randomer 2006-02-24
         sprint(self,#PRINT_HIGH,"You already voted!\n");
     }
     else
@@ -598,8 +594,8 @@ void() Player_VoteYes =
         if (current_voteent.nextthink < time + #VOTE_TIME_REFRESH)
             current_voteent.nextthink = time + #VOTE_TIME_REFRESH;
                 
-        if (!CheckVoting())
-            bprintVotesLeft();
+		bprintVotesLeft();
+		CheckVoting(#FALSE);
     #ifndef VOTING_TEST
     }
     #endif
@@ -619,15 +615,8 @@ void() Player_VoteNo =
         return;
     }
     
-    //if (current_voteent.has_sentry == #VOTE_PUNISH)
-    if (self.owned_by == #VOTED_JUSTJOINED)
-    {
-        sprint(self,#PRINT_HIGH,"You weren't in game when this vote started!\n");
-        return;
-    }
-    
     #ifndef VOTING_TEST
-    else if (current_voteent.admin_kick == self)
+    if (current_voteent.admin_kick == self)
     {
         sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
         return;
@@ -657,8 +646,8 @@ void() Player_VoteNo =
         if (current_voteent.nextthink < time + #VOTE_TIME_REFRESH)
             current_voteent.nextthink = time + #VOTE_TIME_REFRESH;
                 
-        if (!CheckVoting())
-            bprintVotesLeft();
+		bprintVotesLeft();
+		CheckVoting(#FALSE);
 
     #ifndef VOTING_TEST
     }
@@ -836,6 +825,7 @@ void() StartPunishmentVote =
     bprint(#PRINT_HIGH,"Votingç ");
 
     bprint(#PRINT_HIGH,self.netname);
+	last_vote_starter = self.netname; // for AGR -PZ
     bprint(#PRINT_HIGH," proposes to ");
 
     if (self.g_a == #PUNISH_CURSE)
@@ -859,11 +849,14 @@ void() StartPunishmentVote =
         
     ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
 
-    CheckVoting(); // If we are the only player on server, checks
+    CheckVoting(#FALSE); // If we are the only player on server, checks
 };
 
 void() PunishVote_Think =
 {
+	CheckVoting(#TRUE);
+	
+#ifdef NOTDEFINED
     bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
     bprintVoteIssue();
     bprint(#PRINT_HIGH,"\n");
@@ -871,6 +864,7 @@ void() PunishVote_Think =
     BroadcastSound("misc/runekey");
 
     ResetVoteEnt();
+#endif
 };
 
 void() VoteMap_Think;
@@ -880,6 +874,8 @@ void() VoteMap_Think;
 
 void(float nummap, string themap) StartVoteMap =
 {
+	local string temp;
+
     if (no_votemap)
     {
         CmdMsg("Map voting within the mod is disabled, sorry!\n");
@@ -892,7 +888,7 @@ void(float nummap, string themap) StartVoteMap =
         return;
     }
 
-    if (time/60 < #MIN_MINUTES_TOVOTEMAP)
+    if (time < #VOTE_MIN_TIME)
     {
         sprint(self,#PRINT_HIGH,"Too early for a map change!\n");
         return;
@@ -909,6 +905,22 @@ void(float nummap, string themap) StartVoteMap =
         sprint(self,#PRINT_HIGH,"Server update is taking place, no map changes are allowed!\n");
         return;
     }
+	// PZ - AGR begin
+	if (self.group_no == 2 || self.group_no == 3)
+	{
+		local float x;
+		x = GetNoPlayers(#TRUE, #TRUE);
+		if (agr_vote_max != 0 && x > agr_vote_max)
+		{
+			sprint(self, #PRINT_HIGH, "Votingç Max number of players allowed for an ¡«“ vote is ");
+			temp = ftos(agr_vote_max);
+			temp = colstr(temp, #COLSTR_NUMBER);
+			sprint(self, #PRINT_HIGH, temp);
+			sprint(self, #PRINT_HIGH, " players.\n");
+			return;
+		}
+	}
+	// AGR end
 
     BackFlash(self,1);
         
@@ -1003,6 +1015,7 @@ void(float nummap, string themap) StartVoteMap =
     themap = colstr(current_voteent.netname,#COLSTR_RED);
 
     bprint(#PRINT_HIGH,"Votingç ",self.netname);
+	last_vote_starter = self.netname; // for AGR -PZ
     
     if (self.group_no == 0)
         bprint(#PRINT_HIGH," suggests ",themap," as next map");
@@ -1017,11 +1030,14 @@ void(float nummap, string themap) StartVoteMap =
         
     ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
 
-    CheckVoting(); // If we are the only player on server must check
+    CheckVoting(#FALSE); // If we are the only player on server must check
 };
 
 void() VoteMap_Think =
 {
+	CheckVoting(#TRUE);
+	
+#ifdef NOTDEFINED
     bprint(#PRINT_HIGH,"Votingç Map voting failed");
 
     bprintVoteIssue();
@@ -1031,6 +1047,7 @@ void() VoteMap_Think =
     BroadcastSound("misc/runekey");
 
     ResetVoteEnt();
+#endif
 };
 
 //==================================================================
@@ -1100,15 +1117,36 @@ void() ResetClientsMenu =
 //==========================================================================
 // called after each vote (yes or no) to see if its a succesfull vote
 
-float() CheckVoting =
+float(float final) CheckVoting =
 {
     // this shouldn't be needed
     if (current_voteent == world || current_voteent.classname!="voteent")
     {
-        bprint(#PRINT_HIGH,"\nVotingç Error in voting system!\n");
+        bprint(#PRINT_HIGH,"Votingç Error in voting system!\n");
         ResetVoteEnt();
         return #TRUE;
     }    
+
+	local float num_for, num_against, num_total;
+	local entity te;
+	
+	// Count the number of votes for, against and total clients.
+	te = nextent(world);
+	while (te != world) {
+		if (te.classname == "player" || te.classname == "spec") {
+			num_total = num_total + 1;
+			if (te.owned_by == #VOTED_YES) {
+				num_for = num_for + 1;
+			} else if (te.owned_by == #VOTED_NO) {
+				num_against = num_against + 1;
+			}
+		}
+		te = nextent(te);
+	}
+    
+    // If this is the final check then only count the people who actually voted.
+    if (final)
+    	num_total = num_for + num_against;
 
     // If an update is taking place, dont allow map voting
     if (current_voteent.has_sentry == #VOTE_NEXTMAP || 
@@ -1117,7 +1155,7 @@ float() CheckVoting =
 		current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR)
     if (ServerUpdating())
     {
-        bprint(#PRINT_HIGH,"\nVotingç Server update is taking place, no map changes are allowed\n");
+        bprint(#PRINT_HIGH,"Votingç Server update is taking place, no map changes are allowed\n");
         ResetVoteEnt();
         return #TRUE;
     }
@@ -1133,14 +1171,14 @@ float() CheckVoting =
         if (!current_voteent.dont_do_triggerwork) // only if not a special ban (user left)
         if ((current_voteent.admin_kick.classname != "player" && current_voteent.admin_kick.classname != "spec") || !current_voteent.admin_kick.is_connected)
         {
-            bprint(#PRINT_HIGH,"\nVotingç Invalid client as target for vote!\n");
+            bprint(#PRINT_HIGH,"Votingç Invalid client as target for vote!\n");
             ResetVoteEnt();
             return #TRUE;
         }
         
         if (current_voteent.g_a == #PUNISH_CURSE) // Curse
         {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_CURSE) // success?
+            if (num_for > num_total * #VOTESNEEDED_CURSE) // success?
             {
                 local float tf;
                 
@@ -1150,7 +1188,7 @@ float() CheckVoting =
                 if (st == string_null) 
                     tf = stof(st);
                 
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+                bprint(#PRINT_HIGH,"Votingç Democracy says ");
                 bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
                 bprint(#PRINT_HIGH," must be cursed\n");
 
@@ -1162,12 +1200,22 @@ float() CheckVoting =
 
                 return #TRUE;
             }
+			else if (num_against >= num_total * (1 - #VOTESNEEDED_CURSE))
+            {
+				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
+				bprintVoteIssue();
+				bprint(#PRINT_HIGH,"\n");
+				
+    			BroadcastSound("misc/runekey");
+				
+    			ResetVoteEnt();
+			}
         }
         else if (current_voteent.g_a == #PUNISH_KICK) // Kick
         {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_KICK) // success?
+            if (num_for > num_total * #VOTESNEEDED_KICK) // success?
             {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+                bprint(#PRINT_HIGH,"Votingç Democracy says ");
                 bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
                 bprint(#PRINT_HIGH," must be kicked\n");
 
@@ -1184,12 +1232,22 @@ float() CheckVoting =
 
                 return #TRUE;
             }
+			else if (num_against >= num_total * (1 - #VOTESNEEDED_KICK))
+            {
+				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
+				bprintVoteIssue();
+				bprint(#PRINT_HIGH,"\n");
+				
+    			BroadcastSound("misc/runekey");
+				
+    			ResetVoteEnt();
+			}
         }
         else if (current_voteent.g_a == #PUNISH_BAN) // Ban!
         {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_BAN) // success?
+            if (num_for > num_total * #VOTESNEEDED_BAN) // success?
             {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+                bprint(#PRINT_HIGH,"Votingç Democracy says ");
 
                 if (current_voteent.dont_do_triggerwork) // Special ban (user has left)
                 {                    
@@ -1231,12 +1289,22 @@ float() CheckVoting =
 
                 return #TRUE;
             }
+			else if (num_against >= num_total * (1 - #VOTESNEEDED_BAN))
+            {
+				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
+				bprintVoteIssue();
+				bprint(#PRINT_HIGH,"\n");
+				
+    			BroadcastSound("misc/runekey");
+				
+    			ResetVoteEnt();
+			}
         }
         else if (current_voteent.g_a == #PUNISH_MUTE) // Mute
         {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MUTE) // success? 
+            if (num_for > num_total * #VOTESNEEDED_MUTE) // success?  
             {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+                bprint(#PRINT_HIGH,"Votingç Democracy says ");
                 bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
                 bprint(#PRINT_HIGH," must be muted =)\n");
 
@@ -1261,12 +1329,22 @@ float() CheckVoting =
 
                 return #TRUE;
             }
+			else if (num_against >= num_total * (1 - #VOTESNEEDED_MUTE))
+            {
+				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
+				bprintVoteIssue();
+				bprint(#PRINT_HIGH,"\n");
+				
+    			BroadcastSound("misc/runekey");
+				
+    			ResetVoteEnt();
+			}
         }        
         else if (current_voteent.g_a == #PUNISH_CUFF) // Cuff
         {
-            if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_CUFF) // success? 
+            if (num_for > num_total * #VOTESNEEDED_CUFF) // success?  
             {
-                bprint(#PRINT_HIGH,"\nVotingç Democracy says ");
+                bprint(#PRINT_HIGH,"Votingç Democracy says ");
                 bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
                 bprint(#PRINT_HIGH," is annoying\n");
 
@@ -1291,15 +1369,25 @@ float() CheckVoting =
 
                 return #TRUE;
             }
+			else if (num_against >= num_total * (1 - #VOTESNEEDED_CUFF))
+            {
+				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
+				bprintVoteIssue();
+				bprint(#PRINT_HIGH,"\n");
+				
+    			BroadcastSound("misc/runekey");
+				
+    			ResetVoteEnt();
+			}
         }
     }
     else if (current_voteent.has_sentry == #VOTE_NEXTMAP)
     {
-        if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_NEXTMAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_NEXTMAP_FACTOR )) // success?
+        if (num_for > num_total * #VOTESNEEDED_NEXTMAP) // success?
         {
             st = colstr(current_voteent.netname,#COLSTR_RED);
             
-            bprint(#PRINT_HIGH,"\nVotingç Success° Setting ",st," as next map\n");
+            bprint(#PRINT_HIGH,"Votingç Success° Setting ",st," as next map\n");
 
 			localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
 
@@ -1312,15 +1400,25 @@ float() CheckVoting =
             ResetVoteEnt(); // removes current vote entity
 
             return #TRUE;
-       }
+		}
+		else if (num_against >= num_total * (1 - #VOTESNEEDED_NEXTMAP))
+		{
+		    bprint(#PRINT_HIGH,"Votingç Map voting failed");
+			bprintVoteIssue();
+			bprint(#PRINT_HIGH,"\n");
+			
+			BroadcastSound("misc/runekey");
+			
+			ResetVoteEnt();
+		}
     }
     else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
     {
-        if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_MAP_FACTOR )) // success?
+        if (num_for > num_total * #VOTESNEEDED_MAP) // success?
         {
             st = colstr(current_voteent.netname,#COLSTR_RED);
 
-            bprint(#PRINT_HIGH,"\nVotingç Success° Switching map to ",st,"\n");
+            bprint(#PRINT_HIGH,"Votingç Success° Switching map to ",st,"\n");
 
 			localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
 
@@ -1332,11 +1430,21 @@ float() CheckVoting =
 
             return #TRUE;
         }
+		else if (num_against >= num_total * (1 - #VOTESNEEDED_MAP))
+		{
+		    bprint(#PRINT_HIGH,"Votingç Map voting failed");
+			bprintVoteIssue();
+			bprint(#PRINT_HIGH,"\n");
+			
+			BroadcastSound("misc/runekey");
+			
+			ResetVoteEnt();
+		}
     }
 	// PZ - begin AGR code
 	else if (current_voteent.has_sentry == #VOTE_NEXTMAP_AGR) 
     {
-        if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_NEXTMAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_NEXTMAP_FACTOR )) // success?
+        if (num_for > num_total * #VOTESNEEDED_NEXTMAP) // success?
         {
             st = colstr(current_voteent.netname,#COLSTR_RED);
             
@@ -1353,11 +1461,21 @@ float() CheckVoting =
             ResetVoteEnt(); // removes current vote entity
 
             return #TRUE;
-       }
+		}
+		else if (num_against >= num_total * (1 - #VOTESNEEDED_NEXTMAP))
+		{
+		    bprint(#PRINT_HIGH,"Votingç Map voting failed");
+			bprintVoteIssue();
+			bprint(#PRINT_HIGH,"\n");
+			
+			BroadcastSound("misc/runekey");
+			
+			ResetVoteEnt();
+		}
     }
     else if (current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR)
     {
-        if (current_voteent.all_active - current_voteent.has_holo >= #VOTESNEEDED_MAP || (((current_voteent.all_active - current_voteent.has_holo) / numclients)> #NEEDEDVOTES_MAP_FACTOR )) // success?
+        if (num_for > num_total * #VOTESNEEDED_MAP) // success?
         {
             st = colstr(current_voteent.netname,#COLSTR_RED);
 
@@ -1373,6 +1491,16 @@ float() CheckVoting =
 
             return #TRUE;
         }
+		else if (num_against >= num_total * (1 - #VOTESNEEDED_MAP))
+		{
+		    bprint(#PRINT_HIGH,"Votingç Map voting failed");
+			bprintVoteIssue();
+			bprint(#PRINT_HIGH,"\n");
+			
+			BroadcastSound("misc/runekey");
+			
+			ResetVoteEnt();
+		}
     } 
 	// PZ - end AGR code
 
@@ -1415,21 +1543,33 @@ string(float themap) GetMapString =
 void() bprintVotesLeft =
 {
     local string st;
-    local float tmp;
-
-    tmp = GetRemainingVotes();
-    tmp = floor(tmp);
-    st = ftos(tmp);   
-    st = colstr(st,#COLSTR_NUMBER);
-
-    if (tmp > 1)
-        bprint(#PRINT_HIGH," €",st," votes left›\n");
-    else
-        bprint(#PRINT_HIGH," € vote left!›\n");
+	local float num_for, num_against;
+	local entity te;
+	
+	// Count the number of votes for and against.
+	te = nextent(world);
+	while (te != world) {
+		if (te.classname == "player" || te.classname == "spec") {
+			if (te.owned_by == #VOTED_YES) {
+				num_for = num_for + 1;
+			} else if (te.owned_by == #VOTED_NO) {
+				num_against = num_against + 1;
+			}
+		}
+		te = nextent(te);
+	}
+	
+	st = colstr(ftos(num_for), #COLSTR_NUMBER);
+	bprint(#PRINT_HIGH, " €", st, " for Ø ");
+	
+	st = colstr(ftos(num_against), #COLSTR_NUMBER);
+	bprint(#PRINT_HIGH, st, " against›\n");
+	
+	//›\n
 };
 
 //======================================================================================
-// The current punsihment vote goes to sleep (player to be muted/cuffed hides away)
+// The current punishment vote goes to sleep (player to be muted/cuffed hides away)
 
 // Warning: here we assume self is the player leaving server to be punished
 void() VoteToSleep =
@@ -1530,6 +1670,7 @@ void(entity sleepent, entity targetclient) SleepVoteResume =
 //========================================================================
 // Returns number of votes remaining for a success
 
+#ifdef NOTDEFINED
 float() GetRemainingVotes =
 {
     if (!current_voteent)
@@ -1557,3 +1698,4 @@ float() GetRemainingVotes =
     
     return 666; // If this happens, its a bug.. and evil!
 };
+#endif

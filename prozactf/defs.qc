@@ -936,7 +936,7 @@ float(entity targ, entity inflictor) CanDamage;
 .float		last_impulse;		// The previous impulse command from this player
 .float		armorclass;			// Type of *special* armor being worn
 .float 		tf_items;			// Another flag for player items
-.float 		job;				// WK Yet another flag for player items
+.float 		job;				// WK Yet another flag for player items //WK CAUTION: IF YOU EVER CHANGE THIS, CPQWSV THIEF CODE WILL BREAK
 .float		job_finished;		// WK Time for job ability to end/reload
 .float		tf_items_flags;		// Flags for the player items
 .float		no_grenades_1;		// Number of grenades of type 1 being carried
@@ -1210,6 +1210,7 @@ float megatf;
 
 //-----//------//
 entity current_voteent;
+string last_vote_starter; // added for AGR mode.. refers to which player started the current vote -PZ
 float votesleeping; // TODO --> Make bit inside server status float that include blink team score flags?
 
 // Chris' Teamplay Plus Mode
@@ -1245,7 +1246,7 @@ float team3nextspam;
 float team4nextspam;
 
 .float team_no;		// The team you belong to
-.float old_team_no;	// WK The team you used belong to
+.float old_team_no;	// WK The team you used to belong to
 .float lives;		// The number of lives you have left
 
 .float infection_team_no; // The team_no of the person who infected you
@@ -1504,14 +1505,14 @@ float       rj;					// Rocket Jump Modifier
 #define BUILD_COST_TESLA		100		// Built thru the menu
 #define BUILD_COST_CAMERA		55		//NOTE is used to check if can build stuff
 #define BUILD_COST_TELEPORTER		90
-#define BUILD_COST_SENSOR			60
-#define BUILD_COST_FIELDGEN			120 // was 140
+#define BUILD_COST_SENSOR		60
+#define BUILD_COST_FIELDGEN		120 		// was 140
 
 
 // Building times
 #define BUILD_TIME_DISPENSER		2		// 2 seconds to build
 #define BUILD_TIME_SENTRYGUN		5		// 5 seconds to build
-#define BUILD_TIME_TESLA		    6		// 8 seconds to build
+#define BUILD_TIME_TESLA		6		// 8 seconds to build
 #define BUILD_TIME_TELEPORTER		3		// 3 seconds to build
 #define BUILD_TIME_FIELDGEN 		4		// 7 seconds to build 
 
@@ -1681,13 +1682,13 @@ float       rj;					// Rocket Jump Modifier
 #define RESPAWN_GUARD_TIME		5
 
 //JOBS AVAILABLE
-#define JOB_THIEF				1
-#define JOB_RUNNER				2
-#define JOB_WARLOCK				4
-#define JOB_CHAPLAN				8
+#define JOB_THIEF				1 //WK CAUTION: IF YOU EVER CHANGE THIS, CPQWSV THIEF CODE WILL BREAK
+#define JOB_RUNNER			2
+#define JOB_WARLOCK			4
+#define JOB_CHAPLAN			8
 #define JOB_BERSERKER			16
 #define JOB_GUERILLA			32
-#define JOB_JUDOKA				64
+#define JOB_JUDOKA			64
 //- OfN - New jobs -
 #define JOB_ARMY                128
 #define JOB_HACKER              256
@@ -1699,14 +1700,14 @@ float       rj;					// Rocket Jump Modifier
 
 //STATES WE ARE IN FOR JOB
 //Every time we add one, make sure it gets reset in tfort.qc!
-#define JOB_ACTIVE				2048  //Job is 'on' like currently hiding
-#define JOB_FULL_HIDE			4096  //Job is in phase two of "hide"
-#define JOB_TIRED				8192  //Recovering from a sprint
-#define JOB_BLOODY_KNIFE		16384 //We've gone OJ on someone
-//OfN obsolete #define JOB_DEMON_OUT			32768 //We have a demon in the world
+#define JOB_ACTIVE		2048  //Job is 'on' like currently hiding //WK CAUTION: IF YOU EVER CHANGE THIS, CPQWSV THIEF CODE WILL BREAK
+#define JOB_FULL_HIDE		4096  //Job is in phase two of "hide"
+#define JOB_TIRED			8192  //Recovering from a sprint
+#define JOB_BLOODY_KNIFE	16384 //We've gone OJ on someone
+//OfN obsolete #define JOB_DEMON_OUT	32768 //We have a demon in the world
 //#define JOB_MARTYR_ENEMY	    ^double //We have been shot, and enemy remembered
-#define JOB_EXTRA1              65536 // Warlock, guerilla and army extra
-#define JOB_EXTRA2              131072// 2nd extra 
+#define JOB_EXTRA1		65536 // Warlock, guerilla and army extra
+#define JOB_EXTRA2		131072// 2nd extra 
 
 /*==================================================*/
 /* New Weapon Related Defines		                */
@@ -1716,7 +1717,7 @@ float       rj;					// Rocket Jump Modifier
 #define RE_SUPER_SHOTGUN		16 // 8 shots
 #define RE_GRENADE_LAUNCHER		6 
 #define RE_ROCKET_LAUNCHER		4 
-#define RE_LIGHT_ASSAULT		36 // was 40 
+#define RE_LIGHT_ASSAULT		30 // WK 1/7/7 36 // was 40 
 #define RE_LASER_CANNON		    6
 
 // reload times
@@ -1724,7 +1725,7 @@ float       rj;					// Rocket Jump Modifier
 #define RE_SUPER_SHOTGUN_TIME		3 
 #define RE_GRENADE_LAUNCHER_TIME	4 
 #define RE_ROCKET_LAUNCHER_TIME 	5 
-#define RE_LIGHT_ASSAULT_TIME		3.3 // was 3.5
+#define RE_LIGHT_ASSAULT_TIME		3.2 //WK 1/7/7 3.3 // was 3.5
 #define RE_LASER_CANNON_TIME	    1.5
 
 //CLIP EXTENDER reload values
@@ -1732,8 +1733,8 @@ float       rj;					// Rocket Jump Modifier
 #define RE_LASER_CANNON_EX           10 // Original 6
 #define RE_LASER_CANNON_TIME_EX      1.5
 //light assault
-#define RE_LIGHT_ASSAULT_EX         48 // Original 40 - 30
-#define RE_LIGHT_ASSAULT_TIME_EX    3.3 // Original 3.5 - 3.2
+#define RE_LIGHT_ASSAULT_EX         36 //WK 1/7/7 48 // Original 40 - 30
+#define RE_LIGHT_ASSAULT_TIME_EX    3.4 //WK 1/7/7 3.3 Original 3.5 - 3.2
 //shotgun
 #define RE_SHOTGUN_EX               12 // Original 8
 #define RE_SHOTGUN_TIME_EX          2 
@@ -1749,7 +1750,10 @@ float       rj;					// Rocket Jump Modifier
 
 
 // Maximum velocity you can move and fire the Sniper Rifle
-#define WEAP_SNIPER_RIFLE_MAX_MOVE	50 
+#define WEAP_SNIPER_RIFLE_MAX_MOVE  50
+#define WEAP_SNIPER_RIFLE_MAX_TIME  5 // WK 1/7/7 3 // PZ - Randomer's charge-up fix
+#define WEAP_SNIPER_RIFLE_MIN_DAMG  50 //
+#define WEAP_SNIPER_RIFLE_MAX_DAMG  200 //WK 1/7/7 400
 
 // Medikit
 #define WEAP_MEDIKIT_HEAL	200  // Amount medikit heals per hit
@@ -1803,7 +1807,8 @@ float       rj;					// Rocket Jump Modifier
 #define GL_PIPEBOMB	1 
 
 // Defines for Concussion Grenade
-#define GR_CONCUSS_TIME	5 
+#define GR_CONCUSS_TIME	2 //WK 5, so 10s now down from 25s
+//WK Note: Concs have 100 health, this much comes off each tick
 #define GR_CONCUSS_DEC	20 
 
 // Defines for the Gas Grenade
@@ -2107,7 +2112,7 @@ float       rj;					// Rocket Jump Modifier
 #define PC_ENGINEER_WEAPONS			#WEAP_SPANNER | #WEAP_RAILGUN | #WEAP_SUPER_SHOTGUN
 #define PC_ENGINEER_MAXAMMO_SHOT		75
 #define PC_ENGINEER_MAXAMMO_NAIL		50 
-#define PC_ENGINEER_MAXAMMO_CELL		275 // synonymous with metal 
+#define PC_ENGINEER_MAXAMMO_CELL		300 // synonymous with metal 
 #define PC_ENGINEER_MAXAMMO_ROCKET		30 
 #define PC_ENGINEER_INITAMMO_SHOT		30 
 #define PC_ENGINEER_INITAMMO_NAIL		25 
@@ -2218,10 +2223,12 @@ float agr; // globar cvar, just on or off (requires 'localinfo agr 1' to be on)
 float agr_frags; // frags blue gets for successfully defending for agr_minutes minutes
 float agr_minutes; // number of minutes blue has to successfully defend in order to be 
 			       // rewarded frags
+float agr_vote_max; // PZ overrides default maximum number of players allowed to vote for AGR
 float timeToRewardBlue; // don't try to set it (it's set by functions)
 float agrTimerRunning; // boolean
 float agrTimeOfLastSound; // in seconds, what the timer was on last timer sound
 #define AGR_ROTATION_OFF #TRUE // on a map triggered by map rotation, AGR is never on
+#define AGR_VOTE_MAX 6 // PZ default maximum number of players allowed for an AGR vote (0 means no max)
 //#define AGR_WHEN_BLUE_SCORES_RETURN_FLAG
 
 // PZ - can't believe these globals didn't already exist.. created them for AGR mode.

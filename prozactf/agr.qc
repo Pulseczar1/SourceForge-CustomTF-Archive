@@ -16,12 +16,14 @@ float agr; // globar cvar, just on or off (requires 'localinfo agr 1' to be on)
 float agr_frags; // frags blue gets for successfully defending for agr_minutes minutes
 float agr_minutes; // number of minutes blue has to successfully defend in order to be 
 			       // rewarded frags
+float agr_vote_max; // overrides default maximum number of players allowed to vote for AGR
 // globals
 float timeToRewardBlue; // don't try to set it (it's set by functions)
 float agrTimerRunning; // boolean
 float agrTimeOfLastSound; // in seconds, what the timer was on last timer sound
 // define vars
 #define AGR_ROTATION_OFF #TRUE // on a map triggered by map rotation, AGR is never on
+#define AGR_VOTE_MAX 6 // default maximum number of players allowed for an AGR vote (0 means no max)
 //#define AGR_WHEN_BLUE_SCORES_RETURN_FLAG
 
 #endif
@@ -104,6 +106,11 @@ void() AGR_initialize =
     if (st == string_null) st = "5"; // sets default
     agr_minutes = stof(st);
     if (agr_minutes < 0) agr_minutes = 0; // the allowed minimum
+
+	st = infokey(world, "agr_vote_max");
+    if (st == string_null) st = "#AGR_VOTE_MAX"; // sets default
+    agr_vote_max = stof(st);
+    if (agr_vote_max < 0) agr_vote_max = 0; // the allowed minimum
 };
 //=================================================================
 // starts the flag capture timer
@@ -178,7 +185,7 @@ void() AGR_stopTimer =
 void() AGR_resetTimer =
 {	
 	local string temp;
-//	local entity blueFlag;
+	// local entity blueFlag;
 
 	timeToRewardBlue = time + agr_minutes*60;
 	bprint(#PRINT_HIGH, "\n агр Timer Reset \n");
@@ -187,24 +194,24 @@ void() AGR_resetTimer =
 	bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, " minutes to capture Blue's flag.\n");
 	bprint(#PRINT_HIGH, "\n");
 	BroadcastSound("doors/runeuse.wav");
-	#ifdef AGR_WHEN_BLUE_SCORES_RETURN_FLAG
-		// return blue flag to its base
-		blueFlag = find(world, classname, "item_tfgoal");
-		while (blueFlag)
+#ifdef AGR_WHEN_BLUE_SCORES_RETURN_FLAG
+	// return blue flag to its base
+	blueFlag = find(world, classname, "item_tfgoal");
+	while (blueFlag)
+	{
+		if (blueFlag.team_no == 2)
 		{
-			if (blueFlag.team_no == 2)
-			{
-				self = blueFlag;
-				// both ways returns the flag
-				if (self.goal_state == #TFGS_ACTIVE && self.owner != world) // a player has it
-					tfgoalitem_RemoveFromPlayer(self, self.owner, 1);
-				else
-					tfgoalitem_remove();
-				break;
-			}
-			blueFlag = find(blueFlag, classname, "item_tfgoal");
+			self = blueFlag;
+			// both ways returns the flag
+			if (self.goal_state == #TFGS_ACTIVE && self.owner != world) // a player has it
+				tfgoalitem_RemoveFromPlayer(self, self.owner, 1);
+			else
+				tfgoalitem_remove();
+			break;
 		}
-	#endif
+		blueFlag = find(blueFlag, classname, "item_tfgoal");
+	}
+#endif
 };
 //=================================================================
 // checks to see if it's time to play a timer sound, and if so, 
