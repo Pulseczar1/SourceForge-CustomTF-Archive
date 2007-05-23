@@ -749,19 +749,32 @@ void() Tesla_Touch =
 	{
 		deathmsg = #DMSG_BUG_ZAPPER;
         
-        if (IsMonster(other))
-        {
-            if (!Teammate(other.real_owner.team_no, self.real_owner.team_no))
-            {
-                TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
-        		return;
-            }
+		if (IsMonster(other))
+		{
+			if (!Teammate(other.real_owner.team_no, self.real_owner.team_no))
+			{
+				TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
+				return;
+			}
             
-            return;
-        }
+			return;
+		}
 
+		if (other.job & #JOB_TKD) { //4/27/7 TKD people are so tough they can defeat point defense systems
+			//If it is an enemy building, we destroy it with a mighty karate chop!!
+			if (!Teammate(self.real_owner.team_no, other.team_no) && other.last_boot_to_the_head < time)
+			{
+				sprint(other,#PRINT_HIGH,"You deliver a mighty karate chop to the sentry gun!\n");
+				sprint(self.real_owner,#PRINT_HIGH,"Your sentry gun just got karate chopped!\n");
+				TF_T_Damage (self, other, other, 300, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+				other.last_boot_to_the_head = time + 5; //Delay after such a mighty blow
+				Spy_RemoveDisguise(other);
+			}
+			return;
+		}
+
+		//TF_T_Damage (other, self, self.real_owner, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 		if (!Teammate(other.team_no, self.real_owner.team_no) && (other.is_undercover != 1)) // <== FIXME
-			//TF_T_Damage (other, self, self.real_owner, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 			TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 		return;
 	}

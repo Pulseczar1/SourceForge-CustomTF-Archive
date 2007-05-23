@@ -464,14 +464,17 @@ float(entity tfield, entity who) Field_ItCanPass =
 
 #endif
 
-    if (who.classname == "player") // PLAYERS
-    {
+	if (who.classname == "player") // PLAYERS
+	{
+		if (who.job & #JOB_TKD) //WK 4/27/7 TKD people are so tough they can walk through field gens!
+			return #TRUE;
+
         if (Teammate(who.team_no, tfield.real_owner.team_no)) // teammate
             return #TRUE;
 
         if (Teammate(who.undercover_team, tfield.real_owner.team_no)) // spies disguised as our team
             return #TRUE;
-    }
+	}
     else if (IsMonster(who))  // MONSTERS/ARMY
     {
         if (Teammate(who.real_owner.team_no, tfield.real_owner.team_no)) // team monster
@@ -502,6 +505,9 @@ float(entity tfield, entity who) Field_ShouldDamage =
 
     if (who.classname == "player") // PLAYERS
     {
+		if (who.job & #JOB_TKD) //WK 4/27/7 TKD people are so tough they can walk through field gens!
+			return #FALSE;
+
         if (who == tfield.real_owner) // field owner
             return #FALSE;
 

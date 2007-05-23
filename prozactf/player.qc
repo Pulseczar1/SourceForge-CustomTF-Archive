@@ -148,6 +148,164 @@ void() player_touch =
 		}
 	}
 
+	//WK 4/27/7 Boot to the Head! Taekwondo code
+	//Tae Kwon Do! Tae Kwon Do!
+	//This looks a bit odd since the stationary person being run INTO is Self, so the TKD person is Other.
+	if (other.job & #JOB_TKD && self.takedamage) {
+		local float playerspeed;
+		if (!Teammate(self.team_no,other.team_no)) {
+			//TODO Check to make sure the person is in front of us.
+
+			if (self.job & #JOB_TKD) { //TWO TKD GUYS!
+				//Issue TKD Challenge (if neither side is juiced already)
+				local float score;
+				score = 5;
+				if (!(self.items & #IT_QUAD) && !(other.items & #IT_QUAD)) {
+					if (random() < 0.33) {
+						bprint(#PRINT_HIGH,other.netname);
+						bprint(#PRINT_HIGH," issues a Tae Kwon Do challenge to ");
+						bprint(#PRINT_HIGH,self.netname);
+						bprint(#PRINT_HIGH,". Let the battle begin!\n");
+						sound (other, #CHAN_WEAPON, "shambler/melee2.wav", 1, #ATTN_NORM);
+					} else if (random() < 0.5) {
+						bprint(#PRINT_HIGH,other.netname);
+						bprint(#PRINT_HIGH," yells TAE KWON DO!\n");
+						bprint(#PRINT_HIGH,self.netname);
+						bprint(#PRINT_HIGH," yells TAE KWON DO!\n");
+						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
+						score = 10;
+					} else if (random() < 0.5) {
+						bprint(#PRINT_HIGH,other.netname);
+						bprint(#PRINT_HIGH," and ");
+						bprint(#PRINT_HIGH,self.netname);
+						bprint(#PRINT_HIGH," begin the Duel of the Iron Mic! (15s)\n");
+						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
+						score = 15;
+					} else if (random() < 0.5) {
+						bprint(#PRINT_HIGH,other.netname);
+						bprint(#PRINT_HIGH," and ");
+						bprint(#PRINT_HIGH,self.netname);
+						bprint(#PRINT_HIGH," begin their samurai showdown! (20s)\n");
+						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
+						score = 20;
+					} else {
+						bprint(#PRINT_HIGH,other.netname);
+						bprint(#PRINT_HIGH," and ");
+						bprint(#PRINT_HIGH,self.netname);
+						bprint(#PRINT_HIGH," begin a duel without honor or humanity! (40s)\n");
+						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
+						score = 40;
+					}
+
+					//Juiced
+					self.items = self.items | #IT_QUAD;
+					self.super_damage_finished = time + score;
+					self.super_time = 1;
+					if (self.attack_finished < time)
+						self.attack_finished = time + 1.5;
+					if (self.job_finished < time)
+						self.job_finished = time + 1.5;
+
+					//Faster recovery since we picked the fight!
+					other.items = other.items | #IT_QUAD;
+					other.super_damage_finished = time + score;
+					other.super_time = 1;
+					if (self.attack_finished < time)
+						self.attack_finished = time + 1;
+					if (self.job_finished < time)
+						self.job_finished = time + 1;
+				}			
+				if (other.last_push < time) {
+					//Push each self away, and up.
+					self.velocity_x = other.last_frame_velocity_x;
+					self.velocity_y = other.last_frame_velocity_y;
+					self.velocity_z = other.last_frame_velocity_z + 200;
+					other.velocity_x = self.last_frame_velocity_x;
+					other.velocity_y = self.last_frame_velocity_y;
+					other.velocity_z = self.last_frame_velocity_z;
+					other.last_push = time + 0.5;
+				}
+			} else {
+				playerspeed = vlen(other.last_frame_velocity);
+				if (other.last_boot_to_the_head < time && playerspeed > 225) {
+					//Damage depends on how fast we are 
+					//We save the last_frame_velocity because the collision kills the speed before we get here.
+					/* Debug Information
+					local string temp_foo;
+					temp_foo = ftos(playerspeed);
+					bprint(#PRINT_HIGH,"Speed: ");
+					bprint(#PRINT_HIGH,temp_foo);
+					bprint(#PRINT_HIGH,"\n");
+					*/
+
+					deathmsg = #DMSG_TKD;
+
+					if (playerspeed < 400) { //Stationary kick
+						if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "Boot to the head!\n");
+						else if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You hit him with a front snap kick!\n");
+						else
+							sprint (other, #PRINT_HIGH, "You hit him with a quick roundhouse kick!\n");
+						sprint (self, #PRINT_HIGH, "BOOT TO THE HEAD!\n");
+					} else if (playerspeed < 800) { //Moving kick
+						if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You deliver a sliding sidekick to his head!\n");
+						else if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You deliver a sliding back kick to his stomach!\n");
+						else
+							sprint (other, #PRINT_HIGH, "You hit him with a sliding axe kick!\n");
+						sprint (self, #PRINT_LOW, "BIG BOOT TO THE HEAD!\n");
+					} else if (playerspeed < 1050) { //Flying kick
+						if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You deliver a flying tornado kick to his head!\n");
+						else if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You slam into him with a jumping side kick!\n");
+						else if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You hit him with a double jumping front push kick!\n");
+						else
+							sprint (other, #PRINT_HIGH, "You strike him in a vital point!!\n");
+						sprint (self, #PRINT_LOW, "MIGHTY BOOT TO YOUR HEAD!\n");
+					} else {
+						playerspeed = 1200; //Cap damage at 100
+						if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You demolish him with a flying death kick!!\n");
+						else if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You break his neck with a light speed roundhouse!!\n");
+						else if (random() < 0.5)
+							sprint (other, #PRINT_HIGH, "You hit him with a front-round-side combination kick within a half second!!\n");
+						else
+							sprint (other, #PRINT_HIGH, "You utterly devastate your opponent. Pilsung!!\n");
+						sprint (self, #PRINT_HIGH, "You were critically kicked by your opponent!\n");
+					}
+					TF_T_Damage (self, other, other, playerspeed / 12, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+					other.last_boot_to_the_head = time + 4;
+				}
+				//Even if our boot timer is down, we can still push him around on a different timer.
+				//It stops us every time we push though
+				//Kick him through the air! Inelastic colision for 90% of total momentum.
+				//HWGUYs can't be punted.
+				if (other.last_push < time) {
+					if (!(self.cutf_items & #CUTF_HWGUY) && playerspeed > 300) {
+						other.velocity = '0 0 200'; //Deliver all our force into the kick! Whapow!
+						self.velocity_x = other.last_frame_velocity_x * 0.9;
+						self.velocity_y = other.last_frame_velocity_y * 0.9;
+						if (other.last_frame_velocity_z > 0)
+							self.velocity_z = other.last_frame_velocity_z + 180; //Lift him a bit
+						else
+							self.velocity_z = other.last_frame_velocity_z - 180; //Punting him down
+						other.last_push = time + 1;
+					} else if (self.cutf_items & #CUTF_HWGUY) { //Bounce off HWGUYs =)
+						other.velocity_x = other.last_frame_velocity_x * -1.2;
+						other.velocity_y = other.last_frame_velocity_y * -1.2;
+						other.velocity_z = other.last_frame_velocity_z + 180; //Lift him a bit
+						other.last_push = time + 0.5;
+					}
+				}
+			}
+		}
+	}
+
 	// Pass on infections
 	if (self.tfstate & #TFSTATE_INFECTED)
 	{
@@ -232,7 +390,7 @@ void() player_touch =
             }
         }
 	}
-
+/* WK 4/27/7 Turned this off. If you actually want to do it right, use last_frame_velocity.
 #ifdef PLAYER_PUSHING
 
     local float v1, v2;
@@ -262,6 +420,7 @@ void() player_touch =
 	}
 
 #endif
+*/
 
 };
 
@@ -1170,6 +1329,7 @@ void(entity warlock) GibPickSound;
 float(entity player) GetMeat;
 void(entity player, float numgibs) SetMeat;
 
+//XXXX
 void() gib_touch =
 {
     if (self.velocity == '0 0 0')

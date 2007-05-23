@@ -63,7 +63,7 @@ void(entity player) UpdateArmorItem;
 #define STR_HP7                "300¯100 Red     "
 // PAGE 6 - Special Armors & Ammo
 #define STR_CERAMIC            "Ceramic Armor   "
-#define STR_GET                "Impact Armor    "
+#define STR_GEL                "Impact Armor    "
 #define STR_ASBESTOS           "Asbestos Armor  "
 #define STR_KEVLAR             "Kevlar Armor    "
 #define STR_BLAST              "Blast Armor     "
@@ -128,6 +128,9 @@ void(entity player) UpdateArmorItem;
 #define STR_HACKER             "CyberNet  ¨Hack©"
 #define STR_MARTYR             "Martyr ¨Suicide©"
 #define STR_CRUSADER           "Crusader ¨Auras©"
+#define STR_TKD                "Taekwondo ¨Kick©"
+//#define STR_PSION              "Psion¨Mindblast©"
+#define STR_PSION              "Coming    ¨Soon©"
 // PAGE 14 - Proficiencies
 #define STR_STEALTH            "Stealth         "
 #define STR_HIGHJUMP           "Highjump        "
@@ -189,7 +192,7 @@ void(entity player) UpdateArmorItem;
 #define COST_HP7                4100
 // PAGE 6 - Special Armors & Ammo
 #define COST_CERAMIC             575
-#define COST_GET                 625
+#define COST_GEL                 625 //WK 4-8-7 It's "GEL", not GET. =)
 #define COST_ASBESTOS            750
 #define COST_KEVLAR             1200
 #define COST_BLAST              1500
@@ -254,6 +257,8 @@ void(entity player) UpdateArmorItem;
 #define COST_HACKER             1200
 #define COST_MARTYR             1000
 #define COST_CRUSADER           1600
+#define COST_TKD                1250
+#define COST_PSION              1200
 // PAGE 14 - Proficiencies
 #define COST_STEALTH             400
 #define COST_HIGHJUMP            500 // Original was 200
@@ -274,16 +279,16 @@ void(entity player) UpdateArmorItem;
 // Leg settings (Speeds)
 #define CUSTOM_SPEED1   410 // Cheetah (shaka original = 650)
 #define CUSTOM_SPEED2   370 // Cougar (shaka original = 420)
-#define CUSTOM_SPEED3   330
-#define CUSTOM_SPEED4   310
-#define CUSTOM_SPEED5   290
-#define CUSTOM_SPEED6   270
+#define CUSTOM_SPEED3   330 // White Rhino
+#define CUSTOM_SPEED4   310 // Scrub Jay
+#define CUSTOM_SPEED5   290 // KGB Officer
+#define CUSTOM_SPEED6   270 // Black Mamba
 #define CUSTOM_SPEED7   250 // Imperial Penguin
 
 // Char used to visually indicate a purchased item (DO NOT USE QUOTES!)
-//#define CHAR_BOUGHT * // <-- Classic "*" char
-#define CHAR_BOUGHT 
- // <-- White Square on original and most charsets
+#define CHAR_BOUGHT * // <-- Classic "*" char
+//#define CHAR_BOUGHT 
+// // <-- White Square on original and most charsets
 
 //==============================================================================
 // The following "ancient" functions have been there doing the work for years
@@ -1185,12 +1190,22 @@ void(float inp) Menu_Health_Input =
         return;
     }
 
+	//WK 4/27/7 Don't allow special armors with 300 armor
+	if (inp == 7 && (self.tf_items & #NIT_GEL || self.tf_items & #NIT_CERAMIC || self.tf_items & #NIT_KEVLAR || self.tf_items & #NIT_BLAST || (self.tf_items & #NIT_ASBESTOS && !(self.weapons_carried & #WEAP_FLAMETHROWER)))) {
+		sprint(self, #PRINT_HIGH, "Sorry, you cannot buy special armors with 300 armor\n");
+		CuTFMenuSound(#MENUSOUND_WRONG);
+		self.impulse=0;
+		return;
+	}
+
     local float current;
     local float tosell, tobuy;
     current = 0;
 
     if (self.maxarmor == 50)
     {
+	  if (self.health == 50) //WK 4/27/7 Made $0 armor 50/50 green, but handled DropFrom...() in Custom.qc
+		current = 0;
         if (self.health == 75)
             current = 1;
         else
@@ -1330,7 +1345,7 @@ void() Menu_Armor  =
     MenuResetCount();
 
     l1 = ConstructMenuItemStr(1,#STR_CERAMIC,#COST_CERAMIC,self.tf_items,#NIT_CERAMIC);
-    str = ConstructMenuItemStr(2,#STR_GET,#COST_GET,self.tf_items,#NIT_GEL);
+    str = ConstructMenuItemStr(2,#STR_GEL,#COST_GEL,self.tf_items,#NIT_GEL);
     l1 = strcat(l1,str);
 
     l2 = ConstructMenuItemStr(3,#STR_ASBESTOS,#COST_ASBESTOS,self.tf_items,#NIT_ASBESTOS);
@@ -1349,12 +1364,20 @@ void() Menu_Armor  =
 
 void(float inp) Menu_Armor_Input =
 {
+	//WK 4/27/7 Don't allow special armors with 300 armor
+	if (inp >= 1 && inp <= 5 && self.maxarmor == 300 && !(self.weapons_carried & #WEAP_FLAMETHROWER && inp == 3)) {
+		sprint(self, #PRINT_HIGH, "Sorry, you cannot buy special armors with 300 armor\n");
+		CuTFMenuSound(#MENUSOUND_WRONG);
+		self.impulse=0;
+		return;
+	}
+
     if (inp == 1) {
         BuyItem(#COST_CERAMIC,#NIT_CERAMIC);
         Menu_Armor();
     }
     if (inp == 2) {
-        BuyItem(#COST_GET, #NIT_GEL);
+        BuyItem(#COST_GEL, #NIT_GEL);
         Menu_Armor();
     }
     if (inp == 3) {
@@ -2132,8 +2155,12 @@ void() Menu_Profession2 =
     str = ConstructMenuJobStr(4,#STR_CRUSADER,#JOB_CRUSADER,#COST_CRUSADER,0,0,"","");
     l2 = strcat(l2,str);
 
+    //WK 4/27/7 Add Psion and TKD Jobs!
+    l3 = ConstructMenuJobStr(5,#STR_TKD,#JOB_TKD,#COST_TKD,0,0,"","");
+    str = ConstructMenuJobStr(6,#STR_PSION,#JOB_PSION,#COST_PSION,0,0,"","");
+    l3 = strcat(l3,str);
+
     l4 = "\n.. Ðòåö    \n.. Îåøô    \n.. Äïîå!   \n";
-    l3 = "\n\n";
 
 	centerprint(self, "œ‹ Cõsôoíiúe Ùïõòóåìæ ‹œ\n‹œ More Professions   œ‹\n\n", l1,l2,l3,l4, temp," dollars left\n\nUse ÓËÉÌÌ to trigger ability\n");
 };
@@ -2163,6 +2190,14 @@ void(float inp) Menu_Profession2_Input =
     }
     if (inp == 4) {
         BuyJob(#COST_CRUSADER,#JOB_CRUSADER);
+        Menu_Profession2();
+    }
+    if (inp == 5) { 
+        BuyJob(#COST_TKD,#JOB_TKD);
+        Menu_Profession2();
+    }
+    if (inp == 6) {
+        BuyJob(#COST_PSION,#JOB_PSION);
         Menu_Profession2();
     }
     if (inp == 8) {
@@ -2729,6 +2764,10 @@ float() SpentOnJob =
         return #COST_MARTYR;
     if (self.job & #JOB_CRUSADER)
         return #COST_CRUSADER;
+    if (self.job & #JOB_TKD)
+        return #COST_TKD;
+    if (self.job & #JOB_PSION)
+        return #COST_PSION;
 };
 
 string(float itemnum, string itemdesc,float cost,float grentype) ConstructMenuGrenStr =

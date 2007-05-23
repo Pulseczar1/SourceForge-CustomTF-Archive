@@ -271,6 +271,13 @@ void() DropFromCustomClassGen =
       if (self.maxammo_cells > 10)
 		self.maxammo_cells = self.maxammo_cells - 10;
 
+	//WK 4/27/7 $0 armor is now 50/50 green, since 0/50 is a completely pointless option
+	if (self.maxarmor == 0) {
+		self.armor_allowed = 0.3;
+		self.armorvalue = 25;
+		self.maxarmor = 50;
+	}
+
 	//Increase their supply if they bought a backpack or bandolier
 	if (self.tf_items & #NIT_AMMO_BACKPACK) {
 		self.maxammo_rockets = self.maxammo_rockets + 30;

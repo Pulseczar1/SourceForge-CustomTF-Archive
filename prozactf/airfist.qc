@@ -157,7 +157,7 @@ void() launch_horn =
   local float recoil; // recoil strength of the gun
 
 	// Reshot time for the airgun attack in seconds.
-	local float attackTime = 0.75; //WK 1/7/7 0.5
+	local float attackTime = 0.5;
 
 	// Max number of times that the weapon can fired in a period of time.
 	local float maxFireRate = 5;
@@ -486,13 +486,29 @@ void() launch_horn =
     recoil = recoil * #AIRFIST_RECOIL_REDUCTION;
 */
 
-  //WK 1/7/7 Gymnasts should benefit from this item... thats what gymn *does*.
+  //WK 1/7/7 Gymnasts should benefit from this item... thats what gym *does*.
   if (self.cutf_items & #CUTF_GYMNAST)
-    recoil = recoil * 1.4;
+    recoil = recoil * 1.3; //WK 4/27/7 Was 1.4
 
   //WK 1/7/7 Halve recoil if carrying flag. (Phrostbye's idea)
   if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT)
     recoil = recoil * 0.25; //WK 2/26/7 0.5 Anti-speedcapping
+
+  //WK 4/27/7 Save our current speed.
+  //WK We wish to see when the recoil increases our speed above certain thresholds, to trigger discharge
+  local float currentspeed;
+  currentspeed = vlen(self.velocity);
+
+  if (currentspeed < 250) currentspeed = 250; //WK Don't discharge when doing a small push from stationary
+  if (currentspeed > self.maxspeed) currentspeed = self.maxspeed; //WK Don't allow bunny hopping to incrementally increase speed up to insanely high speeds without discharge, either.
+
+/* For debugging the numbers...
+  local string currentspeedstring;
+  currentspeedstring = ftos(currentspeed);
+  bprint(#PRINT_HIGH,"Current speed ");
+  bprint(#PRINT_HIGH,currentspeedstring);
+  bprint(#PRINT_HIGH,"\n");
+*/
 
   // recoil self
   self.velocity = self.velocity + v_forward * recoil * -1;
@@ -504,15 +520,27 @@ void() launch_horn =
   //WK 2/26/7 Only give discharges to unupgraded AF
 if (!self.cutf_items & #CUTF_AIRFISTUPGRADE) {
 	  temp_velocity = self.velocity;
-	  temp_velocity_z = temp_velocity_z = 0;
-	  if (vlen(temp_velocity) > self.maxspeed + 200) {
+	  temp_velocity_z = temp_velocity_z * 3 / 4; //WK 4/27/7 Was = 0, allow climbing walls more than horizontal speed.
+
+        //WK A horizontal recoil of 500+ is a big push off, so discharge
+	  if (vlen(temp_velocity) > currentspeed + 500) { //WK 4/27/7 Airfist discharge fix, was self.maxspeed + threshold
 		sprint(self,#PRINT_HIGH,"You discharge your airfist.\n");
-		self.attack_finished = time + 4; 
+		self.attack_finished = time + 3; 
 	  }
-	  else if (vlen(temp_velocity) > self.maxspeed + 100) {
+        //WK 300 is the default recoil when airfisting air, so this means we're pushing off something
+	  else if (vlen(temp_velocity) > currentspeed + 310) {
 		sprint(self,#PRINT_HIGH,"You partially discharge your airfist.\n");
-		self.attack_finished = time + 2; 
+		self.attack_finished = time + 1.5; 
 	  }
+
+/* For debugging the numbers...
+  currentspeed = vlen(temp_velocity);
+  currentspeedstring = ftos(currentspeed);
+  bprint(#PRINT_HIGH,"New speed ");
+  bprint(#PRINT_HIGH,currentspeedstring);
+  bprint(#PRINT_HIGH,"\n");
+*/
+
   }
   if(self.waterlevel > 2)
   {  // below the water, play under water sound

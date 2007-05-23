@@ -723,6 +723,25 @@ float (float tno) TeamFortress_TeamGetLives =
 };
 
 //=========================================================================
+// WK -- Return the number of players in the game
+// WK -- We really needed a function like this for a while. =p (4/27/7)
+float () TeamFortress_GetNoPlayers =
+{
+	local float playercount;
+	local entity search;
+
+	playercount = 0;
+	search = find (world, classname, "player");
+	while (search != world)
+	{
+		playercount = playercount + 1;
+		search = find (search, classname, "player");
+	}
+
+	return playercount;
+};
+
+//=========================================================================
 // Return the number of players in a team
 float (float tno) TeamFortress_TeamGetNoPlayers =
 {

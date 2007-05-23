@@ -68,7 +68,7 @@
 
 //===================================================//
 // UNIMPLEMENTED STUFF DISABLERS                     //
-#define GREMLIN_NOTDONE // <-- Disables gremlin
+//#define GREMLIN_NOTDONE // <-- Disables gremlin
 //#define FISH_NOTDONE // <-- Disables piranha
 
 //===================================================//

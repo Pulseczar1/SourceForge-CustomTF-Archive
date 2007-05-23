@@ -1918,6 +1918,17 @@ void() MonsterTouch =
 
     if (self.tfstate & #TFSTATE_INFECTED)
     {
+	if (other.job & #JOB_TKD) { 
+		if (!Teammate(self.real_owner.team_no, other.team_no) && other.last_boot_to_the_head < time)
+		{
+			sprint(other,#PRINT_HIGH,"You kick the demon in a vital point!\n");
+			TF_T_Damage (self, other, other, 300, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+			other.last_boot_to_the_head = time + 5; //Delay after such a mighty blow
+			Spy_RemoveDisguise(other);
+		}
+		return;
+	}
+
         if (other.classname == "player")
         {
             if (!(other.invincible_finished > time)) // Dont infect if we r invincible
