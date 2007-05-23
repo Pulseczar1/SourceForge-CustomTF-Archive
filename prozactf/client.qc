@@ -2892,6 +2892,13 @@ void() PlayerPreThink =
 			self.velocity_z = jello;
 	}
 
+	//WK 5-15-7 Whenever we land on the ground, we re-enable the ability for TKDists to doublejump again
+	if (self.flags & #FL_ONGROUND || self.waterlevel > 1) //Resets on ground or in water
+		if (self.job & #JOB_TKD && self.job & #JOB_ACTIVE)
+			self.job = self.job - (self.job & #JOB_ACTIVE);
+
+
+
 	// teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';

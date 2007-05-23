@@ -822,6 +822,9 @@ void() JobTKD =
 	local entity TKD_Brake;
 	local vector temp_velocity;
 
+	if (self.job & #JOB_ACTIVE) //WK 5-15-7 Don't allow further jumps after a double jump
+		return;
+
 	TKD_Brake = spawn();
 	TKD_Brake.owner = self;
 	//TKD_Brake.gravity = self.gravity;
@@ -844,12 +847,14 @@ void() JobTKD =
 		if (!(self.flags & #FL_ONGROUND)) {
 			self.job_finished = self.job_finished + 1;
 			self.velocity_z = 0;
+			//The following flag gets cleared in player_think when we land on the ground...
+			self.job = self.job | #JOB_ACTIVE; //WK 5-15-7 Set ACTIVE flag indicating we've done a double jump
 		}
 
 		self.gravity = 0.5;
 
 		if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT)
-			self.velocity_z = self.velocity_z + 300; //Anti-speedcap
+			self.velocity_z = self.velocity_z + 400; //Anti-speedcap
 		else
 			self.velocity_z = self.velocity_z + 600;
 
@@ -858,15 +863,28 @@ void() JobTKD =
 		makevectors(self.angles);
 		if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT) {
 			self.velocity = self.velocity + playerspeed*v_forward*0.5;
-			self.velocity_z = 200;
+			self.velocity_z = 200; //We don't allow big jump + TKD moves while glowing
 		}
 		else {
 			self.velocity = self.velocity + playerspeed*v_forward;
-			self.velocity_z = self.velocity_z + 180;
+			if (self.velocity_z < 20)
+				self.velocity_z = 200;
+			else
+				self.velocity_z = self.velocity_z + 180;
 		}
+
 		TKD_Brake.nextthink = time + #TKDLONGJUMPTIME;
 		self.job_finished = time + #TKDLONGJUMPRESET; //Long jumps are tiring
 	}
+
+/*
+	sprint(self,#PRINT_HIGH,"Velocity: \n");
+	local string stemp;
+	stemp = vtos(self.velocity);
+	sprint(self,#PRINT_HIGH,stemp);
+	sprint(self,#PRINT_HIGH,"\n");
+*/
+
 	self.attack_finished = TKD_Brake.nextthink;
 	self.flags = self.flags - (self.flags & #FL_ONGROUND);	
 };

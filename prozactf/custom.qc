@@ -278,6 +278,24 @@ void() DropFromCustomClassGen =
 		self.maxarmor = 50;
 	}
 
+	//WK 5/15/7 If they have money left over, put it into health.
+	if (self.money > 0) {
+		local float bonus_health;
+		if (self.money < 100) bonus_health = 0;
+		else if (self.money <= 200) bonus_health = 5;
+		else if (self.money <= 300) bonus_health = 10;
+		else if (self.money <= 500) bonus_health = 15;
+		else if (self.money <= 800) bonus_health = 20;
+		else if (self.money <= 1200) bonus_health = 25;
+		else if (self.money <= 1600) bonus_health = 30;
+		else if (self.money <= 2000) bonus_health = 35;
+		else if (self.money <= 2400) bonus_health = 40;
+		else if (self.money <  3000) bonus_health = 45;
+		else bonus_health = 50;
+
+		self.max_health = self.max_health + bonus_health;
+	}
+
 	//Increase their supply if they bought a backpack or bandolier
 	if (self.tf_items & #NIT_AMMO_BACKPACK) {
 		self.maxammo_rockets = self.maxammo_rockets + 30;

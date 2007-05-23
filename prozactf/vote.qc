@@ -790,7 +790,7 @@ void() WarnVote_Think =
 		if (te.is_connected && te.owned_by == #VOTED_READY)
 		{
 			te.StatusRefreshTime = time + 5;
-			centerprint(te,"WARNING: Voting ends in 15 seconds. You haven't voted yet.\n");
+			centerprint(te,"WARNING: Voting ends in 15 seconds.\n");
 			stuffcmd(te,"play enforcer/sight3.wav\n");
 		}
 		te = find(te, classname, "player");
