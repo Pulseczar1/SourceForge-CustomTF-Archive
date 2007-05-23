@@ -979,7 +979,8 @@ void() T_TranqDartTouch =
 		// Do the Damage
 		//WK 1/7/7 Increased power of tranq to 25-45, ignoring armor
 		//WK 2/8/7 Lowered to 20-25, lowered speed from 4000 to 2400
-		tranq_damage = 20+floor(6*random()); //WK 1/7/7 Note: if you put this formula in the function call, it crashes the server!
+		//WK 2/26/7 Lowered to 8-12, because people kept bitching
+		tranq_damage = 8+floor(4*random()); //WK 1/7/7 Note: if you put this formula in the function call, it crashes the server!
 		TF_T_Damage (other, self, self.owner, tranq_damage, #TF_TD_NOTTEAM | #TF_TD_IGNOREARMOUR, #TF_TD_NAIL);
 		
         if (other.classname == "player")
