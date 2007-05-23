@@ -45,6 +45,8 @@ float() TeamFortress_TeamPutPlayerInTeam =
 	local float i, j, lowest, likely_team;
 	//local string st;
 
+	//WK 1/7/7 Use KKMay's Server Side function to do this??
+
 	i = 1;
 	likely_team = random() * number_of_teams;
 	likely_team = ceil(likely_team);

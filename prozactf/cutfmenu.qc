@@ -149,7 +149,7 @@ void(entity player) UpdateArmorItem;
 
 // For the love of god, we needed this before!! (easily tweakable, SINGLE VALUES!)
 // PAGE 1 - Primary Weapons
-#define COST_SNIPERRIFLE        5000 // 4000
+#define COST_SNIPERRIFLE        4500 //WK 1/7/7 Was 5000 // 4000
 #define COST_ASSAULTCANNON      3000   
 #define COST_ROCKETLAUNCHER     3000
 #define COST_PYROTOYS           3000
@@ -166,8 +166,8 @@ void(entity player) UpdateArmorItem;
 #define COST_SHOTGUN              50
 // PAGE 3 - Misc/Extra Weapons
 #define COST_MAUSER             2400
-#define COST_AIRF               2000
-#define COST_AIRFISTUPGRADE     1850
+#define COST_AIRF               1600 //WK 1/7/7 Was 2000
+#define COST_AIRFISTUPGRADE     1400 //WK 1/7/7 Was 1850
 #define COST_DAEDALUS           1500
 #define COST_LASERCANNON        1400
 #define COST_HOLO               1200
@@ -282,7 +282,8 @@ void(entity player) UpdateArmorItem;
 
 // Char used to visually indicate a purchased item (DO NOT USE QUOTES!)
 //#define CHAR_BOUGHT * // <-- Classic "*" char
-#define CHAR_BOUGHT  // <-- White Square on original and most charsets
+#define CHAR_BOUGHT 
+ // <-- White Square on original and most charsets
 
 //==============================================================================
 // The following "ancient" functions have been there doing the work for years
@@ -2956,6 +2957,7 @@ string(float itemnum, string itemdesc,float cost) ConstructMenuSpeedStr =
 
 float() SpentOnHP =
 {
+    //WK 1/7/7 This needs to be aligned with the constants
     if (self.maxarmor == 300)
         return #COST_HP7;
     if (self.maxarmor == 200)
@@ -2976,6 +2978,7 @@ float() SpentOnHP =
 
 float() GetCurrentHPItem =
 {
+    //WK 1/7/7 This needs to be aligned with the constants
     if (self.maxarmor == 300)
         return 7;
     if (self.maxarmor == 200)

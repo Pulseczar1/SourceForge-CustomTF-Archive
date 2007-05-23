@@ -91,7 +91,6 @@ void() TeamFortress_MOTD =
         TeamFortress_Alias("range", #IMPULSE_TESTRANGE, 0);
         //TeamFortress_Alias("debug", (#IMPULSE_DEBUG), 0); 193
 		
-
 		// check if player already has aliases
 	   	if (self.got_aliases == #TRUE)
 			return;

@@ -1703,7 +1703,7 @@ TeamFortress : W_FireSniperRifle
 void() W_FireSniperRifle =
 {
 	local vector dir, src;
-	local float dam_mult, zdif, use_this;
+	local float dam_mult, zdif, use_this, damg;
 
 	sound (self ,#CHAN_WEAPON, "weapons/sniper.wav", 1, #ATTN_NORM);
 	KickPlayer(-2, self);
@@ -1739,11 +1739,19 @@ void() W_FireSniperRifle =
     OTR = 1; // 1 = No OTR
 
     if (self.cutf_items & #CUTF_OTR)
-    if (self.ammo_shells >= #OTR_AMMO_COST)
+    	if (self.ammo_shells >= #OTR_AMMO_COST)
         OTR = #OTR_DMG_FACTOR;
 
 	deathmsg = #DMSG_SNIPERRIFLE;
 	dam_mult = 1;
+
+	// PZ - code added for randomer's charge-up fix
+	damg = (time - self.heat) / #WEAP_SNIPER_RIFLE_MAX_TIME;
+	if (damg < 0)
+		damg = 0;
+	if (damg > 1)
+		damg = 1;
+	damg = damg * (#WEAP_SNIPER_RIFLE_MAX_DAMG - #WEAP_SNIPER_RIFLE_MIN_DAMG) + #WEAP_SNIPER_RIFLE_MIN_DAMG; // Powerup * damage range + minimum damage.
 
     if (OTR > 1)
         self.currentammo = self.ammo_shells = self.ammo_shells - #OTR_AMMO_COST;
@@ -1780,36 +1788,31 @@ void() W_FireSniperRifle =
 				// leg shot
 				dam_mult = 0.75;
 
-                local float legdmgdone;                
+                		local float legdmgdone;                
 
-                /*if (OTR > 1)
-                    trace_ent.leg_damage = trace_ent.leg_damage + 2;
-                else
-                    trace_ent.leg_damage = trace_ent.leg_damage + 1;*/
-
-                if (OTR > 1)
-                    legdmgdone = HurtLegs(trace_ent,2);
-                else
-                    legdmgdone = HurtLegs(trace_ent,1);
+               		 if (OTR > 1)
+               		     legdmgdone = HurtLegs(trace_ent,2);
+             		   else
+             		       legdmgdone = HurtLegs(trace_ent,1);
 
 				//TeamFortress_SetSpeed(trace_ent); 
 				deathmsg = #DMSG_SNIPERLEGSHOT;
 				//WK Kevlar ignored for snipers again.
-				TF_T_Damage (trace_ent, self, self, self.heat * dam_mult * OTR, 0, 0);
+				TF_T_Damage (trace_ent, self, self, damg * dam_mult * OTR, 0, 0);
 
 
 				if (trace_ent.health > 0 && legdmgdone)
 				{
-                    if (OTR > 1)
-                    {
-                        sprint(trace_ent, #PRINT_MEDIUM, "Leg injury! That was OTR stuff!\n");
+                		    if (OTR > 1)
+         		           {
+    		                    sprint(trace_ent, #PRINT_MEDIUM, "Leg injury! That was OTR stuff!\n");
 					    sprint(self, #PRINT_MEDIUM, "Leg shot - that really will slow him down!\n");
-                    }
-                    else
-                    {
-                        sprint(trace_ent, #PRINT_MEDIUM, "Leg injury!\n");
-					    sprint(self, #PRINT_MEDIUM, "Leg shot - that'll slow him down!\n");
-                    }
+   		                 }
+     	                       else
+                   	     {
+          	            	  sprint(trace_ent, #PRINT_MEDIUM, "Leg injury!\n");
+						sprint(self, #PRINT_MEDIUM, "Leg shot - that'll slow him down!\n");
+                    	     }
 				}
 
 				return;
@@ -1817,7 +1820,7 @@ void() W_FireSniperRifle =
 			else if (zdif > 20)
 			{
 				// head shot
-				dam_mult = 2;
+				dam_mult = 1.5; //WK 1/7/7 Sniper nerf: 2
 
                 if (OTR > 1)
                     stuffcmd(trace_ent, "bf;bf\n");
@@ -1826,7 +1829,7 @@ void() W_FireSniperRifle =
 
 				trace_ent.head_shot_vector = trace_ent.origin - self.origin;
 				deathmsg = #DMSG_SNIPERHEADSHOT;
-				TF_T_Damage (trace_ent, self, self, self.heat * dam_mult * OTR, 0, #TF_TD_SHOT);
+				TF_T_Damage (trace_ent, self, self, damg * dam_mult * OTR, 0, #TF_TD_SHOT);
 
 				if (trace_ent.health > 0)
 				{
@@ -1853,7 +1856,7 @@ void() W_FireSniperRifle =
 	ClearMultiDamage ();
 
 	if (trace_fraction != 1.0)	// if it hit something
-   		TraceAttack (self.heat * dam_mult * OTR * sniper_factor, dir);
+   		TraceAttack (damg * dam_mult * OTR * sniper_factor, dir);
 
     // OfN - Particle/sound stuff and dot removal
     local entity sight;
@@ -1888,6 +1891,7 @@ TeamFortress : W_FireAutoRifle
 void() W_FireAutoRifle =
 {
 	local vector dir;
+	local float OTR;
 
 	sound (self ,#CHAN_WEAPON, "weapons/sniper.wav", 1, #ATTN_NORM);
 
@@ -1897,7 +1901,11 @@ void() W_FireAutoRifle =
 	makevectors(self.v_angle);
 	dir = v_forward;
 	deathmsg = #DMSG_AUTORIFLE;
-	FireSniperBullet (dir, 8);
+	//WK 1/7/7 Added OTR autorifle shots. They don't consume more bullets, unlike normal OTR shots.
+	if (self.cutf_items & #CUTF_OTR)
+		FireSniperBullet (dir, 10); //WK 1/7/7 OTR autoshots deal 10 damage instead of 8.
+	else 
+		FireSniperBullet (dir, 8);
 };
 
 /*
@@ -2012,20 +2020,21 @@ void() T_MissileTouch =
 		}
 	*/
 	if (self.has_tesla) //Cluster rockets do less
-		damg = damg - 25;
+		damg = damg - 15; //WK 1/7/7 -25, they need to do a little more
 
 	deathmsg = self.weapon;
 	if (other.health)
 	{
 		bonus = 10 + random()*20;
 		if (self.has_tesla)
-			bonus = 0;
+			bonus = 10; //WK 0, have direct cluster hits mean a little something, since they're hard as hell to steer.
 		TF_T_Damage (other, self, self.owner, damg+bonus, 0, #TF_TD_EXPLOSION);
 	}
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
 	// Lowered from 120
+	// WK 1/7/7 Note: Cluster Rockets no longer cause knockation
 	T_RadiusDamage (self, self.owner, damg, other);
 
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -2057,6 +2066,7 @@ void() T_MissileTouch =
 void() Rocket_Track_Dot =
 {
 	//local vector olorigin;
+	local float dist;
 
 	if (time > self.has_sentry) {
 		self.think = SUB_Remove;
@@ -2082,7 +2092,7 @@ void() Rocket_Track_Dot =
 			//	self.velocity = dir * 500;
 			//else
 			if (self.owner.cluster_mode)
-				self.velocity = dir * 600;
+				self.velocity = dir * 700; //WK 1/7/7 600 -- sped up clusters a bit.
 			else
 				self.velocity = dir * 900;
 			self.angles = vectoangles(self.velocity);
@@ -2091,14 +2101,16 @@ void() Rocket_Track_Dot =
 			if (self.has_tesla) { //We're a cluster, so act crazy	
 				makevectors(self.angles);
 				self.v_angle = sight.origin; //Save last direction for losing sight
-				self.velocity = self.velocity + 300 * v_right * (random() - 0.5);
-				self.velocity = self.velocity + 300 * v_up * (random() - 0.5);
+				//WK 1/7/7 Increased think rate means swarming amplitude has to be increased (from 300)
+				self.velocity = self.velocity + 450 * v_right * (random() - 0.5);
+				self.velocity = self.velocity + 450 * v_up * (random() - 0.5);
 			}
 		}
 		else { //Lost sight of sight
 			if (self.has_tesla && self.v_angle != '0 0 0') {
-				vtemp = self.v_angle;
+				vtemp = self.v_angle; //Last point we saw the sight at
 				dir = normalize(vtemp - self.origin);
+				//WK 1/7/7 Note that this next line is impossible to reach...
 				if (self.owner.cluster_mode && !(self.has_tesla)) //Slow down main rocket
 					self.velocity = dir * 900;
 				else
@@ -2106,14 +2118,23 @@ void() Rocket_Track_Dot =
 				self.angles = vectoangles(self.velocity);
 				self.think = Rocket_Track_Dot;
 				makevectors(self.angles);
-				self.velocity = self.velocity + 300 * v_right * (random() - 0.5);
-				self.velocity = self.velocity + 300 * v_up * (random() - 0.5);
+				//WK 1/7/7 Increased think rate means swarming amplitude has to be increased (from 300)
+				//WK 1/7/7 Stop bug where rockets can swarm around a point in space and never hit -- when within 100 fly straight
+				dist = vlen(self.v_angle - self.origin);
+				if (dist > 300) { //We can swarm as long as we're more than 300 from last seen target
+					self.velocity = self.velocity + 450 * v_right * (random() - 0.5);
+					self.velocity = self.velocity + 450 * v_up * (random() - 0.5);
+				} else { //Stop swarming around an empty point in space
+					if (self.has_sentry > time + 1) 
+						self.has_sentry = time + 0.5; //Remove within a half second of reaching point.
+				}
 			}
 			//	self.velocity = 1000 * normalize(self.v_angle);
 		}
 	}
 
-	self.nextthink = time + 0.25;
+/* WK 1/7/7 Was every 0.1 seconds before, now wastes bandwidth to give a much smoother rocket path. It looks nicer, and the prevailence of broadband means that people can handle this now. More importantly, the gameplay control of steering rockets is a lot more manageable now. Note: We randomly think every 0.01 to 0.03 seconds on each rocket, to break up network load with cluster rox. */
+	self.nextthink = time + 0.01*floor(1+3*random());
 };
 /*
 ================
@@ -2180,9 +2201,10 @@ void() W_FireRocket =
 	if (self.tf_items & #NIT_RL_LASER_SIGHT) {
 		newmis.nextthink = time + 0.1; //Because tracks a sight
 		if (loops)
-			newmis.nextthink = time + 0.5; //Delay one second to spread out
+			//newmis.nextthink = time + 0.2; // Delay one second to spread out
+			newmis.nextthink = time + 0.1*floor(1+3*random()); //WK 1/7/7 To reduce corridor issues, clusters come alive earlier (0.5)
 		newmis.think = Rocket_Track_Dot;
-		newmis.has_sentry = time + 6;
+		newmis.has_sentry = time + 20; //WK 1/7/7 Was 6 -- Greatly increased in order to allow more tricks with laser guided rockets
 	} else {
 		newmis.nextthink = time + 4;
 		newmis.think = SUB_Remove;
@@ -2201,7 +2223,7 @@ void() W_FireRocket =
 		newmis.has_tesla = loops; //Tell the rocket it is a cluster
        	newmis.weapon = #DMSG_CLUSTER_ROCKET;
 		olorigin = newmis.origin;
-		newmis.origin = newmis.origin + v_right * (random() * 120 - 60);
+		newmis.origin = newmis.origin + v_right * (random() * 80 - 40); //WK 1/7/7 Pulled in from 120-60 to make corridors better
 		newmis.origin = newmis.origin + v_forward * (random() * 40);
 		newmis.origin = newmis.origin + v_up * (random() * 50 - 20);
 		olorigin = olorigin - newmis.origin; //Get vector to new point
@@ -2350,7 +2372,7 @@ void() W_FireLightning =
 	//We do this by capping the maximum ammo at 100, and using all
 	//cells above that in one tremendous shot
 	if (self.ammo_cells > 100) {
-		excess = (self.ammo_cells - 100) * 2 / 3;
+		excess = floor((self.ammo_cells - 100) * 2 / 3.1); //WK 1/7/7 Nerfed slightly from 3
 		if (excess < 50) excess = 50;
 		self.ammo_cells = 100;
 	}
@@ -2651,7 +2673,7 @@ void(vector org, vector dir) launch_spike =
 	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
 	setorigin (newmis, org);
 
-	newmis.velocity = dir * 1600; // was 1000
+	newmis.velocity = dir * 2000; // WK was 1000
 
 #ifdef DEMO_STUFF
 	// Have we got a live camera in projectile mode?
@@ -2971,7 +2993,7 @@ void() W_SetCurrentAmmo =
 	else if (self.current_weapon == #WEAP_SHOTGUN)
 	{
 		self.currentammo = self.ammo_shells;
-		self.items = self.items | #IT_CELLS;
+		self.items = self.items | #IT_SHELLS; //WK 1/7/7 Was "Cells" o_O?
 		if (!(self.tfstate & #TFSTATE_RELOADING))
 		{
 			self.weaponmodel = "progs/v_shot.mdl";
@@ -3720,7 +3742,7 @@ void() W_Attack =
     if (self.tfstate & #TFSTATE_PSIONIZED)
         return;
 
-	//WK Tranq does not remove disguise
+	//WK Tranq and Mauser does not remove disguise
 	if (self.is_undercover && (self.current_weapon != #WEAP_TRANQ && self.current_weapon != #WEAP_MAUSER))
 		Spy_RemoveDisguise(self);
 
@@ -5384,6 +5406,10 @@ void() W_WeaponFrame =
 	if ((self.is_building != 0) || (self.is_detpacking != 0) || (self.is_feigning != 0) || (self.is_haxxxoring != 0) || (self.is_toffingadet != 0))
 		return;
 
+	//WK 1/7/7 ...or making a new class
+	if (self.done_custom & #CUSTOM_BUILDING)
+		return;
+
 	//WK ...or Chaplaning
 	if (self.job & #JOB_CHAPLAN && self.job & #JOB_ACTIVE)
 		return;
@@ -5412,9 +5438,12 @@ void() W_WeaponFrame =
 		{
 			if (self.tfstate & #TFSTATE_AIMING)
 			{
-				if (self.heat < 400)
-					self.heat = self.heat + 3;
-
+/*
+			//	if (self.heat < 400) // PZ - removed for Randomer's charge-up fix
+			//		self.heat = self.heat + 3;
+				if (self.heat < 300) //WK 1/7/7 Sniper Nerf down from 400 max damage
+					self.heat = self.heat + 2; //WK 1/7/7 Sniper Nerf down from 3
+*/
 				if (self.height > 30)
 				{
 					self.height = self.height - 5;
@@ -5431,11 +5460,7 @@ void() W_WeaponFrame =
 				{
 					// create the laser sight
 					SniperSight_Create(0);
-					self.heat = 50; // damage done
-					#ifdef WEINER_SNIPER
-						self.heat = 80;
-					#endif
-					
+					self.heat = time; // damage done // PZ - 50 -> time (Randomer's charge-up fix)
 					self.height = 90;
 					self.tfstate = self.tfstate | #TFSTATE_AIMING;
 	
@@ -5616,7 +5641,7 @@ void() W_FireDaedalus =
 **
 ** W_FireMauser!
 ** Fires the mauser spy thing which is likely to have a name change
-** so nyeh
+** so nyeh. WK 1/7/7 -- I guess not, it's been in place 7 years. =)
 */
 
 void() W_FireMauser =
@@ -5651,11 +5676,16 @@ void() W_FireMauser =
 		SpawnBlood (org, 20);
 		deathmsg = #DMSG_MAUSER;
 		SuperDamageSound();
-		TF_T_Damage(trace_ent, self, self, 20, #TF_TD_NOTTEAM, #TF_TD_SHOT);
 		if (trace_ent.classname == "player")
 		{
-			TF_T_Damage(trace_ent, self, self, 50+200*random(), #TF_TD_NOTTEAM + #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
+/* WK 1/7/7 -- Mauser no longer bypasses armor since we can't buy more health now... they were originally balanced around the fact that people would routinely have 100-150 health. Also, they are now Nail damage (since they shoot nails). This allows countering mausers, somewhat. They still do an extreme amount of damage. Upped the damage to compensate, should still one-shot most people, but those with 300/100 will probably take multiple shots to kill. */
+			TF_T_Damage(trace_ent, self, self, 50+300*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL);
 			sprint(trace_ent, #PRINT_HIGH, "Your nerves scream as poison floods your veins...\n");
+		}
+ /* WK 1/7/7 -- Mausers no longer even hurt sentries (it's poison!)
+But we want Mausers to be able to kill Grunties and Demons, since it was ridiculous before, picking off a 600 health grunty at 20 health per mauser shot. It does less damage though, than against players. */
+		else if (!IsBuilding(trace_ent)) {
+			TF_T_Damage(trace_ent, self, self, 50+200*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL);
 		}
 	}
     else
@@ -5749,7 +5779,7 @@ void() HIP_LaserTouch =
 	  remove(self);
 	  return;
    }
-   oldvel = normalize(self.neworigin);
+   oldvel = normalize(self.neworigin); //WK Last velocity, not a position.
    spot1 = self.origin - (16*oldvel);
    spot2 = self.origin + (16*oldvel);
    traceline (spot1, spot2, #TL_ANY_SOLID, self);  // see through other monsters
@@ -5769,7 +5799,7 @@ void() HIP_LaserTouch =
       //- OfN laser hurts monsters a lot
       if (IsMonsterNonArmy(other)) self.dmg = self.dmg * 2;
 
-      //- scrags get rapped by the laser
+      //- scrags get raped by the laser
       if (other.classname == "monster_wizard") self.dmg = self.dmg * 2; // so.. this is *4
 
       deathmsg = #DMSG_LASERCANNON;
@@ -5793,7 +5823,7 @@ void() HIP_LaserTouch =
       self.velocity = oldvel+(2*trace_plane_normal);
       self.velocity = normalize(self.velocity);
       self.velocity = self.speed * self.velocity;
-      self.neworigin = self.velocity;
+      self.neworigin = self.velocity; //WK Note: Save our current velocity
       if (self.flags & #FL_ONGROUND)
 	  self.flags = self.flags - #FL_ONGROUND;
       //r = random();

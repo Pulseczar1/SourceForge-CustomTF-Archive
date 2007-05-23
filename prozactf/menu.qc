@@ -13,7 +13,11 @@ are on their respective files now.
 void(vector where) spawnFOG;
 void(entity pl, string s1, string s2, string s3, string s4) CenterPrint4;
 void(entity pl, string s1, string s2, string s3, string s4, string s5, string s6, string s7) CenterPrint7;
-
+void() bprintVoteIssue;
+void(string thesound) BroadcastSound;
+void() ResetVoteEnt;
+float(float checkIP, float noIdlers) GetNoPlayers;
+ 
 #define MENU_DEFAULT					1
 #define MENU_TEAM 						2
 #define MENU_CLASS 						3
@@ -658,21 +662,59 @@ void() Menu_Team =
 
 void(float inp) Menu_Team_Input =
 {
+ 	local float teamSet; // bool
+
 	//WK Remove starting observer gravity. It might come right back.
 	self.gravity = 1;
 
 	if (inp == 5) // auto team
-		TeamFortress_TeamPutPlayerInTeam();
+		teamSet = TeamFortress_TeamPutPlayerInTeam();
 	else if (inp <= number_of_teams && inp > 0)
-		TeamFortress_TeamSet(inp);		
+		teamSet = TeamFortress_TeamSet(inp);		
 	else if (number_of_teams == 0 && inp <= #TM_MAX_NO)
-		TeamFortress_TeamSet(inp);
+		teamSet = TeamFortress_TeamSet(inp);
 	else //- OfN
     {
     	//ResetMenu();		
     	self.impulse = 0;
         return;
     }
+
+	// added teamSet for AGR code below -PZ
+	local entity ent;
+	local string temp;
+	if (teamSet) //Observers do not count against AGR limits
+	{
+		ent = find(world, classname, "voteent");
+		if (ent != world)
+		{
+			if (ent.group_no == 2 || ent.group_no == 3) // is current running vote for an AGR map?
+			{
+				// check that newly-added player to the game doesn't go over agr_vote_max
+				local float x;
+				x = GetNoPlayers(#TRUE, #TRUE);
+				if (agr_vote_max != 0 && x > agr_vote_max)
+				{
+					bprint(#PRINT_HIGH, "Voting Max number of players allowed for an ÁÇÒ vote is ");
+					temp = ftos(agr_vote_max); temp = colstr(temp, #COLSTR_NUMBER);
+					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, " players.\n");
+					bprint(#PRINT_HIGH, last_vote_starter); bprint(#PRINT_HIGH, " thanks ");
+					bprint(#PRINT_HIGH, self.netname); 
+					bprint(#PRINT_HIGH, " for putting the player-count above ");
+					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, ". :P\n");
+
+					bprint(#PRINT_HIGH,"Voting Map voting failed");
+					bprintVoteIssue();
+					bprint(#PRINT_HIGH,"\n");
+					
+					BroadcastSound("misc/runekey");
+					
+					ResetVoteEnt();
+				}
+			}
+		}    
+	}
+	// end AGR code
 
     /*else if (inp == 7)
 		self.current_menu = #MENU_PICKBINDS;
@@ -1743,12 +1785,14 @@ void(float inp) Menu_Engineer_Input =
         if (te2 == world)
             return;
 
+/* WK 1/7/7 This is silly... you can get stuck with damaged or ammo empty turrets that you can't fix
         if ((te2.max_health - te2.health) > (te2.max_health * #SENTRIES_MINIMUMHP_TODETONATE_FACTOR))
         {
             sprint(self,#PRINT_HIGH,"Your sentry holds too much damage to be able to detonate it remotely!\n");
             self.impulse = 0;
             return;
         }        
+*/
 
         Find_And_Dmg("building_sentrygun", self, 1,0);
 		ResetMenu();		
@@ -1997,7 +2041,7 @@ void(float inp) Menu_EngineerFix_SentryGun_Input =
 
 		local float HPfactor,AMMOfactor;
         if (self.building.all_active & #IMPROVED_THREE)
-            HPfactor=2;
+            HPfactor=1.5; //WK 1-7-7 Toned down hacking, 2
         else
             HPfactor=1;
 
@@ -2018,7 +2062,7 @@ void(float inp) Menu_EngineerFix_SentryGun_Input =
 			sound (self.building, #CHAN_ITEM, "weapons/turrset.wav", 1, #ATTN_NORM);
 			self.building.think = lvl2_sentry_stand;
 			//self.building.skin = 1;
-            self.building.max_health = 180 * HPfactor;
+            self.building.max_health = floor(225 * HPfactor); //WK 1-7-7 180
             self.building.maxammo_shells = 120 * AMMOfactor;
 		}
 		else // if (self.building.weapon == 3)
@@ -2026,7 +2070,7 @@ void(float inp) Menu_EngineerFix_SentryGun_Input =
 			sound (self.building, #CHAN_ITEM, "weapons/turrset.wav", 1, #ATTN_NORM);
 			self.building.think = lvl3_sentry_stand;
 			//self.building.skin = 2;
-            self.building.max_health = 220 * HPfactor;
+            self.building.max_health = floor(300 * HPfactor); //WK 1-7-7 220
             self.building.maxammo_shells = 144 * AMMOfactor;
 		}
         
@@ -2112,7 +2156,7 @@ void(float inp) Menu_EngineerFix_SentryGun_Input =
         self.building.heat = 1;
         #endif
 	}
-	//Detachable sentry!
+	//WK Turret Sentries!
 	else if (inp == 8)
 	{
 		if (self.building.tf_items & #NIT_TURRET) {
@@ -2784,7 +2828,7 @@ void(float inp) Menu_EngineerFix_Tesla_Input =
 		{
 			local float HPfactor,num,AMMOfactor;
             if (self.building.all_active & #IMPROVED_THREE)
-                HPfactor=2;
+                HPfactor=1.5; //WK 1-7-7 Toned down hacking, 2
             else
                 HPfactor=1;
             
@@ -2799,14 +2843,14 @@ void(float inp) Menu_EngineerFix_Tesla_Input =
 			//Upgrade them //- OfN - teslas start with 150 hp
 			if (self.building.ammo_rockets == 1) {
 				//self.building.max_health = self.building.max_health + 75; // 225
-                self.building.max_health = 225*HPfactor;
+                self.building.max_health = floor(225*HPfactor);
 				//self.building.health = self.building.health + 75;
 				self.building.maxammo_cells = (#MAXCELLS0 + #ADDCELLS1) * AMMOfactor;
 				self.building.ammo_cells = self.building.maxammo_cells;
 			}
 			else if (self.building.ammo_rockets == 2) {
 				//self.building.max_health = self.building.max_health + 100;// 325
-                self.building.max_health = 325*HPfactor;// 325
+                self.building.max_health = floor(325*HPfactor);// 325
 				//self.building.health = self.building.health + 100;
 				//self.building.maxammo_cells = self.building.maxammo_cells + #ADDCELLS2; //Add
                 self.building.maxammo_cells = (#MAXCELLS0 + #ADDCELLS1 + #ADDCELLS2)*AMMOfactor;
@@ -2814,7 +2858,7 @@ void(float inp) Menu_EngineerFix_Tesla_Input =
 			}
 			else if (self.building.ammo_rockets == 3) {
 				//self.building.max_health = self.building.max_health + 75; // 400
-   				self.building.max_health = 400*HPfactor; // 400
+   				self.building.max_health = floor(400*HPfactor); // 400
 				//self.building.health = self.building.health + 75;
 				self.building.maxammo_cells = (#MAXCELLS0 + #ADDCELLS1 + #ADDCELLS2 + #ADDCELLS3)*AMMOfactor; //Add
 				self.building.ammo_cells = self.building.maxammo_cells;

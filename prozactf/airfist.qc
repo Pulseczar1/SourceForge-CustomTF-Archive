@@ -41,6 +41,8 @@ $frame ablast1 ablast2 ablast3 ablast4 ablast5 ablast6
 
 void (entity thing) canairpush =
 {
+	local float af_det_delay;
+
 	if (thing.classname == "player")
     {
         #ifdef AIRFIST_DONT_PUSH_TEAMMATES
@@ -87,7 +89,16 @@ void (entity thing) canairpush =
 
   	else if (thing.classname == "detpack" && no_detpush == 0)
     {
-		thing.avelocity = '300 300 300';
+	//WK 1/7/7 Airfisting messes up the fuse. detpack.oldenemy is the countdown timer
+	af_det_delay = 2 + floor(5*random());
+
+	thing.nextthink = thing.nextthink + af_det_delay; //WK Scramble the detpack's timer. :)
+	thing.oldenemy.health = thing.oldenemy.health + af_det_delay;
+	sprint(self,#PRINT_HIGH,"Your airfist damages the detpack circuits\n");
+	if (self != thing.owner) 
+		sprint(thing.owner,#PRINT_HIGH,"Your detpack circuits have been damaged!\n");
+
+	  thing.avelocity = '300 300 300';
         thing.movetype = #MOVETYPE_BOUNCE;
         return #TRUE;
     }
@@ -114,10 +125,11 @@ void (entity thing) canairpush =
 
 void() launch_horn =
 {
-	// Local variables used in the function
+  // Local variables used in the function
   local entity e;
   local vector delta;
   local vector dir;
+  local vector temp_velocity;
   local float eSpeed;
   local float dist;
   local float percent;
@@ -145,7 +157,7 @@ void() launch_horn =
   local float recoil; // recoil strength of the gun
 
 	// Reshot time for the airgun attack in seconds.
-	local float attackTime = 0.5;
+	local float attackTime = 0.75; //WK 1/7/7 0.5
 
 	// Max number of times that the weapon can fired in a period of time.
 	local float maxFireRate = 5;
@@ -470,8 +482,30 @@ void() launch_horn =
   if (!self.cutf_items & #CUTF_AIRFISTUPGRADE)
     recoil = recoil * #AIRFIST_RECOIL_REDUCTION;
 
+  //WK 1/7/7 Gymnasts should benefit from this item... thats what gymn *does*.
+  if (self.cutf_items & #CUTF_GYMNAST)
+    recoil = recoil * 1.4;
+
+  //WK 1/7/7 Halve recoil if carrying flag. (Phrostbye's idea)
+  if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT)
+    recoil = recoil * 0.5;
+
   // recoil self
   self.velocity = self.velocity + v_forward * recoil * -1;
+
+  //WK 1/7/7 Airfist Nerf, no more speedboating	
+  //You can use the airfist normally, but it needs to recharge
+  //after giving the player free SuperDuperSpeed
+  temp_velocity = self.velocity;
+  temp_velocity_z = temp_velocity_z = 0;
+  if (vlen(temp_velocity) > self.maxspeed + 200) {
+	sprint(self,#PRINT_HIGH,"You discharge your airfist.\n");
+	self.attack_finished = time + 4; 
+  }
+  else if (vlen(temp_velocity) > self.maxspeed + 100) {
+	sprint(self,#PRINT_HIGH,"You partially discharge your airfist.\n");
+	self.attack_finished = time + 2; 
+  }
 
   if(self.waterlevel > 2)
   {  // below the water, play under water sound

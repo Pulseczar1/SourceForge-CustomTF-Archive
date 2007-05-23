@@ -5,12 +5,13 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs build 245 Û08¯09¯2006Ý\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs build 248 Û01¯25¯2007Ý\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
 //#define MSG_CUTFVERSION "CustomÔÆ version ö3®2®OfN"
-#define MSG_CUTFVERSION   "ÐÒÏÚÁÃ CustomÔÆ ö•®”®OfN˜" //<-- 3.2.OfN6
+//WK #define MSG_CUTFVERSION   "ÐÒÏÚÁÃ CustomÔÆ ö•®”®OfN˜" //<-- 3.2.OfN6
+#define MSG_CUTFVERSION   "ÐÒÏÚÁÃ CustomÔÆ VERSION 1-25-07˜" //WK Version 1-25-7
 
 #define MSG_INTRO  "Welcome to ÐÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®telefragged®com¯shaka\n\nžžžžžžžžžžžžžžžžžžžžžžžžžžžžŸ\n\n"
 #define MSG_INTRO2 "Based on the aussie ver by SB-1\nModified version by Clan Prozac\n\n" // žžžžžžžžžžžžžžžžžžžžžžžžžžŸ\n\n
@@ -21,7 +22,7 @@
 
 
 //WK 152 Default, must be > 6.
-#define MOTD_FINISHED 420//242 		//Delay in 1/10th seconds for motd to show
+#define MOTD_FINISHED 152 //WK 1/7/7 420 //242 		//Delay in 1/10th seconds for motd to show
 
 void() PrintProzacMOTD =
 {

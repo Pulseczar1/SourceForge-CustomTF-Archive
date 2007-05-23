@@ -447,6 +447,7 @@ void() ConcussionGrenadeTimer =
 	self.health = self.health - #GR_CONCUSS_DEC;
 	
 	// medic recovers twice as fast
+	// WK ...and so do thieves and gymnasts
 	if (self.owner.weapons_carried & #WEAP_MEDIKIT) //WK
 		self.health = self.health - #GR_CONCUSS_DEC;
 	if (self.owner.cutf_items & #CUTF_STEALTH)

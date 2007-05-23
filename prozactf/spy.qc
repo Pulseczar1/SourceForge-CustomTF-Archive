@@ -935,7 +935,7 @@ void() W_FireTranq =
 		
 	makevectors (self.v_angle);
 	newmis.velocity = v_forward;
-	newmis.velocity = newmis.velocity * 1500;	// Faster than a normal nail WK 1500
+	newmis.velocity = newmis.velocity * 4000;	//WK 1/7/7 Tranq upgrade //Faster than a normal nail WK 1500
 	newmis.angles = vectoangles(newmis.velocity);
 
 	newmis.touch = T_TranqDartTouch;
@@ -953,6 +953,7 @@ void() W_FireTranq =
 void() T_TranqDartTouch =
 {
 	local entity timer;
+	local float tranq_damage;
 
 	if (other.solid == #SOLID_TRIGGER)
 		return;	// trigger field, do nothing
@@ -976,7 +977,9 @@ void() T_TranqDartTouch =
 		deathmsg = #DMSG_TRANQ;
 
 		// Do the Damage
-		TF_T_Damage (other, self, self.owner, 10, #TF_TD_NOTTEAM, #TF_TD_NAIL);
+		//WK 1/7/7 Increased power of tranq to 25-45, ignoring armor
+		tranq_damage = 25+floor(21*random()); //WK 1/7/7 Lol, if you put this formula in the function call, it crashes the server!
+		TF_T_Damage (other, self, self.owner, tranq_damage, #TF_TD_NOTTEAM | #TF_TD_IGNOREARMOUR, #TF_TD_NAIL);
 		
         if (other.classname == "player")
         if (other.#runes & #RUNE_RESIS)
