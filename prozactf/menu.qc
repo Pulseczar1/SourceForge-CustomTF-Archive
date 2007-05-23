@@ -2545,7 +2545,7 @@ string(float num) Return_Colored_Num =
 //menu 0=normal 1=misc
 float(float ups, entity person, entity sent, float type, float menu) Check_Tesla_Ups =
 {
-#define UPGRADE 125 //Cells per upgrade
+#define UPGRADE 100 //Cells per upgrade //WK 2/8/7 125 
 //#define MAXUPGRADES 6
 #define MAXCELLS0 50
 #define MAXCELLS1 120

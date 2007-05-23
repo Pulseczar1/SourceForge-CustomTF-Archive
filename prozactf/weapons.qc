@@ -3913,7 +3913,8 @@ void() W_Attack =
 			self.heat = 1;
 			makeImmune(self,time+2);
 			//self.immune_to_check = time + 2;
-			self.tfstate = self.tfstate | #TFSTATE_CANT_MOVE;
+			//WK 2/8/7 Allow Ass Cannons to move now, ala Classic TF
+			//self.tfstate = self.tfstate | #TFSTATE_CANT_MOVE;
 			TeamFortress_SetSpeed(self);
  			player_assaultcannonup1();
 		}
@@ -5679,7 +5680,7 @@ void() W_FireMauser =
 		if (trace_ent.classname == "player")
 		{
 /* WK 1/7/7 -- Mauser no longer bypasses armor since we can't buy more health now... they were originally balanced around the fact that people would routinely have 100-150 health. Also, they are now Nail damage (since they shoot nails). This allows countering mausers, somewhat. They still do an extreme amount of damage. Upped the damage to compensate, should still one-shot most people, but those with 300/100 will probably take multiple shots to kill. */
-			TF_T_Damage(trace_ent, self, self, 50+300*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL);
+			TF_T_Damage(trace_ent, self, self, 180+41*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL); //WK 2-8-7 50-350 damage
 			sprint(trace_ent, #PRINT_HIGH, "Your nerves scream as poison floods your veins...\n");
 		}
  /* WK 1/7/7 -- Mausers no longer even hurt sentries (it's poison!)

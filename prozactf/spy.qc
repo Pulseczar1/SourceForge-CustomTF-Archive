@@ -935,7 +935,7 @@ void() W_FireTranq =
 		
 	makevectors (self.v_angle);
 	newmis.velocity = v_forward;
-	newmis.velocity = newmis.velocity * 4000;	//WK 1/7/7 Tranq upgrade //Faster than a normal nail WK 1500
+	newmis.velocity = newmis.velocity * 2400;	//WK 2/8/7 4000 //WK 1/7/7 Tranq upgrade //Faster than a normal nail WK 1500
 	newmis.angles = vectoangles(newmis.velocity);
 
 	newmis.touch = T_TranqDartTouch;
@@ -978,7 +978,8 @@ void() T_TranqDartTouch =
 
 		// Do the Damage
 		//WK 1/7/7 Increased power of tranq to 25-45, ignoring armor
-		tranq_damage = 25+floor(21*random()); //WK 1/7/7 Lol, if you put this formula in the function call, it crashes the server!
+		//WK 2/8/7 Lowered to 20-25, lowered speed from 4000 to 2400
+		tranq_damage = 20+floor(6*random()); //WK 1/7/7 Note: if you put this formula in the function call, it crashes the server!
 		TF_T_Damage (other, self, self.owner, tranq_damage, #TF_TD_NOTTEAM | #TF_TD_IGNOREARMOUR, #TF_TD_NAIL);
 		
         if (other.classname == "player")

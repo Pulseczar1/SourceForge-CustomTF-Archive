@@ -609,7 +609,8 @@ void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ]
 	if ((!self.button0) || (self.ammo_shells < 1) || intermission_running)
 	{
 		// Let him/her walk again
-		self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		//WK 2/8/7 Ass cannons can walk now
+		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 		TeamFortress_SetSpeed(self);
         
 		self.count = 1;
@@ -647,13 +648,9 @@ void() player_assaultcannonup2   =[$nailatt1, player_assaultcannonup1  ]
 {
 	if ((!self.button0) || (self.ammo_shells < 1) || intermission_running)
 	{
-		// Let him/her walk again
-		//if (!self.is_haxxxoring) //- OfN already checked on TeamFortress_SetSpeed()
-        //{
-            self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		//WK 2/8/7 Ass cannons can walk now
+            //self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 		    TeamFortress_SetSpeed(self);
-        //}
-
 		self.count = 1;
 		self.heat = 0;
 		player_assaultcannondown1();
@@ -694,7 +691,8 @@ void() player_assaultcannon1   =[$nailatt1, player_assaultcannon2  ]
 	{
 		stuffcmd(self, "v_idlescale 0\n");
 		// Let him/her walk again
-        self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+        //WK 2/8/7 Ass cannnons can walk now
+	  //self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
         TeamFortress_SetSpeed(self);
     
 		self.weaponframe = 0;
@@ -730,7 +728,8 @@ void() player_assaultcannon2   =[$nailatt2, player_assaultcannon1  ]
 	{
 		stuffcmd(self, "v_idlescale 0\n");
 		// Let him/her walk again
-	    self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+	    //WK 2/8/7 Ass cannons can walk again
+	    //self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 	    TeamFortress_SetSpeed(self);
     
 		self.weaponframe = 0;
@@ -769,7 +768,7 @@ void() player_assaultcannondown1   =[$nailatt1, player_assaultcannondown1  ]
 	    self.fire_held_down = #FALSE;
 
 		// Let him/her walk again
-	    self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+	    //WK self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 	    TeamFortress_SetSpeed(self);
      
 		if (self.ammo_shells < 1 || self.ammo_cells < 6)

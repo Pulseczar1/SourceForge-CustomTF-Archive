@@ -1144,12 +1144,20 @@ void() TeamFortress_PrimeGrenade =
 		return;
 	}
 
-    // OfN - Psionized guys can't prime grenades
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You hardly have control over your hands!\n");
-        return;
-    }
+	// WK 2/8/7 You can only prime one grenade per 3 seconds
+	if (time < self.last_grenade_primed + 3)
+	{
+		//sprint(self,#PRINT_HIGH,"You can only prime one grenade every 3 seconds\n");
+		return;
+	}
+	self.last_grenade_primed = time;
+
+	// OfN - Psionized guys can't prime grenades
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You hardly have control over your hands!\n");
+		return;
+	}
 
 	if (self.impulse == #TF_GRENADE_1)
 	{
@@ -1734,7 +1742,7 @@ void(entity p) TeamFortress_SetSpeed =
 		p.maxspeed = p.maxspeed + 200;
 	//Fins slow us down out of water
 	if ((p.tf_items & #NIT_SCUBA) && !(p.flags & #FL_INWATER))
-		p.maxspeed = p.maxspeed - 20;
+		p.maxspeed = p.maxspeed - 10; //WK 1-7-7 20
 
 	// 2nd, see if any GoalItems are slowing them down
 	tf = 0;
@@ -1774,10 +1782,18 @@ void(entity p) TeamFortress_SetSpeed =
 	}
 
 	// 5th, if they're a sniper, and they're aiming, their speed must be 60 or less
+	//WK Changed to allow aiming at half base leg speed, it's more fun that way.
 	if (p.tfstate & #TFSTATE_AIMING)
 	{
 		if (p.maxspeed > 60)
 			p.maxspeed = p.maxspeed / 2;
+	}
+
+	// WK 5.5th See if they are ass cannoning
+	// WK 2/8/7 We allow ass cannons to move now, slowly
+	if (p.button0 && p.current_weapon == #WEAP_ASSAULT_CANNON)
+	{
+		p.maxspeed = p.maxspeed / 3;
 	}
 
 	// WK 6th, See if they're partially hidden
@@ -1808,9 +1824,11 @@ void(entity p) TeamFortress_SetSpeed =
         p.maxspeed = p.maxspeed * #SPEEDRUNE_FACTOR;
 
     // OfN - Finally, the psionic stuff
+    /* WK 1-7-7 Psionic grenades no longer slow
     if (p.tfstate & #TFSTATE_PSIONIZED)
         p.maxspeed = p.maxspeed * #PSIONIC_MOVEFACTOR;
-    
+    */
+
 	#ifdef QUAKE_WORLD
 		stuffcmd(p,"cl_backspeed 1000\n");
 		stuffcmd(p,"cl_forwardspeed 1000\n");
