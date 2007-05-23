@@ -550,7 +550,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		}
 		else if ((targ.armorclass & #AT_SAVEMELEE) && T_AttackType == #TF_TD_MELEE)
 		{
-			bprint(#PRINT_HIGH,"Testes?\n");
 			damage = floor(damage * 0.5);
 
 			//Melee armor gives 40% chance to negate damage

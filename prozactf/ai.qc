@@ -577,6 +577,93 @@ void() ChangeYaw =
 };
 */
 
+//WK 5-17-5 Function to calculate the incremental rotation toward a target
+//I.e., a more generalized version of ChangeYaw
+//Instead of setting an angle directly, it returns the angle that should be rotated to
+
+float(float current_angle,float ideal_angle,float rotate_speed) RotateTowardTarget =
+{
+	local float	move;
+
+	//Fix bad angles < 0 or > 360
+	current_angle = anglemod(current_angle);
+	ideal_angle = anglemod(ideal_angle);
+
+	if (current_angle == ideal_angle)
+		return current_angle;
+
+	move = ideal_angle - current_angle;
+	if (ideal_angle > current_angle)
+	{
+		if (move > 180)
+			move = move - 360;
+	}
+	else
+	{
+		if (move < -180)
+			move = move + 360;
+	}
+
+	if (move > 0)
+	{
+		if (move > rotate_speed)
+			move = rotate_speed;
+	}
+	else
+	{
+		if (move < 0-rotate_speed )
+			move = 0-rotate_speed;
+	}
+
+/*
+	stemp = ftos(move);
+	sprint(self,#PRINT_HIGH,"Move: ");
+	sprint(self,#PRINT_HIGH,stemp);
+	sprint(self,#PRINT_HIGH,"\n");
+*/
+
+	move = anglemod(current_angle + move);
+	return move;
+};
+
+/*
+//current_yaw = self.ideal_yaw;
+// mod down the current angle
+	current_yaw = anglemod( self.angles_y );
+	ideal = self.ideal_yaw;
+	
+	if (current_yaw == ideal)
+		return;
+	
+	move = ideal - current_yaw;
+	if (ideal > current_yaw)
+	{
+		if (move > 180)
+			move = move - 360;
+	}
+	else
+	{
+		if (move < -180)
+			move = move + 360;
+	}
+		
+	if (move > 0)
+	{
+		if (move > self.yaw_speed)
+			move = self.yaw_speed;
+	}
+	else
+	{
+		if (move < 0-self.yaw_speed )
+			move = 0-self.yaw_speed;
+	}
+
+	current_yaw = anglemod (current_yaw + move);
+
+	self.angles_y = current_yaw;
+};
+*/
+
 
 
 //============================================================================

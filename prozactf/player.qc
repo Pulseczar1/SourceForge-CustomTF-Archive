@@ -151,7 +151,7 @@ void() player_touch =
 	//WK 4/27/7 Boot to the Head! Taekwondo code
 	//Tae Kwon Do! Tae Kwon Do!
 	//This looks a bit odd since the stationary person being run INTO is Self, so the TKD person is Other.
-	if (other.job & #JOB_TKD && self.takedamage) {
+	if (other.job & #JOB_TKD && self.takedamage && self.health > 0 && other.health > 0) {
 		local float playerspeed;
 		if (!Teammate(self.team_no,other.team_no)) {
 			//TODO Check to make sure the person is in front of us.
@@ -214,6 +214,23 @@ void() player_touch =
 						self.attack_finished = time + 1;
 					if (self.job_finished < time)
 						self.job_finished = time + 1;
+
+					//WK 5-15-7 Remove all primed grenades so they don't blow up on them accidentally
+					local entity te;
+					te = find(world,classname,"grenade_timer");
+					while (te)
+					{
+						if (te.owner == self || te.owner == other)
+						{
+							te.nextthink = time + 0.1;
+							te.think = SUB_Remove;
+						}
+						te = find(te,classname,"grenade_timer");
+					}
+					self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_GRENPRIMED);
+					self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_GRENTHROWING);
+					other.tfstate = other.tfstate - (other.tfstate & #TFSTATE_GRENPRIMED);
+					other.tfstate = other.tfstate - (other.tfstate & #TFSTATE_GRENTHROWING);
 				}			
 				if (other.last_push < time) {
 					//Push each self away, and up.
@@ -230,13 +247,12 @@ void() player_touch =
 				if (other.last_boot_to_the_head < time && playerspeed > 225) {
 					//Damage depends on how fast we are 
 					//We save the last_frame_velocity because the collision kills the speed before we get here.
-					/* Debug Information
+					/* Debug Information */
 					local string temp_foo;
 					temp_foo = ftos(playerspeed);
-					bprint(#PRINT_HIGH,"Speed: ");
-					bprint(#PRINT_HIGH,temp_foo);
-					bprint(#PRINT_HIGH,"\n");
-					*/
+					sprint(other,#PRINT_HIGH,"(Speed: ");
+					sprint(other,#PRINT_HIGH,temp_foo);
+					sprint(other,#PRINT_HIGH,") ");
 
 					deathmsg = #DMSG_TKD;
 

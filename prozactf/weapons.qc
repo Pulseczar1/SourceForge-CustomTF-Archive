@@ -2034,15 +2034,8 @@ void() T_MissileTouch =
         if (self.owner.dmg != 0)
             damg = self.owner.dmg;
 
-    /*
-	if (self.owner)
-		if (self.owner.tf_items & #NIT_RL_LASER_SIGHT) {
-			//RPrint("Laser rocket hit!\n");
-			damg = damg - 10;
-		}
-	*/
 	if (self.has_tesla) //Cluster rockets do less
-		damg = damg - 30; //WK 3/1/7 -25, they need to do a little less now they control better
+		damg = damg - 40; //WK 3/1/7 -25, they need to do a little less now they control better
 
 	deathmsg = self.weapon;
 	if (other.health)
@@ -2084,39 +2077,24 @@ void() T_MissileTouch =
 #endif
 };
 
-//CH rocket tracker (taken from shalrath.qc)
-void() Rocket_Track_Dot =
-{
-	//local vector olorigin;
-	local float dist;
-
-	if (time > self.has_sentry) {
-		self.think = SUB_Remove;
-	}
-	else
-	{
-		local vector	dir, vtemp;
-		local entity tg, sight;
-
-		sight = world;
-		tg = find (world, classname, "timer");
-		while (tg)
-		{
-			if (tg.owner == self.owner && tg.think == SniperSight_Update2)
-				sight = tg;
-			tg = find(tg, classname, "timer");
+//Code to stop rockets from swarming around a point and not hitting it.
+/*
+		dist = vlen(self.v_angle - self.origin);
+		if (dist < 300) {
+			if (self.has_sentry > time + 0.5) 
+				self.has_sentry = time + 0.5; //Remove within a half second of reaching point.
 		}
-		if (sight != world) //Found a sight
-		{
-			vtemp = sight.origin;
-			dir = normalize(vtemp - self.origin);
-			//if (self.owner.cluster_mode && !(self.has_tesla)) //Slow down main rocket
-			//	self.velocity = dir * 500;
-			//else
+*/
+
+//Old rocket code
+/*
+//CH rocket tracker (taken from shalrath.qc)
+//WK I wrote most of this
 			if (self.owner.cluster_mode)
 				self.velocity = dir * 700; //WK 1/7/7 600 -- sped up clusters a bit.
 			else
 				self.velocity = dir * 900;
+
 			self.angles = vectoangles(self.velocity);
 			self.think = Rocket_Track_Dot;
 			//WK Add in cluster munitions support
@@ -2154,10 +2132,86 @@ void() Rocket_Track_Dot =
 			//	self.velocity = 1000 * normalize(self.v_angle);
 		}
 	}
+*/
 
-/* WK 1/7/7 Was every 0.1 seconds before, now wastes bandwidth to give a much smoother rocket path. It looks nicer, and the prevailence of broadband means that people can handle this now. More importantly, the gameplay control of steering rockets is a lot more manageable now. Note: We randomly think every 0.01 to 0.03 seconds on each rocket, to break up network load with cluster rox. */
-	self.nextthink = time + 0.01*floor(1+3*random());
+//WK Used to incrementally rotate rocket toward laser pointer (in AI.qc)
+float(float current_angle,float ideal_angle,float rotate_speed) RotateTowardTarget;
+
+//WK 5-17-7 Rewrote entire function so that the rocket rotates slowly toward the dot.
+//Set rocket rotate to a higher number to increase the turning speed of the rox.
+//10 is a good number, with about a 10 yard turning radius, 20 is barely noticeable, and 30 is like the old instant turn behavior.
+//Any slower and the rockets are just "nudgeable" toward their targets, and not really guided.
+#define ROCKET_ROTATE 3
+void() Rocket_Track_Dot =
+{
+	local float dist;
+	local vector dir, vtemp, atemp;
+	local entity tg, sight;
+	local string stemp;
+
+	if (time > self.has_sentry) {
+		self.think = SUB_Remove;
+	}
+	else
+	{
+		sight = world;
+		tg = find (world, classname, "timer");
+		while (tg)
+		{
+			if (tg.owner == self.owner && tg.think == SniperSight_Update2)
+				sight = tg;
+			tg = find(tg, classname, "timer");
+		}
+		if (sight != world) { //Found a sight
+			vtemp = sight.origin;
+			self.v_angle = vtemp; //Save position
+		}
+		else //Else used the last place we saw the sight
+			vtemp = self.v_angle;
+
+		//TODO: Maybe break the lockon if the laser pointer is not ahead of the target. This stops funny rockets from circling.
+
+		dir = normalize(vtemp - self.origin);
+		atemp = vectoangles(dir); //WK 5-15-7 The angle we wish to be pointed in.
+		atemp_x = anglemod(atemp_x * -1); //WTF, pitch is inverted coming out of vectoangles?
+
+/*		sprint(self.owner,#PRINT_HIGH,"Desired angle: ");
+		stemp = vtos(atemp);
+		sprint(self.owner,#PRINT_HIGH,stemp);
+		sprint(self.owner,#PRINT_HIGH,"\n");
+*/
+
+		//Slowly rotate the rocket toward the target.
+		//Finalangle holds our last good self.angles, atemp holds the desired angle
+		self.angles_x = RotateTowardTarget(self.finalangle_x,atemp_x,#ROCKET_ROTATE);
+		self.angles_y = RotateTowardTarget(self.finalangle_y,atemp_y,#ROCKET_ROTATE);
+		self.angles_z = RotateTowardTarget(self.finalangle_z,atemp_z,#ROCKET_ROTATE);
+
+		makevectors(self.angles); //Now that we have the new angles figured out, recreate velocity vectors
+		dir = normalize(v_forward);
+
+		if (self.owner.cluster_mode) { //Cluster rockets
+			self.velocity = dir * 700;
+			if (self.has_tesla) { //Mini missiles swarm
+				//TODO Try out using getwave() for sinusoidal rocket swarms
+				self.velocity = self.velocity + 450 * v_right * (random() - 0.5);
+				self.velocity = self.velocity + 450 * v_up * (random() - 0.5);
+			}
+		} else //Non-cluster rocket
+			self.velocity = dir * 900;
+		
+		self.finalangle = self.angles; //Save angle so swarming doesn't mess up our turn calculations
+		self.angles = vectoangles(self.velocity); //Point the rockets along the direction of their velocity
+
+		//WK 1/7/7 Was every 0.1 seconds before, now wastes bandwidth to give a much smoother rocket path.
+		//It looks nicer, and the prevailence of broadband means that people can handle this now.
+		//More importantly, the gameplay control of steering rockets is a lot more manageable now.
+		//Note: We randomly think every 0.01 to 0.03 seconds on each rocket, to break up network load with cluster rox.
+		self.nextthink = time + 0.01*floor(1+3*random());
+		self.think = Rocket_Track_Dot;
+	}
 };
+
 /*
 ================
 W_FireRocket
@@ -2170,7 +2224,7 @@ void() W_FireRocket =
 	loops = 0;
 	if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
 		loops = 5;
-	while (loops >= 0) {
+  while (loops >= 0) { //WK Cycle through all cluster shots
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	if (self.ammo_rockets < 0) {
 		self.currentammo = self.ammo_rockets = 0;
@@ -2216,6 +2270,8 @@ void() W_FireRocket =
 	else
 		newmis.velocity = newmis.velocity * 600; //Cluster and no sight
 	newmis.angles = vectoangles(newmis.velocity);
+	newmis.angles_x = anglemod(newmis.angles_x * -1); //WTF, pitch is inverted coming out of vectoangles?
+	newmis.finalangle = newmis.angles; //WK 5-15-7 Save our angle for laser tracking fun.
 
 	newmis.touch = T_MissileTouch;
 
@@ -2226,7 +2282,7 @@ void() W_FireRocket =
 			//newmis.nextthink = time + 0.2; // Delay one second to spread out
 			newmis.nextthink = time + 0.1*floor(1+3*random()); //WK 1/7/7 To reduce corridor issues, clusters come alive earlier (0.5)
 		newmis.think = Rocket_Track_Dot;
-		newmis.has_sentry = time + 20; //WK 1/7/7 Was 6 -- Greatly increased in order to allow more tricks with laser guided rockets
+		newmis.has_sentry = time + 10; //WK 5/15/7 Reverted back to 10 seconds from 20 (originally 6)
 	} else {
 		newmis.nextthink = time + 4;
 		newmis.think = SUB_Remove;
@@ -2239,9 +2295,9 @@ void() W_FireRocket =
 		setmodel (newmis, "progs/minimis.mdl"); //Diff model for swarm rockets
 	setsize (newmis, '0 0 0', '0 0 0');		
 	setorigin (newmis, self.origin + dir*8 + '0 0 16');
+	traceline (self.origin, self.origin + v_forward*9192, #TL_ANY_SOLID, self); //Make this TRUE
+	newmis.v_angle = trace_endpos;
 	if (loops) { //WK Vary the starting point of the cluster
-		traceline (self.origin, self.origin + v_forward*9192, #TL_ANY_SOLID, self); //Make this TRUE
-		newmis.v_angle = trace_endpos;
 		newmis.has_tesla = loops; //Tell the rocket it is a cluster
        	newmis.weapon = #DMSG_CLUSTER_ROCKET;
 		olorigin = newmis.origin;
@@ -2254,12 +2310,14 @@ void() W_FireRocket =
 			newmis.velocity = newmis.velocity + olorigin;			
 	}
 	loops = loops - 1;
-	} //End while loops
+  } //End while loops
+
 #ifdef DEMO_STUFF
 	// Have we got a live camera in projectile mode?
 	if (live_camera)
 		CamProjectileLockOn();
 #endif
+
 };
 
 /*

@@ -2789,6 +2789,10 @@ string(float pc) TeamFortress_GetJobName =
 		return "Martyr";
   	else if ( pc & #JOB_CRUSADER )
 		return "Crusader";
+  	else if ( pc & #JOB_TKD)
+		return "Taekwondo Black Belt";
+  	else if ( pc & #JOB_PSION)
+		return "Psychic Warrior";
 	else
 		return "Custom Playerclass";
 };
