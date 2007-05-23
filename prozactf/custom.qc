@@ -1239,6 +1239,18 @@ void() KracGrenadeExplode =
 	te = findradius(self.origin, 150);
 	while (te)
 	{	
+		if (te != world) {
+		//WK 1/7/7 Krac nerf
+		//Deals 200, tapers off linearly with radius (min 75)
+		damage = 200 - vlen(te.origin - self.origin);
+		if (damage > 200 || damage < 0) {
+			//bprint(#PRINT_MEDIUM,"Logic error in krac occured.\n");
+			//dremove(self);
+			//return;
+			damage = 75;
+		}
+		if (damage < 75) damage = 75;
+		if (te.armorclass & #AT_SAVEMELEE) damage = floor(damage / 2);
 		// Player?
 		if (te.classname == "player" && te.health > 0)
 		{
@@ -1247,17 +1259,7 @@ void() KracGrenadeExplode =
 			self = te;
 			TeamFortress_DetpackStop(#TRUE);
 			self = oldself;
-
-			//WK 1/7/7 Krac nerf
-			//Deals 200, tapers off linearly with radius (min 75)
-			damage = 200 - vlen(te.origin - self.origin);
-			if (damage > 200 || damage < 0) {
-				bprint(#PRINT_MEDIUM,"Logic error in krac occured.\n");
-				dremove(self);
-				return;
-			}
-			if (damage < 75) damage = 75;
-			if (te.armorclass & #AT_SAVEMELEE) damage = floor(damage / 2);
+	
 			te.armorvalue = te.armorvalue - damage;
 			if (te.armorvalue < 10) te.armorvalue = 10;
 
@@ -1271,7 +1273,7 @@ void() KracGrenadeExplode =
 			if (te.current_weapon == #WEAP_LIGHTNING || te.current_weapon == #WEAP_LASERCANNON ||
 			    te.current_weapon == #WEAP_DAEDALUS || te.current_weapon == #WEAP_AIRF ||
 			    te.current_weapon == #WEAP_FLAMETHROWER)
-				te.currentammo = te.ammo_cells;
+			    te.currentammo = te.ammo_cells;
 
 			/* WK 1/7/7 Old damage code:
 			//Gel armor makes kracs do less damage
@@ -1302,9 +1304,9 @@ void() KracGrenadeExplode =
 			TF_T_Damage(te, self, self.owner, 400, 0, 0);
 		else if (te.classname == "building_teleporter")
 			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-        else if (te.classname == "building_sensor") //- Often - needed?
+		else if (te.classname == "building_sensor") //- Often - needed?
 			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-        else if (te.classname == "building_fieldgen") //- Often - needed?
+		else if (te.classname == "building_fieldgen") //- Often - needed?
 			TF_T_Damage(te, self, self.owner, 200, 0, 0);
 		else if (te.classname == "item_armor1" || te.classname == "item_armor2" || te.classname == "item_armorInv") {
 			te.solid = #SOLID_NOT;
@@ -1340,6 +1342,7 @@ void() KracGrenadeExplode =
 			}
 			te.think = BecomeExplosion;
 			te.nextthink = time + 0.1;
+		}
 		}
 		te = te.chain;
 	}

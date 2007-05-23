@@ -1753,7 +1753,7 @@ float       rj;					// Rocket Jump Modifier
 #define WEAP_SNIPER_RIFLE_MAX_MOVE  50
 #define WEAP_SNIPER_RIFLE_MAX_TIME  4 // WK 1/7/7 3 // PZ - Randomer's charge-up fix
 #define WEAP_SNIPER_RIFLE_MIN_DAMG  60 //WK 2/8/7 Increase snapshot damage from 50 to 60
-#define WEAP_SNIPER_RIFLE_MAX_DAMG  200 //WK 1/7/7 400
+#define WEAP_SNIPER_RIFLE_MAX_DAMG  220 //WK 1/7/7 400
 
 // Medikit
 #define WEAP_MEDIKIT_HEAL	200  // Amount medikit heals per hit

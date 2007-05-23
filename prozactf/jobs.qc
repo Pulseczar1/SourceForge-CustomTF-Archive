@@ -613,9 +613,12 @@ void() JudokaRearm =
 
 		sprint(self.owner,#PRINT_HIGH,"You get your weapon back\n");
 		self.owner.weapons_carried = self.owner.weapons_carried | self.current_weapon;
+		TeamFortress_SetSpeed(self.owner);  //WK 3/2/7 Judo Speed fix
 
 		sprint(self.enemy,#PRINT_HIGH,"You lose your stolen weapon\n");
 		self.enemy.weapons_carried = self.enemy.weapons_carried - (self.enemy.weapons_carried & self.current_weapon);
+		TeamFortress_SetSpeed(self.enemy);  //WK 3/2/7 Judo Speed fix
+
 		//Fix for a bug that would let someone keep their weapon if they switched to autorifle before
 		//the weapon returned.
 		if (self.enemy.current_weapon == self.current_weapon || self.current_weapon == #WEAP_SNIPER_RIFLE || self.current_weapon == #WEAP_MEDIKIT) {	
@@ -702,6 +705,9 @@ void() JobJudoka =
 		trace_ent.weaponmodel = string_null;
 		trace_ent.weaponframe = 0;
 		trace_ent.currentammo = 0;
+
+		TeamFortress_SetSpeed(self);  //WK 3/2/7 Judo Speed fix
+		TeamFortress_SetSpeed(trace_ent); //WK 3/2/7 Judo Speed fix
 
 
 		if ((trace_ent.job & #JOB_JUDOKA && trace_ent.job_finished > time) || trace_ent.current_weapon == 0) {

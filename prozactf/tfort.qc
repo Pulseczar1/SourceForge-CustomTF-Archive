@@ -1145,7 +1145,7 @@ void() TeamFortress_PrimeGrenade =
 	}
 
 	// WK 2/8/7 You can only prime one grenade per 3 seconds
-	if (time < self.last_grenade_primed + 3)
+	if (time < self.last_grenade_primed + 2.2) //WK 3/2/7 was 3s
 	{
 		//sprint(self,#PRINT_HIGH,"You can only prime one grenade every 3 seconds\n");
 		return;
