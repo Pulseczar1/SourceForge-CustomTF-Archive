@@ -1,7 +1,7 @@
 //#pragma PROGS_DAT "../qwprogs.dat"
 //#pragma PROGS_SRC "progs.src"
 
-#pragma CHECK_UNUSED_ON
+//WK 4/27/7 Turn off spammy warnings #pragma CHECK_UNUSED_ON
 
 #includelist
 

@@ -288,7 +288,8 @@ void() ChaplanInspire = {
 		{ //No short circuit evaluation, so...
 		      if (!Teammate(head.real_owner.team_no,self.team_no))
 		      { //...to avoid a crash from deref
-				/*if ((head.health <= 200 && head.classname == "monster_demon1") || head.health < 500 && head.classname == "monster_shambler") {
+				/*
+				if ((head.health <= 200 && head.classname == "monster_demon1") || head.health < 500 && head.classname == "monster_shambler") {
 					sprint(self,#PRINT_HIGH,"You dispel a demon\n");
 					self.real_frags = self.real_frags + 1;
 	 				if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -297,8 +298,9 @@ void() ChaplanInspire = {
 				if (head.classname == "monster_shambler")
 					TF_T_Damage(head, self, self, 500, 0, 0);
 				else if (head.classname == "monster_demon1")
-					TF_T_Damage(head, self, self, 200, 0, 0);*/
-                TF_T_Damage(head, self, self, 220, 0, 0); // OfN
+					TF_T_Damage(head, self, self, 200, 0, 0);
+				*/
+                		TF_T_Damage(head, self, self, 220, 0, 0); // OfN
 			}
 		}
 		else if (head.classname == "player" &&	//Person who is...
@@ -553,7 +555,7 @@ void() JobBerserker =
 */
 //This is guaranteed to be removed if either target or owner dies or disconnects
 //So we don't have to do error checking on those situations
-//Four special cases, Rifle, Medikit, AC and Grapple, have side effects
+//Four special cases, Sniper Rifle, Medikit, AC and Grapple, have side effects
 // when you remove them. Need special cases to handle their theft
 #define DISARM_TIME 10
 #define CANT_ATTACK_TIME 5
@@ -593,7 +595,8 @@ void() JudokaRearm =
 			oself = self;
 			self = self.enemy;
 			stuffcmd(self, "v_idlescale 0\n");
-			self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+			//WK 4-8-7 Not Applicable Any More 
+			//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 			TeamFortress_SetSpeed(self);
 			self.weaponframe = 0;
 			self.count = 1;
@@ -658,7 +661,7 @@ void() JobJudoka =
     if (trace_ent.classname == "player")
     if (trace_ent.#runes & #RUNE_RESIS)
     {
-        sprint (self, #PRINT_HIGH, "He is protected with a misterious power!\n");
+        sprint (self, #PRINT_HIGH, "He is protected by a mysterious power!\n"); //WK Typo
         return;
     }
 
@@ -714,14 +717,14 @@ void() JobJudoka =
 			//Hit fellow judoka or chaplan
 			sprint (self, #PRINT_HIGH, "You throw him with a mighty Seoi Otoshi\n");
 			deathmsg = #DMSG_JUDOKA;
-			TF_T_Damage (trace_ent, self, self, 150, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+			TF_T_Damage (trace_ent, self, self, 150, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 		else if (self.weapons_carried & trace_ent.current_weapon) {
 			sprint (self, #PRINT_HIGH, "You knock his weapon out of his hands\n");
 			tWeapon.heat = 0; //I.e., we didn't take a weapon
 			trace_ent.attack_finished = time + #DISARM_TIME;			
 			deathmsg = #DMSG_JUDOKA;
-			TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+			TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 		else if (trace_ent.current_weapon != 0 && trace_ent.current_weapon != #WEAP_AXE){
 			//Steal their weapon if they have one
@@ -766,7 +769,7 @@ void() JobJudoka =
 			trace_ent.current_weapon = 0;
 
 			deathmsg = #DMSG_JUDOKA;
-			TF_T_Damage (trace_ent, self, self, 65, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+			TF_T_Damage (trace_ent, self, self, 65, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 
 		self.job_finished = time + #HIT_DELAY;
@@ -777,6 +780,100 @@ void() JobJudoka =
 
 void() JobCrusader;
 void() JobGuerilla;
+
+//WK 4/27/7 TAE KWON DO! TAE KWON DO!
+//Combination sprinter, antigrav and melee guy
+//If stopped, jumps straight up, which takes you up to a balcony.
+//If running, does a longjump in that direction
+//If he rams someone, inflicts a BOOT TO THE HEAD!
+
+//WK 4/27/7 Brakes for the TKD Leap
+//This is called two seconds or so after TKD skill, to break speed and reset gravity.
+void () JobTKDThink = 
+{
+	local float playerspeed;
+	playerspeed = vlen(self.owner.velocity);
+
+/* Debugging Info
+	local string temp_foo;
+	temp_foo = ftos(playerspeed);
+	bprint(#PRINT_HIGH,"Final Speed :");
+	bprint(#PRINT_HIGH,temp_foo);
+	bprint(#PRINT_HIGH,"\n");
+*/
+
+	//Normalize speed back down to max allowed
+	if (playerspeed > self.owner.maxspeed) playerspeed = self.owner.maxspeed / playerspeed;
+	else playerspeed = 1;
+	self.owner.velocity = self.owner.velocity * playerspeed;
+	self.owner.gravity = 1;
+
+	self.think = SUB_Remove;
+	self.nextthink = time + 0.1;
+};
+
+#define TKDHIGHJUMPTIME 0.6
+#define TKDHIGHJUMPRESET 0.5
+#define TKDLONGJUMPTIME 1.33
+#define TKDLONGJUMPRESET 5
+void() JobTKD =
+{
+	local float playerspeed;
+	local entity TKD_Brake;
+	local vector temp_velocity;
+
+	TKD_Brake = spawn();
+	TKD_Brake.owner = self;
+	//TKD_Brake.gravity = self.gravity;
+	TKD_Brake.classname = "timer";
+	TKD_Brake.netname = "tkdtimer";
+	TKD_Brake.think = JobTKDThink;
+
+	//Kiai!
+	sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
+
+	temp_velocity = self.velocity;
+	temp_velocity_z = 0;
+	playerspeed = vlen(temp_velocity);
+
+	if (playerspeed < 150) { //High jump
+		TKD_Brake.nextthink = time + #TKDHIGHJUMPTIME;
+		self.job_finished = time + #TKDHIGHJUMPRESET; //High jumps are less tiring
+
+		//We allow ninja-style double jumps, but only once.
+		if (!(self.flags & #FL_ONGROUND)) {
+			self.job_finished = self.job_finished + 1;
+			self.velocity_z = 0;
+		}
+
+		self.gravity = 0.5;
+
+		if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT)
+			self.velocity_z = self.velocity_z + 300; //Anti-speedcap
+		else
+			self.velocity_z = self.velocity_z + 600;
+
+	} else { //Long jump
+		self.gravity = 0.5;
+		makevectors(self.angles);
+		if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT) {
+			self.velocity = self.velocity + playerspeed*v_forward*0.5;
+			self.velocity_z = 200;
+		}
+		else {
+			self.velocity = self.velocity + playerspeed*v_forward;
+			self.velocity_z = self.velocity_z + 180;
+		}
+		TKD_Brake.nextthink = time + #TKDLONGJUMPTIME;
+		self.job_finished = time + #TKDLONGJUMPRESET; //Long jumps are tiring
+	}
+	self.attack_finished = TKD_Brake.nextthink;
+	self.flags = self.flags - (self.flags & #FL_ONGROUND);	
+};
+
+void() JobPsion =
+{
+};
 
 void() UseJobSkill =
 {
@@ -825,6 +922,10 @@ void() UseJobSkill =
 		JobArmy();
     else if (myjob & #JOB_CRUSADER)
 		JobCrusader();
+    else if (myjob & #JOB_TKD)
+		JobTKD();
+    else if (myjob & #JOB_PSION)
+		JobPsion();
 	else {
 		sprint(self,#PRINT_HIGH,"You don't have a job. Go get employed.\n");
 		self.job_finished = time + 5; //Don't let them print this message that often

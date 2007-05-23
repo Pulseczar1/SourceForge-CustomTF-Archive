@@ -19,7 +19,7 @@
 #define VOTE_SWITCHMAP_AGR  5 // PZ - AGR mode
 
 // punish types
-#define PUNISH_NONE         0
+//WK Not used... #define PUNISH_NONE         0
 #define PUNISH_CURSE        1
 #define PUNISH_KICK         2
 #define PUNISH_BAN          3
@@ -34,6 +34,7 @@
 // Settings defines
 
 #define VOTE_TIME           60
+#define WARN_TIME           45 //WK ...15 seconds before VOTE_TIME it prints a warning the vote is about to end.
 #define VOTE_MIN_TIME       10
 #define VOTE_TIME_REFRESH   25
 #define VOTE_DELAY          240 // seconds to wait until another vote from same user is allowed
@@ -181,8 +182,10 @@ void() Menu_Punish =
         st3 = ".. Mute¡         ";
     else if (self.g_a == #PUNISH_CUFF)
         st3 = ".. Cuff¡         ";
-    else
-        st3 = ".. Curse¡        ";        
+    else { //WK Fix bug where a vote could do down without .g_a being set
+        st3 = ".. Curse¡        ";
+        self.g_a = #PUNISH_CURSE; //Initialize it here, i.e.
+	}        
 
     CenterPrint5(self,st,st2,"\n\n.. Next User®®®  \n\n.. Ãèïïóå Áãôéïî:\n\n",st3,"\n\n®® Åøéô          \n");
                                                            
@@ -552,6 +555,8 @@ void() bprintVoteIssue =
 //==============================================================
 // user has used the VoteYes impulse command
 
+float() TeamFortress_GetNoPlayers; //WK Used to count all the people in the world.
+
 void() Player_VoteYes =
 {
     if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
@@ -564,11 +569,12 @@ void() Player_VoteYes =
     }
 
     #ifndef VOTING_TEST
-    if (current_voteent.admin_kick == self)
+    if (current_voteent.admin_kick == self) //WK 4-27-7 We allow people to vote only *no* on punishing themselves in small games
     {
         sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
         return;
     }
+
     else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
     {
 		// FIXME: Allow the person to change their vote. -randomer 2006-02-24
@@ -606,6 +612,8 @@ void() Player_VoteYes =
 
 void() Player_VoteNo =
 {
+    local float playercount;
+
     if (self.playerclass == #PC_UNDEFINED && self.classname == "player") // Observers
         return;
     
@@ -616,9 +624,12 @@ void() Player_VoteNo =
     }
     
     #ifndef VOTING_TEST
-    if (current_voteent.admin_kick == self)
+
+    //WK Allow voting "no" on self in <= 4 player games
+    playercount = TeamFortress_GetNoPlayers();
+    if (current_voteent.admin_kick == self && playercount > 4) //WK 4-27-7 Stop silliness in small votes
     {
-        sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
+        sprint(self,#PRINT_HIGH,"You are not allowed to vote on yourself if there are more than 4 players!\n");
         return;
     }
     else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
@@ -769,6 +780,29 @@ float() GetNoClients =
     return clients;*/
 };
 
+//WK 4/27/7 Add 15 second warning to voting system, reminding people to vote.
+void() WarnVote_Think =
+{
+	local entity te;
+	te = find(world, classname, "player");
+	while (te != world)
+	{
+		if (te.is_connected && te.owned_by == #VOTED_READY)
+		{
+			te.StatusRefreshTime = time + 5;
+			centerprint(te,"WARNING: Voting ends in 15 seconds. You haven't voted yet.\n");
+			stuffcmd(te,"play enforcer/sight3.wav\n");
+		}
+		te = find(te, classname, "player");
+	} 
+	bprintVoteIssue(); //BPrint the current vote up top.
+	bprintVotesLeft(); //And the current number of votes left
+
+	//bprint(#PRINT_MEDIUM,"Voting Ends in 15 Seconds.\n");
+	//BroadcastSound("misc/medkey");
+	dremove(self);
+};
+
 void() PunishVote_Think;
 
 //=================================================================
@@ -797,7 +831,14 @@ void() StartPunishmentVote =
     BackFlash(self,1);
 
     CleanClientVotes();
-    
+  
+    //WK Broadcast a warning to the server that the vote is going to end in 15 seconds
+    local entity warnent;
+    warnent = spawn();
+    warnent.think = WarnVote_Think;
+    warnent.nextthink = time + #WARN_TIME;
+    warnent.owner = world;
+  
     local entity voteent;
 
     voteent = spawn();
@@ -847,7 +888,7 @@ void() StartPunishmentVote =
 
     current_voteent.dont_do_triggerwork = #FALSE;
         
-    ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
+    ResetClientsMenu(); // reset menus on players/specs who are on MENU_PUNISH or MENU_VOTEMAP
 
     CheckVoting(#FALSE); // If we are the only player on server, checks
 };
@@ -923,7 +964,14 @@ void(float nummap, string themap) StartVoteMap =
 	// AGR end
 
     BackFlash(self,1);
-        
+
+    //WK Broadcast a warning to the server that the vote is going to end in 15 seconds
+    local entity warnent;
+    warnent = spawn();
+    warnent.think = WarnVote_Think;
+    warnent.nextthink = time + #WARN_TIME;
+    warnent.owner = world;
+  
     local entity voteent;
 
     voteent = spawn();
@@ -1163,8 +1211,18 @@ float(float final) CheckVoting =
     local float numclients;
     local string st;
     
-    numclients = GetNoClients();
-    
+    //numclients = GetNoClients();
+    numclients = TeamFortress_GetNoPlayers(); //WK 4/27/7 Just count players, not spects for reaching a quorum.
+
+    //WK 4/27/7 Require a quorum of 40% votes to succeed
+    if (final) {
+	if (num_total < numclients * 0.4) {
+        bprint(#PRINT_HIGH,"Voting Did not reach a 40% quorum -- the vote fails.\n");
+        ResetVoteEnt();
+        return #TRUE;
+	}
+    }
+
     if (current_voteent.has_sentry == #VOTE_PUNISH) // Punishment voting
     {
         // Check for a valid client as target

@@ -2515,7 +2515,7 @@ void() PlayerJump =
 		if (self.tf_items & #NIT_SCUBA)
 			self.velocity_z = 250;
 
-		// play swiming sound
+		// play swimming sound
 		if (self.cutf_items & #CUTF_STEALTH) // SB no noise if we have stealth
 			return;
 		
@@ -2719,6 +2719,9 @@ void() PlayerPreThink =
 {
     if (self.flags & #FL_FINALIZED)
         return;
+
+	//WK 4/27/7 Save our last frame's velocity for player_touch ramming.
+	self.last_frame_velocity = self.velocity;
 
 	//local float	mspeed, aspeed, r;
 	local vector src;

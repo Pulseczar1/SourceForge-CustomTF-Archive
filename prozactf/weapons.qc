@@ -350,9 +350,9 @@ void() W_FireAxe =
 		{
 			deathmsg = #DMSG_AXE;
 			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-				TF_T_Damage (trace_ent, self, self, 30, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				TF_T_Damage (trace_ent, self, self, 30, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 			else
-				TF_T_Damage (trace_ent, self, self, 60, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				TF_T_Damage (trace_ent, self, self, 60, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 		else	// spy can try for the backstab!
 		{
@@ -390,18 +390,18 @@ void() W_FireAxe =
 
 //WK 120 & no IGNOREARMOR
 				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
+					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_MELEE);
 				else
-					TF_T_Damage (trace_ent, self, self, 200, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
+					TF_T_Damage (trace_ent, self, self, 200, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_MELEE);
 			}
 			else
 			{
 				deathmsg = #DMSG_AXE;
 //WK 40
 				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					TF_T_Damage (trace_ent, self, self, 50, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+					TF_T_Damage (trace_ent, self, self, 50, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 				else
-					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER);				
+					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_MELEE);				
 			}
 		}
 	}
@@ -607,9 +607,9 @@ void() W_FireSpanner =
 			deathmsg = #DMSG_SPANNER;
 //WK 20
 			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-				TF_T_Damage (trace_ent, self, self, 20, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				TF_T_Damage (trace_ent, self, self, 20, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 			else
-				TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_OTHER);
+				TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 	}
 	else // hit wall
@@ -1579,10 +1579,10 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 		if (self.current_weapon & #WEAP_ASSAULT_CANNON)
 			//traceline (src, src + direction*2048, #TL_ANY_SOLID, self); //WK 2048
-            BulletTraceline(src, src + direction*dist);
+            	BulletTraceline(src, src + direction*dist);
 		else
 			//traceline (src, src + direction*1024, #TL_ANY_SOLID, self); //WK 2048
-            BulletTraceline(src, src + direction*dist);
+            	BulletTraceline(src, src + direction*dist);
 
 		if (trace_fraction != 1.0)
 		{
@@ -1917,19 +1917,41 @@ void() W_FireAssaultCannon =
 {
 	local vector dir;
 
-	KickPlayer(-4, self);
+	//WK 4-8-7 Spin the gun down if we aren't on the ground, or scuba commandoing, or attached to a hook
+	if ((self.flags & #FL_ONGROUND) || (self.hook_out) || ((self.tf_items & #NIT_SCUBA) && self.waterlevel))
+	{
+		KickPlayer(-4, self);
 
-	//WK Judoka's usually don't have enough ammo to shoot this thing...
-	if (!(self.job & #JOB_JUDOKA && self.job & #JOB_ACTIVE))
-		self.currentammo = self.ammo_shells = self.ammo_shells - 1;
-	dir = aim (self, 100000);
-	deathmsg = #DMSG_ASSAULTCANNON;
-	//WK FireBullets (5, dir, '0.1 0.1 0');
-	//We want more of a cone of fire...
-//	FireBullets (5, dir, '0.2 0.1 0');
-//	FireBullets (5, dir, '0.4 0.1 0');
-	FireBullets (7, dir, '0.15 0.1 0',2048);
-	FireBullets (3, dir, '0.3 0.1 0',2048);
+		//WK Judoka's usually don't have enough ammo to shoot this thing...
+		if (!(self.job & #JOB_JUDOKA && self.job & #JOB_ACTIVE))
+			self.currentammo = self.ammo_shells = self.ammo_shells - 1;
+		dir = aim (self, 100000);
+		deathmsg = #DMSG_ASSAULTCANNON;
+		//WK FireBullets (5, dir, '0.1 0.1 0');
+		//We want more of a cone of fire...
+	//	FireBullets (5, dir, '0.2 0.1 0');
+	//	FireBullets (5, dir, '0.4 0.1 0');
+		FireBullets (7, dir, '0.15 0.1 0',2048);
+		FireBullets (3, dir, '0.3 0.1 0',2048);
+	}
+	else 
+	{
+		// Let him/her walk again
+		TeamFortress_SetSpeed(self);
+		self.weaponframe = 0;
+		self.count = 1;
+		self.heat = 0;
+		self.button0 = 0;
+		self.fire_held_down = #FALSE;
+		player_assaultcannondown1();
+
+/*
+		self.fire_held_down = #FALSE;
+		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		TeamFortress_SetSpeed(self);
+		player_run ();
+*/
+	}
 };
 
 /*
@@ -3874,7 +3896,7 @@ void() W_Attack =
 		Attack_Finished(0.1);
 		sound (self, #CHAN_AUTO, "weapons/lstart.wav", 1, #ATTN_NORM);
 	}
-	else if (self.current_weapon == #WEAP_DAEDALUS) //CHANGEME
+	else if (self.current_weapon == #WEAP_DAEDALUS)
 	{
 		player_rocket1();
 		W_FireDaedalus();
@@ -4457,13 +4479,13 @@ void() W_ChangeWeapon =
 			if (fl == #WEAP_DAEDALUS)
 			{
 				fl = #WEAP_LIGHTNING;
-				if (it & #WEAP_LIGHTNING) //WEAP_DAEDALUS
+				if (it & #WEAP_LIGHTNING)
 					usable = 1;
 			}
             else if (fl == #WEAP_LIGHTNING)
 			{
 				fl = #WEAP_AIRF;
-				if (it & #WEAP_AIRF) //WEAP_DAEDALUS
+				if (it & #WEAP_AIRF)
 					usable = 1;
 			}
 			else
@@ -5415,15 +5437,14 @@ void() W_WeaponFrame =
 	if (self.job & #JOB_CHAPLAN && self.job & #JOB_ACTIVE)
 		return;
 
-	// Check for release
+	// Check for release on assault cannon
 	if (!self.button0 && self.fire_held_down && self.current_weapon == #WEAP_ASSAULT_CANNON)
 	{
-	    self.fire_held_down = #FALSE;
+		self.fire_held_down = #FALSE;
 
 		// Let him/her walk again
 		self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 		TeamFortress_SetSpeed(self);
-
 		player_run ();
 	}
 	// check for attack
@@ -5487,14 +5508,18 @@ void() W_WeaponFrame =
 		{
 			// Only fire the Assault Cannon if the player is on the ground
 			// WK Or if you are a Scuba Commando Underwater!
-			if (self.flags & #FL_ONGROUND || ((self.tf_items & #NIT_SCUBA) && self.waterlevel))
+			if (self.flags & #FL_ONGROUND || (self.hook_out) || ((self.tf_items & #NIT_SCUBA) && self.waterlevel))
 			{
 				SuperDamageSound ();
 				W_Attack ();
 			}
 			else
 			{
-				sprint(self, #PRINT_MEDIUM, "You cannot fire the assault cannon without\nyour feet on the ground...\n");
+				//WK 4-8-7 Don't spam ass cannoners who ain't on the ground
+				if (self.last_saveme_sound < time) {
+					sprint(self, #PRINT_MEDIUM, "You cannot fire the assault cannon without\nyour feet on the ground...\n");
+					self.last_saveme_sound = time + 4;
+				}
 			}
 		}
 		else
@@ -5539,6 +5564,7 @@ Combination conc, krac and RL
 void() T_DaedalusTouch =
 {
 	local float points;
+	local float armordamage;
 	local vector org;
 	local entity head;
 
@@ -5554,9 +5580,11 @@ void() T_DaedalusTouch =
 			if (points > 0)
 			{
 				head.velocity = org - self.origin;
-				head.velocity = head.velocity * (points / 20);
 				if (head.cutf_items & #CUTF_GYMNAST)
+					head.velocity = head.velocity * (points / 10); //WK 4/27/7 Changed to simply double recoil instead of squaring it.
+				else
 					head.velocity = head.velocity * (points / 20);
+
 				if (head.classname != "player" && head.flags & #FL_ONGROUND)
 					head.flags = head.flags - #FL_ONGROUND;
 			}
@@ -5569,10 +5597,22 @@ void() T_DaedalusTouch =
 			//Rocket Launcher (w/ armor stripping)
 			else
 			{
-				if (head.armorvalue > 35) head.armorvalue = head.armorvalue - 35;				
-				else head.armorvalue = 0;
+				//WK 4/27/7 Rewrote the Daedalus so that it does more damage against unarmored foes.
 				deathmsg = #DMSG_DAEDALUS;
-				TF_T_Damage (head, self, self.owner, points / 8, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+				armordamage = 40;
+				//if (head.tf_items & #NIT_GEL) armordamage = 20; //Krac protection works against Daedalus
+				//else if (head.tf_items & #NIT_ASBESTOS) armordamage = 30; //Asbestos protects somewhat
+				if (head.armorclass & #AT_SAVEMELEE) armordamage = 20; //Krac protection works against Daedalus
+				else if (head.armorclass & #AT_SAVEFIRE) armordamage = 30; //Asbestos protects somewhat
+
+				if (head.armorvalue > armordamage) {
+					head.armorvalue = head.armorvalue - armordamage;				
+					TF_T_Damage (head, self, self.owner, points / 8, #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_FIRE);
+				}
+				else {
+					head.armorvalue = 0;
+					TF_T_Damage (head, self, self.owner, points / 2, #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_FIRE);
+				}					
 			}
 		}
 		head = head.chain;
@@ -5619,7 +5659,7 @@ void() W_FireDaedalus =
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
-    newmis.classname = "rocket"; // OfN - for airfist pushing
+	newmis.classname = "rocket"; // OfN - for airfist pushing
 	newmis.solid = #SOLID_BBOX;
 		
 	makevectors (self.v_angle);
@@ -5629,7 +5669,9 @@ void() W_FireDaedalus =
 	newmis.angles = vectoangles(newmis.velocity);
 	newmis.skin = 1;
 	//CHANGEME Replace this with s_explode sprite. :)
-	setmodel (newmis, "progs/flare.mdl");
+	//setmodel (newmis, "progs/flare.mdl");
+	//WK 4/27/7 Done. Looks awesome now in FTEQuake. =)
+	setmodel (newmis, "progs/s_explod.spr");
 	setsize (newmis, '0 0 0', '0 0 0');		
 	setorigin (newmis, self.origin + v_forward*8 + '0 0 16');
 

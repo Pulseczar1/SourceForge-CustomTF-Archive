@@ -979,8 +979,10 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " flew too close to the sun!\n";
 				else if (deathmsg == #DMSG_AIRG || deathmsg == #DMSG_AIRG_WATER)
 					deathstring = " airfists his own ass!\n";
-                else if (deathmsg == #DMSG_JUDOKA)
+				else if (deathmsg == #DMSG_JUDOKA)
 					deathstring = " broke his own arms!\n";
+				else if (deathmsg == #DMSG_TKD)
+					deathstring = " kicked himself in the face!\n";
 				else if (deathmsg == #DMSG_AXE)
 					deathstring = " drove an axe through his own head!\n";
 				else if (deathmsg == #DMSG_BACKSTAB)
@@ -1588,7 +1590,7 @@ void(entity targ, entity attacker) ClientObituary =
 					
                     /*if (attacker.demon_blood < #MAX_KNIFE_BLOOD) //SB - OfN defined max now
 						attacker.demon_blood = attacker.demon_blood + 1;*/
-                    WarlockKnifeKill(attacker);
+						WarlockKnifeKill(attacker);
 				}
 				else if (deathmsg == #DMSG_SPANNER)
 				{
@@ -1661,82 +1663,108 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " grappled with ";
 					deathstring2 = "\n";
 				}
-                else if (deathmsg == #DMSG_NAPALM)
-                {                    
-                    deathstring = " is fried with ";
-                    deathstring2 = "'s napalm fireworks\n";
-                }
+				else if (deathmsg == #DMSG_NAPALM)
+				{                    
+					deathstring = " is fried with ";
+					deathstring2 = "'s napalm fireworks\n";
+				}
 				else if (deathmsg == #DMSG_JUDOKA)
 				{
 					deathstring = " had his arms broken by ";
 					deathstring2 = "\n";
 				}
-                else if (deathmsg == #DMSG_AIRG)
+				else if (deathmsg == #DMSG_TKD)
 				{
-                    if (rnum < 0.5)
-                        deathstring = " is ventilated by ";
-                    else
-					    deathstring = " receives fresh air from ";
-
-                    deathstring2 = "\n";
+					if (rnum <= 0.15) {
+						deathstring = " is punted across the battlefield by ";
+						deathstring2 = "'s mighty Tae Kwon Do kicks!\n";
+					}
+					else if (rnum <= 0.4) {
+						deathstring = " takes a boot to the head from ";
+						deathstring2 = "\n";
+					}
+					else if (rnum <= 0.6) {
+						deathstring = " accepts a mighty Yup Chagi from ";
+						deathstring2 = "-sabum\n";
+					}
+					else if (rnum <= 0.73) {
+						deathstring = " collapses from ";
+						deathstring2 = "'s deadly kick.\n";
+					}
+					else if (rnum <= 0.8) {
+						deathstring = " learns the way of the American Ninja from  ";
+						deathstring2 = "\n";
+					}
+					else {
+						deathstring = " takes a mighty tornado kick to the head from  ";
+						deathstring2 = "-sabum\n";
+					}
 				}
-                else if (deathmsg == #DMSG_LASERCANNON)
-                {
-                   	deathstring = " was blasted by ";
+				else if (deathmsg == #DMSG_AIRG)
+				{
+					if (rnum < 0.5)
+						deathstring = " is ventilated by ";
+					else
+					    deathstring = " receives fresh air from ";
+					deathstring2 = "\n";
+				}
+				else if (deathmsg == #DMSG_LASERCANNON)
+				{
+					deathstring = " was blasted by ";
 					deathstring2 = "'s laser cannon\n";
-                }  
-                else if (deathmsg == #DMSG_BIOEXPLOSION)
-                {
-                    deathstring = " dies by the toxic explosion of ";
+				}  
+				else if (deathmsg == #DMSG_BIOEXPLOSION)
+				{
+					deathstring = " dies by the toxic explosion of ";
 					deathstring2 = "'s infection grenade\n";
-                }
-                else if (deathmsg == #DMSG_DISPEL)
+				}
+				else if (deathmsg == #DMSG_DISPEL)
 				{
 					deathstring = " is banished to the netherworld by ";
 					deathstring2 = "\n";
 				}
-                else if (deathmsg == #DMSG_AIRG_WATER)
+				else if (deathmsg == #DMSG_AIRG_WATER)
 				{
 					if (rnum < 0.5)
-                    {
-                        deathstring = " learns to swim backwards with ";
-					    deathstring2 = "'s help\n";
-                    }
-                    else
-                    {
-                        deathstring = " is underwater-airfisted by ";
-					    deathstring2 = "\n";
-                    }
-                }
+					{
+						deathstring = " learns to swim backwards with ";
+						deathstring2 = "'s help\n";
+					}
+					else
+					{
+						deathstring = " is underwater-airfisted by ";
+						deathstring2 = "\n";
+					}
+				}
 				else if (deathmsg == #DMSG_SNIPERRIFLE)
 				{
 					if (attacker.cutf_items & #CUTF_OTR && random() > 0.25)
-                    {                        
-                        if (targ.health < -40 && random() > 0.75)
-                        {
-                            deathstring = " becomes some pieces of meat with ";
-                            deathstring2 = "'s OTR shot\n";
-                        }
-                        else
-                        {
-                            if (rnum < 0.3)
-                            {
-                                deathstring = " will never be the same after ";
-                                deathstring2 = "'s OTR shot\n";
-                            }
-                            else if (rnum < 0.6)
-                            {
-                                deathstring = " learns from ";
-                                deathstring2 = " what an OTR bullet is\n";                            
-                            }
-                            else
-                            {
-                                deathstring = " gets a new OTR implant from ";
-                                deathstring2 = "\n";
-                            }
-                        }
-                    }
-                    else if (rnum < 0.5)
+					{                        
+						if (targ.health < -40 && random() > 0.75)
+						{
+							deathstring = " becomes some pieces of meat with ";
+							deathstring2 = "'s OTR shot\n";
+						}
+						else
+						{
+							if (rnum < 0.3)
+							{
+								deathstring = " will never be the same after ";
+								deathstring2 = "'s OTR shot\n";
+							}
+							else if (rnum < 0.6)
+							{
+								deathstring = " learns from ";
+								deathstring2 = " what an OTR bullet is\n";                            
+							}
+							else
+							{
+								deathstring = " gets a new OTR implant from ";
+								deathstring2 = "\n";
+							}
+						}
+					}
+					else if (rnum < 0.5)
 					{
 						deathstring = " takes a bullet in the chest from ";
 						deathstring2 = "\n";
@@ -1750,11 +1778,11 @@ void(entity targ, entity attacker) ClientObituary =
 				else if (deathmsg == #DMSG_SNIPERHEADSHOT)
 				{
 					if (attacker.cutf_items & #CUTF_OTR && random() > 0.25)
-                    {
-                        deathstring = "'s head flies away due to ";
-                        deathstring2 = " and his OTR bullets\n";
-                    }
-                    else if (rnum < 0.5)
+					{
+						deathstring = "'s head flies away due to ";
+						deathstring2 = " and his OTR bullets\n";
+					}
+					else if (rnum < 0.5)
 					{
 						deathstring = " gets a third eye from ";
 						deathstring2 = "\n";

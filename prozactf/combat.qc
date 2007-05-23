@@ -286,21 +286,22 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	#TF_TD_IGNOREARMOUR: bypasses the armour of the target
 	#TF_TD_NOTTEAM: doesn't damage a team member
 	#TF_TD_NOTSELF: doesn't damage self
-    #TF_TD_NOKNOCK: Impides knockation on players (OfN)
-    #TF_TD_DONTGIB: Impides the damage to result in a health of target below -1
-    #TF_TD_NOPAIN : Don't do pain frames
+	#TF_TD_NOKNOCK: Impides knockation on players (OfN)
+	#TF_TD_DONTGIB: Impides the damage to result in a health of target below -1
+	#TF_TD_NOPAIN : Don't do pain frames
 
  The following is used to determine whether this attack is affected 
  the type of armor the defender is wearing.
  T_AttackType:		
-	#TF_TD_OTHER		:	type ignored
+	#TF_TD_OTHER			: type ignored
 	#TF_TD_SHOT			: 	bullet damage
 	#TF_TD_NAIL			:	nailgun damage
-	#TF_TD_EXPLOSION	:	explosion damage
-	#TF_TD_ELECTRICITY	:	electricity damage
-	#TF_TD_FIRE			:	fire damage
+	#TF_TD_EXPLOSION		: explosion damage
+	#TF_TD_ELECTRICITY		: electricity damage
+	#TF_TD_FIRE			: fire damage
+	#TF_TD_MELEE:			: melee damage (New Type)
 
-	#TF_TD_NOSOUND		:	Special Value. Health is adjusted without
+	#TF_TD_NOSOUND			: Special Value. Health is adjusted without
 						    any sound, painframe, etc
 							Health is _set_ to damage, not altered.
 
@@ -362,8 +363,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	//BUTTON TRIGGERING
 	if (attacker.classname == "player")
 	{
-		//if (targ.classname != "player" && !IsBuilding(targ) && targ.classname != "monster_demon1")
-        if (targ.classname != "player" && !IsBuilding(targ) && !IsMonster(targ) && targ.#corpseflag != #STRFLAG_CORPSE)
+		if (targ.classname != "player" && !IsBuilding(targ) && !IsMonster(targ) && targ.#corpseflag != #STRFLAG_CORPSE)
 		{
 			if (!Activated(targ,attacker))
 			{
@@ -384,19 +384,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	damage_attacker = attacker;
 
 	// INVINCIBILITY
-    /*
-	if (targ.flags & #FL_GODMODE)
-		return;
+	// Handled in cpstuff.qc now
+	
 	if (targ.invincible_finished >= time)
-	{
-		if (self.invincible_sound < time)
-		{
-			sound (targ, #CHAN_ITEM, "items/protect3.wav", 1, #ATTN_NORM);
-			self.invincible_sound = time + 2;
-		}
-		return;
-	}*/
-    if (targ.invincible_finished >= time)
 	{
 		if (targ.invincible_sound < time)
 		{
@@ -410,7 +400,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	// WK See if they're close enough to chap to get protection
 	if (attacker.classname == "player" && attacker.tfstate & #TFSTATE_INSPIRED) {
 		knockem = vlen(attacker.origin - attacker.inspirator.origin);
-		//output = ftos(dist);
 		if (knockem > #CHAPLAN_RADIUS) { //We've strayed from the flock
 			sprint(attacker,#PRINT_HIGH,"You have strayed from the flock\n");
 			attacker.tfstate = attacker.tfstate - #TFSTATE_INSPIRED;
@@ -435,50 +424,27 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
     if (!(T_flags & #TF_TD_IGNORERESIST))
         damage = damage * GetDamageInFactor(targ);
 
-    // OfN - Corpses are handled in their own routine
-    if (targ.#corpseflag == #STRFLAG_CORPSE)
-    {
-        DamageCorpse(targ,damage,targ.origin,attacker,#TRUE);
-        return;
-    }
+	// OfN - Corpses are handled in their own routine
+ 	if (targ.#corpseflag == #STRFLAG_CORPSE)
+ 	{
+ 		DamageCorpse(targ,damage,targ.origin,attacker,#TRUE);
+ 		return;
+ 	}
 
-    // QUAD DAMAGE
-	/*if (attacker.super_damage_finished > time) {
-		if (attacker.tfstate & #TFSTATE_INSPIRED)
-			damage = damage * 1.8; // was 1.5
-		if (attacker.job & #JOB_BERSERKER && attacker.job & #JOB_ACTIVE)
-            damage = damage * #BERSERKER_DMGFACTOR;
-        else
-			damage = damage * 4;
-	}
-
-   	if (attacker.aura == #AURA_POWER)
-		damage = damage * 2; // was 1.5
-
-    if (attacker.#runes & #RUNE_TRIAD)
-        damage = damage * 3;
-	*/
+ 	// QUAD DAMAGE
+ 	// Handled in cpstuff.qc now
+    
 	if (targ.aura == #AURA_RESIS || targ.#runes & #RUNE_RESIS)
-    {
-        if (targ.invincible_sound < time) {
+	{
+ 		if (targ.invincible_sound < time) {
 			sound (targ, #CHAN_ITEM, "auras/aura1b.wav", 1, #ATTN_NORM);
 			targ.invincible_sound = time + 1.5;
         }
-        
-        /*if (targ.aura == #AURA_RESIS)
-            damage = damage * 0.6; // was 0.66
-
-        if (targ.#runes & #RUNE_RESIS)
-            damage = damage * 0.4;*/
     }
 
 	//DAMAGE ADJUSTMENT
-	//- OfN - if (deathmsg != #DMSG_MARTYR && targ.classname != "monster_demon1" && targ.classname != "monster_shambler" && targ.classname != "monster_army")
-    if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))
+	if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))
 	{ 
-		/* OfN done in GetDamageInFactor()
-        if (targ.tfstate & #TFSTATE_INSPIRED) //Chaplan defense
-			damage = damage * 0.66;*/
 		//WK Ping fairness code. LPB is < 200 ping
 		if (attacker.classname == "player" && targ.classname == "player" && attacker != targ)
 		{
@@ -496,7 +462,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	}
 
 	//MIRROR DAMAGE
-    knockem = 0;
+	knockem = 0;
 	//WK - Check to see if we hit a friend
 	if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && attacker.classname == "player" && targ.classname == "player")  {
 		//We just hit someone on our team!
@@ -518,15 +484,16 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		}
 		//Don't inflict damage on a (teamkiller or spy)-hitter
 		if (knockem > 0)
-        if (!(targ.is_feigning || targ.is_undercover) && !(targ.penance_time > time)) //Hurt the jerk!
-			TF_T_Damage (attacker, attacker, attacker, knockem, 0, #TF_TD_OTHER);
+ 			if (!(targ.is_feigning || targ.is_undercover) && !(targ.penance_time > time)) //Hurt the jerk!
+				TF_T_Damage (attacker, attacker, attacker, knockem, 0, #TF_TD_OTHER);
 	}
 	//WK Slight mirror demon protection
 	//Do 2 points of damage to a friendly teammate shooting a friendly demon
 	//SB 2 damage? no way, we're doing the full mirror damage
-	//- Ofn- if ((targ.classname == "monster_demon1" || targ.classname == "monster_army" || targ.classname == "monster_shambler") && targ.real_owner != world) {
+	//WK 4/27/7 We want reflected damage ALWAYS on, not just during mirror teamplay settings
 	if (IsMonster(targ) && targ.real_owner != world) {
-        targ.armorvalue = 1;
+		targ.armorvalue = 1;
+		/* WK 4/27/7 
 		if (T_flags & #TF_TD_NOTTEAM)
 		{
 			//Direct damage
@@ -543,10 +510,13 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			if (teamplay & #TEAMPLAY_HALFMIRROREXPLOSIVE)
 				knockem = knockem + damage / 2;
 		}
-        if (knockem > 0)
-		if (Teammate(targ.real_owner.team_no,attacker.team_no) && (targ.real_owner != attacker) && attacker.classname == "player")
-			TF_T_Damage (attacker, attacker, attacker, knockem, 0, #TF_TD_OTHER);
+		*/
+		knockem = 10; //WK 4/27/7 Make it painful to shoot friendly demons.
+		if (knockem > 0)
+			if (Teammate(targ.real_owner.team_no,attacker.team_no) && (targ.real_owner != attacker) && attacker.classname == "player")
+				TF_T_Damage (attacker, attacker, attacker, knockem, 0, #TF_TD_OTHER);
 	}
+
 	//WK Friendly Sentrygun protection - you can't hurt friendly sentries
 	if (IsBuilding(targ)) {
 		if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && (!targ.tf_items & #NIT_SECURITY_CAMERA)) {
@@ -578,13 +548,16 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 				    sprint(attacker,#PRINT_HIGH,"You hit kevlar\n");
 	            }
 		}
-		else if ((targ.armorclass & #AT_SAVEMELEE) && (deathmsg == #DMSG_JUDOKA || deathmsg == #DMSG_AXE || deathmsg == #DMSG_BACKSTAB || deathmsg == #DMSG_SPANNER))
+		else if ((targ.armorclass & #AT_SAVEMELEE) && T_AttackType == #TF_TD_MELEE)
 		{
+			bprint(#PRINT_HIGH,"Testes?\n");
 			damage = floor(damage * 0.5);
+
+			//Melee armor gives 40% chance to negate damage
 			if ((targ.velocity_x > 0 || targ.velocity_y > 0 || targ.velocity_z > 0) && random() > 0.6)
 				return;
-			if (deathmsg == #DMSG_BACKSTAB)
-				T_flags = T_flags - (T_flags & #TF_TD_IGNOREARMOUR);
+			//And cannot be penetrated by a backstab
+			T_flags = T_flags - (T_flags & #TF_TD_IGNOREARMOUR);
 		}
 		else if ((targ.armorclass & #AT_SAVEEXPLOSION) && (T_AttackType == #TF_TD_EXPLOSION))
 			damage = floor(damage * 0.5);

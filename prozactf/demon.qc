@@ -517,7 +517,7 @@ void(float side)	Demon_Melee =
 		ldmg = ldmg * 0.8;
 	
 	//T_Damage (self.enemy, self, self, ldmg);
-    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
+    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -650,7 +650,7 @@ void()	Demon_JumpTouch =
 			if (other.cutf_items & #CUTF_DEMONLORE)
 				ldmg = ldmg * 0.8;
             
-            TF_T_Damage(other, self, self, ldmg,0,#TF_TD_OTHER);
+            TF_T_Damage(other, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
 			//T_Damage (other, self, self, ldmg);	
 			//WK Comment out this next line for demon-head hopping action!
 			if (self.think == SUB_Remove) return; //We can die when killing owner

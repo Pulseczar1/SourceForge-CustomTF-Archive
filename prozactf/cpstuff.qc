@@ -1215,8 +1215,8 @@ void() PrintResults =
 void(entity attacker) MonsterKill =
 {
     if (attacker.job & #JOB_WARLOCK)
-    if (deathmsg == #DMSG_AXE || deathmsg == #DMSG_BACKSTAB)
-        WarlockKnifeKill(attacker);
+    	if (deathmsg == #DMSG_AXE || deathmsg == #DMSG_BACKSTAB)
+        	WarlockKnifeKill(attacker);
 };
 
 //===============================================================================

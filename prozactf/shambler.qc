@@ -125,7 +125,7 @@ local float 	ldmg;
 	if (self.enemy.tf_items & #NIT_GEL) ldmg = ldmg / 2;
 	if (self.enemy.cutf_items & #CUTF_DEMONLORE) ldmg = ldmg / 2;
 	//T_Damage (self.enemy, self, self, ldmg);
-    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
+	TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
 	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
 
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
@@ -169,7 +169,7 @@ local float 	ldmg;
 			self.health = self.max_health;
 	}
 	//T_Damage (self.enemy, self, self, ldmg);
-    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_OTHER);
+	TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
 	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
 
 	if (side)

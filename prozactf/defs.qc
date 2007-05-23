@@ -1058,6 +1058,7 @@ float(entity targ, entity inflictor) CanDamage;
 #define TF_TD_EXPLOSION		4  // Explosion damage
 #define TF_TD_ELECTRICITY	8  // Electric damage
 #define TF_TD_FIRE		16  // Fire damage
+#define TF_TD_MELEE		32  // WK 4/27/7 Melee Damage!
 #define TF_TD_NOSOUND		256 // Special damage. Makes no sound/painframe, etc
 
 
@@ -1690,13 +1691,15 @@ float       rj;					// Rocket Jump Modifier
 #define JOB_GUERILLA			32
 #define JOB_JUDOKA			64
 //- OfN - New jobs -
-#define JOB_ARMY                128
-#define JOB_HACKER              256
-#define JOB_MARTYR              512
-#define JOB_CRUSADER           1024
-
-//This is the sum of all jobs...
-#define JOB_ALL					2047 //Not a job, used to simplify bit operators
+#define JOB_ARMY			128
+#define JOB_HACKER		256
+#define JOB_MARTYR		512
+#define JOB_CRUSADER		1024
+//WK New jobs!
+#define JOB_TKD			262144 // WK 4/27/7 Tae Kwon Do -- Boot to the Head!
+#define JOB_PSION			524288 // WK 4/27/7 Psionizes people! In air, drop them. On ground, pulls close.
+//This is the sum of all jobs above...
+#define JOB_ALL					788479 //Not a job, used to simplify bit operators
 
 //STATES WE ARE IN FOR JOB
 //Every time we add one, make sure it gets reset in tfort.qc!
@@ -1852,6 +1855,9 @@ float       rj;					// Rocket Jump Modifier
 // Make sure people don't do too many saveme sounds
 .float last_saveme_sound;
 .float last_grenade_primed; //WK 2/8/7 Only allow priming one grenade per 3 seconds
+.float last_boot_to_the_head; //WK 4/27/7 Only allow one BTTH per 1 or 2 seconds
+.float last_push; //WK 4/27/7 Only allow one shove per 0.5 seconds.
+.vector last_frame_velocity; //WK 4/27/7 Holds the velocity from the previous frame
 
 // Armor Classes : Bitfields. Use the "armorclass" of armor for the Armor Type.
 
@@ -1948,7 +1954,7 @@ float       rj;					// Rocket Jump Modifier
 #define PC_SOLDIER_GRENADE_TYPE_2		#GR_TYPE_NAIL
 #define PC_SOLDIER_GRENADE_INIT_1		4 	 
 #define PC_SOLDIER_GRENADE_INIT_2		2 	 
-#define PC_SOLDIER_TF_ITEMS			0 //#NIT_RL_LASER_SIGHT //WK no Cluster - OfN no hover boots
+#define PC_SOLDIER_TF_ITEMS			#NIT_RL_LASER_SIGHT //WK 4-27-7 Laser back in //OfN no hover boots
 #define PC_SOLDIER_JOB				#JOB_ARMY //#JOB_RUNNER
 
 // Class Details for DEMOLITION MAN
@@ -2065,7 +2071,7 @@ float       rj;					// Rocket Jump Modifier
 #define PC_PYRO_GRENADE_INIT_1		4 	 
 #define PC_PYRO_GRENADE_INIT_2		4 	 
 #define PC_PYRO_TF_ITEMS			#NIT_ASBESTOS | #NIT_HOVER_BOOTS | #NIT_HOVER_BOOTS_UPGRADE //WK 2/8/7 Added asbestos armor back to pyros
-#define PC_PYRO_JOB				    #JOB_THIEF
+#define PC_PYRO_JOB				    #JOB_TKD
 
 // Class Details for SPY
 //#define PC_SPY_SKIN				    22 
@@ -2571,6 +2577,8 @@ float deathmsg;		// Global, which is set before every T_Damage, to indicate
 #define DMSG_XMAS               71
 #define DMSG_EARTHQUAKE         72
 #define DMSG_STORM              73
+#define DMSG_TKD				74
+#define DMSG_PSION			75
 
 //Defs for objects a spikeshooter can spawn  Misc.qc
 #define SPAWNFLAG_SUPERSPIKE	1 

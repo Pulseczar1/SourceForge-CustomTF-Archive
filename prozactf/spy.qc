@@ -760,11 +760,16 @@ void() GasGrenadeMakeGas =
 			{
 			// Damage
 			deathmsg = #DMSG_GREN_GAS;
+			/*
 			if (self.heat == 0) // Grievre fix
+				TF_T_Damage (te, world, self.owner, 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 				TF_T_Damage (te, world, self.owner, 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 			else
 				TF_T_Damage (te, world, self.owner, 40, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
-
+				*/
+			//WK 4/27/7 The above makes no sense.
+				TF_T_Damage (te, world, self.owner, 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
+			
 			// Make them hallucinate
 			if (te.tfstate & #TFSTATE_HALLUCINATING)
 			{
