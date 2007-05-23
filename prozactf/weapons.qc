@@ -2020,7 +2020,7 @@ void() T_MissileTouch =
 		}
 	*/
 	if (self.has_tesla) //Cluster rockets do less
-		damg = damg - 15; //WK 1/7/7 -25, they need to do a little more
+		damg = damg - 20; //WK 2/26/7 Lowered from -15 //WK 1/7/7 -25, they need to do a little more
 
 	deathmsg = self.weapon;
 	if (other.health)
@@ -5680,13 +5680,13 @@ void() W_FireMauser =
 		if (trace_ent.classname == "player")
 		{
 /* WK 1/7/7 -- Mauser no longer bypasses armor since we can't buy more health now... they were originally balanced around the fact that people would routinely have 100-150 health. Also, they are now Nail damage (since they shoot nails). This allows countering mausers, somewhat. They still do an extreme amount of damage. Upped the damage to compensate, should still one-shot most people, but those with 300/100 will probably take multiple shots to kill. */
-			TF_T_Damage(trace_ent, self, self, 180+41*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL); //WK 2-8-7 50-350 damage
+			TF_T_Damage(trace_ent, self, self, 280+41*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL); //WK 2/26/7 Upped damage from 200 to 300
 			sprint(trace_ent, #PRINT_HIGH, "Your nerves scream as poison floods your veins...\n");
 		}
  /* WK 1/7/7 -- Mausers no longer even hurt sentries (it's poison!)
 But we want Mausers to be able to kill Grunties and Demons, since it was ridiculous before, picking off a 600 health grunty at 20 health per mauser shot. It does less damage though, than against players. */
 		else if (!IsBuilding(trace_ent)) {
-			TF_T_Damage(trace_ent, self, self, 50+200*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL);
+			TF_T_Damage(trace_ent, self, self, 150+100*random(), #TF_TD_NOTTEAM | #TF_TD_NOKNOCK, #TF_TD_NAIL);
 		}
 	}
     else

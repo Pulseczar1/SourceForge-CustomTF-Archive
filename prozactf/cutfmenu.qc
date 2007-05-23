@@ -166,8 +166,8 @@ void(entity player) UpdateArmorItem;
 #define COST_SHOTGUN              50
 // PAGE 3 - Misc/Extra Weapons
 #define COST_MAUSER             2400
-#define COST_AIRF               1600 //WK 1/7/7 Was 2000
-#define COST_AIRFISTUPGRADE     1400 //WK 1/7/7 Was 1850
+#define COST_AIRF               2500 //WK 2/26/7 Was 2000
+#define COST_AIRFISTUPGRADE     2500 //WK 2/26/7 Was 1850
 #define COST_DAEDALUS           1500
 #define COST_LASERCANNON        1400
 #define COST_HOLO               1200

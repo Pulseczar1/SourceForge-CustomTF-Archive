@@ -1150,7 +1150,6 @@ void() TeamFortress_PrimeGrenade =
 		//sprint(self,#PRINT_HIGH,"You can only prime one grenade every 3 seconds\n");
 		return;
 	}
-	self.last_grenade_primed = time;
 
 	// OfN - Psionized guys can't prime grenades
 	if (self.tfstate & #TFSTATE_PSIONIZED)
@@ -1229,6 +1228,7 @@ void() TeamFortress_PrimeGrenade =
 
 
 			self.no_grenades_1 = self.no_grenades_1 - 1;
+			self.last_grenade_primed = time; //WK 2/26/7 Gren prime bugfix
 
             // OfN 
             //sound(self, #CHAN_MISC, "weapons/pinpull.wav", 1, #ATTN_IDLE);
@@ -1339,6 +1339,7 @@ void() TeamFortress_PrimeGrenade =
 				self.no_grenades_2 = 2;*/
 
 			self.no_grenades_2 = self.no_grenades_2 - 1;
+			self.last_grenade_primed = time; //WK 2/26/7 Gren Prime Bugfix
 
             //sound(self, #CHAN_MISC, "weapons/pinpull.wav", 1, #ATTN_IDLE);
 		}
@@ -1789,13 +1790,6 @@ void(entity p) TeamFortress_SetSpeed =
 			p.maxspeed = p.maxspeed / 2;
 	}
 
-	// WK 5.5th See if they are ass cannoning
-	// WK 2/8/7 We allow ass cannons to move now, slowly
-	if (p.button0 && p.current_weapon == #WEAP_ASSAULT_CANNON)
-	{
-		p.maxspeed = p.maxspeed / 3;
-	}
-
 	// WK 6th, See if they're partially hidden
 	if (p.job & #JOB_THIEF)
 	{
@@ -1828,6 +1822,15 @@ void(entity p) TeamFortress_SetSpeed =
     if (p.tfstate & #TFSTATE_PSIONIZED)
         p.maxspeed = p.maxspeed * #PSIONIC_MOVEFACTOR;
     */
+
+	// WK See if they are ass cannoning WK 2/26/7 -- Slowed down 
+	// WK 2/8/7 We allow ass cannons to move now, slowly
+	if (p.button0 && p.current_weapon == #WEAP_ASSAULT_CANNON)
+	{
+		p.maxspeed = p.maxspeed / 3;
+	}
+
+
 
 	#ifdef QUAKE_WORLD
 		stuffcmd(p,"cl_backspeed 1000\n");

@@ -366,13 +366,15 @@ void() launch_horn =
         // If its a missile, change the direction but keep the same speed.
         eSpeed = vlen(e.velocity);
         e.velocity = normalize(delta) * eSpeed;
+	  //WK Canairpush() should ensure only valid things will hit the line below...
+	  e.owner = self; //WK 2/26/7 Make reflected rockets hit their owners. <<Careful not to reflect something bad...>>
       }
       else
       {
         // If we havent the upgrade reduce push on players
         if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE) && e.classname=="player")
             delta = delta * #AIRFIST_PUSH_REDUCTION;
-        
+
         // Apply the velocity adjustment
         e.velocity = e.velocity + delta;
 
@@ -479,8 +481,10 @@ void() launch_horn =
   }
 
   // If we havent the upgrade reduce recoil
+/* WK 2/26/7 We give them discharge instead
   if (!self.cutf_items & #CUTF_AIRFISTUPGRADE)
     recoil = recoil * #AIRFIST_RECOIL_REDUCTION;
+*/
 
   //WK 1/7/7 Gymnasts should benefit from this item... thats what gymn *does*.
   if (self.cutf_items & #CUTF_GYMNAST)
@@ -488,7 +492,7 @@ void() launch_horn =
 
   //WK 1/7/7 Halve recoil if carrying flag. (Phrostbye's idea)
   if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT)
-    recoil = recoil * 0.5;
+    recoil = recoil * 0.25; //WK 2/26/7 0.5 Anti-speedcapping
 
   // recoil self
   self.velocity = self.velocity + v_forward * recoil * -1;
@@ -496,17 +500,20 @@ void() launch_horn =
   //WK 1/7/7 Airfist Nerf, no more speedboating	
   //You can use the airfist normally, but it needs to recharge
   //after giving the player free SuperDuperSpeed
-  temp_velocity = self.velocity;
-  temp_velocity_z = temp_velocity_z = 0;
-  if (vlen(temp_velocity) > self.maxspeed + 200) {
-	sprint(self,#PRINT_HIGH,"You discharge your airfist.\n");
-	self.attack_finished = time + 4; 
-  }
-  else if (vlen(temp_velocity) > self.maxspeed + 100) {
-	sprint(self,#PRINT_HIGH,"You partially discharge your airfist.\n");
-	self.attack_finished = time + 2; 
-  }
 
+  //WK 2/26/7 Only give discharges to unupgraded AF
+if (!self.cutf_items & #CUTF_AIRFISTUPGRADE) {
+	  temp_velocity = self.velocity;
+	  temp_velocity_z = temp_velocity_z = 0;
+	  if (vlen(temp_velocity) > self.maxspeed + 200) {
+		sprint(self,#PRINT_HIGH,"You discharge your airfist.\n");
+		self.attack_finished = time + 4; 
+	  }
+	  else if (vlen(temp_velocity) > self.maxspeed + 100) {
+		sprint(self,#PRINT_HIGH,"You partially discharge your airfist.\n");
+		self.attack_finished = time + 2; 
+	  }
+  }
   if(self.waterlevel > 2)
   {  // below the water, play under water sound
     sound (self, #CHAN_AUTO, "weapons/agwater.wav", 1, #ATTN_NORM);

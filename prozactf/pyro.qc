@@ -230,6 +230,10 @@ void() NapalmGrenThink =
     {
         if (random() < 0.75)
             sound (self, #CHAN_MISC, "weapons/flmgrexp.wav", 1, #ATTN_NORM);
+
+	   //WK 2/26/7 Was doing 120 half the time, 260 half the time.
+ 	   deathmsg = #DMSG_NAPALM;
+	   T_RadiusFireDamage(exporg,self,self.owner,damage,0.7);
     }
     else
     {
@@ -246,9 +250,6 @@ void() NapalmGrenThink =
         T_RadiusFireDamage(self.origin,self,self.owner,#NAPALM_MAINDMG,0.85);
     }
     
-    deathmsg = #DMSG_NAPALM;
-    T_RadiusFireDamage(exporg,self,self.owner,damage,0.7);
-
     if (random() < 0.3)
         SpawnSprite(1,#SPRITE_AIRBURST,exporg,'0 0 0',#SPRITEMOVE_UPSLOW,0.15);
     else
@@ -470,6 +471,7 @@ void() FlameFollow =
 			self.model = "progs/flame2.mdl";
 			setmodel(self, self.model);
 		}
+		self.health = self.health - 2; //WK 2/15/98 - Stop drop and roll!
 	}
 	else if (self.model == "progs/flame2.mdl")
 	{
