@@ -645,8 +645,10 @@ void() Flamer_stream_touch =
 
 	if (other != world)
 	{
-		if (other.takedamage == #DAMAGE_AIM && other.health > 0)
+		if (other.takedamage == #DAMAGE_AIM && other.health > 0 && time >= self.attack_finished)
 		{
+			// Gizmo - prevent flame from damaging the enemy a shitload of times if they run into the flame
+			self.attack_finished = time + 0.50;
 
 			deathmsg = #DMSG_FLAME;
 			TF_T_Damage(other,self,self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
