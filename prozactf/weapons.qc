@@ -1934,6 +1934,8 @@ void() W_FireAssaultCannon =
 		FireBullets (7, dir, '0.15 0.1 0',2048);
 		FireBullets (3, dir, '0.3 0.1 0',2048);
 	}
+
+/* WK 6/1/7 Stop spin down 'bug' from being juggled.
 	else 
 	{
 		// Let him/her walk again
@@ -1944,14 +1946,8 @@ void() W_FireAssaultCannon =
 		self.button0 = 0;
 		self.fire_held_down = #FALSE;
 		player_assaultcannondown1();
-
-/*
-		self.fire_held_down = #FALSE;
-		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-		TeamFortress_SetSpeed(self);
-		player_run ();
-*/
 	}
+*/
 };
 
 /*
@@ -2154,6 +2150,9 @@ void() Rocket_Track_Dot =
 	}
 	else
 	{
+		self.nextthink = time + 0.01*floor(1+3*random());
+		self.think = Rocket_Track_Dot;
+
 		sight = world;
 		tg = find (world, classname, "timer");
 		while (tg)
@@ -2174,6 +2173,14 @@ void() Rocket_Track_Dot =
 		dir = normalize(vtemp - self.origin);
 		atemp = vectoangles(dir); //WK 5-15-7 The angle we wish to be pointed in.
 		atemp_x = anglemod(atemp_x * -1); //WTF, pitch is inverted coming out of vectoangles?
+
+		//5-16-7 If the laser pointer ever gets behind the rocket, break the lockon
+		makevectors(atemp);
+		local vector def;
+		def = v_right;
+		makevectors(self.angles);
+		if (crossproduct(def,v_forward) < 0)
+			return;
 
 /*		sprint(self.owner,#PRINT_HIGH,"Desired angle: ");
 		stemp = vtos(atemp);
@@ -2207,8 +2214,6 @@ void() Rocket_Track_Dot =
 		//It looks nicer, and the prevailence of broadband means that people can handle this now.
 		//More importantly, the gameplay control of steering rockets is a lot more manageable now.
 		//Note: We randomly think every 0.01 to 0.03 seconds on each rocket, to break up network load with cluster rox.
-		self.nextthink = time + 0.01*floor(1+3*random());
-		self.think = Rocket_Track_Dot;
 	}
 };
 
@@ -2270,8 +2275,8 @@ void() W_FireRocket =
 	else
 		newmis.velocity = newmis.velocity * 600; //Cluster and no sight
 	newmis.angles = vectoangles(newmis.velocity);
-	newmis.angles_x = anglemod(newmis.angles_x * -1); //WTF, pitch is inverted coming out of vectoangles?
-	newmis.finalangle = newmis.angles; //WK 5-15-7 Save our angle for laser tracking fun.
+	newmis.finalangle = newmis.angles;
+	newmis.finalangle_x = anglemod(newmis.finalangle_x * -1); //WTF, pitch is inverted coming out of vectoangles?
 
 	newmis.touch = T_MissileTouch;
 
