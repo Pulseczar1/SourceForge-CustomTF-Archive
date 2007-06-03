@@ -1129,8 +1129,8 @@ void() TeamFortress_GrenadePrimed;
 // Primes a grenade of the type corresponding to the player's impulse
 void() TeamFortress_PrimeGrenade =
 {
-	local float gtype;
-	local string gs, ptime;
+	local float gtype,gsd;
+	local string st, gs, ptime;
 	local entity tGrenade;
 
 	/*if (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) {
@@ -1144,8 +1144,16 @@ void() TeamFortress_PrimeGrenade =
 		return;
 	}
 
+	// WK 6/1/7 Add in serverinfo for grenade spam delay, "gsd"
+#define GRENADE_SPAM_DELAY 2.2
+	gsd = #GRENADE_SPAM_DELAY;
+	st = infokey(world,"gsd");
+	if (st != string_null) {
+		gsd = stof(st);
+		if (gsd < 0 || gsd > 6) gsd = #GRENADE_SPAM_DELAY;
+	}
 	// WK 2/8/7 You can only prime one grenade per 3 seconds
-	if (time < self.last_grenade_primed + 2.2) //WK 3/2/7 was 3s
+	if (time < self.last_grenade_primed + gsd)
 	{
 		//sprint(self,#PRINT_HIGH,"You can only prime one grenade every 3 seconds\n");
 		return;
@@ -1509,26 +1517,19 @@ void() TeamFortress_GrenadePrimed =
 		newmis.avelocity = '100 300 100';
 		setmodel (newmis, "progs/biggren.mdl");
 	}
-//CH flares no longer used
 	else if (self.weapon == #GR_TYPE_FLARE)
 	{
 		newmis.movetype = #MOVETYPE_FLY;
-        newmis.touch = FlareGrenadeTouch;
+        	newmis.touch = FlareGrenadeTouch;
 		newmis.think = FlareGrenadeExplode;
-		//newmis.skin  = 0;//TF_FLARE_OFF;
-		newmis.avelocity = '0 0 0';
-        
-
-        makevectors (user.v_angle);
-	    newmis.velocity = v_forward;
-        //newmis.velocity = aim(user, 10000);
-    	newmis.velocity = newmis.velocity * 2000;
-        
-//        newmis.velocity = newmis.velocity * 4;
-        //newmis.velocity_z = 0;
+		newmis.weapon = #GR_TYPE_FLARE; //WK 6/1/7 Needed for HEAT_SEEKING rox
+		newmis.avelocity = '0 0 0';        
+        	makevectors (user.v_angle);
+		newmis.velocity = v_forward;
+		newmis.velocity = newmis.velocity * 2000;
 		setmodel (newmis, "progs/flarefly.mdl");
-        newmis.skin=0;
-        newmis.has_holo=0; //flag turned on when explodes
+		newmis.skin=0;
+		newmis.has_holo=0; //flag turned on when explodes
 	}
 	else if (self.weapon == #GR_TYPE_GAS)
 	{
@@ -1809,6 +1810,10 @@ void(entity p) TeamFortress_SetSpeed =
 			p.maxspeed = p.maxspeed + 200;
 	}
 
+	//WK Check to see if we're psionically carrying something
+	if (p.job & #JOB_PSION && p.job & #JOB_ACTIVE)
+		p.maxspeed = p.maxspeed / 2;
+
     // OfN - Speed aura miltiplies our final speed
     if (p.aura == #AURA_SPEED)
         p.maxspeed = p.maxspeed * #SPEEDAURA_FACTOR;
@@ -2069,6 +2074,7 @@ void() TeamFortress_SetEquipment =
 		self.tf_items = 0;
 		self.tf_items_flags = 0;
 		self.cutf_items = 0;
+		self.cutf2_items = 0;
 		self.done_custom = 0;
 
 		//Clear job without losing track of demons, etc.
@@ -2216,7 +2222,8 @@ void() TeamFortress_SetEquipment =
 			self.armorclass = self.armorclass | #AT_SAVEFIRE;
 
 		//Support for the "Auto" class itemry
-		if (self.tf_items & #NIT_AUTOSCANNER || self.weapons_carried & #WEAP_MEDIKIT || self.tf_items & #NIT_AUTOID) {
+		//WK 6/1/7 Added Psion auto-uncover timer
+		if (self.tf_items & #NIT_AUTOSCANNER || self.weapons_carried & #WEAP_MEDIKIT || self.tf_items & #NIT_AUTOID || self.job & #JOB_PSION) {
 				automan = spawn ();
 				automan.classname = "timer";
 				automan.nextthink = time + 2;
@@ -2863,31 +2870,31 @@ void() TeamFortress_RemoveTimers =
 
 	//CH - TOFIX: IS THIS WHAT CAUSES GRENS TO BE TRHOWN AFTER RESPAWNING??
 	//stuffcmd (self, "throwgren\n"); //Throw any grenades
-    TeamFortress_ThrowGrenade();
+	TeamFortress_ThrowGrenade();
 
-    if (self.tfstate & #TFSTATE_GRENTHROWING)
-    {
-        oself = self;
+	if (self.tfstate & #TFSTATE_GRENTHROWING)
+	{
+		oself = self;
 
-        te = find(world,classname,"grenade");
+		te = find(world,classname,"grenade");
 
-        while (te)
-        {
-            if (te.owner == oself)
-            if (te.think == TeamFortress_GrenadePrimed)
-            {
-                self = te;
-                TeamFortress_GrenadePrimed();
-            }
+		while (te)
+		{
+			if (te.owner == oself)
+			if (te.think == TeamFortress_GrenadePrimed)
+			{
+				self = te;
+				TeamFortress_GrenadePrimed();
+			}
 
-            te = find(te,classname,"grenade");
-        }
+			te = find(te,classname,"grenade");
+		}
 
-        self = oself;
-    }
+		self = oself;
+	}
 	//stuffcmd (self, "impulse 169\n"); //Stop laying dets
 
-    TeamFortress_DetpackStop(#FALSE);
+	TeamFortress_DetpackStop(#FALSE);
 
 	// Clear the sniper's aiming
 	if (self.tfstate & #TFSTATE_AIMING)
@@ -2915,6 +2922,21 @@ void() TeamFortress_RemoveTimers =
 			}
 			te = find(te, classname, "timer");
 		}
+		else if (te.netname == "haulingtimer") { //Or we can clean up the psion timer directly.
+			if (te.owner == self) {
+				//Clear active flag, which will make the timer drop the item without blowing
+				//self.job = self.job - (self.job & #JOB_ACTIVE);
+				self.job = self.job | #JOB_TIRED; //Force the drop
+				oself = self;
+				self = te;
+				if (self.think != SUB_Remove)
+					self.think();
+				self = oself;
+				te.think = SUB_Remove;
+				te.nextthink = time + 0.01;
+			}
+			te = find(te, classname, "timer");
+		}
 		else if (te.owner == self)
 		{
 			//WK Fix our new little flash timer
@@ -2937,11 +2959,11 @@ void() TeamFortress_RemoveTimers =
 				else 
 					te = find(te, classname, "timer");
 			}
-            else if (te.netname == "alias") // Ignore alias timer
-            {
-                // do nothing, just skip it (IT MUST NOT BE REMOVED EVER)
-                te = find(te, classname, "timer");
-            }
+			else if (te.netname == "alias") // Ignore alias timer
+			{
+				// do nothing, just skip it (IT MUST NOT BE REMOVED EVER)
+				te = find(te, classname, "timer");
+			}
 			else
 			{
 				dremove(te);
@@ -3627,8 +3649,6 @@ void() TeamFortress_ExplodePerson =
 		newmis.avelocity = '0 300 0';
 		setmodel (newmis, "progs/biggren.mdl");
 	}
-//CH no flare 
-//OfN why??
 	else if (self.weapon == #GR_TYPE_FLARE)
 	{
 		//sprint(self.owner, #PRINT_HIGH, "Flare lit.\n");

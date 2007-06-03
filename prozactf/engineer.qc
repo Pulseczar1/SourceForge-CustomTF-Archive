@@ -245,152 +245,10 @@ void() EMPGrenadeExplode =
 	while (te)
 	{	
 		if (!CanDamage(te,self)) // OfN
-        {
-            #ifdef EMP_DISCHARGE // TODO: Make this work when enabled
-            if (te.classname == "building_sentrygun" || te.classname == "building_tesla")
-            { // Sentries and teslas
-                if (te.health > 0)
-                {
-                    if (te.classname == "building_tesla")
-                        sprint(self.owner,#PRINT_HIGH,"Your psionic ",desc," has disabled ",te.real_owner.netname,"'s tesla!\n");
-                    else
-                        sprint(self.owner,#PRINT_HIGH,"Your psionic ",desc," has disabled ",te.real_owner.netname,"'s sentry gun!\n");
-
-                    sound(te, #CHAN_MISC, "effects/crunch.wav",1,#ATTN_NORM);
-
-                    SpawnSprite(1,#SPRITE_ABLAST,te.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
-                    
-                    if (te.tfstate & #TFSTATE_PSIONIZED) // Already affected
-                    {
-                        // find the timer for psionics
-                        local entity psion;
-
-                        psion = find(world,netname,"psionictimer");
-
-                        while (psion != world)
-                        {
-                            if (psion.owner == te) 
-                            {
-                                // reset time
-                                ttime = psionicstime;
-
-                                // ICE'd stuff lowers the time of effect
-                                if (te.all_active & #IMPROVED_SIX) // ICE3
-                                    ttime = psionicstime - (psionicstime*0.6);
-                                else if (te.all_active & #IMPROVED_FIVE) // ICE2
-                                    ttime = psionicstime - (psionicstime*0.4);
-                                else if (te.all_active & #IMPROVED_TWO) // ICE1
-                                    ttime = psionicstime - (psionicstime*0.2);
-
-                                psion.nextthink = time + ttime;
-                            }
-
-                            psion = find(psion,netname,"psionictimer");
-                        }                    
-
-                        if (te.classname == "building_tesla")
-                            sprint(te.real_owner,#PRINT_HIGH,"Your tesla accepts another psionic discharge\n");
-                        else
-                            sprint(te.real_owner,#PRINT_HIGH,"Your sentry gun accepts another psionic discharge\n");
-
-                    }
-                    else // not affected yet
-                    {
-                        // create psionic timer
-                        newmis = spawn();
-
-                        newmis.classname = "timer";
-                        newmis.netname = "psionictimer";
-                        newmis.team_no = self.owner.team_no;
-                        newmis.owner = te;
-                        newmis.think = PsionicTimer;
-                        
-                        ttime = psionicstime;
-
-                        // ICE'd stuff lowers the time of effect
-                        if (te.all_active & #IMPROVED_SIX) // ICE3
-                            ttime = psionicstime - (psionicstime*0.6);
-                        else if (te.all_active & #IMPROVED_FIVE) // ICE2
-                            ttime = psionicstime - (psionicstime*0.4);
-                        else if (te.all_active & #IMPROVED_TWO) // ICE1
-                            ttime = psionicstime - (psionicstime*0.2);
-
-                        newmis.nextthink = time + ttime;
-
-                        te.tfstate = te.tfstate | #TFSTATE_PSIONIZED;
-
-                        if (te.classname == "building_tesla")
-                            sprint(te.real_owner,#PRINT_HIGH,"Your tesla receives a psionic discharge!\n");
-                        else
-                            sprint(te.real_owner,#PRINT_HIGH,"Your sentry gun receives a psionic discharge!\n");
-                    }
-                }
-            }
-            else if (te.classname == "building_fieldgen") // psionics disable the fieldgens for a while
-            {
-                if (te.health > 0)
-                if (te.martyr_enemy != world)
-                {
-                    // ice effect reduction
-                    local float icelevel, disabletime, tmp;
-                
-                    icelevel = FieldIsImproved(te.martyr_enemy);
-
-                    if (icelevel & #IMPROVED_SIX)
-                        icelevel = 3;
-                    else if (icelevel & #IMPROVED_FIVE)
-                        icelevel = 2;
-                    else if (icelevel & #IMPROVED_TWO)
-                        icelevel = 1;
-                    else icelevel = 0;
-
-                    tmp = 2.5 + random() * 2.5;
-
-                    disabletime = tmp - ((icelevel / 3) * tmp * 0.5);
-                        
-                    DisableField(te.martyr_enemy, disabletime);
-
-                    SpawnSprite(1,#SPRITE_ABLAST,te.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
-
-                    sound(te, #CHAN_MISC, "effects/crunch.wav",1,#ATTN_NORM);
-
-                    sprint(self.owner,#PRINT_HIGH,"your psionic ",desc," disabled the field generator!\n");
-
-                    sprint(te.real_owner,#PRINT_HIGH,"your field generator has received a psionic discharge!\n");
-                }
-            }
-            else if (te.classname == "force_field") // psionics disable the fieldgens of a field for a shorter time
-            {
-                // ice handling
-                local float icelevel, disabletime, tmp;
-                
-                icelevel = FieldIsImproved(te);
-
-                if (icelevel & #IMPROVED_SIX)
-                    icelevel = 3;
-                else if (icelevel & #IMPROVED_FIVE)
-                    icelevel = 2;
-                else if (icelevel & #IMPROVED_TWO)
-                    icelevel = 1;
-                else icelevel = 0;
-
-                tmp = 2 + random() * 2;
-
-                disabletime = tmp - ((icelevel / 3) * tmp * 0.5);
-                
-                DisableField(te, disabletime);
-
-                SpawnSprite(2,#SPRITE_ABLAST,te.origin,'0 0 0',#SPRITEMOVE_UP,0.2);            
-
-                sprint(self.owner,#PRINT_HIGH,"your psionic ",desc," disabled the force field!\n");
-
-                sprint(te.real_owner,#PRINT_HIGH,"your force field has been shuted down by psionics!\n");
-            }
-            else
-            #endif
-                SUB_Null();
-        }
-        else if (te.touch == ammo_touch || te.touch == weapon_touch) // Ammo/Weapon?
+		{
+			SUB_Null();
+		}
+		else if (te.touch == ammo_touch || te.touch == weapon_touch) // Ammo/Weapon?
 		{
 			// Make sure it isn't picked up in the next second
 			te.solid = #SOLID_NOT;
@@ -422,15 +280,15 @@ void() EMPGrenadeExplode =
 		// Building?
 		else if (IsBuilding(te)) {
 			total_exp = total_exp + 120;
-			TF_T_Damage(te,self,self.owner, 120, 0, #TF_TD_OTHER);
+			TF_T_Damage(te,self,self.owner, 120, 0, #TF_TD_EXPLOSION);
 		}
 		// Ammobox?
 		else if (te.classname == "ammobox")
 		{
 			expsize = 0;
-			expsize = expsize + (te.ammo_shells * 0.75);
-			expsize = expsize + ((te.ammo_rockets * 0.75) * 2);
-			expsize = expsize + ((te.ammo_cells * 0.75) * 2);
+			expsize = expsize + (te.ammo_shells * 0.5); //WK .75
+			expsize = expsize + ((te.ammo_rockets * 0.5) * 2); //WK .75
+			expsize = expsize + ((te.ammo_cells * 0.5) * 2); //WK .75
 
 			if (expsize > 0)
 			{
@@ -461,10 +319,11 @@ void() EMPGrenadeExplode =
 		{
 			expsize = 0;
 			// calculate explosion size
-			expsize = expsize + (te.ammo_shells * 0.75);
-			expsize = expsize + ((te.ammo_rockets * 0.75) * 2);
-			if (!(te.weapons_carried & #WEAP_SPANNER || te.touch == BackpackTouch))
-				expsize = expsize + (te.ammo_cells * 0.75);
+			// //WK 6/1/7 Reduced EMP damage from 75% ammo to 50% ammo, it was doing way too much damage
+			expsize = expsize + (te.ammo_shells * 0.5); //WK .75
+			expsize = expsize + ((te.ammo_rockets * 0.5) * 2); //WK .75
+			if (!(te.cutf_items & #CUTF_SENTRYGUN || te.tf_items & #NIT_TESLA || te.weapons_carried & #WEAP_SPANNER || te.touch == BackpackTouch)) //WK 6/1/7 Added in sentrygun and tesla to match the below
+				expsize = expsize + (te.ammo_cells * 0.5); //WK .75
 
 			if (expsize > 0)
 			{
@@ -479,10 +338,10 @@ void() EMPGrenadeExplode =
 					TF_T_Damage (te, self, self.owner, expsize, 0, #TF_TD_EXPLOSION);
 
 					// Remove ammo
-					te.ammo_shells = ceil(te.ammo_shells * 0.25);
-					te.ammo_rockets = ceil(te.ammo_rockets * 0.25);
-					if (!(te.cutf_items & #CUTF_SENTRYGUN || te.tf_items & #NIT_TESLA))
-						te.ammo_cells = ceil(te.ammo_cells * 0.25);
+					te.ammo_shells = ceil(te.ammo_shells * 0.5); //WK .25
+					te.ammo_rockets = ceil(te.ammo_rockets * 0.5); //WK .25
+					if (!(te.cutf_items & #CUTF_SENTRYGUN || te.tf_items & #NIT_TESLA || te.weapons_carried & #WEAP_SPANNER)) //WK 6/1/7 EMP Bugfix -- Added in spanner to match above
+						te.ammo_cells = ceil(te.ammo_cells * 0.5); //WK .25
 
 					if (te.classname=="player")
                     {
@@ -1278,13 +1137,26 @@ void() TeamFortress_FinishedBuilding =
 		}
 		oldself.has_teleporter = 0; //CH for frag related upgrades
 		if (!(self.weapons_carried & #WEAP_SPANNER)) { //No spanner
-			oldself.ammo_shells = 1;
-			oldself.ammo_nails = 2;
-			oldself.ammo_rockets = 1;
-			oldself.has_sentry = oldself.has_sentry - 4; //Take away 3
-			oldself.max_health = 225;
-			oldself.ammo_cells = #MAXCELLS1; //Initial ammo allocation
-			oldself.maxammo_cells = #MAXCELLS1;
+			//WK 6/1/7 Make people that buy the tesla upgrade but no spanner get a better default tes
+			if (self.tf_items & #NIT_TESLA_UPGRADE) {
+				oldself.ammo_shells = 2;
+				oldself.ammo_nails = 2;
+				oldself.ammo_rockets = 2;
+				oldself.max_health = 350; //Power Supply Level 2
+				oldself.ammo_cells = #MAXCELLS2; //Initial ammo allocation
+				oldself.maxammo_cells = #MAXCELLS2;
+				oldself.tf_items = oldself.tf_items | #NIT_SCANNER; //Improved Targeter
+				oldself.has_tesla = 1; //Misc Upgrades Left
+			}
+			else {
+				oldself.ammo_shells = 1;
+				oldself.ammo_nails = 2;
+				oldself.ammo_rockets = 1;
+				oldself.max_health = 200;
+				oldself.ammo_cells = #MAXCELLS1; //Initial ammo allocation
+				oldself.maxammo_cells = #MAXCELLS1;
+			}
+			oldself.has_sentry = 0; //WK
 		}
 		oldself.health = oldself.max_health;
 		oldself.waitmin = (oldself.ammo_shells + 2) * (oldself.ammo_nails + 2);
@@ -1294,10 +1166,10 @@ void() TeamFortress_FinishedBuilding =
 		oldself.lip   = 0; //WK How many tinkers have been done
 		modelindex_tesla = oldself.modelindex; //CH
 
-        oldself.all_active=0; // OfN - reset HACKER improvements
-        oldself.is_malfunctioning = 0;
-        oldself.has_fieldgen = time;
-        oldself.is_haxxxoring=0; // isnt flying
+		oldself.all_active=0; // OfN - reset HACKER improvements
+		oldself.is_malfunctioning = 0;
+		oldself.has_fieldgen = time;
+		oldself.is_haxxxoring=0; // isnt flying
 	}
 	else if (oldself.weapon == #BUILD_TELEPORTER)
 	{

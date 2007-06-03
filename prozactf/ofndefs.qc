@@ -111,7 +111,7 @@
 #define GREMLIN_MAX_HP           2000*/
 
 #define OTR_DMG_FACTOR        1.15 // Damage an otr bullet does respect a normal one
-#define OTR_AMMO_COST         3 // Shells an OTR bullet takes when used
+#define OTR_AMMO_COST         2 // Shells an OTR bullet takes when used
 
 #define SCRAG_DMG              42 // damage the scrag does // was 29
 #define WAYPOINT_LIFE         240 // 120 after this amount of seconds any unused waypoint will be removed
@@ -280,7 +280,7 @@
 #define MINE_NAPALM_BURNTIMES 12
 #define MINE_PSIONICS_TIME 6.5
 
-#define NAILGREN_DMG  20 // <-- original value was 12
+#define NAILGREN_DMG  12 //WK 6/1/7 reset to original value //20
 
 #define HACKER_ATTEMPTRATE 1
 
@@ -311,7 +311,6 @@
 #endif
 
 //#define FIXES_FOR_FLOATINGBUILDS
-#define REALISTIC_SHOTGUN_PARTS
 
 #define SUICIDE_RESPAWN_DELAY 10 // If ppl complain, set it to 8 :P Original was 5
 

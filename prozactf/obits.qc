@@ -969,10 +969,12 @@ void(entity targ, entity attacker) ClientObituary =
                     else
                         deathstring = " learns something about spanners and force fields..\n";
                 }
-                else if (deathmsg == #DMSG_NAPALM)
-                    deathstring = " burns with his own napalm\n";
-                else if (deathmsg == #DMSG_TELEOUTWORLD)
-                    deathstring = " is teleported outside the world!\n";
+				else if (deathmsg == #DMSG_NAPALM)
+					deathstring = " burns with his own napalm\n";
+				else if (deathmsg == #DMSG_EXPLOSIVE_SHOT)
+					deathstring = " incinerates himself with his own explosive shot\n";
+				else if (deathmsg == #DMSG_TELEOUTWORLD)
+					deathstring = " is teleported outside the world!\n";
 				else if (deathmsg == #DMSG_MAUSER)
 					deathstring = " assassinated himself!\n";
 				else if (deathmsg == #DMSG_DAEDALUS)
@@ -983,6 +985,8 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " broke his own arms!\n";
 				else if (deathmsg == #DMSG_TKD)
 					deathstring = " kicked himself in the face!\n";
+				else if (deathmsg == #DMSG_PSION)
+					deathstring = " exploded his own brain\n";
 				else if (deathmsg == #DMSG_AXE)
 					deathstring = " drove an axe through his own head!\n";
 				else if (deathmsg == #DMSG_BACKSTAB)
@@ -1673,6 +1677,11 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " had his arms broken by ";
 					deathstring2 = "\n";
 				}
+				else if (deathmsg == #DMSG_PSION)
+				{
+					deathstring = " was lobotomized by ";
+					deathstring2 = "'s psionic mind blast\n";
+				}
 				else if (deathmsg == #DMSG_TKD)
 				{
 					if (rnum <= 0.15) {
@@ -1815,6 +1824,24 @@ void(entity targ, entity attacker) ClientObituary =
 				{
 					deathstring = " collects ";
 					deathstring2 = "'s bullet spray.\n";
+				}
+				else if (deathmsg == #DMSG_SHINIGAMI)
+				{
+					deathstring = " is harvested by ";
+					deathstring2 = "'s death-god bullet.\n";
+				}
+				else if (deathmsg == #DMSG_EXPLOSIVE_SHOT)
+				{
+					if (rnum < 0.5)
+					{
+						deathstring = " is exploded by ";
+						deathstring2 = "'s phosphorus bullets.\n";
+					}
+					else
+					{
+						deathstring = " is incinerated by ";
+						deathstring2 = "'s explosive shot.\n";
+					}
 				}
 				else if (deathmsg == #DMSG_ASSAULTCANNON)
 				{
@@ -4162,24 +4189,24 @@ void(entity targ, entity attacker) ClientObituary =
 			else if (targ.classname == "building_tesla" && attacker == targ)
 			{
 				if (deathmsg == #DMSG_EARTHQUAKE)
-                {
-                    bprint(#PRINT_MEDIUM,"tesla is destroyed by the earthquake!\n");
-                    return;
-                }
+				{
+					bprint(#PRINT_MEDIUM,"tesla is destroyed by the earthquake!\n");
+					return;
+				}
+	
+				if (deathmsg == #DMSG_STORM)
+				{
+					bprint(#PRINT_MEDIUM,"tesla is destroyed by the storm lightning!\n");
+					return;
+				}
 
-                if (deathmsg == #DMSG_STORM)
-                {
-                    bprint(#PRINT_MEDIUM,"tesla is destroyed by the storm lightning!\n");
-                    return;
-                }
-
-                bprint (#PRINT_MEDIUM, "tesla coil destroys itself.\n");
+				bprint (#PRINT_MEDIUM, "tesla coil destroys itself.\n");
 				return;
 			}
 			else if (targ.classname == "building_tesla")
 				bprint (#PRINT_MEDIUM, "tesla sentry lost the battle against");
-            else if (targ.classname == "building_sensor")
-				bprint (#PRINT_MEDIUM, "motion sensor was fucked up by");
+			else if (targ.classname == "building_sensor")
+				bprint (#PRINT_MEDIUM, "motion sensor was blown up by");
    			else if (targ.classname == "building_fieldgen")
 				bprint (#PRINT_MEDIUM, "field generator was destroyed by");
 			else

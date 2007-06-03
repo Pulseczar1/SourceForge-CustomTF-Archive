@@ -25,7 +25,9 @@ void() KracGrenadeExplode;
 void(entity bastard,float threshold) createBastard;
 void() UseJobSkill; //Function for handling professions
 void (entity targ,float pain) RevealThief;
-
+float (entity thing) canairpush;
+void() PsionicTimer;
+void() player_run;
 
 //Extern
 void (vector org, entity death_owner) spawn_tdeath;
@@ -197,7 +199,7 @@ void() JobThief =
 ** Sprints at +200 speed for a while, then has to rest (half speed)
 */
 #define PHASE1 5
-#define PHASE2 5
+#define PHASE2 3
 #define PHASE3 5
 void() RunnerThink =
 {
@@ -557,8 +559,9 @@ void() JobBerserker =
 //So we don't have to do error checking on those situations
 //Four special cases, Sniper Rifle, Medikit, AC and Grapple, have side effects
 // when you remove them. Need special cases to handle their theft
+//WK 6/1/7 CANT_ATTACK_TIME lowered from 5s, since it was kind of lame, since you have no weapon anyway.
 #define DISARM_TIME 10
-#define CANT_ATTACK_TIME 5
+#define CANT_ATTACK_TIME 3
 #define HIT_DELAY 8
 #define MISS_DELAY 1
 void() JudokaRearm =
@@ -667,6 +670,19 @@ void() JobJudoka =
 
 	if (trace_ent.classname == "player" && !Teammate(trace_ent.team_no, self.team_no) && trace_ent.playerclass != #PC_UNDEFINED)
 	{
+		if (trace_ent.current_weapon == #WEAP_SNIPER_RIFLE && trace_ent.cutf2_items & #CUTF2_SHINIGAMI) {
+			sprint(self,#PRINT_HIGH,"He is wielding the Shinigami, and cannot be disarmed!\n");
+			sprint (trace_ent, #PRINT_HIGH, self.netname);
+			sprint (trace_ent, #PRINT_HIGH, " attempted to disarm you, but the power of the Shinigami protected you!\n");
+			return;
+		}
+		if ((trace_ent.current_weapon == #WEAP_SNIPER_RIFLE || trace_ent.current_weapon == #WEAP_AUTO_RIFLE) && self.cutf2_items & #CUTF2_SHINIGAMI) {
+			sprint(self,#PRINT_HIGH,"The Shinigami prevent you from stealing a second rifle!\n");
+			sprint (trace_ent, #PRINT_HIGH, self.netname);
+			sprint (trace_ent, #PRINT_HIGH, " attempted to disarm you, but the power of the Shinigami protected you!\n");
+			return;
+		}
+
 		if (self.is_undercover) //Taking someone's weapon should give you away
 			Spy_RemoveDisguise(self);
 
@@ -839,12 +855,12 @@ void() JobTKD =
 	temp_velocity_z = 0;
 	playerspeed = vlen(temp_velocity);
 
-	if (playerspeed < 150) { //High jump
+	if (playerspeed < 180) { //High jump
 		TKD_Brake.nextthink = time + #TKDHIGHJUMPTIME;
 		self.job_finished = time + #TKDHIGHJUMPRESET; //High jumps are less tiring
 
 		//We allow ninja-style double jumps, but only once.
-		if (!(self.flags & #FL_ONGROUND)) {
+		if (!(self.flags & #FL_ONGROUND) && !(self.waterlevel > 0)) {
 			self.job_finished = self.job_finished + 1;
 			self.velocity_z = 0;
 			//The following flag gets cleared in player_think when we land on the ground...
@@ -889,8 +905,342 @@ void() JobTKD =
 	self.flags = self.flags - (self.flags & #FL_ONGROUND);	
 };
 
+/*
+==The Psion==
+The Psion job has three levels, of increasing power.
+
+Level 1:
+Passive Ability: Mind Probe. Psions automatically uncover all enemy spies and thieves within 15 feet. Passive Ability: Mind Shield. Spy/Psions, on the other hand, are immune to being automatically uncovered, even by motion sensors. Active ability: Mind Blast. Once per 10 seconds you can mind blast an opponent ahead of you, psionizing them for 1 second (+.5s per  additional level of the job), making them unable to attack or perform any  actions.
+
+Level 2: Passive Ability: Uncovering radius increases to 30 feet. Active Ability: Telekinetic Wave. When you hit skill, on top of the mind blast, you emit a telekinetic explosion, flinging away all objects near you (similar to using the airfist). If you face a rocket or similar projectile head-on, it will be reflected perfectly back at its owner. Active Ability: Telekinesis (triggers at the same time as the Telekinetic Wave). If you target a detpack, you can pick it up and move slowly with it. You take double damage while using telekinesis, and if you die while carrying it, the detpack explodes harmlessly. Both picking up and dropping a detpack damage its sensitive circuits, increasing the time before detonation.
+
+Level 3: Passive Ability: Uncovering radius increases to 45 feet. Active Ability: Telekinetic Wave II. The radius of your Telekinetic Wave improves by 50%. Active Ability: Telekinesis II. You can pick up buildings and slowly walk with them. You take double damage while hauling buildings, and if you die, they explode (if they are friendly). If the buildings are killed while you are carrying them, your head may explode from the backlash.
+
+*By default, you can only move your own buildings and enemy buildings.* To allow friendly psions to move your buildings, type 'setinfo psi on' at the console. Type 'setinfo psi off' to disable this. You cannot move turrets, as they are rooted into the ceiling.
+*/
+
+//.owner = self
+//.oldenemy = hauling target
+//BUG: This isn't working perfectly for sentryguns right now, especially when you manually det a sentrygun
+//   the psion doesn't die from it.
+//The code which handles people dying and destroying the other pair is buggy, but the psion is functional.
+//It works except in weird dying situations like suicide or detdispenser
+void() HaulingTimer = 
+{
+	local float dropit,boom,dist,af_det_delay;
+	local vector target_loc,target_vel;
+
+	deathmsg = #DMSG_PSION;
+
+	//There's only two ways to drop it without killing both, by manually cancelling, or leaving range
+	dropit = 0; //Setting this flag means we will drop the object this round.
+	boom = 1; //Setting this flag means that we will blow up both of us.
+
+	//Figure out if we have to drop it
+	if (!self.owner) dropit = 1;
+	else {
+		if (!(self.owner.job & #JOB_ACTIVE)) {
+			dropit = 1;
+			boom = 0;
+		}
+		if (self.owner.health <= 0) dropit = 1;
+	}
+	if (!self.oldenemy) dropit = 1;
+	else {
+		if (self.oldenemy.takedamage && self.oldenemy.health <= 0) dropit = 1;
+		if (IsBuilding(self.oldenemy) && self.oldenemy.tf_items & #NIT_TURRET) dropit = 1; //Blow up if they turret what we're carrying
+		dist = vlen(self.owner.origin - self.oldenemy.origin);
+		if (dist > 600) { 
+			dropit = 1; //Max range of 600 for TK
+			boom = 0; //Don't allow cheap build killing
+		}
+	}
+
+	if (self.owner.job & #JOB_TIRED) { //Set only when we die, during RemoveTimers, to force a drop
+		self.owner.job = self.owner.job - #JOB_TIRED; //Clear flag
+		dropit = 1;
+		boom = 1;
+	}
+
+	if (dropit) {
+		//Lower the carried thing back to ground.
+		if (self.oldenemy) {
+			self.oldenemy.movetype = #MOVETYPE_FLY;
+			self.oldenemy.velocity = '0 0 -150'; //So we let it fall
+
+			//Handle 2-part sentryguns
+			if (self.oldenemy.classname == "building_sentrygun") {
+				if (self.oldenemy.trigger_field) {
+					self.oldenemy.trigger_field.velocity = self.oldenemy.velocity; //Parallel velocity
+					if (pointcontents(self.oldenemy.origin - '0 0 8') == #CONTENT_EMPTY)
+							setorigin(self.oldenemy.trigger_field,self.oldenemy.origin - '0 0 8');
+				}
+			} else if (self.oldenemy.classname == "detpack") {
+				//WK Dropping a det messes up its circuits
+				af_det_delay = 2 + floor(5*random());
+
+				self.oldenemy.nextthink = self.oldenemy.nextthink + af_det_delay; //WK Scramble the detpack's timer. :)
+				self.oldenemy.oldenemy.health = self.oldenemy.oldenemy.health + af_det_delay;
+				sprint(self,#PRINT_HIGH,"You damage the detpack circuits\n");
+				if (self != self.oldenemy.owner) 
+					sprint(self.oldenemy.owner,#PRINT_HIGH,"Your detpack circuits have been damaged!\n");
+				self.oldenemy.avelocity = '0 0 0';
+				self.oldenemy.angles = '90 0 0';
+				self.oldenemy.movetype = #MOVETYPE_BOUNCE;
+			}
+		}
+
+		if (boom) { //If one person dies, both die
+			if (self.owner) {
+				if (self.owner.health > 0 && self.owner.takedamage) { //Explode our brain
+					TF_T_Damage(self.owner, self.owner, self.owner, self.owner.health + 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
+				}
+			}
+			if (self.oldenemy) {
+				if (IsBuilding(self.oldenemy)) //Blow up only friendly buildings we're carrying
+				{
+					//bprint(#PRINT_HIGH,"Blow the build!\n");
+					if (self.oldenemy.health > 0 && self.oldenemy.takedamage && Teammate(self.oldenemy.real_owner.team_no,self.owner.team_no))
+							TF_T_Damage(self.oldenemy, self.oldenemy, self.oldenemy, self.oldenemy.health + 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
+				}
+				else if (self.oldenemy.classname == "detpack") {
+					//bprint(#PRINT_HIGH,"Blow the detpack!\n");
+					// This code handles disarming a detpack
+					if (self.oldenemy.weaponmode == 1)	// Detpack was being disarmed
+					{
+						self.oldenemy.enemy.tfstate = self.oldenemy.enemy.tfstate - (self.oldenemy.enemy.tfstate & #TFSTATE_CANT_MOVE);
+						#ifdef QUAKE_WORLD
+							TeamFortress_SetSpeed(self.oldenemy.enemy);
+						#else
+							self.oldenemy.enemy.pausetime = time;		
+						#endif	
+						dremove(self.oldenemy.oldenemy);  	 // CountDown
+						dremove(self.oldenemy.observer_list); //	Disarm timer
+					}
+					else { //Not being disarmed
+						dremove(self.oldenemy.oldenemy);  	 // CountDown
+					}
+					self.oldenemy.think = BecomeExplosion;
+					self.oldenemy.nextthink = time + 0.1;
+				}
+				//else
+				//	bprint(#PRINT_HIGH,"Psion: Unknown entity being carried.\n");
+			}
+		}
+
+
+		if (self.owner) { //Clean up job flags and speed
+			self.owner.job = self.owner.job - (self.owner.job & #JOB_ACTIVE);
+			TeamFortress_SetSpeed(self.owner);
+		}
+		self.oldenemy = self.owner = world; //Clean up
+		self.think = SUB_Remove; //Kill the timer
+	}
+	//No drop, so haul it around
+	else {
+		self.oldenemy.movetype = #MOVETYPE_FLY;
+
+		makevectors(self.owner.v_angle);
+		target_loc = self.owner.origin + v_forward*60 + v_up*15; //Goal is up ahead of us
+		dist = vlen(target_loc - self.oldenemy.origin);
+		target_vel = normalize (target_loc - self.oldenemy.origin); //Move it toward target location
+		if (dist < 150)
+			target_vel = target_vel * dist;
+		else
+			target_vel = target_vel * 150;
+		self.oldenemy.velocity = target_vel;
+
+		if (self.oldenemy.classname == "building_sentrygun") { //Handle two-part sentries	
+//.trigger_field is the base
+//.oldenemy is the turret
+			if (self.oldenemy.trigger_field) {
+				//The top is always at base.origin + '0 0 8';
+				self.oldenemy.trigger_field.velocity = self.oldenemy.velocity; //Parallel velocity
+
+				//Try to repair connection if it gets broken
+				dist = vlen(self.oldenemy.origin - self.oldenemy.trigger_field.origin);
+				if (dist > 10) {
+					if (pointcontents(self.oldenemy.origin - '0 0 8') == #CONTENT_EMPTY)
+						setorigin(self.oldenemy.trigger_field,self.oldenemy.origin - '0 0 8');
+				}
+			}
+		}
+	
+	}
+	self.nextthink = time + 0.01;
+};
+
 void() JobPsion =
 {
+	local entity head,haul_target,oself;
+	local vector dir,dir2;
+	local float radius,dist,dotproduct,grabbed,ever_grabbed;
+
+	radius = 200; //Level 1 Psion has smallest range
+	if (self.job & #JOB_EXTRA1) radius = 300; //Level 2 Psion increases range
+	else if (self.job & #JOB_EXTRA2) radius = 400; //Level 3 Psion increases range
+		
+	deathmsg = #DMSG_PSION;
+	ever_grabbed = 0; //We can only pick up one object. Set this when we have.
+
+	//We burst and see what we get
+	head = findradius(self.origin, radius);
+	while (head) {
+		dist = vlen(self.origin-head.origin);
+		traceline (self.origin, head.origin, #TL_BSP_ONLY, self);
+		if (trace_fraction == 1.0) { //Need full line of sight to target
+			if (head.classname != "player" || (!Teammate(self.team_no,head.team_no) && head.takedamage && head.health > 0 && head.playerclass != #PC_UNDEFINED))
+			{
+				makevectors(self.v_angle);
+				dir = normalize(v_forward);
+				dir2 = normalize(head.origin - self.origin);
+				dotproduct = dir * dir2;
+
+				grabbed = 0; //Set this true if we pick up something so we don't push it away
+				if (dotproduct > 0.95) { //We hit people & things in a 18 degree cone ahead of us
+					//Mind Blast
+					if (head.classname == "player") { //Enemy player
+						//Zot them!! 20,40,60 damage depending on job rank
+						TF_T_Damage (head, self, self, radius/10, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY); 
+						WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+						WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
+						WriteEntity (#MSG_BROADCAST, self);
+						WriteCoord (#MSG_BROADCAST, self.origin_x);
+						WriteCoord (#MSG_BROADCAST, self.origin_y);
+						WriteCoord (#MSG_BROADCAST, self.absmax_z - 10); //From my head
+						WriteCoord (#MSG_BROADCAST, head.origin_x);
+						WriteCoord (#MSG_BROADCAST, head.origin_y);
+						WriteCoord (#MSG_BROADCAST, head.absmax_z - 10); //Shoot their head
+						#ifdef QUAKE_WORLD
+							multicast (self.origin, #MULTICAST_PHS);
+						#endif
+						sound (self, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM);
+
+						if (!(head.job & #JOB_PSION)) { //Can't psionize a psion
+							// create psionic timer
+							newmis = spawn();
+							newmis.classname = "timer";
+							newmis.netname = "psionictimer";
+							newmis.team_no = self.team_no;
+							newmis.owner = head;
+							newmis.think = PsionicTimer;
+							newmis.nextthink = time + 1;
+							if (self.job & #JOB_EXTRA1) newmis.nextthink = time + 1.5; //Level 2
+							else if (self.job & #JOB_EXTRA2) newmis.nextthink = time + 2; //Level 3
+							head.tfstate = head.tfstate | #TFSTATE_PSIONIZED;
+							head.button0 = 0;
+							head.button1 = 0;
+							head.button2 = 0;
+							head.fire_held_down = #FALSE;
+							head.heat = 0;
+							oself = self;
+							self = head;
+							if (self.current_weapon == #WEAP_ASSAULT_CANNON && self.fire_held_down) 
+							{
+								stuffcmd(self, "-attack;v_idlescale 0\n");
+								self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+								self.weaponframe = 0;
+								self.count = 1;
+								player_assaultcannondown1();                        
+							}
+							else
+								player_run();
+							self = oself;
+							sprint(head,#PRINT_HIGH,"Your body accepts a psionic discharge!\n");
+							TeamFortress_SetSpeed(head);
+						}
+					}
+					//Telekinesis works at half normal range
+					else if (ever_grabbed == 0) { //Can only grab one thing
+						haul_target = head;
+						local float allowed;
+						allowed = 0;
+						if (!Teammate(head.real_owner.team_no,self.team_no)) allowed = 1; //Moving enemy builds ok
+						if (infokey(head.real_owner,"psi") == "on") allowed = 1; //Moving allowed builds ok
+						if (self == head.real_owner) allowed = 1; //We can always move our own builds
+
+						if (head.classname == "detpack" && (self.job & (#JOB_EXTRA1 | #JOB_EXTRA2))) {
+							sprint(self,#PRINT_HIGH,"Grabbed a detpack\n");
+							grabbed = ever_grabbed = 1;
+						}
+						//.trigger_field is the sentry's base
+						else if (head.classname == "building_sentrygun" && !(head.tf_items & #NIT_TURRET) && (self.job & #JOB_EXTRA2) && allowed) {
+							//if (head.trigger_field)
+							//	haul_target = head.trigger_field; //Grab it by the base instead
+							sprint(self,#PRINT_HIGH,"Grabbed a sentry\n");
+							grabbed = ever_grabbed = 1;
+						}
+						else if (head.classname == "building_sentrygun_base" && !(head.tf_items & #NIT_TURRET) && (self.job & #JOB_EXTRA2) && allowed) {
+							sprint(self,#PRINT_HIGH,"Grabbed a sentry base\n");
+							if (head.oldenemy)
+								haul_target = head.oldenemy; //Switch target to the sentry's head.
+							grabbed = ever_grabbed = 1;
+						}
+						else if (head.classname == "building_tesla" && !(head.tf_items & #NIT_TURRET) &&(self.job & #JOB_EXTRA2) && allowed) {
+							sprint(self,#PRINT_HIGH,"Grabbed a tesla\n");
+							grabbed = ever_grabbed = 1;
+						}
+						else if (head.classname == "building_dispenser" && (self.job & #JOB_EXTRA2) && allowed) {
+							sprint(self,#PRINT_HIGH,"Grabbed a dispenser\n");
+							grabbed = ever_grabbed = 1;
+						}
+						//Ok, if we're grabbing it, let's do it
+						if (grabbed) {
+							self.job = self.job | #JOB_ACTIVE; //Indicate we're hauling
+							TeamFortress_SetSpeed(self);
+
+							//Create hauling timer
+							newmis = spawn();
+							newmis.classname = "timer";
+							newmis.netname = "haulingtimer";
+							newmis.team_no = self.team_no;
+							newmis.owner = self; //We're the hauler
+							newmis.oldenemy = haul_target; //It's the haulee
+							newmis.think = HaulingTimer;
+							newmis.nextthink = time + 0.01;
+						}
+					}
+				} //End dotproduct > 0.95
+				//Burst airfist effect
+				if (self.job & (#JOB_EXTRA1 | #JOB_EXTRA2)) {
+					if (grabbed != 1 && canairpush(head)) {
+						//Take em off the ground and fling them away
+						head.flags = head.flags - (head.flags & #FL_ONGROUND);
+						if (head.classname == "rocket" || head.classname == "grenade" || head.classname == "spike")
+						{
+							//Reflect moving shots coming at us
+							dotproduct = head.velocity * (self.origin - head.origin);
+							if (dotproduct > 0.5 && vlen(head.velocity) > 200) {
+								head.velocity = head.velocity * -1; //Reflect
+							} else {
+								head.velocity = dir2 * 600; //Else just knock em away
+								if (head.velocity_z < 200) head.velocity_z = 200;
+							}
+							//Reown it to get credit for the kill, and to stop laser guided
+							head.owner = self;
+						} else
+						{
+							head.velocity = dir2 * 600;
+							if (head.velocity_z < 250 && head.classname != "rocket") head.velocity_z = 250;
+						}		
+					}
+				}
+			}
+		}
+		head = head.chain;
+	}
+	//Special effects
+	if (self.job & (#JOB_EXTRA1 | #JOB_EXTRA2)) {
+		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
+		WriteCoord (#MSG_BROADCAST, self.origin_x);
+		WriteCoord (#MSG_BROADCAST, self.origin_y);
+		WriteCoord (#MSG_BROADCAST, self.absmax_z); //Explosion comes out of the head
+		#ifdef QUAKE_WORLD
+			multicast (self.origin, #MULTICAST_PHS);
+		#endif
+	}
+	self.job_finished = time + 10;
 };
 
 void() UseJobSkill =
@@ -900,15 +1250,24 @@ void() UseJobSkill =
 
 	//Make sure they can do it
 	if (self.done_custom & #CUSTOM_BUILDING) return;
-	if (self.job_finished > time) return;
 
-    // OfN - Psionized guys can't use skill
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You hardly can do anything psionized!\n");
-        self.job_finished = time + 1;
-        return;
-    }
+	// OfN - Psionized guys can't use skill
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You hardly can do anything psionized!\n");
+		self.job_finished = time + 1;
+		return;
+	}
+
+
+	//We can drop things as a psion before our job_finished is up
+	if (self.job & #JOB_PSION && self.job & #JOB_ACTIVE) {
+		self.job = self.job - (self.job & #JOB_ACTIVE);
+		if (self.job_finished < time) self.job_finished = time + 1; //Don't double trigger
+		return;
+	}
+
+	if (self.job_finished > time) return;
 
 	myjob = self.job;
 	if (myjob & #JOB_THIEF)

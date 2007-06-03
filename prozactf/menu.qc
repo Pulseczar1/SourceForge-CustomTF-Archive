@@ -2,7 +2,7 @@
 	MENU.QC			Custom TeamFortress v2.3	
 
 	(c) TeamFortress Software Pty Ltd 	29/2/97
-	(c) William Kerney			         4/4/00
+	(c) William Kerney			         6/1/07
 	(c) Craig Hauser				    19/3/00
 ========================================================
 This file handles all menu functions and displays.
@@ -18,39 +18,39 @@ void(string thesound) BroadcastSound;
 void() ResetVoteEnt;
 float(float checkIP, float noIdlers) GetNoPlayers;
  
-#define MENU_DEFAULT					1
-#define MENU_TEAM 						2
-#define MENU_CLASS 						3
-#define MENU_DROP  						4
-#define MENU_INTRO 						5
-#define MENU_CLASSHELP					6
-#define MENU_CLASSHELP2 				7
-#define MENU_REPEATHELP 				8
-#define MENU_PICKBINDS  				9
-#define MENU_SHOWBINDS1 				10
-#define MENU_SHOWBINDS2 				11
-#define MENU_SPY						12
-#define MENU_SPY_SKIN					13
-#define MENU_SPY_COLOR					14
+#define MENU_DEFAULT				1
+#define MENU_TEAM 				2
+#define MENU_CLASS 				3
+#define MENU_DROP  				4
+#define MENU_INTRO 				5
+#define MENU_CLASSHELP				6
+#define MENU_CLASSHELP2 			7
+#define MENU_REPEATHELP 			8
+#define MENU_PICKBINDS  			9
+#define MENU_SHOWBINDS1 			10
+#define MENU_SHOWBINDS2 			11
+#define MENU_SPY					12
+#define MENU_SPY_SKIN				13
+#define MENU_SPY_COLOR				14
 
-#define MENU_ENGINEER					15
+#define MENU_ENGINEER				15
 
 #define MENU_ENGINEER_FIX_DISPENSER		16
 #define MENU_ENGINEER_FIX_SENTRYGUN		17
-#define MENU_ENGINEER_FIX_TESLA			18
+#define MENU_ENGINEER_FIX_TESLA		18
 #define MENU_ENGINEER_FIX_TESLA2		19
-#define MENU_DISPENSER					20
+#define MENU_DISPENSER				20
 #define MENU_ENGINEER_FIX_CAMERA		21
 #define MENU_ENGINEER_FIX_TELEPORTER	22
 #define MENU_ENGINEER_FIX_SENSOR		23
-#define MENU_ENGINEER_FIX_FIELDGEN      24
+#define MENU_ENGINEER_FIX_FIELDGEN		24
 
-#define MENU_DEMON				        26 	// SB menu for demon summon, I use 26 in the hope that nobody
+#define MENU_DEMON				26 	// SB menu for demon summon, I use 26 in the hope that nobody
 									        // has made anything conflicting with this for future vers.
 									        // Not that I expect anyone else to ever do anything...
-#define MENU_ARMY				        27
-#define MENU_F_HACK				        28
-#define MENU_E_HACK				        29
+#define MENU_ARMY					27
+#define MENU_F_HACK				28
+#define MENU_E_HACK				29
 
 #define MENU_CRUSADER                   30
 
@@ -61,21 +61,27 @@ float(float checkIP, float noIdlers) GetNoPlayers;
 #define MENU_VOTEMAP                    33
 
 //WK - Menus for making a custom class
-#define MENU_PRIMARY_WEAPON			    36
-#define MENU_SECONDARY_WEAPON		    37
-#define MENU_MISC_WEAPON                38
-#define MENU_LEGS					    39
-#define MENU_HEALTH					    40
-#define MENU_ARMOR					    41
-#define MENU_SPECIAL				    42
-#define MENU_SPECIAL2				    43
-#define MENU_GREN1					    44
-#define MENU_GREN2					    45
-#define MENU_ENGINEERING			    46
-#define MENU_PROFESSION				    47
-#define MENU_PROFESSION2			    48
-#define MENU_PROFICIENCY			    49
-#define MENU_OPTION					    50
+//#define MENU_PRIMARY_WEAPONx			36
+//#define MENU_SECONDARY_WEAPONx			37
+//#define MENU_MISC_WEAPONx			38
+//WK 6/1/7 Redid the menus
+#define MENU_SNIPER_WEAPON			36
+#define MENU_ROCKET_WEAPON			37
+#define MENU_SHOTGUN_WEAPON			38
+#define MENU_OTHER_WEAPON			39
+#define MENU_TOOLS				40
+#define MENU_LEGS					41
+#define MENU_HEALTH				42
+#define MENU_ARMOR				43
+#define MENU_SPECIAL				44
+#define MENU_SPECIAL2				45
+#define MENU_GREN1				46
+#define MENU_GREN2				47
+#define MENU_ENGINEERING			48
+#define MENU_PROFESSION				49
+#define MENU_PROFESSION2			50
+#define MENU_PROFICIENCY			51
+#define MENU_OPTION				52
 
 //If we extend this, search for "MENU_OPTION" below
 //WK ------------------------------------
@@ -169,22 +175,17 @@ void(float cost, float type) BuyJob;
 void(float cost,float type) BuyGren2;*/
 void(float in) PrintRefund;
 void(float in) PrintNotEnoughMoney;
-void() Menu_PrimaryWeapon;
-void(float inp) Menu_PrimaryWeapon_Input;
-void() Menu_SecondaryWeapon;
-void(float inp) Menu_SecondaryWeapon_Input;
-//- Ofn -
-void() Menu_MiscWeapon;
-void(float inp) Menu_MiscWeapon_Input;
-void() Menu_Crusader;
-void(float inp) Menu_Crusader_Input;
-void() Menu_Punish;
-void(float inp) Menu_Punish_Input;
-void() Menu_VoteMap;
-void(float inp) Menu_VoteMap_Input;
-void() Menu_Guerilla;
-void(float inp) Menu_Guerilla_Input;
-
+//WK 6/1/7 Total Revamp
+void() Menu_SniperWeapon;
+void(float inp) Menu_SniperWeapon_Input;
+void() Menu_RocketWeapon;
+void(float inp) Menu_RocketWeapon_Input;
+void() Menu_ShotgunWeapon;
+void(float inp) Menu_ShotgunWeapon_Input;
+void() Menu_OtherWeapon;
+void(float inp) Menu_OtherWeapon_Input;
+void() Menu_Tools;
+void(float inp) Menu_Tools_Input;
 void() Menu_Legs;
 void(float inp) Menu_Legs_Input;
 void() Menu_Health;
@@ -209,6 +210,16 @@ void() Menu_Proficiency;
 void(float inp) Menu_Proficiency_Input;
 void() Menu_Option;
 void(float inp) Menu_Option_Input;
+
+//OFN
+void() Menu_Crusader;
+void(float inp) Menu_Crusader_Input;
+void() Menu_Punish;
+void(float inp) Menu_Punish_Input;
+void() Menu_VoteMap;
+void(float inp) Menu_VoteMap_Input;
+void() Menu_Guerilla;
+void(float inp) Menu_Guerilla_Input;
 
 //WK Needed for rotate
 float(float v) anglemod;
@@ -321,12 +332,12 @@ void() Player_Menu =
 	// determine which menu to display
 	// WK - Check to see if the custom class menu is overriding us
 	if ((self.done_custom & #CUSTOM_BUILDING) && !(self.done_custom & #CUSTOM_OVERRIDE) && self.playerclass == #PC_CUSTOM) {
-		self.current_menu = #MENU_PRIMARY_WEAPON;
+		self.current_menu = #MENU_SNIPER_WEAPON;
 		self.done_custom = self.done_custom | #CUSTOM_OVERRIDE;
 	}
 
 	//Don't flash status bars
-	if (self.current_menu >= #MENU_PRIMARY_WEAPON && self.current_menu <= #MENU_OPTION)
+	if (self.current_menu >= #MENU_SNIPER_WEAPON && self.current_menu <= #MENU_OPTION)
 		self.StatusRefreshTime = time + 1.5;
 
     //- OfN - Checks for destroyed buildings - NEEDED?
@@ -487,17 +498,25 @@ void() Player_Menu =
         Menu_VoteMap();
     }
     //WK ------------------
-	else if (self.current_menu == #MENU_PRIMARY_WEAPON)
+	else if (self.current_menu == #MENU_SNIPER_WEAPON)
 	{
-		Menu_PrimaryWeapon();
+		Menu_SniperWeapon();
 	}
-	else if (self.current_menu == #MENU_SECONDARY_WEAPON)
+	else if (self.current_menu == #MENU_ROCKET_WEAPON)
 	{
-		Menu_SecondaryWeapon();
+		Menu_RocketWeapon();
 	}
-    else if (self.current_menu == #MENU_MISC_WEAPON)
+	else if (self.current_menu == #MENU_SHOTGUN_WEAPON)
 	{
-		Menu_MiscWeapon();
+		Menu_ShotgunWeapon();
+	}
+	else if (self.current_menu == #MENU_OTHER_WEAPON)
+	{
+		Menu_OtherWeapon();
+	}
+    else if (self.current_menu == #MENU_TOOLS)
+	{
+		Menu_Tools();
 	}
 	else if (self.current_menu == #MENU_LEGS)
 	{
@@ -912,7 +931,7 @@ void(float inp) Menu_DoBindings_Input =
 
 void(float inp) Menu_Input =
 {
-    if (self.current_menu >= #MENU_PRIMARY_WEAPON && self.current_menu <= #MENU_OPTION)
+    if (self.current_menu >= #MENU_SNIPER_WEAPON && self.current_menu <= #MENU_OPTION)
     if (inp >= 1 && inp <= 7)
     {
         if (!CanBuyItem(inp))
@@ -984,12 +1003,16 @@ void(float inp) Menu_Input =
         Menu_Punish_Input(inp);
     else if (self.current_menu == #MENU_VOTEMAP)
         Menu_VoteMap_Input(inp);
-	else if (self.current_menu == #MENU_PRIMARY_WEAPON) //WK --
-		Menu_PrimaryWeapon_Input(inp);
-	else if (self.current_menu == #MENU_SECONDARY_WEAPON)
-		Menu_SecondaryWeapon_Input(inp);
-    else if (self.current_menu == #MENU_MISC_WEAPON)
-		Menu_MiscWeapon_Input(inp);
+	else if (self.current_menu == #MENU_SNIPER_WEAPON) //WK --
+		Menu_SniperWeapon_Input(inp);
+	else if (self.current_menu == #MENU_ROCKET_WEAPON)
+		Menu_RocketWeapon_Input(inp);
+    else if (self.current_menu == #MENU_SHOTGUN_WEAPON)
+		Menu_ShotgunWeapon_Input(inp);
+    else if (self.current_menu == #MENU_OTHER_WEAPON)
+		Menu_OtherWeapon_Input(inp);
+    else if (self.current_menu == #MENU_TOOLS)
+		Menu_Tools_Input(inp);
 	else if (self.current_menu == #MENU_LEGS)
 		Menu_Legs_Input(inp);
 	else if (self.current_menu == #MENU_HEALTH)
@@ -1464,15 +1487,17 @@ void(float inp) Menu_Engineer_Input =
                     {
                         if (te.dont_do_triggerwork == 1)
                         {
+				/* WK 6/1/7 Silly. Removed.
                             if (te.real_owner == self)
                             {
                                 if ((te.max_health - te.health) > (te.max_health * #SENTRIES_MINIMUMHP_TODETONATE_FACTOR))
                                 {
-                                    sprint(self,#PRINT_HIGH,"Your senty gun holds too much damage to be able to detonate it remotely!\n");
+                                    sprint(self,#PRINT_HIGH,"Your sentry gun holds too much damage to be able to detonate it remotely!\n");
                                     self.impulse = 0;
                                     return;
                                 }
                             }
+				*/
                             Find_And_Dmg("building_sentrygun",self,1,1);
                         }
                         
@@ -1811,13 +1836,14 @@ void(float inp) Menu_Engineer_Input =
 					self.impulse = 0;
 					return;
 				}
-
+/* WK 6/1/7 This is a silly feature.
                 if ((te.max_health - te.health) > (te.max_health * #SENTRIES_MINIMUMHP_TODETONATE_FACTOR))
                 {
                     sprint(self,#PRINT_HIGH,"Your tesla holds too much damage to be able to detonate it remotely!\n");
                     self.impulse = 0;
                     return;
                 }
+*/
 			}
 			te = find(te, classname, "building_tesla");
 		}
@@ -2796,9 +2822,6 @@ void() Menu_EngineerFix_Tesla =
 };
 void(float inp) Menu_EngineerFix_Tesla_Input =
 {
-	/*local string temp;
-	local float cost = 0;
-	local float maxcells;*/
 	if (self.classname != "player" || self.building == world)
 		return;
 

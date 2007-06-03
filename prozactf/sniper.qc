@@ -70,8 +70,9 @@ void(float zoom_level) TF_zoom =
 void() SniperSight_Update =
 {
 	local vector org;
+	local float dist;
 
-	if (!(self.owner.tfstate & #TFSTATE_AIMING) || (self.owner.current_weapon != #WEAP_SNIPER_RIFLE))
+	if (!(self.owner.tfstate & #TFSTATE_AIMING) || (self.owner.current_weapon != #WEAP_SNIPER_RIFLE) || !(self.owner.button0))
 	{
 		self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_AIMING);
 		TeamFortress_SetSpeed(self.owner);
@@ -80,27 +81,33 @@ void() SniperSight_Update =
 		return;
 	}
 
-    makevectors(self.owner.v_angle);
+	makevectors(self.owner.v_angle);
 
 	org = self.owner.origin + v_forward*10;
 	org_z = self.owner.absmin_z + self.owner.size_z * 0.7;
 
-    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
+	//WK 6/1/7 Have laser dot now accurately show max range for sniper shots
+	//Was 9192, now is 8092, or 8092 * 1.3 if having long barrel.
+	dist = #WEAP_SNIPER_MAX_RANGE;
+	if (self.owner.cutf2_items & #CUTF2_LONG_BARREL)
+		dist = dist * #CUTF2_LONG_BARREL_RANGE_FACTOR;
 
-    if (trace_fraction == 1.0)
+	traceline(org, org + v_forward*dist, #TL_ANY_SOLID, self);
+
+	if (trace_fraction == 1.0)
 	{
        	setorigin(self, self.owner.origin );
 		return;
 	}
 
 	self.angles = vectoangles(v_forward);
-    setorigin(self, trace_endpos);
+	setorigin(self, trace_endpos);
 
-    #ifdef SNIPERSIGHT_SHOWPOS
-    local string st;
-    st = vtos(trace_endpos);
-    sprint(self.owner,#PRINT_HIGH,"Sniper dot pos: ",st,"\n");
-    #endif
+	#ifdef SNIPERSIGHT_SHOWPOS
+	local string st;
+	st = vtos(trace_endpos);
+	sprint(self.owner,#PRINT_HIGH,"Sniper dot pos: ",st,"\n");
+	#endif
 
 	self.nextthink = time + 0.1;
 };
@@ -109,8 +116,9 @@ void() SniperSight_Update2 =
 {
 	//bprint(#PRINT_HIGH, "Sight Think..\n");
 	local vector org;
+	local float dist;
 
-	if (!(self.owner.tfstate & #TFSTATE_RL_LASER) || (self.owner.current_weapon != #WEAP_ROCKET_LAUNCHER))
+	if (!(self.owner.tfstate & #TFSTATE_RL_LASER) || !(self.owner.current_weapon & (#WEAP_ROCKET_LAUNCHER | #WEAP_INCENDIARY | #WEAP_DAEDALUS)) || !(self.owner.button0))
 	{
 		self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RL_LASER);
 		TeamFortress_SetSpeed(self.owner);
@@ -119,21 +127,28 @@ void() SniperSight_Update2 =
 		return;
 	}
 
-    makevectors(self.owner.v_angle);
+	makevectors(self.owner.v_angle);
 
 	org = self.owner.origin + v_forward*10;
 	org_z = self.owner.absmin_z + self.owner.size_z * 0.7;
 
-    traceline (org, org + v_forward*9192, #TL_ANY_SOLID, self);
+	//WK 6/1/7 Make laser guideds match max sniper range
+	//Was 9192, now is 8092, or 8092 * 1.3 if having long barrel.
+	//In this case, long_barrel means you have a better scope on your RL. =)
+	dist = #WEAP_SNIPER_MAX_RANGE;
+	if (self.owner.cutf2_items & #CUTF2_LONG_BARREL)
+		dist = dist * #CUTF2_LONG_BARREL_RANGE_FACTOR;
 
-    if (trace_fraction == 1.0)
+	traceline(org, org + v_forward*dist, #TL_ANY_SOLID, self);
+
+	if (trace_fraction == 1.0)
 	{
        	setorigin(self, self.owner.origin );
 		return;
 	}
 
 	self.angles = vectoangles(v_forward);
-    setorigin(self, trace_endpos);
+	setorigin(self, trace_endpos);
 
 	self.nextthink = time + 0.1;
 };

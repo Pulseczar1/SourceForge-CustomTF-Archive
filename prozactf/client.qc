@@ -1437,19 +1437,19 @@ Player entered the suicide command
 */
 void() ClientKill =
 {
-    if (intermission_running)
-        return;
+	if (intermission_running)
+		return;
 
 	if (ceasefire) 
-    {
-        sprint(self,#PRINT_HIGH,"You can't suicide during a ceasefire!\n");
-        return;
-    }
+	{
+		sprint(self,#PRINT_HIGH,"You can't suicide during a ceasefire!\n");
+		return;
+	}
 
-    if (self.flags & #FL_FINALIZED)
-        return;
+	if (self.flags & #FL_FINALIZED)
+		return;
     
-    local float finished;
+	local float finished;
 	local entity te;
 	//WK Stop music
 	sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
@@ -1535,8 +1535,8 @@ void() ClientKill =
 	TeamFortress_RemoveTimers();
 	TeamFortress_SetupRespawn(#TRUE);
 
-    // Drop any runes he would carry
-    PlayerDropRunes(self);
+	// Drop any runes he would carry
+	PlayerDropRunes(self);
 
 	self.health = -1;
 	self.th_die();

@@ -416,6 +416,8 @@ float() MotionSensorFindTarget =
 			gotone = #FALSE;
 		else if (!Pharse_Client(client, self, 1, trange, 0, 1))
 			gotone = #FALSE;
+		if (client.job & #JOB_PSION) //WK 6/1/7 Psions immune to this
+			gotone = #FALSE;
 
 		loopc = loopc + 1;
 		if (gotone) loopc = 1000;
