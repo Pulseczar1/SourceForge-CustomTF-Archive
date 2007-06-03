@@ -24,11 +24,11 @@ sprites.qc
 environ.qc
 
 menu.qc
+jobs.qc
 cutfmenu.qc
 tinker.qc
 custom.qc
 sbitems.qc
-jobs.qc
 guerilla.qc
 subs.qc
 combat.qc

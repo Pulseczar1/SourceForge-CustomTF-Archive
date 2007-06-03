@@ -293,18 +293,17 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
  The following is used to determine whether this attack is affected 
  the type of armor the defender is wearing.
  T_AttackType:		
-	#TF_TD_OTHER			: type ignored
-	#TF_TD_SHOT			: 	bullet damage
-	#TF_TD_NAIL			:	nailgun damage
+	#TF_TD_OTHER		: type ignored
+	#TF_TD_SHOT			: bullet damage
+	#TF_TD_NAIL			: nailgun damage
 	#TF_TD_EXPLOSION		: explosion damage
-	#TF_TD_ELECTRICITY		: electricity damage
+	#TF_TD_ELECTRICITY	: electricity damage
 	#TF_TD_FIRE			: fire damage
-	#TF_TD_MELEE:			: melee damage (New Type)
+	#TF_TD_MELEE:		: melee damage (WK New Type for CuTF)
 
-	#TF_TD_NOSOUND			: Special Value. Health is adjusted without
-						    any sound, painframe, etc
-							Health is _set_ to damage, not altered.
-
+	#TF_TD_NOSOUND		: Special Value. Health is adjusted without
+					any sound, painframe, etc
+					Health is _set_ to damage, not altered.
 ============
 */
 
@@ -321,13 +320,8 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	//WK -- For LPB calculation
 	local string st;
-	//local float ping; --> knockem
-    
 
-	//mirror = 0;
 #ifdef QUAKE_WORLD // culled by KK. was QUAKE_WORLD
-	/*if (infokey(world,"ceasefire")=="on") //Cyto
-		return;*/
     if (ceasefire)
         return;
 #endif
@@ -419,10 +413,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		}
 	}
 
-    // OfN - Apply damage factors of attacker and target if any
-    damage = damage * GetDamageOutFactor(attacker);
-    if (!(T_flags & #TF_TD_IGNORERESIST))
-        damage = damage * GetDamageInFactor(targ);
+	// OfN - Apply damage factors of attacker and target if any
+	damage = damage * GetDamageOutFactor(attacker);
+	if (!(T_flags & #TF_TD_IGNORERESIST))
+		damage = damage * GetDamageInFactor(targ);
 
 	// OfN - Corpses are handled in their own routine
  	if (targ.#corpseflag == #STRFLAG_CORPSE)
@@ -444,22 +438,30 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	//DAMAGE ADJUSTMENT
 	if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))
-	{ 
-		//WK Ping fairness code. LPB is < 200 ping
-		if (attacker.classname == "player" && targ.classname == "player" && attacker != targ)
-		{
-			st = infokey(attacker,"ping");
-			knockem = 200;
-			if (st != string_null)
-				knockem = stof(st);
-			knockem = (knockem + 1000) / 1200;
-			if (knockem < 0.8) knockem = 0.8;
-			if (knockem > 1.2) knockem = 1.2;
-			damage = damage * knockem;
+	{
+		//WK 6/1/7 Ping Equalization must be turned on now, since high speed internet is common.
+		st = infokey(world,"lpb");
+		if (st == "on") {
+			//WK Ping fairness code. LPB is < 200 ping
+			if (attacker.classname == "player" && targ.classname == "player" && attacker != targ)
+			{
+				st = infokey(attacker,"ping");
+				knockem = 200;
+				if (st != string_null)
+					knockem = stof(st);
+				knockem = (knockem + 1000) / 1200;
+				if (knockem < 0.8) knockem = 0.8;
+				if (knockem > 1.2) knockem = 1.2;
+				damage = damage * knockem;
+			}
 		}
 		if (teamplay & (#TEAMPLAY_LESSSCOREHELP | #TEAMPLAY_LESSPLAYERSHELP))
 			damage = TeamEqualiseDamage(targ, attacker, damage);
 	}
+
+	//PSIONS carrying objects take double damage
+	if (targ.job & #JOB_PSION && targ.job & #JOB_ACTIVE)
+		damage = damage * 2;
 
 	//MIRROR DAMAGE
 	knockem = 0;
@@ -526,10 +528,17 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	}
 
 	// SPECIAL ARMOR CALCULATIONS
+	// Special armor reduces damage by 50%, or only 25% vs special armor piercing shots.
+#define NORMAL_SAVE 0.5
+#define ARMOR_PIERCING_SAVE 0.75
 	if ((targ.armorclass != 0) && (T_AttackType != 0))
 	{
+		local float save_factor;
+		save_factor = #NORMAL_SAVE;
+		if (attacker.cutf2_items & #CUTF2_ARMOR_PIERCING) save_factor = #ARMOR_PIERCING_SAVE;
+
 		if ((targ.armorclass & #AT_SAVESHOT) && (T_AttackType == #TF_TD_SHOT)) {
-			damage = floor(damage * 0.5);
+			damage = floor(damage * save_factor);
 			//WK Cap max damage you can take with kevlar on, like in Real Life(tm)
 			//WK The purpose being to cut down on the power of snipers
 			if(targ.classname == "player") // SB kevlar fixed so it caps damage now, also spacing much nicer :)
@@ -550,7 +559,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		}
 		else if ((targ.armorclass & #AT_SAVEMELEE) && T_AttackType == #TF_TD_MELEE)
 		{
-			damage = floor(damage * 0.5);
+			damage = floor(damage * save_factor);
 
 			//Melee armor gives 40% chance to negate damage
 			if ((targ.velocity_x > 0 || targ.velocity_y > 0 || targ.velocity_z > 0) && random() > 0.6)
@@ -559,11 +568,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			T_flags = T_flags - (T_flags & #TF_TD_IGNOREARMOUR);
 		}
 		else if ((targ.armorclass & #AT_SAVEEXPLOSION) && (T_AttackType == #TF_TD_EXPLOSION))
-			damage = floor(damage * 0.5);
+			damage = floor(damage * save_factor);
 		else if ((targ.armorclass & #AT_SAVEELECTRICITY) && (T_AttackType == #TF_TD_ELECTRICITY || T_AttackType == #TF_TD_NAIL))
-			damage = floor(damage * 0.5);
+			damage = floor(damage * save_factor);
 		else if ((targ.armorclass & #AT_SAVEFIRE) && (T_AttackType == #TF_TD_FIRE))
-			damage = floor(damage * 0.5);
+			damage = floor(damage * save_factor);
 	}
 
 	//ARMOR PROTECTION CALCULATION
@@ -863,7 +872,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
             if (head.classname == "grenade" && head.netname == "land_mine")
 			{
 				if (deathmsg != #DMSG_LAND_MINE) { 
-                    //head.has_tesla = 2; //- ofn - ur mine explodes better than is destroyed
+					//head.has_tesla = 2; //- ofn - ur mine explodes better than is destroyed
 					head.think = GuerillaExplode;
 					head.nextthink = time + 0.1;
 				}

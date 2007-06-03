@@ -645,10 +645,8 @@ void() Flamer_stream_touch =
 
 	if (other != world)
 	{
-		if (other.takedamage == #DAMAGE_AIM && other.health > 0 && time >= self.attack_finished)
+		if (other.takedamage == #DAMAGE_AIM && other.health > 0)
 		{
-			// Gizmo - prevent flame from damaging the enemy a shitload of times if they run into the flame
-			self.attack_finished = time + 0.50;
 
 			deathmsg = #DMSG_FLAME;
 			TF_T_Damage(other,self,self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
@@ -666,14 +664,14 @@ void() Flamer_stream_touch =
 			}
 
 	
-            if (other.classname == "player")
-            {
+            	if (other.classname == "player")
+			{
 				if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other.team_no, self.owner.team_no))
 						return;
 
-            	CenterPrint(other,"You are on fire!\n");
-	            stuffcmd (other,"bf\n");
-        	}
+      	      	CenterPrint(other,"You are on fire!\n");
+		            stuffcmd (other,"bf\n");
+			}
 
 			if (other.numflames < #FLAME_NUMLIGHTS)
 			{
@@ -701,6 +699,7 @@ void() Flamer_stream_touch =
 
 			flame.nextthink = time + 0.1;
 			flame.think = FlameFollow;
+			remove(self); //WK 6/1/7 Flamethrower overdamage fix
 		}
 	}
 	else
@@ -918,26 +917,25 @@ void() T_IncendiaryTouch =
 	
 	while (head)
 	{
-			if (head.takedamage && head.health > 0)
-			{
-				deathmsg = #DMSG_FLAME;
-				TF_T_Damage (head, self, self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+		if (head.takedamage && head.health > 0)
+		{
+			deathmsg = #DMSG_FLAME;
+			TF_T_Damage (head, self, self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
 
-				// set 'em on fire
-				other = head;  // i can't believe this works!
+			// set 'em on fire
+			other = head;  // i can't believe this works!
+
+			//Cluster shots shouldn't overburn them
+			if (!self.has_tesla) //Burn always if not cluster shot
 				Napalm_touch();
-				if (other.classname == "player")
-					stuffcmd(other, "bf\nbf\n");
-				if (IsBuilding(other)) 
+			else if (!other.numflames) //Clusters light on fire only if they aren't burning
+				Napalm_touch();
+			
+			if (other.classname == "player")
+				stuffcmd(other, "bf\nbf\n");
+			if (IsBuilding(other)) 
 				TF_T_Damage (head, self, self.owner, 35, #TF_TD_NOTTEAM, #TF_TD_FIRE);
-
-			}
-            /*else TOFIX: if i use this to make corpses desptryable, coolexplosion later doesnt work?
-            {
-                if (head.#corpseflag = #STRFLAG_CORPSE)
-                    TF_T_Damage (head, self, self.owner, 10 + random()*10, #TF_TD_NOTTEAM, #TF_TD_FIRE);
-            }*/
-
+		}
 		head = head.chain;
 	}
     
@@ -984,47 +982,20 @@ W_FireIncendiaryCannon
 */
 void() W_FireIncendiaryCannon =
 {
-	
-	if (self.ammo_rockets < 3)
-		return;
+	local float shots;
+	shots = 1; //Ammo cost
+	if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
+		shots = 4; //Main rocket + 3 cluster shots
+	if (self.ammo_rockets < shots*3) shots = floor(self.ammo_rockets/3);
+	self.currentammo = self.ammo_rockets = self.ammo_rockets - shots*3;
+	if (self.ammo_rockets < 3) self.currentammo = self.ammo_rockets = 0;
+	if (shots <= 0) return;
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 3;
-	
 	sound (self, #CHAN_WEAPON, "weapons/sgun1.wav", 1, #ATTN_NORM);
+	if (self.classname == "player")
+		KickPlayer(-3, self);
 
-	KickPlayer(-3, self);
-
-	newmis = spawn ();
-	newmis.owner = self;
-	newmis.movetype = #MOVETYPE_FLYMISSILE;
-	newmis.solid = #SOLID_BBOX;
-		
-	// set newmis speed	
-	makevectors (self.v_angle);
-	newmis.velocity = aim(self, 1000);
-	newmis.velocity = newmis.velocity * 650; // original 600
-	newmis.angles = vectoangles(newmis.velocity);
-	
-	newmis.touch = T_IncendiaryTouch;
-
-    //- OfN - For airfist
-    newmis.classname = "rocket";
-
-	// set newmis duration
-	newmis.nextthink = time + 5;
-	newmis.think = SUB_Remove;
-
-	newmis.weapon = #DMSG_INCENDIARY;
-	
-	setmodel (newmis, "progs/missile.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
-	setorigin (newmis, self.origin + v_forward*8 + '0 0 16');
-
-#ifdef DEMO_STUFF
-	// Have we got a live camera in projectile mode?
-	if (live_camera)
-		CamProjectileLockOn();
-#endif
+	MakeRocket(#WEAP_INCENDIARY, shots);
 };
 
 //=========================================================================
@@ -1036,7 +1007,7 @@ void() TeamFortress_IncendiaryCannon =
 
 	if (self.ammo_rockets < 3)
 	{
-		sprint (self, #PRINT_HIGH, "not enough ammo.\n");
+		sprint (self, #PRINT_HIGH, "Not enough ammo.\n");
 		return;
 	}
 
@@ -1044,6 +1015,7 @@ void() TeamFortress_IncendiaryCannon =
 
 	W_SetCurrentAmmo();
 };
+
 // Flamethrower selection function
 void() TeamFortress_FlameThrower =
 {

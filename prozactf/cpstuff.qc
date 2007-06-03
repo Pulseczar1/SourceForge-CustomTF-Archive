@@ -165,7 +165,7 @@ void (float startup) UpdateInfos =
     else if (extras_mode > 2) extras_mode = 2; //the allowed maximum
 
     st = infokey(world, "sniper_factor"); //ARE YOU HAPPY XSETZER?? :P
-    if (st==string_null) st="0.85"; //sets default
+    if (st==string_null) st="1"; //WK 6/1/7 .85 //sets default
     sniper_factor = stof(st);
     if (sniper_factor < 0.1 ) sniper_factor = 0.1; // the allowed minimum 
     else if (sniper_factor > 2) sniper_factor = 2; //the allowed maximum
@@ -176,9 +176,9 @@ void (float startup) UpdateInfos =
 	AGR_initialize();
 
     st = infokey(world, "army_delay"); //
-    if (st==string_null) st="5"; //was 5 ,sets default
+    if (st==string_null) st="3"; //WK 6/1/7 5 //was 5 ,sets default
     army_delay = stof(st);
-    if (army_delay < 2 ) army_delay = 2; // the allowed minimum 
+    if (army_delay < 2 ) army_delay = 1; //WK 6/1/7 2 // the allowed minimum 
     else if (army_delay > 60) army_delay = 60; //the allowed maximum
 
     st = infokey(world, "allow_watermonsters"); //
@@ -435,19 +435,10 @@ float (float tno, float theColor ) IsValidTopColor =
 //==========================//
 // The new holograph device //
 //==========================//
+
+//WK 6/1/7 TODO: Make Holo animate
 void(entity player) UpdateCells =
 {
-    /*if (player.current_weapon == #WEAP_SPANNER 
-    || player.current_weapon == #WEAP_LIGHTNING
-    || player.current_weapon == #WEAP_FLAMETHROWER
-    || player.current_weapon == #WEAP_DAEDALUS
-    || player.current_weapon == #WEAP_LASERCANNON
-    || player.current_weapon == #WEAP_AIRF)
-    {
-        player.currentammo = player.ammo_cells;
-        player.items = player.items | #IT_CELLS;
-    }*/
-
     if (player.items & #IT_CELLS)
         player.currentammo = player.ammo_cells;
     else if (player.current_weapon == #WEAP_SPANNER)
@@ -570,41 +561,40 @@ void() FlareGrenadeTouch =
 	if (other == self.owner)
 		return;		// don't bounce on owner
 
-    if (pointcontents(self.origin) == #CONTENT_SKY || pointcontents(self.origin) == #CONTENT_SOLID) // if in wall or sky
+	if (pointcontents(self.origin) == #CONTENT_SKY || pointcontents(self.origin) == #CONTENT_SOLID) // if in wall or sky
 	{
-       dremove(self);
-       return;
-    }
+		dremove(self);
+		return;
+	}
 
-    if (self.has_holo==0)
-    {
-        self.skin=1;
-        //setmodel (self, "progs/flare.mdl");
-    }
+	if (self.has_holo==0)
+	{
+		self.skin=1;
+		//setmodel (self, "progs/flare.mdl");
+	}
 
-    if (other == world && self.movetype != #MOVETYPE_BOUNCE)
-    {
-        self.velocity = '0 0 0';
+	if (other == world && self.movetype != #MOVETYPE_BOUNCE)
+	{
+		self.velocity = '0 0 0';
         
-        /*
-        if (random()<0.6)
-        {
-           sound (self, #CHAN_MISC, "effects/bodyhit2.wav", 0.7, #ATTN_NORM);	// bounce sound
-        }
-        else
-        {
-           sound (self, #CHAN_MISC, "effects/bodyhit1.wav", 0.6, #ATTN_NORM);	// bounce sound
-        }*/
-    }
-    else
-    {
-        self.movetype = #MOVETYPE_BOUNCE;
-        self.avelocity = '1000 200 850';
-        self.touch = FlareBounce;
+		//WK 6/1/7 Re-enable flare hitting sounds
+		if (random()<0.6)
+		{
+			sound (self, #CHAN_MISC, "effects/bodyhit2.wav", 0.7, #ATTN_NORM);	// bounce sound
+		}
+		else
+		{
+			sound (self, #CHAN_MISC, "effects/bodyhit1.wav", 0.6, #ATTN_NORM);	// bounce sound
+		}
+	}
+	else
+	{
+		self.movetype = #MOVETYPE_BOUNCE;
+		self.avelocity = '1000 200 850';
+		self.touch = FlareBounce;
+	}
 
-    }
-
-    if (self.velocity == '0 0 0')
+	if (self.velocity == '0 0 0')
 		self.avelocity = '0 0 0';
 	
 };
@@ -657,38 +647,13 @@ void() FlareGrenadeExplode =
 
 float(entity thing) IsMonster =
 {
-    /*if (thing.classname=="monster_shambler")
-        return #TRUE;
-    if (thing.classname=="monster_demon1")
-        return #TRUE;
-    if (thing.classname=="monster_wizard")
-        return #TRUE;
-    if (thing.classname=="monster_army")
-        return #TRUE;
-    if (thing.classname=="monster_fish")
-        return #TRUE;
-    if (thing.classname=="monster_gremlin")
-        return #TRUE;*/
-    
     if (thing.flags & #FL_MONSTER)
         return #TRUE;
-
     return #FALSE;
 };
 
 float(entity thing) IsMonsterNonArmy =
 {
-    /*if (thing.classname=="monster_shambler")
-        return #TRUE;
-    if (thing.classname=="monster_demon1")
-        return #TRUE;
-    if (thing.classname=="monster_wizard")
-        return #TRUE;
-    if (thing.classname=="monster_fish")
-        return #TRUE;
-    if (thing.classname=="monster_gremlin")
-        return #TRUE;*/
-
     if (thing.flags & #FL_MONSTER && thing.classname != "monster_army")
         return #TRUE;
     
@@ -740,19 +705,6 @@ void(entity themonster) MonsterDie =
 
     self=themonster;
 
-    /*if (themonster.classname == "monster_wizard")
-        wiz_die();
-    else if (themonster.classname == "monster_shambler")
-        custom_shambler_die();
-    else if (themonster.classname == "monster_demon1")
-        custom_demon_die();
-    else if (themonster.classname == "monster_army")
-        custom_grunt_die();
-    else if (themonster.classname == "monster_fish")
-        fish_death();
-    else if (themonster.classname == "monster_gremlin")
-        gremlin_die();*/
-    
     if (self.th_die)
         self.th_die();
 
@@ -1227,7 +1179,13 @@ float(entity theplayer, float grenslot) GetMaxGrens =
     #ifdef GRENADES_TEST
     return 999;
     #endif
-    
+
+	//WK 6/1/7 Stock demoman gets more grenades than custom classes
+	if (theplayer.playerclass == #PC_DEMOMAN) {
+		if (grenslot == 1) return #PC_DEMOMAN_GRENADE_INIT_1;
+		else return #PC_DEMOMAN_GRENADE_INIT_2;
+	}
+	
     if (theplayer.tf_items & #NIT_AMMO_BANDOLIER) // player can carry more grens cause he got bandolier
 	{
         if (grenslot == 2) //2nd slot
@@ -1822,16 +1780,24 @@ void(entity ent) MuzzleFlash =
 
 float(entity player, float damage) HurtLegs =
 {
-    if (player.classname != "player") return 0;
+	local float excess;
+	excess = 0;
+
+	if (player.classname != "player") return 0;
     
-    if (player.#runes & #RUNE_RESIS)
-        return 0;
+	if (player.#runes & #RUNE_RESIS)
+		return 0;
 
-    player.leg_damage = player.leg_damage + damage;
+	player.leg_damage = player.leg_damage + damage;
+	//WK 6/1/7 Cap leg_damage at 8 (80% slowdown)
+	if (player.leg_damage > 8) {
+		excess = player.leg_damage - 8;
+		player.leg_damage = 8;
+	}
 
-    TeamFortress_SetSpeed(player);
+	TeamFortress_SetSpeed(player);
 
-    return damage;
+	return damage-excess;
 };
 
 //==========================================================================
@@ -1881,6 +1847,7 @@ void(entity player, string st, float action, float predefined) PlayerFinal =
     player.weapon = 0;
     player.weapons_carried = 0;
     player.cutf_items = 0;
+    player.cutf2_items = 0;
     player.tf_items = 0;
     player.aura = 0;
     player.takedamage = 0;

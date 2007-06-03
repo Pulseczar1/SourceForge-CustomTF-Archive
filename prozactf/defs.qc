@@ -1600,21 +1600,20 @@ float       rj;					// Rocket Jump Modifier
 #define WEAP_SUPER_SHOTGUN		256
 #define WEAP_NAILGUN			512
 #define WEAP_LIGHT_ASSAULT		1024
-#define WEAP_GRENADE_LAUNCHER	2048
+#define WEAP_GRENADE_LAUNCHER		2048
 #define WEAP_FLAMETHROWER		4096
-#define WEAP_ROCKET_LAUNCHER	8192
+#define WEAP_ROCKET_LAUNCHER		8192
 #define WEAP_INCENDIARY			16384
 #define WEAP_ASSAULT_CANNON		32768
 #define WEAP_LIGHTNING			65536
 #define WEAP_DAEDALUS			131072
 //#define WEAP_DETPACK			131072 DONT MAKE ANY AMMOTYPES USE THIS NUMBER!
-#define WEAP_TRANQ				262144
+#define WEAP_TRANQ			262144
 #define WEAP_RAILGUN			524288
-#define WEAP_MAUSER				1048576
-
-#define WEAP_AIRF               2097152 //- OfN - airfist
-#define WEAP_LASERCANNON        4194304 //- OfN - LASER CANNON
-#define WEAP_SNG                8388608 // Last BIT!!!
+#define WEAP_MAUSER			1048576
+#define WEAP_AIRF				2097152 //- OfN - airfist
+#define WEAP_LASERCANNON		4194304 //- OfN - LASER CANNON
+#define WEAP_SNG				8388608 // Last BIT!!!
 //MAX 24 BITS OF PRECISION IN FLOAT!
 
 /*====================================================*/
@@ -1646,38 +1645,63 @@ float       rj;					// Rocket Jump Modifier
 #define NIT_TELEPORTER				131072 //CH Teleporter
 #define NIT_TESLA_UPGRADE 			262144 //Get more tesla upgrades
 #define NIT_HOVER_BOOTS_UPGRADE		524288 //CH you get 2x fuel
-#define NIT_RL_LASER_SIGHT			1048576 //CH
-#define NIT_CLUSTER_ROCKETS			2097152 //CH
-#define NIT_DOUBLETESLA             4194304 // OfN - Player gets 2 teslas 
-//1 more allowed, before we run out of bits in a .float
+#define NIT_RL_LASER_SIGHT			1048576 //WK, not CH
+#define NIT_CLUSTER_ROCKETS			2097152 //WK, not CH
+#define NIT_DOUBLETESLA				4194304 // OfN - Player gets 2 teslas 
+#define NIT_RL_LASER_SIGHT2			8388608 //WK Faster turning laser guided
+//OUT OF BITS!
 
 //WK On to the third 24-wide bitfield for holding purchases
 .float cutf_items;
 #define CUTF_DETPACK			1
-#define CUTF_KNIFE				2  //More like a powerup
+#define CUTF_KNIFE			2  //More like a powerup
 #define CUTF_SPY_KIT			4  //Allows disguise
-#define CUTF_HWGUY				8  //Person doesn't bounce
+#define CUTF_HWGUY			8  //Person doesn't bounce
 #define CUTF_SENTRYGUN			16 //Allows building a gun
-#define CUTF_JAMMER				32 // SB scanner jammer
+#define CUTF_JAMMER			32 // SB scanner jammer
 #define CUTF_FULLARMOUR			64 // SB full armour when spawning
 #define CUTF_CYBERAUG			128 // SB cybernetic augmentation
-#define CUTF_SENSOR				256 // SB motion sensor
-//#define CUTF_INTERFACE			512 // SB tech interface - for hax0ring SGs
+#define CUTF_SENSOR			256 // SB motion sensor
+//#define CUTF_INTERFACE		512 // SB tech interface - for hax0ring SGs
 #define CUTF_TOSSABLEDET		512 // C4 tossable detpack
 #define CUTF_DISPENSER			1024 // the new buyable dispenc0r
-#define CUTF_STEALTH			2048 // balance proficiency - done
-#define CUTF_HIGHJUMP			4096 // highjump proficiency - done
+#define CUTF_STEALTH			2048 // balance proficiency
+#define CUTF_HIGHJUMP			4096 // highjump proficiency
 #define CUTF_GYMNAST			8192 // Gymnast proficiency
 #define CUTF_DEMONLORE			16384 // demon lore proficiency
 #define CUTF_EXPBODY			32768 // Exploding body
 #define CUTF_CLOSECOMBAT		65536 // close combat guy
 //-----------------------------------//
-#define CUTF_HOLO               131072 // OfN - Holograph
-#define CUTF_CLIPEXTEND         262144 // OfN - Clip extender
-#define CUTF_FIELDGEN           524288 // OfN - field generators
-#define CUTF_AIRFISTUPGRADE     1048576
-#define CUTF_OTR                2097152
-#define CUTF_DOUBLESENTRY       4194304 // OfN - Player gets 2 sentries 
+#define CUTF_HOLO				131072 // OfN - Holograph
+#define CUTF_CLIPEXTEND			262144 // OfN - Clip extender
+#define CUTF_FIELDGEN			524288 // OfN - field generators
+#define CUTF_AIRFISTUPGRADE		1048576
+#define CUTF_OTR				2097152
+#define CUTF_DOUBLESENTRY		4194304 // OfN - Player gets 2 sentries 
+//One more bit!
+
+//WK 6/1/7 Even more items to buy!
+.float cutf2_items;
+#define CUTF2_SHINIGAMI			1 //Projectile Based Sniper Rifle flag. Person still gets #WEAP_SNIPER_RIFLE
+#define CUTF2_CRIPPLER			2 //+1 leg damage with rifle shots
+#define CUTF2_OVERCHARGE		4 //+50% max sniper rifle charge
+#define CUTF2_CHARGER			8 //+25% charge speed (charges in 3s instead of 4s, or 4.5s instead of 6s).
+#define CUTF2_INITIALIZER		16 //+33% bonus starting damage
+#define CUTF2_FASTER_ROX		32 //+20% fly speed for rockets
+#define CUTF2_HEAT_SEEKING		64 //Rockets track targets automagically
+#define CUTF2_LONG_BARREL		128 //Tightens Spread of Shotguns by 30%, Increases Range by 30%
+#define CUTF2_EXPLOSIVE_SHOT		256 //Increases Shot Damage, 20% of damage is AOE
+#define CUTF2_ARMOR_PIERCING		512 //Ignores half of a special armor's protection
+
+//CUTF2 constants
+#define CUTF2_LONG_BARREL_SPREAD_FACTOR 0.8 //80% normal spread
+#define CUTF2_LONG_BARREL_RANGE_FACTOR 1.3 //+30% range
+#define CUTF2_OVERCHARGE_FACTOR 1.5 //+50% max damage
+#define CUTF2_CHARGER_FACTOR 0.75 //Charges 25% faster
+#define CUTF2_INITIALIZER_FACTOR 1.33 //+33% initial damage
+#define CUTF2_EXPLOSIVE_SHOT_FACTOR 0.2 //Bonus +20% damage as radius
+#define CUTF2_EXPLOSIVE_SHOT_FIRE_CHANCE 0.1 //10% chance per hit to get lit
+#define CUTF2_HEAT_SEEKING_RANGE 1000 //Radius to hunt for new targets
 
 //Time to be invincible from the respawn guard
 #define RESPAWN_GUARD_TIME		5
@@ -1691,15 +1715,16 @@ float       rj;					// Rocket Jump Modifier
 #define JOB_GUERILLA			32
 #define JOB_JUDOKA			64
 //- OfN - New jobs -
-#define JOB_ARMY			128
-#define JOB_HACKER		256
-#define JOB_MARTYR		512
-#define JOB_CRUSADER		1024
+#define JOB_ARMY				128
+#define JOB_HACKER			256
+#define JOB_MARTYR			512
+#define JOB_CRUSADER			1024
 //WK New jobs!
-#define JOB_TKD			262144 // WK 4/27/7 Tae Kwon Do -- Boot to the Head!
-#define JOB_PSION			524288 // WK 4/27/7 Psionizes people! In air, drop them. On ground, pulls close.
+#define JOB_TKD				262144 // WK 4/27/7 Tae Kwon Do -- Boot to the Head!
+#define JOB_PSION				524288 // WK 4/27/7 Psionizes people! In air, drop them. On ground, pulls close.
+
 //This is the sum of all jobs above...
-#define JOB_ALL					788479 //Not a job, used to simplify bit operators
+#define JOB_ALL				788479 //Not a job, used to simplify bit operators
 
 //STATES WE ARE IN FOR JOB
 //Every time we add one, make sure it gets reset in tfort.qc!
@@ -1707,8 +1732,6 @@ float       rj;					// Rocket Jump Modifier
 #define JOB_FULL_HIDE		4096  //Job is in phase two of "hide"
 #define JOB_TIRED			8192  //Recovering from a sprint
 #define JOB_BLOODY_KNIFE	16384 //We've gone OJ on someone
-//OfN obsolete #define JOB_DEMON_OUT	32768 //We have a demon in the world
-//#define JOB_MARTYR_ENEMY	    ^double //We have been shot, and enemy remembered
 #define JOB_EXTRA1		65536 // Warlock, guerilla and army extra
 #define JOB_EXTRA2		131072// 2nd extra 
 
@@ -1721,15 +1744,15 @@ float       rj;					// Rocket Jump Modifier
 #define RE_GRENADE_LAUNCHER		6 
 #define RE_ROCKET_LAUNCHER		4 
 #define RE_LIGHT_ASSAULT		30 // WK 1/7/7 36 // was 40 
-#define RE_LASER_CANNON		    6
+#define RE_LASER_CANNON		    	6
 
 // reload times
-#define RE_SHOTGUN_TIME			    2 
+#define RE_SHOTGUN_TIME			2 
 #define RE_SUPER_SHOTGUN_TIME		3 
 #define RE_GRENADE_LAUNCHER_TIME	4 
 #define RE_ROCKET_LAUNCHER_TIME 	5 
 #define RE_LIGHT_ASSAULT_TIME		3.2 //WK 1/7/7 3.3 // was 3.5
-#define RE_LASER_CANNON_TIME	    1.5
+#define RE_LASER_CANNON_TIME		1.5
 
 //CLIP EXTENDER reload values
 //laser cannon
@@ -1756,7 +1779,8 @@ float       rj;					// Rocket Jump Modifier
 #define WEAP_SNIPER_RIFLE_MAX_MOVE  50
 #define WEAP_SNIPER_RIFLE_MAX_TIME  4 // WK 1/7/7 3 // PZ - Randomer's charge-up fix
 #define WEAP_SNIPER_RIFLE_MIN_DAMG  60 //WK 2/8/7 Increase snapshot damage from 50 to 60
-#define WEAP_SNIPER_RIFLE_MAX_DAMG  220 //WK 1/7/7 400
+#define WEAP_SNIPER_RIFLE_MAX_DAMG  190 //WK 1/7/7 400 6/1/7 220, to compensate for LPB code removal
+#define WEAP_SNIPER_MAX_RANGE 8092
 
 // Medikit
 #define WEAP_MEDIKIT_HEAL	200  // Amount medikit heals per hit
@@ -1777,7 +1801,7 @@ float       rj;					// Rocket Jump Modifier
 .float ammo_c4det; // ammo for c4 throwable det
 
 // Tranquiliser Gun
-#define TRANQ_TIME			5
+#define TRANQ_TIME		5
 
 // Grenades
 #define GR_PRIMETIME		3 
@@ -1801,9 +1825,8 @@ float       rj;					// Rocket Jump Modifier
 #define GR_TYPE_FRAG		10
 #define GR_TYPE_KRAC		11
 #define GR_TYPE_ANTIGRAV	12
-#define GR_TYPE_BIO         13
-#define GR_TYPE_CALTROP     14
-
+#define GR_TYPE_BIO		13
+#define GR_TYPE_CALTROP		14
 
 // Defines for WeaponMode
 #define GL_NORMAL	0 
@@ -1824,7 +1847,7 @@ float       rj;					// Rocket Jump Modifier
 /*==================================================*/
 /* New Item Flags		                        	*/
 /*==================================================*/
-#define NIT_SCANNER_ENEMY		1 	// Detect enemies
+#define NIT_SCANNER_ENEMY	1 	// Detect enemies
 #define NIT_SCANNER_FRIENDLY	2 	// Detect friendlies (team members)
 #define NIT_SCANNER_MOVEMENT	4 	// Motion detection. Only report moving entities.
 
@@ -1861,11 +1884,11 @@ float       rj;					// Rocket Jump Modifier
 
 // Armor Classes : Bitfields. Use the "armorclass" of armor for the Armor Type.
 
-#define AT_SAVESHOT			    1   // Kevlar	: Reduces bullet damage by 15%
+#define AT_SAVESHOT			1   // Kevlar	: Reduces bullet damage by 15%
 #define AT_SAVEMELEE			2   // Gel		: Reduces melee attacks by 15%
 #define AT_SAVEEXPLOSION		4   // Blast	: Reduces explosion damage 15%
-#define AT_SAVEELECTRICITY	    8 	// Shock	: Reduces electricity damage by 15% // ceramic
-#define AT_SAVEFIRE			    16 	// Asbestos	: Reduces fire damage by 15%
+#define AT_SAVEELECTRICITY	      8 	// Shock	: Reduces electricity damage by 15% // ceramic
+#define AT_SAVEFIRE			16 	// Asbestos	: Reduces fire damage by 15%
 
 /*==========================================================================*/
 /* TEAMFORTRESS CLASS DETAILS												*/
@@ -1916,11 +1939,11 @@ float       rj;					// Rocket Jump Modifier
 #define PC_SNIPER_WEAPONS			#WEAP_SNIPER_RIFLE | #WEAP_AUTO_RIFLE | #WEAP_AXE | #WEAP_NAILGUN
 #define PC_SNIPER_MAXAMMO_SHOT		75 
 #define PC_SNIPER_MAXAMMO_NAIL		100 
-#define PC_SNIPER_MAXAMMO_CELL		150 
+#define PC_SNIPER_MAXAMMO_CELL		50 
 #define PC_SNIPER_MAXAMMO_ROCKET		25 
 #define PC_SNIPER_INITAMMO_SHOT		60 
 #define PC_SNIPER_INITAMMO_NAIL		50 
-#define PC_SNIPER_INITAMMO_CELL		0 
+#define PC_SNIPER_INITAMMO_CELL		25 
 #define PC_SNIPER_INITAMMO_ROCKET		0 
 #define PC_SNIPER_GRENADE_TYPE_1		#GR_TYPE_CALTROP
 #define PC_SNIPER_GRENADE_TYPE_2		#GR_TYPE_FLARE //- OfN it was #GR_TYPE_FLASH 
@@ -1954,8 +1977,8 @@ float       rj;					// Rocket Jump Modifier
 #define PC_SOLDIER_GRENADE_TYPE_2		#GR_TYPE_NAIL
 #define PC_SOLDIER_GRENADE_INIT_1		4 	 
 #define PC_SOLDIER_GRENADE_INIT_2		2 	 
-#define PC_SOLDIER_TF_ITEMS			#NIT_RL_LASER_SIGHT //WK 4-27-7 Laser back in //OfN no hover boots
-#define PC_SOLDIER_JOB				#JOB_ARMY //#JOB_RUNNER
+#define PC_SOLDIER_TF_ITEMS			0 //WK 6/1/7 Because people were bitching, removed #NIT_RL_LASER_SIGHT
+#define PC_SOLDIER_JOB				#JOB_ARMY | #JOB_EXTRA1 //WK 6/1/7 Gave them second summon.
 
 // Class Details for DEMOLITION MAN
 //#define PC_DEMOMAN_SKIN				1 
@@ -1982,7 +2005,7 @@ float       rj;					// Rocket Jump Modifier
 #define PC_DEMOMAN_GRENADE_TYPE_1		#GR_TYPE_NORMAL
 #define PC_DEMOMAN_GRENADE_TYPE_2		#GR_TYPE_MIRV
 #define PC_DEMOMAN_GRENADE_INIT_1		4 	 
-#define PC_DEMOMAN_GRENADE_INIT_2		3 	 
+#define PC_DEMOMAN_GRENADE_INIT_2		4 	 
 #define PC_DEMOMAN_TF_ITEMS			0 
 #define PC_DEMOMAN_JOB				#JOB_GUERILLA
 #define PC_DEMOMAN_CUTFITEMS		#CUTF_DETPACK | #CUTF_TOSSABLEDET | #CUTF_HIGHJUMP //WK 2/8/7 Added highjump
@@ -2577,8 +2600,10 @@ float deathmsg;		// Global, which is set before every T_Damage, to indicate
 #define DMSG_XMAS               71
 #define DMSG_EARTHQUAKE         72
 #define DMSG_STORM              73
-#define DMSG_TKD				74
-#define DMSG_PSION			75
+#define DMSG_TKD			  74
+#define DMSG_PSION		  75
+#define DMSG_SHINIGAMI		  76
+#define DMSG_EXPLOSIVE_SHOT	  77
 
 //Defs for objects a spikeshooter can spawn  Misc.qc
 #define SPAWNFLAG_SUPERSPIKE	1 

@@ -286,8 +286,8 @@ void() TeamFortress_DetpackSet =
 	self = oldself;
 
 	newmis = spawn ();
-	newmis.owner = self.owner;
-    newmis.origin = self.owner.origin - '0 0 23';
+	newmis.owner = newmis.real_owner = self.owner;
+    	newmis.origin = self.owner.origin - '0 0 23';
 	newmis.movetype = #MOVETYPE_BOUNCE;
 #ifdef QUAKE_WORLD
 	newmis.solid = #SOLID_BBOX;
@@ -295,7 +295,7 @@ void() TeamFortress_DetpackSet =
 	newmis.solid = #SOLID_TRIGGER;
 #endif
 	newmis.classname = "detpack";
-    newmis.flags = #FL_ITEM;
+    	newmis.flags = #FL_ITEM;
 		
 	newmis.angles = '90 0 0';
 	newmis.angles_y = self.owner.angles_y;
