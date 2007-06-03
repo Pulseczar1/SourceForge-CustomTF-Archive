@@ -1659,6 +1659,7 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 		#ifdef COOL_GIBS    
 		CoolExplosion(self, damage,20);
 		#endif
+/* Turn off the beautiful spam. =(
 		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 //		WriteByte (#MSG_BROADCAST, #TE_TAREXPLOSION);
 		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
@@ -1668,6 +1669,7 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 #ifdef QUAKE_WORLD
 		multicast (trace_endpos, #MULTICAST_PHS);
 #endif
+*/
 	}
 };
 
@@ -2300,14 +2302,17 @@ float(float current_angle,float ideal_angle,float rotate_speed) RotateTowardTarg
 //Any slower and the rockets are just "nudgeable" toward their targets, and not really guided.
 //WK 6/1/7 Turned this into the everything function for thinking rockets, bumped up turn speed from 3 to 4
 #define ROCKET_ROTATE 3
+#define HEAT_ROCKET_ROTATE 0.5
 void() Rocket_Track_Dot =
 {
 	//local float dist;
 	local vector dir, dir2, org, vtemp, atemp;
 	local entity tg, sight,nearest_ent;
-	local float myspeed, effective_distance, dotproduct, min_distance;
+	local float myspeed, effective_distance, dotproduct, min_distance, rocket_rotate;
 	local string stemp;
 	local entity head;
+
+	rocket_rotate = #ROCKET_ROTATE;
 
 	if (time > self.has_sentry) {
 		self.think = SUB_Remove;
@@ -2412,6 +2417,7 @@ void() Rocket_Track_Dot =
 				vtemp = nearest_ent.origin;
 				vtemp_z = nearest_ent.absmin_z; //We aim at the feet of the target!
 				self.v_angle = vtemp; //Save target position
+				rocket_rotate = #HEAT_ROCKET_ROTATE;
 			}
 		}
 		else //Else used the last place we saw the sight
@@ -2437,9 +2443,10 @@ void() Rocket_Track_Dot =
 
 		//Slowly rotate the rocket toward the target.
 		//Finalangle holds our last good self.angles, atemp holds the desired angle
-		self.angles_x = RotateTowardTarget(self.finalangle_x,atemp_x,#ROCKET_ROTATE);
-		self.angles_y = RotateTowardTarget(self.finalangle_y,atemp_y,#ROCKET_ROTATE);
-		self.angles_z = RotateTowardTarget(self.finalangle_z,atemp_z,#ROCKET_ROTATE);
+		//We rotate slower if we're heat seeking toward a target
+		self.angles_x = RotateTowardTarget(self.finalangle_x,atemp_x,rocket_rotate);
+		self.angles_y = RotateTowardTarget(self.finalangle_y,atemp_y,rocket_rotate);
+		self.angles_z = RotateTowardTarget(self.finalangle_z,atemp_z,rocket_rotate);
 
 		makevectors(self.angles); //Now that we have the new angles figured out, recreate velocity vectors
 		dir = normalize(v_forward);
