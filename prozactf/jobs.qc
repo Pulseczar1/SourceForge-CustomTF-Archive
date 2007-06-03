@@ -1115,8 +1115,7 @@ void() JobPsion =
 							multicast (self.origin, #MULTICAST_PHS);
 						#endif
 						sound (self, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM);
-
-						if (!(head.job & #JOB_PSION)) { //Can't psionize a psion
+						if (!(head.job & #JOB_PSION) && head.health > 0) { //Can't psionize a psion
 							// create psionic timer
 							newmis = spawn();
 							newmis.classname = "timer";
@@ -1149,6 +1148,8 @@ void() JobPsion =
 							sprint(head,#PRINT_HIGH,"Your body accepts a psionic discharge!\n");
 							TeamFortress_SetSpeed(head);
 						}
+
+
 					}
 					//Telekinesis works at half normal range
 					else if (ever_grabbed == 0) { //Can only grab one thing
