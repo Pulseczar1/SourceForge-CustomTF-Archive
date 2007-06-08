@@ -1691,7 +1691,7 @@ void() W_FireShotgun =
 	//WK 6/1/7 OTR Shotguns
 	OTR = 1;
 	if (self.cutf_items & #CUTF_OTR && self.ammo_shells > #OTR_AMMO_COST) {
-		OTR = #OTR_DMG_FACTOR * 2; //Double OTR Effect
+		OTR = #OTR_SHOTGUN_DMG_FACTOR; //Double OTR Effect
 		self.currentammo = self.ammo_shells = self.ammo_shells - #OTR_AMMO_COST;
 	}
 	else
@@ -1734,7 +1734,7 @@ void() W_FireSuperShotgun =
 	//WK 6/1/7 OTR Shotguns
 	OTR = 1;
 	if (self.cutf_items & #CUTF_OTR && self.ammo_shells > #OTR_AMMO_COST) {
-		OTR = #OTR_DMG_FACTOR * 2; //Double OTR Effect
+		OTR = #OTR_SHOTGUN_DMG_FACTOR; //Double OTR Effect
 		self.currentammo = self.ammo_shells = self.ammo_shells - (2*#OTR_AMMO_COST);
 	}
 	else

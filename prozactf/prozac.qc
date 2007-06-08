@@ -5,16 +5,16 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs build 259 Û06¯3¯2007İ\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs build 260 Û06¯7¯2007İ\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
-#define MSG_CUTFVERSION   "ĞÒÏÚÁÃ CustomÔÆ VERSION 6-3-07" //WK Version Number
+#define MSG_CUTFVERSION   "ĞÒÏÚÁÃ CustomÔÆ VERSION 6-7-07" //WK Version Number
 
 #define MSG_INTRO  "Welcome to ĞÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®customtf®com\n\nŸ\n\n"
 #define MSG_INTRO2 "Based on the aussie ver by SB-1\nModified version by Clan Prozac\n\n" // Ÿ\n\n
-#define MSG_INTRO3 "Post bug reports and comments on:\nhttp:¯¯www®customtf®com¯forums"
-
+//#define MSG_INTRO3 "Post bug reports and comments on:\nhttp:¯¯www®customtf®com¯forums"
+#define MSG_INTRO3 "Post bug reports and comments on:\nhttp:¯¯customtf®sourceforge®net¯forum¯"
 
 //WK 152 Default, must be > 6.
 #define MOTD_FINISHED 152 //WK 1/7/7 420 //242 		//Delay in 1/10th seconds for motd to show
@@ -23,7 +23,7 @@ void() PrintProzacMOTD =
 {
     local string st;   
 
-    st = "Ÿ Celebrating  years !! Ÿ\n\n";
+    st = "Ÿ Celebrating › years!! Ÿ\n\n";
     
     if ((self.#cprint_fx & 3) == 3)
         st = colstr(st,#COLSTR_MIX1);
