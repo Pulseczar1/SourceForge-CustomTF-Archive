@@ -669,7 +669,8 @@ extern rvGameLog *				gameLog;
 // 14: 1.3
 // 26: 1.4 beta
 // 30: 1.4
-const int GAME_API_VERSION		= 30;
+// 37: 1.4.2
+const int GAME_API_VERSION		= 37;
 
 struct gameImport_t {
 

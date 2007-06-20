@@ -5,7 +5,7 @@
 
 struct game_name_s {
 	game_name_s( void ) {
-		sprintf( string, "Q4F %s", "1.4" );
+		sprintf( string, "Q4F %s", "1.5beta" );
 	}
 	char string[256];
 } game_name;
