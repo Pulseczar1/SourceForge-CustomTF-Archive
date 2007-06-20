@@ -609,10 +609,17 @@ bool idProjectile::Collide( const trace_t &collision, const idVec3 &velocity, bo
 	}
 
 	// If the projectile hits water then we need to let the projectile keep going
-	if ( ent->GetPhysics()->GetContents() & CONTENTS_WATER || collision.c.contents & CONTENTS_WATER ) {
+	//if ( ent->GetPhysics()->GetContents() & CONTENTS_WATER || collision.c.contents & CONTENTS_WATER || collision.c.material && (collision.c.material->GetContentFlags() & CONTENTS_WATER)) {
+	if ( ent->GetPhysics()->GetContents() & CONTENTS_WATER || collision.c.contents & CONTENTS_WATER || (collision.c.material && (collision.c.material->GetContentFlags() & CONTENTS_WATER)) ){
 		if ( /*!gameLocal.isClient && */!physicsObj.IsInWater( ) ) {
 			gameLocal.PlayEffect( spawnArgs, "fx_impact_water", collision.endpos, collision.c.normal.ToMat3(), false, vec3_origin, /*true*/syncPhysics, EC_IMPACT );
 		}
+		int newclipmask = physicsObj.GetClipMask();
+		newclipmask &= (~(MASK_WATER));
+		physicsObj.SetClipMask(newclipmask);
+		//WFR END
+		// Pass through water
+		return false;
 		return false;
 	}
 	else if ( canDamage && ent->IsType( idActor::GetClassType() ) ) {
