@@ -634,6 +634,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		targ.dmg_inflictor = inflictor;
 	}
 
+	//Recoilless Rifles sets the NOKNOCK flag
+	if (attacker.cutf2_items & #CUTF2_RECOILLESS_RIFLE) T_flags = T_flags | #TF_TD_NOKNOCK;
+
 	// KNOCKATION CALCULATION
 	if (!(T_flags & #TF_TD_NOKNOCK)) // OfN - No knockation if the appropiate flag is set
     		if ( (inflictor != world) && (targ.movetype == #MOVETYPE_WALK) )

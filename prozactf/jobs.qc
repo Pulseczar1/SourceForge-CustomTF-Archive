@@ -733,14 +733,14 @@ void() JobJudoka =
 			//Hit fellow judoka or chaplan
 			sprint (self, #PRINT_HIGH, "You throw him with a mighty Seoi Otoshi\n");
 			deathmsg = #DMSG_JUDOKA;
-			TF_T_Damage (trace_ent, self, self, 150, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+			TF_T_Damage (trace_ent, self, self, 120, #TF_TD_NOTTEAM, #TF_TD_MELEE); //WK 150
 		}
 		else if (self.weapons_carried & trace_ent.current_weapon) {
 			sprint (self, #PRINT_HIGH, "You knock his weapon out of his hands\n");
 			tWeapon.heat = 0; //I.e., we didn't take a weapon
 			trace_ent.attack_finished = time + #DISARM_TIME;			
 			deathmsg = #DMSG_JUDOKA;
-			TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+			TF_T_Damage (trace_ent, self, self, 80, #TF_TD_NOTTEAM, #TF_TD_MELEE); //WK 100
 		}
 		else if (trace_ent.current_weapon != 0 && trace_ent.current_weapon != #WEAP_AXE){
 			//Steal their weapon if they have one
@@ -785,7 +785,7 @@ void() JobJudoka =
 			trace_ent.current_weapon = 0;
 
 			deathmsg = #DMSG_JUDOKA;
-			TF_T_Damage (trace_ent, self, self, 65, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+			TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_MELEE); //WK 65
 		}
 
 		self.job_finished = time + #HIT_DELAY;

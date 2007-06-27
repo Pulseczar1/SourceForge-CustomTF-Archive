@@ -1692,6 +1692,8 @@ float       rj;					// Rocket Jump Modifier
 #define CUTF2_LONG_BARREL		128 //Tightens Spread of Shotguns by 30%, Increases Range by 30%
 #define CUTF2_EXPLOSIVE_SHOT		256 //Increases Shot Damage, 20% of damage is AOE
 #define CUTF2_ARMOR_PIERCING		512 //Ignores half of a special armor's protection
+#define CUTF2_RECOILLESS_RIFLE	1024 //Your shots do not inflict knockation
+#define CUTF2_CANNIBAL			2048 //You can eat gibs to heal
 
 //CUTF2 constants
 #define CUTF2_LONG_BARREL_SPREAD_FACTOR 0.8 //80% normal spread
@@ -1699,7 +1701,7 @@ float       rj;					// Rocket Jump Modifier
 #define CUTF2_OVERCHARGE_FACTOR 1.5 //+50% max damage
 #define CUTF2_CHARGER_FACTOR 0.75 //Charges 25% faster
 #define CUTF2_INITIALIZER_FACTOR 1.33 //+33% initial damage
-#define CUTF2_EXPLOSIVE_SHOT_FACTOR 0.2 //Bonus +20% damage as radius
+#define CUTF2_EXPLOSIVE_SHOT_FACTOR 0.1 //Bonus +10% damage as radius //WK 20%
 #define CUTF2_EXPLOSIVE_SHOT_FIRE_CHANCE 0.1 //10% chance per hit to get lit
 #define CUTF2_HEAT_SEEKING_RANGE 1000 //Radius to hunt for new targets
 
@@ -1744,7 +1746,7 @@ float       rj;					// Rocket Jump Modifier
 #define RE_GRENADE_LAUNCHER		6 
 #define RE_ROCKET_LAUNCHER		4 
 #define RE_LIGHT_ASSAULT		30 // WK 1/7/7 36 // was 40 
-#define RE_LASER_CANNON		    	6
+#define RE_LASER_CANNON		    	12 //WK 6/27/7 6
 
 // reload times
 #define RE_SHOTGUN_TIME			2 
@@ -1752,12 +1754,12 @@ float       rj;					// Rocket Jump Modifier
 #define RE_GRENADE_LAUNCHER_TIME	4 
 #define RE_ROCKET_LAUNCHER_TIME 	5 
 #define RE_LIGHT_ASSAULT_TIME		3.2 //WK 1/7/7 3.3 // was 3.5
-#define RE_LASER_CANNON_TIME		1.5
+#define RE_LASER_CANNON_TIME		3 //WK 6/27/7 1.5
 
 //CLIP EXTENDER reload values
 //laser cannon
-#define RE_LASER_CANNON_EX           10 // Original 6
-#define RE_LASER_CANNON_TIME_EX      1.5
+#define RE_LASER_CANNON_EX           18 //10 // Original 6
+#define RE_LASER_CANNON_TIME_EX      3.5 //1.5
 //light assault
 #define RE_LIGHT_ASSAULT_EX         36 //WK 1/7/7 48 // Original 40 - 30
 #define RE_LIGHT_ASSAULT_TIME_EX    3.4 //WK 1/7/7 3.3 Original 3.5 - 3.2
@@ -1881,6 +1883,7 @@ float       rj;					// Rocket Jump Modifier
 .float last_boot_to_the_head; //WK 4/27/7 Only allow one BTTH per 1 or 2 seconds
 .float last_push; //WK 4/27/7 Only allow one shove per 0.5 seconds.
 .vector last_frame_velocity; //WK 4/27/7 Holds the velocity from the previous frame
+.float last_frag_gren_time; //WK 6/27/7 Can only be frag grenaded once per second
 
 // Armor Classes : Bitfields. Use the "armorclass" of armor for the Armor Type.
 

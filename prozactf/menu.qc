@@ -1516,6 +1516,7 @@ void(float inp) Menu_Engineer_Input =
                     {
                         if (te.dont_do_triggerwork == 2)
                         {
+/* WK Silly. Removed.
                             if (te.real_owner == self)
                             {
                                 if ((te.max_health - te.health) > (te.max_health * #SENTRIES_MINIMUMHP_TODETONATE_FACTOR))
@@ -1525,6 +1526,7 @@ void(float inp) Menu_Engineer_Input =
                                     return;
                                 }
                             }
+*/
                             Find_And_Dmg("building_sentrygun",self,1,2);
                         }
                         
@@ -1555,12 +1557,14 @@ void(float inp) Menu_Engineer_Input =
                                     return;
                                 }
 
+/* WK Silly. Removed.
                                 if ((te.max_health - te.health) > (te.max_health * #SENTRIES_MINIMUMHP_TODETONATE_FACTOR))
                                 {
                                     sprint(self,#PRINT_HIGH,"Your tesla holds too much damage to be able to detonate it remotely!\n");
                                     self.impulse = 0;
                                     return;
                                 }
+*/
                             }
 
                             Find_And_Dmg("building_tesla",self,1,1);
@@ -1589,12 +1593,14 @@ void(float inp) Menu_Engineer_Input =
                                     return;
                                 }
 
+/* WK Silly. Removed.
                                 if ((te.max_health - te.health) > (te.max_health * #SENTRIES_MINIMUMHP_TODETONATE_FACTOR))
                                 {
                                     sprint(self,#PRINT_HIGH,"Your tesla holds too much damage to be able to detonate it remotely!\n");
                                     self.impulse = 0;
                                     return;
                                 }
+*/
                             }
 
                             Find_And_Dmg("building_tesla",self,1,2);

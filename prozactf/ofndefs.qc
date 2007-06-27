@@ -111,7 +111,7 @@
 #define GREMLIN_MAX_HP           2000*/
 
 #define OTR_DMG_FACTOR        1.15 // Damage an otr bullet does respect a normal one
-#define OTR_SHOTGUN_DMG_FACTOR 1.30 // Shotguns do +30% instead of +15%
+#define OTR_SHOTGUN_DMG_FACTOR 1.15 // Shotguns can do different amount with OTR
 #define OTR_AMMO_COST         2 // Shells an OTR bullet takes when used
 
 #define SCRAG_DMG              42 // damage the scrag does // was 29

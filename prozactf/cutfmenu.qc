@@ -317,17 +317,21 @@ void(float cost, float type) BuyCuTF2;
 #define STR_RESPAWNGUARD	   "Respawn Guard   "
 #define STR_HOVERBOOTS		   "Hover Boots     "
 #define STR_BOOTUPGRADE 	   "«Boot Upgrade   "
+#define STR_RECOILLESS		   "+Recoilless     "
+#define STR_CANNIBAL		   "Cannibal        "
 
 #define COST_AUTOID 			  25
 #define COST_RESPAWNGUARD		  25
 #define COST_HOVERBOOTS 		 850
 #define COST_BOOTUPGRADE		 350
+#define COST_RECOILLESS			 600
+#define COST_CANNIBAL			 500
 
 #define STR_SELLEXTRAS		   "Sell stuff back "
 
 
 // Leg settings (Speeds)
-#define CUSTOM_SPEED1	500 //WK 6/1/7 410 // Cheetah (shaka original = 650)
+#define CUSTOM_SPEED1	470 //WK 6/1/7 410 // Cheetah (shaka original = 650)
 #define CUSTOM_SPEED2	400 //WK 6/1/7 370 // Cougar (shaka original = 420)
 #define CUSTOM_SPEED3	330 // White Rhino
 #define CUSTOM_SPEED4	310 // Scrub Jay
@@ -2695,10 +2699,9 @@ void() Menu_Option =
 	str = ConstructMenuItemStr(4,#STR_BOOTUPGRADE,#COST_BOOTUPGRADE,self.tf_items,#NIT_HOVER_BOOTS_UPGRADE);
 	l2 = strcat(l2,str);
 
-	//l3 = ConstructMenuItemStr(5,#STR_RLASERGUIDED,#COST_RLASERGUIDED,self.tf_items,#NIT_RL_LASER_SIGHT);
-	//str = ConstructMenuItemStr(6,#STR_OTR,#COST_OTR,self.cutf_items,#CUTF_OTR);
-	//l3 = strcat(l3,str);
-	l3 = "";
+	l3 = ConstructMenuItemStr(5,#STR_RECOILLESS,#COST_RECOILLESS,self.cutf2_items,#CUTF2_RECOILLESS_RIFLE);
+	str = ConstructMenuItemStr(6,#STR_CANNIBAL,#COST_CANNIBAL,self.cutf2_items,#CUTF2_CANNIBAL);
+	l3 = strcat(l3,str);
 
 	//l4 = ConstructMenuItemStr(7,#STR_CLUSTER,#COST_CLUSTER,self.tf_items,#NIT_CLUSTER_ROCKETS);
 	l4 = "";
@@ -2728,11 +2731,17 @@ void(float inp) Menu_Option_Input =
 		HelpString("Doubles the maximum fuel for your hover boots.");
 		Menu_Option();
 	}
-/*	if (inp == 5) {
+	if (inp == 5) {
+		BuyCuTF2(#COST_RECOILLESS,#CUTF2_RECOILLESS_RIFLE);
+		HelpString("The Recoilless Rifle augment makes all of your weapon attacks not knock back the enemy.");
+		Menu_Option();
 	}
 	if (inp == 6) {
+		BuyCuTF2(#COST_CANNIBAL,#CUTF2_CANNIBAL);
+		HelpString("As a cannibal, you can eat gibs in order to heal yourself (up to 25 points above your maximum) and even repair your armor.");
+		Menu_Option();
 	}
-	if (inp == 7) {
+/*	if (inp == 7) {
 	}
 */
 	if (inp == 8) {

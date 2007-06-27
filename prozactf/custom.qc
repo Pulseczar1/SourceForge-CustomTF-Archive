@@ -941,58 +941,102 @@ void(float cost, float type) BuyGren2 =
 */
 
 //Functions for our new grenades
+//WK6-27-7 Frag spikes now reflect off walls, ala Hipnotic Laser Cannon Shots
+#define FRAG_VELOCITY 1000
 void() fragspike_touch =
 {
+	local vector spot1,spot2;
+	local vector oldvel;
+
 	//if (pointcontents(self.origin) == #CONTENT_SKY)
 	if (pointcontents(self.origin) != #CONTENT_EMPTY)
 	{
 		dremove(self);
 		return;
 	}
-	
+
 	// hit something that bleeds
-	if (other.takedamage)
+	if (other.takedamage && other.last_frag_gren_time < time)
 	{
 		deathmsg = #DMSG_GREN_FRAG;
 
 		TF_T_Damage (other, self, self.real_owner, 150, #TF_TD_NOTTEAM, #TF_TD_NAIL);
+		other.last_frag_gren_time = time + 1;
 		dremove(self);
 	}
 	else
 	{
-		//WK 6/1/7 Add in code from Laser Cannon Here, TODO!
 		//We bounce off world since we are fragments
 		if (self.heat > 0) {
-//			self.heat = self.heat - 1;
-//			if (self.velocity = '0 0 0') { //Skip around
-			if (1) { //Skip around
-				self.velocity_x = (random() - 0.5) * 200;
-				self.velocity_y = (random() - 0.5) * 200;
-				self.velocity_z = random() * 200;
+/*
+			local string temps;
+			bprint(#PRINT_HIGH,"Bounce ");
+			temps = ftos(self.heat);
+			bprint(#PRINT_HIGH,temps);
+			bprint(#PRINT_HIGH,": ");
+			temps = vtos(self.neworigin);
+			bprint(#PRINT_HIGH,temps);
+			bprint(#PRINT_HIGH,", TPN: ");
+*/
+			self.heat = self.heat - 1;
+			oldvel = normalize(self.neworigin);
+			spot1 = self.origin - (16*oldvel);
+			spot2 = self.origin + (16*oldvel);
+			traceline (spot1, spot2, #TL_BSP_ONLY, self);  // see through other monsters
+//			temps = vtos(trace_plane_normal);
+//			bprint(#PRINT_HIGH,temps);
+//			bprint(#PRINT_HIGH,"\n");
+			if (vlen(trace_plane_normal) < 1) { //Didn't find any wall, repeat with wider search
+				spot1 = self.origin - (300*oldvel);
+				spot2 = self.origin + (300*oldvel);
+				traceline (spot1, spot2, #TL_BSP_ONLY, self);  // see through other monsters
+				//bprint(#PRINT_HIGH,"Wider Search: ");
+				//temps = vtos(trace_plane_normal);
+				//bprint(#PRINT_HIGH,temps);
+				//bprint(#PRINT_HIGH,"\n");
 			}
+			if (vlen(trace_plane_normal) < 1) { //Still didn't find any wall, so simply reflect
+				self.origin_z = self.origin_z + 20; //Lift up off the ground
+				self.velocity = -1*oldvel;
+			} else { //Reflect off a wall
+				//self.origin = trace_endpos;
+				self.velocity = normalize(oldvel+(2*trace_plane_normal));
+			}
+			if (self.flags & #FL_ONGROUND) self.flags = self.flags - #FL_ONGROUND;
+			self.velocity = #FRAG_VELOCITY * self.velocity;
+			self.neworigin = self.velocity; //WK Note: Save our current velocity
+			//self.nextthink = time + 0.5+random();
 		}
 		else {
-            if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-               //FieldExplosion(other,self.origin,self);
-               FieldEvent(other,self.origin,self);
-            else
-            {
-                WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-                WriteByte (#MSG_BROADCAST, #TE_SUPERSPIKE);
-                WriteCoord (#MSG_BROADCAST, self.origin_x);
-                WriteCoord (#MSG_BROADCAST, self.origin_y);
-                WriteCoord (#MSG_BROADCAST, self.origin_z);
-            #ifdef QUAKE_WORLD
-                multicast (self.origin, #MULTICAST_PHS);
-            #endif
-            }
-
+			if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+				FieldEvent(other,self.origin,self);
+			else
+			{
+				WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+				WriteByte (#MSG_BROADCAST, #TE_SUPERSPIKE);
+				WriteCoord (#MSG_BROADCAST, self.origin_x);
+				WriteCoord (#MSG_BROADCAST, self.origin_y);
+				WriteCoord (#MSG_BROADCAST, self.origin_z);
+				#ifdef QUAKE_WORLD
+					multicast (self.origin, #MULTICAST_PHS);
+				#endif
+			}
 			dremove(self);
 		}
 	}
 };
 void() FragSpikeThink =
 {
+	//We service the fragspike every 0.1 seconds, but only readjust it's vector after attack_finished has elapsed
+	//Essentially, we're forcing it to the velocity it's supposed to have every 0.1 seconds
+	if (time < self.attack_finished) {
+		if (self.flags & #FL_ONGROUND) self.flags = self.flags - #FL_ONGROUND;
+		self.velocity = self.neworigin;
+		self.angles = vectoangles(self.velocity);
+		self.nextthink = time + 0.1;
+		return;
+	}
+
 	if (self.heat > 0) {
 		self.heat = self.heat - 1;
 
@@ -1000,13 +1044,15 @@ void() FragSpikeThink =
 		self.angles_x = 0;
 		self.angles_z = 0;
 		makevectors(self.angles);
-		if (self.velocity = '0 0 0')
-			self.origin_z = self.origin_z + 50;
+		//if (self.velocity = '0 0 0')
+		self.origin_z = self.origin_z + 10;
 
-		self.velocity = v_forward * 1000;
-		self.velocity_z = (random() + 0.25) * 1000;
+		self.velocity = v_forward * #FRAG_VELOCITY;
+		self.velocity_z = (0.5-random()) * 10;
+		self.neworigin = self.velocity; //Save our current velocity
 
-		self.nextthink = time + 0.5 + random();
+		self.attack_finished = time + 1 + random(); //Holds time to redo speed
+		self.nextthink = time + 0.1;
 	}
 	else {
 		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
@@ -1051,7 +1097,9 @@ void() FragGrenadeExplode =
 	multicast (self.origin, #MULTICAST_PHS);
 #endif
 
-	shraps = rint(6 * random()) + 6; //Pieces of shrapmetal;
+	//shraps = rint(6 * random()) + 6; //Pieces of shrapmetal;
+	shraps = 12; //WK 6-27-7 We can handle the lag now
+	//shraps = 1; //WK DELETETHIS
 	while (shraps > 0) {
 		self.angles_y = random() * 360;
 		self.angles_x = 0;
@@ -1062,32 +1110,34 @@ void() FragGrenadeExplode =
 		newmis = spawn ();
 		//WK Make shraps hit owner newmis.owner = self.owner;
 		newmis.real_owner = self.owner;
-		newmis.movetype = #MOVETYPE_BOUNCE;
+		newmis.movetype = #MOVETYPE_FLYMISSILE;
 		newmis.solid = #SOLID_BBOX;
 
 		newmis.angles = '0 0 0';
 		newmis.classname = "spike";
 		newmis.think = FragSpikeThink;
-//		newmis.think = SUB_Remove;
-		newmis.nextthink = time + 1;
+		newmis.nextthink = time + 0.1;
+		newmis.attack_finished = time + 1 + random(); //Holds time to redo speed
 		setmodel (newmis, "progs/spike.mdl");
-		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+//		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+		setsize (newmis, '0 0 0', '0 0 0');
 		setorigin (newmis, self.origin);
 
 		//Start it over the ground
 		newmis.origin_z = newmis.origin_z + 10;
 
-		newmis.velocity = v_forward * 1000;
+		newmis.velocity = v_forward * #FRAG_VELOCITY;
 		if (random() < 0.5) 
-			newmis.velocity_z = 20;
+			newmis.velocity_z = 10;
 		else
-			newmis.velocity_z = random() * 1000;
+			newmis.velocity_z = (0.5 - random()) * 100;
+		newmis.neworigin = newmis.velocity; //Save our current velocity
 		newmis.avelocity = '100 100 100';
 		newmis.touch = fragspike_touch;
 		newmis.weapon = #DMSG_GREN_NAIL;
 
-		//Make it bounce six times.
-		newmis.heat = 5;
+		//Make it bounce ten times.
+		newmis.heat = 10;
 		shraps = shraps - 1;
 	}
 #ifdef QUAKE_WORLD
