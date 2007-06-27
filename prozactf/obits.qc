@@ -1454,6 +1454,10 @@ void(entity targ, entity attacker) ClientObituary =
 				{
 				/*	deathstring = " is assassinated by ";
 					deathstring2 = "'s Mauser WK-77\n";	*/
+					dprint(attacker.netname);
+					dprint(" mausers ");
+					dprint(targ.netname);
+					dprint("\n");
 					sprint(attacker, #PRINT_HIGH, "You mercilessly slaughter ");
 					sprint(attacker, #PRINT_HIGH, targ.netname);
 					sprint(attacker, #PRINT_HIGH, "!\n");					

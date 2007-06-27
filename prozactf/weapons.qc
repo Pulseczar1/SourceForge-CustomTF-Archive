@@ -2416,10 +2416,11 @@ void() Rocket_Track_Dot =
 			else {
 				vtemp = nearest_ent.origin;
 				vtemp_z = nearest_ent.absmin_z; //We aim at the feet of the target!
+				vtemp = vtemp - nearest_ent.velocity*0.2; //WK 6-27-7 Aim behind them if they are moving.
 				self.v_angle = vtemp; //Save target position
 				rocket_rotate = #HEAT_ROCKET_ROTATE;
 			}
-		}
+		} //End Heat Seeking Code
 		else //Else used the last place we saw the sight
 			vtemp = self.v_angle;
 
@@ -4258,6 +4259,8 @@ void() W_Attack =
 //CH so that the dot can be removed quicker (reset after dot gone)
 		if (self.tf_items & #NIT_RL_LASER_SIGHT)
 			Attack_Finished(0.1);
+		else if (self.cutf2_items & #CUTF2_HEAT_SEEKING) //WK 6-27-7 Heat seeking shots have +50% cooldown
+			Attack_Finished(1.2);
 		else
 			Attack_Finished(0.8);
 	}
@@ -6288,7 +6291,7 @@ void() HIP_LaserTouch =
 	  deathmsg = #DMSG_LASERCANNON;
 	  TF_T_Damage (other, self, self.demon_one, self.dmg, #TF_TD_NOTTEAM | #TF_TD_DONTGIB, #TF_TD_ELECTRICITY);
    }
-   else if ((self.cnt >= 3) || (random()<0.15))
+   else if ((self.cnt > 5) || (random()<0.05)) //WK 6/27/7 >=3, <0.15
    {
 	   WriteByte (#MSG_MULTICAST, #SVC_TEMPENTITY);
 	   WriteByte (#MSG_MULTICAST, #TE_GUNSHOT);
@@ -6301,6 +6304,7 @@ void() HIP_LaserTouch =
    else
    {
 //		self.dmg = 0.66 * self.dmg;
+//	  self.dmg = 1.15 * self.dmg;
 	  self.dmg = 0.9 * self.dmg;
 //		self.speed = 0.95 * self.speed;
 	  self.velocity = oldvel+(2*trace_plane_normal);
@@ -6373,7 +6377,7 @@ void(vector org, vector vec, float light) HIP_LaunchLaser =
    newmis.avelocity = '0 0 400';
 
    newmis.nextthink = time;
-   newmis.attack_finished = time + 3.5; //was 3.5//OfN- they last for 7 seconds now
+   newmis.attack_finished = time + 3.5; //OfN- they last for 7 seconds now
    newmis.think = HIP_LaserThink;
    newmis.touch = HIP_LaserTouch;
    newmis.count = 0;

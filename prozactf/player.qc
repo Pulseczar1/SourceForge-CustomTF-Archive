@@ -1,5 +1,3 @@
-
-
 /*======================================================
 	PLAYER.QC			Custom TeamFortress v3.1
 
@@ -1345,41 +1343,69 @@ void(entity warlock) GibPickSound;
 float(entity player) GetMeat;
 void(entity player, float numgibs) SetMeat;
 
-//XXXX
 void() gib_touch =
 {
-    if (self.velocity == '0 0 0')
-        self.avelocity = '0 0 0';
+	local float removeme;
+	removeme = 0;
+
+	if (self.velocity == '0 0 0')
+		self.avelocity = '0 0 0';
+
+	//WK 6/27/7 Cannibals can eat gibs
+	if (other.classname == "player")
+	if (other.cutf2_items & #CUTF2_CANNIBAL)
+	if (other.playerclass != #PC_UNDEFINED) // Skip Observers
+	if (!(other.done_custom & #CUSTOM_BUILDING)) // ppl customizing
+	if (other.health > 0)
+	{
+		//We heal up to 25 points above the max
+		if (other.health < other.max_health + 25) {
+			other.health = other.health + 25;
+			if (other.health > other.max_health + 25)
+				other.health = other.max_health + 25;
+			removeme = 1;
+		}
+		if (other.armorvalue < other.maxarmor) {
+			other.armorvalue = other.armorvalue + 15;
+			if (other.armorvalue > other.maxarmor)
+				other.armorvalue = other.maxarmor;
+			other.armortype = other.armor_allowed;
+			removeme = 1;
+		}
+		if (removeme)
+			stuffcmd(other,"bf\n");
+	}
+
+	//WK 6/27/7 We allow both cannibal and warlock on same gibs
+	if (other.classname == "player")
+	#ifndef WARLOCK_TEST
+		if (!Teammate(other.team_no,self.team_no)) // Only enemy gibs can be picked up
+	#endif
+	if (other.job & #JOB_WARLOCK)
+	if (other.playerclass != #PC_UNDEFINED) // Skip Observers
+	if (!(other.done_custom & #CUSTOM_BUILDING)) // ppl customizing
+	if (other.health > 0)
+	{
+		local string kgs;
+		kgs = ftos(self.has_fieldgen);
     
-    if (other.classname == "player")
-    #ifndef WARLOCK_TEST
-    if (!Teammate(other.team_no,self.team_no)) // Only enemy gibs can be picked up
-    #endif
-    if (other.job & #JOB_WARLOCK)
-    if (other.playerclass != #PC_UNDEFINED) // Skip Observers
-    if (!(other.done_custom & #CUSTOM_BUILDING)) // ppl customizing
-    //if (self.has_fieldgen) NOT NEEDED, only gibs with meat have their touch assigned
-    if (other.health > 0)
-    {
-        local string kgs;
-        kgs = ftos(self.has_fieldgen);
-    
-        local float meat;
-        meat = GetMeat(other);
-        SetMeat(other,meat+self.has_fieldgen);
+		local float meat;
+		meat = GetMeat(other);
+		SetMeat(other,meat+self.has_fieldgen);
 
-        sprint(other,#PRINT_HIGH,"You get ");
-        sprint(other,#PRINT_HIGH,kgs);
+		sprint(other,#PRINT_HIGH,"You get ");
+		sprint(other,#PRINT_HIGH,kgs);
 
-        if (self.has_fieldgen > 1)
-            sprint(other,#PRINT_HIGH," kgs of fresh meat\n");
-        else
-            sprint(other,#PRINT_HIGH," kg of fresh meat\n");
+		if (self.has_fieldgen > 1)
+			sprint(other,#PRINT_HIGH," kgs of fresh meat\n");
+		else
+			sprint(other,#PRINT_HIGH," kg of fresh meat\n");
 
-        GibPickSound(other);
-        stuffcmd(other,"bf\n");
-        dremove(self);
-    }
+		GibPickSound(other);
+		stuffcmd(other,"bf\n");
+		removeme = 1;
+	}
+	if (removeme) dremove(self);
 };
 
 void(string gibname, float dm, float makecool, float gibskin, float gibkgs, float randorg) ThrowGib =
