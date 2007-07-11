@@ -146,6 +146,9 @@ void(entity player) UpdateArmorItem;
 #define STR_RLASERGUIDED	   "Laser Guided RL "
 #define STR_OTR 			   "OTR Bullets     "
 #define STR_CLUSTER 		   "Cluster Rockets "
+// PAGE 17 - More Equipment
+#define STR_FASTERROCKETS		"Faster Rockets  "
+#define STR_NONSTICKYGRENS		"Anti-Stick Grens"
 
 #define STR_SELLEXTRAS		   "Sell stuff back "
 
@@ -274,6 +277,9 @@ void(entity player) UpdateArmorItem;
 #define COST_RLASERGUIDED		1000
 #define COST_OTR				1850
 #define COST_CLUSTER			3250
+// PAGE 17 - More Equipment
+#define COST_FASTERROCKETS		800
+#define COST_NONSTICKYGRENS		450
 
 // Leg settings (Speeds)
 #define CUSTOM_SPEED1	410 // Cheetah (shaka original = 650)
@@ -2383,7 +2389,7 @@ void() Menu_Option =
 	l3 = strcat(l3,str);
 
 	l4 = ConstructMenuItemStr(7,#STR_CLUSTER,#COST_CLUSTER,self.tf_items,#NIT_CLUSTER_ROCKETS);
-	l4 = strcat(l4,".. Ðòåö    \n..         \n.. Äïîå!   \n");
+	l4 = strcat(l4,".. Ðòåö    \n.. Îåøô    \n.. Äïîå!   \n");
 
 	centerprint(self, "œ‹ Cõsôoíiúe Ùïõòóåìæ ‹œ\n‹œ Optional Equipment œ‹\n\n", l1,l2,l3,l4, temp," dollars left\n");
 };
@@ -2430,11 +2436,98 @@ void(float inp) Menu_Option_Input =
 		self.current_menu = #MENU_PROFICIENCY;
 		Menu_Proficiency(); 	   
 	}
+	if (inp == 9) {
+		CuTFMenuSound(#MENUSOUND_BROWSE);
+		self.current_menu = #MENU_MOREOPTION;
+		Menu_MoreOption ();			
+	}
 	if (inp == 10) {
 		DropFromCustomClassGen();
 	}
 
 	self.impulse = 0;
+};
+
+
+// ====================================================================
+//	Menu of more optional equipment - Gizmo
+// ====================================================================
+void() Menu_MoreOption =
+{
+	local string temp;
+	temp = ftos(self.money);
+	
+	if (self.tfstate & #TFSTATE_NOTENOUGHMONEY)
+		temp = colstr(temp,#COLSTR_RED);
+	
+	local string l1,l2,l3,l4, str;
+
+	MenuResetCount();
+
+	l1 = ConstructMenuItemStr(1, #STR_FASTERROCKETS, #COST_FASTERROCKETS, self.cutf_moreitems, #CUTF_MI_FASTERROCKETS);
+	str = ConstructMenuItemStr(2, #STR_NONSTICKYGRENS, #COST_NONSTICKYGRENS, self.cutf_moreitems, #CUTF_MI_NONSTICKYGRENS);
+	l1 = strcat(l1, str);
+
+	l2 = l3 = "\n\n";
+
+	l4 = "\n";
+	l4 = strcat(l4, ".. Ðòåö    \n..         \n.. Äïîå!   \n");
+
+	centerprint(self, "œ‹ Cõsôoíiúe Ùïõòóåìæ ‹œ\n‹œ More Equipment     œ‹\n\n", l1, l2, l3, l4, temp," dollars left\n");
+};
+
+void(float inp) Menu_MoreOption_Input =
+{
+	if (inp >= 1 && inp <= 10) {
+		// Gizmo - modified version of avirox's mods
+		if (inp == 1) {
+			if (self.weapons_carried & #WEAP_ROCKET_LAUNCHER) {
+				if (self.cutf_moreitems & #CUTF_MI_FASTERROCKETS) {
+					PrintRefund (#COST_FASTERROCKETS);
+					self.cutf_moreitems = self.cutf_moreitems - #CUTF_MI_FASTERROCKETS;
+				} else if (self.money >= #COST_FASTERROCKETS) {
+					self.money = self.money - #COST_FASTERROCKETS;
+					self.cutf_moreitems = self.cutf_moreitems | #CUTF_MI_FASTERROCKETS;
+					PrintMoney ();
+				} else
+					PrintNotEnoughMoney (#COST_FASTERROCKETS);
+			} else {
+				// TODO: add these into custom.qc; infact all this should be in a new moreitems function in custom.qc
+				sprint (self, #PRINT_HIGH, "Gonna lob these rockets at em'? Go buy a rocket launcher first\n");
+				CuTFMenuSound (#MENUSOUND_WRONG);
+			}
+
+			Menu_MoreOption ();
+		} else if (inp == 2) {
+			sprint (self, #PRINT_HIGH, "Sorry, non-sticky grenades are disabled till a serious bug/exploit is fixed!\n");
+			CuTFMenuSound (#MENUSOUND_WRONG);
+/*
+			if (self.cutf_moreitems & #CUTF_MI_NONSTICKYGRENS) {
+				PrintRefund (#COST_NONSTICKYGRENS);
+				self.cutf_moreitems = self.cutf_moreitems - #CUTF_MI_NONSTICKYGRENS;
+			} else if (self.money >= #COST_NONSTICKYGRENS) {
+				self.money = self.money - #COST_NONSTICKYGRENS;
+				self.cutf_moreitems = self.cutf_moreitems | #CUTF_MI_NONSTICKYGRENS;
+				PrintMoney ();
+			} else
+				PrintNotEnoughMoney (#COST_NONSTICKYGRENS);
+
+			Menu_MoreOption ();
+*/
+		}
+	   
+		if (inp == 8) {
+			CuTFMenuSound(#MENUSOUND_BROWSE);
+			self.current_menu = #MENU_OPTION;
+			Menu_Option();
+		}
+		if (inp == 10)
+		{
+			DropFromCustomClassGen();
+		}
+
+		self.impulse = 0;
+	}
 };
 
 //___________________________________________________________________________________

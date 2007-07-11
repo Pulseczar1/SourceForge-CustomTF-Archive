@@ -145,6 +145,9 @@ void() DropToCustomClassGen =
 #else
 	self.cutf_items = 0;
 #endif
+	// Gizmo - new item flags
+	self.cutf_moreitems = 0;
+
 	self.tf_items_flags = 0;
 	self.items = 0;
 	self.ammo_rockets = 0;

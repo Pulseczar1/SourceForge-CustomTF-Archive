@@ -612,10 +612,11 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 
 	// check for insane mode, thought about putting this in StartFrame, but I'd bet T_Damage gets called less overall
 	monster_mode = stof (infokey(world, "monster_mode"));
-	if (monster_mode == 1) {
+	if (monster_mode & 1) {
 		if (attacker.team_no == #TEAMNO_MONSTERS && targ.classname == "player")
 			return indmg * 2;
-	} else if (monster_mode == 2) {
+	}
+	if (monster_mode & 2) {
 		if (attacker.flags & #FL_CLIENT && COOP_IsCoopMonster(targ))
 			indmg = indmg * 0.5;
 	}
