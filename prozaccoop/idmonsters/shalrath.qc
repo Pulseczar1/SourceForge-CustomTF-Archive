@@ -268,11 +268,8 @@ void() monster_shalrath =
 	self.#npc_spawnfunc = monster_shalrath;
 	COOP_SetLives ();
 
-	self.#npc_bulletmult = 1.10;
-	self.#npc_spikemult = 1;
-	self.#npc_explosionmult = 0.55;
-	self.#npc_electricitymult = 1.20;
-	self.#npc_firemult = 0.85;
+	self.#npc_explosionmult = 0.75;
+	self.#npc_electricitymult = 1.25;
 
 	self.think = coop_walkmonster_start;
 	self.nextthink = time + 0.1 + random ()*0.1;	

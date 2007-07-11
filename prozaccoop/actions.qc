@@ -157,6 +157,51 @@ void() TeamFortress_SaveMe =
 	}
 };
 
+#ifdef COOP_MODE_ENHANCED
+/*
+	ConstructString - Gizmo - made this function to make things easier
+*/
+
+string (string s1, string s2, string s3, string s4, string s5, string s6, string s7, string s8) ConstructString =
+{
+	local string ls;
+
+	ls = strcat (s1, s2);
+
+	if (s3 != string_null)
+		ls = strcat (ls, s3);
+	else
+		return ls;
+
+	if (s4 != string_null)
+		ls = strcat (ls, s4);
+	else
+		return ls;
+
+	if (s5 != string_null)
+		ls = strcat (ls, s5);
+	else
+		return ls;
+
+	if (s6 != string_null)
+		ls = strcat (ls, s6);
+	else
+		return ls;
+
+	if (s7 != string_null)
+		ls = strcat (ls, s7);
+	else
+		return ls;
+
+	if (s8 != string_null)
+		ls = strcat (ls, s8);
+	else
+		return ls;
+
+	return ls;
+};
+#endif
+
 //=========================================================================
 // ID's the player in your sights, and if you're a medic or engineer,
 // reports their health and armor.
@@ -625,14 +670,100 @@ void(float inAuto) TeamFortress_ID =
 
 #ifdef COOP_MODE_ENHANCED
 		else if (trace_ent.team_no == #TEAMNO_MONSTERS) {
+			local string s1;
+			local string bullet, nail, exp, elec, fire, melee;
+			local string strong, weak;
+			local string ar;
+
 			// Gizmo - wouldn't this be easier to do this one time before these if statements?
 			self.StatusRefreshTime = time + 1.5;
 			st = ftos (trace_ent.health);
+			ar = ftos (trace_ent.armorvalue);
 
-			if (self.cutf_items & #CUTF_DEMONLORE)
-				centerprint (self, spacer, "An εξενω ", trace_ent.netname, "\n\n", st, " health");
-			else
-				centerprint (self, spacer, "An εξενω ", trace_ent.netname);
+			// Gizmo - print more information
+			bullet = ftos(rint(trace_ent.#npc_bulletmult * 100));
+			nail = ftos(rint(trace_ent.#npc_spikemult * 100));
+			exp = ftos(rint(trace_ent.#npc_explosionmult * 100));
+			elec = ftos(rint(trace_ent.#npc_electricitymult * 100));
+			fire = ftos(rint(trace_ent.#npc_firemult * 100));
+			melee = ftos(rint(trace_ent.#npc_meleemult * 100));
+			//bullet = colstr (bullet, #COLSTR_NUMBER);
+			//nail = colstr (nail, #COLSTR_NUMBER);
+			//exp = colstr (exp, #COLSTR_NUMBER);
+			//elec = colstr (elec, #COLSTR_NUMBER);
+			//fire = colstr (fire, #COLSTR_NUMBER);
+			//melee = colstr (melee, #COLSTR_NUMBER);
+
+			strong = "Strong";
+			weak = "Weak";
+			if (trace_ent.#npc_bulletmult) {
+				if (trace_ent.#npc_bulletmult < 0.95)
+					s1 = ConstructString (strong, "―", bullet, "%", " against βυμμετσ\n", string_null, string_null, string_null);
+			}
+			if (trace_ent.#npc_spikemult) {
+				if (trace_ent.#npc_spikemult < 0.95)
+					s1 = ConstructString (s1, strong, "―", nail, "%", " against ξαιμσ\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_explosionmult) {
+				if (trace_ent.#npc_explosionmult < 0.95)
+					s1 = ConstructString (s1, strong, "―", exp, "%", " against εψπμοσιοξσ\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_electricitymult) {
+				if (trace_ent.#npc_electricitymult < 0.95)
+					s1 = ConstructString (s1, strong, "―", elec, "%", " against εμεγτςιγιτω\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_firemult) {
+				if (trace_ent.#npc_firemult < 0.95)
+					s1 = ConstructString (s1, strong, "―", fire, "%", " against ζιςε\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_meleemult) {
+				if (trace_ent.#npc_meleemult < 0.95)
+					s1 = ConstructString (s1, strong, "―", melee, "%", " against νεμεε ατταγλσ\n", string_null, string_null);
+			}
+
+			if (s1 != string_null)
+				s1 = strcat (s1, "\n");
+
+			if (trace_ent.#npc_bulletmult) {
+				if (trace_ent.#npc_bulletmult > 1)
+					s1 = ConstructString (s1, weak, "―", bullet, "%", " against βυμμετσ\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_spikemult) {
+				if (trace_ent.#npc_spikemult > 1)
+					s1 = ConstructString (s1, weak, "―", nail, "%", " against ξαιμσ\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_explosionmult) {
+				if (trace_ent.#npc_explosionmult > 1)
+					s1 = ConstructString (s1, weak, "―", exp, "%", " against εψπμοσιοξσ\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_electricitymult) {
+				if (trace_ent.#npc_electricitymult > 1)
+					s1 = ConstructString (s1, weak, "―", elec, "%", " against εμεγτςιγιτω\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_firemult) {
+				if (trace_ent.#npc_firemult > 1)
+					s1 = ConstructString (s1, weak, "―", fire, "%", " against ζιςε\n", string_null, string_null);
+			}
+			if (trace_ent.#npc_meleemult) {
+				if (trace_ent.#npc_meleemult > 1)
+					s1 = ConstructString (s1, weak, "―", melee, "%", " against νεμεε ατταγλσ\n", string_null, string_null);
+			}
+			//delstr (bullet);
+			//delstr (nail);
+			//delstr (exp);
+			//delstr (elec);
+			//delstr (fire);
+			//delstr (melee);
+
+			if (self.cutf_items & #CUTF_DEMONLORE) {
+				s1 = ConstructString (ar, " armor\n\n", s1, string_null, string_null, string_null, string_null, string_null);
+				centerprint (self, "\nAn εξενω ", trace_ent.netname, "\n\n", st, " health\n", s1);
+			} else
+				centerprint (self, "\nAn εξενω ", trace_ent.netname, "\n\n", s1);
+
+			// for when an observer
+			// Gizmo - wtf? why not use time + ... ? using every frame is unreliable
+			self.menu_count = 0;
 		}
 #endif
 	}

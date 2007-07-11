@@ -261,7 +261,7 @@ void() monster_demon1 =
 	self.#npc_spawnfunc = monster_demon1;
 	COOP_SetLives ();
 
-	self.#npc_electricitymult = 1.40;
+	self.#npc_firemult = 1.25;
 		
 	coop_walkmonster_start();
 };
@@ -366,10 +366,10 @@ void(float side)	_Demon_Melee =
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
-		
-    sound (self, #CHAN_WEAPON, "demon/dhit2.wav", 1, #ATTN_NORM);
+
+	sound (self, #CHAN_WEAPON, "demon/dhit2.wav", 1, #ATTN_NORM);
 	ldmg = #IDMON_DEMON_SLASHDMG + 5*random();
-	T_Damage (self.enemy, self, self, ldmg);	
+	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -388,7 +388,7 @@ void()	_Demon_JumpTouch =
 		if ( vlen(self.velocity) > 400 )
 		{
 			ldmg = #IDMON_DEMON_JUMPDMG + 10*random();
-			T_Damage (other, self, self, ldmg);	
+			TF_T_Damage (other, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 	}
 

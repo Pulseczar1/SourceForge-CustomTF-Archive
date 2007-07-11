@@ -13,6 +13,18 @@
 
 
 /*
+	COOP_IsCoopMonster - returns true only if this is a new coop monster, not if it's a monster in general
+*/
+
+float (entity test) COOP_IsCoopMonster =
+{
+	if (test.team_no == #TEAMNO_MONSTERS)
+		return #TRUE;
+	return #FALSE;
+};
+
+
+/*
 	COOP_SightBlocked - checks if an entities sight to the given entity is blocked
 */
 
@@ -436,6 +448,9 @@ void (float dist) COOP_Run =
 	if (self.attack_state == #AS_SLIDING)
 		return;
 
+	// decrease our speed if tranqed
+	if (self.tfstate & #TFSTATE_TRANQUILISED)
+		dist = dist * #NPC_TRANQ_FACTOR;
 	// increase our speed by the factor if there is one set
 	if (self.#npc_speedfactor)
 		COOP_WalkSmooth (dist * self.#npc_speedfactor);
@@ -455,6 +470,7 @@ void (float dist) COOP_Run =
 	COOP_RandomName
 */
 
+/*
 string () COOP_RandomName =
 {
 	local float rnum;
@@ -466,16 +482,19 @@ string () COOP_RandomName =
 	else
 		return "bob";
 };
+*/
 
 
 /*
 	COOP_GenerateMonsterName
 */
 
+/*
 string (entity monster) COOP_GenerateMonsterName =
 {
 	return monster.netname;
 };
+*/
 
 
 //====================================
@@ -596,6 +615,22 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 	if (monster_mode == 1) {
 		if (attacker.team_no == #TEAMNO_MONSTERS && targ.classname == "player")
 			return indmg * 2;
+	} else if (monster_mode == 2) {
+		if (attacker.flags & #FL_CLIENT && COOP_IsCoopMonster(targ))
+			indmg = indmg * 0.5;
+	}
+
+
+	// automatic adjustment to the number of players
+	if (attacker.flags & #FL_CLIENT && COOP_IsCoopMonster(targ)) {
+		if (num_players <= 2)
+			indmg = indmg * 1.7;	// 2
+		else if (num_players <= 4)
+			indmg = indmg * 1.4;	// 1.6
+		else if (num_players == 5)
+			indmg = indmg * 1.2;
+		else if (num_players >= 8)
+			indmg = indmg * 0.8;
 	}
 
 
@@ -609,6 +644,8 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 		targ.#npc_electricitymult = 1;
 	if (!targ.#npc_firemult)
 		targ.#npc_firemult = 1;
+	if (!targ.#npc_meleemult)
+		targ.#npc_meleemult = 1;
 	if (!targ.#npc_othermult)
 		targ.#npc_othermult = 1;
 
@@ -618,6 +655,7 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 	else if (targ.team_no != #TEAMNO_MONSTERS)
 		return indmg;
 
+	// if the target is a coop monster then do the special stuff
 	if (attacktype == #TF_TD_SHOT)
 		indmg = indmg * targ.#npc_bulletmult;
 	else if (attacktype == #TF_TD_NAIL)
@@ -628,6 +666,8 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 		indmg = indmg * targ.#npc_electricitymult;
 	else if (attacktype == #TF_TD_FIRE)
 		indmg = indmg * targ.#npc_firemult;
+	else if (attacktype == #TF_TD_MELEE)
+		indmg = indmg * targ.#npc_meleemult;
 	else if (attacktype == #TF_TD_OTHER)
 		indmg = indmg * targ.#npc_othermult;
 

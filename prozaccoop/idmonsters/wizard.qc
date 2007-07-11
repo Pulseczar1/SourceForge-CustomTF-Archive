@@ -8,7 +8,7 @@
 
 
 #define IDMON_WIZARD_HEALTH		220
-#define IDMON_WIZARD_SPIKEDMG		100		// 150
+#define IDMON_WIZARD_SPIKEDMG		60		// 150
 
 
 /*
@@ -103,6 +103,9 @@ float()	_WizardCheckAttack =
 {
 	local entity	targ;
 	local float		chance;
+
+	if (!infront(self.enemy))
+		return #FALSE;
 
 	enemy_range = range (self.enemy);
 	enemy_vis = visible (self.enemy);
@@ -485,6 +488,9 @@ void() monster_wizard =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_wizard;
 	COOP_SetLives ();
+
+	self.#npc_spikemult = 1.2;
+	self.#npc_explosionmult = 1.2;
 		
 	coop_flymonster_start ();
 };

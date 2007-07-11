@@ -324,6 +324,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 
 #ifdef COOP_MODE_ENHANCED
 float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEntityDamage;
+float (entity test) COOP_IsCoopMonster;
 #endif
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage =
 {
@@ -602,7 +603,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 				    sprint(attacker,#PRINT_HIGH,"You hit kevlar\n");
 	            }
 		}
-		else if ((targ.armorclass & #AT_SAVEMELEE) && (deathmsg == #DMSG_JUDOKA || deathmsg == #DMSG_AXE || deathmsg == #DMSG_BACKSTAB || deathmsg == #DMSG_SPANNER))
+		else if ((targ.armorclass & #AT_SAVEMELEE) && (T_AttackType == #TF_TD_MELEE || deathmsg == #DMSG_JUDOKA || deathmsg == #DMSG_AXE || deathmsg == #DMSG_BACKSTAB || deathmsg == #DMSG_SPANNER))
 		{
 			damage = floor(damage * 0.5);
 			if ((targ.velocity_x > 0 || targ.velocity_y > 0 || targ.velocity_z > 0) && random() > 0.6)
@@ -830,6 +831,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	if (self.th_pain)
 	{
 		self.th_pain (attacker, take);
+#ifdef COOP_MODE_ENHANCED
+		// Gizmo - prevent the monster lerping from getting messed up when pausing a bit for pain
+		if (COOP_IsCoopMonster(self))
+			self.#npc_lastruntime = 0;
+#endif
 		// nightmare mode monsters don't go into pain frames often
 		/*if (skill >= 3)
 			self.pain_finished = time + 5;		*/

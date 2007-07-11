@@ -110,7 +110,7 @@ void()	Tar_JumpTouch =
 		if ( vlen(self.velocity) > 400 )
 		{
 			ldmg = #IDMON_TARBABY_HITDMG + 10*random();
-			T_Damage (other, self, self, ldmg);	
+			TF_T_Damage (other, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 			sound (self, #CHAN_WEAPON, "blob/hit1.wav", 1, #ATTN_NORM);
 		}
 	}
@@ -251,6 +251,8 @@ void() monster_tarbaby =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_tarbaby;
 	COOP_SetLives ();
+
+	self.#npc_explosionmult = 1.25;
 	
 	coop_walkmonster_start ();
 };

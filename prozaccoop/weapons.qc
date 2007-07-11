@@ -2168,15 +2168,6 @@ void() Rocket_Track_Dot =
 /* WK 1/7/7 Was every 0.1 seconds before, now wastes bandwidth to give a much smoother rocket path. It looks nicer, and the prevailence of broadband means that people can handle this now. More importantly, the gameplay control of steering rockets is a lot more manageable now. Note: We randomly think every 0.01 to 0.03 seconds on each rocket, to break up network load with cluster rox. */
 	self.nextthink = time + 0.01*floor(1+3*random());
 };
-
-// Mega Speed upgrade
-float() MegaSpeed =
-{
-	if (self.cutf_items & #CUTF_MTFROCKETS)
-		return ( 1.444444 );
-	else
-		return ( 1 );
-}
 /*
 ================
 W_FireRocket
@@ -2223,17 +2214,17 @@ void() W_FireRocket =
 		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
 		{ //Make lead rocket start slower too
 			if (self.tf_items & #NIT_RL_LASER_SIGHT) //Cluster and sight to start
-				newmis.velocity = (newmis.velocity * 400) * MegaSpeed();
+				newmis.velocity = newmis.velocity * 400;
 			else
-				newmis.velocity = (newmis.velocity * 600) * MegaSpeed(); //Cluster and no sight
+				newmis.velocity = newmis.velocity * 600; //Cluster and no sight
 		}
 		else 
-			newmis.velocity = (newmis.velocity * 900) * MegaSpeed();
+			newmis.velocity = newmis.velocity * 900;
 	}
 	else if (self.tf_items & #NIT_RL_LASER_SIGHT) //Cluster and sight to start
-		newmis.velocity = (newmis.velocity * 400) * MegaSpeed();
+		newmis.velocity = newmis.velocity * 400;
 	else
-		newmis.velocity = (newmis.velocity * 600) * MegaSpeed(); //Cluster and no sight
+		newmis.velocity = newmis.velocity * 600; //Cluster and no sight
 	newmis.angles = vectoangles(newmis.velocity);
 
 	newmis.touch = T_MissileTouch;
@@ -5446,36 +5437,11 @@ void() W_WeaponFrame =
 				} */
 			}
 		}
-	}  
-
-	if (self.cutf_items & #CUTF_ANTISTICKY)
-	{
-		//grenade throw lag fix (sticky grenades)
-		if (self.tfstate & 32768) // if player is tranq'd, do not do this anti-sticky function
-		{
-			if ((time < self.attack_finished))
-				return;
-
-			if ( self.impulse != 0 )
-				ImpulseCommands ();
-
-		}
-		else
-		{
-			if ( time < self.attack_finished )
-			{
-				if (self.impulse == 152 || self.impulse == 151 || self.impulse == 150 || self.impulse == 191)
-					ImpulseCommands ();
-				else
-					return;
-			}
-		}
 	}
-	else
-	{
-		if (time < self.attack_finished)
-			return; 
-	}
+
+	if (time < self.attack_finished)
+		return;    
+
 	// Stop calling this function so much
 	if (self.impulse != 0)
 		ImpulseCommands ();

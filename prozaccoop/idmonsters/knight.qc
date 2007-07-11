@@ -9,7 +9,9 @@
 #else
 
 
-#define IDMON_KNIGHT_HEALTH		300
+#define IDMON_KNIGHT_HEALTH		100
+#define IDMON_KNIGHT_ARMORVALUE	200
+#define IDMON_KNIGHT_ARMORTYPE	0.8
 #define IDMON_KNIGHT_SLASHDMG		14
 
 
@@ -293,6 +295,8 @@ void() monster_knight =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.max_health = self.health = #IDMON_KNIGHT_HEALTH;
+	self.armorvalue = #IDMON_KNIGHT_ARMORVALUE;
+	self.armortype = #IDMON_KNIGHT_ARMORTYPE;
 
 	self.th_stand = knight_stand1;
 	self.th_walk = knight_walk1;
@@ -321,10 +325,9 @@ void() monster_knight =
 	COOP_SetLives ();
 
 	self.#npc_bulletmult = 0.80;
-	self.#npc_spikemult = 0.65;
-	self.#npc_explosionmult = 0.75;
+	self.#npc_spikemult = 0.80;
 	self.#npc_electricitymult = 3;
-	self.#npc_firemult = 0.80;
+	self.#npc_meleemult = 0.50;
 	
 	coop_walkmonster_start ();
 };

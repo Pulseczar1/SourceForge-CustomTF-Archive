@@ -34,6 +34,7 @@ guerilla.qc
 subs.qc
 combat.qc
 items.qc
+coop_items.qc
 admin.qc
 gweapons.qc
 weapons.qc

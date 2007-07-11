@@ -342,10 +342,6 @@ void(entity attacker, float damage)	ogre_pain =
 	if (self.enemy == world || self.enemy == self)
 		self.enemy = attacker;
 
-	// don't bother doing pain if on hard mode
-	if (skill >= 2)
-		return;
-
 // don't make multiple pain sounds right after each other
 	if (self.pain_finished > time)
 		return;
@@ -385,7 +381,7 @@ void()	ogre_die1	=[	$death1,	ogre_die2	] {};
 void()	ogre_die2	=[	$death2,	ogre_die3	] {};
 void()	ogre_die3	=[	$death3,	ogre_die4	]
 {self.solid = #SOLID_NOT;
-self.ammo_rockets = 2;DropBackpack();};
+self.ammo_rockets = 8;DropBackpack();};
 void()	ogre_die4	=[	$death4,	ogre_die5	] {};
 void()	ogre_die5	=[	$death5,	ogre_die6	] {};
 void()	ogre_die6	=[	$death6,	ogre_die7	] {};
@@ -402,7 +398,7 @@ void()	ogre_bdie1	=[	$bdeath1,	ogre_bdie2	] {};
 void()	ogre_bdie2	=[	$bdeath2,	ogre_bdie3	] {ai_forward(5);};
 void()	ogre_bdie3	=[	$bdeath3,	ogre_bdie4	]
 {self.solid = #SOLID_NOT;
-self.ammo_rockets = 2;DropBackpack();};
+self.ammo_rockets = 8;DropBackpack();};
 void()	ogre_bdie4	=[	$bdeath4,	ogre_bdie5	] {ai_forward(1);};
 void()	ogre_bdie5	=[	$bdeath5,	ogre_bdie6	] {ai_forward(3);};
 void()	ogre_bdie6	=[	$bdeath6,	ogre_bdie7	] {ai_forward(7);};
@@ -508,13 +504,12 @@ void() monster_ogre =
 	self.#npc_spawnfunc = monster_ogre;
 	COOP_SetLives ();
 
-	self.#npc_spikemult = 1.30;
-	self.#npc_explosionmult = 0.40;
+	self.#npc_spikemult = 1.25;
+	self.#npc_explosionmult = 0.75;
 	self.#npc_electricitymult = 1.50;
-	self.#npc_firemult = 0.50;
 
 	// set ammo for emp
-	self.ammo_rockets = 450;
+	self.ammo_rockets = 500;
 	
 	coop_walkmonster_start();
 };

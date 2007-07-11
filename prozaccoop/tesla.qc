@@ -82,7 +82,7 @@ float() ReturnTeslaDelay;
 entity(entity scanner, float scanrange) Tesla_RadiusScan;
 
 // OfN
-entity(entity OldTesla) TeslaClone;
+//entity(entity OldTesla) TeslaClone;
 //float(entity gun) IsInValidLocation;
 
 void() Tesla_Check_Frags =
@@ -264,12 +264,18 @@ void() TeslaThink =
 {	 
 	if (self.pain_finished == 1) // replace tesla entity if it was cloaked
 	{
+/*
 		local entity TSelf;
 		TSelf=TeslaClone(self);
 		dremove(self);
 		self=TSelf;
 		self.pain_finished=0;
 		self.nextthink=time;
+*/
+		setmodel (self, "progs/coil.mdl");
+		setorigin (self, self.origin);
+		self.pain_finished = 0;
+		self.nextthink = time;
 		return;
 	}
 
@@ -1035,6 +1041,7 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 //- Ofn - ugly hack i know... ------------------------------//
 //- This is needed for the cloaking tesla to work ----------//
 
+/*
 entity(entity OldTesla) TeslaClone =
 {
 	newmis = spawn();
@@ -1214,3 +1221,4 @@ entity(entity OldTesla) TeslaClone =
 
 	return newmis;
 };
+*/
