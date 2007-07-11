@@ -2168,11 +2168,23 @@ void() Rocket_Track_Dot =
 /* WK 1/7/7 Was every 0.1 seconds before, now wastes bandwidth to give a much smoother rocket path. It looks nicer, and the prevailence of broadband means that people can handle this now. More importantly, the gameplay control of steering rockets is a lot more manageable now. Note: We randomly think every 0.01 to 0.03 seconds on each rocket, to break up network load with cluster rox. */
 	self.nextthink = time + 0.01*floor(1+3*random());
 };
+
+
 /*
 ================
 W_FireRocket
 ================
 */
+
+// Gizmo - modified version of avirox's rocket speed; look for 'RocketSpeedMult()' to see what's changed
+float() RocketSpeedMult =
+{
+	if (self.cutf_moreitems & #CUTF_MI_FASTERROCKETS)
+		return 1.444444;
+	else
+		return 1;
+};
+
 void() W_FireRocket =
 {
 	local float loops;
@@ -2214,17 +2226,17 @@ void() W_FireRocket =
 		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
 		{ //Make lead rocket start slower too
 			if (self.tf_items & #NIT_RL_LASER_SIGHT) //Cluster and sight to start
-				newmis.velocity = newmis.velocity * 400;
+				newmis.velocity = (newmis.velocity * 400) * RocketSpeedMult();
 			else
-				newmis.velocity = newmis.velocity * 600; //Cluster and no sight
+				newmis.velocity = (newmis.velocity * 600) * RocketSpeedMult(); //Cluster and no sight
 		}
 		else 
-			newmis.velocity = newmis.velocity * 900;
+			newmis.velocity = (newmis.velocity * 900) * RocketSpeedMult();
 	}
 	else if (self.tf_items & #NIT_RL_LASER_SIGHT) //Cluster and sight to start
-		newmis.velocity = newmis.velocity * 400;
+		newmis.velocity = (newmis.velocity * 400) * RocketSpeedMult();
 	else
-		newmis.velocity = newmis.velocity * 600; //Cluster and no sight
+		newmis.velocity = (newmis.velocity * 600) * RocketSpeedMult(); //Cluster and no sight
 	newmis.angles = vectoangles(newmis.velocity);
 
 	newmis.touch = T_MissileTouch;
@@ -5439,8 +5451,15 @@ void() W_WeaponFrame =
 		}
 	}
 
-	if (time < self.attack_finished)
-		return;    
+	// Gizmo - modified(!) version of avirox's anti-stick mod
+	if (self.cutf_moreitems & #CUTF_MI_NONSTICKYGRENS && !(self.tfstate & #TFSTATE_TRANQUILISED)) {
+		if (time < self.attack_finished && (self.impulse != #TF_GRENADE_1 && self.impulse != #TF_GRENADE_2 &&
+			self.impulse != #TF_GRENADE_T && self.impulse != #IMPULSE_THROWDETPACK))
+			return;
+	} else {
+		if (time < self.attack_finished)
+			return;
+	}
 
 	// Stop calling this function so much
 	if (self.impulse != 0)

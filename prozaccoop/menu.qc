@@ -77,12 +77,14 @@ float(float checkIP, float noIdlers) GetNoPlayers;
 #define MENU_PROFICIENCY				49
 #define MENU_OPTION 					50
 #define MENU_TOOLS					51
+#define MENU_MOREOPTION					52
 
 // Gizmo - added
 #define MENU_CUSTOM_MIN 				36
-#define MENU_CUSTOM_MAX 				51
+#define MENU_CUSTOM_MAX 				52
 
 
+// Gizmo - no need to search for "MENU_OPTION" anymore, just change the above min/max macros
 //If we extend this, search for "MENU_OPTION" below
 //WK ------------------------------------
 
@@ -218,6 +220,8 @@ void(float inp) Menu_Option_Input;
 
 void() Menu_ToolWeapon;
 void(float inp) Menu_ToolWeapon_Input;
+void() Menu_MoreOption;
+void(float inp) Menu_MoreOption_Input;
 
 //WK Needed for rotate
 float(float v) anglemod;
@@ -558,6 +562,8 @@ void() Player_Menu =
 		Menu_Option();
 	} else if (self.current_menu == #MENU_TOOLS)
 		Menu_ToolWeapon ();
+	else if (self.current_menu == #MENU_MOREOPTION)
+		Menu_MoreOption ();
 	
 	//WK ----------------
 	else if (self.team_no == 0 && teamplay && (self.lives != 0))
@@ -1028,6 +1034,8 @@ void(float inp) Menu_Input =
 		Menu_Option_Input(inp); //WK --
 	else if (self.current_menu == #MENU_TOOLS)
 		Menu_ToolWeapon_Input (inp);
+	else if (self.current_menu == #MENU_MOREOPTION)
+		Menu_MoreOption_Input (inp);
 };
 
 void() Menu_Intro =

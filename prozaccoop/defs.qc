@@ -1689,7 +1689,12 @@ float		rj; 				// Rocket Jump Modifier
 #define CUTF_FIELDGEN			524288 // OfN - field generators
 #define CUTF_AIRFISTUPGRADE 	1048576
 #define CUTF_OTR				2097152
-#define CUTF_DOUBLESENTRY		4194304 // OfN - Player gets 2 sentries 
+#define CUTF_DOUBLESENTRY		4194304 // OfN - Player gets 2 sentries
+
+// Gizmo - fourth bitfield; for the more optional equipment page, and anything else that remotely fits into that category
+.float cutf_moreitems;					// cutfMoreItems
+#define CUTF_MI_FASTERROCKETS	1		// Gizmo - avirox's faster rocket mod
+#define CUTF_MI_NONSTICKYGRENS	2		// Gizmo - avirox's non-sticky grens
 
 //Time to be invincible from the respawn guard
 #ifdef COOP_MODE_ENHANCED
