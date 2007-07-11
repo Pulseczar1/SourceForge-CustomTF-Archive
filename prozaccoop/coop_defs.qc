@@ -7,6 +7,9 @@
 #else
 
 
+// misc monster stuff
+#define NPC_TRANQ_FACTOR			0.6				// how much monsters slow down when tranqed
+
 // alternate teams
 #define TEAMNO_MONSTERS				100				// team number for monsters
 
@@ -38,6 +41,7 @@
 #define npc_explosionmult			ff_count
 #define npc_electricitymult			hover_time
 #define npc_firemult				penance_time
+#define npc_meleemult				has_cheated
 #define npc_othermult				has_cheated
 
 // used for smooth movement of monsters, FIXME: change vars I just made up some crap to see if it compiles

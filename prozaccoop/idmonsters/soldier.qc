@@ -186,10 +186,6 @@ void(entity attacker, float damage)	army_pain =
 	// if he has no enemy give him one
 	if (self.enemy == world || self.enemy == self)
 		self.enemy = attacker;
-
-	// don't bother doing pain if on hard mode
-	if (skill >= 2)
-		return;
 	
 	if (self.pain_finished > time)
 		return;
@@ -235,6 +231,8 @@ void() army_fire =
 	// FIXME: distance, and possibly make damage multiplied by number of players?
 	deathmsg = #DMSG_SHOTGUN;
 	FireBullets (#IDMON_GRUNT_SGUNBULLETS, dir, '0.11 0.11 0', 9999);
+
+	self.attack_finished = time + (random() + 1);
 };
 
 
@@ -242,7 +240,7 @@ void() army_fire =
 void()	army_die1	=[	$death1,	army_die2	] {};
 void()	army_die2	=[	$death2,	army_die3	] {};
 void()	army_die3	=[	$death3,	army_die4	]
-{self.solid = #SOLID_NOT;self.ammo_shells = 5;DropBackpack();};
+{self.solid = #SOLID_NOT;self.ammo_shells = 15;DropBackpack();};
 void()	army_die4	=[	$death4,	army_die5	] {};
 void()	army_die5	=[	$death5,	army_die6	] {};
 void()	army_die6	=[	$death6,	army_die7	] {};
@@ -254,7 +252,7 @@ void()	army_die10	=[	$death10,	army_die10	] {MonsterCorpse();};
 void()	army_cdie1	=[	$deathc1,	army_cdie2	] {};
 void()	army_cdie2	=[	$deathc2,	army_cdie3	] {ai_back(5);};
 void()	army_cdie3	=[	$deathc3,	army_cdie4	]
-{self.solid = #SOLID_NOT;self.ammo_shells = 5;DropBackpack();ai_back(4);};
+{self.solid = #SOLID_NOT;self.ammo_shells = 15;DropBackpack();ai_back(4);};
 void()	army_cdie4	=[	$deathc4,	army_cdie5	] {ai_back(13);};
 void()	army_cdie5	=[	$deathc5,	army_cdie6	] {ai_back(3);};
 void()	army_cdie6	=[	$deathc6,	army_cdie7	] {ai_back(4);};
@@ -354,7 +352,7 @@ void() monster_army =
 	self.#npc_spawnfunc = monster_army;
 	COOP_SetLives ();
 
-	self.#npc_bulletmult = 0.80;
+	self.#npc_bulletmult = 0.75;
 
 	// set ammo for emp
 	self.ammo_shells = 75;

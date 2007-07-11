@@ -103,7 +103,7 @@ void() _fish_melee =
 		
 	sound (self, #CHAN_VOICE, "fish/bite.wav", 1, #ATTN_NORM);
 	ldmg = #IDMON_FISH_BITEDMG + random()*10;
-	T_Damage (self.enemy, self, self, ldmg);
+	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 };
 
 void() f_attack1        =[      $attack1,       f_attack2 ] {ai_charge(10);};
@@ -230,6 +230,7 @@ void() monster_fish =
 	COOP_SetLives ();
 
 	self.#npc_electricitymult = 2.6;
+	self.#npc_meleemult = 2;
 	
 	coop_swimmonster_start ();
 };

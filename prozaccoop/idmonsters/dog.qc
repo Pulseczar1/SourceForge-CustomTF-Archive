@@ -74,7 +74,7 @@ local float 	ldmg;
 		return;
 		
 	ldmg = (random() + random() + random()) * #IDMON_DOG_BITEDMG;
-	T_Damage (self.enemy, self, self, ldmg);
+	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 };
 
 void()	Dog_JumpTouch =
@@ -89,7 +89,7 @@ void()	Dog_JumpTouch =
 		if ( vlen(self.velocity) > 300 )
 		{
 			ldmg = #IDMON_DOG_JUMPDMG + 10*random();
-			T_Damage (other, self, self, ldmg);	
+			TF_T_Damage (other, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 	}
 
@@ -168,7 +168,7 @@ void() dog_atta6	=[	$attack6,	dog_atta7	] {ai_charge(10);};
 void() dog_atta7	=[	$attack7,	dog_atta8	] {ai_charge(10);};
 void() dog_atta8	=[	$attack8,	dog_run1	] {ai_charge(10);};
 
-void() dog_leap1	=[	$leap1,		dog_leap2	] {COOP_Turn();};
+void() dog_leap1	=[	$leap1,		dog_leap2	] {COOP_Turn(); self.attack_finished = time + 2;};
 void() dog_leap2	=[	$leap2,		dog_leap3	]
 {
 	COOP_Turn();
@@ -187,7 +187,7 @@ void() dog_leap5	=[	$leap5,		dog_leap6	] {};
 void() dog_leap6	=[	$leap6,		dog_leap7	] {};
 void() dog_leap7	=[	$leap7,		dog_leap8	] {};
 void() dog_leap8	=[	$leap8,		dog_leap9	] {};
-void() dog_leap9	=[	$leap9,		dog_leap9	] {self.attack_finished = time + 2;};
+void() dog_leap9	=[	$leap9,		dog_leap9	] {};
 
 void() dog_pain1	=[	$pain1 ,	dog_pain2	] {};
 void() dog_pain2	=[	$pain2 ,	dog_pain3	] {};
@@ -396,7 +396,7 @@ void() monster_dog =
 
 
 	self.netname = "fido";
-	self.netname = COOP_GenerateMonsterName (self);
+//	self.netname = COOP_GenerateMonsterName (self);
 
 	self.monsterweight = #MWEIGHT_SMALL;
 	self.monsterflags = #MFLAG_BITER;
@@ -414,6 +414,8 @@ void() monster_dog =
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_dog;
 	COOP_SetLives ();
+
+	self.#npc_firemult = 1.25;
 
 	coop_walkmonster_start();
 };

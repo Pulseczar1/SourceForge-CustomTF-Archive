@@ -251,7 +251,7 @@ void() UpdateWeaponItems;
 float() CheckEnemyDismantle;
 void() SBBuildSensor;
 void() Tesla_Lose_Glow;
-entity(entity OldTesla) TeslaClone;
+//entity(entity OldTesla) TeslaClone;
 float(entity theplayer, float grenslot) GetMaxGrens;
 void (float cost, float type) BuyGren;
 string(float typ) GetGrenadeText;
@@ -3010,12 +3010,15 @@ void(float inp) Menu_EngineerFix_Tesla_Input2 =
 					sprint(self, #PRINT_HIGH, "You turretize the tesla\n");
 
 					if (self.building.job == 1 && self.building.tf_items & #NIT_TESLA_CLOAKING)
-					{	 
+					{
+/*
 						local entity TSelf, OSelfB;
 						OSelfB=self.building;
 						TSelf=TeslaClone(OSelfB);
 						dremove(OSelfB);
-						self.building=TSelf; // NEEDED? teslaclone should have updated this pointer anyway..						
+						self.building=TSelf; // NEEDED? teslaclone should have updated this pointer anyway..
+*/
+						setmodel (self.building, "progs/coil.mdl");
  
 						spawnFOG(self.building.origin);
 						sound (self.building, #CHAN_MISC, "misc/r_tele4.wav", 1, #ATTN_NORM);

@@ -1239,6 +1239,11 @@ void() KracGrenadeTouch =
 	KracGrenadeExplode();
 };
 
+
+#ifdef COOP_MODE_ENHANCED
+float (entity test) COOP_IsCoopMonster;
+#endif
+
 void() KracGrenadeExplode =
 {
 	local entity te,newmis;
@@ -1349,6 +1354,24 @@ void() KracGrenadeExplode =
 			te.think = BecomeExplosion;
 			te.nextthink = time + 0.1;
 		}
+#ifdef COOP_MODE_ENHANCED
+		// Gizmo - enable kracs to work on monsters
+		else if (COOP_IsCoopMonster(te)) {
+			//WK 1/7/7 Krac nerf
+			//Deals 200, tapers off linearly with radius (min 75)
+			damage = 200 - vlen(te.origin - self.origin);
+			if (damage > 200 || damage < 0) {
+				bprint(#PRINT_MEDIUM,"Logic error in krac occured.\n");
+				dremove(self);
+				return;
+			}
+			if (damage < 75) damage = 75;
+			//if (te.armorclass & #AT_SAVEMELEE) damage = floor(damage / 2);
+			te.armorvalue = te.armorvalue - damage;
+			if (te.armorvalue < 10) te.armorvalue = 10;
+		}
+#endif
+
 		te = te.chain;
 	}
 

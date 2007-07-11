@@ -10,7 +10,9 @@
 #else
 
 
-#define IDMON_HKNIGHT_HEALTH		350
+#define IDMON_HKNIGHT_HEALTH		100
+#define IDMON_HKNIGHT_ARMORVALUE	300
+#define IDMON_HKNIGHT_ARMORTYPE	0.8
 #define IDMON_HKNIGHT_SPIKEDMG	70	// was 85
 
 
@@ -503,6 +505,8 @@ void() monster_hell_knight =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.max_health = self.health = #IDMON_HKNIGHT_HEALTH;
+	self.armorvalue = #IDMON_HKNIGHT_ARMORVALUE;
+	self.armortype = #IDMON_HKNIGHT_ARMORTYPE;
 
 	self.th_stand = hknight_stand1;
 	self.th_walk = hknight_walk1;
@@ -531,11 +535,10 @@ void() monster_hell_knight =
 	self.#npc_spawnfunc = monster_hell_knight;
 	COOP_SetLives ();
 
-	self.#npc_bulletmult = 0.70;
-	self.#npc_spikemult = 0.55;
-	self.#npc_explosionmult = 0.65;
+	self.#npc_bulletmult = 0.80;
+	self.#npc_spikemult = 0.80;
 	self.#npc_electricitymult = 3;
-	self.#npc_firemult = 0.70;
+	self.#npc_meleemult = 0.5;
 	
 	coop_walkmonster_start ();
 };

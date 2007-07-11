@@ -270,6 +270,17 @@ void() zombie_missile =
 		zombie_attc1 ();
 };
 
+float() ZombieCheckAttack =
+{
+	local vector delta;
+
+	delta = self.enemy.origin - self.origin;
+
+	if (vlen(delta) > 350)
+		return #FALSE;
+	return #TRUE;
+};
+
 
 /*
 =============================================================================
@@ -547,6 +558,7 @@ void() monster_zombie =
 	self.is_connected = #TRUE;
 
 
+	self.OnPreAttack = ZombieCheckAttack;
 	self.OnNoticeEnemy = ZombieOnSight;
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_zombie;
@@ -555,7 +567,7 @@ void() monster_zombie =
 	self.#npc_bulletmult = 0.50;
 	self.#npc_spikemult = 0.50;
 	self.#npc_explosionmult = 2.15;
-	self.#npc_electricitymult = 0.20;
+	self.#npc_electricitymult = 0.50;
 	self.#npc_firemult = 3.96;
 
 	if (self.spawnflags & #SPAWN_CRUCIFIED)

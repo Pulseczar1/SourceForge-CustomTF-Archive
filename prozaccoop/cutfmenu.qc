@@ -47,8 +47,6 @@ void(entity player) UpdateArmorItem;
 #define STR_CLIPEXTEND			"Clip Extender   "
 // PAGE 4 - Tools
 #define STR_ZEROGRAVITY 		"Zero-Gravity Gun"
-#define STR_MTFROCKETS	 		"Mega RocketSpeed"
-#define STR_ANTISTICKY			"Anti-stick nades"
 // PAGE 5 - Leg Enhancements
 #define STR_SPEED1			   "Cheetah         "
 #define STR_SPEED2			   "Cougar          "
@@ -178,8 +176,6 @@ void(entity player) UpdateArmorItem;
 #define COST_CLIPEXTEND 		 600
 // PAGE 4 - Tools
 #define COST_ZEROGRAVITY		1000
-#define COST_MTFROCKETS			800
-#define COST_ANTISTICKY			450
 // PAGE 5 - Leg Enhancements
 #define COST_SPEED1 			9000
 #define COST_SPEED2 			6000
@@ -713,23 +709,10 @@ void() Menu_ToolWeapon =
 	MenuResetCount();
 
 	l1 = ConstructMenuItemStr(1,#STR_ZEROGRAVITY,#COST_ZEROGRAVITY,self.weapons_carried,#WEAP_ZEROGRAVITY);
-	str = ConstructMenuItemStr(2,#STR_MTFROCKETS,#COST_MTFROCKETS,self.cutf_items,#CUTF_MTFROCKETS);
+	str = "\n";
 	l1 = strcat(l1,str);
 
-/*	l1 = ConstructMenuItemStr(1,#STR_CERAMIC,#COST_CERAMIC,self.tf_items,#NIT_CERAMIC);
-	str = ConstructMenuItemStr(2,#STR_GET,#COST_GET,self.tf_items,#NIT_GEL);
-	l1 = strcat(l1,str);
-#define STR_MTFROCKETS	 		"Mega Rocket Speed"
-#define STR_ANTISTICKY			"Anti-stick grenades"
-
-	str = "\n";
-*/
-
-	l2 = ConstructMenuItemStr(3,#STR_ANTISTICKY,#COST_ANTISTICKY,self.cutf_items,#CUTF_ANTISTICKY);
-	str = "\n";
-	l2 = strcat(l2,str);
-
-	l3 = "\n\n";
+	l2 = l3 = "\n\n";
 
 	l4 = "\n";
 	l4 = strcat(l4,".. Ðòåö    \n.. Îåøô    \n.. Äïîå!   \n");
@@ -744,44 +727,6 @@ void(float inp) Menu_ToolWeapon_Input =
 
 		if (inp == 1) {
 			BuyWeapon(#COST_ZEROGRAVITY, #WEAP_ZEROGRAVITY);
-			Menu_ToolWeapon ();
-		}
-		if (inp == 2) {
-			if (self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
-			{
-				if (self.cutf_items & #CUTF_MTFROCKETS) //Already have it
-				{
-					PrintRefund(#COST_MTFROCKETS);
-					self.cutf_items = self.cutf_items - #CUTF_MTFROCKETS;
-				}
-				else if (self.money >= #COST_MTFROCKETS) {
-					self.money = self.money - #COST_MTFROCKETS;
-					self.cutf_items = self.cutf_items | #CUTF_MTFROCKETS;
-					PrintMoney();
-				}
-				else
-					PrintNotEnoughMoney(#COST_MTFROCKETS);
-			}
-			else
-				sprint( self, 2, "You need to own a Rocket Launcher to purchase this upgrade!\n" );
-
-			Menu_ToolWeapon ();
-		}
-		if (inp == 3) {
-
-			if (self.cutf_items & #CUTF_ANTISTICKY) //Already have it
-			{
-				PrintRefund(#COST_ANTISTICKY);
-				self.cutf_items = self.cutf_items - #CUTF_ANTISTICKY;
-			}
-			else if (self.money >= #COST_ANTISTICKY) {
-				self.money = self.money - #COST_ANTISTICKY;
-				self.cutf_items = self.cutf_items | #CUTF_ANTISTICKY;
-				PrintMoney();
-			}
-			else
-				PrintNotEnoughMoney(#COST_ANTISTICKY);
-
 			Menu_ToolWeapon ();
 		}
 	   

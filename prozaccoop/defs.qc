@@ -1058,6 +1058,7 @@ float(entity targ, entity inflictor) CanDamage;
 #define TF_TD_EXPLOSION 	4  // Explosion damage
 #define TF_TD_ELECTRICITY	8  // Electric damage
 #define TF_TD_FIRE		16	// Fire damage
+#define TF_TD_MELEE		32	// Gizmo - Melee damage, like shamblers, demons, etc.
 #define TF_TD_NOSOUND		256 // Special damage. Makes no sound/painframe, etc
 
 
@@ -1689,8 +1690,6 @@ float		rj; 				// Rocket Jump Modifier
 #define CUTF_AIRFISTUPGRADE 	1048576
 #define CUTF_OTR				2097152
 #define CUTF_DOUBLESENTRY		4194304 // OfN - Player gets 2 sentries 
-#define CUTF_MTFROCKETS			8388608	// XavioR: Use MegaTF rocket speed
-#define CUTF_ANTISTICKY			16777216	// XavioR: Sticky Nade fix (check weapons.qc - this shouldnt even need an upgrade >.<)
 
 //Time to be invincible from the respawn guard
 #ifdef COOP_MODE_ENHANCED

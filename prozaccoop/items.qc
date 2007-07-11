@@ -569,6 +569,10 @@ WEAPONS
 ===============================================================================
 */
 
+#ifdef COOP_MODE_ENHANCED
+float () weapon_dummy;
+#endif
+
 void(entity p) bound_other_ammo =
 {
 	if (p.ammo_shells > TeamFortress_GetMaxAmmo(p,#IT_SHELLS))
@@ -821,20 +825,19 @@ void() weapon_supershotgun =
 		return;
 	}
 
-#ifdef COOP_MODE_ENHANCED
-	// always remove single player weapons in coop
-	remove (self);
-	return;
-#else
-
 	precache_model ("progs/g_shot.mdl");
 	setmodel (self, "progs/g_shot.mdl");
 	self.weapon = #WEAP_SUPER_SHOTGUN;
 	self.netname = "Double-barrelled Shotgun";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+
+#ifdef COOP_MODE_ENHANCED
+	if (!weapon_dummy())
+		return;
 #endif
+
+	StartItem ();
 };
 
 /*QUAKED weapon_nailgun (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -848,20 +851,19 @@ void() weapon_nailgun =
 		return;
 	}
 
-#ifdef COOP_MODE_ENHANCED
-	// always remove single player weapons in coop
-	remove (self);
-	return;
-#else
-
 	precache_model ("progs/g_nail.mdl");
 	setmodel (self, "progs/g_nail.mdl");
 	self.weapon = #WEAP_NAILGUN;
 	self.netname = "nailgun";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+
+#ifdef COOP_MODE_ENHANCED
+	if (!weapon_dummy())
+		return;
 #endif
+
+	StartItem ();
 };
 
 /*QUAKED weapon_supernailgun (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -875,20 +877,19 @@ void() weapon_supernailgun =
 		return;
 	}
 
-#ifdef COOP_MODE_ENHANCED
-	// always remove single player weapons in coop
-	remove (self);
-	return;
-#else
-
 	precache_model ("progs/g_nail2.mdl");
 	setmodel (self, "progs/g_nail2.mdl");
 	self.weapon = #WEAP_LIGHT_ASSAULT;
 	self.netname = "Super Nailgun";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+
+#ifdef COOP_MODE_ENHANCED
+	if (!weapon_dummy())
+		return;
 #endif
+
+	StartItem ();
 };
 
 /*QUAKED weapon_grenadelauncher (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -902,20 +903,19 @@ void() weapon_grenadelauncher =
 		return;
 	}
 
-#ifdef COOP_MODE_ENHANCED
-	// always remove single player weapons in coop
-	remove (self);
-	return;
-#else
-
 	precache_model ("progs/g_rock.mdl");
 	setmodel (self, "progs/g_rock.mdl");
 	self.weapon = 3;
 	self.netname = "Grenade Launcher";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+
+#ifdef COOP_MODE_ENHANCED
+	if (!weapon_dummy())
+		return;
 #endif
+
+	StartItem ();
 };
 
 /*QUAKED weapon_rocketlauncher (0 .5 .8) (-16 -16 0) (16 16 32)
@@ -929,20 +929,19 @@ void() weapon_rocketlauncher =
 		return;
 	}
 
-#ifdef COOP_MODE_ENHANCED
-	// always remove single player weapons in coop
-	remove (self);
-	return;
-#else
-
 	precache_model ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
 	self.weapon = 3;
 	self.netname = "Rocket Launcher";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+
+#ifdef COOP_MODE_ENHANCED
+	if (!weapon_dummy())
+		return;
 #endif
+
+	StartItem ();
 };
 
 
@@ -958,20 +957,19 @@ void() weapon_lightning =
 		return;
 	}
 
-#ifdef COOP_MODE_ENHANCED
-	// always remove single player weapons in coop
-	remove (self);
-	return;
-#else
-
 	precache_model ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
 	self.weapon = 3;
 	self.netname = "Thunderbolt";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+
+#ifdef COOP_MODE_ENHANCED
+	if (!weapon_dummy())
+		return;
 #endif
+
+	StartItem ();
 };
 
 

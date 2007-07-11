@@ -151,7 +151,7 @@ local float 	ldmg;
 		return;
 		
 	ldmg = (random() + random() + random()) * #IDMON_SHAMBLER_SMASHDMG;
-	T_Damage (self.enemy, self, self, ldmg);
+	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
 
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
@@ -177,7 +177,7 @@ local float 	ldmg;
 		return;
 		
 	ldmg = (random() + random() + random()) * #IDMON_SHAMBLER_CLAWDMG;
-	T_Damage (self.enemy, self, self, ldmg);
+	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
 
 	if (side)
@@ -482,6 +482,7 @@ void() monster_shambler =
 
 	self.#npc_electricitymult = 0.25;
 	self.#npc_spikemult = 1.60;
+	self.#npc_meleemult = 0.50;
 
 	coop_walkmonster_start();
 };
