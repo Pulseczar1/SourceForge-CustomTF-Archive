@@ -2061,6 +2061,31 @@ Pull specific info from a newly changed userinfo string
 into a more C freindly form.
 =================
 */
+// Gizmo - simple function to generate a random name for a person
+static char *GetRandomName (char *fallback)
+{
+	int		numNames, r;
+	char	*val;
+	char	key[128];
+
+	// get number of names set
+	val = Info_ValueForKey (localinfo, "ng_numnames");
+	numNames = atoi (val);
+
+	if (!numNames)
+		return fallback;
+
+	// pick a random one and return it
+	r = (int) (((double) rand() / (double) RAND_MAX) * numNames);
+	sprintf (key, "ng_name%i", r);							// use sprintf to avoid messing up va() if it was passed in
+	val = Info_ValueForKey (localinfo, key);
+
+	if (!*val)
+		return fallback;
+
+	return val;
+}
+
 void SV_ExtractFromUserinfo (client_t *cl)
 {
 	char		*val, *p, *q;
@@ -2088,7 +2113,8 @@ void SV_ExtractFromUserinfo (client_t *cl)
 		;
 
 	if (!*p || no_good_chars) {	// white space only or all bad chars
-		strcpy(newname, va("user-%d", cl->userid));
+		strcpy(newname, GetRandomName(va("user-%d", cl->userid)));
+//		strcpy(newname, va("user-%d", cl->userid));
 		p = newname;
 	}
 
@@ -2110,7 +2136,8 @@ void SV_ExtractFromUserinfo (client_t *cl)
 	else if (!stricmp(val, "player")  || !stricmp(val, "unnamed")
 	     ||  !stricmp(val, "console") || !stricmp(val, "c0ns0le")
 	     ||  !stricmp(val, "c0nsole") || !stricmp(val, "cons0le"))
-		val = va("user-%d", cl->userid);
+		val = GetRandomName (va("user-%d", cl->userid));
+//		val = va("user-%d", cl->userid);
 	else {  // check to see if another user by the same name exists
 		for (i=0, client = svs.clients; i<MAX_CLIENTS ; i++, client++) {
 			if (client->state != cs_spawned || client == cl)
