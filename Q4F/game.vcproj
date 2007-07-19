@@ -250,7 +250,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="0"
 				InlineFunctionExpansion="1"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="0"
@@ -271,7 +271,7 @@
 				ProgramDataBaseFileName="$(IntDir)/$(ProjectName)x86.pdb"
 				BrowseInformation="0"
 				BrowseInformationFile="$(IntDir)/$(ProjectName)/"
-				WarningLevel="4"
+				WarningLevel="2"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="1"
 				CompileAs="0"
@@ -295,6 +295,7 @@
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\game\game.def"
 				GenerateDebugInformation="true"
+				AssemblyDebug="1"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)x86.pdb"
 				GenerateMapFile="true"
 				MapFileName="$(IntDir)/$(ProjectName)x86.map"
