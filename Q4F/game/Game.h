@@ -171,7 +171,7 @@ public:
 	// lastCatchupFrame is always true except if we are running several game frames in a row and this one is not the last one
 	// subsystems which can tolerate skipping frames will not run during those catchup frames
 	// several game frames in a row happen when game + renderer time goes above the tick time ( 16ms )
-	virtual gameReturn_t		RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame ) = 0;
+	virtual gameReturn_t		RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame, int serverGameFrame ) = 0;
 
 	virtual void				MenuFrame( void ) = 0;
 // RAVEN END
