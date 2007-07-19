@@ -1095,7 +1095,7 @@ void rvJumpPad::Think( void ) {
 				msg.WriteByte( GAME_UNRELIABLE_MESSAGE_EVENT );
 				msg.WriteBits( gameLocal.GetSpawnId( this ), 32 );
 				msg.WriteByte( EVENT_JUMPFX );
-				gameLocal.SendUnreliableMessagePVS( msg, gameLocal.pvs.GetPVSArea( renderEntity.origin ) );
+				gameLocal.SendUnreliableMessagePVS( msg, this, gameLocal.pvs.GetPVSArea( renderEntity.origin ) );
 			}
 			
 			lastEffectTime = forceField.GetLastApplyTime( );

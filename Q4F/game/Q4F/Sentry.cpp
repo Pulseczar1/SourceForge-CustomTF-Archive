@@ -475,7 +475,7 @@ void SentryGun::FireMG( idVec3 &dir ) {
 	int		areas[ 2 ];
 
 	gameLocal.HitScan( ownerInfo, attackDef->dict, 1.0f, dir, eyePos, gunPos, false, this, areas );
-	gameLocal.SendUnreliableMessagePVS( msg, areas[0], areas[1] );
+	gameLocal.SendUnreliableMessagePVS( msg, this, areas[0], areas[1] );
 
 	idVec3 dirToGun = gunPos - eyePos;
 	dirToGun.Normalize();

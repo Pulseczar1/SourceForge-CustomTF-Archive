@@ -3027,8 +3027,9 @@ idGameLocal::SendUnreliableMessagePVS
 excludeClient to -1 for no exclusions
 ===============
 */
-void idGameLocal::SendUnreliableMessagePVS( const idBitMsg &msg, int area1, int area2 ) {
+void idGameLocal::SendUnreliableMessagePVS( const idBitMsg &msg, const idEntity *instanceEnt, int area1, int area2 ) {
 	int			icl;
+	int			matchInstance = instanceEnt ? instanceEnt->GetInstance() : -1;
 	idPlayer	*player;
 	int			areas[ 2 ];
 	int			numEvAreas;
@@ -3051,38 +3052,41 @@ void idGameLocal::SendUnreliableMessagePVS( const idBitMsg &msg, int area1, int 
 		if ( !entities[ icl ] ) {
 			continue;
 		}
-		if ( icl != forceUnreliableClient ) {
-			if ( clientsPVS[ icl ].i < 0 ) {
-				// clients for which we don't have PVS info won't get anything
-				continue;
-			}
-			player = static_cast< idPlayer * >( entities[ icl ] );
+		if ( matchInstance >= 0 && entities[ icl ]->GetInstance() != matchInstance ) {
+			continue;
+		}
+		if ( clientsPVS[ icl ].i < 0 ) {
+			// clients for which we don't have PVS info won't get anything
+			continue;
+		}
+		player = static_cast< idPlayer * >( entities[ icl ] );
 
-			// if no areas are given, this is a global emit
-			if ( numEvAreas ) {
-				// ony send if pvs says this client can see it
-				if ( !pvs.InCurrentPVS( clientsPVS[ icl ], areas, numEvAreas ) ) {
-					continue;
-				}
+		// if no areas are given, this is a global emit
+		if ( numEvAreas ) {
+			// ony send if pvs says this client can see it
+			if ( !pvs.InCurrentPVS( clientsPVS[ icl ], areas, numEvAreas ) ) {
+				continue;
 			}
 		}
 
 		unreliableMessages[ icl ].Add( msg.GetData(), msg.GetSize(), false );
 	}
 
-	forceUnreliableClient = -1;
-
 	if ( demoState == DEMO_RECORDING ) {
 		// record the target areas to the message
 		idBitMsg	dest;
 		byte		msgBuf[ 16 ];
 
-		dest.Init( msgBuf, sizeof( msgBuf ) );
-		dest.WriteByte( GAME_UNRELIABLE_RECORD_AREAS );
-		dest.WriteLong( area1 );
-		dest.WriteLong( area2 );
+		// Tourney games: only record from instance 0
+		if ( !instanceEnt || instanceEnt->GetInstance() == 0 ) {
 		
-		unreliableMessages[ MAX_CLIENTS ].AddConcat( dest.GetData(), dest.GetSize(), msg.GetData(), msg.GetSize(), false );
+			dest.Init( msgBuf, sizeof( msgBuf ) );
+			dest.WriteByte( GAME_UNRELIABLE_RECORD_AREAS );
+			dest.WriteLong( area1 );
+			dest.WriteLong( area2 );
+			
+			unreliableMessages[ MAX_CLIENTS ].AddConcat( dest.GetData(), dest.GetSize(), msg.GetData(), msg.GetSize(), false );
+		}
 	}
 }
 

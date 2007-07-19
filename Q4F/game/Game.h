@@ -281,7 +281,7 @@ public:
 // RAVEN BEGIN
 // jscott: for the effects system
 	virtual void				StartViewEffect( int type, float time, float scale ) = 0;
-	virtual rvClientEffect*		PlayEffect ( const idDecl *effect, const idVec3& origin, const idMat3& axis, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false, effectCategory_t category = EC_IGNORE, const idVec4& effectTint = vec4_one ) = 0;
+	virtual rvClientEffect*		PlayEffect( const idDecl *effect, const idVec3& origin, const idMat3& axis, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false, bool predictBit = false, effectCategory_t category = EC_IGNORE, const idVec4& effectTint = vec4_one ) = 0;
 	virtual void				GetPlayerView( idVec3 &origin, idMat3 &axis ) = 0;
 	virtual const idVec3		GetCurrentGravity( const idVec3& origin, const idMat3& axis ) const = 0;
 	virtual void				Translation( trace_t &trace, idVec3 &source, idVec3 &dest, idTraceModel *trm, int clipMask ) = 0;

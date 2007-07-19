@@ -2422,7 +2422,7 @@ void rvWeapon::Hitscan( const idVec3& muzzleOrigin, int num_hitscans, float powe
 				// NOTE: we emit to the areas of the last hitscan
 				// there is a remote possibility that multiple hitscans for shotgun would cover more than 2 areas,
 				// so in some rare case a client might miss it
-				gameLocal.SendUnreliableMessagePVS( msg, areas[0], areas[1] );
+				gameLocal.SendUnreliableMessagePVS( msg, owner, areas[0], areas[1] );
 			}
 		}
 	}

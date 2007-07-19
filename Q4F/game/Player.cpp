@@ -1593,11 +1593,18 @@ void idPlayer::SpawnToPoint( const idVec3 &spawn_origin, const idAngles &spawn_a
  			// we may be called twice in a row in some situations. avoid a double fx and 'fly to the roof'
  			if ( lastTeleFX < gameLocal.time - 1000 ) {
 
-				gameLocal.forceUnreliableClient = entityNumber;
+				/*gameLocal.forceUnreliableClient = entityNumber;
 				gameLocal.PlayEffect ( spawnArgs, "fx_spawn", spawn_origin, idVec3(0,0,1).ToMat3(), false, vec3_origin, true );
 				gameLocal.forceUnreliableClient = -1;
 
+				lastTeleFX = gameLocal.time;*/
+
+				// currentThinkingEntity not set here (called out of Run())
+				idEntity* thinker = gameLocal.currentThinkingEntity;
+				gameLocal.currentThinkingEntity = this;
+				gameLocal.PlayEffect( spawnArgs, "fx_spawn", renderEntity.origin, idVec3(0,0,1).ToMat3(), false, vec3_origin, true );
 				lastTeleFX = gameLocal.time;
+				gameLocal.currentThinkingEntity = thinker;
  			}
 		}
 		if ( mphud ) {
