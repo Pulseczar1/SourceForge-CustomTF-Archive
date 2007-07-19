@@ -391,6 +391,7 @@ void idGameLocal::Clear( void ) {
 	gameDebug.Shutdown ( );
 	gameLogLocal.Shutdown ( );
 
+	currentThinkingEntity = NULL;
 
 	memset( lagometer, 0, sizeof( lagometer ) );
 
@@ -3341,6 +3342,14 @@ gameReturn_t idGameLocal::RunFrame( const usercmd_t *clientCmds, int activeEdito
 		// are influenced by the player's actions
 		random.RandomInt();
 
+		// xavior: HACKISH :|
+		if ( player ) {
+			// ddynerman: save the current thinking entity for instance-dependent
+			currentThinkingEntity = player;
+			//player->Think();
+			currentThinkingEntity = NULL;
+		}
+
 		if ( player ) {
 			// update the renderview so that any gui videos play from the right frame
 			view = player->GetRenderView();
@@ -3408,7 +3417,10 @@ gameReturn_t idGameLocal::RunFrame( const usercmd_t *clientCmds, int activeEdito
 				}
 				timer_singlethink.Clear();
 				timer_singlethink.Start();
+				// ddynerman: save the current thinking entity for instance-dependent
+				currentThinkingEntity = ent;
 				ent->Think();
+				currentThinkingEntity = NULL;
 				timer_singlethink.Stop();
 				ms = timer_singlethink.Milliseconds();
 				if ( ms >= g_timeentities.GetFloat() ) {
@@ -3443,13 +3455,19 @@ gameReturn_t idGameLocal::RunFrame( const usercmd_t *clientCmds, int activeEdito
 						ent->GetPhysics()->UpdateTime( time );
 						continue;
 					}
+					// ddynerman: save the current thinking entity for instance-dependent
+					currentThinkingEntity = ent;
 					ent->Think();
+					currentThinkingEntity = NULL;
 					num++;
 				}
 			} else {
 				num = 0;
 				for( ent = activeEntities.Next(); ent != NULL; ent = ent->activeNode.Next() ) {
+					// ddynerman: save the current thinking entity for instance-dependent
+					currentThinkingEntity = ent;
 					ent->Think();
+					currentThinkingEntity = NULL;
 					num++;
 				}
 			}
@@ -6174,8 +6192,11 @@ void idGameLocal::SetPlayerInfo( idVec3 &origin, idMat3 &axis, int PlayerNum ) {
 
 	player->Teleport( origin, axis.ToAngles(), NULL );
 
+// ddynerman: save the current thinking entity for instance-dependent
+	currentThinkingEntity = player;
 	player->CalculateFirstPersonView();
 	player->CalculateRenderView();
+	currentThinkingEntity = NULL;
 
 	return;
 };
@@ -6949,6 +6970,7 @@ rvClientEffect* idGameLocal::PlayEffect(
 	bool					loop, 
 	const idVec3&			endOrigin, 
 	bool					broadcast,
+	bool					predictedBit,
 	effectCategory_t		category,
 	const idVec4&			effectTint ) {
 
@@ -6961,8 +6983,6 @@ rvClientEffect* idGameLocal::PlayEffect(
 	}
 
 	if ( isServer && broadcast ) {
-		bool sendEnd = false;
-
 		idBitMsg	msg;
 		byte		msgBuf[MAX_GAME_MESSAGE_SIZE];
 		idCQuat		quat;
@@ -6978,22 +6998,15 @@ rvClientEffect* idGameLocal::PlayEffect(
 		msg.WriteFloat( quat.x );
 		msg.WriteFloat( quat.y );
 		msg.WriteFloat( quat.z );
-		msg.WriteBits( loop, 1 );
-		if ( endOrigin != vec3_zero ) {
-			sendEnd = true;
-			msg.WriteBits( 1, 1 );
-			msg.WriteFloat( endOrigin.x );
-			msg.WriteFloat( endOrigin.y );
-			msg.WriteFloat( endOrigin.z );
-		}
-		else {
-			msg.WriteBits( 0, 1 );
-		}
-
+		msg.WriteFloat( endOrigin.x );
+		msg.WriteFloat( endOrigin.y );
+		msg.WriteFloat( endOrigin.z );
 		msg.WriteByte( category );
+		msg.WriteBits( loop, 1 );
+		msg.WriteBits( predictedBit, 1 );
 
 		// send to everyone who has start or end in it's PVS
-		SendUnreliableMessagePVS( msg, pvs.GetPVSArea( origin ), sendEnd ? pvs.GetPVSArea( endOrigin ) : -1 );
+		SendUnreliableMessagePVS( msg, currentThinkingEntity, pvs.GetPVSArea( origin ), pvs.GetPVSArea( endOrigin ) );
 	}
 
 	if ( isServer && localClientNum < 0 ) {
@@ -7004,6 +7017,13 @@ rvClientEffect* idGameLocal::PlayEffect(
 	if ( bse->Filtered( effect->GetName(), category ) ) {
 		// Effect filtered out
 		return NULL;
+	}
+// RAVEN END
+
+	if ( gameLocal.isListenServer && currentThinkingEntity && gameLocal.GetLocalPlayer() ) {
+		if ( currentThinkingEntity->GetInstance() != gameLocal.GetLocalPlayer()->GetInstance() ) {
+			return NULL;
+		}
 	}
 	
 	// mwhitlock: Dynamic memory consolidation

@@ -271,11 +271,11 @@ void DetPak::DrawExplosion( const idVec3 &pos, float radius ) {
 	int areaNum = gameLocal.pvs.GetPVSArea( pos );
 	
 	if ( !onlyLOS ) {
-		gameLocal.SendUnreliableMessagePVS( outMsg, areaNum );
+		gameLocal.SendUnreliableMessagePVS( outMsg, this, areaNum );
 	}
 	else {
 		// 3j_todo ?
-		gameLocal.SendUnreliableMessagePVS( outMsg, areaNum );
+		gameLocal.SendUnreliableMessagePVS( outMsg, this, areaNum );
 	}
 
 

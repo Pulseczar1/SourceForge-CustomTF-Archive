@@ -566,6 +566,9 @@ public:
 	q4fMapInfo				mapInfo;
 	idList<idDict>			entityUsageList;
 
+// ddynerman: the entity currently thinking, used to play effects/etc only in the appropriate instance
+	idEntity*				currentThinkingEntity;
+
 	MessageListCollection	msgListCollection;
 
 	const static int		INITIAL_SPAWN_COUNT = 1;
@@ -918,7 +921,7 @@ public:
 
 
 // bdube: added effect calls
-	virtual rvClientEffect*	PlayEffect			( const idDecl *effect, const idVec3& origin, const idMat3& axis, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false, effectCategory_t category = EC_IGNORE, const idVec4& effectTint = vec4_one );
+	virtual rvClientEffect*	PlayEffect			( const idDecl *effect, const idVec3& origin, const idMat3& axis, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false, bool predictBit = false, effectCategory_t category = EC_IGNORE, const idVec4& effectTint = vec4_one );
 	rvClientEffect*			PlayEffect			( const idDict& args, const char* effectName, const idVec3& origin, const idMat3& axis, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false, effectCategory_t category = EC_IGNORE, const idVec4& effectTint = vec4_one );
 	const idDecl			*GetEffect			( const idDict& args, const char* effectName, const rvDeclMatType* materialType = NULL );
 
@@ -956,7 +959,7 @@ public:
 
 	void					SendUnreliableMessage( const idBitMsg &msg, const int clientNum );
 	// note: local client on dedicated server is always excluded
-	void					SendUnreliableMessagePVS( const idBitMsg &msg, int area1 = -1, int area2 = -1 );
+	void					SendUnreliableMessagePVS( const idBitMsg &msg, const idEntity *instanceEnt, int area1 = -1, int area2 = -1 );
 
 	int						forceUnreliableClient;
 
@@ -1422,7 +1425,7 @@ extern TFStatManager*	tfStatManager;
 
 // bdube: inlines
 ID_INLINE rvClientEffect* idGameLocal::PlayEffect( const idDict& args, const char* effectName, const idVec3& origin, const idMat3& axis, bool loop, const idVec3& endOrigin, bool broadcast, effectCategory_t category, const idVec4& effectTint ) {
-	return PlayEffect ( GetEffect ( args, effectName ), origin, axis, loop, endOrigin, broadcast, category, effectTint );
+	return PlayEffect ( GetEffect ( args, effectName ), origin, axis, loop, endOrigin, broadcast, false, category, effectTint );
 }
 
 ID_INLINE bool idGameLocal::IsTeamGame( void ) const {

@@ -1878,7 +1878,7 @@ rvClientEffect* idEntity::PlayEffect( const idDecl *effect, const idVec3& origin
 	}
 
 	if ( entityNumber == ENTITYNUM_WORLD ) {
-		return gameLocal.PlayEffect( effect, origin, axis, loop, endOrigin, broadcast, category, effectTint );
+		return gameLocal.PlayEffect( effect, origin, axis, loop, endOrigin, broadcast, false, category, effectTint );
 	}
 
 	// Calculate the local origin and axis from the given globals

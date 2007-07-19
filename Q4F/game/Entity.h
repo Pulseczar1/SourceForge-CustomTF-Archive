@@ -487,6 +487,9 @@ public:
 	void					ServerSendEvent( int eventId, const idBitMsg *msg, bool saveEvent, int excludeClient ) const;
 	void					ClientSendEvent( int eventId, const idBitMsg *msg ) const;
 
+// ddynerman: multiple arenas (for MP)
+	//virtual void			SetInstance( int newInstance );
+	virtual int				GetInstance( void ) const;
 
 // bdube: debugging
 	virtual void			GetDebugInfo( debugInfoProc_t proc, void* userData );
@@ -527,7 +530,8 @@ private:
 
 // abahr: changed to protected for access in children classes
 protected:
-
+// ddynerman: multiple game instances
+	int						instance;
 
 // bdube: made virtual
 	virtual bool			DoDormantTests( void );				// dormant == on the active list, but out of PVS
@@ -905,6 +909,11 @@ ID_INLINE float idEntity::DistanceTo2d ( idEntity* ent ) {
 
 ID_INLINE bool idEntity::CanTakeDamage ( void ) const {
 	return fl.takedamage;
+}
+
+// ddynerman: MP arena stuff
+ID_INLINE int idEntity::GetInstance( void ) const {
+	return instance;
 }
 
 #endif /* !__GAME_ENTITY_H__ */
