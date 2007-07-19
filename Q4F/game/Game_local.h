@@ -614,7 +614,7 @@ public:
 	virtual void			CacheDictionaryMedia( const idDict *dict );
 	virtual void			SpawnPlayer( int clientNum );
 
-	virtual gameReturn_t	RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame );
+	virtual gameReturn_t	RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame, int serverGameFrame );
 	virtual	void			MenuFrame( void );
 
 	virtual void			RepeaterFrame( const userOrigin_t *clientOrigins, bool lastCatchupFrame ) {};

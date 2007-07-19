@@ -3291,7 +3291,7 @@ idGameLocal::RunFrame
 ================
 */
 
-gameReturn_t idGameLocal::RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame ) {
+ gameReturn_t idGameLocal::RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame, int serverGameFrame ) {
 	idEntity *	ent;
 	int			num;
 	float		ms;
@@ -7020,12 +7020,14 @@ rvClientEffect* idGameLocal::PlayEffect(
 	}
 // RAVEN END
 
-	if ( gameLocal.isListenServer && currentThinkingEntity && gameLocal.GetLocalPlayer() ) {
+	// XAV: ADDRESS ME FIX ME FIXME : This *should* be enabled but it's not. 1.4.2 code
+	// which isn't fully implemented.. should do something about this!
+/*	if ( gameLocal.isListenServer && currentThinkingEntity && gameLocal.GetLocalPlayer() ) {
 		if ( currentThinkingEntity->GetInstance() != gameLocal.GetLocalPlayer()->GetInstance() ) {
 			return NULL;
 		}
 	}
-	
+*/	
 	// mwhitlock: Dynamic memory consolidation
 	RV_PUSH_SYS_HEAP_ID(RV_HEAP_ID_MULTIPLE_FRAME);
 	rvClientEffect* clientEffect = new rvClientEffect( effect );
