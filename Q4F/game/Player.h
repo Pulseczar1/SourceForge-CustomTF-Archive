@@ -579,6 +579,7 @@ private:
 
 	jointHandle_t			hipJoint;
 	jointHandle_t			chestJoint;
+	jointHandle_t			neckLeanJoint;
 
 	idPhysics_Player		physicsObj;			// player physics
 
@@ -700,6 +701,16 @@ private:
 	void					PredictionErrorDecay( void );
 
 	void					LookAtKiller( const idVec3 &dir );
+
+	idVec3					leanVelocity;
+
+	// lean props
+	float					leanMaxSpeed;
+	float					leanBlendRatio;
+	float					leanMaxLateralAngle;
+	float					leanMaxForwardAngle;
+	float					leanHeadRatio;
+	float					leanHipRatio;
 
 	void					StopFiring( void );
 	void					FireWeapon( void );

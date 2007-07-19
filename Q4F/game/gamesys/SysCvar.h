@@ -302,4 +302,7 @@ extern idCVar	net_clientLagOMeter;
 
 extern idCVar	r_shadows;
 
+// 1.4.2
+extern idCVar g_playerLean;
+
 #endif /* !__SYS_CVAR_H__ */

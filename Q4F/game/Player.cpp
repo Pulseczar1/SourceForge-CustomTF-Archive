@@ -520,6 +520,7 @@ idPlayer::idPlayer() {
 	hipJoint					= INVALID_JOINT;
 	chestJoint				= INVALID_JOINT;
  	headJoint				= INVALID_JOINT;
+	neckLeanJoint			= INVALID_JOINT;
 
 	bobFoot					= 0;
 	bobFrac					= 0.0f;
@@ -678,6 +679,15 @@ idPlayer::idPlayer() {
 	CommonClear();
 
 	// </q4f>
+
+	// 1.4.2
+	leanVelocity = vec3_zero;
+	leanMaxSpeed = 0.0f;
+	leanBlendRatio = 0.0f;
+	leanMaxLateralAngle = 0.0f;
+	leanMaxForwardAngle = 0.0f;
+	leanHeadRatio = 0.0f;
+	leanHipRatio = 0.0f;
 }
 /*
 ==============
@@ -894,6 +904,8 @@ void idPlayer::Init( void ) {
 	legsForward = true;
 	oldViewYaw = 0.0f;
 
+	leanVelocity = vec3_zero;
+
 // mekberg: moved into function.
 	SetPMCVars( );	
 
@@ -951,6 +963,20 @@ void idPlayer::Init( void ) {
  	if ( headJoint == INVALID_JOINT ) {
  		gameLocal.Error( "Joint '%s' not found for 'joint_head' on '%s'", value, name.c_str() );
  	}
+
+	value = spawnArgs.GetString( "joint_neckLean", "neckcontrol" );
+	neckLeanJoint = animator.GetJointHandle( value );
+	if ( neckLeanJoint == INVALID_JOINT ) {
+		gameLocal.Error( "Joint '%s' not found for 'joint_neck' on '%s'", value, name.c_str() );
+	}
+
+	// read player lean properties
+	spawnArgs.GetFloat( "lean_maxSpeed", "500", leanMaxSpeed );
+	spawnArgs.GetFloat( "lean_blendRatio", "0.9", leanBlendRatio );
+	spawnArgs.GetFloat( "lean_maxLateralAngle", "30", leanMaxLateralAngle );
+	spawnArgs.GetFloat( "lean_maxForwardAngle", "50", leanMaxForwardAngle );
+	spawnArgs.GetFloat( "lean_headRatio", "-0.5", leanHeadRatio );
+	spawnArgs.GetFloat( "lean_hipRatio", "0.5", leanHipRatio );
 
 	// initialize the script variables
 	memset ( &pfl, 0, sizeof( pfl ) );
@@ -1581,6 +1607,7 @@ void idPlayer::SpawnToPoint( const idVec3 &spawn_origin, const idAngles &spawn_a
 	legsYaw = 0.0f;
 	idealLegsYaw = 0.0f;
 	oldViewYaw = viewAngles.yaw;
+	leanVelocity = vec3_zero;
 
 	if ( spectating ) {
 		Hide();
@@ -4223,7 +4250,8 @@ idPlayer::SetClipModel
 void idPlayer::SetClipModel( bool forceSpectatorBBox ) {
 	idBounds bounds;
 
-	common->DPrintf( "idPlayer::SetClipModel() - Called on %d '%s' forceSpectatorBBox = %d spectate = %d\n", entityNumber, uiName, forceSpectatorBBox, spectating );
+	// FIXME: xav: dprintf causing crash on q4f_1v1... maybe i should look into that at some point? (thx AnthonyJ)
+	//common->DPrintf( "idPlayer::SetClipModel() - Called on %d '%s' forceSpectatorBBox = %d spectate = %d\n", entityNumber, uiName, forceSpectatorBBox, spectating );
 	if ( spectating || forceSpectatorBBox ) {
  		bounds = idBounds( vec3_origin ).Expand( pm_spectatebbox.GetFloat() * 0.5f );
 	} else {
@@ -4507,7 +4535,6 @@ void idPlayer::AdjustBodyAngles( void ) {
 	idMat3		legsAxis;
 	bool		blend;
 	float		diff;
-	float		frac;
 	float		upBlend;
 	float		forwardBlend;
 	float		downBlend;
@@ -4570,16 +4597,70 @@ void idPlayer::AdjustBodyAngles( void ) {
 	legsAxis = idAngles( 0.0f, legsYaw, 0.0f ).ToMat3();
 	animator.SetJointAxis( hipJoint, JOINTMOD_WORLD, legsAxis );
 
-	// calculate the blending between down, straight, and up
-	frac = viewAngles.pitch / 90.0f;
-	if ( frac > 0.0f ) {
-		downBlend		= frac;
-		forwardBlend	= 1.0f - frac;
+	// ==============================================================================================
+	// leaning - orient parts of the body towards the movement direction
+	// we control the chest, neck and hip orientations
+
+	float leanGunCorrection = 0.0f;
+	if ( g_playerLean.GetFloat() != 0.0f ) {
+
+		idVec3 velocity = physicsObj.GetLinearVelocity();
+		velocity.z = 0.0f;
+
+		// clamp and scale max speed to unit velocity
+		float horizSpeed = velocity.Normalize();
+		if ( horizSpeed > leanMaxSpeed ) {
+			horizSpeed = leanMaxSpeed;
+		}
+		velocity *= horizSpeed / leanMaxSpeed;
+		// now express this velocity in the view's axis base 
+		velocity *= viewAxis.Transpose();
+
+		// blend
+		leanVelocity = velocity * leanBlendRatio + leanVelocity * ( 1.0f - leanBlendRatio );
+
+		// build the rotation
+		float t = fabs( leanVelocity.x ) + fabs( leanVelocity.y );
+		if ( t > 1e-3f ) {
+			float maxAngle = ( leanMaxForwardAngle * fabs( leanVelocity.x ) + leanMaxLateralAngle * fabs( leanVelocity.y ) ) / t;
+			maxAngle *= g_playerLean.GetFloat();
+
+			idVec3 rotate;
+			rotate.Cross( leanVelocity, idVec3( 0.0f, 0.0f, 1.0f ) );
+			float chestAngle = maxAngle * rotate.Normalize(); // doing the blend on the vectors, but idRotation wants a normalized rotation
+			idRotation chestRotate( vec3_origin, rotate, chestAngle );
+			animator.SetJointAxis( chestJoint, JOINTMOD_WORLD, chestRotate.ToMat3() );
+
+			// extract a rotation angle in the forward plane, this is used to compensate the gun later
+			idVec3 p( 1.0f, 0.0f, 0.0f );
+			chestRotate.RotatePoint( p );
+			leanGunCorrection = RAD2DEG( idMath::ATan( p.z, p.x ) );
+
+			float headAngle = chestAngle * leanHeadRatio;
+			idRotation neckRotate( vec3_origin, rotate, headAngle );
+			animator.SetJointAxis( neckLeanJoint, JOINTMOD_WORLD, neckRotate.ToMat3() );
+
+			float hipAngle = chestAngle * leanHipRatio;
+			idRotation hipRotate( vec3_origin, rotate, hipAngle );
+			animator.SetJointAxis( hipJoint, JOINTMOD_WORLD, hipRotate.ToMat3() );
+		} else {
+			leanVelocity = vec3_origin;
+			leanGunCorrection = 0.0f;
+		}
+	}
+
+	// ==============================================================================================
+	// calculate the blending between down, straight, and up. account for the chest lean
+
+	float leanFrac = idMath::ClampFloat( -1.0f, 1.0f, ( viewAngles.pitch + leanGunCorrection ) / 90.0f );
+	if ( leanFrac > 0.0f ) {
+		downBlend		= leanFrac;
+		forwardBlend	= 1.0f - leanFrac;
 		upBlend			= 0.0f;
 	} else {
 		downBlend		= 0.0f;
-		forwardBlend	= 1.0f + frac;
-		upBlend			= -frac;
+		forwardBlend	= 1.0f + leanFrac;
+		upBlend			= -leanFrac;
 	}
 
     animator.CurrentAnim( ANIMCHANNEL_TORSO )->SetSyncedAnimWeight( 0, downBlend );
@@ -5240,6 +5321,7 @@ void idPlayer::Teleport( const idVec3 &origin, const idAngles &angles, idEntity 
 	legsYaw = 0.0f;
 	idealLegsYaw = 0.0f;
 	oldViewYaw = viewAngles.yaw;
+	leanVelocity = vec3_zero;
 
  	//if ( gameLocal.isMultiplayer ) {
  		playerView.Flash( colorWhite, 140 );
