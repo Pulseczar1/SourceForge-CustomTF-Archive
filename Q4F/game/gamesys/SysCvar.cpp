@@ -442,6 +442,9 @@ idCVar si_serverURL(				"si_serverURL",				"",				CVAR_GAME | CVAR_SERVERINFO | 
 idCVar g_unlagged(					"g_unlagged",				"1",			CVAR_GAME | CVAR_BOOL | PC_CVAR_ARCHIVE, "enables unlagged code." );
 idCVar g_unlaggedMaxPing(			"g_unlaggedMaxPing",		"80",			CVAR_GAME | CVAR_INTEGER | PC_CVAR_ARCHIVE, "maximum ping allowed to compensate" );
 
+// 1.4.2 hax0risms :D
+idCVar g_playerLean(						"g_playerLean",						"1",			CVAR_GAME | CVAR_FLOAT | CVAR_ARCHIVE, "scale down or disable client-side player lean" );
+
 
 // bdube: cvar helps
 static	idCVarHelp	help_g_showHud ( "g_showHud", "Show Player HUD", "Off;On", "0;1", CVARHELP_GAME );
