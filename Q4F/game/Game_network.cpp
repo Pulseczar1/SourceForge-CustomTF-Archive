@@ -37,6 +37,10 @@ int net_snapshotSize;
 
 extern const int ASYNC_PLAYER_FRAG_BITS;
 
+// message senders
+idNullMessageSender nullSender;
+idServerReliableMessageSender serverReliableSender;
+idRepeaterReliableMessageSender repeaterReliableSender;
 
 /*
 ================
@@ -47,6 +51,11 @@ void idGameLocal::InitAsyncNetwork( void ) {
 	memset( clientEntityStates, 0, sizeof( clientEntityStates ) );
 	memset( clientPVS, 0, sizeof( clientPVS ) );
 	memset( clientSnapshots, 0, sizeof( clientSnapshots ) );
+
+	memset( viewerEntityStates, 0, sizeof( *viewerEntityStates ) * maxViewers );
+	memset( viewerPVS, 0, sizeof( *viewerPVS ) * maxViewers );
+	memset( viewerSnapshots, 0, sizeof( *viewerSnapshots ) * maxViewers );
+	memset( viewerUnreliableMessages, 0, sizeof (*viewerUnreliableMessages) * maxViewers );
 
 	eventQueue.Init();
 
@@ -68,6 +77,11 @@ void idGameLocal::ShutdownAsyncNetwork( void ) {
 	memset( clientEntityStates, 0, sizeof( clientEntityStates ) );
 	memset( clientPVS, 0, sizeof( clientPVS ) );
 	memset( clientSnapshots, 0, sizeof( clientSnapshots ) );
+
+	memset( viewerEntityStates, 0, sizeof( *viewerEntityStates ) * maxViewers );
+	memset( viewerPVS, 0, sizeof( *viewerPVS ) * maxViewers );
+	memset( viewerSnapshots, 0, sizeof( *viewerSnapshots ) * maxViewers );
+	memset( viewerUnreliableMessages, 0, sizeof (*viewerUnreliableMessages) * maxViewers );
 }
 
 /*
@@ -90,14 +104,13 @@ clientId is the ID of the connecting client - can later be mapped to a clientNum
 allowReply_t idGameLocal::ServerAllowClient( int clientId, int numClients, const char *IP, const char *guid, const char *password, const char *privatePassword, char reason[ MAX_STRING_CHARS ] ) {
 	reason[0] = '\0';
 
-	gameLocal.Printf( "ServerAllowClient: says numClients is %d\n", numClients );
-
+// RAVEN BEGIN
 // shouchard:  ban support
 	if ( IsGuidBanned( guid ) ) {
 		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107239" );
 		return ALLOW_NO;
 	}
-
+// RAVEN END
 
 	if ( serverInfo.GetInt( "si_pure" ) && !mpGame.IsPureReady() ) {
 		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107139" );
@@ -109,6 +122,7 @@ allowReply_t idGameLocal::ServerAllowClient( int clientId, int numClients, const
 		return ALLOW_NOTYET;
 	}
 
+	// completely full
 	if ( numClients >= serverInfo.GetInt( "si_maxPlayers" ) ) {
 		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107141" );
 		return ALLOW_NOTYET;
@@ -142,6 +156,7 @@ allowReply_t idGameLocal::ServerAllowClient( int clientId, int numClients, const
 			return ALLOW_NOTYET;
 		}
 	} 
+	
 
 	if ( !cvarSystem->GetCVarBool( "si_usePass" ) ) {
 		return ALLOW_YES;
@@ -165,6 +180,122 @@ allowReply_t idGameLocal::ServerAllowClient( int clientId, int numClients, const
 	return ALLOW_BADPASS;
 }
 
+/*
+================
+idGameLocal::ReallocViewers
+Allocate/Reallocate space for viewers
+================
+*/
+template<typename T> static ID_INLINE void ReallocateZero( T *&var, int oldSize, int newSize ) {
+	T *new_var = newSize ? new T[ newSize ] : NULL;
+	SIMDProcessor->Memcpy( new_var, var, sizeof(*new_var) * Min( newSize, oldSize ) );
+	delete[] var;
+	var = new_var;
+	if ( newSize > oldSize ) {
+		SIMDProcessor->Memset( var + oldSize, 0, sizeof(*var) * (newSize - oldSize) );
+	}
+}
+
+/*
+================
+idGameLocal::RepeaterAllowClient
+clientId is the ID of the connecting client - can later be mapped to a clientNum by calling networkSystem->ServerGetClientNum( clientId )
+================
+*/
+allowReply_t idGameLocal::RepeaterAllowClient( int clientId, int numClients, const char *IP, const char *guid, bool repeater, const char *password, const char *privatePassword, char reason[ MAX_STRING_CHARS ] ) {
+	reason[0] = '\0';
+
+	if ( IsGuidBanned( guid ) ) {
+		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107239" );
+		return ALLOW_NO;
+	}
+
+	if ( serverInfo.GetInt( "si_pure" ) != 0 && !mpGame.IsPureReady() ) {
+		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107139" );
+		return ALLOW_NOTYET;
+	}
+
+	if ( !cvarSystem->GetCVarInteger( "ri_maxViewers" ) ) {
+		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_123000" );
+		return ALLOW_NOTYET;
+	}
+
+	// completely full
+	if ( numClients >= cvarSystem->GetCVarInteger( "ri_maxViewers" ) ) {
+		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_123000" );
+		return ALLOW_NOTYET;
+	}
+
+	// check private clients
+	// just in case somehow we have a stale private clientId that matches a new client
+	privateViewerIds.Remove( clientId );
+	nopvsViewerIds.Remove( clientId );
+
+	const char *privatePass = cvarSystem->GetCVarString( "g_privateViewerPassword" );
+	if ( privatePass[ 0 ] == '\0' && ri_privateViewers.GetInteger() > 0 ) {
+		common->Warning( "idGameLocal::RepeaterAllowClient() - ri_privateViewers > 0 with no g_privateViewerPassword" );
+		cmdSystem->BufferCommandText( CMD_EXEC_NOW, "say ri_privateViewers is set but g_privateViewerPassword is empty" );
+		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107142" );
+		return ALLOW_NOTYET;
+	}
+
+	int numPrivateClients = privateViewerIds.Num();
+
+	// private clients that take up public slots are considered public clients
+	numPrivateClients = idMath::ClampInt( 0, ri_privateViewers.GetInteger(), numPrivateClients );
+
+	if ( repeater ) {
+		const char *nopvsPass = cvarSystem->GetCVarString( "g_repeaterPassword" );
+
+		if ( nopvsPass[ 0 ] != '\0' ) {
+			if ( idStr::Cmp( nopvsPass, privatePassword ) ) {
+				// password is set, and they don't match.
+				idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107143" );
+				Printf( "Rejecting viewer %s from IP %s: invalid password for repeater\n", guid, IP );
+				return ALLOW_BADPASS;
+			}
+
+			// once this client spawns in, they'll be marked private
+			privateViewerIds.Append( clientId );
+		} else {
+			if ( privatePass[ 0 ] != '\0' && !idStr::Cmp( privatePass, privatePassword ) ) {
+				// once this client spawns in, they'll be marked private
+				privateViewerIds.Append( clientId );
+			}
+		}
+
+		// once this client spawns in, they'll be marked as a broadcaster
+		nopvsViewerIds.Append( clientId );
+	} else if ( privatePass[ 0 ] != '\0' && !idStr::Cmp( privatePass, privatePassword ) ) {
+		// once this client spawns in, they'll be marked private
+		privateViewerIds.Append( clientId );
+	} else if( (numClients - numPrivateClients) >= ( cvarSystem->GetCVarInteger( "ri_maxViewers" ) - ri_privateViewers.GetInteger() ) ) {
+		// if the number of public clients is greater than or equal to the number of public slots, require a private slot
+		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107141" );
+		return ALLOW_NOTYET;
+	}
+
+	if ( !ri_useViewerPass.GetBool() ) {
+		return ALLOW_YES;
+	}
+
+	const char *pass = cvarSystem->GetCVarString( "g_viewerPassword" );
+	if ( pass[ 0 ] == '\0' ) {
+		common->Warning( "ri_useViewerPass is set but g_viewerPassword is empty" );
+		cmdSystem->BufferCommandText( CMD_EXEC_NOW, "say ri_useViewerPass is set but g_viewerPassword is empty" );
+		// avoids silent misconfigured state
+		idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107142" );
+		return ALLOW_NOTYET;
+	}
+
+	if ( !idStr::Cmp( pass, password ) ) {
+		return ALLOW_YES;
+	}
+
+	idStr::snPrintf( reason, MAX_STRING_CHARS, "#str_107143" );
+	Printf( "Rejecting viewer %s from IP %s: invalid password\n", guid, IP );
+	return ALLOW_BADPASS;
+}
 /*
 ================
 idGameLocal::ServerClientConnect
@@ -298,7 +429,7 @@ void idGameLocal::ServerWriteInitialReliableMessages( int clientNum ) {
 		outMsg.Init( msgBuf, sizeof( msgBuf ) );
 		outMsg.BeginWriting( );
 		outMsg.WriteByte( GAME_RELIABLE_MESSAGE_SPAWN_PLAYER );
-		outMsg.WriteBits( i, ASYNC_MAX_CLIENT_BITS );
+		outMsg.WriteByte( i );
 		outMsg.WriteLong( spawnIds[ i ] );
 		networkSystem->ServerSendReliableMessage( clientNum, outMsg );
 	}
@@ -315,16 +446,6 @@ void idGameLocal::ServerWriteInitialReliableMessages( int clientNum ) {
 	networkSystem->ServerSendReliableMessage( clientNum, outMsg );
 
 	mpGame.ServerWriteInitialReliableMessages( clientNum );
-	tfGame.SendInitialState( clientNum );
-
-	if ( clientNum != gameLocal.localClientNum ) {
-		// send our mapinfo info
-		outMsg.Init( msgBuf, sizeof( msgBuf ) );
-		outMsg.BeginWriting();
-		outMsg.WriteByte( GAME_RELIABLE_MESSAGE_MAPINFO );
-		mapInfo.WriteInfo( gameType, outMsg );
-		networkSystem->ServerSendReliableMessage( clientNum, outMsg );
-	}
 }
 
 /*
@@ -332,11 +453,11 @@ void idGameLocal::ServerWriteInitialReliableMessages( int clientNum ) {
 idGameLocal::FreeSnapshotsOlderThanSequence
 ================
 */
-void idGameLocal::FreeSnapshotsOlderThanSequence( int clientNum, int sequence ) {
+void idGameLocal::FreeSnapshotsOlderThanSequence( snapshot_t *&clientSnapshot, int sequence ) {
 	snapshot_t *snapshot, *lastSnapshot, *nextSnapshot;
 	entityState_t *state;
 
-	for ( lastSnapshot = NULL, snapshot = clientSnapshots[clientNum]; snapshot; snapshot = nextSnapshot ) {
+	for ( lastSnapshot = NULL, snapshot = clientSnapshot; snapshot; snapshot = nextSnapshot ) {
 		nextSnapshot = snapshot->next;
 		if ( snapshot->sequence < sequence ) {
 			for ( state = snapshot->firstEntityState; state; state = snapshot->firstEntityState ) {
@@ -346,13 +467,22 @@ void idGameLocal::FreeSnapshotsOlderThanSequence( int clientNum, int sequence ) 
 			if ( lastSnapshot ) {
 				lastSnapshot->next = snapshot->next;
 			} else {
-				clientSnapshots[clientNum] = snapshot->next;
+				clientSnapshot = snapshot->next;
 			}
 			snapshotAllocator.Free( snapshot );
 		} else {
 			lastSnapshot = snapshot;
 		}
 	}
+}
+
+/*
+================
+idGameLocal::FreeSnapshotsOlderThanSequence
+================
+*/
+void idGameLocal::FreeSnapshotsOlderThanSequence( int clientNum, int sequence ) {
+	FreeSnapshotsOlderThanSequence( clientSnapshots[ clientNum ], sequence );
 }
 
 /*
@@ -375,10 +505,8 @@ bool idGameLocal::ApplySnapshot( int clientNum, int sequence ) {
 				}
 				clientEntityStates[clientNum][state->entityNumber] = state;
 			}
-
 			// ~512 bytes
 			memcpy( clientPVS[clientNum], snapshot->pvs, sizeof( snapshot->pvs ) );
-
 			if ( lastSnapshot ) {
 				lastSnapshot->next = nextSnapshot;
 			} else {
@@ -400,30 +528,13 @@ idGameLocal::WriteGameStateToSnapshot
 ================
 */
 void idGameLocal::WriteGameStateToSnapshot( idBitMsgDelta &msg ) const {
+	int i;
 
-
-	/*for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
+	for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
 		msg.WriteFloat( globalShaderParms[i] );
-	}*/
-
-#if ASYNC_WRITE_TAGS
-	int check = gameLocal.random.RandomInt( 223344 );
-	msg.WriteLong( check );
-#endif
-
-	tfGame.WriteToSnapshot( msg );
-
-#if ASYNC_WRITE_TAGS
-	msg.WriteLong( check );
-	check = gameLocal.random.RandomInt( 223344 );
-	msg.WriteLong( check );
-#endif
+	}
 
 	mpGame.WriteToSnapshot( msg );
-
-#if ASYNC_WRITE_TAGS
-	msg.WriteLong( check );
-#endif
 }
 
 /*
@@ -432,45 +543,25 @@ idGameLocal::ReadGameStateFromSnapshot
 ================
 */
 void idGameLocal::ReadGameStateFromSnapshot( const idBitMsgDelta &msg ) {
+	int i;
 
-
-	/*for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
+	for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
 		globalShaderParms[i] = msg.ReadFloat();
-	}*/
-
-#if ASYNC_WRITE_TAGS
-	int check = msg.ReadLong();
-#endif
-
-	tfGame.ReadFromSnapshot( msg );
-
-#if ASYNC_WRITE_TAGS
-	if ( msg.ReadLong() != check ) {
-		gameLocal.Error( "tfgame out of sync with client" );
 	}
-	check = msg.ReadLong();
-#endif
+
 	mpGame.ReadFromSnapshot( msg );
-
-
-#if ASYNC_WRITE_TAGS
-	if ( msg.ReadLong() != check ) {
-		gameLocal.Error( "mpGame out of sync with client" );
-	}
-#endif
 }
 
 /*
 ================
 idGameLocal::ServerWriteSnapshot
-
-  Write a snapshot of the current game state for the given client.
+Write a snapshot of the current game state for the given client.
 ================
 */
-
+// RAVEN BEGIN
 // jnewquist: Use dword array to match pvs array so we don't have endianness problems.
-void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients ) {
-
+void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, int lastSnapshotFrame ) {
+// RAVEN END
 	int i, msgSize, msgWriteBit;
 	idPlayer *player, *spectated = NULL;
 	idEntity *ent;
@@ -491,6 +582,7 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 	}
 	
 	// free too old snapshots
+	// ( that's a security, normal acking from server keeps a smaller backlog of snaps )
 	FreeSnapshotsOlderThanSequence( clientNum, sequence - 64 );
 
 	// allocate new snapshot
@@ -527,6 +619,13 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 			continue;
 		}
 
+// RAVEN BEGIN
+// ddynerman: don't transmit entities not in your clip world
+		if ( ent->GetInstance() != player->GetInstance() ) {
+			continue;
+		}
+// RAVEN END
+
 		// if the entity is a map entity, mark it in PVS
 		if ( isMapEntity[ ent->entityNumber ] ) {
 			snapshot->pvs[ ent->entityNumber >> 5 ] |= 1 << ( ent->entityNumber & 31 );
@@ -539,7 +638,6 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 
 		// add the entity to the snapshot PVS
 		snapshot->pvs[ ent->entityNumber >> 5 ] |= 1 << ( ent->entityNumber & 31 );
-
 
 		// save the write state to which we can revert when the entity didn't change at all
 		msg.SaveWriteState( msgSize, msgWriteBit );
@@ -611,35 +709,25 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 	newBase->state.BeginWriting();
 	deltaMsg.InitWriting( base ? &base->state : NULL, &newBase->state, &msg );
 
-	#if ASYNC_WRITE_TAGS
-		int check = gameLocal.random.RandomInt( 223344 );
-		deltaMsg.WriteLong( check );
-	#endif
-
 	if ( player->spectating && player->spectator != player->entityNumber && entities[ player->spectator ] ) {
 		assert( entities[ player->spectator ]->IsType( idPlayer::GetClassType() ) );
-		deltaMsg.WriteBits( player->spectator, ASYNC_MAX_CLIENT_BITS );
+		deltaMsg.WriteBits( player->spectator, idMath::BitsForInteger( MAX_CLIENTS ) );
 		static_cast< idPlayer * >( gameLocal.entities[ player->spectator ] )->WritePlayerStateToSnapshot( deltaMsg );
 	} else {
-		deltaMsg.WriteBits( player->entityNumber, ASYNC_MAX_CLIENT_BITS );
+		deltaMsg.WriteBits( player->entityNumber, idMath::BitsForInteger( MAX_CLIENTS ) );
 		player->WritePlayerStateToSnapshot( deltaMsg );
 	}
-
-	#if ASYNC_WRITE_TAGS
-		deltaMsg.WriteLong( check );
-	#endif
-
 	WriteGameStateToSnapshot( deltaMsg );
 
 	// copy the client PVS string
-
+// RAVEN BEGIN
 // JSinger: Changed to call optimized memcpy
 // jnewquist: Use dword array to match pvs array so we don't have endianness problems.
 	const int numDwords = ( numPVSClients + 31 ) >> 5;
 	for ( i = 0; i < numDwords; i++ ) {
 		clientInPVS[i] = snapshot->pvs[i];
 	}
-
+// RAVEN END
 }
 
 /*
@@ -647,7 +735,7 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 idGameLocal::ServerWriteServerDemoSnapshot
 ===============
 */
-void idGameLocal::ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg ) {
+void idGameLocal::ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg, int lastSnapshotFrame ) {
 	snapshot_t		*snapshot;
 	int				i, msgSize, msgWriteBit;
 	idEntity		*ent;
@@ -655,6 +743,7 @@ void idGameLocal::ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg ) {
 	idBitMsgDelta	deltaMsg;
 
 	bool ret = ServerApplySnapshot( MAX_CLIENTS, sequence - 1 );
+	ret = ret; // silence warning
 	assert( ret || sequence == 1 );	// past the first snapshot of the server demo stream, there's always exactly one to clear
 
 	snapshot = snapshotAllocator.Alloc();
@@ -668,6 +757,11 @@ void idGameLocal::ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg ) {
 	for ( ent = spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next() ) {
 
 		if ( !ent->fl.networkSync ) {
+			continue;
+		}
+
+		// only record instance 0 ( tourney games )
+		if ( ent->GetInstance() != 0 ) {
 			continue;
 		}
 
@@ -727,6 +821,14 @@ void idGameLocal::ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg ) {
 	// and the game state
 	WriteGameStateToSnapshot( deltaMsg );
 	
+}
+
+/*
+===============
+idGameLocal::RepeaterEndSnapshots
+===============
+*/
+void idGameLocal::RepeaterEndSnapshots( void ) {
 }
 
 /*
@@ -3257,15 +3359,12 @@ void idGameLocal::ProcessUnreliableMessage( const idBitMsg &msg ) {
 			break;
 		}
 #endif
-		case GAME_UNRELIABLE_MESSAGE_DETSPLODE: {
-			ReceiveDetpackSplode( msg );
-			break;
-		}
 		default: {
 			Error( "idGameLocal::ProcessUnreliableMessage() - Unknown unreliable message '%d'\n", type );
 		}
 	}
 }
+
 
 /*
 ===============
@@ -3549,23 +3648,6 @@ void idGameLocal::SetDemoState( demoState_t state, bool _serverDemo, bool _timeD
 		demo_mphud = NULL;
 		demo_cursor = NULL;
 	}
-}
-
-/*
-============
-idGameLocal::SetRepeaterState
-============
-*/
-void idGameLocal::SetRepeaterState( bool isRepeater, bool serverIsRepeater ) {
-	this->isRepeater = isRepeater;
-	this->serverIsRepeater = serverIsRepeater;
-
-	if ( cvarSystem->GetCVarInteger( "net_serverDownload" ) == 3 ) {
-		networkSystem->HTTPEnable( this->isServer || this->isRepeater );
-	}
-
-	//Xav: ADDME
-//	ReallocViewers( isRepeater ? cvarSystem->GetCVarInteger( "ri_maxViewers" ) : 0 );
 }
 
 /*

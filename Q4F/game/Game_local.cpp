@@ -378,6 +378,16 @@ void idGameLocal::Clear( void ) {
 	memset( clientPVS, 0, sizeof( clientPVS ) );
 	memset( clientSnapshots, 0, sizeof( clientSnapshots ) );
 
+	//ReallocViewers( 0 );
+
+	maxViewers = 0;
+	maxViewer = 0;
+	viewers = NULL;
+	viewerEntityStates = NULL;
+	viewerPVS = NULL;
+	viewerSnapshots = NULL;
+	viewerUnreliableMessages = NULL;
+
 	eventQueue.Init();
 //	savedEventQueue.Init();
 
@@ -1234,7 +1244,6 @@ bool idGameLocal::IsClientActive( int clientNum ) {
 
 	return false;
 }
-
 
 /*
 ===========
@@ -3590,8 +3599,6 @@ idGameLocal::RunFrame
 
 	return ret;
 }
-
-
 
 /*
 ======================================================================

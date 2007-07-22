@@ -73,6 +73,22 @@ idCVar si_countDown(				"si_countDown",				"0",			CVAR_GAME | CVAR_SERVERINFO | 
 // MCG: added "weapon stay" option
 //idCVar si_weaponStay(				"si_weaponStay",			"0",			CVAR_GAME | CVAR_SERVERINFO | CVAR_BOOL, "cannot pick up weapons you already have (get no ammo from them)" );
 
+idCVar si_fps(						"si_fps",						"60",			CVAR_GAME | CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_INTEGER, "Server framerate/game tick rate", 30, 90 );
+
+idCVar ri_useViewerPass(			"ri_useViewerPass",				"0",			CVAR_GAME | CVAR_ARCHIVE | CVAR_BOOL, "use g_viewerPassword for viewers/repeaters" );
+idCVar g_viewerPassword(			"g_viewerPassword",				"",				CVAR_GAME | CVAR_ARCHIVE, "password for viewers/repeaters" );
+
+idCVar ri_privateViewers(			"ri_privateViewers",			"0",			CVAR_GAME | CVAR_REPEATERINFO | CVAR_ARCHIVE | CVAR_INTEGER, "number of private viewer slots" );
+idCVar g_privateViewerPassword(		"g_privateViewerPassword",		"",				CVAR_GAME | CVAR_ARCHIVE, "privatePassword for private viewer slots" );
+idCVar g_repeaterPassword(			"g_repeaterPassword",			"",				CVAR_GAME | CVAR_ARCHIVE, "privatePassword for repeaters" );
+
+idCVar ri_numViewers(				"ri_numViewers",				"0",			CVAR_GAME | CVAR_REPEATERINFO | CVAR_INTEGER | CVAR_ROM, "number of viewer slots in use" );
+idCVar ri_numPrivateViewers(		"ri_numPrivateViewers",			"0",			CVAR_GAME | CVAR_REPEATERINFO | CVAR_INTEGER | CVAR_ROM, "number of private viewer slots in use" );
+
+idCVar ri_name(						"ri_name",						"",				CVAR_GAME | CVAR_ARCHIVE, "override the server's si_name with this for relays" );
+
+idCVar g_noTVChat(					"g_noTVChat",					"0",			CVAR_GAME | CVAR_ARCHIVE | CVAR_BOOL, "Server enable/disable flag for viewer chat on Q4TV" );
+
 
 // user info
 idCVar ui_name(						"ui_name",					"Player",		CVAR_GAME | CVAR_USERINFO | PC_CVAR_ARCHIVE | CVAR_CASE_SENSITIVE | CVAR_SPECIAL_CONCAT, "player name" );

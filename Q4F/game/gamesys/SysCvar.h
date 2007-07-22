@@ -300,6 +300,14 @@ extern idCVar g_clientProjectileCollision;
 
 extern idCVar	net_clientLagOMeter;
 
+extern idCVar ri_useViewerPass;
+extern idCVar ri_privateViewers;
+extern idCVar ri_numViewers;
+extern idCVar ri_numPrivateViewers;
+extern idCVar ri_name;
+
+extern idCVar g_noTVChat;
+
 extern idCVar	r_shadows;
 
 // 1.4.2
