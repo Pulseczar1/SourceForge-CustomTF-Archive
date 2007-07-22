@@ -227,7 +227,6 @@ public:
 
 	// Writes a snapshot of the server game state for the given client.
 	virtual void				ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, int lastSnapshotFrame ) = 0;
-// RAVEN END
 
 	// Patches the network entity states at the server with a snapshot for the given client.
 	virtual bool				ServerApplySnapshot( int clientNum, int sequence ) = 0;
@@ -242,7 +241,7 @@ public:
 	virtual void				RepeaterProcessReliableMessage( int clientNum, const idBitMsg &msg ) = 0;
 
 	// Reads a snapshot and updates the client game state.
-	virtual void				ClientReadSnapshot( int clientNum, int sequence, const int gameFrame, const int gameTime, const int dupeUsercmds, const int aheadOfServer, const idBitMsg &msg ) = 0;
+	virtual void				ClientReadSnapshot( int clientNum, int snapshotSequence, const int gameFrame, const int gameTime, const int dupeUsercmds, const int aheadOfServer, const idBitMsg &msg ) = 0;
 
 	// Patches the network entity states at the client with a snapshot.
 	virtual bool				ClientApplySnapshot( int clientNum, int sequence ) = 0;
@@ -348,6 +347,9 @@ public:
 
 	// Read a snapshot from a server demo stream.
 	virtual void				ClientReadServerDemoSnapshot( int sequence, const int gameFrame, const int gameTime, const idBitMsg &msg ) = 0;
+
+	// Write a snapshot for repeater clients.
+	virtual void				RepeaterWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, const userOrigin_t &pvs_origin, int lastSnapshotFrame ) = 0;
 
 	// Done writing snapshots for repeater clients.
 	virtual void				RepeaterEndSnapshots( void ) = 0;
