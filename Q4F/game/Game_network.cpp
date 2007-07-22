@@ -2467,6 +2467,7 @@ bool idGameLocal::DownloadRequest( const char *IP, const char *guid, const char 
 		return true;
 	} else {
 		// 2: table of pak URLs
+		// 3: table of pak URLs with built-in http server
 		// first token is the game pak if requested, empty if not requested by the client
 		// there may be empty tokens for paks the server couldn't pinpoint - the order matters
 		idStr 		reply = "2;";
@@ -2494,9 +2495,18 @@ bool idGameLocal::DownloadRequest( const char *IP, const char *guid, const char 
 				}
 				continue;
 			}
+
+			idStr url = cvarSystem->GetCVarString( "net_serverDlBaseURL" );
+
+			if ( !url.Length() ) {
+				if ( cvarSystem->GetCVarInteger( "net_serverDownload" ) == 2 ) {
+					common->Warning( "net_serverDownload == 2 and net_serverDlBaseURL not set" );
+				} else {
+					url = cvarSystem->GetCVarString( "net_httpServerBaseURL" );
+				}
+			}
 			
 			if ( matchAll ) {
-				idStr url = cvarSystem->GetCVarString( "net_serverDlBaseURL" );
 				url.AppendPath( pakList[i] );
 				reply += url;
 				common->Printf( "download for %s: %s\n", IP, url.c_str() );
@@ -2509,7 +2519,6 @@ bool idGameLocal::DownloadRequest( const char *IP, const char *guid, const char 
 				if ( j == dlTable.Num() ) {
 					common->Printf( "download for %s: pak not matched: %s\n", IP, pakList[ i ].c_str() );
 				} else {
-					idStr url = cvarSystem->GetCVarString( "net_serverDlBaseURL" );
 					url.AppendPath( dlTable[ j ] );
 					reply += url;
 					common->Printf( "download for %s: %s\n", IP, url.c_str() );
@@ -3540,6 +3549,23 @@ void idGameLocal::SetDemoState( demoState_t state, bool _serverDemo, bool _timeD
 		demo_mphud = NULL;
 		demo_cursor = NULL;
 	}
+}
+
+/*
+============
+idGameLocal::SetRepeaterState
+============
+*/
+void idGameLocal::SetRepeaterState( bool isRepeater, bool serverIsRepeater ) {
+	this->isRepeater = isRepeater;
+	this->serverIsRepeater = serverIsRepeater;
+
+	if ( cvarSystem->GetCVarInteger( "net_serverDownload" ) == 3 ) {
+		networkSystem->HTTPEnable( this->isServer || this->isRepeater );
+	}
+
+	//Xav: ADDME
+//	ReallocViewers( isRepeater ? cvarSystem->GetCVarInteger( "ri_maxViewers" ) : 0 );
 }
 
 /*

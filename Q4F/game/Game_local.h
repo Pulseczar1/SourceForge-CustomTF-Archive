@@ -539,6 +539,7 @@ public:
 	bool					isClient;				// set if the game is run for a client
 													// discriminates between the RunFrame path and the ClientPrediction path
 													// NOTE: on a listen server, isClient is false
+	bool					isRepeater;				// set if the game is repeating
 
 // ddynerman: set if we're a server and not dedicated
 	bool					isListenServer;			
@@ -717,7 +718,8 @@ public:
 
 	virtual void			SetDemoState( demoState_t state, bool serverDemo, bool timeDemo );
 
-	virtual void			SetRepeaterState( bool isRepeater, bool serverIsRepeater ) {if (isRepeater || serverIsRepeater) Warning("Repeater does not work for single player.");};
+	//virtual void			SetRepeaterState( bool isRepeater, bool serverIsRepeater ) {if (isRepeater || serverIsRepeater) Warning("Repeater does not work for single player.");};
+	virtual void			SetRepeaterState( bool isRepeater, bool serverIsRepeater );
 
 	virtual void			WriteNetworkInfo( idFile* file, int clientNum );
 	virtual void			ReadNetworkInfo( int gameTime, idFile* file, int clientNum );
@@ -1060,6 +1062,7 @@ private:
 	demoState_t				demoState;
 	bool					serverDemo;
 	bool					timeDemo;
+	bool					serverIsRepeater;
 
 	int						demo_protocol;	// keep track of the protocol of the demo we're replaying
 
@@ -1127,6 +1130,8 @@ private:
 	void					UpdateClientsPVS( void );
 
 	bool					IsDemoReplayInAreas( int area1, int area2 );
+
+	void					ReallocViewers( int newMaxViewers );
 
 	void					BuildModList( void );
 
