@@ -429,7 +429,7 @@ void idGameLocal::ServerWriteInitialReliableMessages( int clientNum ) {
 		outMsg.Init( msgBuf, sizeof( msgBuf ) );
 		outMsg.BeginWriting( );
 		outMsg.WriteByte( GAME_RELIABLE_MESSAGE_SPAWN_PLAYER );
-		outMsg.WriteByte( i );
+		outMsg.WriteBits( i, ASYNC_MAX_CLIENT_BITS );
 		outMsg.WriteLong( spawnIds[ i ] );
 		networkSystem->ServerSendReliableMessage( clientNum, outMsg );
 	}
@@ -446,7 +446,18 @@ void idGameLocal::ServerWriteInitialReliableMessages( int clientNum ) {
 	networkSystem->ServerSendReliableMessage( clientNum, outMsg );
 
 	mpGame.ServerWriteInitialReliableMessages( clientNum );
+	tfGame.SendInitialState( clientNum );
+
+	if ( clientNum != gameLocal.localClientNum ) {
+		// send our mapinfo info
+		outMsg.Init( msgBuf, sizeof( msgBuf ) );
+		outMsg.BeginWriting();
+		outMsg.WriteByte( GAME_RELIABLE_MESSAGE_MAPINFO );
+		mapInfo.WriteInfo( gameType, outMsg );
+		networkSystem->ServerSendReliableMessage( clientNum, outMsg );
+	}
 }
+
 
 /*
 ================
@@ -454,7 +465,7 @@ idGameLocal::FreeSnapshotsOlderThanSequence
 ================
 */
 void idGameLocal::FreeSnapshotsOlderThanSequence( snapshot_t *&clientSnapshot, int sequence ) {
-	snapshot_t *snapshot, *lastSnapshot, *nextSnapshot;
+/*	snapshot_t *snapshot, *lastSnapshot, *nextSnapshot;
 	entityState_t *state;
 
 	for ( lastSnapshot = NULL, snapshot = clientSnapshot; snapshot; snapshot = nextSnapshot ) {
@@ -473,7 +484,7 @@ void idGameLocal::FreeSnapshotsOlderThanSequence( snapshot_t *&clientSnapshot, i
 		} else {
 			lastSnapshot = snapshot;
 		}
-	}
+	}*/
 }
 
 /*
@@ -482,7 +493,27 @@ idGameLocal::FreeSnapshotsOlderThanSequence
 ================
 */
 void idGameLocal::FreeSnapshotsOlderThanSequence( int clientNum, int sequence ) {
-	FreeSnapshotsOlderThanSequence( clientSnapshots[ clientNum ], sequence );
+//	FreeSnapshotsOlderThanSequence( clientSnapshots[ clientNum ], sequence );
+	snapshot_t *snapshot, *lastSnapshot, *nextSnapshot;
+	entityState_t *state;
+
+	for ( lastSnapshot = NULL, snapshot = clientSnapshots[clientNum]; snapshot; snapshot = nextSnapshot ) {
+		nextSnapshot = snapshot->next;
+		if ( snapshot->sequence < sequence ) {
+			for ( state = snapshot->firstEntityState; state; state = snapshot->firstEntityState ) {
+				snapshot->firstEntityState = snapshot->firstEntityState->next;
+				entityStateAllocator.Free( state );
+			}
+			if ( lastSnapshot ) {
+				lastSnapshot->next = snapshot->next;
+			} else {
+				clientSnapshots[clientNum] = snapshot->next;
+			}
+			snapshotAllocator.Free( snapshot );
+		} else {
+			lastSnapshot = snapshot;
+		}
+	}
 }
 
 /*
@@ -505,8 +536,10 @@ bool idGameLocal::ApplySnapshot( int clientNum, int sequence ) {
 				}
 				clientEntityStates[clientNum][state->entityNumber] = state;
 			}
+
 			// ~512 bytes
 			memcpy( clientPVS[clientNum], snapshot->pvs, sizeof( snapshot->pvs ) );
+
 			if ( lastSnapshot ) {
 				lastSnapshot->next = nextSnapshot;
 			} else {
@@ -528,13 +561,28 @@ idGameLocal::WriteGameStateToSnapshot
 ================
 */
 void idGameLocal::WriteGameStateToSnapshot( idBitMsgDelta &msg ) const {
-	int i;
-
-	for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
+	/*for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
 		msg.WriteFloat( globalShaderParms[i] );
-	}
+	}*/
+
+#if ASYNC_WRITE_TAGS
+	int check = gameLocal.random.RandomInt( 223344 );
+	msg.WriteLong( check );
+#endif
+
+	tfGame.WriteToSnapshot( msg );
+
+#if ASYNC_WRITE_TAGS
+	msg.WriteLong( check );
+	check = gameLocal.random.RandomInt( 223344 );
+	msg.WriteLong( check );
+#endif
 
 	mpGame.WriteToSnapshot( msg );
+
+#if ASYNC_WRITE_TAGS
+	msg.WriteLong( check );
+#endif
 }
 
 /*
@@ -543,13 +591,32 @@ idGameLocal::ReadGameStateFromSnapshot
 ================
 */
 void idGameLocal::ReadGameStateFromSnapshot( const idBitMsgDelta &msg ) {
-	int i;
 
-	for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
+
+	/*for( i = 0; i < MAX_GLOBAL_SHADER_PARMS; i++ ) {
 		globalShaderParms[i] = msg.ReadFloat();
-	}
+	}*/
 
+#if ASYNC_WRITE_TAGS
+	int check = msg.ReadLong();
+#endif
+
+	tfGame.ReadFromSnapshot( msg );
+
+#if ASYNC_WRITE_TAGS
+	if ( msg.ReadLong() != check ) {
+		gameLocal.Error( "tfgame out of sync with client" );
+	}
+	check = msg.ReadLong();
+#endif
 	mpGame.ReadFromSnapshot( msg );
+
+
+#if ASYNC_WRITE_TAGS
+	if ( msg.ReadLong() != check ) {
+		gameLocal.Error( "mpGame out of sync with client" );
+	}
+#endif
 }
 
 /*
@@ -620,10 +687,7 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 		}
 
 // RAVEN BEGIN
-// ddynerman: don't transmit entities not in your clip world
-		if ( ent->GetInstance() != player->GetInstance() ) {
-			continue;
-		}
+
 // RAVEN END
 
 		// if the entity is a map entity, mark it in PVS
@@ -638,6 +702,7 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 
 		// add the entity to the snapshot PVS
 		snapshot->pvs[ ent->entityNumber >> 5 ] |= 1 << ( ent->entityNumber & 31 );
+
 
 		// save the write state to which we can revert when the entity didn't change at all
 		msg.SaveWriteState( msgSize, msgWriteBit );
@@ -709,25 +774,35 @@ void idGameLocal::ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &ms
 	newBase->state.BeginWriting();
 	deltaMsg.InitWriting( base ? &base->state : NULL, &newBase->state, &msg );
 
+	#if ASYNC_WRITE_TAGS
+		int check = gameLocal.random.RandomInt( 223344 );
+		deltaMsg.WriteLong( check );
+	#endif
+
 	if ( player->spectating && player->spectator != player->entityNumber && entities[ player->spectator ] ) {
 		assert( entities[ player->spectator ]->IsType( idPlayer::GetClassType() ) );
-		deltaMsg.WriteBits( player->spectator, idMath::BitsForInteger( MAX_CLIENTS ) );
+		deltaMsg.WriteBits( player->spectator, ASYNC_MAX_CLIENT_BITS );
 		static_cast< idPlayer * >( gameLocal.entities[ player->spectator ] )->WritePlayerStateToSnapshot( deltaMsg );
 	} else {
-		deltaMsg.WriteBits( player->entityNumber, idMath::BitsForInteger( MAX_CLIENTS ) );
+		deltaMsg.WriteBits( player->entityNumber, ASYNC_MAX_CLIENT_BITS );
 		player->WritePlayerStateToSnapshot( deltaMsg );
 	}
+
+	#if ASYNC_WRITE_TAGS
+		deltaMsg.WriteLong( check );
+	#endif
+
 	WriteGameStateToSnapshot( deltaMsg );
 
 	// copy the client PVS string
-// RAVEN BEGIN
+
 // JSinger: Changed to call optimized memcpy
 // jnewquist: Use dword array to match pvs array so we don't have endianness problems.
 	const int numDwords = ( numPVSClients + 31 ) >> 5;
 	for ( i = 0; i < numDwords; i++ ) {
 		clientInPVS[i] = snapshot->pvs[i];
 	}
-// RAVEN END
+
 }
 
 /*
