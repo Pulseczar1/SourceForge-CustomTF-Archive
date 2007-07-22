@@ -177,6 +177,90 @@ const int ASYNC_CLASS_BITS = idMath::BitsForInteger( CLASS_COUNT );
 
 void gameError( const char *fmt, ... );
 
+typedef enum {
+	CHANNEL_DEST_NONE,
+	CHANNEL_DEST_RELIABLE_SERVER,
+	CHANNEL_DEST_RELIABLE_REPEATER,
+
+	CHANNEL_DEST_COUNT
+} channelDestType_t;
+
+class idMessageSender {
+public:
+	virtual channelDestType_t GetChannelType( void ) const = 0;
+	virtual void Send( const idBitMsg &msg ) const = 0;
+};
+
+class idNullMessageSender : public idMessageSender {
+public:
+	virtual channelDestType_t GetChannelType( void ) const { return CHANNEL_DEST_NONE; }
+	virtual void Send( const idBitMsg &msg ) const { return; };
+};
+
+class idServerReliableMessageSender : public idMessageSender {
+public:
+	virtual channelDestType_t GetChannelType( void ) const { return CHANNEL_DEST_RELIABLE_SERVER; }
+	virtual void Send( const idBitMsg &msg ) const {
+		if ( excludeClient != -1 ) {
+			networkSystem->ServerSendReliableMessageExcluding( excludeClient, msg, inhibitRepeater );
+		} else {
+			networkSystem->ServerSendReliableMessage( clientNum, msg, inhibitRepeater );
+		}
+	};
+	const idMessageSender &To( int _clientNum, bool _inhibitRepeater = false ) {
+		clientNum = _clientNum;
+		excludeClient = -1;
+		inhibitRepeater = _inhibitRepeater;
+		return *this;
+	}
+	const idMessageSender &NotTo( int _excludeClient, bool _inhibitRepeater = false ) {
+		clientNum = -1;
+		excludeClient = _excludeClient;
+		inhibitRepeater = _inhibitRepeater;
+		return *this;
+	}
+
+private:
+	int clientNum;
+	int excludeClient;
+	bool inhibitRepeater;
+};
+
+class idRepeaterReliableMessageSender : public idMessageSender {
+public:
+	virtual channelDestType_t GetChannelType( void ) const { return CHANNEL_DEST_RELIABLE_REPEATER; }
+	virtual void Send( const idBitMsg &msg ) const {
+		if ( excludeClient != -1 ) {
+			networkSystem->RepeaterSendReliableMessageExcluding( excludeClient, msg, inhibitHeader, repeaterClient );
+		} else {
+			networkSystem->RepeaterSendReliableMessage( repeaterClient, msg, inhibitHeader, clientNum );
+		}
+	};
+	const idMessageSender &To( int _clientNum, int asClient = -1, bool _inhibitHeader = false ) {
+		repeaterClient = _clientNum;
+		clientNum = asClient;
+		excludeClient = -1;
+		inhibitHeader = _inhibitHeader;
+		return *this;
+	}
+	const idMessageSender &ExcludingTo( int _excludeClient, int _clientNum, bool _inhibitHeader = false ) {
+		repeaterClient = _clientNum;
+		clientNum = -1;
+		excludeClient = _excludeClient;
+		inhibitHeader = _inhibitHeader;
+		return *this;
+	}
+
+private:
+	int repeaterClient;		// viewer number on repeater
+	int clientNum;			// clientNum of real player to address exclusively to
+	int excludeClient;		// clientNum of real player to exclude
+	bool inhibitHeader;
+};
+
+extern idNullMessageSender nullSender;
+extern idServerReliableMessageSender serverReliableSender;
+extern idRepeaterReliableMessageSender repeaterReliableSender;
 
 //============================================================================
 
@@ -385,6 +469,16 @@ typedef enum {
 	GAMESTATE_SHUTDOWN				// inside MapShutdown().  clearing memory.
 } gameState_t;
 
+typedef struct {
+	bool connected;
+	bool active;
+	bool priv;
+	bool nopvs;
+	userOrigin_t origin;
+	int pvsArea;
+	idDict info;
+} viewer_t;
+
 //============================================================================
 class idEventQueue {
 public:
@@ -488,6 +582,10 @@ public:
 	
 	int							entityRegisterTime;
 
+	int						maxViewers; // currently allocated
+	int						maxViewer; // highest numbered active viewer + 1
+
+	viewer_t				(*viewers);
 
 	// can be used to automatically effect every material in the world that references globalParms
 	float					globalShaderParms[ MAX_GLOBAL_SHADER_PARMS ];	
@@ -618,7 +716,7 @@ public:
 	virtual gameReturn_t	RunFrame( const usercmd_t *clientCmds, int activeEditors, bool lastCatchupFrame, int serverGameFrame );
 	virtual	void			MenuFrame( void );
 
-	virtual void			RepeaterFrame( const userOrigin_t *clientOrigins, bool lastCatchupFrame ) {};
+	virtual void			RepeaterFrame( const userOrigin_t *clientOrigins, bool lastCatchupFrame, int spoolTime = 0 ) {};
 
 	virtual bool			Draw( int clientNum );
 	virtual escReply_t		HandleESC( idUserInterface **gui );
@@ -631,14 +729,15 @@ public:
 	virtual void			ServerClientDisconnect( int clientNum );
 	virtual void			ServerWriteInitialReliableMessages( int clientNum );
 
-	virtual allowReply_t	RepeaterAllowClient( int clientId, int numClients, const char *IP, const char *guid, bool repeater, const char *password, const char *privatePassword, char reason[MAX_STRING_CHARS] ) { idStr::Copynz( reason, "#str_107239" /* zinx - FIXME - not banned... */, sizeof(reason) ); return ALLOW_NO; };
+	virtual allowReply_t	RepeaterAllowClient( int clientId, int numClients, const char *IP, const char *guid, bool repeater, const char *password, const char *privatePassword, char reason[MAX_STRING_CHARS] );
 	virtual void			RepeaterClientConnect( int clientNum ) {assert(false);};
 	virtual void			RepeaterClientBegin( int clientNum ) {assert(false);};
 	virtual void			RepeaterClientDisconnect( int clientNum ) {assert(false);};
 	virtual void			RepeaterWriteInitialReliableMessages( int clientNum ) {assert(false);};
+// RAVEN BEGIN
 // jnewquist: Use dword array to match pvs array so we don't have endianness problems.
-	virtual void			ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients );
-
+	virtual void			ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, int lastSnapshotFrame );
+// RAVEN END
 	virtual bool			ServerApplySnapshot( int clientNum, int sequence );
 	virtual void			ServerProcessReliableMessage( int clientNum, const idBitMsg &msg );
 
@@ -718,18 +817,17 @@ public:
 
 	virtual void			SetDemoState( demoState_t state, bool serverDemo, bool timeDemo );
 
-	//virtual void			SetRepeaterState( bool isRepeater, bool serverIsRepeater ) {if (isRepeater || serverIsRepeater) Warning("Repeater does not work for single player.");};
-	virtual void			SetRepeaterState( bool isRepeater, bool serverIsRepeater );
+	virtual void			SetRepeaterState( bool isRepeater, bool serverIsRepeater ) {if (isRepeater || serverIsRepeater) Warning("Repeater does not work for single player.");};
 
 	virtual void			WriteNetworkInfo( idFile* file, int clientNum );
 	virtual void			ReadNetworkInfo( int gameTime, idFile* file, int clientNum );
 	virtual bool			ValidateDemoProtocol( int minor_ref, int minor );
 
-	virtual void			ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg );
+	virtual void			ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg, int lastSnapshotFrame );
 	virtual void			ClientReadServerDemoSnapshot( int sequence, const int gameFrame, const int gameTime, const idBitMsg &msg );
 
-	virtual void			RepeaterWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, const userOrigin_t &pvs_origin ) {assert(false);};
-	virtual void			RepeaterEndSnapshots( void ) {};
+	virtual void			RepeaterWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, const userOrigin_t &pvs_origin, int lastSnapshotFrame ) {assert(false);};
+	virtual void			RepeaterEndSnapshots( void );
 	virtual void			ClientReadRepeaterSnapshot( int sequence, const int gameFrame, const int gameTime, const int aheadOfServer, const idBitMsg &msg ) {assert(false);};
 
 	virtual int				GetDemoFollowClient( void ) { return serverDemo ? followPlayer : -1; }
@@ -927,6 +1025,8 @@ public:
 	rvClientEffect*			PlayEffect			( const idDict& args, const char* effectName, const idVec3& origin, const idMat3& axis, bool loop = false, const idVec3& endOrigin = vec3_origin, bool broadcast = false, effectCategory_t category = EC_IGNORE, const idVec4& effectTint = vec4_one );
 	const idDecl			*GetEffect			( const idDict& args, const char* effectName, const rvDeclMatType* materialType = NULL );
 
+	//void					UpdateRepeaterInfo( bool transmit = false );
+
 	idList<idEntity*>		ambientLights; // lights that cast ambient
 	idList<idEntity*>		waterEnts;
 	idLinkList<idLight>		nonAmbientLights; // lights that aren't ambient, subject to detail level changes
@@ -1044,6 +1144,14 @@ private:
 	int						clientPVS[MAX_CLIENTS+1][ENTITY_PVS_SIZE];
 	snapshot_t *			clientSnapshots[MAX_CLIENTS+1];
 
+	idList<int>				privateViewerIds, nopvsViewerIds;
+
+	entityState_t *			(*viewerEntityStates)[MAX_GENTITIES];	// MAX_CLIENTS slot is for server demo recordings
+	int						(*viewerPVS)[ENTITY_PVS_SIZE];
+	snapshot_t *			(*viewerSnapshots);
+
+	idMsgQueue				(*viewerUnreliableMessages);
+
 // jnewquist: Mark memory tags for idBlockAlloc
 	idBlockAlloc<entityState_t,256,MA_ENTITY> entityStateAllocator;
 	idBlockAlloc<snapshot_t,64,MA_ENTITY> snapshotAllocator;
@@ -1100,6 +1208,7 @@ private:
 	void					InitAsyncNetwork( void );
 	void					ShutdownAsyncNetwork( void );
 	void					InitLocalClient( int clientNum );
+	void					FreeSnapshotsOlderThanSequence( snapshot_t *&clientSnapshot, int sequence );
 	void					FreeSnapshotsOlderThanSequence( int clientNum, int sequence );
 	bool					ApplySnapshot( int clientNum, int sequence );
 	void					WriteGameStateToSnapshot( idBitMsgDelta &msg ) const;
@@ -1130,8 +1239,6 @@ private:
 	void					UpdateClientsPVS( void );
 
 	bool					IsDemoReplayInAreas( int area1, int area2 );
-
-	void					ReallocViewers( int newMaxViewers );
 
 	void					BuildModList( void );
 

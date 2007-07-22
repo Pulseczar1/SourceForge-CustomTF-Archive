@@ -177,7 +177,7 @@ public:
 // RAVEN END
 
 	// Runs a repeater frame
-	virtual void				RepeaterFrame( const userOrigin_t *clientOrigins, bool lastCatchupFrame ) = 0;
+	virtual void				RepeaterFrame( const userOrigin_t *clientOrigins, bool lastCatchupFrame, int serverGameFrame ) = 0;
 
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool				Draw( int clientNum ) = 0;
@@ -226,9 +226,7 @@ public:
 	virtual void				RepeaterWriteInitialReliableMessages( int clientNum ) = 0;
 
 	// Writes a snapshot of the server game state for the given client.
-// RAVEN BEGIN
-// jnewquist: Use dword array to match pvs array so we don't have endianness problems.
-	virtual void				ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients ) = 0;
+	virtual void				ServerWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, int lastSnapshotFrame ) = 0;
 // RAVEN END
 
 	// Patches the network entity states at the server with a snapshot for the given client.
@@ -346,13 +344,10 @@ public:
 	virtual bool				ValidateDemoProtocol( int minor_ref, int minor ) = 0;
 
 	// Write a snapshot for server demo recording.
-	virtual void				ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg ) = 0;
+	virtual void				ServerWriteServerDemoSnapshot( int sequence, idBitMsg &msg, int lastSnapshotFrame ) = 0;
 
 	// Read a snapshot from a server demo stream.
 	virtual void				ClientReadServerDemoSnapshot( int sequence, const int gameFrame, const int gameTime, const idBitMsg &msg ) = 0;
-
-	// Write a snapshot for repeater clients.
-	virtual void				RepeaterWriteSnapshot( int clientNum, int sequence, idBitMsg &msg, dword *clientInPVS, int numPVSClients, const userOrigin_t &pvs_origin ) = 0;
 
 	// Done writing snapshots for repeater clients.
 	virtual void				RepeaterEndSnapshots( void ) = 0;
