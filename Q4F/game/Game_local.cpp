@@ -1803,6 +1803,10 @@ void idGameLocal::InitFromNewMap( const char *mapName, idRenderWorld *renderWorl
 
 	this->isMultiplayer = isServer || isClient;
 
+	if ( cvarSystem->GetCVarInteger( "net_serverDownload" ) == 3 ) {
+		networkSystem->HTTPEnable( this->isServer || this->isRepeater );
+	}
+
 	if ( mapFileName.Length() ) {
 		MapShutdown();
 	}
