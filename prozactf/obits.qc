@@ -890,35 +890,9 @@ void(entity targ, entity attacker) ClientObituary =
 				if (deathmsg == #DMSG_GREN_HAND)
 					deathstring = " grenades himself\n";
 				else if (deathmsg == #DMSG_MARTYR) 
-                {
-					
-                   	//if (rnum <= 0.5)
-						deathstring = " dies for the cause\n";
-					//else
-					//	deathstring = " is persecuted to death\n";
-					
-                    /*
-                    //if (!(targ.job & #JOB_MARTYR_ENEMY)) {
-					    if (rnum <= 0.5)
-						    deathstring = " dies for the heck of it\n";
-					    else
-						    deathstring = " dies with style\n";
-				    
-					else {
-						//Give last person who attacked him a frag
-						if (targ.martyr_enemy.classname == "player" && targ.martyr_enemy.has_disconnected == #FALSE) {
-							Give_Frags_Out(targ.martyr_enemy, targ, 1, 1, 1, 1, 0);
-						}
-						if (rnum <= 0.5)
-							deathstring = " dies for the cause\n";
-						else
-							deathstring = " is persecuted to death\n";
-					} */
+				{
+					deathstring = " dies for the cause\n";
 				}
-                /*else if (deathmsg == #DMSG_EXPBODY) - OfN - No need!
-                {
-                    deathstring = "'s body explodes!\n";
-                }*/
 				else if (deathmsg == #DMSG_BERSERK)
 				{
 					if (rnum < 0.5)
@@ -931,17 +905,17 @@ void(entity targ, entity attacker) ClientObituary =
 				else if (deathmsg == #DMSG_GREN_FRAG)
 					deathstring = " fragments himself\n";
 				else if (deathmsg == #DMSG_LAND_MINE)
-                {
+				{
 					if (rnum < 0.5)
-                        deathstring = " forgot where he put his minefield\n";
-                    else
-                    {
-                        if (rnum < 0.75)
-                            deathstring = " blows up along with his mines\n";
-                        else
-                            deathstring = " explodes with his own mine\n";
-                    }
-                }
+						deathstring = " forgot where he put his minefield\n";
+					else
+					{
+						if (rnum < 0.75)
+							deathstring = " blows up along with his mines\n";
+						else
+							deathstring = " explodes with his own mine\n";
+					}
+				}
 				else if (deathmsg == #DMSG_GREN_MIRV)
 					deathstring = " goes to pieces\n";
 				else if (deathmsg == #DMSG_GREN_PIPE)
@@ -958,17 +932,17 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " set the detpack and forgot to run\n";
 				else if (deathmsg == #DMSG_BIOWEAPON)
 					deathstring = " died by his own infection!\n";
-                else if (deathmsg == #DMSG_FORCEFIELD)
+				else if (deathmsg == #DMSG_FORCEFIELD)
 					deathstring = " is fried in his own force field\n";
-                else if (deathmsg == #DMSG_STUCK_FORCEFIELD)
+				else if (deathmsg == #DMSG_STUCK_FORCEFIELD)
 					deathstring = " is caught and shocked to death in his own force field\n";
-                else if (deathmsg == #DMSG_SPANNERFIELD)
-                {
+				else if (deathmsg == #DMSG_SPANNERFIELD)
+				{
 					if (rnum < 0.5)
-                        deathstring = " dies learning something about spanners and force fields\n";
-                    else
-                        deathstring = " learns something about spanners and force fields..\n";
-                }
+						deathstring = " dies learning something about spanners and force fields\n";
+					else
+						deathstring = " learns something about spanners and force fields..\n";
+				}
 				else if (deathmsg == #DMSG_NAPALM)
 					deathstring = " burns with his own napalm\n";
 				else if (deathmsg == #DMSG_EXPLOSIVE_SHOT)
@@ -991,25 +965,25 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " drove an axe through his own head!\n";
 				else if (deathmsg == #DMSG_BACKSTAB)
 					deathstring = " drove a knife into his own heart!\n";    
-                else if (deathmsg == #DMSG_FGTRAP)
-    				deathstring = " is electrified tweaking a field generator\n";
+				else if (deathmsg == #DMSG_FGTRAP)
+					deathstring = " is electrified tweaking a field generator\n";
 				else if (deathmsg == #DMSG_CALTROP)
 					deathstring = " stepped on too many of his own caltrops\n";
    				else if (deathmsg == #DMSG_FLYCALTROP)
 					deathstring = " was spiked by his own catlrop\n";
-                else if (deathmsg == #DMSG_ROCKETL)
+				else if (deathmsg == #DMSG_ROCKETL)
 				{
 					if (rnum < 0.5)
 						deathstring = " becomes bored with life\n";
 					else
 						deathstring = " checks if his weapon is loaded\n";
 				}
-                else if (deathmsg == #DMSG_CLUSTER_ROCKET)
-                    deathstring = " eats his clusters\n";
-                else if (deathmsg == #DMSG_LASERCANNON)
-                    deathstring = " blasts himself\n";
-                else if (deathmsg == #DMSG_BIOEXPLOSION)
-                    deathstring = " killed himself with a biological grenade\n";
+				else if (deathmsg == #DMSG_CLUSTER_ROCKET)
+					deathstring = " eats his clusters\n";
+				else if (deathmsg == #DMSG_LASERCANNON)
+					deathstring = " blasts himself\n";
+				else if (deathmsg == #DMSG_BIOEXPLOSION)
+					deathstring = " killed himself with a biological grenade\n";
 				else if (deathmsg == #DMSG_INCENDIARY)
 					deathstring = " chars himself with an incendiary rocket\n";
 				else if (deathmsg == #DMSG_GRENADEL)
@@ -1020,22 +994,22 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " dies from uncomfortable boots\n";
 				else if (deathmsg == #DMSG_LIGHTNING)
 					deathstring = " electrocutes himself\n";
-                else if (deathmsg == #DMSG_STORM)
-                {
-                    bprint(#PRINT_MEDIUM," is killed by the storm lightning!\n");
-                    return;
-                }
+				else if (deathmsg == #DMSG_STORM)
+				{
+					bprint(#PRINT_MEDIUM," is killed by the storm lightning!\n");
+					return;
+				}
 				else if (deathmsg == #DMSG_LIGHTNING && targ.waterlevel > 1)
 				{
 					Give_Frags_Out(attacker, attacker, -1, 0, 1, 1, 1);
-                    bprint (#PRINT_MEDIUM, " discharges into the water.\n");
+					bprint (#PRINT_MEDIUM, " discharges into the water.\n");
 					return;
 				}
 				
 				// killed self
 				Give_Frags_Out(attacker, attacker, -1, 0, 1, 1, 1);
 
-                bprint(#PRINT_MEDIUM, deathstring);
+				bprint(#PRINT_MEDIUM, deathstring);
 				return;
 			}
 			else if (teamplay && Teammate(targ.team_no,attacker.team_no))
@@ -1057,59 +1031,50 @@ void(entity targ, entity attacker) ClientObituary =
 					return;
 				}
 
-                if (deathmsg == #DMSG_EXPBODY) //- OfN
+				if (deathmsg == #DMSG_EXPBODY) //- OfN
 				{
 	 				bprint (#PRINT_MEDIUM, targ.netname);
  					bprint (#PRINT_MEDIUM, " has been killed as a side effect of ");
    					bprint (#PRINT_MEDIUM, attacker.netname);
-                    bprint (#PRINT_MEDIUM, "'s body explosion\n");
-                    return;
+					bprint (#PRINT_MEDIUM, "'s body explosion\n");
+					return;
 				}
 
-                if (deathmsg == #DMSG_FORCEFIELD) //- OfN
+				if (deathmsg == #DMSG_FORCEFIELD) //- OfN
 				{
 	 				bprint (#PRINT_MEDIUM, targ.netname);
  					bprint (#PRINT_MEDIUM, " is fried trying to pass thru ");
    					bprint (#PRINT_MEDIUM, attacker.netname);
-                    bprint (#PRINT_MEDIUM, "'s force field\n");
-                    return;
+					bprint (#PRINT_MEDIUM, "'s force field\n");
+					return;
 				}
 
-                if (deathmsg == #DMSG_STUCK_FORCEFIELD) //- OfN
+				if (deathmsg == #DMSG_STUCK_FORCEFIELD) //- OfN
 				{
 	 				bprint (#PRINT_MEDIUM, targ.netname);
  					bprint (#PRINT_MEDIUM, " died stuck inside of ");
    					bprint (#PRINT_MEDIUM, attacker.netname);
-                    bprint (#PRINT_MEDIUM, "'s force field\n");
-                    return;
+					bprint (#PRINT_MEDIUM, "'s force field\n");
+					return;
 				}                
 
-                if (deathmsg == #DMSG_LASERCANNON) //- OfN
+				if (deathmsg == #DMSG_LASERCANNON) //- OfN
 				{
 	 				bprint (#PRINT_MEDIUM, attacker.netname);
  					bprint (#PRINT_MEDIUM, " laser-bolt bounces on ");
-                    bprint (#PRINT_MEDIUM, targ.netname);   					
-                    bprint (#PRINT_MEDIUM, "\n");
-                    return;
+					bprint (#PRINT_MEDIUM, targ.netname);   					
+					bprint (#PRINT_MEDIUM, "\n");
+					return;
 				}
 
-                if (deathmsg == #DMSG_DISPEL) //- OfN
+				if (deathmsg == #DMSG_DISPEL) //- OfN
 				{
 	 				bprint (#PRINT_MEDIUM, attacker.netname);
  					bprint (#PRINT_MEDIUM, " dispels a teammate. (");
-                    bprint (#PRINT_MEDIUM, targ.netname);   					
-                    bprint (#PRINT_MEDIUM, ")\n");
-                    return;
+					bprint (#PRINT_MEDIUM, targ.netname);   					
+					bprint (#PRINT_MEDIUM, ")\n");
+					return;
 				}
-
-                /*if (deathmsg == #DMSG_BIOEXPLOSION)
-                {
-                    bprint(#PRINT_MEDIUM,targ.netname);
-                    bprint(#PRINT_MEDIUM," dies due to ");
-                    bprint(#PRINT_MEDIUM,attacker.netname);
-                    bprint(#PRINT_MEDIUM,"'s infection grenade exploding near\n");
-                    return;
-                }*/
 
                 // OfN - As you can see i was tired of the same 4 teamkill deathmessages
                 // so i added lots, some are great IMHO :P
@@ -1405,7 +1370,7 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " collects one too many of ";
 					deathstring2 = "'s caltrops\n";
 				}
-                else if (deathmsg == #DMSG_FLYCALTROP)
+				else if (deathmsg == #DMSG_FLYCALTROP)
 				{
 					deathstring = " was spiked by ";
 					deathstring2 = "'s caltrops\n";
@@ -1453,7 +1418,8 @@ void(entity targ, entity attacker) ClientObituary =
 				else if (deathmsg == #DMSG_MAUSER)
 				{
 				/*	deathstring = " is assassinated by ";
-					deathstring2 = "'s Mauser WK-77\n";	*/
+					deathstring2 = "'s Mauser WK-77\n";
+				*/
 					dprint(attacker.netname);
 					dprint(" mausers ");
 					dprint(targ.netname);
@@ -1483,17 +1449,17 @@ void(entity targ, entity attacker) ClientObituary =
 						deathstring2 = "'s grenade\n";
 					}
 				}
-                else if (deathmsg == #DMSG_STUCK_FORCEFIELD)
+				else if (deathmsg == #DMSG_STUCK_FORCEFIELD)
 				{
 					deathstring = " is fried in ";
 					deathstring2 = "'s force field\n";
 				}
-                else if (deathmsg == #DMSG_FORCEFIELD)
+				else if (deathmsg == #DMSG_FORCEFIELD)
 				{
 					deathstring = " had a shocking experience on ";
 					deathstring2 = "'s force field\n";
 				}
-                else if (deathmsg == #DMSG_FGTRAP)
+				else if (deathmsg == #DMSG_FGTRAP)
 				{
 					deathstring = " explodes with ";
 					deathstring2 = "'s trapped field generator\n";
@@ -1517,21 +1483,21 @@ void(entity targ, entity attacker) ClientObituary =
 				{
 					deathstring2 = "'s land mine\n";
 
-                    if (rnum < 0.8)
+					if (rnum < 0.8)
 						deathstring = " walked over ";
 					else
 						deathstring = " was launched 40 ft into the air by ";
 
 					if (targ.health < -40)
-                    {
+					{
 						if (rnum < 0.8) 
 							deathstring = " was turned into a shower of gibs by ";
 						else 
 							deathstring = " was launched 80 ft into the air by ";
 					}
                     
-                    // We killed one poor guy with our mines:
-                    MineKill(attacker);
+					// We killed one poor guy with our mines:
+					MineKill(attacker);
 				}
 				else if (deathmsg == #DMSG_FLAME)
 				{
@@ -1563,42 +1529,35 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 				else if (deathmsg == #DMSG_AXE)
 				{
-                    deathstring2 = "\n";
+					deathstring2 = "\n";
 
-                    if (attacker.cutf_items & #CUTF_KNIFE)
+					if (attacker.cutf_items & #CUTF_KNIFE)
 					{
-                        if (attacker.job & #JOB_WARLOCK)
-                        {
-                            if (rnum < 0.33)
-                                deathstring = " is forced to donate his blood by ";
-                            else if (rnum < 0.66)
-                            {
-                                bprint(#PRINT_MEDIUM,attacker.netname);
-                                bprint(#PRINT_MEDIUM," grabs ");
-                                bprint(#PRINT_MEDIUM,targ.netname);
-                                bprint(#PRINT_MEDIUM,"'s heart for his collection\n");
-                                WarlockKnifeKill(attacker);
-                                return;
-                            }
-                            else
-                                deathstring = "'s heart is now a prized possession of ";                            
-                        }
-                        else
-                        {
-                            deathstring = " was knife-murdered by "; 
-                        }
-                    }
+						if (attacker.job & #JOB_WARLOCK)
+						{
+							if (rnum < 0.33)
+								deathstring = " is forced to donate his blood by ";
+							else if (rnum < 0.66)
+							{
+								bprint(#PRINT_MEDIUM,attacker.netname);
+								bprint(#PRINT_MEDIUM," grabs ");
+								bprint(#PRINT_MEDIUM,targ.netname);
+								bprint(#PRINT_MEDIUM,"'s heart for his collection\n");
+								WarlockKnifeKill(attacker);
+								return;
+							}
+							else
+								deathstring = "'s heart is now a prized possession of ";                            
+						}
+						else
+						{
+							deathstring = " was knife-murdered by "; 
+						}
+					}
 					else
 						deathstring = " was axe-murdered by ";
 					
-                    //if (attacker.demon_blood < 0) //WK Sanity Check
-					//	attacker.demon_blood = 0;
-					// if the above ever happens you've got a serious bug that needs fixing
-					// don't get around it by cheap hacks - SB
-					
-                    /*if (attacker.demon_blood < #MAX_KNIFE_BLOOD) //SB - OfN defined max now
-						attacker.demon_blood = attacker.demon_blood + 1;*/
-						WarlockKnifeKill(attacker);
+					WarlockKnifeKill(attacker);
 				}
 				else if (deathmsg == #DMSG_SPANNER)
 				{
@@ -1620,7 +1579,7 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " was nailed by ";
 					deathstring2 = "\n";
 				}
-                else if (deathmsg == #DMSG_SNG)
+				else if (deathmsg == #DMSG_SNG)
 				{
 					deathstring = " was spiked by ";
 					deathstring2 = "'s super nailgun\n";
@@ -1808,11 +1767,11 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 				else if (deathmsg == #DMSG_SNIPERLEGSHOT)
 				{
-                    if (attacker.cutf_items & #CUTF_OTR && random() > 0.25)
-                    {
-                        deathstring = " owns a metallic replacement for his legs from ";
-                        deathstring2 = "\n";
-                    }
+					if (attacker.cutf_items & #CUTF_OTR && random() > 0.25)
+					{
+						deathstring = " owns a metallic replacement for his legs from ";
+						deathstring2 = "\n";
+					}
 					else if (rnum < 0.5)
 					{
 						deathstring = " is made legless by ";
@@ -1854,34 +1813,28 @@ void(entity targ, entity attacker) ClientObituary =
 				}
 				else if (deathmsg == #DMSG_BACKSTAB)
 				{
-                    if (attacker.job & #JOB_WARLOCK && random() < 0.33)
-                    {
-                        bprint(#PRINT_MEDIUM,attacker.netname);
-                        bprint(#PRINT_MEDIUM," extirpates ");
-                        bprint(#PRINT_MEDIUM,targ.netname);
-                        bprint(#PRINT_MEDIUM,"'s heart\n");
-                        WarlockKnifeKill(attacker);
-                        return;
-                    }
-					
-                    if (rnum < 0.5)
-                    {
-                        deathstring = " gets assassinated by ";
-					    deathstring2 = "\n";
+					if (attacker.job & #JOB_WARLOCK && random() < 0.33)
+					{
+						bprint(#PRINT_MEDIUM,attacker.netname);
+						bprint(#PRINT_MEDIUM," extirpates ");
+						bprint(#PRINT_MEDIUM,targ.netname);
+						bprint(#PRINT_MEDIUM,"'s heart\n");
+						WarlockKnifeKill(attacker);
+						return;
 					}
-                    else
-                    {
-                        deathstring = " is knifed from behind by ";
-					    deathstring2 = "\n";
-                    }
-
-                    //if (attacker.demon_blood < 0) //WK Sanity Check
-					//	attacker.demon_blood = 0;
-					// See previous comment - SB
-					/*if (attacker.demon_blood < #MAX_KNIFE_BLOOD) //SB
-						attacker.demon_blood = attacker.demon_blood + 1;*/
-                    
-                    WarlockKnifeKill(attacker);
+					
+					if (rnum < 0.5)
+					{
+						deathstring = " gets assassinated by ";
+						deathstring2 = "\n";
+					}
+					else
+					{
+						deathstring = " is knifed from behind by ";
+						deathstring2 = "\n";
+					}
+                 
+					WarlockKnifeKill(attacker);
 				}
 				else if (deathmsg == #DMSG_TRANQ)
 				{
@@ -2158,7 +2111,7 @@ void(entity targ, entity attacker) ClientObituary =
 			{
 				deathstring = " tried to leave\n";
 			}
-            else if (targ.deathtype == "falling" && attacker == world)
+			else if (targ.deathtype == "falling" && attacker == world)
 			{
 				targ.deathtype = "";
 				deathstring = " fell to his death\n";
@@ -2167,17 +2120,17 @@ void(entity targ, entity attacker) ClientObituary =
 			{
 				rnum = random();
                 
-                if (rnum < 0.25)
-                    deathstring = " died happily\n";
-                else if (rnum < 0.5)
-                    deathstring = " knows how to die with style\n";
-                else if (rnum < 0.75) 
-                    deathstring = " simply dies\n";
-                else deathstring = " had an original death\n";
+				if (rnum < 0.25)
+					deathstring = " died happily\n";
+				else if (rnum < 0.5)
+					deathstring = " knows how to die with style\n";
+				else if (rnum < 0.75) 
+					deathstring = " simply dies\n";
+				else deathstring = " had an original death\n";
 			}
 
 			bprint(#PRINT_MEDIUM, deathstring);
-            return; //- ofn
+			return; //- ofn
 		}
 	}    
     else if (IsMonster(targ) && attacker.classname == "building_sentrygun")

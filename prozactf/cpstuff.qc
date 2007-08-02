@@ -1714,28 +1714,28 @@ void(float broadcastmsg) PrintGameSettings =
 
 float(entity thing) GetDamageOutFactor =
 {
-    local float factor;
-    factor = 1;
+	local float factor;
+	factor = 1;
     
-    if (thing.super_damage_finished > time) {
-		if (thing.tfstate & #TFSTATE_INSPIRED)
-			factor = factor * #CHAPLAN_DMGFACTOR; // was 1.5
+	//WK 8/4/7 Changed the code so that only the best damage multiplier works now.
+	if (thing.super_damage_finished > time) {
 		if (thing.job & #JOB_BERSERKER && thing.job & #JOB_ACTIVE)
-            factor = factor * #BERSERKER_DMGFACTOR;
-        else
-			factor = factor * 4; // quad
+			factor = #BERSERKER_DMGFACTOR;
+		if (thing.tfstate & #TFSTATE_INSPIRED)
+			if (factor < #CHAPLAN_DMGFACTOR) factor = #CHAPLAN_DMGFACTOR;
+		if (factor == 1) factor = 4; // Else, we have quad
 	}
 
-   	if (thing.aura == #AURA_POWER)
-		factor = factor * #POWERAURA_DMGFACTOR; // was 1.5
+	if (thing.#runes & #RUNE_TRIAD)
+		if (factor < 3) factor = 3;
 
-    if (thing.#runes & #RUNE_TRIAD)
-        factor = factor * 3;
+	if (thing.aura == #AURA_POWER)
+		if (factor < #POWERAURA_DMGFACTOR) factor = #POWERAURA_DMGFACTOR;
 
-    if (factor > #MAX_OUT_DMGFACTOR)
-        factor = #MAX_OUT_DMGFACTOR;
+	if (factor > #MAX_OUT_DMGFACTOR) //Not really needed now that they don't stack, but leave in for sanity
+		factor = #MAX_OUT_DMGFACTOR;
 
-    return factor;
+	return factor;
 };
 
 //==========================================================================
@@ -1747,7 +1747,7 @@ float(entity thing) GetDamageInFactor =
     factor = 1;
 
     if (thing.aura == #AURA_RESIS)
-        factor = factor * #RESISAURA_DMGFACTOR; // was 0.66
+        factor = factor * #RESISAURA_DMGFACTOR;
 
     if (thing.#runes & #RUNE_RESIS)
         factor = factor * #RESISRUNE_DMGFACTOR;

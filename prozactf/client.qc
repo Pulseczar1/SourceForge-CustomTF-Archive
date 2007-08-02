@@ -2717,7 +2717,10 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-    if (self.flags & #FL_FINALIZED)
+	local vector tempvel;
+	local float tempspeed;
+
+	if (self.flags & #FL_FINALIZED)
         return;
 
 	//WK 4/27/7 Save our last frame's velocity for player_touch ramming.
@@ -2749,10 +2752,10 @@ void() PlayerPreThink =
 
 #ifdef QUAKE_WORLD // culled by KK. was QUAKE_WORLD
 	//if (infokey(world,"ceasefire")=="on") //Cyto
-    if (ceasefire)
+	if (ceasefire)
 	{
 		#ifndef CEASEFIRE_ALLOWS_TO_MOVE
-        if (self.lip)
+		if (self.lip)
 			self.origin = self.oldorigin;
 		else
 		{
@@ -2765,29 +2768,26 @@ void() PlayerPreThink =
 				self.lip = #TRUE;
 			}
 		}
-        #endif
+		#endif
 
-        if (self.current_menu == #MENU_DEFAULT || self.current_menu == 0)
-        if (self.duration < time)
-        {
-            if (self.#cprint_fx & 1)
-                CenterPrint(self,"žžžžžžžžžžžžžžžžžŸ\nÃåáóåæéòå Áððìéåó\nžžžžžžžžžžžžžžžžžŸ");
-            else
-                CenterPrint(self,"žžžžžžžžžžžžžžžžžŸ\nCeasefire Applies\nžžžžžžžžžžžžžžžžžŸ");
-            
-            self.duration = time + #CEASEFIRE_CPRINT_RATE;
-
-            self.#cprint_fx = self.#cprint_fx + 1;
-        }
-                                                                                  
-    	if (!GoodCeasefireImpulse(self.impulse)) //See admin.qc
-	    	self.impulse = 0;
-
-  		self.button0 = 0;
-    	self.button1 = 0;
-	    self.button2 = 0;
+		if (self.current_menu == #MENU_DEFAULT || self.current_menu == 0)
+		if (self.duration < time)
+		{
+			if (self.#cprint_fx & 1)
+				CenterPrint(self,"žžžžžžžžžžžžžžžžžŸ\nÃåáóåæéòå Áððìéåó\nžžžžžžžžžžžžžžžžžŸ");
+			else
+				CenterPrint(self,"žžžžžžžžžžžžžžžžžŸ\nCeasefire Applies\nžžžžžžžžžžžžžžžžžŸ");
+			self.duration = time + #CEASEFIRE_CPRINT_RATE;
+	            self.#cprint_fx = self.#cprint_fx + 1;
+		}
+                                                                   
+		if (!GoodCeasefireImpulse(self.impulse)) //See admin.qc
+			self.impulse = 0;
+		self.button0 = 0;
+		self.button1 = 0;
+		self.button2 = 0;
 	}
-    else if (self.lip)
+	else if (self.lip)
 	{
 		self.lip = #FALSE;
 		centerprint(self,"");
@@ -2797,7 +2797,6 @@ void() PlayerPreThink =
 
 	CheckRules ();
 
-	//xxxx
 	//WK Supercharged observer mode!
 	if (self.playerclass == #PC_UNDEFINED)
 	{
@@ -2855,15 +2854,17 @@ void() PlayerPreThink =
 			Spy_RemoveDisguise(self);
 		}
 	}
-	/*if (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) 
+	//WK 8/4/7 Thieves can't hide with flags now
+	if (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) 
 	{
 		if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT))
 		{
 			sprint(self, #PRINT_MEDIUM, "The glowing removes your full invisibility.\n");
-			self.job = self.job - (self.job & #JOB_FULL_HIDE);
-			self.job = self.job | #JOB_ACTIVE;
+			RevealThief(self,#FALSE);
+//			self.job = self.job - (self.job & #JOB_FULL_HIDE);
+//			self.job = self.job | #JOB_ACTIVE;
 		}
-	} */
+	}
 	
 	if (self.deadflag == #DEAD_DYING)
 		return;	// dying, so do nothing
@@ -2872,7 +2873,7 @@ void() PlayerPreThink =
 	{
 		if (self.button2)
 		{
-			PlayerJump (); //WK This just does noises for jumps
+			PlayerJump (); //WK This just does noises for jumps and some other stuff
 		}
 		else
 			self.flags = self.flags | #FL_JUMPRELEASED;
@@ -2897,7 +2898,16 @@ void() PlayerPreThink =
 		if (self.job & #JOB_TKD && self.job & #JOB_ACTIVE)
 			self.job = self.job - (self.job & #JOB_ACTIVE);
 
-
+	//WK 8/4/7 Cap bhop / hover glide to only slightly ludicrous speeds (+300 speed)
+	tempvel_x = self.velocity_x; //We only care about horizontal movement
+	tempvel_y = self.velocity_y;
+	tempvel_z = 0;
+	tempspeed = vlen(tempvel);
+	if (tempspeed > (self.maxspeed + 300) && ((self.flags & #FL_ONGROUND) || self.tf_items & #NIT_HOVER_BOOTS)) {
+		tempspeed = (self.maxspeed + 300) / tempspeed;
+		self.velocity_x = self.velocity_x * tempspeed; //Only slow down horizontal movement
+		self.velocity_y = self.velocity_y * tempspeed;
+	}
 
 	// teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
@@ -3708,10 +3718,10 @@ void() PlayerQuit =
 
     if (ValidVoteEnt())
     {
-        if (current_voteent.has_sentry == 0) //PUNISH
+        if (current_voteent.has_sentry == #VOTE_PUNISH)
         if (current_voteent.admin_kick == self)
         {
-            if (current_voteent.g_a == 2) // PUNISH_BAN
+            if (current_voteent.g_a == #PUNISH_BAN)
             {
                 bprint(#PRINT_HIGH,"Voting ");
                 bprint(#PRINT_HIGH,self.netname);
@@ -3726,7 +3736,7 @@ void() PlayerQuit =
 
                 BroadcastSound("zombie/z_hit");
             }
-            else if (current_voteent.g_a == 3 || current_voteent.g_a == 4) // PUNISH_MUTE or PUNISH_CUFF
+            else if (current_voteent.g_a == #PUNISH_MUTE || current_voteent.g_a == #PUNISH_CUFF)
             {
                 bprint(#PRINT_HIGH,"Voting ");
                 bprint(#PRINT_HIGH,self.netname);
