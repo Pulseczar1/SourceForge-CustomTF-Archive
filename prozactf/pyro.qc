@@ -749,14 +749,14 @@ void() Napalm_touch =
 			if (other.armorclass & #AT_SAVEFIRE && other.armorvalue > 0)
 				return;
 	
-	        if (other.classname == "player")
-	        {
+			if (other.classname == "player")
+	        	{
 				if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other.team_no, self.owner.team_no))
 						return;
 
-	        	CenterPrint(other,"You are on fire!\n");
-	            stuffcmd (other,"bf\n");
-        	}
+				CenterPrint(other,"You are on fire!\n");
+				stuffcmd (other,"bf\n");
+        		}
 
 			if (other.numflames < #FLAME_NUMLIGHTS) // = 0
 			{

@@ -152,27 +152,25 @@ void() BioGrenadeExplode =
 	{
 		if (dier.classname == "player" && dier.health > 0)
 		{
-            //if (visible(dier))
 			if (CanDamage(dier,self))
-                if (dier.takedamage)
+				if (dier.takedamage)
 				{
-                    BioInfect(dier, self.owner, 1, self); // was 0.7
-                }
-        }
-        else
-        {
-            if (IsMonster(dier))
-            //if (visible(dier)) 
-            if (CanDamage(dier,self))
-                BioInfect(dier, self.owner, 1, self);
+					BioInfect(dier, self.owner, 1, self); // was 0.7
+                		}
+        	}
+		else
+		{
+			if (IsMonster(dier))
+		            if (CanDamage(dier,self))
+            		    BioInfect(dier, self.owner, 1, self);
 		}
 
 		dier = dier.chain;
 	}
 	
-    sound(self,#CHAN_WEAPON,"misc/vapeur2.wav",1,#ATTN_NORM); 
+	sound(self,#CHAN_WEAPON,"misc/vapeur2.wav",1,#ATTN_NORM); 
 
-    SpawnSprite(3,#SPRITE_ABLAST,self.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
+	SpawnSprite(3,#SPRITE_ABLAST,self.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
 
 	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);

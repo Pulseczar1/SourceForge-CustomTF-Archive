@@ -456,6 +456,9 @@ void() ConcussionGrenadeTimer =
 	if (self.owner.cutf_items & #CUTF_GYMNAST)
 		self.health = self.health - #GR_CONCUSS_DEC;
 
+	if (!(self.owner.tfstate & #TFSTATE_CONCUSSIONED)) //WK 8/4/7 Conc was cured
+		self.health = 0;
+
 	if (self.health < 0)
 		self.health = 0;
 	self.nextthink = time + #GR_CONCUSS_TIME;
@@ -944,6 +947,7 @@ void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusBou
 							{
 								stuffcmd(head,"v_idlescale 100\n");
 								stuffcmd(head,"bf\n");
+								head.tfstate = head.tfstate | #TFSTATE_CONCUSSIONED; //WK 8/4/7 Fixed this flag not being set
 								// Create a timer entity
 								te = spawn();
 								te.nextthink = time + #GR_CONCUSS_TIME;

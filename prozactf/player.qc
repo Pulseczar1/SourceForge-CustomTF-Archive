@@ -204,14 +204,14 @@ void() player_touch =
 					if (self.job_finished < time)
 						self.job_finished = time + 1.5;
 
-					//Faster recovery since we picked the fight!
+					//WK 8/4/7 Made both people equal //Faster recovery since we picked the fight!
 					other.items = other.items | #IT_QUAD;
 					other.super_damage_finished = time + score;
 					other.super_time = 1;
 					if (self.attack_finished < time)
-						self.attack_finished = time + 1;
+						self.attack_finished = time + 1.5;
 					if (self.job_finished < time)
-						self.job_finished = time + 1;
+						self.job_finished = time + 1.5;
 
 					//WK 5-15-7 Remove all primed grenades so they don't blow up on them accidentally
 					local entity te;
@@ -792,7 +792,7 @@ void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ]
 		return;
 	}
 
-    self.fire_held_down = #TRUE;
+	self.fire_held_down = #TRUE;
 
 	if (self.heat == 1)
 		sound (self, #CHAN_WEAPON, "weapons/asscan1.wav", 1, #ATTN_NORM);
@@ -858,15 +858,19 @@ void() player_assaultcannon1   =[$nailatt1, player_assaultcannon2  ]
 
 	muzzleflash();
 
-	sound (self, #CHAN_WEAPON, "weapons/asscan2.wav", 1, #ATTN_NORM);
+	//WK 8/4/7 Add in idle spin sound to the ass cannon, ala normal TF
+	if ((self.flags & #FL_ONGROUND) || (self.hook_out) || ((self.tf_items & #NIT_SCUBA) && self.waterlevel))
+		sound (self, #CHAN_WEAPON, "weapons/asscan2.wav", 1, #ATTN_NORM);
+	else
+		sound (self, #CHAN_WEAPON, "weapons/asscan4.wav", 1, #ATTN_NORM);
 
 	if ((!self.button0) || (self.ammo_shells < 1) || intermission_running)
 	{
 		stuffcmd(self, "v_idlescale 0\n");
 		// Let him/her walk again
-        //WK 2/8/7 Ass cannnons can walk now
-	  //self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-        TeamFortress_SetSpeed(self);
+		//WK 2/8/7 Ass cannnons can walk now
+		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		TeamFortress_SetSpeed(self);
     
 		self.weaponframe = 0;
 		self.count = 1;
@@ -901,9 +905,9 @@ void() player_assaultcannon2   =[$nailatt2, player_assaultcannon1  ]
 	{
 		stuffcmd(self, "v_idlescale 0\n");
 		// Let him/her walk again
-	    //WK 2/8/7 Ass cannons can walk again
-	    //self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-	    TeamFortress_SetSpeed(self);
+		//WK 2/8/7 Ass cannons can walk again
+		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		TeamFortress_SetSpeed(self);
     
 		self.weaponframe = 0;
 		self.count = 1;
@@ -1345,7 +1349,7 @@ void(entity player, float numgibs) SetMeat;
 
 void() gib_touch =
 {
-	local float removeme;
+	local float removeme, bit;
 	removeme = 0;
 
 	if (self.velocity == '0 0 0')
@@ -1360,16 +1364,29 @@ void() gib_touch =
 	{
 		//We heal up to 25 points above the max
 		if (other.health < other.max_health + 25) {
+			other.items = other.items | #IT_SUPERHEALTH; //WK 8/4/7 We flag them as being ok to exceed max_health. Stops 'damage on heal' bug.
 			other.health = other.health + 25;
 			if (other.health > other.max_health + 25)
 				other.health = other.max_health + 25;
 			removeme = 1;
 		}
 		if (other.armorvalue < other.maxarmor) {
+			if (other.armorvalue <= 0) { //WK 8/4/7 Fix the 'no armor icon' bug if cannibal was at 0 armor.
+				other.armorvalue = 0;
+				bit = #IT_ARMOR1;
+				if (other.armor_allowed == 0.6)
+					bit = #IT_ARMOR2;
+				else if (other.armor_allowed == 0.8)
+					bit = #IT_ARMOR3;
+				other.items = other.items - (other.items & (#IT_ARMOR1 | #IT_ARMOR2 | #IT_ARMOR3)) + bit;
+			}
+
 			other.armorvalue = other.armorvalue + 15;
 			if (other.armorvalue > other.maxarmor)
 				other.armorvalue = other.maxarmor;
 			other.armortype = other.armor_allowed;
+
+
 			removeme = 1;
 		}
 		if (removeme)

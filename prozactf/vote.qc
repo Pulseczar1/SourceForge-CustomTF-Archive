@@ -8,58 +8,6 @@
 // modified vote system provided by randomer. -Pulseczar (1/15/07)
 //=======================================================
 
-// Flag defines
-
-// vote entity types
-#define VOTE_NONE           0
-#define VOTE_PUNISH         1
-#define VOTE_NEXTMAP        2
-#define VOTE_SWITCHMAP      3
-#define VOTE_NEXTMAP_AGR	4 // PZ - AGR mode
-#define VOTE_SWITCHMAP_AGR  5 // PZ - AGR mode
-
-// punish types
-//WK Not used... #define PUNISH_NONE         0
-#define PUNISH_CURSE        1
-#define PUNISH_KICK         2
-#define PUNISH_BAN          3
-#define PUNISH_MUTE         4
-#define PUNISH_CUFF         5
-
-// player voting status
-#define VOTED_READY         0
-#define VOTED_YES           1
-#define VOTED_NO            2
-
-// Settings defines
-
-#define VOTE_TIME           60
-#define WARN_TIME           45 //WK ...15 seconds before VOTE_TIME it prints a warning the vote is about to end.
-#define VOTE_MIN_TIME       10
-#define VOTE_TIME_REFRESH   25
-#define VOTE_DELAY          240 // seconds to wait until another vote from same user is allowed
-
-// Fraction of votes required for each action
-#define VOTESNEEDED_CURSE   0.5
-#define VOTESNEEDED_MUTE    0.5
-#define VOTESNEEDED_KICK    0.5
-#define VOTESNEEDED_CUFF    0.5
-#define VOTESNEEDED_BAN     0.5
-#define VOTESNEEDED_MAP     0.5
-#define VOTESNEEDED_NEXTMAP 0.5
-
-//#define BAN_VOTED_TIME        0 // permanent ban
-#define BAN_VOTED_TIME       60 // 60 minutes
-#define MUTE_VOTED_TIME      30
-#define CUFF_VOTED_TIME      15
-
-#ifdef VOTING_TEST
-#define VOTE_DELAY          0 // for testing
-#endif
-
-#define VOTESLEEP_RATECHECK   5 // Rate in seconds of the think for sleeping votes
-#define VOTESLEEP_DURATION   10 // Maximum minutes for a vote to be sleeping before getting discarded
-
 /*===============================================================================================
 
 EXPLANATION OF HOW THE ENTITY FIELDS ARE USED (thnx? np.. :P)

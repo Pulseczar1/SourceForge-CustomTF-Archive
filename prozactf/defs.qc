@@ -1511,6 +1511,7 @@ float       rj;					// Rocket Jump Modifier
 
 
 // Building times
+// WK 8/4/7 Build times increased 50% without a spanner
 #define BUILD_TIME_DISPENSER		2		// 2 seconds to build
 #define BUILD_TIME_SENTRYGUN		5		// 5 seconds to build
 #define BUILD_TIME_TESLA		6		// 8 seconds to build
@@ -2630,3 +2631,50 @@ void(entity client, float ammount) BackFlash;
 .float runes_owned;
 .float clversion;
 .float cltype;
+
+#define VOTE_NONE           0
+#define VOTE_PUNISH         1
+#define VOTE_NEXTMAP        2
+#define VOTE_SWITCHMAP      3
+
+// punish types
+#define PUNISH_NONE         0
+#define PUNISH_CURSE        1
+#define PUNISH_KICK         2
+#define PUNISH_BAN          3
+#define PUNISH_MUTE         4
+#define PUNISH_CUFF         5
+
+// player voting status
+#define VOTED_READY         0
+#define VOTED_YES           1
+#define VOTED_NO            2
+
+// Settings defines
+
+#define VOTE_TIME           60
+#define VOTE_MIN_TIME       10
+#define VOTE_TIME_REFRESH   25
+#define VOTE_DELAY          240 // seconds to wait until another vote from same user is allowed
+
+// OBSOLETED -randomer 2006-02-24
+// Number of votes required for each action
+#define VOTESNEEDED_CURSE   0.51
+#define VOTESNEEDED_MUTE    0.51
+#define VOTESNEEDED_KICK    0.51
+#define VOTESNEEDED_CUFF    0.51
+#define VOTESNEEDED_BAN     0.51
+#define VOTESNEEDED_MAP     0.51
+#define VOTESNEEDED_NEXTMAP 0.51
+
+//#define BAN_VOTED_TIME        0 // permanent ban
+#define BAN_VOTED_TIME       60 // 60 minutes
+#define MUTE_VOTED_TIME      30
+#define CUFF_VOTED_TIME      15
+
+#ifdef VOTING_TEST
+#define VOTE_DELAY          0 // for testing
+#endif
+
+#define VOTESLEEP_RATECHECK   5 // Rate in seconds of the think for sleeping votes
+#define VOTESLEEP_DURATION   10 // Maximum minutes for a vote to be sleeping before getting discarded

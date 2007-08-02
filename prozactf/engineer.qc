@@ -566,7 +566,7 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
     // OfN - the following is needed because we can build via menus or by cmnd
     if (self.is_building == 1)
     {
-        sprint(self, #PRINT_HIGH, "You are already building something!\n");
+		sprint(self, #PRINT_HIGH, "You are already building something!\n");
 		return;
     }
     if (intermission_running || ceasefire)
@@ -597,7 +597,7 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
         return;
     }
 
-    //WK Cheat Fix
+	//WK Cheat Fix 
 	if (self.is_feigning) {
 			sprint(self, #PRINT_HIGH, "Try standing up first!\n");
 			return;
@@ -626,10 +626,10 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	v_forward_z = 0;
 	v_forward = normalize(v_forward) * 64;
 	
-    if (objtobuild == #BUILD_FIELDGEN) //- OfN - Field generators must be lined up to work
-        newmis.origin = WhereGen(self.origin + v_forward);
-    else
-        newmis.origin = self.origin + v_forward;
+	if (objtobuild == #BUILD_FIELDGEN) //- OfN - Field generators must be lined up to work
+		newmis.origin = WhereGen(self.origin + v_forward);
+	else
+		newmis.origin = self.origin + v_forward;
 
 	if (objtobuild == #BUILD_DISPENSER)
 	{
@@ -682,12 +682,12 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
             }
         }            
 
-        newmis.dont_do_triggerwork = devicenum;
+		newmis.dont_do_triggerwork = devicenum;
 
 		tmp1 = '-16 -16 0';
 		tmp2 = '16 16 48';
 		//newmis.mdl = "progs/turrbase.mdl"; 
-        newmis.mdl = "progs/trrbs2.mdl";
+		newmis.mdl = "progs/trrbs2.mdl";
 		newmis.netname = "sentrygun";
 	
 		btime = time + #BUILD_TIME_SENTRYGUN;
@@ -697,40 +697,39 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 		if (!(self.tf_items & #NIT_TESLA))
 		{
 			sprint(self, #PRINT_HIGH, "You must buy a tesla sentry before you can build one.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
         
-        if (self.tf_items & #NIT_DOUBLETESLA)
-        {
-            if (self.has_tesla & devicenum)
-            {
-                sprint(self, #PRINT_HIGH, "You already have that tesla coil up!\n");
-                dremove(newmis);
-                return;
-            }
-        }
-        else
-        {
-            if (self.has_tesla)
-            {
-                sprint(self, #PRINT_HIGH, "You can only have one tesla gun.\nTry dismantling your old one.\n");
-                dremove(newmis);
-                return;
-            }
-        }
+		if (self.tf_items & #NIT_DOUBLETESLA)
+		{
+			if (self.has_tesla & devicenum)
+			{
+				sprint(self, #PRINT_HIGH, "You already have that tesla coil up!\n");
+				dremove(newmis);
+				return;
+			}
+		}
+		else
+		{
+			if (self.has_tesla)
+			{
+				sprint(self, #PRINT_HIGH, "You can only have one tesla gun.\nTry dismantling your old one.\n");
+				dremove(newmis);
+				return;
+			}
+		}
 
-        newmis.dont_do_triggerwork = devicenum;
+		newmis.dont_do_triggerwork = devicenum;
 		
 		//tmp1 = '-16 -16 0'; //- OfN commented by
-        tmp1 = '-16 -16 -25';
+		tmp1 = '-16 -16 -25';
 		//tmp2 = '16 16 48'; //WK 62 is better, but crashes?
-        tmp2 = '16 16 23';
+		tmp2 = '16 16 23';
 		//newmis.mdl = "progs/newtesla.mdl";
-        newmis.mdl = "progs/coil.mdl";
+		newmis.mdl = "progs/coil.mdl";
 		newmis.netname = "tesla";
-        newmis.origin = newmis.origin + '0 0 25';
-        
+		newmis.origin = newmis.origin + '0 0 25';
 	
 		btime = time + #BUILD_TIME_TESLA;
 	}
@@ -774,7 +773,7 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	
 		btime = time + #BUILD_TIME_TELEPORTER;
 	}
-    else if (objtobuild == #BUILD_FIELDGEN)
+	else if (objtobuild == #BUILD_FIELDGEN)
 	{
 		if (self.has_fieldgen >= 2)
 		{
@@ -785,7 +784,7 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 		if (!(self.cutf_items & #CUTF_FIELDGEN))
 		{
 			sprint(self, #PRINT_HIGH, "You must buy a field generator before you can build one.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
 
@@ -797,14 +796,17 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 		btime = time + #BUILD_TIME_FIELDGEN;
 	}
 	
-    // before we start building it, check it out
-    // check for validity of point
-    if (CheckArea(newmis, self) == #FALSE)
-    {
-        sprint(self, #PRINT_HIGH, "Not enough room to build here\n");
-        dremove(newmis);
-        return;
-    }
+	// before we start building it, check it out
+	// check for validity of point
+	if (CheckArea(newmis, self) == #FALSE)
+	{
+		sprint(self, #PRINT_HIGH, "Not enough room to build here\n");
+		dremove(newmis);
+		return;
+	}
+
+	//WK 8/4/7 If we don't have spanner, build times are increased by 50%
+	if (!(self.weapons_carried & #WEAP_SPANNER)) btime = time + ((btime-time) * 1.5);
 
     self.is_building = 1;
     makeImmune(self,time + 2);

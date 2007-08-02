@@ -107,7 +107,7 @@ float (entity e, float healamount, float ignore) T_Heal =
 	if (e.leg_damage)
 	{
 		HealLegs(e);
-        //e.leg_damage = 0;
+        	//e.leg_damage = 0;
 		//TeamFortress_SetSpeed(e);
 	}
 

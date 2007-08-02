@@ -111,7 +111,7 @@ void(float cost, float type) BuyCuTF2;
 #define COST_KNIFE			 650
 #define COST_TRANQ			 300
 #define COST_AIRF				2500 //WK 2/26/7 Was 2000
-#define COST_AIRFISTUPGRADE 		2500 //WK 2/26/7 Was 1850
+#define COST_AIRFISTUPGRADE 		1250 //WK 8/4/7 Was 2500 //WK 2/26/7 Was 1850
 #define COST_HOOK				3000
 
 // PAGE 6 - Leg Enhancements
@@ -909,7 +909,7 @@ void(float inp) Menu_Tools_Input =
 
 		if (inp == 1) {
 			BuyWeapon(#COST_SPANNER,#WEAP_SPANNER);
-			HelpString("The spanner lets you repair and upgrade friendly buildings, dismantle enemy buildings, and heal the armor of teammates at the cost of cells.");
+			HelpString("The spanner lets you repair and upgrade friendly buildings, dismantle enemy buildings, and heal the armor of teammates at the cost of cells. If you don't have one, all build times are 50% slower.");
 			UpdateWeaponItems();
 			Menu_Tools();
 		}

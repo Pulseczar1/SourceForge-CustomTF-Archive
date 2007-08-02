@@ -121,22 +121,22 @@
 #define HAX_UNSTABLEDIST      300 // distance at which enemy hacks take longer cause of "unstable connection"
 #define WAYPOINT_AI_LIFE       10 // life for grunty ai created waypoints - last seen enemy mark
 #define ATTN_MONSTERDIE         #ATTN_NONE // #ATTN_NORM
-#define MINE_SCANRATE           0.6 // mines look again for nearby enemy after this time - it was 1 which caused high ping players to not trigger mines sometimes walking around them fast
+#define MINE_SCANRATE           0.1 //WK 8/4/7 0.6 // mines look again for nearby enemy after this time - it was 1 which caused high ping players to not trigger mines sometimes walking around them fast
 #define EXPBODY_DMG           160 // damage exp. body does /was 140
 
-#define BERSERKER_HP_COST      40 // was 30 (i think 50 originally)
+#define BERSERKER_HP_COST      33 //WK 8/4/7 40 // was 30 (i think 50 originally)
 
 //----- Damage factor settings --------//
-#define BERSERKER_DMGFACTOR        2.1 //2.4 //-was 2.65 was 2 then 2.2
-#define CHAPLAN_DMGFACTOR          1.8 // Original was 1.5??
-#define POWERAURA_DMGFACTOR        2
+#define BERSERKER_DMGFACTOR        1.5 //WK 8/4/7 2.1 //2.4 //-was 2.65 was 2 then 2.2
+#define CHAPLAN_DMGFACTOR          1.5 //WK 8/4/7 1.8 // Original was 1.5??
+#define POWERAURA_DMGFACTOR        1.3 //WK 8/4/7 2
 
 #define RESISAURA_DMGFACTOR        0.6
 #define RESISRUNE_DMGFACTOR        0.5
 #define CHAPLAN_DEFENSE_DMGFACTOR  0.66
 
-#define MAX_OUT_DMGFACTOR          5
-#define MIN_IN_DMGFACTOR           0.25
+#define MAX_OUT_DMGFACTOR          4 //WK 8/4/7 5
+#define MIN_IN_DMGFACTOR           0.4 //WK 8/4/7 0.25
 //-------------------------------------//
 
 #define LASER_CANNON_DMG       36//26 // was 28

@@ -1038,7 +1038,7 @@ void() FragSpikeThink =
 	}
 
 	if (self.heat > 0) {
-		self.heat = self.heat - 1;
+		self.heat = self.heat - 2; //WK 8/4/7 Was 1. Will stop those long duration fragments
 
 		self.angles_y = random() * 360;
 		self.angles_x = 0;
@@ -1051,7 +1051,7 @@ void() FragSpikeThink =
 		self.velocity_z = (0.5-random()) * 10;
 		self.neworigin = self.velocity; //Save our current velocity
 
-		self.attack_finished = time + 1 + random(); //Holds time to redo speed
+		self.attack_finished = time + 0.3 + random(); //Holds time to redo speed //WK 8/4/7 0.3 was 1
 		self.nextthink = time + 0.1;
 	}
 	else {
@@ -1078,11 +1078,11 @@ void() FragGrenadeTouch =
 	if (self.velocity == '0 0 0')
 		self.avelocity = '0 0 0';
 };
+
 void() FragGrenadeExplode =
 {
 	local float shraps;
-	//local string happy;
-	local entity newmis; // (???)
+	local entity newmis;
 
 //Small explosive radius
 	deathmsg = #DMSG_GREN_HAND;
@@ -1117,7 +1117,7 @@ void() FragGrenadeExplode =
 		newmis.classname = "spike";
 		newmis.think = FragSpikeThink;
 		newmis.nextthink = time + 0.1;
-		newmis.attack_finished = time + 1 + random(); //Holds time to redo speed
+		newmis.attack_finished = time + 0.3 + random(); //Holds time to redo speed //WK 8/4/7 0.3 was 1
 		setmodel (newmis, "progs/spike.mdl");
 //		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
 		setsize (newmis, '0 0 0', '0 0 0');
@@ -1136,8 +1136,8 @@ void() FragGrenadeExplode =
 		newmis.touch = fragspike_touch;
 		newmis.weapon = #DMSG_GREN_NAIL;
 
-		//Make it bounce ten times.
-		newmis.heat = 10;
+		//Make it bounce 8 times / last for 8 seconds
+		newmis.heat = 8; //WK 8/4/7 10
 		shraps = shraps - 1;
 	}
 #ifdef QUAKE_WORLD

@@ -208,6 +208,7 @@ void() W_Precache =
 	precache_sound ("weapons/asscan1.wav"); // Assault Cannon Powerup
 	precache_sound ("weapons/asscan2.wav"); // Assault Cannon Churning
 	precache_sound ("weapons/asscan3.wav"); // Assault Cannon Powerdown
+	precache_sound ("weapons/asscan4.wav"); // Assault Cannon Idle Spin //WK 8/4/7
 	precache_sound ("weapons/railgun.wav"); // Railgun
 	precache_sound ("weapons/dartgun.wav"); // Spy's dart gun
 	  //precache_sound ("ambience/thunder1.wav");	// Connect sound
@@ -271,13 +272,6 @@ void(float att_delay) Attack_Finished =
 	}
 	
 	self.attack_finished = time + att_delay;
-
-	/*OLD CODEif (self.tfstate & #TFSTATE_TRANQUILISED)
-		self.attack_finished = time + (att_delay * 1.5);
-	else if (self.aura == #AURA_HASTE)
-		self.attack_finished = time + (att_delay * 0.75);
-	else 
-		self.attack_finished = time + att_delay;*/
 };
 
 /*
@@ -684,6 +678,7 @@ void(float inAuto) W_FireMedikit =
 					stuffcmd(trace_ent ,"v_idlescale 0\n");
 					SpawnBlood(org, 20);
 					sprint(trace_ent, #PRINT_HIGH, "you have been healed of your concussion\n");
+					trace_ent.tfstate = trace_ent.tfstate - (trace_ent.tfstate & #TFSTATE_CONCUSSIONED); //WK 8/4/7 Flag fix
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
 					if (!Teammate(self.team_no,te.team_no))
@@ -1615,6 +1610,9 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 	if (self.cutf2_items & #CUTF2_EXPLOSIVE_SHOT && trace_fraction != 1.0) {
 		damage = damage * orig_shotcount; //Calculate the total damage done by this function
 		damage = damage * #CUTF2_EXPLOSIVE_SHOT_FACTOR; //Figure out how much we're going to explode for
+		if (self.current_weapon & #WEAP_ASSAULT_CANNON || self.current_weapon & #WEAP_LIGHT_ASSAULT)
+			damage = damage / 2; //Assault cannons explode for half effect
+
 		st = ftos(damage);
 //		bprint(#PRINT_HIGH,"Damage: ");
 //		bprint(#PRINT_HIGH,st);
@@ -1640,6 +1638,7 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 				TF_T_Damage(head, self, self, damage, #TF_TD_NOKNOCK, #TF_TD_FIRE);
 				//TF_T_Damage(head, self, self, damage, 0, #TF_TD_FIRE);
 
+/* WK 8/4/7 We'll turn this off for now, since it seems to be causing the "falling to their death" obituary bug
 				// set 'em on fire
 				if (random() <= #CUTF2_EXPLOSIVE_SHOT_FIRE_CHANCE) //10% chance
 				{
@@ -1648,6 +1647,7 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 					if (other.classname == "player")
 						stuffcmd(other, "bf\nbf\n");
 				}
+*/
 			}
 			head = head.chain;
 		}
@@ -2309,7 +2309,6 @@ void() Rocket_Track_Dot =
 	local vector dir, dir2, org, vtemp, atemp;
 	local entity tg, sight,nearest_ent;
 	local float myspeed, effective_distance, dotproduct, min_distance, rocket_rotate;
-	local string stemp;
 	local entity head;
 
 	rocket_rotate = #ROCKET_ROTATE;
@@ -4145,8 +4144,11 @@ void() W_Attack =
 
 	//WK When conced you randomly don't fire
 	if (self.tfstate & #TFSTATE_CONCUSSIONED)
-		if (random() <= 0.3)
+		if (random() <= 0.3) {
+			sprint (self, #PRINT_MEDIUM, "Your concussion causes you to misfire!\n");
+			Attack_Finished(0.6); //WK 8/4/7 Added. No point otherwise, since the attack will trigger next frame anyway
 			return;
+		}
 
 	makevectors (self.v_angle); 		// calculate forward angle for velocity
 	self.show_hostile = time + 1;	// wake monsters up
@@ -4276,6 +4278,8 @@ void() W_Attack =
 		W_FireDaedalus();
 		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
 			Attack_Finished(2.8); //3x delay+ on a cluster attack
+		else if (self.cutf2_items & #CUTF2_HEAT_SEEKING) //WK 8/4/7 Heat seeking shots have +50% cooldown
+			Attack_Finished(1.2);
 		else
 			Attack_Finished(0.8);
 		sound (self, #CHAN_AUTO, "weapons/lstart.wav", 1, #ATTN_NORM);
@@ -4309,7 +4313,6 @@ void() W_Attack =
 			self.ammo_cells = self.ammo_cells - 4;
 			self.heat = 1;
 			makeImmune(self,time+2);
-			//self.immune_to_check = time + 2;
 			//WK 2/8/7 Allow Ass Cannons to move now, ala Classic TF
 			//self.tfstate = self.tfstate | #TFSTATE_CANT_MOVE;
 			TeamFortress_SetSpeed(self);
@@ -4331,6 +4334,8 @@ void() W_Attack =
 		W_FireIncendiaryCannon();
 		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE) //WK Clusters are multiple 
 			Attack_Finished(4);
+		else if (self.cutf2_items & #CUTF2_HEAT_SEEKING) //WK 8/4/7 Heat seeking shots have +50% cooldown
+			Attack_Finished(1.8);
 		else
 			Attack_Finished(1.2);
 	}
@@ -5886,12 +5891,13 @@ void() W_WeaponFrame =
 		}
 	}
 
-	if (time < self.attack_finished)
-		return;    
-
 	// Stop calling this function so much
 	if (self.impulse != 0)
 		ImpulseCommands ();
+
+	//WK 8/4/7 Moved this down below Impulse Commands
+	if (time < self.attack_finished)
+		return;    
 
 	// Can't fire while setting a detpack or building something
 	if ((self.is_building != 0) || (self.is_detpacking != 0) || (self.is_feigning != 0) || (self.is_haxxxoring != 0) || (self.is_toffingadet != 0))

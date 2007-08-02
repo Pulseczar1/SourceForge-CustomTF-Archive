@@ -54,8 +54,6 @@ void() Menu_Crusader =
 
 	if (self.weapons_carried & #WEAP_MEDIKIT)
 	{
-        //CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n.. Mass healing         Û20 manaÝ\n.. Mass cure            Û20 manaÝ\n.. Sing                 Û 0 manaÝ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-        
         if (amount >= 45)
             CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û íáîáÝ\n.. Dispel Evil          Û íáîáÝ\n.. Mass healing         Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
         else if (amount >= 30)
@@ -69,9 +67,6 @@ void() Menu_Crusader =
 	}
     else
 	{
-        //CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n.. Sing                 Û 0 manaÝ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-        //CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Speed        Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n.. Sing                 Û 0 manaÝ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-
         if (amount >= 45)
             CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û íáîáÝ\n.. Dispel Evil          Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
         else if (amount >= 30)
@@ -91,16 +86,16 @@ void(float inp) Menu_Crusader_Input =
 {
 	// If you read this, this is how you should be doing menus. HEAR ME?? No? Well I assume you
 	// are reading it so that'll have to do.
-	
+	// WK Lol, this is how all the old menus worked. And they were properly tab spaced. =)
+
 	if (inp == 1)
 		AddAura(#AURA_POWER);
 	else if (inp == 2)
 		AddAura(#AURA_RESIS);
 	else if (inp == 3)
 		AddAura(#AURA_HASTE);
-    else if (inp == 4)
+	else if (inp == 4)
 		AddAura(#AURA_REGEN);
-
 	else if (inp == 5)
 		AddAura(#AURA_SPEED);
 	else if (inp == 6)
@@ -110,17 +105,9 @@ void(float inp) Menu_Crusader_Input =
 	else if (inp == 8)
 		CrusaderMassHeal();
         
-    /*else if (inp == 5)
-		CrusaderAddInvisibility();
-	else if (inp == 6)
-		CrusaderDispel();
-	else if (inp == 7)
-		CrusaderMassHeal();
-	else if (inp == 8)
-		CrusaderMassCure();*/
 	else if (inp == 9)
 		sound (self, #CHAN_MUSIC, "ambience/orff.wav", 1, #ATTN_NORM);
-    else if (inp == 10)
+	else if (inp == 10)
 		inp = 0;
 	else
 		return;
@@ -148,12 +135,16 @@ entity (entity crusader) Crusader_FindIdiot =
 	{
 		if ((guy.classname == "player" && guy.health > 0) || IsMonster(guy))
 		{
-			store = normalize(guy.origin - crusader.origin);
-			matchlevel = crusader.v_angle * store;
-			if (matchlevel > oldmatch)
-			{
-				matched = guy;
-				oldmatch = matchlevel;
+			//WK 8/4/7 Fix crusader bug allowing giving aura through walls
+			traceline (crusader.origin, guy.origin, #TL_BSP_ONLY, crusader);
+			if (trace_fraction == 1.0) {
+				store = normalize(guy.origin - crusader.origin);
+				matchlevel = crusader.v_angle * store;
+				if (matchlevel > oldmatch)
+				{
+					matched = guy;
+					oldmatch = matchlevel;
+				}
 			}
 		}
 		guy = guy.chain;

@@ -185,7 +185,6 @@ void() launch_horn =
 	{player_run ();return;}  // Complete any other attacks first.
 
   // How long the fire time is.
-	//self.attack_finished = time + attackTime; ORIGINAL
   // OfN - Take tranquiliser, haste and speed rune into account
   Attack_Finished (attackTime);
 
