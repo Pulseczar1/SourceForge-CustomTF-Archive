@@ -2302,7 +2302,9 @@ float(float current_angle,float ideal_angle,float rotate_speed) RotateTowardTarg
 //Any slower and the rockets are just "nudgeable" toward their targets, and not really guided.
 //WK 6/1/7 Turned this into the everything function for thinking rockets, bumped up turn speed from 3 to 4
 #define ROCKET_ROTATE 3
-#define HEAT_ROCKET_ROTATE 0.5
+//WK 8/4/7 Made the rotate rate speed independant, so all shots will have identical turning rates
+// Turning rate is now (projectile_speed / ROCKET_ROTATE), so faster rox will turn faster, and slower ones will turn slower. (Default rate is 0.5 degrees per frame, i.e. speed = 900.)
+#define HEAT_ROCKET_ROTATE 1800
 void() Rocket_Track_Dot =
 {
 	//local float dist;
@@ -2360,7 +2362,8 @@ void() Rocket_Track_Dot =
 				dotproduct = dir * dir2;
 
 				//0.707 is a 45 degree cone
-				if (trace_fraction == 1.0 && dotproduct > 0.707) //Full line of sight
+				//0.819 is a 35 degree cone
+				if (trace_fraction == 1.0 && dotproduct > 0.819) //Full line of sight
 				{
 					//Flares confuse heat seekers
 					if (head.classname == "grenade" && head.weapon == #GR_TYPE_FLARE)
@@ -2417,7 +2420,7 @@ void() Rocket_Track_Dot =
 				vtemp_z = nearest_ent.absmin_z; //We aim at the feet of the target!
 				vtemp = vtemp - nearest_ent.velocity*0.2; //WK 6-27-7 Aim behind them if they are moving.
 				self.v_angle = vtemp; //Save target position
-				rocket_rotate = #HEAT_ROCKET_ROTATE;
+				rocket_rotate = vlen(self.velocity) / #HEAT_ROCKET_ROTATE; //WK 8/4/7
 			}
 		} //End Heat Seeking Code
 		else //Else used the last place we saw the sight
@@ -3760,6 +3763,16 @@ void() W_Reload_rocket_launcher =
 	self.owner.StatusRefreshTime = time + 0.1;
 };
 
+void() W_Reload_daedalus =
+{
+	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
+	self.owner.weaponmodel = "progs/v_rock.mdl";
+	sprint(self.owner, #PRINT_LOW, "finished reloading\n");
+	dremove(self);
+
+	self.owner.StatusRefreshTime = time + 0.1;
+};
+
 void() W_Reload_laser_cannon =
 {
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_RELOADING);
@@ -3923,6 +3936,32 @@ float() CheckForReload =
 				return #TRUE;
 			}
 		}
+		else if (self.current_weapon == #WEAP_DAEDALUS)
+		{
+			if (self.reload_daedalus >= #RE_DAEDALUS_EX && self.ammo_cells > 0)
+			{
+				self.reload_daedalus = 0;
+				if (self.ammo_cells < #RE_DAEDALUS_EX)
+					self.reload_daedalus = #RE_DAEDALUS_EX - self.ammo_cells;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				if(self.tf_items & #NIT_CLUSTER_ROCKETS)
+					tWeapon.nextthink = time + ((#RE_DAEDALUS_TIME_EX - 1) * speedmult);
+				else
+					tWeapon.nextthink = time + (#RE_DAEDALUS_TIME_EX * speedmult);
+				tWeapon.think = W_Reload_daedalus;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+
+				return #TRUE;
+			}
+		}
+
 
 		return #FALSE;
 
@@ -4070,6 +4109,31 @@ float() CheckForReload =
 			return #TRUE;
 		}
 	}
+	else if (self.current_weapon == #WEAP_DAEDALUS)
+	{
+		if (self.reload_daedalus >= #RE_DAEDALUS && self.ammo_cells > 0)
+		{
+			self.reload_daedalus = 0;
+			if (self.ammo_cells < #RE_DAEDALUS)
+				self.reload_daedalus = #RE_DAEDALUS - self.ammo_cells;
+
+			sprint (self, #PRINT_HIGH, "reloading...\n");
+		self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+			tWeapon = spawn();
+			tWeapon.owner = self;
+			tWeapon.classname = "timer";
+		if(self.tf_items & #NIT_CLUSTER_ROCKETS)
+				tWeapon.nextthink = time + ((#RE_DAEDALUS_TIME - 1) * speedmult);
+		else
+				tWeapon.nextthink = time + (#RE_DAEDALUS_TIME * speedmult);
+			tWeapon.think = W_Reload_daedalus;
+
+			self.weaponmodel = "";
+			self.weaponframe = 0;
+
+			return #TRUE;
+		}
+	}
 
 	return #FALSE;
 };
@@ -4142,10 +4206,10 @@ void() W_Attack =
 	if (self.job & #JOB_THIEF && (self.job & #JOB_ACTIVE || self.job & #JOB_FULL_HIDE))
 		RevealThief(self,#FALSE);
 
-	//WK When conced you randomly don't fire
-	if (self.tfstate & #TFSTATE_CONCUSSIONED)
+	//WK When conced you randomly don't fire, but not with ass cannon out (it bugs)
+	if (self.tfstate & #TFSTATE_CONCUSSIONED && !(self.current_weapon & #WEAP_ASSAULT_CANNON))
 		if (random() <= 0.3) {
-			sprint (self, #PRINT_MEDIUM, "Your concussion causes you to misfire!\n");
+			//sprint (self, #PRINT_MEDIUM, "Your concussion causes you to misfire!\n");
 			Attack_Finished(0.6); //WK 8/4/7 Added. No point otherwise, since the attack will trigger next frame anyway
 			return;
 		}
@@ -4274,8 +4338,20 @@ void() W_Attack =
 	}
 	else if (self.current_weapon == #WEAP_DAEDALUS)
 	{
+		if (CheckForReload() == #TRUE) //WK 8/4/7 Daed on clips now
+			return;
+
 		player_rocket1();
 		W_FireDaedalus();
+
+		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE) //WK Clusters are multiple shots
+			self.reload_daedalus = self.reload_daedalus + 3;
+		else
+			self.reload_daedalus = self.reload_daedalus + 1;
+		self.StatusRefreshTime = time + 0.1;
+
+		CheckForReload();
+
 		if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
 			Attack_Finished(2.8); //3x delay+ on a cluster attack
 		else if (self.cutf2_items & #CUTF2_HEAT_SEEKING) //WK 8/4/7 Heat seeking shots have +50% cooldown
@@ -6028,13 +6104,15 @@ T_DaedalusTouch
 Combination conc, krac and RL
 ================
 */
-#define BOUNCE 120
+//WK 8/4/7 Was 120
+#define BOUNCE 140
 void() T_DaedalusTouch =
 {
 	local float points;
 	local float armordamage;
 	local vector org;
 	local entity head;
+	local vector velocitydelta;
 
 	head = findradius(self.origin, #BOUNCE);	
 	while (head) {
@@ -6043,23 +6121,22 @@ void() T_DaedalusTouch =
 		{
 			org = head.origin + (head.mins + head.maxs)*0.5;
 			points = 0.5*vlen (org - self.origin);
-			if (points < 0) points = 0;
-				points = #BOUNCE - points;
-			if (points > 0)
+			points = #BOUNCE - points;
+			if (points > 0 && !(head.cutf_items & #CUTF_HWGUY))
 			{
-				head.velocity = org - self.origin;
+				//WK 8/4/7 Fixed daedalus bouncing so it works right now
+				velocitydelta = 400 * normalize(org - self.origin);
 				if (head.cutf_items & #CUTF_GYMNAST)
-					head.velocity = head.velocity * (points / 10); //WK 4/27/7 Changed to simply double recoil instead of squaring it.
-				else
-					head.velocity = head.velocity * (points / 20);
-
-				if (head.classname != "player" && head.flags & #FL_ONGROUND)
-					head.flags = head.flags - #FL_ONGROUND;
+					velocitydelta = velocitydelta * 1.50;
+				head.velocity_z = head.velocity_z / 3; //Dampen the effects of jumping
+				head.velocity = head.velocity + velocitydelta;
+				if (head.velocity_z < 200) head.velocity_z = 200; //Kick it up into the air
+				head.flags = head.flags - (head.flags & #FL_ONGROUND);
 			}
 		}
 		if (head.takedamage)
 		{
-			//Krac
+			//Krac on buildings, but fire damage
 			if (IsBuilding(head))
 				TF_T_Damage (head, self, self.owner, 100, #TF_TD_NOTTEAM, #TF_TD_FIRE);
 

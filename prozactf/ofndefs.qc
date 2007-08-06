@@ -121,7 +121,7 @@
 #define HAX_UNSTABLEDIST      300 // distance at which enemy hacks take longer cause of "unstable connection"
 #define WAYPOINT_AI_LIFE       10 // life for grunty ai created waypoints - last seen enemy mark
 #define ATTN_MONSTERDIE         #ATTN_NONE // #ATTN_NORM
-#define MINE_SCANRATE           0.1 //WK 8/4/7 0.6 // mines look again for nearby enemy after this time - it was 1 which caused high ping players to not trigger mines sometimes walking around them fast
+#define MINE_SCANRATE           0.2 //WK 8/4/7 0.6 // mines look again for nearby enemy after this time - it was 1 which caused high ping players to not trigger mines sometimes walking around them fast
 #define EXPBODY_DMG           160 // damage exp. body does /was 140
 
 #define BERSERKER_HP_COST      33 //WK 8/4/7 40 // was 30 (i think 50 originally)

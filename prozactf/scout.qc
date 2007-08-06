@@ -468,8 +468,10 @@ void() ConcussionGrenadeTimer =
 	stuffcmd(self.owner, st);
 	stuffcmd(self.owner, "\n");
 
-	if (self.health == 0)
+	if (self.health == 0) {
+		self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_CONCUSSIONED); //WK 8/4/7
 		dremove(self);
+	}
 };
 
 //=========================================================================

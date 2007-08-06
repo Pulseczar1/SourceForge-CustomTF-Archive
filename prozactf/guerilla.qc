@@ -74,7 +74,7 @@
 // Various settings
 #define GUERILLA_ACTIVATE_TIME 8 //Time until it turns on //- it was 3? prolly 10
 #define GUERILLA_BEEP_RATE 4 //Delay between beeps //- it was 3
-#define GUERILLA_MINE_DURATION 360 //Time it lasts after being activated //- it was 60 ofn 
+#define GUERILLA_MINE_DURATION 240 //WK 8/4/7 360. Time it lasts after being activated (WK Fixed, now is actual seconds.)
 #define GUERILLA_JOB_DELAY 4 //Time between mine placements //- it was 10
 #define GUERILLA_RADIUS 135 //-it was 150 without define
 #define GUERILLA_MINE_COST 4 // OfN number of rockets a mine needs
@@ -746,7 +746,7 @@ void() GuerillaThink = //Every second see if we have enemy nearby
 
     desc = GetMineStr(self.has_sentry);
 	
-    self.health = self.health - 1;
+    self.health = self.health - #MINE_SCANRATE;
 
 	if (self.health <= 0) { //Detonate mine cause we ran out of time
 
