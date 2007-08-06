@@ -1746,6 +1746,7 @@ float       rj;					// Rocket Jump Modifier
 #define RE_SUPER_SHOTGUN		16 // 8 shots
 #define RE_GRENADE_LAUNCHER		6 
 #define RE_ROCKET_LAUNCHER		4 
+#define RE_DAEDALUS			3 
 #define RE_LIGHT_ASSAULT		30 // WK 1/7/7 36 // was 40 
 #define RE_LASER_CANNON		    	12 //WK 6/27/7 6
 
@@ -1754,6 +1755,7 @@ float       rj;					// Rocket Jump Modifier
 #define RE_SUPER_SHOTGUN_TIME		3 
 #define RE_GRENADE_LAUNCHER_TIME	4 
 #define RE_ROCKET_LAUNCHER_TIME 	5 
+#define RE_DAEDALUS_TIME 		3 //WK 8/4/7 Faster reload ratio than RL
 #define RE_LIGHT_ASSAULT_TIME		3.2 //WK 1/7/7 3.3 // was 3.5
 #define RE_LASER_CANNON_TIME		3 //WK 6/27/7 1.5
 
@@ -1773,6 +1775,9 @@ float       rj;					// Rocket Jump Modifier
 //rocket launcher
 #define RE_ROCKET_LAUNCHER_EX       5 // Original 4
 #define RE_ROCKET_LAUNCHER_TIME_EX  5
+//daedalus
+#define RE_DAEDALUS_EX       		4
+#define RE_DAEDALUS_TIME_EX  4
 //grenade launcher
 #define RE_GRENADE_LAUNCHER_EX      8 // Original 6
 #define RE_GRENADE_LAUNCHER_TIME_EX 4
@@ -1870,6 +1875,7 @@ float       rj;					// Rocket Jump Modifier
 .float reload_super_shotgun;
 .float reload_grenade_launcher;
 .float reload_rocket_launcher;
+.float reload_daedalus;
 .float reload_light_assault;
 
 // Assault Cannon
@@ -2632,13 +2638,16 @@ void(entity client, float ammount) BackFlash;
 .float clversion;
 .float cltype;
 
+// vote entity types
 #define VOTE_NONE           0
 #define VOTE_PUNISH         1
 #define VOTE_NEXTMAP        2
 #define VOTE_SWITCHMAP      3
+#define VOTE_NEXTMAP_AGR	4 // PZ - AGR mode
+#define VOTE_SWITCHMAP_AGR  5 // PZ - AGR mode
 
 // punish types
-#define PUNISH_NONE         0
+//WK Not used... #define PUNISH_NONE         0
 #define PUNISH_CURSE        1
 #define PUNISH_KICK         2
 #define PUNISH_BAN          3
@@ -2653,19 +2662,19 @@ void(entity client, float ammount) BackFlash;
 // Settings defines
 
 #define VOTE_TIME           60
+#define WARN_TIME           45 //WK ...15 seconds before VOTE_TIME it prints a warning the vote is about to end.
 #define VOTE_MIN_TIME       10
 #define VOTE_TIME_REFRESH   25
 #define VOTE_DELAY          240 // seconds to wait until another vote from same user is allowed
 
-// OBSOLETED -randomer 2006-02-24
-// Number of votes required for each action
-#define VOTESNEEDED_CURSE   0.51
-#define VOTESNEEDED_MUTE    0.51
-#define VOTESNEEDED_KICK    0.51
-#define VOTESNEEDED_CUFF    0.51
-#define VOTESNEEDED_BAN     0.51
-#define VOTESNEEDED_MAP     0.51
-#define VOTESNEEDED_NEXTMAP 0.51
+// Fraction of votes required for each action
+#define VOTESNEEDED_CURSE   0.5
+#define VOTESNEEDED_MUTE    0.5
+#define VOTESNEEDED_KICK    0.5
+#define VOTESNEEDED_CUFF    0.5
+#define VOTESNEEDED_BAN     0.5
+#define VOTESNEEDED_MAP     0.5
+#define VOTESNEEDED_NEXTMAP 0.5
 
 //#define BAN_VOTED_TIME        0 // permanent ban
 #define BAN_VOTED_TIME       60 // 60 minutes

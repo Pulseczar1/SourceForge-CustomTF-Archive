@@ -317,7 +317,7 @@ void(float cost, float type) BuyCuTF2;
 #define STR_RESPAWNGUARD	   "Respawn Guard   "
 #define STR_HOVERBOOTS		   "Hover Boots     "
 #define STR_BOOTUPGRADE 	   "«Boot Upgrade   "
-#define STR_RECOILLESS		   "+Recoilless     "
+#define STR_RECOILLESS		   "«Recoilless     "
 #define STR_CANNIBAL		   "Cannibal        "
 
 #define COST_AUTOID 			  25
