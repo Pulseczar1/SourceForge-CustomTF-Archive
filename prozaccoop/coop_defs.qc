@@ -34,6 +34,8 @@
 #define npc_spawnfunc				think1			// safe to use?
 #define npc_spawndelay				walkframe			// was gravity
 #define npc_originalloc				pos1
+#define npc_attackoffset			pos2				// where the npc shoots from, IE: '0 0 40' for shams
+#define npc_enemyoffset				dest				// offset that our enemy is visible
 
 // damage multipliers
 #define npc_bulletmult				money
@@ -42,7 +44,7 @@
 #define npc_electricitymult			hover_time
 #define npc_firemult				penance_time
 #define npc_meleemult				has_cheated
-#define npc_othermult				has_cheated
+#define npc_othermult				has_cheated			// FIXME: right now melee works by other, we should make all melee weapons use TF_TD_MELEE
 
 // used for smooth movement of monsters, FIXME: change vars I just made up some crap to see if it compiles
 .void() npc_oldthink;

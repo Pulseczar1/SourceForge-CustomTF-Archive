@@ -236,10 +236,11 @@ void() _Wiz_FastFire =
 		newmis.nextthink = time + 6;
 		setorigin (newmis, self.origin);
 
-	//	newmis.velocity = vec * 2000;
+//		newmis.velocity = vec * 2000;
+//		newmis.velocity = vec*600;
 
-
-		newmis.velocity = vec*600;
+		// TODO: Gizmo - someday I want monsters to look at where they want to shoot, and just have weapons shoot via v_forward
+		LaunchMissile (newmis, 600, 0.1);
 		newmis.owner = self.owner;
 		newmis.classname = "wizspike";
 		setmodel (newmis, "progs/w_spike.mdl");

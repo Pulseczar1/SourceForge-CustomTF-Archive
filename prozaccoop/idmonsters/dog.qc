@@ -333,6 +333,8 @@ float()	CheckDogJump =
 
 float()	DogCheckAttack =
 {
+	enemy_range = range (self.enemy);
+
 // if close enough for slashing, go for it
 	if (CheckDogMelee ())
 	{

@@ -8,6 +8,8 @@ cooperative mode functions
 
 void() DroppedKeyThink =
 {
+	local float i;
+
 	// let the throwing player pick it up again
 	self.think = SUB_Null;
 	self.touch = key_touch;
