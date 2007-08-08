@@ -196,7 +196,7 @@ void(vector st) ZombieFireGrenade =
 
 	makevectors (self.angles);
 
-	missile.velocity = normalize(self.enemy.origin - org);
+	missile.velocity = normalize((self.enemy.origin + shootOffset) - org);
 	missile.velocity = missile.velocity * 600;
 	missile.velocity_z = 200;
 

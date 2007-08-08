@@ -126,10 +126,10 @@ void()	army_run8	=[	$run8,		army_run1	] {COOP_Run(8);
 };
 
 void()	army_atk1	=[	$shoot1,	army_atk2	] {
-	if (COOP_SightBlocked(self, self.enemy)) {
-		self.nextthink = time + 0.01;
-		self.think = self.th_run;
-	} else
+//	if (COOP_SightBlocked(self, self.enemy)) {
+//		self.nextthink = time + 0.01;
+//		self.think = self.th_run;
+//	} else
 		COOP_Turn();
 };
 void()	army_atk2	=[	$shoot2,	army_atk3	] {COOP_Turn();};
@@ -225,7 +225,7 @@ void() army_fire =
 // fire somewhat behind the player, so a dodging player is harder to hit
 	en = self.enemy;
 	
-	dir = en.origin - en.velocity*0.1;
+	dir = (en.origin + shootOffset) - en.velocity*0.1;
 	dir = normalize (dir - self.origin);
 	
 	// FIXME: distance, and possibly make damage multiplied by number of players?

@@ -49,6 +49,7 @@ $frame attacka9 attacka10 attacka11 attacka12 attacka13 attacka14 attacka15
 
 void()	_Demon_JumpTouch;
 void(float side)	_Demon_Melee;
+float() _DemonCheckAttack;
 
 void()	_demon1_stand1	=[	$stand1,	_demon1_stand2	] {COOP_Idle();};
 void()	_demon1_stand2	=[	$stand2,	_demon1_stand3	] {};
@@ -256,6 +257,7 @@ void() monster_demon1 =
 
 	self.is_connected = #TRUE;
 
+	self.OnPreAttack = _DemonCheckAttack;
 	self.OnNoticeEnemy = _Demon_OnSight;
 	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_demon1;
@@ -331,6 +333,8 @@ float()	_CheckDemonJump =
 float()	_DemonCheckAttack =
 {
 	local	vector	vec;
+
+	enemy_range = range (self.enemy);
 	
 // if close enough for slashing, go for it
 	if (_CheckDemonMelee ())
@@ -342,7 +346,7 @@ float()	_DemonCheckAttack =
 	if (_CheckDemonJump ())
 	{
 		self.attack_state = #AS_MISSILE;
-        sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
+		sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
 		return #TRUE;
 	}
 	

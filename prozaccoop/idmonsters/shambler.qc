@@ -69,6 +69,8 @@ void() _ShamHeal =
 	else if (hp < 1)
 		hp = 1;
 
+	// round the heal amount up
+	hp = ceil (hp);
 	self.health = self.health + hp;
 
 	sound(self, #CHAN_ITEM, "items/r_item1.wav", 1, #ATTN_NORM);
@@ -245,7 +247,8 @@ void() _CastLightning =
 
 	org = self.origin + '0 0 40';
 
-	dir = self.enemy.origin + '0 0 16' - org;
+//	dir = self.enemy.origin + '0 0 16' - org;
+	dir = self.enemy.origin + shootOffset - org;
 	dir = normalize (dir);
 
 	traceline (org, self.origin + dir*4096, #TRUE, self);
@@ -443,6 +446,8 @@ void() monster_shambler =
 		precache_sound ("shambler/melee2.wav");
 		precache_sound ("shambler/smack.wav");
 	}
+
+	self.#npc_attackoffset = '0 0 40';
 
 	self.solid = #SOLID_SLIDEBOX;
 	self.movetype = #MOVETYPE_STEP;

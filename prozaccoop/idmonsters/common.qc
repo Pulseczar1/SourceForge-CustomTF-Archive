@@ -25,7 +25,89 @@ float (entity test) COOP_IsCoopMonster =
 
 
 /*
+	COOP_FindShootOffset - replacement for COOP_SightBlocked()
+*/
+
+vector shootOffset;
+
+float (entity start, entity end) COOP_FindShootOffset =
+{
+	local vector startVec;
+
+	makevectors (start.angles);
+
+// set the initial monster's point of view for the line of sight check
+	startVec = start.origin + start.#npc_attackoffset;
+
+// start checking for any visible line of sight to enemy
+	traceline (startVec, end.origin, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater)) {
+		shootOffset = '0 0 0';
+		return #TRUE;
+	}
+
+	shootOffset = '0 0 16';
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	shootOffset = end.view_ofs;
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	// start on end
+	makevectors (end.angles);
+
+	shootOffset = v_right * end.mins_y;
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	shootOffset = v_right * end.maxs_y;
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	shootOffset = v_up * end.mins_z;
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	shootOffset = v_up * end.maxs_z;
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	// corners
+	shootOffset = (v_up * end.maxs_z) + (v_right * end.maxs_y);
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	shootOffset = (v_up * end.maxs_z) + (v_right * end.mins_y);
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	shootOffset = (v_up * end.mins_z) + (v_right * end.maxs_y);
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	shootOffset = (v_up * end.mins_z) + (v_right * end.mins_y);
+	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	if (trace_ent == end && (!trace_inopen || !trace_inwater))
+		return #TRUE;
+
+	return #FALSE;
+};
+
+
+/*
 	COOP_SightBlocked - checks if an entities sight to the given entity is blocked
+
+	8/8/07: Gizmo - updated this function for better monster targeting
 */
 
 float (entity start, entity end) COOP_SightBlocked =
@@ -34,7 +116,7 @@ float (entity start, entity end) COOP_SightBlocked =
 
 	// return false if another entity or the map blocked our sight, also if we crossed contents
 
-	traceline (start.origin, end.origin, #TL_ANY_SOLID, start);
+	traceline (start.origin + start.#npc_attackoffset, end.origin, #TL_ANY_SOLID, start);
 	if (trace_ent != end)
 		return #TRUE;
 	if (trace_inopen && trace_inwater)
@@ -221,7 +303,7 @@ void (float dist) COOP_WalkSmooth =
 
 float (entity en) COOP_CanAttackEnemy =
 {
-	if (!visible2(en, self) || !en.takedamage || en.health <= 0)
+	if (/*!visible2(en, self) || */!en.takedamage || en.health <= 0)
 		return #FALSE;
 	return #TRUE;
 };
@@ -340,9 +422,9 @@ void () COOP_Turn =
 
 void (float dist) COOP_Run =
 {
-	local entity e;
-	local float sightblocked, r, chance;
-	local float c_attack;
+	local entity	e;
+	local float		sightblocked, r, chance;
+	local float		c_attack;
 
 	// for other functions like slide if we use them
 	movedist = dist;
@@ -362,13 +444,13 @@ void (float dist) COOP_Run =
 	}
 
 // get default variables so we don't have to calculate them over and over
-	sightblocked = COOP_SightBlocked (self, self.enemy);
+	sightblocked = (!COOP_FindShootOffset(self, self.enemy));
 	r = range (self.enemy);
 
 // check if he's in an attack state (usually for telling the monster to attack but face him first, attacking resets the state)
 	// use these to tell the monster to not fire right away and aim at him
 	if (self.attack_state && self.attack_state != #AS_STRAIGHT) {
-		self.ideal_yaw = vectoyaw (self.enemy.origin - self.origin);
+		self.ideal_yaw = vectoyaw ((self.enemy.origin + shootOffset) - self.origin);
 		ChangeYaw ();
 
 		// if sight is blocked, reset the attack state
@@ -422,7 +504,9 @@ void (float dist) COOP_Run =
 			c_attack = #TRUE;
 
 		if (c_attack) {
-			if (r <= #RANGE_MELEE) {
+			if (r <= #RANGE_MELEE && visible(self.enemy)) {
+				ChangeYaw ();
+
 				if (self.th_melee) {
 					// TODO: check if facing, no that's done above if state is set
 					self.th_melee ();

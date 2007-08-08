@@ -171,12 +171,13 @@ void() ShalMissile =
 	missile.think = ShalHome;
 	missile.enemy = self.enemy;
 	missile.touch = ShalMissileTouch;
+	missile.#npc_enemyoffset = shootOffset;
 };
 
 void() ShalHome =
 {
 	local vector	dir, vtemp;
-	vtemp = self.enemy.origin + '0 0 10';
+	vtemp = self.enemy.origin + self.#npc_enemyoffset;
 	if (self.enemy.health < 1)
 	{
 		remove(self);
