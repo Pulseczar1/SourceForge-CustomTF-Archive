@@ -505,8 +505,6 @@ void (float dist) COOP_Run =
 
 		if (c_attack) {
 			if (r <= #RANGE_MELEE && visible(self.enemy)) {
-				ChangeYaw ();
-
 				if (self.th_melee) {
 					// TODO: check if facing, no that's done above if state is set
 					self.th_melee ();
@@ -520,6 +518,11 @@ void (float dist) COOP_Run =
 					return;
 				}
 			}
+		}
+
+		if (r <= #RANGE_MELEE) {
+			self.ideal_yaw = vectoyaw ((self.enemy.origin + shootOffset) - self.origin);
+			ChangeYaw ();
 		}
 	} else if (sightblocked) {
 		e = COOP_FindTarget (self);
@@ -616,11 +619,12 @@ void () COOP_SetLives =
 	self must be the monster respawning, that means you must call this BEFORE the monster is removed
 */
 
-void () respawn_think =
+void () respawn_monster =
 {
 	local entity head;
 	local float savedlives;
 
+/*
 	head = findradius (self.origin, 56);
 
 	while (head) {
@@ -632,6 +636,7 @@ void () respawn_think =
 
 		head = head.chain;
 	}
+*/
 
 	// play teleport effect
 	spawn_tfog (self.origin);
@@ -660,6 +665,43 @@ void () respawn_think =
 	}
 };
 
+void () respawn_think;
+void() respawn_verify =
+{
+	local entity other2;
+
+	if (other == self.owner)
+		return;
+
+	// if we get here then something is in the way
+	if (other.takedamage && other.health > 0) {
+		self.owner.nextthink = time + 5;
+		self.owner.think = respawn_think;
+		remove (self);
+	}
+};
+
+void () respawn_think =
+{
+	local entity toucher;
+
+	toucher = spawn();
+	toucher.movetype = #MOVETYPE_NONE;
+	toucher.solid = #SOLID_TRIGGER;
+	toucher.angles = '0 0 0';
+	setsize (toucher, self.mins - '1 1 1', self.maxs + '1 1 1');
+	setorigin (toucher, self.origin);
+	toucher.touch = respawn_verify;
+	toucher.nextthink = time + 0.2;
+	toucher.think = SUB_Remove;
+	toucher.owner = self;
+
+	self.nextthink = time + 0.3;
+	self.think = respawn_monster;
+	
+	force_retouch = 2;		// make sure even still objects get hit
+};
+
 void (float respawntime, void() spawn_func) COOP_SetupRespawn =
 {
 	local entity newmon;
@@ -676,6 +718,7 @@ void (float respawntime, void() spawn_func) COOP_SetupRespawn =
 
 	newmon = spawn ();
 	newmon.lives = self.lives - 1;
+	setsize (newmon, self.mins, self.maxs);
 	setorigin (newmon, self.#npc_originalloc);
 
 	newmon.nextthink = time + respawntime;
