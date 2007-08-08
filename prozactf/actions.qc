@@ -879,10 +879,44 @@ void() TeamFortress_ReloadCurrentWeapon =
                 self.weaponframe = 0;
             }
         }
+	else if (self.current_weapon == #WEAP_DAEDALUS) //WK 8/4/7 Added clips to daed
+        {
+            if (self.reload_daedalus == 0)
+            {
+                sprint (self, #PRINT_HIGH, "Clip full.\n");
+                return;
+            }
 
-    
+            if (self.reload_daedalus < self.ammo_cells)
+            {
+                Attack_Finished(0.8);
 
-    } // CLIP EXTENDER
+                // Calculate the reload time needed
+                rt = (#RE_DAEDALUS_EX - self.reload_daedalus) / #RE_DAEDALUS_EX;
+                rt = #RE_DAEDALUS_TIME_EX - (#RE_DAEDALUS_TIME_EX * rt);
+
+                if (self.#runes & #RUNE_SPEED)
+                    rt = rt * #SPEEDRUNE_RELOADMULT;
+
+                self.reload_daedalus = 0;
+
+                if (self.ammo_cells < #RE_DAEDALUS_EX)
+                    self.reload_daedalus = #RE_DAEDALUS_EX - self.ammo_cells;
+
+                sprint (self, #PRINT_HIGH, "reloading...\n");
+                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+                tWeapon = spawn();
+                tWeapon.netname = "reloadtimer"; //WK For Judoka code
+                tWeapon.owner = self;
+                tWeapon.classname = "timer";
+                tWeapon.nextthink = time + rt;
+                tWeapon.think = W_Reload_daedalus;
+
+                self.weaponmodel = "";
+                self.weaponframe = 0;
+            }
+        }
+    } // END CLIP EXTENDER
     else
     {
 
@@ -1126,7 +1160,44 @@ void() TeamFortress_ReloadCurrentWeapon =
                 self.weaponframe = 0;
             }
         }
-    } // CLIP EXTENDER (END ELSE)
+	else if (self.current_weapon == #WEAP_DAEDALUS) //WK 8/4/7 Added clips to daed
+        {
+            if (self.reload_daedalus == 0)
+            {
+                sprint (self, #PRINT_HIGH, "Clip full.\n");
+                return;
+            }
+
+            if (self.reload_daedalus < self.ammo_cells)
+            {
+                Attack_Finished(0.8);
+
+                // Calculate the reload time needed
+                rt = (#RE_DAEDALUS - self.reload_daedalus) / #RE_DAEDALUS;
+                rt = #RE_DAEDALUS_TIME - (#RE_DAEDALUS_TIME * rt);
+
+                if (self.#runes & #RUNE_SPEED)
+                    rt = rt * #SPEEDRUNE_RELOADMULT;
+
+                self.reload_daedalus = 0;
+
+                if (self.ammo_cells < #RE_DAEDALUS)
+                    self.reload_daedalus = #RE_DAEDALUS - self.ammo_cells;
+
+                sprint (self, #PRINT_HIGH, "reloading...\n");
+                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+                tWeapon = spawn();
+                tWeapon.netname = "reloadtimer"; //WK For Judoka code
+                tWeapon.owner = self;
+                tWeapon.classname = "timer";
+                tWeapon.nextthink = time + rt;
+                tWeapon.think = W_Reload_daedalus;
+
+                self.weaponmodel = "";
+                self.weaponframe = 0;
+            }
+        }
+    }
 };
 
 //CH drops an item TF goal if the bits are set to allow it.
