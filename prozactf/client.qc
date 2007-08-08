@@ -1950,6 +1950,7 @@ void() PutClientInServer =
 	self.reload_super_shotgun = 0;
 	self.reload_grenade_launcher = 0;
 	self.reload_rocket_launcher = 0;
+	self.reload_daedalus = 0; //WK 8/4/7 Added reload to daed
 	self.reload_light_assault = 0;
     self.reload_laser_cannon = 0;
 	

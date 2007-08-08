@@ -5,7 +5,7 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs build 264 Û08¯5¯2007Ý\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs build 265 Û08¯5¯2007Ý\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
