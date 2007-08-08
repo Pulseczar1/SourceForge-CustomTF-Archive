@@ -82,8 +82,9 @@ void(entity missile, float mspeed, float accuracy) LaunchMissile =
 	
 	missile.velocity = vec * mspeed;
 
-	missile.angles = '0 0 0';
-	missile.angles_y = vectoyaw(missile.velocity);
+//	missile.angles = '0 0 0';
+//	missile.angles_y = vectoyaw(missile.velocity);
+	missile.angles = vectoangles (missile.velocity);
 
 // set missile duration
 	missile.nextthink = time + 5;
