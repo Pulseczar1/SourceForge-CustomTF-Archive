@@ -171,7 +171,7 @@ void() ShalMissile =
 	missile.think = ShalHome;
 	missile.enemy = self.enemy;
 	missile.touch = ShalMissileTouch;
-	missile.#npc_enemyoffset = shootOffset;
+	missile.#npc_enemyoffset = self.#npc_enemyoffset;
 };
 
 void() ShalHome =

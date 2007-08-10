@@ -122,7 +122,7 @@ void() OgreFireGrenade =
 
 	makevectors (self.angles);
 
-	missile.velocity = normalize((self.enemy.origin + shootOffset) - self.origin);
+	missile.velocity = normalize((self.enemy.origin + self.#npc_enemyoffset) - self.origin);
 	missile.velocity = missile.velocity * enlen;
 	missile.velocity_z = missile.velocity_z + 200;
 

@@ -248,10 +248,11 @@ void() _CastLightning =
 	org = self.origin + '0 0 40';
 
 //	dir = self.enemy.origin + '0 0 16' - org;
-	dir = self.enemy.origin + shootOffset - org;
+	dir = (self.enemy.origin + self.#npc_enemyoffset) - org;
 	dir = normalize (dir);
 
-	traceline (org, self.origin + dir*4096, #TRUE, self);
+	// self.origin or org?
+	traceline (org, org + dir*4096, #TRUE, self);
 
 	WriteByte (#MSG_MULTICAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_MULTICAST, #TE_LIGHTNING1);

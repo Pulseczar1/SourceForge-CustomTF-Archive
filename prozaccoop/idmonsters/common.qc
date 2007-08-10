@@ -28,8 +28,6 @@ float (entity test) COOP_IsCoopMonster =
 	COOP_FindShootOffset - replacement for COOP_SightBlocked()
 */
 
-vector shootOffset;
-
 float (entity start, entity end) COOP_FindShootOffset =
 {
 	local vector startVec;
@@ -42,61 +40,61 @@ float (entity start, entity end) COOP_FindShootOffset =
 // start checking for any visible line of sight to enemy
 	traceline (startVec, end.origin, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater)) {
-		shootOffset = '0 0 0';
+		start.#npc_enemyoffset = '0 0 0';
 		return #TRUE;
 	}
 
-	shootOffset = '0 0 16';
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = '0 0 16';
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
-	shootOffset = end.view_ofs;
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = end.view_ofs;
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
 	// start on end
 	makevectors (end.angles);
 
-	shootOffset = v_right * end.mins_y;
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = v_right * end.mins_y;
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
-	shootOffset = v_right * end.maxs_y;
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = v_right * end.maxs_y;
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
-	shootOffset = v_up * end.mins_z;
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = v_up * end.mins_z;
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
-	shootOffset = v_up * end.maxs_z;
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = v_up * end.maxs_z;
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
 	// corners
-	shootOffset = (v_up * end.maxs_z) + (v_right * end.maxs_y);
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = (v_up * end.maxs_z) + (v_right * end.maxs_y);
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
-	shootOffset = (v_up * end.maxs_z) + (v_right * end.mins_y);
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = (v_up * end.maxs_z) + (v_right * end.mins_y);
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
-	shootOffset = (v_up * end.mins_z) + (v_right * end.maxs_y);
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = (v_up * end.mins_z) + (v_right * end.maxs_y);
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
-	shootOffset = (v_up * end.mins_z) + (v_right * end.mins_y);
-	traceline (startVec, end.origin + shootOffset, #TL_ANY_SOLID, start);
+	start.#npc_enemyoffset = (v_up * end.mins_z) + (v_right * end.mins_y);
+	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
 	if (trace_ent == end && (!trace_inopen || !trace_inwater))
 		return #TRUE;
 
@@ -450,7 +448,7 @@ void (float dist) COOP_Run =
 // check if he's in an attack state (usually for telling the monster to attack but face him first, attacking resets the state)
 	// use these to tell the monster to not fire right away and aim at him
 	if (self.attack_state && self.attack_state != #AS_STRAIGHT) {
-		self.ideal_yaw = vectoyaw ((self.enemy.origin + shootOffset) - self.origin);
+		self.ideal_yaw = vectoyaw ((self.enemy.origin + self.#npc_enemyoffset) - self.origin);
 		ChangeYaw ();
 
 		// if sight is blocked, reset the attack state
@@ -521,7 +519,7 @@ void (float dist) COOP_Run =
 		}
 
 		if (r <= #RANGE_MELEE) {
-			self.ideal_yaw = vectoyaw ((self.enemy.origin + shootOffset) - self.origin);
+			self.ideal_yaw = vectoyaw ((self.enemy.origin + self.#npc_enemyoffset) - self.origin);
 			ChangeYaw ();
 		}
 	} else if (sightblocked) {
