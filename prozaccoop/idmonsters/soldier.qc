@@ -225,7 +225,7 @@ void() army_fire =
 // fire somewhat behind the player, so a dodging player is harder to hit
 	en = self.enemy;
 	
-	dir = (en.origin + shootOffset) - en.velocity*0.1;
+	dir = (en.origin + self.#npc_enemyoffset) - en.velocity*0.1;
 	dir = normalize (dir - self.origin);
 	
 	// FIXME: distance, and possibly make damage multiplied by number of players?
