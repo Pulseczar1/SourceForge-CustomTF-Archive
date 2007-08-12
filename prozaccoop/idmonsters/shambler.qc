@@ -386,7 +386,8 @@ float() _ShamCheckAttack =
 	local float		enemy_yaw;
 
 	enemy_range = range (self.enemy);
-	enemy_vis = visible (self.enemy);
+//	enemy_vis = visible (self.enemy);
+	enemy_vis = #TRUE;
 
 	if (enemy_range == #RANGE_MELEE)
 	{
@@ -397,8 +398,8 @@ float() _ShamCheckAttack =
 	if (time < self.attack_finished)
 		return #FALSE;
 	
-	if (!enemy_vis)
-		return #FALSE;
+//	if (!enemy_vis)
+//		return #FALSE;
 		
 	targ = self.enemy;
 
