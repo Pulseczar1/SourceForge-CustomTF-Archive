@@ -30,7 +30,7 @@ float (entity test) COOP_IsCoopMonster =
 
 float (entity start, entity end) COOP_FindShootOffset =
 {
-	local vector startVec;
+	local vector startVec, tempVec;
 
 	makevectors (start.angles);
 
@@ -55,7 +55,12 @@ float (entity start, entity end) COOP_FindShootOffset =
 		return #TRUE;
 
 	// start on end
-	makevectors (end.angles);
+//	makevectors (end.angles);
+	tempVec = end.origin - startVec;
+	tempVec_y = vectoyaw (tempVec);
+	tempVec_x = 0;
+	tempVec_z = 0;
+	makevectors (tempVec);
 
 	start.#npc_enemyoffset = v_right * end.mins_y;
 	traceline (startVec, end.origin + start.#npc_enemyoffset, #TL_ANY_SOLID, start);
