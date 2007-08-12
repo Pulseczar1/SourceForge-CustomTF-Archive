@@ -2900,7 +2900,9 @@ void() PlayerPreThink =
 			self.job = self.job - (self.job & #JOB_ACTIVE);
 
 	//WK 8/4/7 Cap bhop / hover glide to only slightly ludicrous speeds (+300 speed)
-	tempvel_x = self.velocity_x; //We only care about horizontal movement
+  // reeeeeeee-jecteddd! (phrosty)
+	/*
+  tempvel_x = self.velocity_x; //We only care about horizontal movement
 	tempvel_y = self.velocity_y;
 	tempvel_z = 0;
 	tempspeed = vlen(tempvel);
@@ -2909,6 +2911,7 @@ void() PlayerPreThink =
 		self.velocity_x = self.velocity_x * tempspeed; //Only slow down horizontal movement
 		self.velocity_y = self.velocity_y * tempspeed;
 	}
+  */
 
 	// teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
