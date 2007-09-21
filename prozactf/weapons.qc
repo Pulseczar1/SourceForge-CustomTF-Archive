@@ -5974,11 +5974,9 @@ void() W_WeaponFrame =
         self.impulse = 0;
       }
     }
-    else if (!self.is_building && !self.is_detpacking && !self.is_feigning) {
-      if (self.impulse == #TF_GRENADE_1 || self.impulse == #TF_GRENADE_2) {
-        TeamFortress_PrimeGrenade();
-        self.impulse = 0;
-      }
+    else if (!self.is_building && !self.is_detpacking && !self.is_feigning && (self.impulse == #TF_GRENADE_1 || self.impulse == #TF_GRENADE_2)) {
+      TeamFortress_PrimeGrenade();
+      self.impulse = 0;
     }
     else if (self.impulse == #TF_GRENADE_T) {
       TeamFortress_ThrowGrenade();
