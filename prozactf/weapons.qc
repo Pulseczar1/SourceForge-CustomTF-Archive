@@ -5966,14 +5966,34 @@ void() W_WeaponFrame =
 			}
 		}
 	}
+  
+  // 9/21/7 correct fix to remove gren delay - phrosty
+  if (self.impulse != 0 && self.penance_time <= time) {		
+    if (prematch >= time) {
+      if (self.impulse > 10 || self.impulse < 1) {
+        self.impulse = 0;
+      }
+    }
+    else if (!self.is_building && !self.is_detpacking && !self.is_feigning) {
+      if (self.impulse == #TF_GRENADE_1 || self.impulse == #TF_GRENADE_2) {
+        TeamFortress_PrimeGrenade();
+        self.impulse = 0;
+      }
+    }
+    else if (self.impulse == #TF_GRENADE_T) {
+      TeamFortress_ThrowGrenade();
+      self.impulse = 0;
+    }
+  }
+
+	//WK 8/4/7 Moved this down below Impulse Commands
+  // 9/21/7 reverted - phrosty
+	if (time < self.attack_finished)
+		return;
 
 	// Stop calling this function so much
 	if (self.impulse != 0)
 		ImpulseCommands ();
-
-	//WK 8/4/7 Moved this down below Impulse Commands
-	if (time < self.attack_finished)
-		return;    
 
 	// Can't fire while setting a detpack or building something
 	if ((self.is_building != 0) || (self.is_detpacking != 0) || (self.is_feigning != 0) || (self.is_haxxxoring != 0) || (self.is_toffingadet != 0))
