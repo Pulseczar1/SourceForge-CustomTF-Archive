@@ -1529,7 +1529,7 @@ void() ClientKill =
 
 	self.health = -1;
 	self.th_die();
-	self.deadflag = #DEAD_RESPAWNABLE;
+//	self.deadflag = #DEAD_RESPAWNABLE;		// Gizmo - commented this out, th_die() takes care of it
 	self.tfstate = self.tfstate | #TFSTATE_RESPAWN_READY;
 //	self.respawn_time = time;
 };
@@ -1960,12 +1960,17 @@ void() PutClientInServer =
 
 	DecodeLevelParms ();
 
+//#ifdef COOP_MODE
 #ifdef COOP_MODE_ENHANCED
 	// Force all players to be on the same team in Coop mode
 	if (coop)
 	{
-		teamplay = 21;
-		cvar_set("teamplay", "21?TeamFortress");
+		// teamplay must be at least set to something
+		if (!teamplay) {
+			teamplay = 21;
+			cvar_set("teamplay", "21?TeamFortress");
+		}
+
 		TeamFortress_TeamSet(1);
 	}
 #endif

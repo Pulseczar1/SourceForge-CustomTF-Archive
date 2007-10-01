@@ -354,7 +354,13 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		return;
 
 	if (!targ.takedamage)
-        return;
+		return;
+
+#ifdef EOG_BESTTEAMKILLER
+	// Gizmo - we do this even if team damage isn't enabled to make fun of people who can't hit the enemy
+	if (targ != attacker && attacker.classname == "player" && Teammate(targ.team_no, attacker.team_no) && !IsBuilding(targ))
+		attacker.#team_damage_dealt = attacker.#team_damage_dealt + damage;
+#endif
 
 #ifdef COOP_MODE_ENHANCED
 	// certain monsters are weaker/stronger against certain types of attack

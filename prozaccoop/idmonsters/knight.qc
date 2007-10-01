@@ -261,6 +261,24 @@ void() knight_die =
 };
 
 
+void() KnightPreAttack =
+{
+	local float		len;
+
+// decide if now is a good swing time
+	len = vlen(self.enemy.origin+self.enemy.view_ofs - (self.origin+self.view_ofs));
+
+/*
+	if (len < 80)
+		knight_atk1 ();
+	else
+		knight_runatk1 ();
+*/
+	if (len < 80)
+		return #TRUE;
+
+	return #FALSE;
+};
 
 float() KnightOnSight =
 {
@@ -318,6 +336,7 @@ void() monster_knight =
 	self.is_connected = #TRUE;
 
 
+	self.OnPreAttack = KnightPreAttack;
 	self.OnNoticeEnemy = KnightOnSight;
 	self.#npc_speedfactor = 2;
 	self.#npc_spawndelay = 30;

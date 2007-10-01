@@ -11,6 +11,7 @@ messages.qc
 skins.qc
 
 defs.qc
+tfdefs.qc
 agr_h.qc
 qw.qc
 debug.qc

@@ -13,9 +13,9 @@
 //WK #define MSG_CUTFVERSION   "прозац Customтф Ж∙╝■╝OfN≤" //<-- 3.2.OfN6
 
 #ifdef COOP_MODE_ENHANCED
-#define MSG_CUTFVERSION		"прозац Customтф COOP VERSION 8-??-07"
+#define MSG_CUTFVERSION		"прозац Customтф COOP VERSION 10-??-07"
 #else
-#define MSG_CUTFVERSION		"прозац Customтф VERSION 8-??-07"
+#define MSG_CUTFVERSION		"прозац Customтф VERSION 10-??-07"
 #endif
 
 #define MSG_INTRO  "Welcome to прозац Customтф\na Quake тф MOD by ShakaUVM\nwww╝telefragged╝com╞shaka\nModified for COOP By тХЕ гИЗМО\n\n²····························÷\n\n"
