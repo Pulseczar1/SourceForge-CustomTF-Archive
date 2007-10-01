@@ -1135,6 +1135,24 @@ entity() GetBestKiller =
 	return theplayer;
 };
 
+// Gizmo
+entity() GetBestTeamKiller =
+{
+	local entity bestplayer, head;
+
+	head		= world;
+	bestplayer	= world;
+
+	do {
+		head = find (head, classname, "player");
+
+		if (head.#team_damage_dealt > bestplayer.#team_damage_dealt)
+			bestplayer = head;
+	} while (head != world);
+
+	return bestplayer;
+};
+
 void() bprintline =
 {
 	bprint(#PRINT_HIGH,"\n\n\n");
@@ -1147,15 +1165,16 @@ void() PrintResults =
 
 	local string tmps;
 	local float tmpf,tmpf2;
-	
+
 	//bprintline();
 
 	bprint(#PRINT_HIGH,"\n Εξδ Οζ Ηανε! \n\n");
-	
-	if (time >= timelimit)
+
+	// Gizmo - fixed printing this with a zero timelimit
+	if (time >= timelimit && timelimit > 0)
 	{
 		bprint(#PRINT_HIGH,"Time limit reached!\n");
-	}	 
+	}
 
 	tmpf = time/60;
 	tmpf2 = floor(tmpf);
@@ -1168,7 +1187,7 @@ void() PrintResults =
 	bprint(#PRINT_HIGH," minutes\n");
 
 	bprint(#PRINT_HIGH,"\n Òεσυμτσ: \n\n");
-		
+
 	winteam = GetTrueTeamName(TeamFortress_TeamGetWinner());
 
 	if (winteam != "ERROR")
@@ -1178,15 +1197,16 @@ void() PrintResults =
 	}
 
 	TeamFortress_TeamShowScores(3,0,0);
-	
+
+	// best player
 	bprint(#PRINT_HIGH,"\nΒεστ Πμαωες: ");
 	theplayer = GetBestPlayer();
-	
+
 	if (theplayer != world)
 	{
 		tmpf = floor(theplayer.frags);
 		tmps = ftos(tmpf);
-		
+
 		bprint(#PRINT_HIGH,theplayer.netname);
 		bprint(#PRINT_HIGH," (");
 		bprint(#PRINT_HIGH,GetTrueTeamName(theplayer.team_no));
@@ -1196,10 +1216,11 @@ void() PrintResults =
 	}
 	else
 		bprint(#PRINT_HIGH,"None");
-	
+
+	// best killer
 	bprint(#PRINT_HIGH,"\nΛιμμιξη Ναγθιξε: ");
 	theplayer = GetBestKiller();
-	
+
 	if (theplayer != world)
 	{
 		tmpf = floor(theplayer.frags - TeamFortress_TeamGetScore(theplayer.team_no));
@@ -1214,6 +1235,27 @@ void() PrintResults =
 	}
 	else
 		bprint(#PRINT_HIGH,"None");
+
+#ifdef EOG_BESTTEAMKILLER
+	// Gizmo - best team killer
+	bprint(#PRINT_HIGH,"\n\nΤεαν Λιμμιξη Ναγθιξε: ");
+	theplayer = GetBestTeamKiller();
+
+	if (theplayer != world)
+	{
+		tmpf = floor(theplayer.#team_damage_dealt);
+		tmps = ftos(tmpf);
+
+		bprint(#PRINT_HIGH,theplayer.netname);
+		bprint(#PRINT_HIGH," (");
+		bprint(#PRINT_HIGH,GetTrueTeamName(theplayer.team_no));
+		bprint(#PRINT_HIGH,") with ");
+		bprint(#PRINT_HIGH,tmps);
+		bprint(#PRINT_HIGH," team-damage dealt");
+	}
+	else
+		bprint(#PRINT_HIGH,"None");
+#endif
 
 	bprint(#PRINT_HIGH,"\n");
 	bprintline();

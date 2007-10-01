@@ -3047,9 +3047,12 @@ void(float Suicided) TeamFortress_SetupRespawn =
 	else 
 		restime = 0;
 
+// Gizmo - remove respawn delay for coop, TODO: enable a toggleable amount in localinfo
+#ifndef COOP_MODE_ENHANCED
 	// Suiciders can't respawn immediately
 	if (Suicided)
 		restime = restime + #SUICIDE_RESPAWN_DELAY;
+#endif
 
 	// Remove a life
 	if (self.lives > 0 && prematch < time)

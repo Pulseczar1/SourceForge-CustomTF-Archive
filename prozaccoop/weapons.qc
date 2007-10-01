@@ -4995,6 +4995,27 @@ void() ImpulseCommands =
 		else if (self.impulse == #TF_DROPKEY && coop)
 			DropKey();
 #endif
+#ifdef COOP_MODE_ENHANCED
+/*
+		else if (self.impulse == 211) {
+			makevectors (self.v_angle);
+			traceline (self.origin, (self.origin + '0 0 16') + v_forward*2048, #TL_ANY_SOLID, self);
+
+			if (trace_ent != world) {
+				if (trace_ent.use) {
+					local entity oself;
+
+					activator = self;
+
+					oself = self;
+					self = trace_ent;
+					trace_ent.use ();
+					self = oself;
+				}
+			}
+		}
+*/
+#endif
 	}
 	//WK We can toss grens while chaplaining. Readme says so. :p
 	if (!self.is_building && !self.is_detpacking && !self.is_feigning)

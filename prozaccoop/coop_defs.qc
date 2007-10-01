@@ -36,6 +36,7 @@
 #define npc_originalloc				pos1
 #define npc_attackoffset			pos2				// where the npc shoots from, IE: '0 0 40' for shams
 #define npc_enemyoffset				dest				// offset that our enemy is visible
+#define npc_inpain				demon_one			// if the monster is currently in pain
 
 // damage multipliers
 #define npc_bulletmult				money

@@ -16,7 +16,11 @@ void() PipebombTouch;
 // Mirv Grenade Functions
 void() MirvGrenadeTouch;
 void() MirvGrenadeExplode;
+#ifdef MIRV_VELOCITY
+void (vector org, vector initVelocity, entity shooter) MirvGrenadeLaunch;
+#else
 void (vector org, entity shooter) MirvGrenadeLaunch;
+#endif
 // Detpack Functions
 void(float timer) TeamFortress_SetDetpack;
 void() TeamFortress_DetpackSet;
@@ -92,7 +96,12 @@ void() MirvGrenadeExplode =
 	i = 0;
 	while (i < nummirvs)
 	{
+#ifdef MIRV_VELOCITY
+		// Gizmo - allow for the spamlets to inherit the mirv's velocity
+		MirvGrenadeLaunch (self.origin + '0 0 -1', self.velocity, self.owner);
+#else
 		MirvGrenadeLaunch (self.origin + '0 0 -1',self.owner);
+#endif
 		i = i + 1;
 	}
 
@@ -107,7 +116,11 @@ void() MirvGrenadeExplode =
 
 //=========================================================================
 // Launch a Mirv
+#ifdef MIRV_VELOCITY
+void (vector org, vector initVelocity, entity shooter) MirvGrenadeLaunch =
+#else
 void (vector org, entity shooter) MirvGrenadeLaunch =
+#endif
 {
 	local float xdir,ydir,zdir;
 
@@ -138,7 +151,11 @@ void (vector org, entity shooter) MirvGrenadeLaunch =
 	newmis.velocity_y = ydir * 2;
 	newmis.velocity_z = zdir * 15;
 
-	newmis.avelocity='100 100 400';
+#ifdef MIRV_VELOCITY
+	newmis.velocity = newmis.velocity + initVelocity;
+#endif
+
+	newmis.avelocity = '100 100 400';
 
 	setmodel (newmis, "progs/grenade2.mdl");
 	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);

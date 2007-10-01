@@ -8,7 +8,9 @@ Defines for the compilable options within TF.
 #pragma DONT_COMPILE_THIS_FILE
 
 //#define COOP_MODE
-#define COOP_MODE_ENHANCED	// the new coop mode
+#define COOP_MODE_ENHANCED	// Gizmo - the new coop mode
+#define MIRV_VELOCITY		// Gizmo - enables the spamlets of mirvs to take on the original mirv's velocity
+#define EOG_BESTTEAMKILLER	// Gizmo - enables the reporting of the best team killer at the end of the game
 #define NET_SERVER
 //#define BOTS			// doesn't do anything yet
 //#define DEMO_STUFF

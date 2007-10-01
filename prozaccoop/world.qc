@@ -212,6 +212,8 @@ void () ValidateCoopsSpawns =
 	local entity le, re;
 
 	// always start from world
+	le = world;
+	re = world;
 
 	do {
 		le = find (le, classname, "info_player_coop");

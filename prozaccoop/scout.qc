@@ -1174,7 +1174,7 @@ void (vector org, entity shooter) CreateCaltrop =
 	newmis.owner = shooter;
 	newmis.movetype = #MOVETYPE_BOUNCE;
 	newmis.solid = #SOLID_TRIGGER;
-    //newmis.solid = #SOLID_BBOX;
+//	newmis.solid = #SOLID_BBOX;
 
 	newmis.classname = "caltrop";
 	newmis.weapon = #DMSG_CALTROP;
@@ -1189,15 +1189,15 @@ void (vector org, entity shooter) CreateCaltrop =
 	newmis.velocity_y = ydir * 2;
 	newmis.velocity_z = zdir * 15;
 
-	//newmis.avelocity = '500 500 500';
-    newmis.avelocity_x = crandom()*400;
-    newmis.avelocity_y = crandom()*400;
-    newmis.avelocity_z = crandom()*400;
+//	newmis.avelocity = '500 500 500';
+	newmis.avelocity_x = crandom()*400;
+	newmis.avelocity_y = crandom()*400;
+	newmis.avelocity_z = crandom()*400;
 
 
 	setmodel (newmis, "progs/caltrop.mdl");
 	setsize (newmis, '-10 -10 -9', '0 0 0');
-    //setsize (newmis, '-5 -5 -4', '5 5 5');
+//	setsize (newmis, '-5 -5 -4', '5 5 5');
 
     /*#ifdef COOL_GIBS
     newmis.#coolflag = #STRFLAG_COOL;
@@ -1206,13 +1206,37 @@ void (vector org, entity shooter) CreateCaltrop =
 	setorigin (newmis, org);
 };
 
+// Gizmo - so they lay down correctly
+void() CaltropPostTouch =
+{
+	if (self.velocity == '0 0 0') {
+		self.avelocity = '0 0 0';
+		self.angles = '90 90 90';
+	}
+
+	self.nextthink = self.wait;
+	self.think = SUB_Remove;
+
+	self.wait = 0;
+};
+
 void() CaltropTouch =
 {
+	// Gizmo - enable a post touch function since touch functions are called before velocity is changed
+	if (!self.wait && other == world) {
+		self.wait = self.nextthink;
+
+		self.nextthink = time + 0.01;
+		self.think = CaltropPostTouch;
+	}
+
+/*
 	if (self.velocity == '0 0 0')
-    {
-        self.avelocity = '0 0 0';
+	{
+		self.avelocity = '0 0 0';
 		self.angles = '90 90 90';
-    }
+	}
+*/
 	
 	if (self.heat > time)
 		return;
@@ -1222,23 +1246,23 @@ void() CaltropTouch =
 		if (Teammate(self.owner.team_no, other.team_no) && other != self.owner)
 			return;
 			
-        if (self.velocity == '0 0 0') // supposedly on the ground..
-        {
+		if (self.velocity == '0 0 0') // supposedly on the ground..
+		{
 			sprint(other, #PRINT_HIGH, "Ouch! Ouch! Caltrops!\n");
-            //other.leg_damage = other.leg_damage + 2;
-          	//TeamFortress_SetSpeed(other);
-            HurtLegs(other,2);
-            deathmsg = #DMSG_CALTROP;
-    		TF_T_Damage(other, self, self.owner, 16, 0, #TF_TD_OTHER);
-        }
-        else // if its moving...
-        {
+			//other.leg_damage = other.leg_damage + 2;
+			//TeamFortress_SetSpeed(other);
+			HurtLegs(other,2);
+			deathmsg = #DMSG_CALTROP;
+			TF_T_Damage(other, self, self.owner, 16, 0, #TF_TD_OTHER);
+		}
+		else // if its moving...
+		{
 			sprint(other, #PRINT_HIGH, "Woah! Flying caltrops!\n");
-            deathmsg = #DMSG_FLYCALTROP;
-    		TF_T_Damage(other, self, self.owner, 20 + random() * 9, 0, #TF_TD_OTHER);
-        }
+			deathmsg = #DMSG_FLYCALTROP;
+			TF_T_Damage(other, self, self.owner, 20 + random() * 9, 0, #TF_TD_OTHER);
+		}
 
-        dremove(self);
+		dremove(self);
 	}
 };
 

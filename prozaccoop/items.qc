@@ -15,6 +15,9 @@ float () IsSingleplayerItem =
 };
 #endif
 
+// Gizmo - moved this up here
+#define WEAPON_BIG2 1 
+
 
 void() W_SetCurrentAmmo;
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
@@ -980,6 +983,7 @@ AMMO
 
 ===============================================================================
 */
+
 void(entity pl, float typ) PrintGrenadeType =
 {
 	local string st;
@@ -1023,6 +1027,9 @@ void(entity pl, float typ) PrintGrenadeType =
 	sprint(pl, #PRINT_HIGH, st);
 };
 
+// Gizmo - commented out old extra gren code; when your ammo is full on rockets
+// you would always get an extra gren; bug? or an intentional side effect?
+/*
 float() GetGrenadePossibility =
 {
 	local float maxgrens1, maxgrens2;
@@ -1045,7 +1052,6 @@ float() GetGrenadePossibility =
 			sprint(other, #PRINT_HIGH, "You found a ");
 			PrintGrenadeType(other, other.tp_grenades_1);
 			sprint(other, #PRINT_HIGH, " grenade\n");
-
 			return #TRUE;
 		}
 	}
@@ -1063,6 +1069,7 @@ float() GetGrenadePossibility =
 
 	return #FALSE;
 };
+*/
 
 void() ammo_touch =
 {
@@ -1071,7 +1078,7 @@ void() ammo_touch =
 	local float 	gotgren;
 	local float 	gotbox;
 
-	gotgren = #FALSE;
+	gotgren = #GR_TYPE_NONE;
 	gotbox = #FALSE;
 
 	if (other.classname != "player")
@@ -1122,16 +1129,37 @@ void() ammo_touch =
 //	rockets
 	else if (self.weapon == 3)
 	{
-		gotgren = GetGrenadePossibility();
-
-		if (other.ammo_rockets >= TeamFortress_GetMaxAmmo(other, #IT_ROCKETS ))
-		{
-			gotbox = #FALSE;
+		// Gizmo - big boxes give extra grens
+		if (self.spawnflags & #WEAPON_BIG2) {
+			if (self.no_grenades_1 && other.no_grenades_1 < GetMaxGrens(other, 1)) {
+				other.no_grenades_1 = other.no_grenades_1 + 1;
+				gotgren = other.tp_grenades_1;
+			} else if (self.no_grenades_2 && other.no_grenades_2 < GetMaxGrens(other, 2)) {
+				other.no_grenades_2 = other.no_grenades_2 + 1;
+				gotgren = other.tp_grenades_2;
+			}
 		}
-		else
+
+		//if (other.ammo_rockets >= TeamFortress_GetMaxAmmo(other, #IT_ROCKETS))
+		//	gotbox = #FALSE;
+		if (other.ammo_rockets < TeamFortress_GetMaxAmmo(other, #IT_ROCKETS))
 		{
 			gotbox = #TRUE;
 			other.ammo_rockets = other.ammo_rockets + self.aflag;
+		}
+
+		// Gizmo - replenish grens if the box was taken
+		// TODO: only for big box
+		if (gotbox || gotgren != #GR_TYPE_NONE) {
+			self.no_grenades_1 = 0;
+			self.no_grenades_2 = 0;
+
+			if (random() < 0.5) {
+				if (random() < 0.5)
+					self.no_grenades_1 = 1;
+				else
+					self.no_grenades_2 = 1;
+			}
 		}
 	}
 
@@ -1144,6 +1172,7 @@ void() ammo_touch =
 		gotbox = #TRUE;
 	}
 
+	// FIXME
 	if (!gotbox && !gotgren)
 		return;
 	
@@ -1178,13 +1207,18 @@ void() ammo_touch =
 
 	}
 
+	// Gizmo
+	if (gotgren != #GR_TYPE_NONE) {
+		sprint (other, #PRINT_HIGH, "You found a ");
+		PrintGrenadeType (other, gotgren);
+		sprint (other, #PRINT_HIGH, " grenade\n");
+	}
+
 	Respawn_Item(self, other);
 };
 
 
 
-
-#define WEAPON_BIG2 1 
 
 /*QUAKED item_shells (0 .5 .8) (0 0 0) (32 32 32) big
 */
@@ -1266,6 +1300,14 @@ void() item_rockets =
 		precache_model ("maps/b_rock1.bsp");
 		setmodel (self, "maps/b_rock1.bsp");
 		self.aflag = 10;
+
+		// Gizmo - this fixes rocket pickups always giving you grens if you have max rocket ammo
+		if (random() < 0.5) {
+			if (random() < 0.5)
+				self.no_grenades_1 = 1;
+			else
+				self.no_grenades_2 = 1;
+		}
 	}
 	else
 	{
@@ -1273,6 +1315,7 @@ void() item_rockets =
 		setmodel (self, "maps/b_rock0.bsp");
 		self.aflag = 5;
 	}
+
 	self.weapon = 3;
 	self.netname = "rockets";
 	setsize (self, '0 0 0', '32 32 56');
