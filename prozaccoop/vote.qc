@@ -1176,7 +1176,8 @@ float(float final) CheckVoting =
 		num_total = num_for + num_against;
 */
 	// if this isn't the final check then only do anything if over 50% of the population has voted
-	if (!final && num_for + num_against <= num_total / 2)
+//	if (!final && num_for + num_against <= num_total / 2)
+	if (!final && num_for <= num_total / 2 && num_against <= num_total / 2)
 		return #FALSE;
 // GIZMO END
 
