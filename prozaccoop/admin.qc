@@ -1165,7 +1165,11 @@ void() Admin_Remove =
 		sprint (self, #PRINT_HIGH, trace_ent.classname);
 		sprint (self, #PRINT_HIGH, " has been removed\n");
 
-		remove (trace_ent);
+//		remove (trace_ent);
+
+		trace_ent.solid = #SOLID_NOT;
+		trace_ent.movetype = #MOVETYPE_NONE;
+		setmodel (trace_ent, "");
 	} else {
 		sprint (self, #PRINT_HIGH, trace_ent.classname);
 		sprint (self, #PRINT_HIGH, " is not a valid BSP object\n");
