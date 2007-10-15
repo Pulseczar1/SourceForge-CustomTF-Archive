@@ -4606,7 +4606,11 @@ void() CycleWeaponCommand =
 		return;
 
 	if (self.tfstate & #TFSTATE_CANT_MOVE)
-		return; 
+		return;
+
+	// Gizmo - drop anything picked up
+	if (self.pickedupobject_hands != world)
+		zg_drop (self, #FALSE);
 
 	it = self.weapons_carried;
 	self.impulse = 0;
