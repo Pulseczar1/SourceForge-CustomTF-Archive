@@ -64,13 +64,14 @@ void() JobArmy =
 {
 	if (self.current_menu == #MENU_ARMY)
 	{
-		if (self.job & #JOB_EXTRA1 || self.job & #JOB_EXTRA2)
-			Menu_Army_Input(7); // yeah hackish.. but does the job
-		else
-		{			 
-			if (self.demon_one)
+		// Gizmo - this should just always switch to the tactical menu to make impulse scripts easier
+//		if (self.job & #JOB_EXTRA1 || self.job & #JOB_EXTRA2)
+//			Menu_Army_Input(7); // yeah hackish.. but does the job
+//		else
+//		{			 
+//			if (self.demon_one)
 				Menu_Army_Input(6); // same comment :P
-		}
+//		}
 		
 		return;
 	}

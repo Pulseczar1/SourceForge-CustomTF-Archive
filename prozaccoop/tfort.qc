@@ -4028,7 +4028,8 @@ void() CyberAugSleep =
 
 void() TeamFortress_RegenerateCyber =
 {
-	//local entity te;
+	local entity oself;
+
 	if (self.is_abouttodie)
 		return;
 	
@@ -4043,7 +4044,12 @@ void() TeamFortress_RegenerateCyber =
 	if (self.owner.cutf_items & #CUTF_CYBERAUG && !(self.owner.is_malfunctioning)) //WK Custom class friendly
 	{
 		self.owner.armortype = self.owner.armor_allowed;
+		// Gizmo - whoever did this forgot that W_SetCurrentAmmo only works on self, fixed :)
+		oself = self;
+		self = self.owner;
 		W_SetCurrentAmmo();
+		self = oself;
+
 		if (self.owner.health < self.owner.max_health)
 		{
 			if (self.owner.ammo_medikit == 0)
@@ -4059,7 +4065,7 @@ void() TeamFortress_RegenerateCyber =
 				self.owner.ammo_medikit = self.owner.ammo_medikit - #PC_MEDIC_REGEN_AMOUNT / 2;
 			}
 		}
-		
+
 		if (self.owner.armorvalue < self.owner.maxarmor)
 		{
 			if (self.owner.ammo_cells == 0)
@@ -4076,7 +4082,7 @@ void() TeamFortress_RegenerateCyber =
 			}
 		}
 
-        UpdateCells(self.owner);
+		UpdateCells(self.owner);
 
 		if (self.owner.armorvalue > self.owner.maxarmor)
 			self.owner.armorvalue = self.owner.maxarmor;

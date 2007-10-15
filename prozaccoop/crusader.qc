@@ -140,15 +140,16 @@ entity (entity crusader) Crusader_FindIdiot =
 	local entity matched;
 	local vector store;
 	local float matchlevel, oldmatch;
-	
+
 	matchlevel = 0;
 	matched = crusader;
 	oldmatch = 0;
-	
+
 	guy = findradius(crusader.origin, 250);
 	while (guy)
 	{
-		if ((guy.classname == "player" && guy.health > 0) || IsMonster(guy))
+		// Gizmo - target must be visible
+		if (((guy.classname == "player" && guy.health > 0) || IsMonster(guy)) && visible2(guy, crusader))
 		{
 			store = normalize(guy.origin - crusader.origin);
 			matchlevel = crusader.v_angle * store;
@@ -160,7 +161,7 @@ entity (entity crusader) Crusader_FindIdiot =
 		}
 		guy = guy.chain;
 	}
-	
+
 	if (oldmatch > 0.2)
 		return matched;
 	else
@@ -171,19 +172,19 @@ void(float aur) AddAura =
 {
 	local float amount;
 	local entity targ;
-	
+
 	amount = time - self.job_finished;
 	if (amount > 60)
 		amount = 60;
-	
+
 	if (amount < 15)
 	{
 		sprint(self, #PRINT_HIGH, "You don't have enough mana to bestow an aura\n");
 		return;
 	}
-	
+
 	targ = Crusader_FindIdiot(self);
-	
+
 	#ifndef CRUSADER_TEST
 	if (self == targ)
 	{
@@ -191,7 +192,7 @@ void(float aur) AddAura =
 		return;
 	}
 	#endif
-	
+
 	if (targ.aura == aur)
 	{
 		sprint(self, #PRINT_HIGH, targ.netname, " already has that aura.\n");
@@ -206,7 +207,7 @@ void(float aur) AddAura =
 				sprint(self, #PRINT_HIGH, "You can't bestow an aura of haste onto an army soldier!\n");
 			else
 				sprint(self, #PRINT_HIGH, "You can't bestow an aura of haste onto a monster!\n");
-			
+
 			return;
 		}
 		else if (aur == #AURA_SPEED)
@@ -215,7 +216,7 @@ void(float aur) AddAura =
 				sprint(self, #PRINT_HIGH, "You can't bestow an aura of speed onto an army soldier!\n");
 			else
 				sprint(self, #PRINT_HIGH, "You can't bestow an aura of speed onto a monster!\n");
-			
+
 			return;
 		}
 	}
@@ -277,13 +278,13 @@ void(float aur) AddAura =
 		local string strung;
 		local float oldaur;
 		local string oldstrung;
-		
+
 		oldaur = targ.aura;
 		targ.aura = aur;
 		targ.crusader_inspirator = self;
 		amount = amount - 15;
 		self.job_finished = time - amount;
-		
+
 		// Spawn regeneration timer, if needed (monsters dont use one, they use the AI_Check_Contents sub)
 		if (aur == #AURA_REGEN && targ.classname == "player")
 		{
@@ -316,7 +317,7 @@ void(float aur) AddAura =
 			oldstrung = "Aura of Regeneration";
 		else if (oldaur == #AURA_SPEED)
 			oldstrung = "Aura of Speed";
-		
+
 		if (IsMonster(targ)) // Monsters
 		{
 			local string thingname;
@@ -334,18 +335,18 @@ void(float aur) AddAura =
 			sprint(targ.real_owner, #PRINT_HIGH, self.netname, " bestows upon your ",thingname," an ", strung);
 
 			teamprefixsprintbi(self.team_no,self,targ.real_owner);
-			
+
 			tmps = strcat(self.netname," gives to our ");
 			teamsprintbi(self,targ.real_owner,tmps,thingname," ",targ.netname," an ",strung);			 
 		}
 		else // Players
 		{
 			// TODO?: Use .undercover_name for spies?
-			
+
 			// Set new speed if speed aura is beeing cast or replaced
 			if (aur == #AURA_SPEED || oldaur == #AURA_SPEED)
 				TeamFortress_SetSpeed(targ);
-			
+
 			if (oldaur == 0)
 				sprint(self, #PRINT_HIGH, "You provide ", targ.netname, " with an ", strung);
 			else
@@ -366,7 +367,7 @@ void(float aur) AddAura =
 		}
 
 	#ifndef CRUSADER_TEST
-	
+
 	#ifndef ALLOW_AURAS_ON_CRUSADERS
 
 	}
@@ -374,7 +375,7 @@ void(float aur) AddAura =
 		sprint(self, #PRINT_HIGH, targ.netname, " is a Crusader and their Aura of Righteousness may not be replaced.\n");
 	//else
 	//	sprint(self, #PRINT_HIGH, "You may only bestow an aura upon a player\n");
-	
+
 	#endif
 
 	#endif
@@ -384,19 +385,19 @@ void() CrusaderAddInvisibility =
 {
 	local float amount;
 	local entity targ;
-	
+
 	amount = time - self.job_finished;
 	if (amount > 60)
 		amount = 60;
-	
+
 	if (amount < 45)
 	{
 		sprint(self, #PRINT_HIGH, "You don't have enough mana to grant invisibility\n");
 		return;
 	}
-	
+
 	targ = Crusader_FindIdiot(self);
-	
+
 	if (self == targ)
 	{
 		sprint(self, #PRINT_HIGH, "There is nobody there to bestow an aura upon\n");
@@ -414,7 +415,7 @@ void() CrusaderAddInvisibility =
 		sprint(self, #PRINT_HIGH, "You can't make an Army soldier invisible!\n");
 		return;
 	}
-	
+
 	#ifndef ALLOW_AURAS_ON_CRUSADERS
 	if (!(targ.job & #JOB_CRUSADER))
 	{
@@ -448,11 +449,11 @@ void() CrusaderAddInvisibility =
 		// Flash screen of both crusader and guy receiving aura
 		stuffcmd(self,"bf;bf\n");
 		stuffcmd(targ,"bf;bf\n");
-		
+
 		// Flash both crusader and target entities
 		MuzzleFlash(self);
 		MuzzleFlash(targ);
-		
+
 		sprint(self, #PRINT_HIGH, "You provide ", targ.netname, " with powers of invisibility! They will be invisible for the next 10 seconds!\n");
 		sprint(targ, #PRINT_HIGH, self.netname, " grants you an Aura of Invisibility! You will be fully invisibile for the next 10 seconds!\n");
 		targ.aura = #AURA_INVIS;
@@ -813,13 +814,19 @@ void () resurrect_think =
 	local entity oself, head;
 
 	// FIXME: the player could have died and respawned by now, but the functions that handle that are ugly...
-	if (self.owner.health <= 0 || vlen(self.real_owner.origin - self.owner.origin) > 200) {
+	if (self.owner.health <= 0) {
 		remove (self);
 		return;
 	}
 
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_CANT_MOVE);
 	TeamFortress_SetSpeed (self.owner);
+
+	if (vlen(self.real_owner.origin - self.owner.origin) > 200) {
+		//sprint (self.owner, #PRINT_HIGH, "Resurrect failed!\n");
+		remove (self);
+		return;
+	}
 
 	// make life easier
 	head = self.real_owner;

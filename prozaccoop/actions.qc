@@ -1,7 +1,7 @@
 /*======================================================
 	ACTIONS.QC			Custom TeamFortress v3.2	
 
-	(c) TeamFortress Software Pty Ltd 	13/5/97
+	(c) TeamFortress Software Pty Ltd	13/5/97
 	(c) William Kerney			2/9/00
 	(c) Craig Hauser				19/3/00
 ========================================================
@@ -36,11 +36,11 @@ void() TeamFortress_Discard =
 		if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_GRENADE_LAUNCHER || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || self.job & #JOB_GUERILLA))
 			newmis.ammo_rockets = self.ammo_rockets;
 		//OfN old bug, WEAP_SUPERSHOTGUN if (!(self.cutf_items & #CUTF_CYBERAUG || self.cutf_items & #CUTF_HOLO || self.weapons_carried & #WEAP_LASERCANNON || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_LIGHTNING || self.weapons_carried & #WEAP_SUPER_SHOTGUN || self.weapons_carried & #WEAP_ASSAULT_CANNON || self.weapons_carried & #WEAP_DAEDALUS || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER)))
-        //done -  FIXME: Add fieldgens
-        //if (!(self.cutf_items & #CUTF_CYBERAUG || self.cutf_items & #CUTF_HOLO || self.weapons_carried & #WEAP_LASERCANNON || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_LIGHTNING || self.weapons_carried & #WEAP_AIRF || self.weapons_carried & #WEAP_ASSAULT_CANNON || self.weapons_carried & #WEAP_DAEDALUS || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_FIELDGEN)))
-        //if (!(self.cutf_items & #CUTF_CYBERAUG || self.cutf_items & #CUTF_HOLO || self.weapons_carried & #WEAP_LASERCANNON || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_LIGHTNING || self.weapons_carried & #WEAP_AIRF || self.weapons_carried & #WEAP_ASSAULT_CANNON || self.weapons_carried & #WEAP_DAEDALUS || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_FIELDGEN) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_SENSOR)))
-        if (!(self.cutf_items & (#CUTF_CYBERAUG | #CUTF_HOLO) || self.weapons_carried & (#WEAP_LASERCANNON | #WEAP_INCENDIARY | #WEAP_LIGHTNING | #WEAP_ASSAULT_CANNON | #WEAP_DAEDALUS | #WEAP_AIRF) || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_FIELDGEN) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_SENSOR)))
-        //if (!(self.weapons_carried & #WEAP_SPANER && (self.cutf_items & (CUTF_SENTRYGUN |   )  )))
+		//done -  FIXME: Add fieldgens
+		//if (!(self.cutf_items & #CUTF_CYBERAUG || self.cutf_items & #CUTF_HOLO || self.weapons_carried & #WEAP_LASERCANNON || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_LIGHTNING || self.weapons_carried & #WEAP_AIRF || self.weapons_carried & #WEAP_ASSAULT_CANNON || self.weapons_carried & #WEAP_DAEDALUS || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_FIELDGEN)))
+		//if (!(self.cutf_items & #CUTF_CYBERAUG || self.cutf_items & #CUTF_HOLO || self.weapons_carried & #WEAP_LASERCANNON || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_LIGHTNING || self.weapons_carried & #WEAP_AIRF || self.weapons_carried & #WEAP_ASSAULT_CANNON || self.weapons_carried & #WEAP_DAEDALUS || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_FIELDGEN) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_SENSOR)))
+		if (!(self.cutf_items & (#CUTF_CYBERAUG | #CUTF_HOLO) || self.weapons_carried & (#WEAP_LASERCANNON | #WEAP_INCENDIARY | #WEAP_LIGHTNING | #WEAP_ASSAULT_CANNON | #WEAP_DAEDALUS | #WEAP_AIRF) || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_FIELDGEN) || (self.weapons_carried & #WEAP_SPANNER && self.cutf_items & #CUTF_SENSOR)))
+		//if (!(self.weapons_carried & #WEAP_SPANER && (self.cutf_items & (CUTF_SENTRYGUN |   )  )))
 			newmis.ammo_cells = self.ammo_cells;
 	}
 
@@ -99,12 +99,12 @@ void() TeamFortress_Discard =
 		newmis.velocity_z = 200;
 	}
 	newmis.avelocity = '0 300 0';
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0'); 	
 	setorigin (newmis, self.origin);
 	newmis.nextthink = time + 30;	// remove after 30 seconds
 	newmis.think = SUB_Remove;
 	newmis.touch = TeamFortress_AmmoboxTouch;
-	setmodel (newmis, "progs/backpack.mdl");    
+	setmodel (newmis, "progs/backpack.mdl");	
 };
 
 //=========================================================================
@@ -117,9 +117,9 @@ void() TeamFortress_SaveMe =
 	if (self.last_saveme_sound < time)
 	{
 		if (random() < 0.8)
-			sound(self, #CHAN_WEAPON, "speech/saveme1.wav", 1, #ATTN_NORM);	// MEDIC!
+			sound(self, #CHAN_WEAPON, "speech/saveme1.wav", 1, #ATTN_NORM); // MEDIC!
 		else
-			sound(self, #CHAN_WEAPON, "speech/saveme2.wav", 1, #ATTN_NORM);	// Excuse me...
+			sound(self, #CHAN_WEAPON, "speech/saveme2.wav", 1, #ATTN_NORM); // Excuse me...
 		self.last_saveme_sound = time + 4;
 	}
 
@@ -127,7 +127,7 @@ void() TeamFortress_SaveMe =
 	while (te)
 	{	
 		//if (self.weapons_carried & #WEAP_MEDIKIT) OfN WTF?
-          // Was ==, wtf?
+		  // Was ==, wtf?
 		if (self != te || te.weapons_carried & #WEAP_MEDIKIT || te.weapons_carried & #WEAP_SPANNER || te.cutf_items & #CUTF_SPY_KIT) //WK Custom class friendly
 		{
 			if (Teammate(self.team_no, te.team_no) || (te.cutf_items & #CUTF_SPY_KIT))
@@ -207,12 +207,12 @@ string (string s1, string s2, string s3, string s4, string s5, string s6, string
 // reports their health and armor.
 void(float inAuto) TeamFortress_ID =
 {
-    //WK All the inAuto and spacer stuff I added
+	//WK All the inAuto and spacer stuff I added
 	local vector src;
 	local string st, cls;
 	local string spacer;
 	src = self.origin + v_forward*10;
-    src_z = self.absmin_z + self.size_z * 0.7;
+	src_z = self.absmin_z + self.size_z * 0.7;
 	if (!inAuto) //WK I.e. just someone is doing it normally
 		traceline (src, src + v_forward*2048, #TL_EVERYTHING, self); //#TL_ANY_SOLID
 	else		//WK I.e. it is an autoscan
@@ -220,13 +220,13 @@ void(float inAuto) TeamFortress_ID =
 
 	if (inAuto)
 	{
-        if (trace_ent.classname == "player" && trace_ent.job & (#JOB_THIEF + #JOB_ACTIVE))
+		if (trace_ent.classname == "player" && trace_ent.job & (#JOB_THIEF + #JOB_ACTIVE))
 			return;
 
-        // Auto ID shouldn't pertubate menus
-        if (self.current_menu != 0)
-           return; 
-    }
+		// Auto ID shouldn't pertubate menus
+		if (self.current_menu != 0)
+		   return; 
+	}
 
 	//if (!inAuto)
 		//spacer = "\n\n\n\n\n";
@@ -237,86 +237,86 @@ void(float inAuto) TeamFortress_ID =
 	if (trace_ent != world && trace_ent.origin != world.origin )
 	{
 		#ifdef IDABLE_CORPSES
-        if (trace_ent.#corpseflag == #STRFLAG_CORPSE)
-        {
-            self.StatusRefreshTime = time + 1.5;
-            if (trace_ent.classname == "player")
-            {
-                if (trace_ent.playerclass == #PC_CUSTOM)
+		if (trace_ent.#corpseflag == #STRFLAG_CORPSE)
+		{
+			self.StatusRefreshTime = time + 1.5;
+			if (trace_ent.classname == "player")
+			{
+				if (trace_ent.playerclass == #PC_CUSTOM)
 					cls = TeamFortress_GetJobName(trace_ent.job);
 				else
 					cls = TeamFortress_GetClassName(trace_ent.playerclass);
 
-                if (Teammate(self.team_no,trace_ent.team_no))
-                    centerprint(self, spacer, trace_ent.netname, "'s corpse!\n\nNo ",cls," deserves this..");
-                else
-                    centerprint(self, spacer, "This enemy ",cls," looks like\n\n",trace_ent.netname,"'s corpse!");
-            
-                return;
-            }
-            else if (trace_ent.classname == "monster_corpse")
-            {
-                if (trace_ent.#monster_type == #MONSTER_ARMY)
-                {
-                    if (Teammate(self.team_no,trace_ent.team_no))
-                        centerprint(self, spacer, "Dead army comrade");
-                    else
-                        centerprint(self, spacer, "Dead enemy army guy");
-                }
-                else
-                {
-                    if (Teammate(self.team_no,trace_ent.team_no))
-                        centerprint(self, spacer, "This good beast was helping");
-                    else
-                        centerprint(self, spacer, "This thing isn't alive\n\nIt smells badly though");
-                }
+				if (Teammate(self.team_no,trace_ent.team_no))
+					centerprint(self, spacer, trace_ent.netname, "'s corpse!\n\nNo ",cls," deserves this..");
+				else
+					centerprint(self, spacer, "This enemy ",cls," looks like\n\n",trace_ent.netname,"'s corpse!");
+			
+				return;
+			}
+			else if (trace_ent.classname == "monster_corpse")
+			{
+				if (trace_ent.#monster_type == #MONSTER_ARMY)
+				{
+					if (Teammate(self.team_no,trace_ent.team_no))
+						centerprint(self, spacer, "Dead army comrade");
+					else
+						centerprint(self, spacer, "Dead enemy army guy");
+				}
+				else
+				{
+					if (Teammate(self.team_no,trace_ent.team_no))
+						centerprint(self, spacer, "This good beast was helping");
+					else
+						centerprint(self, spacer, "This thing isn't alive\n\nIt smells badly though");
+				}
 
-                return;
-            }
-            
-            // Player corpse on bodyque (unsafe to get name)
-            if (Teammate(self.team_no,trace_ent.team_no))
-                centerprint(self, spacer,"\nFallen teammate");
-            else
-                centerprint(self, spacer,"\nAn enemy rotten corpse");
+				return;
+			}
+			
+			// Player corpse on bodyque (unsafe to get name)
+			if (Teammate(self.team_no,trace_ent.team_no))
+				centerprint(self, spacer,"\nFallen teammate");
+			else
+				centerprint(self, spacer,"\nAn enemy rotten corpse");
 
-            return;
-        }
-        else 
-        #endif
-        #ifdef IDABLE_TFITEMS
-        if (trace_ent.classname == "item_tfgoal")
-        {
-            if (trace_ent.netname)
-            {
-                self.StatusRefreshTime = time + 1.5;
-                centerprint(self,trace_ent.netname);
-            }
+			return;
+		}
+		else 
+		#endif
+		#ifdef IDABLE_TFITEMS
+		if (trace_ent.classname == "item_tfgoal")
+		{
+			if (trace_ent.netname)
+			{
+				self.StatusRefreshTime = time + 1.5;
+				centerprint(self,trace_ent.netname);
+			}
 
-            return;
-        }
-        else
-        #endif
-        #ifdef IDABLE_RUNES
-        if (trace_ent.classname == "rune")
-        {
-            self.StatusRefreshTime = time + 1.5;
-            centerprint(self,trace_ent.netname);
+			return;
+		}
+		else
+		#endif
+		#ifdef IDABLE_RUNES
+		if (trace_ent.classname == "rune")
+		{
+			self.StatusRefreshTime = time + 1.5;
+			centerprint(self,trace_ent.netname);
 
-            return;
-        }
-        else
-        #endif
-        /*if (trace_ent.classname == "grenade" && trace_ent.netname == "land_mine")
-        {
-            self.StatusRefreshTime = time + 1.5;
-            if (Teammate(self.team_no,trace_ent.owner.team_no))
-                centerprint(self,"Friendly Mine");
-            else
-                centerprint(self,"Εξενω Mine");
-            return;
-        }*/
-        if (trace_ent.classname == "player" && trace_ent.health > 0)
+			return;
+		}
+		else
+		#endif
+		/*if (trace_ent.classname == "grenade" && trace_ent.netname == "land_mine")
+		{
+			self.StatusRefreshTime = time + 1.5;
+			if (Teammate(self.team_no,trace_ent.owner.team_no))
+				centerprint(self,"Friendly Mine");
+			else
+				centerprint(self,"Εξενω Mine");
+			return;
+		}*/
+		if (trace_ent.classname == "player" && trace_ent.health > 0)
 		{
 			self.StatusRefreshTime = time + 1.5;
 
@@ -424,7 +424,7 @@ void(float inAuto) TeamFortress_ID =
 				centerprint(self, spacer,"Εξενω Dispenser made by\n\n", trace_ent.real_owner.netname, "\n");
 	
 		}
-   		else if (trace_ent.classname == "building_fieldgen")
+		else if (trace_ent.classname == "building_fieldgen")
 		{
 			self.StatusRefreshTime = time + 1.5;
 			
@@ -443,20 +443,20 @@ void(float inAuto) TeamFortress_ID =
 		{
 			self.StatusRefreshTime = time + 1.5;
 			if (self == trace_ent.real_owner)
-            {
-			    if (self.cutf_items & #CUTF_DOUBLESENTRY)
-                {
-                    if (trace_ent.dont_do_triggerwork == 1)
-                        centerprint(self, spacer,"Your Sentry Gun #1\n");
-                    else if (trace_ent.dont_do_triggerwork == 2)
-                        centerprint(self, spacer,"Your Sentry Gun #2\n");
-                    else
-                        centerprint(self, spacer,"Your Sentry Gun\n");
-                }
-                else
-                    centerprint(self, spacer,"Your Sentry Gun\n");
+			{
+				if (self.cutf_items & #CUTF_DOUBLESENTRY)
+				{
+					if (trace_ent.dont_do_triggerwork == 1)
+						centerprint(self, spacer,"Your Sentry Gun #1\n");
+					else if (trace_ent.dont_do_triggerwork == 2)
+						centerprint(self, spacer,"Your Sentry Gun #2\n");
+					else
+						centerprint(self, spacer,"Your Sentry Gun\n");
+				}
+				else
+					centerprint(self, spacer,"Your Sentry Gun\n");
 			}
-            else if (!teamplay)
+			else if (!teamplay)
 				centerprint(self, spacer,"Sentry Gun made by\n\n", trace_ent.real_owner.netname,"\n");
 			else if (Teammate(trace_ent.team_no, self.team_no))
 				centerprint(self, spacer,"Friendly Sentry Gun made by\n\n", trace_ent.real_owner.netname,"\n");
@@ -467,20 +467,20 @@ void(float inAuto) TeamFortress_ID =
 		{
 			self.StatusRefreshTime = time + 1.5;
 			if (self == trace_ent.real_owner)
-            {
-                if (self.tf_items & #NIT_DOUBLETESLA)
-                {
-                    if (trace_ent.dont_do_triggerwork == 1)
-                        centerprint(self, spacer,"Your Tesla Coil #1\n");
-                    else if (trace_ent.dont_do_triggerwork == 2)
-                        centerprint(self, spacer,"Your Tesla Coil #2\n");
-                    else
-                        centerprint(self, spacer,"Your Tesla Coil\n");
-                }
-                else
-                    centerprint(self, spacer,"Your Tesla Coil\n");				
+			{
+				if (self.tf_items & #NIT_DOUBLETESLA)
+				{
+					if (trace_ent.dont_do_triggerwork == 1)
+						centerprint(self, spacer,"Your Tesla Coil #1\n");
+					else if (trace_ent.dont_do_triggerwork == 2)
+						centerprint(self, spacer,"Your Tesla Coil #2\n");
+					else
+						centerprint(self, spacer,"Your Tesla Coil\n");
+				}
+				else
+					centerprint(self, spacer,"Your Tesla Coil\n");				
 			}
-            else if (!teamplay)
+			else if (!teamplay)
 				centerprint(self, spacer,"Tesla Coil made by\n\n", trace_ent.real_owner.netname,"\n");
 			else if (Teammate(trace_ent.team_no, self.team_no))
 				centerprint(self, spacer,"Friendly Tesla made by\n\n", trace_ent.real_owner.netname,"\n");
@@ -523,7 +523,7 @@ void(float inAuto) TeamFortress_ID =
 			else 
 				centerprint(self, spacer,"Εξενω Teleporter Pad made by\n\n", trace_ent.real_owner.netname,"\n");
 		}
-        else if (trace_ent.classname == "monster_demon1")
+		else if (trace_ent.classname == "monster_demon1")
 		{
 			//custom_demon_name(trace_ent); //CH
 			self.StatusRefreshTime = time + 1.5;
@@ -595,7 +595,7 @@ void(float inAuto) TeamFortress_ID =
 					centerprint(self, spacer,trace_ent.netname,"\n\nεξενω shambler summoned by\n\n ", trace_ent.real_owner.netname);
 			}
 		}
-        else if (trace_ent.classname == "monster_fish") //- OfN
+		else if (trace_ent.classname == "monster_fish") //- OfN
 		{
 			//custom_demon_name(trace_ent); 
 			self.StatusRefreshTime = time + 1.5;
@@ -619,7 +619,7 @@ void(float inAuto) TeamFortress_ID =
 					centerprint(self, spacer,trace_ent.netname,"\n\nεξενω Piranha summoned by\n\n", trace_ent.real_owner.netname);
 			}
 		}
-        else if (trace_ent.classname == "monster_gremlin") //- OfN
+		else if (trace_ent.classname == "monster_gremlin") //- OfN
 		{
 			//custom_demon_name(trace_ent); 
 			self.StatusRefreshTime = time + 1.5;
@@ -643,7 +643,7 @@ void(float inAuto) TeamFortress_ID =
 					centerprint(self, spacer,trace_ent.netname,"\n\nεξενω Gremlin summoned by\n\n", trace_ent.real_owner.netname);
 			}
 		}
-        else if (trace_ent.classname == "monster_wizard") //- OfN
+		else if (trace_ent.classname == "monster_wizard") //- OfN
 		{
 			//custom_demon_name(trace_ent); 
 			self.StatusRefreshTime = time + 1.5;
@@ -773,513 +773,513 @@ void(float inAuto) TeamFortress_ID =
 // Reloads the current weapon
 void() TeamFortress_ReloadCurrentWeapon =
 {
-    // OfN - Psionized guys can't reload
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You can't reload right now!\n");
-        return;
-    }
-
-    //---------------- CLIP EXTENDER (same as below but with _EX values -------------//
-    if (self.cutf_items & #CUTF_CLIPEXTEND)
-    {
-        local float rt;
-        local entity tWeapon;
-
-        if (self.current_weapon == #WEAP_SHOTGUN)
-        {
-            if (self.reload_shotgun == 0)
-            {
-                sprint(self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if ( self.reload_shotgun < self.ammo_shells)
-            {
-                Attack_Finished(0.4);
-
-                // Calculate the reload time needed
-                rt = (#RE_SHOTGUN_EX - self.reload_shotgun) / #RE_SHOTGUN_EX;
-                rt = #RE_SHOTGUN_TIME_EX - (#RE_SHOTGUN_TIME_EX * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_shotgun = 0;
-                if (self.ammo_shells < #RE_SHOTGUN_EX)
-                    self.reload_shotgun = #RE_SHOTGUN_EX - self.ammo_shells;
-               
-                sprint(self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_shotgun;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint(self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
-        {
-            if (self.reload_super_shotgun == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if ( self.reload_super_shotgun < self.ammo_shells)
-            {
-                Attack_Finished(0.7);
-
-                // Calculate the reload time needed
-                rt = (#RE_SUPER_SHOTGUN_EX - self.reload_super_shotgun) / #RE_SUPER_SHOTGUN_EX;
-                rt = #RE_SUPER_SHOTGUN_TIME_EX - (#RE_SUPER_SHOTGUN_TIME_EX * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_super_shotgun = 0;
-                if (self.ammo_shells < #RE_SUPER_SHOTGUN_EX)
-                    self.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX - self.ammo_shells;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_super_shotgun;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_LASERCANNON)
-        {
-            if (self.reload_laser_cannon == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Cannon already in full charge.\n");
-                return;
-            }
-
-            if ( self.reload_laser_cannon < self.ammo_cells)
-            {
-                Attack_Finished(2);
-
-                // Calculate the reload time needed
-                rt = (#RE_LASER_CANNON_EX - self.reload_laser_cannon) / #RE_LASER_CANNON_EX;
-                rt = #RE_LASER_CANNON_TIME_EX - (#RE_LASER_CANNON_TIME_EX * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_laser_cannon = 0;
-                if (self.ammo_cells < #RE_LASER_CANNON_EX)
-                    self.reload_laser_cannon = #RE_LASER_CANNON_EX - self.ammo_cells;
-
-                sprint (self, #PRINT_HIGH, "Charging cannon...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_laser_cannon;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint (self, #PRINT_HIGH, "not enough cells to recharge\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
-        {
-            if (self.reload_light_assault == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if ( self.reload_light_assault < self.ammo_nails)
-            {
-                Attack_Finished(2);
-
-                // Calculate the reload time needed
-                rt = (#RE_LIGHT_ASSAULT_EX - self.reload_light_assault) / #RE_LIGHT_ASSAULT_EX;
-                rt = #RE_LIGHT_ASSAULT_TIME_EX - (#RE_LIGHT_ASSAULT_TIME_EX * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_light_assault = 0;
-                if (self.ammo_nails < #RE_LIGHT_ASSAULT_EX)
-                    self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_nails;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_light_assault;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
-        {
-            if (self.reload_grenade_launcher == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-            
-            if (self.reload_grenade_launcher < self.ammo_rockets)
-            {
-                Attack_Finished(0.6);
-
-                // Calculate the reload time needed
-                rt = (#RE_GRENADE_LAUNCHER_EX - self.reload_grenade_launcher) / #RE_GRENADE_LAUNCHER_EX;
-                rt = #RE_GRENADE_LAUNCHER_TIME_EX - (#RE_GRENADE_LAUNCHER_TIME_EX * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_grenade_launcher = 0;
-                if (self.ammo_rockets < #RE_GRENADE_LAUNCHER_EX)
-                    self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER_EX - self.ammo_rockets;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_grenade_launcher;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else 
-            {
-                sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER)
-        {
-            if (self.reload_rocket_launcher == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if (self.reload_rocket_launcher < self.ammo_rockets)
-            {
-                Attack_Finished(0.8);
-
-                // Calculate the reload time needed
-                rt = (#RE_ROCKET_LAUNCHER_EX - self.reload_rocket_launcher) / #RE_ROCKET_LAUNCHER_EX;
-                rt = #RE_ROCKET_LAUNCHER_TIME_EX - (#RE_ROCKET_LAUNCHER_TIME_EX * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_rocket_launcher = 0;
-
-                if (self.ammo_rockets < #RE_ROCKET_LAUNCHER_EX)
-                    self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER_EX - self.ammo_rockets;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_rocket_launcher;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-        }
-
-    
-
-    } // CLIP EXTENDER
-    else
-    {
-
-        local float rt;
-        local entity tWeapon;
-
-        if (self.current_weapon == #WEAP_SHOTGUN)
-        {
-            if (self.reload_shotgun == 0)
-            {
-                sprint(self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if ( self.reload_shotgun < self.ammo_shells)
-            {
-                Attack_Finished(0.4);
-
-                // Calculate the reload time needed
-                rt = (#RE_SHOTGUN - self.reload_shotgun) / #RE_SHOTGUN;
-                rt = #RE_SHOTGUN_TIME - (#RE_SHOTGUN_TIME * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_shotgun = 0;
-                if (self.ammo_shells < #RE_SHOTGUN)
-                    self.reload_shotgun = #RE_SHOTGUN - self.ammo_shells;
-               
-                sprint(self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_shotgun;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint(self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
-        {
-            if (self.reload_super_shotgun == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if ( self.reload_super_shotgun < self.ammo_shells)
-            {
-                Attack_Finished(0.7);
-
-                // Calculate the reload time needed
-                rt = (#RE_SUPER_SHOTGUN - self.reload_super_shotgun) / #RE_SUPER_SHOTGUN;
-                rt = #RE_SUPER_SHOTGUN_TIME - (#RE_SUPER_SHOTGUN_TIME * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_super_shotgun = 0;
-                if (self.ammo_shells < #RE_SUPER_SHOTGUN)
-                    self.reload_super_shotgun = #RE_SUPER_SHOTGUN - self.ammo_shells;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_super_shotgun;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_LASERCANNON)
-        {
-            if (self.reload_laser_cannon == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Cannon already in full charge.\n");
-                return;
-            }
-
-            if ( self.reload_laser_cannon < self.ammo_cells)
-            {
-                Attack_Finished(2);
-
-                // Calculate the reload time needed
-                rt = (#RE_LASER_CANNON - self.reload_laser_cannon) / #RE_LASER_CANNON;
-                rt = #RE_LASER_CANNON_TIME - (#RE_LASER_CANNON_TIME * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_laser_cannon = 0;
-                if (self.ammo_cells < #RE_LASER_CANNON)
-                    self.reload_laser_cannon = #RE_LASER_CANNON - self.ammo_cells;
-
-                sprint (self, #PRINT_HIGH, "Charging cannon...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_laser_cannon;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint (self, #PRINT_HIGH, "not enough cells to recharge\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
-        {
-            if (self.reload_light_assault == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if ( self.reload_light_assault < self.ammo_nails)
-            {
-                Attack_Finished(2);
-
-                // Calculate the reload time needed
-                rt = (#RE_LIGHT_ASSAULT - self.reload_light_assault) / #RE_LIGHT_ASSAULT;
-                rt = #RE_LIGHT_ASSAULT_TIME - (#RE_LIGHT_ASSAULT_TIME * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_light_assault = 0;
-                if (self.ammo_nails < #RE_LIGHT_ASSAULT)
-                    self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_nails;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_light_assault;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else
-            {
-                sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
-        {
-            if (self.reload_grenade_launcher == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-            
-            if (self.reload_grenade_launcher < self.ammo_rockets)
-            {
-                Attack_Finished(0.6);
-
-                // Calculate the reload time needed
-                rt = (#RE_GRENADE_LAUNCHER - self.reload_grenade_launcher) / #RE_GRENADE_LAUNCHER;
-                rt = #RE_GRENADE_LAUNCHER_TIME - (#RE_GRENADE_LAUNCHER_TIME * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_grenade_launcher = 0;
-                if (self.ammo_rockets < #RE_GRENADE_LAUNCHER)
-                    self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER - self.ammo_rockets;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_grenade_launcher;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-            else 
-            {
-                sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
-            }
-        }
-        else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER)
-        {
-            if (self.reload_rocket_launcher == 0)
-            {
-                sprint (self, #PRINT_HIGH, "Clip full.\n");
-                return;
-            }
-
-            if (self.reload_rocket_launcher < self.ammo_rockets)
-            {
-                Attack_Finished(0.8);
-
-                // Calculate the reload time needed
-                rt = (#RE_ROCKET_LAUNCHER - self.reload_rocket_launcher) / #RE_ROCKET_LAUNCHER;
-                rt = #RE_ROCKET_LAUNCHER_TIME - (#RE_ROCKET_LAUNCHER_TIME * rt);
-
-                if (self.#runes & #RUNE_SPEED)
-                    rt = rt * #SPEEDRUNE_RELOADMULT;
-
-                self.reload_rocket_launcher = 0;
-
-                if (self.ammo_rockets < #RE_ROCKET_LAUNCHER)
-                    self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER - self.ammo_rockets;
-
-                sprint (self, #PRINT_HIGH, "reloading...\n");
-                self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
-                tWeapon = spawn();
-                tWeapon.netname = "reloadtimer"; //WK For Judoka code
-                tWeapon.owner = self;
-                tWeapon.classname = "timer";
-                tWeapon.nextthink = time + rt;
-                tWeapon.think = W_Reload_rocket_launcher;
-
-                self.weaponmodel = "";
-                self.weaponframe = 0;
-            }
-        }
-    } // CLIP EXTENDER (END ELSE)
+	// OfN - Psionized guys can't reload
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You can't reload right now!\n");
+		return;
+	}
+
+	//---------------- CLIP EXTENDER (same as below but with _EX values -------------//
+	if (self.cutf_items & #CUTF_CLIPEXTEND)
+	{
+		local float rt;
+		local entity tWeapon;
+
+		if (self.current_weapon == #WEAP_SHOTGUN)
+		{
+			if (self.reload_shotgun == 0)
+			{
+				sprint(self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if ( self.reload_shotgun < self.ammo_shells)
+			{
+				Attack_Finished(0.4);
+
+				// Calculate the reload time needed
+				rt = (#RE_SHOTGUN_EX - self.reload_shotgun) / #RE_SHOTGUN_EX;
+				rt = #RE_SHOTGUN_TIME_EX - (#RE_SHOTGUN_TIME_EX * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_shotgun = 0;
+				if (self.ammo_shells < #RE_SHOTGUN_EX)
+					self.reload_shotgun = #RE_SHOTGUN_EX - self.ammo_shells;
+			   
+				sprint(self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_shotgun;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint(self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
+		{
+			if (self.reload_super_shotgun == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if ( self.reload_super_shotgun < self.ammo_shells)
+			{
+				Attack_Finished(0.7);
+
+				// Calculate the reload time needed
+				rt = (#RE_SUPER_SHOTGUN_EX - self.reload_super_shotgun) / #RE_SUPER_SHOTGUN_EX;
+				rt = #RE_SUPER_SHOTGUN_TIME_EX - (#RE_SUPER_SHOTGUN_TIME_EX * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_super_shotgun = 0;
+				if (self.ammo_shells < #RE_SUPER_SHOTGUN_EX)
+					self.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX - self.ammo_shells;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_super_shotgun;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_LASERCANNON)
+		{
+			if (self.reload_laser_cannon == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Cannon already in full charge.\n");
+				return;
+			}
+
+			if ( self.reload_laser_cannon < self.ammo_cells)
+			{
+				Attack_Finished(2);
+
+				// Calculate the reload time needed
+				rt = (#RE_LASER_CANNON_EX - self.reload_laser_cannon) / #RE_LASER_CANNON_EX;
+				rt = #RE_LASER_CANNON_TIME_EX - (#RE_LASER_CANNON_TIME_EX * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_laser_cannon = 0;
+				if (self.ammo_cells < #RE_LASER_CANNON_EX)
+					self.reload_laser_cannon = #RE_LASER_CANNON_EX - self.ammo_cells;
+
+				sprint (self, #PRINT_HIGH, "Charging cannon...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_laser_cannon;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint (self, #PRINT_HIGH, "not enough cells to recharge\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
+		{
+			if (self.reload_light_assault == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if ( self.reload_light_assault < self.ammo_nails)
+			{
+				Attack_Finished(2);
+
+				// Calculate the reload time needed
+				rt = (#RE_LIGHT_ASSAULT_EX - self.reload_light_assault) / #RE_LIGHT_ASSAULT_EX;
+				rt = #RE_LIGHT_ASSAULT_TIME_EX - (#RE_LIGHT_ASSAULT_TIME_EX * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_light_assault = 0;
+				if (self.ammo_nails < #RE_LIGHT_ASSAULT_EX)
+					self.reload_light_assault = #RE_LIGHT_ASSAULT_EX - self.ammo_nails;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_light_assault;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
+		{
+			if (self.reload_grenade_launcher == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+			
+			if (self.reload_grenade_launcher < self.ammo_rockets)
+			{
+				Attack_Finished(0.6);
+
+				// Calculate the reload time needed
+				rt = (#RE_GRENADE_LAUNCHER_EX - self.reload_grenade_launcher) / #RE_GRENADE_LAUNCHER_EX;
+				rt = #RE_GRENADE_LAUNCHER_TIME_EX - (#RE_GRENADE_LAUNCHER_TIME_EX * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_grenade_launcher = 0;
+				if (self.ammo_rockets < #RE_GRENADE_LAUNCHER_EX)
+					self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER_EX - self.ammo_rockets;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_grenade_launcher;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else 
+			{
+				sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER)
+		{
+			if (self.reload_rocket_launcher == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if (self.reload_rocket_launcher < self.ammo_rockets)
+			{
+				Attack_Finished(0.8);
+
+				// Calculate the reload time needed
+				rt = (#RE_ROCKET_LAUNCHER_EX - self.reload_rocket_launcher) / #RE_ROCKET_LAUNCHER_EX;
+				rt = #RE_ROCKET_LAUNCHER_TIME_EX - (#RE_ROCKET_LAUNCHER_TIME_EX * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_rocket_launcher = 0;
+
+				if (self.ammo_rockets < #RE_ROCKET_LAUNCHER_EX)
+					self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER_EX - self.ammo_rockets;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_rocket_launcher;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+		}
+
+	
+
+	} // CLIP EXTENDER
+	else
+	{
+
+		local float rt;
+		local entity tWeapon;
+
+		if (self.current_weapon == #WEAP_SHOTGUN)
+		{
+			if (self.reload_shotgun == 0)
+			{
+				sprint(self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if ( self.reload_shotgun < self.ammo_shells)
+			{
+				Attack_Finished(0.4);
+
+				// Calculate the reload time needed
+				rt = (#RE_SHOTGUN - self.reload_shotgun) / #RE_SHOTGUN;
+				rt = #RE_SHOTGUN_TIME - (#RE_SHOTGUN_TIME * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_shotgun = 0;
+				if (self.ammo_shells < #RE_SHOTGUN)
+					self.reload_shotgun = #RE_SHOTGUN - self.ammo_shells;
+			   
+				sprint(self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_shotgun;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint(self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_SUPER_SHOTGUN)
+		{
+			if (self.reload_super_shotgun == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if ( self.reload_super_shotgun < self.ammo_shells)
+			{
+				Attack_Finished(0.7);
+
+				// Calculate the reload time needed
+				rt = (#RE_SUPER_SHOTGUN - self.reload_super_shotgun) / #RE_SUPER_SHOTGUN;
+				rt = #RE_SUPER_SHOTGUN_TIME - (#RE_SUPER_SHOTGUN_TIME * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_super_shotgun = 0;
+				if (self.ammo_shells < #RE_SUPER_SHOTGUN)
+					self.reload_super_shotgun = #RE_SUPER_SHOTGUN - self.ammo_shells;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_super_shotgun;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_LASERCANNON)
+		{
+			if (self.reload_laser_cannon == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Cannon already in full charge.\n");
+				return;
+			}
+
+			if ( self.reload_laser_cannon < self.ammo_cells)
+			{
+				Attack_Finished(2);
+
+				// Calculate the reload time needed
+				rt = (#RE_LASER_CANNON - self.reload_laser_cannon) / #RE_LASER_CANNON;
+				rt = #RE_LASER_CANNON_TIME - (#RE_LASER_CANNON_TIME * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_laser_cannon = 0;
+				if (self.ammo_cells < #RE_LASER_CANNON)
+					self.reload_laser_cannon = #RE_LASER_CANNON - self.ammo_cells;
+
+				sprint (self, #PRINT_HIGH, "Charging cannon...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_laser_cannon;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint (self, #PRINT_HIGH, "not enough cells to recharge\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_LIGHT_ASSAULT)
+		{
+			if (self.reload_light_assault == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if ( self.reload_light_assault < self.ammo_nails)
+			{
+				Attack_Finished(2);
+
+				// Calculate the reload time needed
+				rt = (#RE_LIGHT_ASSAULT - self.reload_light_assault) / #RE_LIGHT_ASSAULT;
+				rt = #RE_LIGHT_ASSAULT_TIME - (#RE_LIGHT_ASSAULT_TIME * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_light_assault = 0;
+				if (self.ammo_nails < #RE_LIGHT_ASSAULT)
+					self.reload_light_assault = #RE_LIGHT_ASSAULT - self.ammo_nails;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_light_assault;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else
+			{
+				sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_GRENADE_LAUNCHER)
+		{
+			if (self.reload_grenade_launcher == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+			
+			if (self.reload_grenade_launcher < self.ammo_rockets)
+			{
+				Attack_Finished(0.6);
+
+				// Calculate the reload time needed
+				rt = (#RE_GRENADE_LAUNCHER - self.reload_grenade_launcher) / #RE_GRENADE_LAUNCHER;
+				rt = #RE_GRENADE_LAUNCHER_TIME - (#RE_GRENADE_LAUNCHER_TIME * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_grenade_launcher = 0;
+				if (self.ammo_rockets < #RE_GRENADE_LAUNCHER)
+					self.reload_grenade_launcher = #RE_GRENADE_LAUNCHER - self.ammo_rockets;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_grenade_launcher;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+			else 
+			{
+				sprint (self, #PRINT_HIGH, "not enough ammo to reload\n");
+			}
+		}
+		else if (self.current_weapon == #WEAP_ROCKET_LAUNCHER)
+		{
+			if (self.reload_rocket_launcher == 0)
+			{
+				sprint (self, #PRINT_HIGH, "Clip full.\n");
+				return;
+			}
+
+			if (self.reload_rocket_launcher < self.ammo_rockets)
+			{
+				Attack_Finished(0.8);
+
+				// Calculate the reload time needed
+				rt = (#RE_ROCKET_LAUNCHER - self.reload_rocket_launcher) / #RE_ROCKET_LAUNCHER;
+				rt = #RE_ROCKET_LAUNCHER_TIME - (#RE_ROCKET_LAUNCHER_TIME * rt);
+
+				if (self.#runes & #RUNE_SPEED)
+					rt = rt * #SPEEDRUNE_RELOADMULT;
+
+				self.reload_rocket_launcher = 0;
+
+				if (self.ammo_rockets < #RE_ROCKET_LAUNCHER)
+					self.reload_rocket_launcher = #RE_ROCKET_LAUNCHER - self.ammo_rockets;
+
+				sprint (self, #PRINT_HIGH, "reloading...\n");
+				self.tfstate = (self.tfstate | #TFSTATE_RELOADING);
+				tWeapon = spawn();
+				tWeapon.netname = "reloadtimer"; //WK For Judoka code
+				tWeapon.owner = self;
+				tWeapon.classname = "timer";
+				tWeapon.nextthink = time + rt;
+				tWeapon.think = W_Reload_rocket_launcher;
+
+				self.weaponmodel = "";
+				self.weaponframe = 0;
+			}
+		}
+	} // CLIP EXTENDER (END ELSE)
 };
 
 //CH drops an item TF goal if the bits are set to allow it.
 float() TeamFortress_DropItems =
 {
 	local entity tg;
-    local float counter;
+	local float counter;
 
-    counter = 0;
+	counter = 0;
 	//local string temp;
 
 	tg = find (world, classname, "item_tfgoal");
@@ -1290,14 +1290,14 @@ float() TeamFortress_DropItems =
 			if (tg.goal_activation & #TFGR_DROPITEMS) // Grievre fix: was goal_result
 			{
 				if (tg.netname)
-                    sprint (self, #PRINT_HIGH, "Dropping item: ", tg.netname, "\n");
+					sprint (self, #PRINT_HIGH, "Dropping item: ", tg.netname, "\n");
 				
-                counter = counter + 1;
+				counter = counter + 1;
 
-                if (counter > 1)
-                    tfgoalitem_RemoveFromPlayer(tg, self, 0);
-                else
-                    tfgoalitem_RemoveFromPlayer(tg, self, 2); // last param was 0, OfN added 2, which tosses item in player dir, see tfortmap.qc
+				if (counter > 1)
+					tfgoalitem_RemoveFromPlayer(tg, self, 0);
+				else
+					tfgoalitem_RemoveFromPlayer(tg, self, 2); // last param was 0, OfN added 2, which tosses item in player dir, see tfortmap.qc
 //CH it treats it as though you died.  And if bits are set, you throw it, or it gets removed etc.
 			}
 		}
@@ -1305,5 +1305,5 @@ float() TeamFortress_DropItems =
 		tg = find(tg, classname, "item_tfgoal");
 	}
 
-    return counter;
+	return counter;
 };

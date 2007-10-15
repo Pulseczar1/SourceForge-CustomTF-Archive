@@ -2894,7 +2894,8 @@ void() PlayerPreThink =
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if (time > self.attack_finished && self.currentammo == 0 && self.weapon > #WEAP_AXE)
+	// Gizmo - fixed this happening while building
+	if (time > self.attack_finished && self.currentammo == 0 && self.weapon > #WEAP_AXE && !self.is_building)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();

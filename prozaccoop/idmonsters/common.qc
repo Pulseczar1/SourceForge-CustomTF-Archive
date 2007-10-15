@@ -624,33 +624,13 @@ void () COOP_SetLives =
 
 void () respawn_monster =
 {
-	local entity head;
 	local float savedlives;
 
-/*
-	head = findradius (self.origin, 56);
-
-	while (head) {
-		if (head.takedamage && head.health > 0) {
-			self.nextthink = time + 5;
-			self.think = respawn_think;
-			return;
-		}
-
-		head = head.chain;
-	}
-*/
+	// make sure to erase the touch function, the rest should be reset by the spawn function (size, solid, and movetype)
+	self.touch = SUB_Null;
 
 	// play teleport effect
 	spawn_tfog (self.origin);
-/*
-	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-	WriteByte (#MSG_BROADCAST, #TE_TELEPORT);
-	WriteCoord (#MSG_BROADCAST, self.origin_x);
-	WriteCoord (#MSG_BROADCAST, self.origin_y);
-	WriteCoord (#MSG_BROADCAST, self.origin_z);
-	multicast (self.origin, #MULTICAST_PHS);
-*/
 
 	// respawn the monster
 	savedlives = self.lives;
@@ -671,35 +651,28 @@ void () respawn_monster =
 void () respawn_think;
 void() respawn_verify =
 {
-	local entity other2;
-
-	if (other == self.owner)
-		return;
-
-	// if we get here then something is in the way
+	// if something is in the way, then extend the respawn time 5 seconds and resetup the trigger
+	// at that time so we can check for still objects again after the 5 seconds are up
 	if (other.takedamage && other.health > 0) {
-		self.owner.nextthink = time + 5;
-		self.owner.think = respawn_think;
-		remove (self);
+		self.nextthink = time + 5;
+		self.think = respawn_think;
+
+		// don't let anything else touching within 5 seconds reset the timer back to 5 seconds
+		self.touch = SUB_Null;
+		// don't let the sizebox continue to grow each time
+		setsize (self, self.mins + '1 1 1', self.maxs - '1 1 1');
 	}
 };
 
 void () respawn_think =
 {
-	local entity toucher;
+	// setup the monster to be a trigger before it's spawned, to check for things in the way
+	self.movetype	= #MOVETYPE_NONE;
+	self.solid		= #SOLID_TRIGGER;
+	self.touch		= respawn_verify;
+	setsize (self, self.mins - '1 1 1', self.maxs + '1 1 1');
 
-	toucher = spawn();
-	toucher.movetype = #MOVETYPE_NONE;
-	toucher.solid = #SOLID_TRIGGER;
-	toucher.angles = '0 0 0';
-	setsize (toucher, self.mins - '1 1 1', self.maxs + '1 1 1');
-	setorigin (toucher, self.origin);
-	toucher.touch = respawn_verify;
-	toucher.nextthink = time + 0.2;
-	toucher.think = SUB_Remove;
-	toucher.owner = self;
-
-	self.nextthink = time + 0.3;
+	self.nextthink = time + 0.2;
 	self.think = respawn_monster;
 	
 	force_retouch = 2;		// make sure even still objects get hit
