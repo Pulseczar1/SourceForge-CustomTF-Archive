@@ -17,10 +17,13 @@ Zero-Gravity gun
 
 
 // FIXME: change some of these to macros
-.entity pickedupobject_hands;
-.entity pickupthink_hands;
-.entity _oldowner;
-.float oldmovetype;
+.entity	pickedupobject_hands;
+.entity	pickupthink_hands;
+.entity	_oldowner;
+.entity	pickedupby;								// set if the object is being picked up
+.float	oldmovetype;
+
+float		unlockedZeroGrav;							// set to TRUE if unlocked
 
 void (entity pickuper, float toss) zg_drop;
 float (entity pickupee) zg_getpickupdist;
@@ -158,16 +161,24 @@ float (entity source, entity targ) zg_infront =
 
 float (entity tester, entity test) zg_invalidtarget =
 {
-	if (test.solid == #SOLID_BSP || test == world || test.movetype == #MOVETYPE_NONE || test.pickedupobject_hands == test)
+	if (test.solid == #SOLID_BSP || test == world /*|| test.movetype == #MOVETYPE_NONE*/ || test.pickedupby != world)
 		return #TRUE;
-	if (test.flags & #FL_MONSTER || !zg_infront(tester, test))
+	if (/*test.flags & #FL_MONSTER ||*/ !zg_infront(tester, test))
 		return #TRUE;
 	if (IsBuilding(test) && test.real_owner != tester)
 		return 2;
-	if (test.flags & #FL_ITEM)
-		return 3;
-	if (test.flags & #FL_CLIENT)
-		return #TRUE;
+
+	if (!unlockedZeroGrav) {
+		if (test.flags & #FL_ITEM)
+			return 3;
+		if (test.flags & #FL_CLIENT)
+			return #TRUE;
+	}
+
+	if (unlockedZeroGrav < 2) {
+		if (test.movetype == #MOVETYPE_NONE || test.flags & #FL_MONSTER)
+			return #TRUE;
+	}
 
 	return #FALSE;
 };
@@ -225,8 +236,16 @@ void () zg_think =
 	pickupee = self.owner.pickedupobject_hands;
 
 	// if the pickuper doesn't have anything picked up then remove ourself
+	// FIXME: this should never happen, zg_drop should be the only thing that messes with pickupee and removes the thinker
 	if (pickupee == world)
 		remove (self);
+
+	// 10/12/07: if the pickupee's movetype has changed, save it and reset it back to MOVETYPE_FLY, can happen
+	// FIXME: if the object's new movetype is actually set somewhere to MOVETYPE_FLY, there's no way to know it changed, and the old movetype will still be set when dropped instead of fly
+	if (pickupee.movetype != #MOVETYPE_FLY) {
+		pickupee.oldmovetype = pickupee.movetype;
+		pickupee.movetype = #MOVETYPE_FLY;
+	}
 
 	// check if the pickuper is dead, FIXME: change if pickuper left
 	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "" || !pickuper.is_connected)	// *
@@ -294,7 +313,7 @@ void (entity pickuper, float toss) zg_drop =
 	pickuper.owner = pickuper._oldowner;
 	pickupee.movetype = pickupee.oldmovetype;
 
-	pickupee.pickedupobject_hands = world;			// *
+	pickupee.pickedupby = world;					// *
 
 	pickuper.pickedupobject_hands = world;
 
@@ -347,7 +366,7 @@ void (entity pickuper) zg_pickup =
 
 	trace_ent.oldmovetype = trace_ent.movetype;
 	trace_ent.movetype = #MOVETYPE_FLY;
-	trace_ent.pickedupobject_hands = trace_ent;		// * for knowing if it's picked up, FIXME: need to somehow know the pickuper entity
+	trace_ent.pickedupby = pickuper;				// * for knowing if it's picked up
 
 	trace_ent.flags = trace_ent.flags - #FL_ONGROUND;	// *
 
@@ -371,6 +390,13 @@ void (entity pickuper) zg_pickup =
 
 void (entity pickuper, float toss) zg_togglepickup =
 {
+	// check for unlocking the gravity gun here instead of every frame
+	if (infokey(world, "zg_unlocked") != "") {
+		unlockedZeroGrav = stof (infokey(world, "zg_unlocked"));
+		localcmd ("localinfo zg_unlocked \"\"\n");
+		localcmd ("serverinfo zg_unlocked \"\"\n");
+	}
+
 	if (pickuper.pickedupobject_hands == world)
 		zg_pickup (pickuper);
 	else

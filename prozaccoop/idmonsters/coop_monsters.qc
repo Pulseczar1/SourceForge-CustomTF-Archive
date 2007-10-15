@@ -101,7 +101,7 @@ void() coop_walkmonster_start_go =
 	}
 
 	// test! Used to remove all monster but the one we're testing
-//	if (self.classname != "idmonster_hell_knight") {
+//	if (self.classname != "idmonster_shambler") {
 //		remove (self);
 //		return;
 //	} else

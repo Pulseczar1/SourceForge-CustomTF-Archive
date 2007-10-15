@@ -403,6 +403,7 @@ void		end_sys_fields; 		// flag for structure dumping
 #define CHAN_MISC	6
 #define CHAN_EARTHQUAKE 7
 //#define CHAN_MONSTER 7
+#define CHAN_NO_PHS_ADD		8    // ie: CHAN_BODY+CHAN_NO_PHS_ADD
 
 #define ATTN_NONE	0 
 #define ATTN_NORM	1 

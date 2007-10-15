@@ -51,7 +51,7 @@ float (entity targ, entity check) visible2 =
 	if (trace_inopen && trace_inwater)
 		return #FALSE;			// sight line crossed contents
 
-	if (trace_fraction == 1 && trace_endpos == spot2) //CH just extra check
+	if (trace_fraction == 1)
 		return #TRUE;
 	return #FALSE;
 };

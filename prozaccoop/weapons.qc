@@ -4602,7 +4602,7 @@ void() CycleWeaponCommand =
 	if (self.weaponmodel == string_null || self.current_weapon == 0)
 		return;
 
-	  if (self.tfstate & #TFSTATE_RELOADING)
+	if (self.tfstate & #TFSTATE_RELOADING)
 		return;
 
 	if (self.tfstate & #TFSTATE_CANT_MOVE)
@@ -4780,13 +4780,21 @@ void() CycleWeaponCommand =
 			if (self.ammo_cells < #AIRFIST_CELLS_COST)
 				am = 1;
 		}
+		// Gizmo - added zg to cycle
 		else if (self.current_weapon == #WEAP_AIRF)
+		{
+			self.current_weapon = #WEAP_ZEROGRAVITY;
+
+			if (!(self.weapons_carried & #WEAP_ZEROGRAVITY))
+				am = 1;
+		}
+		else if (self.current_weapon == #WEAP_ZEROGRAVITY)
 		{
 			self.current_weapon = #WEAP_HOOK;
 
 			if (!(self.weapons_carried & #WEAP_HOOK))
 				am = 1;
-		} 
+		}
 		else if (self.current_weapon == #WEAP_HOOK)
 		{
 			self.current_weapon = #WEAP_MEDIKIT;

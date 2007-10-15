@@ -599,23 +599,23 @@ void() GruntyThink =
 // LookAround for grunty
 entity (entity scanner) LookAroundGrunty =
 {
-	//if (infokey(world,"ceasefire")=="on") //OfN
-	if (ceasefire)
-		return scanner;
-
-	
 	local entity		scanner;
 	local entity		client;
 //	local entity		list_client;
 //	local entity		list;
 	local float 		gotatarget;
 
+	//if (infokey(world,"ceasefire")=="on") //OfN
+	if (ceasefire)
+		return scanner;
+
+	// Gizmo - moved this out of the loop to increase performance (slightly but every little bit helps, and this function is called a lot)
+	gotatarget = 0;
+
 	client = findradius(scanner.origin, 2500);
 
 	while (client)
 	{
-		gotatarget = 0;
-		
 		if (client != scanner && visible2(client, scanner))
 		{
 			
