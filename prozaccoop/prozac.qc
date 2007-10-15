@@ -5,7 +5,7 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs build C300 Û10¯??¯2007Ý\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs build C301 Û10¯??¯2007Ý\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
