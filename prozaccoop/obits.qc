@@ -2151,7 +2151,10 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 			else if (attacker.classname == "trigger_changelevel")
 			{
-				deathstring = " tried to leave\n";
+				if (random() < 0.5)
+					deathstring = " tried to leave\n";
+				else
+					deathstring = " thought he could SLIP through unnoticed\n";
 			}
 			else if (targ.deathtype == "falling" && attacker == world)
 			{

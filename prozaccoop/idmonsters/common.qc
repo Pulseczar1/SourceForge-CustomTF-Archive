@@ -191,20 +191,25 @@ float (entity us, entity test) COOP_IsValidTarget =
 
 /*
 	COOP_FindTarget - finds something we should attack
-
-	NOTE: this shouldn't be the cause of cpu lag anymore, since it doesn't happen very often
 */
+
+float worldscan_delay;
 
 entity (entity scanner) COOP_FindTarget =
 {
-	local entity head;
+	local entity	head;
+	local entity	bestp;
+	local float		monster_mode;
 
-	// This is here to ease cpu with maps that have a lot of monsters, also adds a human factor for delayed notice
+	bestp = world;
+
+/*
+	// this is here to ease cpu with maps that have a lot of monsters, also adds a human factor for delayed notice
 	if (scanner.#npc_noticedelay > time)
 		return world;
 
-	self.#npc_noticedelay = time + 1.3;
-
+	// use a random delay so it doesn't all happen at once
+	self.#npc_noticedelay = time + 0.5 + random();		// old delay was 1.3
 
 	// FIXME: weigh pros and cons of find vs findradius: cpu, etc.
 	head = findradius (scanner.origin, 2048);
@@ -220,6 +225,59 @@ entity (entity scanner) COOP_FindTarget =
 	}
 
 	return world;
+*/
+
+	// check if we should scan for new entities that weren't present before
+	if (worldscan_delay <= time) {
+		head = findradius (world.origin, 65536);
+
+		while (head) {
+			if (head.classname == "monster_demon1" || head.classname == "monster_army" || head.classname == "monster_shambler" ||
+				head.classname == "monster_wizard" || head.classname == "monster_fish" || head.classname == "monster_gremlin")
+				head.isNPCTargetable = #TARGETABLE_YES;
+			else if (IsBuilding(head) && head.classname != "building_sentrygun_base")
+				head.isNPCTargetable = #TARGETABLE_YES;
+			else if (head.flags & #FL_CLIENT)
+				head.isNPCTargetable = #TARGETABLE_YES;
+
+			head = head.chain;
+		}
+
+		worldscan_delay = time + 1.3;
+	}
+
+	// this is here to ease cpu with maps that have a lot of monsters, also adds a human factor for delayed notice
+	if (scanner.#npc_noticedelay > time)
+		return world;
+
+	// check for the non-targeting mode
+	monster_mode = stof (infokey(world, "monster_mode"));
+	if (monster_mode & 4)
+		return world;
+
+	// use a random delay so it doesn't all happen at once
+	self.#npc_noticedelay = time + 0.3 + random();		// old delay was 1.3
+
+	head = find (world, isNPCTargetable, #TARGETABLE_YES);
+
+	while (head) {
+		if (visible2(head, scanner) && head.takedamage && head.health > 0) {
+			if (COOP_IsValidTarget(scanner, head)) {
+				// pick the closest player if only players are visible
+				if (head.flags & #FL_CLIENT) {
+					if (bestp == world || vlen(head.origin - scanner.origin) < vlen(bestp.origin - scanner.origin))
+						bestp = head;
+				} else
+					return head;
+			}
+		}
+
+		head = find (head, isNPCTargetable, #TARGETABLE_YES);
+	}
+
+	// players are always picked last, so if a player was found then return it, but if not bestp will be world
+	// findradius() did this automatically because it returns a chain backward through the entity list
+	return bestp;
 };
 
 

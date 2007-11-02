@@ -1391,6 +1391,9 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
             } else if (!strcasecmp(arg2, "remove")) {
 			Admin_Remove ();
 			return #TRUE;
+		} else if (!strcasecmp(arg2, "use")) {
+			Admin_Use ();
+			return #TRUE;
 		}
         }
 
