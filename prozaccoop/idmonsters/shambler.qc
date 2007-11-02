@@ -412,7 +412,9 @@ float() _ShamCheckAttack =
 // missile attack
 		
 	self.attack_state = #AS_MISSILE;
-	self.attack_finished = time + (1 + 2*random());
+	// make shamblers more aggressive against hwguys
+	if (!(self.enemy.flags & #FL_CLIENT) || self.enemy.current_weapon != #WEAP_ASSAULT_CANNON)
+		self.attack_finished = time + (1 + 2*random());
 	return #TRUE;
 };
 
@@ -487,9 +489,10 @@ void() monster_shambler =
 	self.#npc_spawnfunc = monster_shambler;
 	COOP_SetLives ();
 
-	self.#npc_electricitymult = 0.25;
-	self.#npc_spikemult = 1.60;
-	self.#npc_meleemult = 0.50;
+	self.#npc_bulletmult		= 0.80;
+	self.#npc_electricitymult	= 0.25;
+	self.#npc_spikemult		= 1.60;
+	self.#npc_meleemult		= 0.50;
 
 	coop_walkmonster_start();
 };

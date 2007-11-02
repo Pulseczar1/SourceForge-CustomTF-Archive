@@ -56,6 +56,12 @@
 #define npc_lastruntime				done_custom			// last time our lerp function was called
 #define npc_attemptednextthink		cnt
 
+// this string is set for entities that monsters search for with find()
+.string isNPCTargetable;
+
+#define TARGETABLE_NO				""
+#define TARGETABLE_YES				"."				// don't use ! or * at beginning of string, you get some bullshit error
+
 // globals
 float server_spawned;								// TRUE if server is spawned and ready to go
 

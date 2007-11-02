@@ -1175,3 +1175,48 @@ void() Admin_Remove =
 		sprint (self, #PRINT_HIGH, " is not a valid BSP object\n");
 	}
 };
+
+// Gizmo
+void() door_go_down;
+void() door_go_up;
+void() door_killed;
+void() fd_secret_use;
+void() plat_go_up;
+void() plat_go_down;
+void() Admin_Use =
+{
+	local entity	oself;
+	local float		ospawnflags;
+
+	makevectors (self.v_angle);
+	traceline (self.origin + '0 0 16', (self.origin + '0 0 16') + v_forward * 4096, #TL_ANY_SOLID, self);
+
+	if (trace_ent.classname == "door" && trace_ent.use != fd_secret_use) {
+		bprint (#PRINT_HIGH, "The admin ", self.netname, " forces a door to open/close\n");
+
+		oself = self;
+		self = trace_ent;
+
+		if (self.state == #STATE_DOWN || self.state == #STATE_BOTTOM)
+			door_go_up ();
+		else
+			door_go_down ();
+
+		self = oself;
+	} else if (trace_ent.classname == "plat") {
+		bprint (#PRINT_HIGH, "The admin ", self.netname, " forces a plat to up/down\n");
+
+		oself = self;
+		self = trace_ent;
+
+		if (self.state == #STATE_DOWN || self.state == #STATE_BOTTOM)
+			plat_go_up ();
+		else
+			plat_go_down ();
+
+		self = oself;
+	} else {
+		sprint (self, #PRINT_HIGH, trace_ent.classname);
+		sprint (self, #PRINT_HIGH, " is not a valid object to use\n");
+	}
+};
