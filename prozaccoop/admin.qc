@@ -1189,7 +1189,6 @@ void() plat_go_down;
 void() Admin_Use =
 {
 	local entity	oself;
-	local float		ospawnflags;
 
 	makevectors (self.v_angle);
 	traceline (self.origin + '0 0 16', (self.origin + '0 0 16') + v_forward * 4096, #TL_ANY_SOLID, self);

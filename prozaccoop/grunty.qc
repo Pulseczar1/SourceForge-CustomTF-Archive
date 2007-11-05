@@ -599,7 +599,6 @@ void() GruntyThink =
 // LookAround for grunty
 entity (entity scanner) LookAroundGrunty =
 {
-	local entity		scanner;
 	local entity		client;
 //	local entity		list_client;
 //	local entity		list;
@@ -630,13 +629,13 @@ entity (entity scanner) LookAroundGrunty =
 				gotatarget = Pharse_Client(client, scanner, 1, 0, 0, 0);
 
 				if (client.is_undercover)
-					if (client.cutf_items & #CUTF_JAMMER || !scanner.tf_items & #NIT_SCANNER)
+					if (client.cutf_items & #CUTF_JAMMER || !(scanner.tf_items & #NIT_SCANNER))
 						gotatarget=0;
 				if (client.modelindex == modelindex_null)
-					if (client.cutf_items & #CUTF_JAMMER || !scanner.tf_items & #NIT_SCANNER)
+					if (client.cutf_items & #CUTF_JAMMER || !(scanner.tf_items & #NIT_SCANNER))
 						gotatarget=0;
 				if (client.modelindex == modelindex_eyes)
-					if (client.cutf_items & #CUTF_JAMMER || !scanner.tf_items & #NIT_SCANNER)
+					if (client.cutf_items & #CUTF_JAMMER || !(scanner.tf_items & #NIT_SCANNER))
 						if (random() < 2 - scanner.has_tesla * random())
 							gotatarget=0;		
 			}
@@ -674,6 +673,7 @@ entity () GruntyPharse =
 	local entity retarg;
 	local float r;
 	r = random();
+	retarg = world;
 	
 	#ifdef MAD_GRUNTY
 
@@ -2012,6 +2012,7 @@ void() grunty_touch =
 		return;
 	
 	local entity Bio;
+	local string tmps;
 
 	if (self.tfstate & #TFSTATE_INFECTED)
 	{
@@ -2033,7 +2034,6 @@ void() grunty_touch =
 				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
 				other.infection_team_no = self.infection_team_no;
 				
-				local string tmps;
 				tmps = GetMonsterName(self);
 
 				sprint(other, #PRINT_MEDIUM, "You have been infected by the ");
@@ -2052,12 +2052,10 @@ void() grunty_touch =
 			if (!(other.tfstate & #TFSTATE_INFECTED))
 			{
 				// Report to owner
-				local string tmps;
 				tmps = GetMonsterName(other);
 				sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
 
 				// Report to teammates of owner
-				local string tmps;
 				tmps = GetMonsterName(other);
 				teamprefixsprint(other.real_owner.team_no,other.real_owner);
 				teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");

@@ -782,11 +782,10 @@ void() TeamFortress_ReloadCurrentWeapon =
 	}
 
 	//---------------- CLIP EXTENDER (same as below but with _EX values -------------//
+	local float rt;
+	local entity tWeapon;
 	if (self.cutf_items & #CUTF_CLIPEXTEND)
 	{
-		local float rt;
-		local entity tWeapon;
-
 		if (self.current_weapon == #WEAP_SHOTGUN)
 		{
 			if (self.reload_shotgun == 0)
@@ -1030,9 +1029,6 @@ void() TeamFortress_ReloadCurrentWeapon =
 	} // CLIP EXTENDER
 	else
 	{
-
-		local float rt;
-		local entity tWeapon;
 
 		if (self.current_weapon == #WEAP_SHOTGUN)
 		{

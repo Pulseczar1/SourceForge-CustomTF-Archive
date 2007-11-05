@@ -159,6 +159,7 @@ void() Player_Punish =
 void() Menu_Punish =
 {
 	local string st, st2, st3;
+	st = "";
 		
 	// if we didn't disconnect and we are a valid class, player or spectator..
 	if (HasValidAdminTarget2(self))
@@ -1212,6 +1213,7 @@ float(float final) CheckVoting =
 			return #TRUE;
 		}
 		
+		local float uid;
 		if (current_voteent.g_a == #PUNISH_CURSE) // Curse
 		{
 			if (num_for > num_total * #VOTESNEEDED_CURSE) // success?
@@ -1351,8 +1353,6 @@ float(float final) CheckVoting =
 
 				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been muted!\n");
 				
-				local float uid;
-				
 				uid = getuid(current_voteent.admin_kick);
 				st = ftos(uid);
 
@@ -1390,8 +1390,6 @@ float(float final) CheckVoting =
 				BroadcastSound("doors/runeuse");
 
 				sprint(current_voteent.admin_kick,#PRINT_HIGH,"\nYou have been cuffed!\n");
-				
-				local float uid;
 				
 				uid = getuid(current_voteent.admin_kick);
 				st = ftos(uid);

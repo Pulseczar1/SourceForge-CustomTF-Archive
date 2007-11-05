@@ -261,7 +261,7 @@ void() knight_die =
 };
 
 
-void() KnightPreAttack =
+float() KnightPreAttack =
 {
 	local float		len;
 
