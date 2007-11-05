@@ -1044,6 +1044,9 @@ float(float mode, float mutetime) Admin_Silence =
     local string st, st2;
     local float fl, counter;
 
+	te = world;
+	counter = 0;
+
     if (mode == 0 || mode == 1) // Players
     {
         te = find(te,classname,"player");

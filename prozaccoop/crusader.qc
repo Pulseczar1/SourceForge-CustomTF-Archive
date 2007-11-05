@@ -485,7 +485,7 @@ void() CrusaderMassHeal =
 	local entity te;
 	local float amount;
 	
-	if (!self.weapons_carried & #WEAP_MEDIKIT)
+	if (!(self.weapons_carried & #WEAP_MEDIKIT))
 	{
 		sprint(self, #PRINT_HIGH, "You cannot perform mass heal without a medikit\n");
 		return;

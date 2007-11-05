@@ -7,7 +7,7 @@ Functions for the security camera
 ======================================================*/
 void() Security_Camera_Idle;
 float() Security_Camera_FindTarget;
-void() Security_Camera_Pain;
+void(entity attacker, float damage) Security_Camera_Pain;
 void() Security_Camera_Die;
 void() Security_Camera_PrintTarget;
 void() Security_Camera_Spawn;
@@ -33,6 +33,7 @@ float() Security_Camera_FindTarget =
 {
 	local entity client;
 	local float	r, gotone, loopc;
+	client = world;
 
 	if (self.is_malfunctioning & #SCREWUP_TWO) // SB how tragic, camera can't see
 		return #FALSE;
@@ -104,6 +105,7 @@ float() Security_Camera_FindFakeTarget =
 {
 	local entity client;
 	local float	r, gotone, loopc;
+	client = world;
 
 	if (self.is_malfunctioning & #SCREWUP_THREE) // SB how tragic, camera can't see
 		return #FALSE;
@@ -169,7 +171,7 @@ float() Security_Camera_FindFakeTarget =
 	return #TRUE;
 };
 //========
-void() Security_Camera_Pain =
+void(entity attacker, float damage) Security_Camera_Pain =
 {
 	sound (self, #CHAN_WEAPON, "weapons/cambeep.wav", 1, #ATTN_NORM);
 };

@@ -477,7 +477,7 @@ entity(float runetype) SpawnRune =
         {
             RPrint("BUG: Unknown rune type on SpawnRune()!\n");
             dremove(rune);
-            return;
+            return world;
         }
 
         // Assign model

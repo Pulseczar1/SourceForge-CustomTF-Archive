@@ -761,8 +761,10 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	}
 
 	local float btime;
+	btime = 0;
 	//local entity te;
 	local vector tmp1, tmp2;
+	tmp1 = tmp2 = '0 0 0';
 
 	newmis = spawn();
 
@@ -1045,7 +1047,7 @@ void() DispenserThink =
 void() TeamFortress_FinishedBuilding =
 {
 	local entity oldself;
-	local float current_yaw;
+	//local float current_yaw;
 	//local vector source;
 
 	if (self.owner.is_building != 1)

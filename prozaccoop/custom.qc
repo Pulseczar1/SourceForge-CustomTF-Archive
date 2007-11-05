@@ -81,6 +81,7 @@ void(entity player) ResetStripedAndGiven;
 float(float targteam, float attackteam) Teammate =
 {
 	local float teammask;
+	teammask = 0;
 
 	if ( !targteam ) return #FALSE;
 	if ( targteam == attackteam ) return #TRUE;
@@ -1127,7 +1128,7 @@ void() FragSpikeThink =
 		self.angles_x = 0;
 		self.angles_z = 0;
 		makevectors(self.angles);
-		if (self.velocity = '0 0 0')
+		if (self.velocity == '0 0 0')
 			self.origin_z = self.origin_z + 50;
 
 		self.velocity = v_forward * 1000;
@@ -1249,9 +1250,10 @@ float (entity test) COOP_IsCoopMonster;
 
 void() KracGrenadeExplode =
 {
-	local entity te,newmis;
+	local entity te;
 	local entity oldself;
 	local float damage;
+	damage = 0;
 	te = findradius(self.origin, 150);
 	while (te)
 	{	
@@ -1660,37 +1662,37 @@ void() UpdateWeaponItems =
     if (self.weapons_carried & #WEAP_SHOTGUN)
         self.items = self.items | #IT_SHOTGUN;
     else
-        self.items = self.items - self.items & #IT_SHOTGUN;
+        self.items = self.items - (self.items & #IT_SHOTGUN);
 
     if (self.weapons_carried & #WEAP_SUPER_SHOTGUN)
         self.items = self.items | #IT_SUPER_SHOTGUN;
     else
-        self.items = self.items - self.items & #IT_SUPER_SHOTGUN;
+        self.items = self.items - (self.items & #IT_SUPER_SHOTGUN);
 
     if (self.weapons_carried & #WEAP_NAILGUN)
         self.items = self.items | #IT_NAILGUN;
     else
-        self.items = self.items - self.items & #IT_NAILGUN;
+        self.items = self.items - (self.items & #IT_NAILGUN);
 
     if (self.weapons_carried & (#WEAP_LIGHT_ASSAULT | #WEAP_SNG))
         self.items = self.items | #IT_LIGHT_ASSAULT;// #IT_SUPER_NAILGUN;
     else
-        self.items = self.items - self.items & #IT_LIGHT_ASSAULT;
+        self.items = self.items - (self.items & #IT_LIGHT_ASSAULT);
 
     if (self.weapons_carried & (#WEAP_GRENADE_LAUNCHER | #WEAP_FLAMETHROWER | #WEAP_DAEDALUS))
         self.items = self.items | #IT_GRENADE_LAUNCHER;
     else
-        self.items = self.items - self.items & #IT_GRENADE_LAUNCHER;
+        self.items = self.items - (self.items & #IT_GRENADE_LAUNCHER);
 
     if (self.weapons_carried & (#WEAP_ROCKET_LAUNCHER | #WEAP_INCENDIARY))
         self.items = self.items | #IT_ROCKET_LAUNCHER;
     else
-        self.items = self.items - self.items & #IT_ROCKET_LAUNCHER;
+        self.items = self.items - (self.items & #IT_ROCKET_LAUNCHER);
 
     if (self.weapons_carried & #WEAP_LIGHTNING)
         self.items = self.items | #IT_LIGHTNING;
     else
-        self.items = self.items - self.items & #IT_LIGHTNING;
+        self.items = self.items - (self.items & #IT_LIGHTNING);
     //#endif
 };
 

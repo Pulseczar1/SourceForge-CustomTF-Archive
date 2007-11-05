@@ -294,7 +294,7 @@ entity (entity scanner) COOP_FindTarget =
 
 void () COOP_SmoothFrame =
 {
-	local float end, oldyaw;
+	local float oldyaw;
 
 	if (time >= self.#npc_smoothtime) {
 		// FIXME: is it ok to call #npc_oldthink directly here?
@@ -484,7 +484,7 @@ void () COOP_Turn =
 void (float dist) COOP_Run =
 {
 	local entity	e;
-	local float		sightblocked, r, chance;
+	local float		sightblocked, r;
 	local float		c_attack;
 
 	// for other functions like slide if we use them

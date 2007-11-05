@@ -2590,7 +2590,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	// PAGE 1 - Primary Weapons
 	if (itemid == 1)
 	{
-		if (!player.weapons_carried & #WEAP_SNIPER_RIFLE)
+		if (!(player.weapons_carried & #WEAP_SNIPER_RIFLE))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_SNIPER_RIFLE | #WEAP_AUTO_RIFLE;
 			done = #TRUE;
@@ -2598,7 +2598,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 2)
 	{
-		if (!player.weapons_carried & #WEAP_ASSAULT_CANNON)
+		if (!(player.weapons_carried & #WEAP_ASSAULT_CANNON))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_ASSAULT_CANNON;
 			done = #TRUE;
@@ -2606,7 +2606,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 3)
 	{
-		if (!player.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+		if (!(player.weapons_carried & #WEAP_ROCKET_LAUNCHER))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_ROCKET_LAUNCHER;
 			done = #TRUE;
@@ -2614,7 +2614,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 4)
 	{
-		if (!player.weapons_carried & #WEAP_INCENDIARY)
+		if (!(player.weapons_carried & #WEAP_INCENDIARY))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_INCENDIARY | #WEAP_FLAMETHROWER;
 			done = #TRUE;
@@ -2622,7 +2622,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 5)
 	{
-		if (!player.weapons_carried & #WEAP_GRENADE_LAUNCHER)
+		if (!(player.weapons_carried & #WEAP_GRENADE_LAUNCHER))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_GRENADE_LAUNCHER;
 			done = #TRUE;
@@ -2630,7 +2630,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 6)
 	{
-		if (!player.weapons_carried & #WEAP_LIGHTNING)
+		if (!(player.weapons_carried & #WEAP_LIGHTNING))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_LIGHTNING;
 			done = #TRUE;
@@ -2638,7 +2638,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 7)
 	{
-		if (!player.weapons_carried & #WEAP_LIGHT_ASSAULT)
+		if (!(player.weapons_carried & #WEAP_LIGHT_ASSAULT))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_LIGHT_ASSAULT;
 			done = #TRUE;
@@ -2648,7 +2648,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	// PAGE 2 - Secondary Weapons
 	else if (itemid == 8)
 	{
-		if (!player.weapons_carried & #WEAP_SNG)
+		if (!(player.weapons_carried & #WEAP_SNG))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_SNG;
 			done = #TRUE;
@@ -2656,7 +2656,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 9)
 	{
-		if (!player.cutf_items & #CUTF_KNIFE)
+		if (!(player.cutf_items & #CUTF_KNIFE))
 		{
 			player.cutf_items = player.cutf_items | #CUTF_KNIFE;
 			done = #TRUE;
@@ -2664,7 +2664,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 10)
 	{
-		if (!player.weapons_carried & #WEAP_SUPER_SHOTGUN)
+		if (!(player.weapons_carried & #WEAP_SUPER_SHOTGUN))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_SUPER_SHOTGUN;
 			done = #TRUE;
@@ -2672,7 +2672,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 11)
 	{
-		if (!player.weapons_carried & #WEAP_RAILGUN)
+		if (!(player.weapons_carried & #WEAP_RAILGUN))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_RAILGUN;
 			done = #TRUE;
@@ -2680,7 +2680,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 12)
 	{
-		if (!player.weapons_carried & #WEAP_NAILGUN)
+		if (!(player.weapons_carried & #WEAP_NAILGUN))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_NAILGUN;
 			done = #TRUE;
@@ -2688,7 +2688,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 13)
 	{
-		if (!player.weapons_carried & #WEAP_TRANQ)
+		if (!(player.weapons_carried & #WEAP_TRANQ))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_TRANQ;
 			done = #TRUE;
@@ -2696,7 +2696,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 14)
 	{
-		if (!player.weapons_carried & #WEAP_SHOTGUN)
+		if (!(player.weapons_carried & #WEAP_SHOTGUN))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_SHOTGUN;
 			done = #TRUE;
@@ -2706,7 +2706,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	// PAGE 3 - Misc/Extra Weapons
 	else if (itemid == 15)
 	{
-		if (!player.weapons_carried & #WEAP_MAUSER)
+		if (!(player.weapons_carried & #WEAP_MAUSER))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_MAUSER;
 			done = #TRUE;
@@ -2714,7 +2714,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 16)
 	{
-		if (!player.weapons_carried & #WEAP_AIRF)
+		if (!(player.weapons_carried & #WEAP_AIRF))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_AIRF;
 			done = #TRUE;
@@ -2722,7 +2722,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 17)
 	{
-		if (!player.cutf_items & #CUTF_AIRFISTUPGRADE)
+		if (!(player.cutf_items & #CUTF_AIRFISTUPGRADE))
 		{
 			player.cutf_items = player.cutf_items | #CUTF_AIRFISTUPGRADE;
 			done = #TRUE;
@@ -2730,7 +2730,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 18)
 	{
-		if (!player.weapons_carried & #WEAP_DAEDALUS)
+		if (!(player.weapons_carried & #WEAP_DAEDALUS))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_DAEDALUS;
 			done = #TRUE;
@@ -2738,7 +2738,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 19)
 	{
-		if (!player.weapons_carried & #WEAP_LASERCANNON)
+		if (!(player.weapons_carried & #WEAP_LASERCANNON))
 		{
 			player.weapons_carried = player.weapons_carried | #WEAP_LASERCANNON;
 			done = #TRUE;
@@ -2746,7 +2746,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 20)
 	{
-		if (!player.cutf_items & #CUTF_HOLO)
+		if (!(player.cutf_items & #CUTF_HOLO))
 		{
 			player.cutf_items = player.cutf_items | #CUTF_HOLO;
 			done = #TRUE;
@@ -2754,7 +2754,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 21)
 	{
-		if (!player.cutf_items & #CUTF_CLIPEXTEND)
+		if (!(player.cutf_items & #CUTF_CLIPEXTEND))
 		{
 			player.cutf_items = player.cutf_items | #CUTF_CLIPEXTEND;
 			done = #TRUE;
@@ -2766,7 +2766,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	// PAGE 6 - Special Armors & Ammo
 	else if (itemid == 39)
 	{
-		if (!player.tf_items & #NIT_CERAMIC)
+		if (!(player.tf_items & #NIT_CERAMIC))
 		{
 			player.tf_items = player.tf_items | #NIT_CERAMIC;
 			done = #TRUE;
@@ -2774,7 +2774,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 40)
 	{
-		if (!player.tf_items & #NIT_GEL)
+		if (!(player.tf_items & #NIT_GEL))
 		{
 			player.tf_items = player.tf_items | #NIT_GEL;
 			done = #TRUE;
@@ -2782,7 +2782,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 41)
 	{
-		if (!player.cutf_items & #NIT_ASBESTOS)
+		if (!(player.cutf_items & #NIT_ASBESTOS))
 		{
 			player.cutf_items = player.cutf_items | #NIT_ASBESTOS;
 			done = #TRUE;
@@ -2790,7 +2790,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 42)
 	{
-		if (!player.tf_items & #NIT_KEVLAR)
+		if (!(player.tf_items & #NIT_KEVLAR))
 		{
 			player.tf_items = player.tf_items | #NIT_KEVLAR;
 			done = #TRUE;
@@ -2798,7 +2798,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 43)
 	{
-		if (!player.tf_items & #NIT_BLAST)
+		if (!(player.tf_items & #NIT_BLAST))
 		{
 			player.tf_items = player.tf_items | #NIT_BLAST;
 			done = #TRUE;
@@ -2806,7 +2806,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 44)
 	{
-		if (!player.cutf_items & #NIT_AMMO_BACKPACK)
+		if (!(player.cutf_items & #NIT_AMMO_BACKPACK))
 		{
 			player.cutf_items = player.cutf_items | #NIT_AMMO_BACKPACK;
 			done = #TRUE;
@@ -2814,7 +2814,7 @@ float(entity player, float itemid, float storechange, float resetstored) GiveSpe
 	}
 	else if (itemid == 45)
 	{
-		if (!player.cutf_items & #NIT_AMMO_BANDOLIER)
+		if (!(player.cutf_items & #NIT_AMMO_BANDOLIER))
 		{
 			player.cutf_items = player.cutf_items | #NIT_AMMO_BANDOLIER;
 			done = #TRUE;
@@ -3580,7 +3580,6 @@ string(float ver) ver_ftos =
 entity(vector org, vector dir, float meatduration) SpawnMeatSprayEx =
 {
 	local	entity missile;
-	local	vector	org;
 
 	missile = spawn ();
 	missile.owner = self;

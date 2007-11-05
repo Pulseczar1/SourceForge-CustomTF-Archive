@@ -505,7 +505,7 @@ void() JobMartyr =
 
 void() BerserkerKillTimer =
 {
-	if (!self.tfstate & #TFSTATE_CONCUSSIONED)
+	if (!(self.tfstate & #TFSTATE_CONCUSSIONED))
 		stuffcmd(self.owner, "v_idlescale 0\n");
 	
 	if (self.has_sensor)

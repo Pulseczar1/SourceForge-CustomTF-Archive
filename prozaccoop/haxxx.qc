@@ -81,6 +81,7 @@ void () Menu_Friend_Hax =
 	}
 	
 	local string st,st2,st3,st4,st5,st6,st7;
+	st = st3 = "";
 
 	st6="\n\nCom≠Link ÂÛÙ·‚ÏÈÛËÂ‰";
 	st7=" ¡„ÙÈÔÓ:                    \n\n";
@@ -279,6 +280,7 @@ void () Menu_Enemy_Hax =
 	}
 
 	local string st,st2,st3,st4,st5,st6,st7;
+	st = st2 = st3 = st4 = "";
 
 	st6="\n\nCom≠Link ÂÛÙ·‚ÏÈÛËÂ‰";
 	st5="\n\n.. ŒÔÙËÈÓÁ                  ";
@@ -393,6 +395,7 @@ void() SBFireInterface =
 	local entity oself;
 	local entity targ;
 	local float hackThis;
+	local string st;
 	
 	targ = self.martyr_enemy;
 	hackThis = self.has_camera;   
@@ -531,7 +534,6 @@ void() SBFireInterface =
 			{
 				if (targ.classname != "building_dispenser" && targ.classname != "building_teleporter" && targ.classname != "building_fieldgen")
 				{
-					local string st;
 					st=GetBuildingName(targ);
 
 					sprint(targ.real_owner, #PRINT_HIGH,"You've lost the control of your ");
@@ -606,7 +608,6 @@ void() SBFireInterface =
 
 				sprint(self, #PRINT_HIGH, "You correct the machine's malfunction.\n");
 				
-				local string st;
 				st=GetBuildingName(targ);
 
 				if (self!=targ.real_owner)
@@ -636,7 +637,6 @@ void() SBFireInterface =
 			//FRIENDLY IMPROVEMENTS
 			targ.all_active = targ.all_active | hackThis;
 
-			local string st;
 			st=GetBuildingName(targ);
 
 			sprint(self, #PRINT_HIGH, "You make a few adjustments...\n");
@@ -1086,11 +1086,11 @@ float(entity hacked, float r) ReturnFHackDelay =
 	else if (r == 8) return 8; // repairing..
 	else if (r == 2 && IsBuilding(hacked))
 	{
-		if (!hacked.all_active & #IMPROVED_TWO)
+		if (!(hacked.all_active & #IMPROVED_TWO))
 			return 20; // level 1 ICE lasts for 20 seconds always
-		if (!hacked.all_active & #IMPROVED_FIVE)
+		if (!(hacked.all_active & #IMPROVED_FIVE))
 			return 25; // level 2 ICE lasts for 25 seconds always
-		if (!hacked.all_active & #IMPROVED_SIX)
+		if (!(hacked.all_active & #IMPROVED_SIX))
 			return 30;	  
 	}
 	else if (hacked.classname == "building_dispenser")

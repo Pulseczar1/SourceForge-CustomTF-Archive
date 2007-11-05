@@ -227,7 +227,7 @@ void() Teleporter_heat_think =
 		loc_y = loc_y + ((rint(random() * 3 + 1) * 16) - 32);
 
 		pos = pointcontents(loc);                      //-
-		if ( ( (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) && !self.tf_items & #NIT_TURRET) || (self.tf_items & #NIT_TURRET && pos == #CONTENT_SKY) )
+		if ( ( (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) && !(self.tf_items & #NIT_TURRET)) || (self.tf_items & #NIT_TURRET && pos == #CONTENT_SKY) )
 		{
 			TF_T_Damage(self, world, world, self.health+1, 0, 0);
 			

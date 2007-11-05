@@ -92,8 +92,6 @@ void() _Laser_Touch =
 
 void(vector org, vector vec) _LaunchLaser =
 {
-	local	vector	vec;
-		
 	if (self.classname == "idmonster_enforcer")
 		sound (self, #CHAN_WEAPON, "enforcer/enfire.wav", 1, #ATTN_NORM);
 

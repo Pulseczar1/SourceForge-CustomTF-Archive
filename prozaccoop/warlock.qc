@@ -204,6 +204,7 @@ void() flymonster_start_go;
 void() Menu_Demon =
 {
 	local string st,st3,st2,st4,st5,st6,st7;
+	st2 = st4 = "";
 	
     local float knifekills;
     knifekills = GetHearts(self);
@@ -505,13 +506,13 @@ void(float inp) Menu_Demon_Input =
 		self.impulse = 0;
         return;
 	}
+	local string st;
     if (inp == 1 && soul != world) // Come here!
     {	        
         if (!IsMonster(soul)) return;
 
         soul.penance_time = 1;
 
-		local string st;
         st=GetMonsterName(soul);
         
         if (soul.enemy != world)
@@ -551,7 +552,6 @@ void(float inp) Menu_Demon_Input =
 
 		soul.penance_time = 2;
         
-        local string st;
         st=GetMonsterName(soul);
         
         if (soul.enemy != world)
@@ -592,7 +592,6 @@ void(float inp) Menu_Demon_Input =
 
         soul.penance_time = 0;
 
-		local string st;
         st=GetMonsterName(soul);
         
         if (soul.enemy != world)
@@ -801,7 +800,7 @@ void(float inp) Menu_Demon_Input =
 //================================================================
 // Returns TRUE if the given "name type" is free for given player
 
-void(entity player, float nametype) IsNameTypeFree =
+float(entity player, float nametype) IsNameTypeFree =
 {
     if (player.demon_one)
         if (player.demon_one.increase_team2 == nametype)
@@ -873,6 +872,7 @@ void(entity monster) MakeMonsterName =
 {
     local string happy;
     local float r;
+	happy = "";
 
     if (monster.increase_team2 == 0)
     {
@@ -1915,6 +1915,7 @@ void() MonsterTouch =
         return;
 
     local entity Bio;
+	local string tmps;
 
     if (self.tfstate & #TFSTATE_INFECTED)
     {
@@ -1940,7 +1941,6 @@ void() MonsterTouch =
                 other.tfstate = other.tfstate | #TFSTATE_INFECTED;
                 other.infection_team_no = self.infection_team_no;
                 
-                local string tmps;
                 tmps = GetMonsterName(self);
 
                 sprint(other, #PRINT_MEDIUM, "You have been infected by the ");
@@ -1959,12 +1959,10 @@ void() MonsterTouch =
             if (!(other.tfstate & #TFSTATE_INFECTED))
             {
                 // Report to owner
-                local string tmps;
                 tmps = GetMonsterName(other);
                 sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
 
                 // Report to teammates of owner
-                local string tmps;
                 tmps = GetMonsterName(other);
                 teamprefixsprint(other.real_owner.team_no,other.real_owner);
                 teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
@@ -2211,12 +2209,12 @@ void (entity attacker) WarlockKnifeKill =
         attacker.dont_do_triggerwork = attacker.dont_do_triggerwork + 1;
         numhearts = attacker.dont_do_triggerwork;
 
+		local float extras;
         if (numhearts == #WARLOCK_BONUS1)
         {
             bprint(#PRINT_HIGH,attacker.netname);
             bprint(#PRINT_HIGH," has collected #WARLOCK_BONUS1 hearts!\n");
 
-            local float extras;
             extras = GetJobExtras(attacker);
 
             if (extras == 0)
@@ -2238,7 +2236,6 @@ void (entity attacker) WarlockKnifeKill =
             bprint(#PRINT_HIGH,attacker.netname);
             bprint(#PRINT_HIGH," has collected #WARLOCK_BONUS2 hearts!!\n");
 
-            local float extras;
             extras = GetJobExtras(attacker);
 
             if (extras == 0) // this only would happen by toggling extras_mode but..
@@ -2336,6 +2333,7 @@ float(entity monster) GetMonsterLevel =
 float(entity monster) GetHPforMeat =
 {
     local float hp, type, meatkgs, meatusage, meatused;
+	hp = 0;
     
     type = monster.#monster_type;
     meatkgs = GetMeat(monster.real_owner);

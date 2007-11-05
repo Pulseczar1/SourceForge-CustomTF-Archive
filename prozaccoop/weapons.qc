@@ -288,6 +288,8 @@ void() W_FireAxe =
 	local	vector	dir;
 	local entity oself; // OfN
 
+	dir = '0 0 0';
+
 	if (self.classname == "player")
 		makevectors(self.v_angle);
 	else
@@ -296,7 +298,7 @@ void() W_FireAxe =
 	
 	if (self.classname == "player")
 	{
-		if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+		if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 			//traceline (source, source + v_forward*64, #TL_ANY_SOLID, self);
 			BulletTraceline(source, source + v_forward*64);
 		else
@@ -354,7 +356,7 @@ void() W_FireAxe =
 		{
 			deathmsg = #DMSG_AXE;
 
-			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+			if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 				TF_T_Damage (trace_ent, self, self, 30, #TF_TD_NOTTEAM, #TF_TD_OTHER);
 			else
 				TF_T_Damage (trace_ent, self, self, 60, #TF_TD_NOTTEAM, #TF_TD_OTHER);
@@ -402,7 +404,7 @@ void() W_FireAxe =
 				//ThrowGib ("progs/gib2.mdl", 25); //-added
 
 //WK 120 & no IGNOREARMOR
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+				if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
 				else
 					TF_T_Damage (trace_ent, self, self, 200, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_OTHER);
@@ -411,7 +413,7 @@ void() W_FireAxe =
 			{
 				deathmsg = #DMSG_AXE;
 //WK 40
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+				if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 					TF_T_Damage (trace_ent, self, self, 50, #TF_TD_NOTTEAM, #TF_TD_OTHER);
 				else
 					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_OTHER); 			
@@ -619,7 +621,7 @@ void() W_FireSpanner =
 
 			deathmsg = #DMSG_SPANNER;
 //WK 20
-			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+			if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 				TF_T_Damage (trace_ent, self, self, 20, #TF_TD_NOTTEAM, #TF_TD_OTHER);
 			else
 				TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_OTHER);
@@ -917,7 +919,7 @@ void(float inAuto) W_FireMedikit =
 						{
 							trace_ent.items = trace_ent.items | #IT_SUPERHEALTH;
 							newmis = spawn();
-							newmis.classname == "medikit_rot";
+							newmis.classname = "medikit_rot";
 							newmis.nextthink = time + 20;
 							newmis.think = item_megahealth_rot;
 							newmis.owner = trace_ent;
@@ -936,7 +938,7 @@ void(float inAuto) W_FireMedikit =
 				SpawnBlood (org, 20);
 
 				deathmsg = #DMSG_BIOWEAPON_ATT;
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+				if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 					T_Damage (trace_ent, self, self, 10);
 				else
 					T_Damage (trace_ent, self, self, 20);
@@ -985,6 +987,7 @@ void(float inAuto) W_FireMedikit =
 		}
 		else if (IsMonster(trace_ent))//- OfN - Monsters 
 		{
+			local string tmps;
 			if (Teammate(trace_ent.real_owner.team_no, self.team_no))
 			{
 				if (trace_ent.health < trace_ent.max_health)
@@ -1025,7 +1028,6 @@ void(float inAuto) W_FireMedikit =
 				{
 					trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_INFECTED;
 					
-					local string tmps;
 					tmps = GetMonsterName(trace_ent);
 					
 					// Inform the medic
@@ -1054,7 +1056,7 @@ void(float inAuto) W_FireMedikit =
 #ifdef COOP_MODE_ENHANCED
 				deathmsg = #DMSG_BIOWEAPON_ATT;
 #endif
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+				if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 					T_Damage (trace_ent, self, self, 10);
 				else
 					T_Damage (trace_ent, self, self, 20);
@@ -1071,7 +1073,6 @@ void(float inAuto) W_FireMedikit =
 #endif
 				if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
 				{
-					local string tmps;
 					tmps = GetMonsterName(trace_ent);
 					sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," ",trace_ent.netname," has been infected!\n");
 
@@ -1160,7 +1161,7 @@ void() W_FireBioweapon =
 				SpawnBlood (org, 20);
 		
 				deathmsg = #DMSG_BIOWEAPON_ATT;
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+				if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 					T_Damage (trace_ent, self, self, 10);
 				else
 					T_Damage (trace_ent, self, self, 20);
@@ -1191,7 +1192,7 @@ void() W_FireBioweapon =
 
 			trace_ent.axhitme = 1;
 			SpawnBlood(org, 20);
-			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
+			if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
 				T_Damage (trace_ent, self, self, 10);
 			else
 				T_Damage (trace_ent, self, self, 20);
@@ -1254,7 +1255,6 @@ SpawnMeatSpray
 void(vector org, vector vel) SpawnMeatSpray =
 {
 	local	entity missile;
-	local	vector	org;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -1730,6 +1730,8 @@ void() W_FireSniperRifle =
 	local vector dir, src;
 	local float dam_mult, zdif, use_this, damg;
 
+	dir = '0 0 0';
+
 	sound (self ,#CHAN_WEAPON, "weapons/sniper.wav", 1, #ATTN_NORM);
 	KickPlayer(-2, self);
 	//self.currentammo = self.ammo_shells = self.ammo_shells - 1; // ofn moved!
@@ -1923,7 +1925,6 @@ TeamFortress : W_FireAutoRifle
 void() W_FireAutoRifle =
 {
 	local vector dir;
-	local float OTR;
 
 	sound (self ,#CHAN_WEAPON, "weapons/sniper.wav", 1, #ATTN_NORM);
 
@@ -2189,6 +2190,7 @@ void() W_FireRocket =
 {
 	local float loops;
 	local vector olorigin, dir;
+	dir = '0 0 0';
 	loops = 0;
 	if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
 		loops = 5;
@@ -2378,7 +2380,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 void() W_FireLightning =
 {
 	local	vector	org;
-	local float 	cells,excess;
+	local float 	cells;
 
 	if (self.ammo_cells < 1)
 	{
@@ -3415,6 +3417,7 @@ void() W_Reload_laser_cannon =
 float() CheckForReload =
 {
 	local float speedmult;
+	local entity tWeapon;
 	speedmult = 1;
 
 	if (self.#runes & #RUNE_SPEED)
@@ -3425,7 +3428,6 @@ float() CheckForReload =
 	{
 
 		//---//
-		local entity tWeapon;
 
 		if (self.current_weapon == #WEAP_SHOTGUN)
 		{
@@ -3572,8 +3574,6 @@ float() CheckForReload =
 	}
 	
 	
-	local entity tWeapon;
-
 	if (self.current_weapon == #WEAP_SHOTGUN)
 	{
 		if (self.reload_shotgun >= #RE_SHOTGUN && self.ammo_shells > 0)
@@ -5636,6 +5636,8 @@ void() T_DaedalusTouch =
 	local float points;
 	local vector org;
 	local entity head;
+
+	points = 0;
 
 	head = findradius(self.origin, #BOUNCE);	
 	while (head) {

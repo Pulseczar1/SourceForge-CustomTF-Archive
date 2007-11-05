@@ -366,7 +366,6 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 	if (patient.tfstate & #TFSTATE_INFECTED)
 	{
 		local float healam;
-		local entity te;
 		
 		healam = rint(patient.health / 2);
 		// remove the infection

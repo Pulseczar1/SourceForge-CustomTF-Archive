@@ -1153,6 +1153,9 @@ float(float final) CheckVoting =
 	}	 
 
 	local float num_for, num_against, num_total;
+	num_total = 0;
+	num_for = 0;
+	num_against = 0;
 	local entity te;
 	
 	// Count the number of votes for, against and total clients.
@@ -1582,6 +1585,7 @@ void() bprintVotesLeft =
 	local string st;
 	local float num_for, num_against;
 	local entity te;
+	num_for = num_against = 0;
 	
 	// Count the number of votes for and against.
 	te = nextent(world);

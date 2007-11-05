@@ -64,6 +64,8 @@ entity(float num, float type, vector org, vector direction, float animtype, floa
     local entity sprite, oself;
     local float counter;
 
+	sprite = world;
+
     counter = 0;
     
     oself = self;

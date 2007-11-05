@@ -365,6 +365,8 @@ void() armor_touch =
 	local float type, value, bit;
 	local string s;
 	local entity oldself;
+
+	bit = value = type = 0;
 	
 	if (other.health <= 0)
 		return;
@@ -699,6 +701,8 @@ void() weapon_touch =
 	local	float	hadammo, best, new, old;
 	local	entity	stemp;
 	local	float	leave;
+
+	new = 0;
 
 	if (!(other.flags & #FL_CLIENT))
 		return;

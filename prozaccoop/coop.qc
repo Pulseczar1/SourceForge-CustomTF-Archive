@@ -8,8 +8,6 @@ cooperative mode functions
 
 void() DroppedKeyThink =
 {
-	local float i;
-
 	// let the throwing player pick it up again
 	self.think = SUB_Null;
 	self.touch = key_touch;
@@ -105,6 +103,7 @@ float() DoorShouldOpen =
 	local float plyrcount;
 	local entity plyr1;
 	local entity plyr2;
+	plyr1 = plyr2 = world;
 
 	if (coop != 2)
 		return #TRUE;

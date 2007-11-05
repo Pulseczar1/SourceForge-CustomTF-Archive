@@ -87,9 +87,10 @@ float(float v) anglemod =
 float(entity test) AI_Check_Contents =
 {
     local float contval;
+	local string MName;
  
     if (test.health <= 0)
-        return;
+        return #FALSE;
     
     contval = pointcontents(test.origin);
 
@@ -171,7 +172,6 @@ float(entity test) AI_Check_Contents =
 			//TF_T_Damage (self, world, world, 25, 0, #TF_TD_FIRE);
             if (IsMonster(self))            
             {
-                local string MName;
                 MName = GetMonsterName(self);
                 if (self.ltime > time - 4) //- OfN - if it felt just after summon
                 {
@@ -215,7 +215,6 @@ float(entity test) AI_Check_Contents =
 
             if (IsMonster(self))            
             {
-                local string MName;
                 MName = GetMonsterName(self);
                 if (self.ltime > time - 4) //- OfN - if it felt just after summon
                 {
@@ -675,7 +674,6 @@ entity (entity scanner) LookAround =
         return scanner;
     #endif
 
-    local entity		scanner;
 	local entity		client;
 //	local entity		list_client;
 //	local entity		list;
@@ -796,6 +794,7 @@ float() FindTarget =
 	local entity	client;
 //	local float		r;
 //	local float		gotatarget;
+	client = world;
 
 // if the first spawnflag bit is set, the monster will only wake up on
 // really seeing the player, not another monster getting angry
@@ -804,7 +803,7 @@ float() FindTarget =
 // spawn flag prior to the ambush flag, and I forgot about it, so the second
 // spawn flag works as well
 	if (!AI_Check_Contents(self))
-        return; //CH check if in lava
+        return #FALSE; //CH check if in lava
 	/* if (sight_entity_time >= time - 0.1 && !(self.spawnflags & 3) )
 	{
 		client = sight_entity;
@@ -1138,7 +1137,7 @@ float()	ShamCheckAttack;
 float() CheckAnyAttack =
 {
 	if (!enemy_vis)
-		return;
+		return #FALSE;
 	if (self.classname == "monster_demon1")
 		return DemonCheckAttack ();
 /*	else if (self.classname == "monster_army")

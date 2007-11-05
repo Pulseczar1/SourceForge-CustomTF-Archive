@@ -72,7 +72,7 @@ float modelindex_tesla; //CH
 // Tesla AI Functions
 float() Tesla_FindTarget;
 void() Tesla_FoundTarget;
-void() Tesla_Pain;
+void(entity attacker, float damage) Tesla_Pain;
 void() Tesla_Die;
 float() Tesla_Fire;
 void() Tesla_Idle;
@@ -415,7 +415,7 @@ void() Tesla_FoundTarget =
 	self.no_grenades_1 = #FALSE;
 };
 
-void() Tesla_Pain =
+void(entity attacker, float damage) Tesla_Pain =
 {
 	// Update the owner's status bar
 	self.real_owner.StatusRefreshTime = time + 0.2;
@@ -493,6 +493,8 @@ float() Tesla_Fire =
 	local float damage;
 	local float cheater;
 	local vector below;
+	damage = 0;
+	cheater = 0;
 
 	// OfN - Psionized teslas don't shot
 	/*if (self.tfstate & #TFSTATE_PSIONIZED)
@@ -627,7 +629,7 @@ float() Tesla_Fire =
 		T_RadiusDamage(self, self, damg, world);
 		if (self.tf_items & #NIT_TURRET) self.origin_z = self.origin_z + 40; // 40
 		//else self.origin_z = self.origin_z - 24;
-		return;
+		return #FALSE;
 	}
 		
 	deathmsg = #DMSG_TESLA;
@@ -996,6 +998,7 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 	{
 		local entity te;
 		local float gotone;
+		gotone = 0;
 
 		te = find(world, classname,"holo");
 

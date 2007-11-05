@@ -396,6 +396,7 @@ void () Throw_Grapple =
 void () Service_Grapple =
 {
         local   vector  hook_dir;
+		hook_dir = '0 0 0';
 
         // drop the hook if player lets go of button
         if (!self.button0)
