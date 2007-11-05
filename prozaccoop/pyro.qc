@@ -48,7 +48,7 @@ entity (string type, entity p_owner) FlameSpawn =
 		if (!(RemoveFlameFromQueue(type)))
 		{
 			// RPrint("Create flame failed: too many\n");
-			return;
+			return world;
 		}
 	}
 
@@ -121,7 +121,7 @@ float (string id_flame) RemoveFlameFromQueue =
 	if (num_world_flames < #FLAME_MAXWORLDNUM)
 	{
 		RPrint("ERROR in RemoveFlameFromQueue\n");
-		return;
+		return #FALSE;
 	}
 /*
 	db1 = ftos(num_world_flames);

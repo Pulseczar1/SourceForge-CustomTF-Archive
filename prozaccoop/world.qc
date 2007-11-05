@@ -211,6 +211,7 @@ void () ValidateCoopsSpawns =
 {
 	local entity le, re;
 
+	re = le = world;
 	// always start from world
 	le = world;
 	re = world;

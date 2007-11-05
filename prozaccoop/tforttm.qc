@@ -122,6 +122,57 @@ void(float tno) TeamFortress_TeamSetColor =
 	}
 };
 
+//The QuakeForge server will call this function on user info changes. The
+//expected return value is 0 if the server is to handle the change as normal
+//(server sends changes to clients) or non-zero if the progs handled the change
+//and the server is to ignore it (by not sending the changes).
+float (string key, string oldvalue, string value) UserInfoChanged =
+{
+	local string realcolor;	// color sent to non-team players
+	local string teamcolor;	// color sent to team players
+	local float myteam;		// team this player is on
+	local float clno;		// client number of this player
+	local entity cl;		// client entity
+
+	if (key != "topcolor" && key != "bottomcolor") {
+		// let the server handle all other keys
+		return 0;
+	}
+	//
+	realcolor = value;
+	myteam = self.team_no;
+	teamcolor = ftos (TeamFortress_TeamGetColor (myteam));
+	// teamkillers are always pink
+	if (realcolor == ftos (#PINK))
+		teamcolor = realcolor;
+
+	// find our client number (hmm, maybe this should be passed in as a third
+	// parameter, but then there's the issue of integer vs float)
+	clno = 0;
+	cl = nextent (world);
+	while (cl != self) {
+		clno = clno + 1;
+	}
+
+	// spam the new color to the clients
+	cl = nextent (world);
+	while (cl) {
+		if (cl.classname == "player" || cl.classname == "spec") {
+			msg_entity = cl;
+			WriteByte (#MSG_ONE, 51);	// svc_setinfo
+			WriteByte (#MSG_ONE, clno);
+			WriteString (#MSG_ONE, key);
+			if (cl.team_no == myteam)
+				WriteString (#MSG_ONE, teamcolor);
+			else
+				WriteString (#MSG_ONE, realcolor);
+		}
+		cl = nextent (cl);
+	}
+	//tell the server we handled the change
+	return 1;
+}
+
 #ifdef QUAKE_WORLD
 string(float tno) GetTeamName =
 {
@@ -386,9 +437,9 @@ float(float tno) TeamFortress_TeamSet =
 //RJM
 
     //- OfN Team3 should have less players than red in Hunted
+	local float result;
     if (mapname == "huntedr")
     {
-        local float result;
         result = floor(TeamFortress_TeamGetNoPlayers(2) * #HUNTED_YELLOWTEAM_FACTOR);
         team3maxplayers = result;
         if (team3maxplayers < 1) team3maxplayers = 1;
@@ -396,7 +447,6 @@ float(float tno) TeamFortress_TeamSet =
     else
     if (mapname == "border1" || mapname == "border1r")
     {
-        local float result;
         result = floor(TeamFortress_TeamGetNoPlayers(2) * #BORDER_FACTOR);
         team3maxplayers = result;
         team1maxplayers = result;
@@ -423,6 +473,8 @@ void() TeamFortress_CheckTeamCheats =
 	local string st, sk;
 	local float tc;
 	local float rate;
+	rate = 0;
+	sk = "";
 
 	if (self.immune_to_chec > time)
 		return;
@@ -729,6 +781,7 @@ float (float tno) TeamFortress_TeamGetNoPlayers =
 	local float size_team;
 	local entity search;
 	//local string st;
+	size_team = 0;
 
 	search = find (world, classname, "player");
 	while (search != world)
@@ -1204,6 +1257,7 @@ float (entity targ, entity attacker, float damage) TeamEqualiseDamage =
 		return damage;
 
 	local float adv, newdam;
+	adv = 0;
 
 	// increase damage done by attacker's team advantage
 	if (attacker.team_no == 1)
@@ -1342,7 +1396,7 @@ float(float tno) TeamFortress_TeamIsCivilian =
 
 //=========================================================================
 // Sprints to all the members on one team except one 
-float(float tno, entity ignore, string st) teamsprint =
+void(float tno, entity ignore, string st) teamsprint =
 {
 	// Don't do teamprints in DM
 	if (tno == 0)

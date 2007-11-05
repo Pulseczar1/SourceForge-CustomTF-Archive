@@ -211,7 +211,6 @@ void() player_touch =
                 sprint(self,#PRINT_HIGH,"You have infected the ",tmps," ",other.netname,"!\n");
 
                 // Report to teammates of owner
-                local string tmps;
                 tmps = GetMonsterName(other);
                 teamprefixsprint(other.real_owner.team_no,other.real_owner);
                 teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
@@ -962,7 +961,7 @@ void()	player_axpain4 =	[	$axpain4,	player_axpain5	] {};
 void()	player_axpain5 =	[	$axpain5,	player_axpain6	] {};
 void()	player_axpain6 =	[	$axpain6,	player_run		] {};
 
-void() player_pain =
+void(entity attacker, float damage) player_pain =
 {
 	if (self.weaponframe)
 		return;

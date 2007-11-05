@@ -12,7 +12,7 @@ connects & disconnects, and when a map changes levels
 // prototypes
 void () W_WeaponFrame;
 void() W_SetCurrentAmmo;
-void() player_pain;
+void(entity attacker, float damage) player_pain;
 void() player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
@@ -1733,9 +1733,9 @@ Returns the entity to spawn at
 entity() SelectSpawnPoint =
 {
 	local	entity spot;
-	local	entity at_spot;
-	local	float  spot_found;
-	local	float  attempts;
+	//local	entity at_spot;
+	//local	float  spot_found;
+	//local	float  attempts;
 	
 	// testinfo_player_start is only found in regioned levels
 	/*
@@ -2545,7 +2545,7 @@ void() PlayerJump =
 	self.flags = self.flags - (self.flags & #FL_JUMPRELEASED);
 	self.button2 = 0;
 // player jumping sound
-	if (!self.cutf_items & #CUTF_STEALTH) // Only play it if we don't have stealth
+	if (!(self.cutf_items & #CUTF_STEALTH)) // Only play it if we don't have stealth
 		sound (self, #CHAN_BODY, "player/plyrjmp8.wav", 1, #ATTN_NORM);
 
 	//WK Sprinters jump higher
@@ -2622,7 +2622,7 @@ void() WaterMove =
 		if (self.flags & #FL_INWATER)
 		{	
 			// play leave water sound
-			if (!self.cutf_items & #CUTF_STEALTH) // SB only if no stealth
+			if (!(self.cutf_items & #CUTF_STEALTH)) // SB only if no stealth
 				sound (self, #CHAN_BODY, "misc/outwater.wav", 1, #ATTN_NORM);
 			self.flags = self.flags - #FL_INWATER;
 			//WK Setspeed for Scuba commando
@@ -2658,7 +2658,7 @@ void() WaterMove =
 	if ( !(self.flags & #FL_INWATER) )
 	{	
 		// player enter water sound
-		if (!self.cutf_items & #CUTF_STEALTH)
+		if (!(self.cutf_items & #CUTF_STEALTH))
 			if (self.watertype == #CONTENT_LAVA)
 				sound (self, #CHAN_BODY, "player/inlava.wav", 1, #ATTN_NORM);
 			else if (self.watertype == #CONTENT_WATER)
@@ -3265,7 +3265,7 @@ void() PlayerPostThink =
 	{
 		if (self.watertype == #CONTENT_WATER)
 		{
-			if (!self.cutf_items & #CUTF_STEALTH)
+			if (!(self.cutf_items & #CUTF_STEALTH))
 				sound (self, #CHAN_BODY, "player/h2ojump.wav", 1, #ATTN_NORM);
 		}
 		else if (self.jump_flag < -650)
@@ -3767,9 +3767,9 @@ void() PlayerQuit =
 
 void() UpdateMapSettings =
 {
+	local float result;
 	if (mapname == "huntedr")
 	{
-		local float result;
 		result = floor(TeamFortress_TeamGetNoPlayers(2) * #HUNTED_YELLOWTEAM_FACTOR);
 		team3maxplayers = result;
 		if (team3maxplayers < 1) team3maxplayers = 1;
@@ -3777,7 +3777,6 @@ void() UpdateMapSettings =
 	else
 	if (mapname == "border1" || mapname == "border1r")
 	{
-		local float result;
 		result = floor(TeamFortress_TeamGetNoPlayers(2) * #BORDER_FACTOR);
 		team3maxplayers = result;
 		team1maxplayers = result;

@@ -4,6 +4,7 @@ void(entity Goal, entity AP) DoGoalWork;
 void(entity Goal, entity AP) DoGroupWork;
 
 void() SUB_Null = {};
+void(entity attacker, float damage) SUB_PainNull = {};
 
 void() SUB_Remove = {dremove(self);};
 

@@ -1135,6 +1135,7 @@ void() TeamFortress_GrenadePrimed;
 void() TeamFortress_PrimeGrenade =
 {
 	local float gtype;
+	gtype = 0;
 	local string gs, ptime;
 	local entity tGrenade;
 
@@ -1634,6 +1635,7 @@ void() TeamFortress_ThrowGrenade =
 float(float pc) IsLegalClass =
 {
 	local float bit;
+	bit = 0;
 
 	// Spy may be turned off
 	if (spy_off == #TRUE && pc == #PC_SPY)
@@ -2049,6 +2051,7 @@ void() TeamFortress_SetEquipment =
 	local entity automan;
 	local string st;
 	local float kept_items;
+	kept_items = 0;
 
 	if (self.classname != "player")
 		return;
@@ -2754,7 +2757,7 @@ float(entity Retriever, entity Items) TeamFortress_AddBackpackItems =
 	// weapons, then you may want them to be able to pick up weapons
 	// from backpacks. If so, this is where to do it.
 	// For now, return. 
-	return;
+	return 0;
 };
 
 //=========================================================================
@@ -3170,6 +3173,7 @@ void() TeamFortress_CheckClassStats =
 void (float type) TeamFortress_DropAmmo =
 {
 	local float ammo;
+	ammo = 0;
 
     if (type == 1)
 	{

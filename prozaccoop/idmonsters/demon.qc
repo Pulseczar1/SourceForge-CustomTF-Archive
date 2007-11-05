@@ -332,8 +332,6 @@ float()	_CheckDemonJump =
 
 float()	_DemonCheckAttack =
 {
-	local	vector	vec;
-
 	enemy_range = range (self.enemy);
 	
 // if close enough for slashing, go for it

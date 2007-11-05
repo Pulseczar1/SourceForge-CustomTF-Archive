@@ -822,6 +822,7 @@ void() GruntyScanTargets =
 void() GruntyCheckFire =
 {
 	local float dist, vis, allowedweaps;
+	allowedweaps = 0;
 
 	if (self.attack_finished > time)
 		return;
@@ -1750,7 +1751,7 @@ void () GruntyPayThink =
 		self.respawn_time = time + 20;
 	}
 	// Grunty is on a SHOPPING SPREE!
-	if (!self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+	if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER))
 		spendalloc = self.money * 0.2; // amount to spend on health/speed upgrades
 	else
 		spendalloc = self.money;
@@ -1778,6 +1779,7 @@ void () GruntyPayThink =
 	if (self.health < self.max_health && self.money >= #GRUNTY_COST_HEALTHPACK)
 	{
 		local float loops, bought;
+		loops = 0;
 		bought=0;
 
 		while (loops < (0.75+(self.has_sensor/4)) && self.money >= #GRUNTY_COST_HEALTHPACK && self.max_health > self.health)
@@ -1830,7 +1832,7 @@ void () GruntyPayThink =
 	}
 	
 	// Consider buying a shotgun
-	if (!self.weapons_carried & #WEAP_SHOTGUN)
+	if (!(self.weapons_carried & #WEAP_SHOTGUN))
 		if (self.money >= #GRUNTY_COST_SHOTGUN)
 		{
 			r = random();
@@ -1843,7 +1845,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a knife
-	if (!self.cutf_items & #CUTF_KNIFE)
+	if (!(self.cutf_items & #CUTF_KNIFE))
 		if (self.money >= #GRUNTY_COST_KNIFE)
 		{
 			r = random();
@@ -1856,7 +1858,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a nailgun
-	if (!self.weapons_carried & #WEAP_NAILGUN)
+	if (!(self.weapons_carried & #WEAP_NAILGUN))
 		if (self.money >= #GRUNTY_COST_NAILGUN)
 		{
 			r = random();
@@ -1869,7 +1871,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a double barrel
-	if (!self.weapons_carried & #WEAP_SUPER_SHOTGUN)
+	if (!(self.weapons_carried & #WEAP_SUPER_SHOTGUN))
 		if (self.money >= #GRUNTY_COST_SUPER_SHOTGUN)
 		{
 			r = random();
@@ -1883,7 +1885,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a scanner
-	if (!self.tf_items & #NIT_SCANNER)
+	if (!(self.tf_items & #NIT_SCANNER))
 		if (self.money >= #GRUNTY_COST_SCANNER)
 		{
 			r = random();
@@ -1896,7 +1898,7 @@ void () GruntyPayThink =
 			}	
 		}
 	// Consider buying...a rocket launcher.
-	if (!self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+	if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER))
 		if (self.money >= #GRUNTY_COST_ROCKET_LAUNCHER)
 		{
 			r = random();

@@ -468,6 +468,8 @@ void(float dist) gremlin_run =
                   local vector end;
                   local float c;
 
+				  end = '0 0 0';
+
                   ang = vectoangles(d);
                   done = 0;
                   c = 0;
@@ -886,7 +888,7 @@ void(entity attacker, float damage) gremlin_pain =
 };
 
 void()   gremlin_spawn1 =[ $spawn1.asc,      gremlin_spawn2 ] {self.nextthink = time + 0.3;
-   self.th_pain = SUB_Null;
+   self.th_pain = SUB_PainNull;
 //    sound (self, CHAN_VOICE, "grem/idle.wav", 1, ATTN_IDLE);
 };
 void()   gremlin_spawn2 =[ $spawn2.asc,      gremlin_spawn3 ] {self.nextthink = time + 0.3;};
@@ -1777,6 +1779,8 @@ void() Gremlin_Split =
    local float c;
    local vector pos;
    local float proceed;
+
+   pos = '0 0 0';
 
    if (NumSpawnGremlins >= (NumGremlins*2))
       return;

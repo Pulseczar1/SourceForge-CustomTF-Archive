@@ -21,8 +21,8 @@ void() CameraSwitchView;*/
 // External functions
 
 void() ConcussionGrenadeTouch;
-void() Security_Camera_Pain;
-float(float tno, entity ignore, string st) teamsprint;
+void(entity attacker, float damage) Security_Camera_Pain;
+void(float tno, entity ignore, string st) teamsprint;
 void() TeamFortress_DetpackTouch;
 void() TeamFortress_DetpackCountDown;
 void() TeamFortress_DetpackExplode;
@@ -391,6 +391,8 @@ float() MotionSensorFindTarget =
 {
 	local entity client;
 	local float	r, gotone, loopc;
+
+	client = world;
 
 	// Try a few checks to make it react faster
 	r = 0;

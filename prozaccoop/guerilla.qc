@@ -169,6 +169,8 @@ void() Menu_Guerilla =
 {
 	local string header, st1, st2, st3, st4, st5, foot, tmp;
 	local float extras, points, bitfield, minesup;
+
+	st1 = st2 = st3 = "";
 	
 	extras = GetJobExtras(self);
 	points = GetMinePoints(self);
@@ -1592,6 +1594,7 @@ float(entity player) GuerillaGetMaxPointsForJob =
 
 void(entity player) GuerillaUpgradeJob =
 {
+	local float currentpoints, spent;
 	if (player.job & #JOB_EXTRA2)
 		return; // cant upgrade anymore
 	 
@@ -1602,7 +1605,6 @@ void(entity player) GuerillaUpgradeJob =
 		player.job = (player.job | #JOB_EXTRA2) - #JOB_EXTRA1;
 
 		// adjust points if needed and for sanity
-		local float currentpoints, spent;
 		spent = GetMineSpentPoints(player);
 		currentpoints = GetMinePoints(player) + spent;
 		
@@ -1622,7 +1624,6 @@ void(entity player) GuerillaUpgradeJob =
 		player.job = player.job | #JOB_EXTRA1;
 
 		// adjust points if needed and for sanity
-		local float currentpoints, spent;
 		spent = GetMineSpentPoints(player);
 		currentpoints = GetMinePoints(player) + spent;
 		

@@ -2598,7 +2598,7 @@ string(float itemnum, string itemdesc,float cost) ConstructMenuSentryStr =
 	result = ftos(itemnum);
 	result = colstr(result,#COLSTR_NUMBER);
 	
-	if (!self.cutf_items & #CUTF_SENTRYGUN)
+	if (!(self.cutf_items & #CUTF_SENTRYGUN))
 	{
 		result = strcat("  ",result);
 		numbought = 0;
@@ -2674,7 +2674,7 @@ string(float itemnum, string itemdesc,float cost) ConstructMenuTeslaStr =
 	result = ftos(itemnum);
 	result = colstr(result,#COLSTR_NUMBER);
 	
-	if (!self.tf_items & #NIT_TESLA)
+	if (!(self.tf_items & #NIT_TESLA))
 	{
 		result = strcat("  ",result);
 		numbought = 0;
@@ -2750,7 +2750,7 @@ string(float itemnum, string itemdesc,float jobid,float cost, float extra1cost, 
 	result = ftos(itemnum);
 	result = colstr(result,#COLSTR_NUMBER);
 	
-	if (!self.job & jobid)
+	if (!(self.job & jobid))
 	{
 		result = strcat("  ",result);
 		numbought = 0;

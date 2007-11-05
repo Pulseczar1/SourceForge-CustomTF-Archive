@@ -39,7 +39,7 @@ $cd id1/progs/s_ablast
 $frame ablast1 ablast2 ablast3 ablast4 ablast5 ablast6
 
 
-void (entity thing) canairpush =
+float (entity thing) canairpush =
 {
 	local float af_det_delay;
 
@@ -405,7 +405,7 @@ void() launch_horn =
             deathmsg = #DMSG_AIRG_WATER;
 
         // If we havent the upgrade reduce dmg (not in water)
-        if (!self.cutf_items & #CUTF_AIRFISTUPGRADE && deathmsg == #DMSG_AIRG)
+        if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE) && deathmsg == #DMSG_AIRG)
             ldmg = ldmg * #AIRFIST_DMG_REDUCTION;
 
         #ifdef AIRFIST_DONT_HURT_TEAMMATES
@@ -508,7 +508,7 @@ void() launch_horn =
   //after giving the player free SuperDuperSpeed
 
   //WK 2/26/7 Only give discharges to unupgraded AF
-if (!self.cutf_items & #CUTF_AIRFISTUPGRADE) {
+if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE)) {
 	  temp_velocity = self.velocity;
 	  temp_velocity_z = temp_velocity_z = 0;
 	  if (vlen(temp_velocity) > self.maxspeed + 200) {

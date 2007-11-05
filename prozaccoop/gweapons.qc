@@ -188,6 +188,8 @@ entity (entity source) zg_findtarget =
 	local entity radiusent;
 	local float ret, badpickup;
 
+	badpickup = 0;
+
 	makevectors (source.v_angle);
 
 	// try directly at what we're looking at

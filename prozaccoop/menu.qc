@@ -680,6 +680,7 @@ void() Menu_Team =
 void(float inp) Menu_Team_Input =
 {
 	local float teamSet; // bool
+	teamSet = 0;
 
 	//WK Remove starting observer gravity. It might come right back.
 	self.gravity = 1;
@@ -1343,6 +1344,8 @@ void() Menu_Engineer =
 	local string line5;
 	local string line6;
 	local string line7;
+
+	line5 = line7 = "";
 
 	//Check line for Dispenser
 	if (self.has_dispenser == #TRUE)
@@ -3221,11 +3224,11 @@ void(float inp) Menu_Dispenser_Input =
 			self.building.ammo_rockets = self.building.ammo_rockets - am * 15;
 			self.no_grenades_1 = self.no_grenades_1 + am;
 
+			local string desc;
 			if (am > 0)
 			{
 				anydone = #TRUE;
 				tmpstr = ftos(floor(am));
-				local string desc;
 				desc = GetGrenadeText(self.tp_grenades_1);
 				sprint(self,#PRINT_LOW,"You get ",tmpstr," ",desc," grenades.\n");
 			}
@@ -3243,7 +3246,6 @@ void(float inp) Menu_Dispenser_Input =
 			{
 				anydone = #TRUE;
 				tmpstr = ftos(floor(am));
-				local string desc;
 				desc = GetGrenadeText(self.tp_grenades_2);
 				sprint(self,#PRINT_LOW,"You get ",tmpstr," ",desc," grenades.\n");
 			}

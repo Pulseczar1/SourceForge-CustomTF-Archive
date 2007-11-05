@@ -382,8 +382,6 @@ float() _ShamCheckAttack =
 {
 	local vector	spot1, spot2;
 	local entity	targ;
-	local float		chance;
-	local float		enemy_yaw;
 
 	enemy_range = range (self.enemy);
 //	enemy_vis = visible (self.enemy);

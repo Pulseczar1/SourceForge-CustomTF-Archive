@@ -15,7 +15,7 @@ void() Sentry_Rotate;
 float() Sentry_FindTarget;
 void() Sentry_FoundTarget;
 void() Sentry_HuntTarget;
-void() Sentry_Pain;
+void(entity attacker, float damage) Sentry_Pain;
 void() Sentry_Die;
 float() Sentry_Fire;
 //WK - Will kill enemies on touch, and adds support for flying.
@@ -308,6 +308,8 @@ float() Sentry_FindTarget =
 	
 	local entity client;
 	local float r, gotone, loopc;
+	local entity te;
+	client = world;
 
 	//WK Hack to get floating sentry working
 	if (self.tf_items & #NIT_TURRET) {
@@ -382,7 +384,6 @@ float() Sentry_FindTarget =
 	if (!gotone && (self.all_active & #IMPROVED_FOUR)) //if no player target found lets scan for monsters and army..
 	{
 #endif
-		local entity te;
 
 		te = find(world, #monsterflag,#STRFLAG_MONSTER);
 
@@ -446,8 +447,6 @@ float() Sentry_FindTarget =
 	//if no player or monsters found lets scan for possible holo fakes.. (if has improved circuits no scan for holos)
 	if (!gotone && !(self.all_active & #IMPROVED_FOUR)) 
 	{
-		local entity te;
-
 		te = find(world, classname,"holo");
 
 		while (te != world && gotone == #FALSE)
@@ -593,7 +592,7 @@ void() Sentry_HuntTarget =
 		self.nextthink = time + (0.5*tfactor);	// Some visual, so its a little easier
 };
 
-void() Sentry_Pain =
+void(entity attacker, float damage) Sentry_Pain =
 {
 	// Update the owner's status bar
 	self.real_owner.StatusRefreshTime = time + 0.2;
@@ -829,7 +828,7 @@ float() Sentry_Fire =
 			WriteCoord (#MSG_BROADCAST, self.origin_z);
 			if (self.tf_items & #NIT_TURRET)
 				self.origin_z = self.origin_z + 40;
-			return;
+			return #FALSE;
 		}
 
 		newmis = spawn ();

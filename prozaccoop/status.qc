@@ -219,6 +219,8 @@ void(entity pl) RefreshStatusBar1 =
 	local entity te;
 	local entity sent;
 
+	sent = world;
+
 	if (pl.StatusBarSize == 0)
 	{
 		pl.StatusRefreshTime = time + 60;
@@ -328,6 +330,8 @@ void(entity pl) RefreshStatusBar4 =
 	//local float num;
 	local entity te;
 	local entity sent;
+
+	sent = world;
 
 	if (pl.StatusBarSize == 0)
 	{
@@ -589,6 +593,7 @@ void(entity pl) RefreshStatusBar3 =
 	local string s5, s6;//, s7;
 	//local entity tg;
 	//local float num;
+	s2 = "";
 
 	if (pl.StatusBarSize == 0)
 	{
@@ -681,6 +686,7 @@ void(entity pl) RefreshStatusBar3 =
         else if (targ.classname == "monster_gremlin")
         	s2 = "\nÇòåíìéî";
 
+		local string tmp;
         if (self.job & #JOB_WARLOCK)
         {
             // Get number of monsters of this kind the player has
@@ -690,7 +696,6 @@ void(entity pl) RefreshStatusBar3 =
             if (thiskind > 1) // More than one?
             {
                 // Ok then, show number of soul also
-                local string tmp;
                 tmp = ftos(targnum+1);
                 tmp = colstr(tmp,#COLSTR_NUMBER);
 
@@ -710,7 +715,6 @@ void(entity pl) RefreshStatusBar3 =
                 s2 = strcat(s2,": ");
             else
             {
-                local string tmp;
                 tmp = ftos(targnum+1);
                 tmp = colstr(tmp,#COLSTR_NUMBER);
 
@@ -825,11 +829,12 @@ void(float res) StatusRes =
 string(entity pl) ClipSizeToString100 =
 //CH edited b/c nothing has over 20
 {
+	local float num;
+	num = 0;
     //---------------- CLIP EXTENDER (same as below but with _EX values -------------//
     if (pl.cutf_items & #CUTF_CLIPEXTEND)
     {
         //---//
-        local float num;
 
         if (pl.current_weapon == #WEAP_SHOTGUN)
         {
@@ -875,8 +880,6 @@ string(entity pl) ClipSizeToString100 =
     }   //---// CLIP EXTENDER
     else
     {
-        local float num;
-
         if (pl.current_weapon == #WEAP_SHOTGUN)
         {
             if (#RE_SHOTGUN - pl.reload_shotgun > pl.ammo_shells)

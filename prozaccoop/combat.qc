@@ -141,12 +141,12 @@ void (float respawntime, void() spawn_func) COOP_SetupRespawn;
 #endif
 void(entity targ, entity attacker) Killed =
 {
+	local string st;
     // SOLVES BUG ???? // Stack overflow?
     if (targ.is_killed == #TRUE)
     {
         if (IsBuilding(targ))
         {
-            local string st;
             RPrint("(OfN WARNING:) Building: '");
             st=GetBuildingName(targ);
             RPrint(st);
@@ -160,7 +160,6 @@ void(entity targ, entity attacker) Killed =
 
         if (targ.classname == "player")
         {
-            local string st;
             RPrint("(OfN WARNING:) Player: '");
             RPrint(targ.netname);
 
@@ -580,7 +579,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	}
 	//WK Friendly Sentrygun protection - you can't hurt friendly sentries
 	if (IsBuilding(targ)) {
-		if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && (!targ.tf_items & #NIT_SECURITY_CAMERA)) {
+		if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && !(targ.tf_items & #NIT_SECURITY_CAMERA)) {
 			return;
 		}
 		targ.armorvalue = 1; //CH so that the armors are counted
@@ -796,7 +795,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		if (Teammate(targ.team_no, attacker.team_no) && targ != attacker && !(targ.penance_time > time) && !(targ.is_undercover) && prematch < time)
 		{
 			//A teamkill
-			local string st;
 			local float threshold;
 			threshold = 0;
 			st = infokey(world, "curse");

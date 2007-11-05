@@ -527,7 +527,7 @@ void() teleport_touch =
 			other.flags = other.flags - #FL_ONGROUND;
 		other.velocity = v_forward * 300;
 	}
-	other.flags = other.flags - other.flags & #FL_ONGROUND;
+	other.flags = other.flags - (other.flags & #FL_ONGROUND);
 };
 
 /*QUAKED info_teleport_destination (.5 .5 .5) (-8 -8 -8) (8 8 32)
@@ -832,7 +832,7 @@ void() trigger_push =
 
 void() trigger_monsterjump_touch =
 {
-	if ( other.flags & (#FL_MONSTER | #FL_FLY | #FL_SWIM) != #FL_MONSTER )
+	if ((other.flags & (#FL_MONSTER | #FL_FLY | #FL_SWIM)) != #FL_MONSTER )
 		return;
 
 // set XY even if not on ground, so the jump will clear lips
