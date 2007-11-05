@@ -279,6 +279,8 @@ void(float aur) AddAura =
 		local float oldaur;
 		local string oldstrung;
 
+		strung = oldstrung = "";
+
 		oldaur = targ.aura;
 		targ.aura = aur;
 		targ.crusader_inspirator = self;

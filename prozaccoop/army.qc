@@ -108,6 +108,8 @@ void(entity soul, float currentsoul) Menu_Army1 =
 	local string st,st2,st3;
 	local string st4, st5;
 
+	st2 = st3 = "";
+
 	local float extras;
 	extras = GetJobExtras(self);
 	   
@@ -331,7 +333,7 @@ void(entity soul, float currentsoul) Menu_Army2 =
 	local float extras;
 	extras = GetJobExtras(self);
 
-	st3="";
+	st = st2 = st3 = st4 = st6 = "";
 
 	if (soul==world) // our sold was killed (this never gets executed?)
 	{
