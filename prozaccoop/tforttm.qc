@@ -122,6 +122,7 @@ void(float tno) TeamFortress_TeamSetColor =
 	}
 };
 
+/*
 //The QuakeForge server will call this function on user info changes. The
 //expected return value is 0 if the server is to handle the change as normal
 //(server sends changes to clients) or non-zero if the progs handled the change
@@ -152,6 +153,7 @@ float (string key, string oldvalue, string value) UserInfoChanged =
 	cl = nextent (world);
 	while (cl != self) {
 		clno = clno + 1;
+		cl = nextent (cl);
 	}
 
 	// spam the new color to the clients
@@ -172,6 +174,7 @@ float (string key, string oldvalue, string value) UserInfoChanged =
 	//tell the server we handled the change
 	return 1;
 }
+*/
 
 #ifdef QUAKE_WORLD
 string(float tno) GetTeamName =
