@@ -78,6 +78,13 @@ cvar_t con_prompt = {"con_prompt","1"};
 cvar_t con_talk = {"con_talk","0"};
 cvar_t con_cleanlog = {"con_cleanlog","1"};
 
+// phrosty - db logging.
+cvar_t db_name = {"db_name",""};
+cvar_t db_host = {"db_host",""};
+cvar_t db_port = {"db_port","0"};
+cvar_t db_user = {"db_user",""};
+cvar_t db_pass = {"db_pass",""};
+
 int restart_state;
 
 //
@@ -1930,6 +1937,13 @@ void SV_InitLocal (void)
 	Cvar_RegisterVariable (&con_prompt); // OfN
 	Cvar_RegisterVariable (&con_talk); // OfN
 	Cvar_RegisterVariable (&con_cleanlog); // OfN
+
+	// phrosty - db logging.
+	Cvar_RegisterVariable(&db_name);
+	Cvar_RegisterVariable(&db_host);
+	Cvar_RegisterVariable(&db_port);
+	Cvar_RegisterVariable(&db_user);
+	Cvar_RegisterVariable(&db_pass);
 
 	Cmd_AddCommand ("addip", SV_AddIP_f);
 	Cmd_AddCommand ("removeip", SV_RemoveIP_f);
