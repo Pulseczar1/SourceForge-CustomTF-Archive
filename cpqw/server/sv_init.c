@@ -295,6 +295,8 @@ void SV_SpawnServer (char *server)
 	
 	SV_SaveSpawnparms ();
 
+	// map has started.
+
 	svs.spawncount++;		// any partially connected client will be
 							// restarted
 
@@ -433,5 +435,13 @@ void SV_SpawnServer (char *server)
 
 	Info_SetValueForKey (svs.info, "map", sv.name, MAX_SERVERINFO_STRING);
 	Con_DPrintf ("Server spawned.\n");
+	
+	if(svs.spawncount != 1) {
+		// if a map was active, stop it.
+		DB_MapStopped();
+	}
+
+	// new map started.
+	DB_MapStarted(sv.name);
 }
 

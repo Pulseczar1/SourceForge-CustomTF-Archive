@@ -18,33 +18,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-#include <time.h>
-#include <stdio.h>
-#include <assert.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#include "qwsvdef.h"
+#include "dblog.h"
+
+#undef PROTOCOL_VERSION /* conflict between mysql and qwsv */
 
 #if defined(_WIN32)
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
-	#include <winsock2.h>
-#elif defined(__POSIX__)
-	#include <pthread.h>
+#include <windows.h>
 #endif
 
 #include <mysql.h>
-
-#include "sys.h"
-#include "bothdefs.h"
-#include "common.h"
-#include "cvar.h"
-#include "dblog.h"
-
-typedef struct tag_dbuser {
-	unsigned int userid;
-	unsigned int dbid;
-} dbuser_t;
 
 /* MySQL connection */
 static MYSQL *g_mysql;
@@ -57,29 +40,6 @@ static MYSQL_STMT *g_insert_frag;
 
 /* current game id */
 static unsigned int g_gameid;
-
-/* sorted array of users for binary searching */
-static dbuser_t g_users[64];
-static size_t g_usercount;
-
-/* performs a binary search on g_users, returning an index with a userid equal or greater to userid. */
-static size_t finduser(unsigned int userid) {
-	ptrdiff_t ret = 0, count = g_usercount;
-
-	while(0 < count) {
-		ptrdiff_t mid = count / 2;
-
-		if(g_users[ret + mid].userid < userid) {
-			ret += ++mid;
-			count -= mid;
-		}
-		else {
-			count = mid;
-		}
-	}
-
-	return ret;
-}
 
 /* allocates and prepares a statement.  does not free statement if prepare fails. */
 static int prepare(MYSQL_STMT **pstmt, MYSQL *db, const char *sql) {
@@ -233,8 +193,6 @@ static void init(void) {
 
 	if(prepare(&g_insert_frag, db, "INSERT INTO t_frags(gameid,attackerid,attackerflags,attackerspeed,victimid,victimflags,victimspeed,speed,distance,weapon) VALUES(?,?,?,?,?,?,?,?,?,?)"))
 		goto err6;
-	
-	g_usercount = 0;
 
 	return;
 
@@ -314,70 +272,28 @@ void DB_MapStopped(void) {
 		mysql_stmt_close(g_insert_frag);
 		mysql_close(g_mysql);
 		g_mysql = NULL;
-		g_usercount = 0;
 	}
 }
 
-/* call when a player connects. */
-void DB_PlayerConnected(unsigned int userid, const char *name) {
-	size_t idx;
+/* call when a player connects or changes names. */
+unsigned int DB_GetPlayerId(const char *name) {
+	unsigned int ret;
 
-	if(!g_mysql) return;
-	
-	/* if it's a new user, add it to user array */
-
-	idx = finduser(userid);
-
-	if(idx == g_usercount) {
-		// adding a new player to end.
-		g_users[idx].userid = userid;
-		++g_usercount;
+	if(g_mysql) {
+		ret = getidforname(g_select_player, g_insert_player, name);
+		assert(ret != 0);
 	}
-	else if(g_users[idx].userid != userid) {
-		// adding a new player to middle.
-		memmove(&g_users[idx + 1], &g_users[idx], (g_usercount - idx) * sizeof(dbuser_t));
-
-		g_users[idx].userid = userid;
-		++g_usercount;
+	else {
+		ret = 0;
 	}
 
-	g_users[idx].dbid = getidforname(g_select_player, g_insert_player, name);
-	assert(g_users[idx].dbid != 0);
-}
-
-/* call when a player changes names. */
-void DB_PlayerNameChanged(unsigned int userid, const char *name) {
-	size_t idx;
-
-	if(!g_mysql) return;
-	
-	/* if it's a new user, add it to user array */
-
-	idx = finduser(userid);
-	assert(idx < g_usercount);
-
-	g_users[idx].dbid = getidforname(g_select_player, g_insert_player, name);
-	assert(g_users[idx].dbid != 0);
-}
-
-/* call when a player disconnects. */
-void DB_PlayerDisconnected(unsigned int userid) {
-	size_t idx;
-
-	if(!g_mysql) return;
-	
-	idx = finduser(userid);
-	assert(idx < g_usercount);
-
-	if(idx < --g_usercount) {
-		memmove(&g_users[idx], &g_users[idx + 1], (g_usercount - idx) * sizeof(dbuser_t));
-	}
+	return ret;
 }
 
 /*
 	call when a player kills another.
 
-	aid/vid: userid
+	aid/vid: player ids.  NOT userid, must get with DB_GetPlayerId.
 	aflags/vflags: flags (16 bits max).  armor type, runes, auras, etc.
 	aspeed: speed of attacker at time of firing.
 	vspeed: speed of victim at time of hit.
@@ -390,19 +306,6 @@ void DB_LogFrag(unsigned int aid, unsigned int aflags, unsigned int aspeed,
 					 unsigned int speed, unsigned int distance, unsigned int weapon)
 {
 	MYSQL_BIND params[10] = {0};
-	size_t idx;
-	
-	// get attacker database id.
-
-	idx = finduser(aid);
-	assert(idx < g_usercount);
-	aid = g_users[idx].dbid;
-	
-	// get victim database id.
-
-	idx = finduser(vid);
-	assert(idx < g_usercount);
-	vid = g_users[idx].dbid;
 
 	// insert into db.
 	

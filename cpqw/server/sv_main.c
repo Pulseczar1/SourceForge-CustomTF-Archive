@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "qwsvdef.h"
+#include "dblog.h"
 
 quakeparms_t host_parms;
 
@@ -135,6 +136,10 @@ void SV_Shutdown (void)
 		fclose (sv_fraglogfile);
 		sv_logfile = NULL;
 	}
+
+	// phrosty - disconnect database.
+	DB_MapStopped();
+
 	NET_Shutdown ();
 }
 
@@ -2192,6 +2197,9 @@ void SV_ExtractFromUserinfo (client_t *cl)
 	strncpy (cl->name, val, sizeof(cl->name)-1);
 	cl->name[sizeof(cl->name) - 1] = 0;
 	Info_SetValueForKey(cl->userinfo,"name",cl->name,MAX_INFO_STRING);
+
+	// phrosty - set database id.
+	cl->databaseid = DB_GetPlayerId(cl->name);
 
 	// rate command
 	val = Info_ValueForKey (cl->userinfo, "rate");

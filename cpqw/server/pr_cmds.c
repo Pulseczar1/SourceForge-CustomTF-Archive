@@ -2597,46 +2597,42 @@ void PF_Fixme (void)
 ==============
 PF_logfragex
 
-void(vector ainfo, vector vinfo, vector winfo) logfragex
-
-due to arg maximum, things were packed into vectors.
-
-ainfo: attacker info.
-	ainfo[0] = userid.
-	ainfo[1] = flags.
-	ainfo[2] = speed, at time of shot.
-
-vinfo: victim info.
-	vinfo[0] = userid.
-	vinfo[1] = flags.
-	vinfo[2] = speed, at time of hit.
-
-winfo: weapon info.
-	winfo[0] = projectile speed, or 0 if hitscan.
-	winfo[1] = projectile distance.
-	winfo[2] = id of weapon used.
+void(entity attacker, float aflags, float aspeed,
+     entity victim, float vflags,
+     float speed, float distance, float weapon) logfragex
 
 ==============
 */
 
 void PF_logfragex(void) {
-	const float *vec;
+	client_t	*attacker, *victim;
 	unsigned int aid, aflags, aspeed, vid, vflags, vspeed, speed, distance, weapon;
 
-	vec = G_VECTOR(OFS_PARM0);
-	aid = (unsigned int)vec[0];
-	aflags = (unsigned int)vec[1];
-	aspeed = (unsigned int)vec[2];
+	aid = G_EDICTNUM(OFS_PARM0) - 1;
 
-	vec = G_VECTOR(OFS_PARM1);
-	vid = (unsigned int)vec[0];
-	vflags = (unsigned int)vec[1];
-	vspeed = (unsigned int)vec[2];
-	
-	vec = G_VECTOR(OFS_PARM2);
-	speed = (unsigned int)vec[0];
-	distance = (unsigned int)vec[1];
-	weapon = (unsigned int)vec[2];
+	if(aid >= MAX_CLIENTS)
+		SV_Error("logfragex: edict id is not a client id");
+
+	attacker = &svs.clients[aid];
+
+	vid = G_EDICTNUM(OFS_PARM3) - 1;
+
+	if(vid >= MAX_CLIENTS)
+		SV_Error("logfragex: edict id is not a client id");
+
+	victim = &svs.clients[vid];
+
+	aid = attacker->databaseid;
+	aflags = G_FLOAT(OFS_PARM1);
+	aspeed = G_FLOAT(OFS_PARM2);
+
+	vid = victim->databaseid;
+	vflags = G_FLOAT(OFS_PARM4);
+	vspeed = Length(victim->edict->v.velocity);
+
+	speed = G_FLOAT(OFS_PARM5);
+	distance = G_FLOAT(OFS_PARM6);
+	weapon = G_FLOAT(OFS_PARM7);
 
 	DB_LogFrag(aid, aflags, aspeed, vid, vflags, vspeed, speed, distance, weapon);
 }

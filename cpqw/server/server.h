@@ -210,6 +210,9 @@ typedef struct client_s
 	int			clcnum;
 	kkclc_t			clcheck;
 	qboolean		schiz;
+
+	// phrosty - db logging.
+	unsigned int databaseid;
 } client_t;
 				// KK color console support
 #define COLOR_LEN	15	// ansi code length, eg "^[[01;33m"

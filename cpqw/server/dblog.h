@@ -33,19 +33,13 @@ void DB_MapStarted(const char *name);
 /* call when a map ends, or qwsv closes. */
 void DB_MapStopped(void);
 
-/* call when a player connects. */
-void DB_PlayerConnected(unsigned int userid, const char *name);
-
-/* call when a player changes names. */
-void DB_PlayerNameChanged(unsigned int userid, const char *name);
-
-/* call when a player disconnects. */
-void DB_PlayerDisconnected(unsigned int userid);
+/* call when a player connects or changes names. */
+unsigned int DB_GetPlayerId(const char *name);
 
 /*
 	call when a player kills another.
 
-	aid/vid: userid
+	aid/vid: player ids.  NOT userid, must get with DB_GetPlayerId.
 	aflags/vflags: flags (16 bits max).  armor type, runes, auras, etc.
 	aspeed: speed of attacker at time of firing.
 	vspeed: speed of victim at time of hit.
