@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "qwsvdef.h"
+#include "dblog.h"
 
 #define	RETURN_EDICT(e) (((int *)pr_globals)[OFS_RETURN] = EDICT_TO_PROG(e))
 #define	RETURN_STRING(s) (((int *)pr_globals)[OFS_RETURN] = PR_SetString(s))
@@ -2592,7 +2593,53 @@ void PF_Fixme (void)
 	PR_RunError ("unimplemented bulitin");
 }
 
+/*
+==============
+PF_logfragex
 
+void(vector ainfo, vector vinfo, vector winfo) logfragex
+
+due to arg maximum, things were packed into vectors.
+
+ainfo: attacker info.
+	ainfo[0] = userid.
+	ainfo[1] = flags.
+	ainfo[2] = speed, at time of shot.
+
+vinfo: victim info.
+	vinfo[0] = userid.
+	vinfo[1] = flags.
+	vinfo[2] = speed, at time of hit.
+
+winfo: weapon info.
+	winfo[0] = projectile speed, or 0 if hitscan.
+	winfo[1] = projectile distance.
+	winfo[2] = id of weapon used.
+
+==============
+*/
+
+void PF_logfragex(void) {
+	const float *vec;
+	unsigned int aid, aflags, aspeed, vid, vflags, vspeed, speed, distance, weapon;
+
+	vec = G_VECTOR(OFS_PARM0);
+	aid = (unsigned int)vec[0];
+	aflags = (unsigned int)vec[1];
+	aspeed = (unsigned int)vec[2];
+
+	vec = G_VECTOR(OFS_PARM1);
+	vid = (unsigned int)vec[0];
+	vflags = (unsigned int)vec[1];
+	vspeed = (unsigned int)vec[2];
+	
+	vec = G_VECTOR(OFS_PARM2);
+	speed = (unsigned int)vec[0];
+	distance = (unsigned int)vec[1];
+	weapon = (unsigned int)vec[2];
+
+	DB_LogFrag(aid, aflags, aspeed, vid, vflags, vspeed, speed, distance, weapon);
+}
 
 builtin_t pr_builtin[] =
 {
@@ -2705,7 +2752,10 @@ PF_makestr,
 PF_delstr,
 PF_getwave,
 PF_clientsound,
-PF_touchworld
+PF_touchworld,
+
+// phrosty - New built-in for database logging.
+PF_logfragex
 };
 
 builtin_t *pr_builtins = pr_builtin;
