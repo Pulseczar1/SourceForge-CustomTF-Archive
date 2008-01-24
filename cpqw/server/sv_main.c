@@ -2198,8 +2198,8 @@ void SV_ExtractFromUserinfo (client_t *cl)
 	cl->name[sizeof(cl->name) - 1] = 0;
 	Info_SetValueForKey(cl->userinfo,"name",cl->name,MAX_INFO_STRING);
 
-	// phrosty - set database id.
-	cl->databaseid = DB_GetPlayerId(cl->name);
+	// phrosty - set database id to 0 (get it on demand later).
+	cl->databaseid = 0;
 
 	// rate command
 	val = Info_ValueForKey (cl->userinfo, "rate");
