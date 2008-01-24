@@ -20,8 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // net_wins.c
 
 #include "quakedef.h"
+#include <malloc.h> // phrosty - for alloca().
 //#include "winsock.h" // old lib is wsock32.lib 
-#include "winsock2.h" // OfN
+#include <winsock2.h> // OfN
 #include "winquake.h"
 
 netadr_t	net_local_adr;
@@ -42,13 +43,13 @@ void NetadrToSockadr (netadr_t *a, struct sockaddr_in *s)
 	memset (s, 0, sizeof(*s));
 	s->sin_family = AF_INET;
 
-	*(int *)&s->sin_addr = *(int *)&a->ip;
+	s->sin_addr.s_addr = *(int *)&a->ip;
 	s->sin_port = a->port;
 }
 
 void SockadrToNetadr (struct sockaddr_in *s, netadr_t *a)
 {
-	*(int *)&a->ip = *(int *)&s->sin_addr;
+	*(int *)&a->ip = s->sin_addr.s_addr;
 	a->port = s->sin_port;
 }
 
@@ -98,16 +99,16 @@ qboolean	NET_StringToAdr (char *s, netadr_t *a)
 {
 	struct hostent	*h;
 	struct sockaddr_in sadr;
-	char	*colon;
-	char	copy[128];
-	
+	char	*colon, *copy;
 	
 	memset (&sadr, 0, sizeof(sadr));
 	sadr.sin_family = AF_INET;
 	
 	sadr.sin_port = 0;
 
+	copy = alloca(strlen(s));
 	strcpy (copy, s);
+
 	// strip off a trailing :port if present
 	for (colon = copy ; *colon ; colon++)
 		if (*colon == ':')
