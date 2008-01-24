@@ -2598,14 +2598,18 @@ void PF_Fixme (void)
 PF_logfragex
 
 void(entity attacker, float aflags, float aspeed,
-     entity victim, float vflags,
-     float speed, float distance, float weapon) logfragex
+     entity victim, float vflags, float vspeed,
+	  vector info) logfragex
 
+info[0] = speed,
+info[1] = distance,
+info[2] = weapon
 ==============
 */
 
 void PF_logfragex(void) {
 	client_t *attacker, *victim;
+	float *vec;
 	unsigned int aid, aflags, aspeed, vid, vflags, vspeed, speed, distance, weapon;
 
 	aid = G_EDICTNUM(OFS_PARM0) - 1;
@@ -2632,11 +2636,13 @@ void PF_logfragex(void) {
 	if(!vid) victim->databaseid = vid = DB_GetPlayerId(victim->name);
 
 	vflags = G_FLOAT(OFS_PARM4);
-	vspeed = Length(victim->edict->v.velocity);
+	vspeed = G_FLOAT(OFS_PARM5);
 
-	speed = G_FLOAT(OFS_PARM5);
-	distance = G_FLOAT(OFS_PARM6);
-	weapon = G_FLOAT(OFS_PARM7);
+	vec = G_VECTOR(OFS_PARM6);
+
+	speed = vec[0];
+	distance = vec[1];
+	weapon = vec[2];
 
 	DB_LogFrag(aid, aflags, aspeed, vid, vflags, vspeed, speed, distance, weapon);
 }
