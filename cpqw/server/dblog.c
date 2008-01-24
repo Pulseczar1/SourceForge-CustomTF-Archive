@@ -64,38 +64,36 @@ static int prepare(MYSQL_STMT **pstmt, MYSQL *db, const char *sql) {
 }
 
 /* binds, executes, and fetches in one go.  returns NULL on success or error message on failure. */
-static int execute(MYSQL_STMT *stmt, MYSQL_BIND *params, MYSQL_BIND *result) {
+static int execute(MYSQL_STMT *stmt, MYSQL_BIND *params, MYSQL_BIND *result, unsigned int *id) {
 	int ret;
 
 	if(params) {
 		ret = mysql_stmt_bind_param(stmt, params);
-		if(ret) {
-			Sys_Printf("WARNING: database error.  %s\n", mysql_stmt_error(stmt));
-			return -1;
-		}
+		if(ret) goto err;
 	}
 
 	ret = mysql_stmt_execute(stmt);
-	if(ret) {
-		Sys_Printf("WARNING: database error.  %s\n", mysql_stmt_error(stmt));
-		return -1;
-	}
+	if(ret) goto err;
 
 	if(result) {
 		ret = mysql_stmt_bind_result(stmt, result);
-		if(ret) {
-			Sys_Printf("WARNING: database error.  %s\n", mysql_stmt_error(stmt));
-			return -1;
-		}
+		if(ret) goto err;
 		
 		ret = mysql_stmt_fetch(stmt);
-		if(ret == 1) {
-			Sys_Printf("WARNING: database error.  %s\n", mysql_stmt_error(stmt));
-			return -1;
-		}
+		if(ret == 1) goto err;
 	}
 
+	if(id) {
+		*id = mysql_stmt_insert_id(stmt);
+	}
+
+	mysql_stmt_reset(stmt);
 	return 0;
+
+err:
+	Sys_Printf("WARNING: database error.  %s\n", mysql_stmt_error(stmt));
+	mysql_stmt_reset(stmt);
+	return -1;
 }
 
 /*
@@ -120,7 +118,7 @@ static unsigned int getidforname(MYSQL_STMT *selectstmt, MYSQL_STMT *insertstmt,
 		result.length = &result.buffer_length;
 		result.is_unsigned = 1;
 
-		if(execute(selectstmt, &param, &result))
+		if(execute(selectstmt, &param, &result, NULL))
 			return 0;
 	}
 
@@ -133,10 +131,8 @@ static unsigned int getidforname(MYSQL_STMT *selectstmt, MYSQL_STMT *insertstmt,
 		param.buffer_length = strlen(name);
 		param.length = &param.buffer_length;
 
-		if(execute(insertstmt, &param, NULL))
+		if(execute(insertstmt, &param, NULL, &id))
 			return 0;
-
-		id = mysql_stmt_insert_id(g_insert_map);
 	}
 
 	return id;
@@ -230,7 +226,6 @@ void DB_MapStarted(const char *name) {
 	int ret;
 
 	init();
-
 	if(!g_mysql) return;
 
 	playdate = (unsigned int)time(NULL);
@@ -252,10 +247,8 @@ void DB_MapStarted(const char *name) {
 	params[1].length = &params[1].buffer_length;
 	params[1].is_unsigned = 1;
 
-	if(execute(g_insert_game, params, NULL))
+	if(execute(g_insert_game, params, NULL, &g_gameid))
 		return;
-
-	g_gameid = mysql_stmt_insert_id(g_insert_game);
 }
 
 /*
@@ -306,6 +299,8 @@ void DB_LogFrag(unsigned int aid, unsigned int aflags, unsigned int aspeed,
 					 unsigned int speed, unsigned int distance, unsigned int weapon)
 {
 	MYSQL_BIND params[10] = {0};
+
+	if(!g_mysql) return;
 
 	// insert into db.
 	
@@ -369,5 +364,5 @@ void DB_LogFrag(unsigned int aid, unsigned int aflags, unsigned int aspeed,
 	params[9].length = &params[0].buffer_length;
 	params[9].is_unsigned = 1;
 	
-	execute(g_insert_frag, params, NULL);
+	execute(g_insert_frag, params, NULL, NULL);
 }
