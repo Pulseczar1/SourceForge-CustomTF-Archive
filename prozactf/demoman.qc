@@ -16,7 +16,7 @@ void() PipebombTouch;
 // Mirv Grenade Functions
 void() MirvGrenadeTouch;
 void() MirvGrenadeExplode;
-void (vector org, entity shooter) MirvGrenadeLaunch;
+void (vector org, entity shooter, vector veloc) MirvGrenadeLaunch;
 // Detpack Functions
 void(float timer) TeamFortress_SetDetpack;
 void() TeamFortress_DetpackSet;
@@ -92,7 +92,7 @@ void() MirvGrenadeExplode =
 	i = 0;
 	while (i < nummirvs)
 	{
-		MirvGrenadeLaunch (self.origin + '0 0 -1',self.owner);
+		MirvGrenadeLaunch (self.origin + '0 0 -1',self.owner,self.velocity); //WK 1/15/07 Added Gizmo's MIRV velocity idea
 		i = i + 1;
 	}
 
@@ -107,7 +107,7 @@ void() MirvGrenadeExplode =
 
 //=========================================================================
 // Launch a Mirv
-void (vector org, entity shooter) MirvGrenadeLaunch =
+void (vector org, entity shooter, vector veloc) MirvGrenadeLaunch =
 {
 	local float xdir,ydir,zdir;
 
@@ -137,6 +137,8 @@ void (vector org, entity shooter) MirvGrenadeLaunch =
 	newmis.velocity_x = xdir * 2;
 	newmis.velocity_y = ydir * 2;
 	newmis.velocity_z = zdir * 15;
+	//WK 1/15/08 Added in Gizmo's Mirv velocity idea
+	newmis.velocity = newmis.velocity + veloc;
 
 	newmis.avelocity='100 100 400';
 
@@ -551,10 +553,12 @@ void() TeamFortress_DetpackCountDown =
 {
 	local string cd;
 
-	cd = ftos(self.health);
-
-	sprint(self.owner, #PRINT_HIGH, cd);
-	sprint(self.owner, #PRINT_HIGH, "...\n");
+	//WK 10/10/7 Countdown is only supposed to show with <= 10 seconds left
+	if (self.health <= 10) {
+		cd = ftos(self.health);
+		sprint(self.owner, #PRINT_HIGH, cd);
+		sprint(self.owner, #PRINT_HIGH, "...\n");
+	}
 
 	self.nextthink = time + 1;
 	self.health = self.health - 1;

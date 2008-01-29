@@ -1133,10 +1133,10 @@ void() TeamFortress_PrimeGrenade =
 	local string st, gs, ptime;
 	local entity tGrenade;
 
-	/*if (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) {
+	if (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) {
 		sprint(self,#PRINT_HIGH,"You can't throw grens while invisible\n");
 		return;
-	}*/
+	}
 
 	// If you've already primed a grenade, return
 	if ((self.tfstate & #TFSTATE_GRENPRIMED) || (self.tfstate & #TFSTATE_GRENTHROWING))
@@ -1792,13 +1792,12 @@ void(entity p) TeamFortress_SetSpeed =
 	}
 
 	// WK 6th, See if they're partially hidden
+	//WK 10/10/7 Shadowsprint allows full movement speed while hiding
 	if (p.job & #JOB_THIEF)
 	{
-		if (p.job & #JOB_ACTIVE)
-			p.maxspeed = (p.maxspeed * 3) / 4;
-		else if (p.job & #JOB_FULL_HIDE)
-			if (p.maxspeed > 130)
-				p.maxspeed = 130;
+		if (p.job & #JOB_ACTIVE || p.job & #JOB_FULL_HIDE)
+			if (!(p.job & #JOB_EXTRA2))
+				p.maxspeed = (p.maxspeed * 3) / 4;
 	}
 
 	//WK 7th, Check to see if they are sprinting or recovering
@@ -3743,9 +3742,6 @@ void() TeamFortress_ExplodePerson =
 	bprint(#PRINT_MEDIUM, self.owner.netname);
 	bprint(#PRINT_MEDIUM, ", you are supposed to THROW the grenade!\n");
 
-    //no xxx, your grenade is your friend for another reason!
-    //no
-
 	// Remove primed grenade object	
 	dremove(self);
 };
@@ -4105,44 +4101,26 @@ void() TeamFortress_RegenerateCells =
 	self.nextthink = time + #PC_SPY_CELL_REGEN_TIME;
 	if (self.owner.job & #JOB_ACTIVE)
 	{
-		/*if (self.owner.ammo_cells == 0)
-		{
-			RevealThief(self.owner,#FALSE);
-		}
-		else {	*/		
-			//if (self.owner.ammo_cells > 100) self.owner.ammo_cells = 100;
-		if ((self.owner.velocity_z > 0 || self.owner.velocity_y > 0 || self.owner.velocity_x > 0) && self.owner.job & #JOB_FULL_HIDE)
-		{
+		if (vlen(self.owner.velocity) > 0 && self.owner.job & #JOB_FULL_HIDE && !self.owner.shadowstep_active)
+		{		
+				//WK 10/10/7 reworked to incorporate shadowstep
+				self.owner.items = self.owner.items - (self.owner.items & #IT_INVISIBILITY); //Clear icon
+				if (self.owner.shadowstep_time > 0) self.owner.shadowstep_time = 0; //Clear shadowstep 'fuel'
+
 				self.owner.frame = 0;
 				self.owner.weaponframe = 0;
 				self.owner.modelindex = modelindex_eyes;
 				self.owner.job = self.owner.job - (self.owner.job & #JOB_FULL_HIDE);
-				TeamFortress_SetSpeed(self.owner);
-			/*self.owner.ammo_cells = self.owner.ammo_cells - #PC_SPY_CELL_USAGE;
-			if (self.owner.ammo_cells <= 0) {
-				self.owner.ammo_cells = 0;
-				RevealThief(self.owner,#FALSE);*/
-			
+				TeamFortress_SetSpeed(self.owner);			
 		}
-		else if ((self.owner.velocity_z == 0 && self.owner.velocity_y == 0 && self.owner.velocity_x == 0) && !(self.owner.job & #JOB_FULL_HIDE))
+		else if (vlen(self.owner.velocity) == 0 && !(self.owner.job & #JOB_FULL_HIDE))
 		{
-			self.owner.frame = 0;
-			self.owner.weaponframe = 0;
-			self.owner.modelindex = modelindex_null;
-			self.owner.job = self.owner.job | #JOB_FULL_HIDE;
+				self.owner.frame = 0;
+				self.owner.weaponframe = 0;
+				self.owner.modelindex = modelindex_null;
+				self.owner.job = self.owner.job | #JOB_FULL_HIDE;
 		}
 	}
-	/*else	// Increase cell ammo
-	{
-		if (self.owner.ammo_cells >= self.owner.maxammo_cells)
-			return;
-
-		self.owner.ammo_cells = self.owner.ammo_cells + #PC_SPY_CELL_REGEN_AMOUNT;
-
-		if (self.owner.ammo_cells > self.owner.maxammo_cells)
-			self.owner.ammo_cells = self.owner.maxammo_cells;
-	}*/
-	//return;
 
 	/*
 	if (self.owner.playerclass == #PC_SPY)

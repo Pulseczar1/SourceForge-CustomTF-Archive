@@ -5,11 +5,11 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs build 265 Û08¯5¯2007İ\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs build 267 Û01¯15¯2008İ\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
-#define MSG_CUTFVERSION   "ĞÒÏÚÁÃ CustomÔÆ VERSION 8-5-07" //WK Version Number
+#define MSG_CUTFVERSION   "ĞÒÏÚÁÃ CustomÔÆ VERSION 1-15-08" //WK Version Number
 
 #define MSG_INTRO  "Welcome to ĞÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®customtf®com\n\nŸ\n\n"
 #define MSG_INTRO2 "Based on the aussie ver by SB-1\nModified version by Clan Prozac\n\n" // Ÿ\n\n

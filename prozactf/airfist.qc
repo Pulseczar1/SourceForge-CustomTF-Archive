@@ -57,7 +57,8 @@ float (entity thing) canairpush =
 	}
 	else if (thing.classname == "spike")
 		return #TRUE;
-	else if (thing.classname == "grenade")
+	//WK 10/10/7 Can't airfist mines now (as it should be) which also fixes the reown problem with mines
+	else if (thing.classname == "grenade" && !(thing.netname == "land_mine"))
 	{
 		thing.avelocity = '300 300 300';
 		return #TRUE;
@@ -360,8 +361,15 @@ void() launch_horn =
 		// If its a missile, change the direction but keep the same speed.
 		eSpeed = vlen(e.velocity);
 		e.velocity = normalize(delta) * eSpeed;
-	  if (e.classname == "rocket" || e.classname == "grenade" || e.classname == "spike") //WK 3/1/7 Safety Measure, reowning some things... bad.
-		e.owner = self; //WK 2/26/7 Make reflected rockets hit their owners.
+		if (e.classname == "rocket" || e.classname == "grenade" || e.classname == "spike") { //WK 3/1/7 Safety Measure, reowning some things... bad.
+			e.owner = self; //WK 2/26/7 Make reflected rockets hit their owners.
+
+			//WK 10/10/7 Fix to let heat seeking rockets get reflected
+			if (e.classname == "rocket") {
+				e.nextthink = time + 5;
+				e.think = SUB_Remove;
+			}
+		}
 	  }
 	  else
 	  {

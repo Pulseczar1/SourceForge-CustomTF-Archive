@@ -535,7 +535,7 @@ float() Tesla_Fire =
 				return #FALSE;
 			if (self.enemy.is_undercover)
 				return #FALSE;
-			if (self.enemy.job & #JOB_THIEF && self.enemy.job & #JOB_ACTIVE)
+			if (self.enemy.job & #JOB_THIEF && (self.enemy.job & #JOB_ACTIVE || self.enemy.job & #JOB_FULL_HIDE))
 				return #FALSE;
 		}
 	}

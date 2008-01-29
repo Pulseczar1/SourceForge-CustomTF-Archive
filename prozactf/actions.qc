@@ -175,13 +175,13 @@ void(float inAuto) TeamFortress_ID =
 
 	if (inAuto)
 	{
-        if (trace_ent.classname == "player" && trace_ent.job & (#JOB_THIEF + #JOB_ACTIVE))
+		if (trace_ent.classname == "player" && trace_ent.job & (#JOB_THIEF + #JOB_ACTIVE + #JOB_FULL_HIDE))
 			return;
 
-        // Auto ID shouldn't pertubate menus
-        if (self.current_menu != 0)
-           return; 
-    }
+		// Auto ID shouldn't pertubate menus
+		if (self.current_menu != 0)
+			return; 
+	}
 
 	//if (!inAuto)
 		//spacer = "\n\n\n\n\n";

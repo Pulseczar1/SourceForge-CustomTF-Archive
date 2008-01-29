@@ -1,7 +1,7 @@
 /*======================================================
-	ENGINEER.QC			Custom TeamFortress v3.1	
+	ENGINEER.QC 		Custom TeamFortress v3.1	
 
-	(c) TeamFortress Software Pty Ltd 	2/3/97
+	(c) TeamFortress Software Pty Ltd	2/3/97
 	(c) William Kerney			4/14/00
 	(c) Craig Hauser				4/14/00
 ========================================================
@@ -68,10 +68,10 @@ void() LaserBolt_Touch =
 	}
 
 	if (other == self.owner)
-		return;		
+		return; 	
 
 	if (other == self.enemy && self.enemy != world)
-		return;		// don't explode on same person twice
+		return; 	// don't explode on same person twice
 
 	if (pointcontents(self.origin) == #CONTENT_SKY)
 	{
@@ -146,7 +146,7 @@ void() W_FireLaser =
 	newmis.solid = #SOLID_TRIGGER;
 
 	setmodel (newmis, "progs/e_spike1.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0'); 	
 
 	setorigin (newmis, org + '0 0 16');
 
@@ -234,11 +234,11 @@ void() EMPGrenadeExplode =
 	multicast (self.origin, #MULTICAST_PHS);
 #endif
 
-    local string desc;
-    desc = "grenade";
+	local string desc;
+	desc = "grenade";
 
-    if (self.netname == "special_mine")
-        desc = "mine";
+	if (self.netname == "special_mine")
+		desc = "mine";
 
 	// Find all ammo in the area
 	te = findradius(self.origin, 240);
@@ -263,8 +263,8 @@ void() EMPGrenadeExplode =
 			te.nextthink = time + 225 * random() + 30; //WK Scramble the detpack's timer. :)
 			dremove(te.oldenemy); // Countdown ent
 
-            sprint(self.owner,#PRINT_HIGH,"Your EMP ",desc," damages the detpack circuits\n");
-            sprint(te.owner,#PRINT_HIGH,"Your detpack circuits have been damaged!\n");
+			sprint(self.owner,#PRINT_HIGH,"Your EMP ",desc," damages the detpack circuits\n");
+			sprint(te.owner,#PRINT_HIGH,"Your detpack circuits have been damaged!\n");
 		}
 		// Pipebomb?
 		else if (te.classname == "pipebomb")
@@ -344,22 +344,22 @@ void() EMPGrenadeExplode =
 						te.ammo_cells = ceil(te.ammo_cells * 0.5); //WK .25
 
 					if (te.classname=="player")
-                    {
-                        // Update console
-					    oldself = self;
-					    self = te;
-					    W_SetCurrentAmmo();
-					    self = oldself;
-                        
-        				WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-                        WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
-                        WriteCoord (#MSG_BROADCAST, te.origin_x);
-                        WriteCoord (#MSG_BROADCAST, te.origin_y);
-                        WriteCoord (#MSG_BROADCAST, te.origin_z);
-                    #ifdef QUAKE_WORLD
-                        multicast (te.origin, #MULTICAST_PHS);
-                    #endif
-                    }
+					{
+						// Update console
+						oldself = self;
+						self = te;
+						W_SetCurrentAmmo();
+						self = oldself;
+						
+						WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+						WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
+						WriteCoord (#MSG_BROADCAST, te.origin_x);
+						WriteCoord (#MSG_BROADCAST, te.origin_y);
+						WriteCoord (#MSG_BROADCAST, te.origin_z);
+					#ifdef QUAKE_WORLD
+						multicast (te.origin, #MULTICAST_PHS);
+					#endif
+					}
 				}
 				else
 				{
@@ -385,7 +385,7 @@ void() EMPGrenadeExplode =
 
 if (total_exp > 0) {//CH Thanks Slice for the idea :)
 
-    sprint(self.owner,#PRINT_HIGH, "Your EMP ",desc," inflicted ");
+	sprint(self.owner,#PRINT_HIGH, "Your EMP ",desc," inflicted ");
 	local string st;
 	st = ftos(total_exp);
 	sprint(self.owner,#PRINT_HIGH, st);
@@ -441,12 +441,12 @@ void() TeamFortress_EngineerBuild =
 
 	if (self.is_detpacking == 1) {
 		CenterPrint(self, "You can't build while detpacking\n");
-		return;		
+		return; 	
 	}
 
 	if (self.is_feigning == 1) {
 		CenterPrint(self, "You can't build while feigning\n");
-		return;		
+		return; 	
 	}
 
 	// Pop up the menu
@@ -462,7 +462,7 @@ void() TeamFortress_EngineerBuild =
 		self.current_menu = #MENU_ENGINEER;
 		self.menu_count = #MENU_REFRESH_RATE;
 	}
-	else if (self.is_building == 1)	
+	else if (self.is_building == 1) 
 	{
 		sprint(self, #PRINT_HIGH, "You stop building.\n");
 
@@ -472,7 +472,7 @@ void() TeamFortress_EngineerBuild =
 #ifdef QUAKE_WORLD
 		TeamFortress_SetSpeed(self);
 #else
- 		self.pausetime = time;
+		self.pausetime = time;
 #endif
 
 		// Remove the timer
@@ -537,7 +537,7 @@ float(entity obj, entity builder) CheckArea =
 
 	end_x = obj.origin_x + obj.maxs_x + 16;
 	end_y = obj.origin_y + obj.mins_y - 16;
-	end_z = obj.origin_z + obj.mins_z - 16;		// check downwards less
+	end_z = obj.origin_z + obj.mins_z - 16; 	// check downwards less
 
 	traceline (src, end, #TL_BSP_ONLY, obj);
 
@@ -563,39 +563,39 @@ float(entity obj, entity builder) CheckArea =
 // rehashed version of TF_Build 
 void(float objtobuild, float devicenum) TeamFortress_Build =
 {
-    // OfN - the following is needed because we can build via menus or by cmnd
-    if (self.is_building == 1)
-    {
+	// OfN - the following is needed because we can build via menus or by cmnd
+	if (self.is_building == 1)
+	{
 		sprint(self, #PRINT_HIGH, "You are already building something!\n");
 		return;
-    }
-    if (intermission_running || ceasefire)
-        return;
-    if (self.flags & #FL_FINALIZED)
-        return;
-    if (self.health <= 0 || self.deadflag != #DEAD_NO)
-        return;
-    if (prematch >= time)
-        return;
-    if (self.done_custom & #CUSTOM_BUILDING) // no ppl customizing
-        return;
-    if (self.playerclass == #PC_UNDEFINED) // no observers
-        return;
-    if (self.penance_time >= time) // Don't let lame teamkillers build anything
-        return;
+	}
+	if (intermission_running || ceasefire)
+		return;
+	if (self.flags & #FL_FINALIZED)
+		return;
+	if (self.health <= 0 || self.deadflag != #DEAD_NO)
+		return;
+	if (prematch >= time)
+		return;
+	if (self.done_custom & #CUSTOM_BUILDING) // no ppl customizing
+		return;
+	if (self.playerclass == #PC_UNDEFINED) // no observers
+		return;
+	if (self.penance_time >= time) // Don't let lame teamkillers build anything
+		return;
 
-    if (!EnoughToBuild(self,objtobuild))
-    {
-        sprint(self, #PRINT_HIGH, "You don't have enough metal to build that!\n");
-        return;
-    }
+	if (!EnoughToBuild(self,objtobuild))
+	{
+		sprint(self, #PRINT_HIGH, "You don't have enough metal to build that!\n");
+		return;
+	}
 
-    // OfN - Psionized guys can't build
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self, #PRINT_HIGH, "You are not able to build while psionized!\n");
-        return;
-    }
+	// OfN - Psionized guys can't build
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self, #PRINT_HIGH, "You are not able to build while psionized!\n");
+		return;
+	}
 
 	//WK Cheat Fix 
 	if (self.is_feigning) {
@@ -603,13 +603,13 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 			return;
 	}
 
-    //OfN - Cheat Fix, heh
+	//OfN - Cheat Fix, heh
 	if (self.is_haxxxoring) {
 			sprint(self, #PRINT_HIGH, "You can't build while hacking!\n");
 			return;
 	}
 
-    if (self.is_detpacking || self.is_toffingadet)
+	if (self.is_detpacking || self.is_toffingadet)
 	{
 		sprint (self, #PRINT_HIGH, "You can't build while manipulating a detpack!\n");
 		return;
@@ -636,21 +636,21 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 		if (self.has_dispenser)
 		{
 			sprint(self, #PRINT_HIGH, "You can only have one dispenser.\nTry dismantling your old one.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
 		if (!(self.cutf_items & #CUTF_DISPENSER))
 		{
 			sprint(self, #PRINT_HIGH, "You must buy the dispenser before you can build it.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
 		tmp1 = '-16 -16 0';
 		tmp2 = '16 16 48';
 
-        newmis.mdl = "progs/disp.mdl";        
+		newmis.mdl = "progs/disp.mdl";		  
 		
-        newmis.netname = "dispenser";
+		newmis.netname = "dispenser";
 
 		btime = time + #BUILD_TIME_DISPENSER;
 	}
@@ -659,28 +659,28 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 		if (!(self.cutf_items & #CUTF_SENTRYGUN))
 		{
 			sprint(self, #PRINT_HIGH, "You must buy a sentry gun before you can build one.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
-        
-        if (self.cutf_items & #CUTF_DOUBLESENTRY)
-        {
-            if (self.has_sentry & devicenum)
-            {
-                sprint(self, #PRINT_HIGH, "You already have that sentry gun up!\n");
-                dremove(newmis);
-                return;                
-            }
-        }
-        else
-        {
-            if (self.has_sentry)
-            {
-                sprint(self, #PRINT_HIGH, "You can only have one sentry gun.\nTry dismantling your old one.\n");
-                dremove(newmis);
-                return;
-            }
-        }            
+		
+		if (self.cutf_items & #CUTF_DOUBLESENTRY)
+		{
+			if (self.has_sentry & devicenum)
+			{
+				sprint(self, #PRINT_HIGH, "You already have that sentry gun up!\n");
+				dremove(newmis);
+				return; 			   
+			}
+		}
+		else
+		{
+			if (self.has_sentry)
+			{
+				sprint(self, #PRINT_HIGH, "You can only have one sentry gun.\nTry dismantling your old one.\n");
+				dremove(newmis);
+				return;
+			}
+		}			 
 
 		newmis.dont_do_triggerwork = devicenum;
 
@@ -700,7 +700,7 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 			dremove(newmis);
 			return;
 		}
-        
+		
 		if (self.tf_items & #NIT_DOUBLETESLA)
 		{
 			if (self.has_tesla & devicenum)
@@ -737,32 +737,32 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	{
 		dremove(newmis);
 
-        if (self.has_camera)
+		if (self.has_camera)
 		{
 			sprint(self, #PRINT_HIGH, "You can only have one security camera.\nTry dismantling your old one.\n");
-        	return;
+			return;
 		}
 		if (!(self.tf_items & #NIT_SECURITY_CAMERA))
 		{
 			sprint(self, #PRINT_HIGH, "You must buy a security camera before you can build one.\n");
-        	return;
+			return;
 		}
 		
-        Security_Camera_Spawn();
-        return;
+		Security_Camera_Spawn();
+		return;
 	}
 	else if (objtobuild == #BUILD_TELEPORTER)
 	{
 		if (self.has_teleporter >= 2)
 		{
 			sprint(self, #PRINT_HIGH, "You can only have 2 teleporters.\nTry dismantling an old one.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
 		if (!(self.tf_items & #NIT_TELEPORTER))
 		{
 			sprint(self, #PRINT_HIGH, "You must buy a teleporter before you can build one.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
 
@@ -778,7 +778,7 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 		if (self.has_fieldgen >= 2)
 		{
 			sprint(self, #PRINT_HIGH, "You already have 2 field generators.\nTry dismantling an old one.\n");
-            dremove(newmis);
+			dremove(newmis);
 			return;
 		}
 		if (!(self.cutf_items & #CUTF_FIELDGEN))
@@ -808,68 +808,68 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	//WK 8/4/7 If we don't have spanner, build times are increased by 50%
 	if (!(self.weapons_carried & #WEAP_SPANNER)) btime = time + ((btime-time) * 1.5);
 
-    self.is_building = 1;
-    makeImmune(self,time + 2);
-    //self.immune_to_check = time + 2;
-    self.tfstate = self.tfstate | #TFSTATE_CANT_MOVE;
+	self.is_building = 1;
+	makeImmune(self,time + 2);
+	//self.immune_to_check = time + 2;
+	self.tfstate = self.tfstate | #TFSTATE_CANT_MOVE;
 
-    // Save the current weapon and remove it
-    self.weapon = self.current_weapon;
-    self.current_weapon = 0;
-    self.weaponmodel = "";
-    self.weaponframe = 0;
+	// Save the current weapon and remove it
+	self.weapon = self.current_weapon;
+	self.current_weapon = 0;
+	self.weaponmodel = "";
+	self.weaponframe = 0;
 
 #ifdef QUAKE_WORLD
-    TeamFortress_SetSpeed(self);
+	TeamFortress_SetSpeed(self);
 #else
-    self.pausetime = btime;
+	self.pausetime = btime;
 #endif
 
-    newmis.owner = self;
-    newmis.classname = "timer";
-    newmis.netname = "build_timer";
-    newmis.nextthink = btime;
-    newmis.think = TeamFortress_FinishedBuilding;
-    newmis.colormap = self.colormap;
-    newmis.weapon = objtobuild;
-    newmis.angles_y = anglemod(self.angles_y + 180);
+	newmis.owner = self;
+	newmis.classname = "timer";
+	newmis.netname = "build_timer";
+	newmis.nextthink = btime;
+	newmis.think = TeamFortress_FinishedBuilding;
+	newmis.colormap = self.colormap;
+	newmis.weapon = objtobuild;
+	newmis.angles_y = anglemod(self.angles_y + 180);
 
-    newmis.velocity = '0 0 8';
-    newmis.movetype = #MOVETYPE_TOSS;    
+	newmis.velocity = '0 0 8';
+	newmis.movetype = #MOVETYPE_TOSS;	 
 
-    newmis.solid = #SOLID_BBOX;
-    setmodel (newmis, newmis.mdl);
-    setsize (newmis, tmp1, tmp2);
-    setorigin (newmis, newmis.origin);
+	newmis.solid = #SOLID_BBOX;
+	setmodel (newmis, newmis.mdl);
+	setsize (newmis, tmp1, tmp2);
+	setorigin (newmis, newmis.origin);
 
-    if (objtobuild==#BUILD_TESLA)
-    {
-        newmis.skin = self.team_no;
-        if (self.team_no==3) newmis.skin=0;
-        else if (self.team_no==4) newmis.skin=3;
-    }
+	if (objtobuild==#BUILD_TESLA)
+	{
+		newmis.skin = self.team_no;
+		if (self.team_no==3) newmis.skin=0;
+		else if (self.team_no==4) newmis.skin=3;
+	}
 
-    newmis.flags = newmis.flags - (newmis.flags & #FL_ONGROUND);
+	newmis.flags = newmis.flags - (newmis.flags & #FL_ONGROUND);
 };
 
 void() DispenserThink =
 {
-    local float iI; // is Improved?
+	local float iI; // is Improved?
 
-    iI=1;
-    
-    if (self.all_active & #IMPROVED_ONE)
-        iI=2;
+	iI=1;
+	
+	if (self.all_active & #IMPROVED_ONE)
+		iI=2;
 
 
-    // dispenser refilling itself 5%
+	// dispenser refilling itself 5%
 	if (!(self.is_malfunctioning & #SCREWUP_THREE)) // SB
 	{
 		self.ammo_shells = self.ammo_shells + rint((#BUILD_DISPENSER_MAX_SHELLS*iI) / 10);
 		self.ammo_cells = self.ammo_cells + rint((#BUILD_DISPENSER_MAX_CELLS*iI) / 10);
 		self.ammo_nails = self.ammo_nails + rint((#BUILD_DISPENSER_MAX_NAILS*iI) / 10);
 		self.ammo_rockets = self.ammo_rockets + rint((#BUILD_DISPENSER_MAX_ROCKETS*iI) / 10);
-		self.armorvalue = self.armorvalue + rint((#BUILD_DISPENSER_MAX_ARMOR*iI) / 10);	
+		self.armorvalue = self.armorvalue + rint((#BUILD_DISPENSER_MAX_ARMOR*iI) / 10); 
 
 		if (self.ammo_shells > #BUILD_DISPENSER_MAX_SHELLS*iI)
 			self.ammo_shells = #BUILD_DISPENSER_MAX_SHELLS*iI;	
@@ -881,20 +881,20 @@ void() DispenserThink =
 			self.ammo_cells = #BUILD_DISPENSER_MAX_CELLS*iI;	
 		if (self.armorvalue > #BUILD_DISPENSER_MAX_ARMOR*iI)
 			self.armorvalue = #BUILD_DISPENSER_MAX_ARMOR*iI;
-            
-        if (self.all_active & #IMPROVED_FOUR) // Upgraded dispenser
-        {
-            self.ammo_detpack = self.ammo_detpack + (#BUILD_DISPENSER_MAX_DETS*iI) /10;
-            self.ammo_c4det = self.ammo_c4det + (#BUILD_DISPENSER_MAX_DETS*iI) /10;
-            self.ammo_medikit = self.ammo_medikit + rint((#BUILD_DISPENSER_MAX_MEDIKIT*iI) /10);
+			
+		if (self.all_active & #IMPROVED_FOUR) // Upgraded dispenser
+		{
+			self.ammo_detpack = self.ammo_detpack + (#BUILD_DISPENSER_MAX_DETS*iI) /10;
+			self.ammo_c4det = self.ammo_c4det + (#BUILD_DISPENSER_MAX_DETS*iI) /10;
+			self.ammo_medikit = self.ammo_medikit + rint((#BUILD_DISPENSER_MAX_MEDIKIT*iI) /10);
 
-            if (self.ammo_detpack > #BUILD_DISPENSER_MAX_DETS*iI)
-	    		self.ammo_detpack = #BUILD_DISPENSER_MAX_DETS*iI;	
-    		if (self.ammo_c4det > #BUILD_DISPENSER_MAX_DETS*iI)
-			    self.ammo_c4det = #BUILD_DISPENSER_MAX_DETS*iI;
-            if (self.ammo_medikit > #BUILD_DISPENSER_MAX_MEDIKIT*iI)
-			    self.ammo_medikit = #BUILD_DISPENSER_MAX_MEDIKIT*iI;
-        }
+			if (self.ammo_detpack > #BUILD_DISPENSER_MAX_DETS*iI)
+				self.ammo_detpack = #BUILD_DISPENSER_MAX_DETS*iI;	
+			if (self.ammo_c4det > #BUILD_DISPENSER_MAX_DETS*iI)
+				self.ammo_c4det = #BUILD_DISPENSER_MAX_DETS*iI;
+			if (self.ammo_medikit > #BUILD_DISPENSER_MAX_MEDIKIT*iI)
+				self.ammo_medikit = #BUILD_DISPENSER_MAX_MEDIKIT*iI;
+		}
 	}
 	self.nextthink = time + 10;
 };
@@ -925,9 +925,9 @@ void() TeamFortress_FinishedBuilding =
 		self.has_dispenser = #TRUE;
 		sprint (self, #PRINT_HIGH, "You finish building the dispenser.\n");
 
-        teamprefixsprint(self.team_no,self); //- OfN
+		teamprefixsprint(self.team_no,self); //- OfN
 
-        teamsprint(self.team_no, self, self.netname);
+		teamsprint(self.team_no, self, self.netname);
 		teamsprint(self.team_no, self, " has built a Dispenser.\n");
 
 		self.ammo_cells = self.ammo_cells - #BUILD_COST_DISPENSER;
@@ -941,14 +941,14 @@ void() TeamFortress_FinishedBuilding =
 		oldself.health = #BUILD_HEALTH_DISPENSER;
 		oldself.think = DispenserThink;
 		oldself.nextthink = time + 5;
-		oldself.th_die = Dispenser_Die;		// Death function
+		oldself.th_die = Dispenser_Die; 	// Death function
 		
-        oldself.mdl = "progs/disp.mdl";		// Actual mdl
-        
+		oldself.mdl = "progs/disp.mdl"; 	// Actual mdl
+		
 		oldself.team_no = self.team_no;
 
-        oldself.all_active=0; // OfN - reset HACKER improvements
-        oldself.is_malfunctioning = 0;
+		oldself.all_active=0; // OfN - reset HACKER improvements
+		oldself.is_malfunctioning = 0;
 
 		oldself.real_owner = self;			// The Engineer owns this item
 		oldself.colormap = self.colormap;	// Set the Color
@@ -964,23 +964,23 @@ void() TeamFortress_FinishedBuilding =
 		oldself.ammo_rockets = ceil(self.ammo_rockets * 0.25);
 		oldself.ammo_cells = ceil(self.ammo_cells * 0.25);
 		oldself.armorvalue = ceil(self.armorvalue * 0.25);
-        
-        oldself.ammo_medikit = ceil(self.ammo_medikit * 0.25);
+		
+		oldself.ammo_medikit = ceil(self.ammo_medikit * 0.25);
 
-        oldself.ammo_detpack = ceil(self.ammo_detpack * 0.25);
+		oldself.ammo_detpack = ceil(self.ammo_detpack * 0.25);
 		oldself.ammo_c4det = ceil(self.ammo_c4det * 0.25);
 		
-        // Remove ours
+		// Remove ours
 		self.ammo_shells = ceil(self.ammo_shells * 0.75);
 		self.ammo_nails = ceil(self.ammo_nails * 0.75);
 		self.ammo_rockets = ceil(self.ammo_rockets * 0.75);
 		self.ammo_cells = ceil(self.ammo_cells * 0.75);
 		self.armorvalue = ceil(self.armorvalue * 0.75);
 
-        self.ammo_detpack = ceil(self.ammo_detpack * 0.75);
+		self.ammo_detpack = ceil(self.ammo_detpack * 0.75);
 		self.ammo_c4det = ceil(self.ammo_c4det * 0.75);
 		
-        self.ammo_medikit = ceil(self.ammo_medikit * 0.75);
+		self.ammo_medikit = ceil(self.ammo_medikit * 0.75);
 
 		oldself.solid = #SOLID_BBOX;
 		setmodel(oldself, oldself.mdl);
@@ -992,46 +992,46 @@ void() TeamFortress_FinishedBuilding =
 		//CH special sbar for eng.
 		self.StatusBarScreen = 1;
 		//self.has_sentry = #TRUE;
-        self.has_sentry = self.has_sentry | oldself.dont_do_triggerwork;
+		self.has_sentry = self.has_sentry | oldself.dont_do_triggerwork;
 		sprint (self, #PRINT_HIGH, "You finish building the sentry gun.\n");
 
-        teamprefixsprint(self.team_no,self); //- OfN
+		teamprefixsprint(self.team_no,self); //- OfN
 
-        teamsprint(self.team_no, self, self.netname);
+		teamsprint(self.team_no, self, self.netname);
 		teamsprint(self.team_no, self, " has built a Sentry Gun.\n");
 			
 		oldself.classname = "building_sentrygun_base";
 		oldself.netname = "sentry gun";
 		oldself.takedamage = 0;
-		oldself.th_die = Sentry_Die; 		// Death function
+		oldself.th_die = Sentry_Die;		// Death function
 		self.ammo_cells = self.ammo_cells - #BUILD_COST_SENTRYGUN;
 
 		setsize (oldself, '-16 -16 0', '16 16 4'); // '-16 -16 0' '16 16 4'
 		newmis = spawn();
-        newmis.dont_do_triggerwork = oldself.dont_do_triggerwork;
+		newmis.dont_do_triggerwork = oldself.dont_do_triggerwork;
 		newmis.classname = "building_sentrygun";
 		newmis.health = #BUILD_HEALTH_SENTRYGUN;
 		newmis.max_health = newmis.health;
 		newmis.tf_items = #NIT_KEVLAR; //Start with kevlar armor
 		newmis.armorclass = #AT_SAVESHOT; //kevlar armor
 		newmis.weapon = 1;					// Level 1 Turret
-		newmis.th_die = Sentry_Die;			// Death function
+		newmis.th_die = Sentry_Die; 		// Death function
 		newmis.th_pain = Sentry_Pain;
 		//newmis.mdl = "progs/turrgun.mdl";
-        newmis.mdl = "progs/trrgn2.mdl";
+		newmis.mdl = "progs/trrgn2.mdl";
 		sound (oldself, #CHAN_ITEM, "weapons/turrset.wav", 1, #ATTN_NORM);
 		newmis.solid = #SOLID_BBOX;
 		setmodel(newmis, newmis.mdl);
 		setsize (newmis, '-16 -16 0', '16 16 48'); 
 		setorigin(newmis, oldself.origin + '0 0 8'); 
-		newmis.real_owner = oldself.real_owner;	// The Engineer owns this item
+		newmis.real_owner = oldself.real_owner; // The Engineer owns this item
 		newmis.trigger_field = oldself;
 		oldself.oldenemy = newmis;
 		newmis.movetype = #MOVETYPE_STEP;
 		oldself.colormap = self.colormap;	// Set the Base Color
 		newmis.colormap = self.colormap;	// Set the Color
 
-        newmis.skin = self.team_no - 1;
+		newmis.skin = self.team_no - 1;
 
 		newmis.takedamage = #DAMAGE_AIM;
 		newmis.velocity = '0 0 -8';
@@ -1039,13 +1039,15 @@ void() TeamFortress_FinishedBuilding =
 		oldself.flags = oldself.flags - (oldself.flags & #FL_ONGROUND);
 
 		newmis.frags = 0; //CH how many people has your sent killed?
+		newmis.money = 0; //WK How many frags have been spent?
+		newmis.demon_blood = 0; //WK Holds our bitfield for new building upgrades
 
 		newmis.team_no = self.team_no;
 		newmis.think = lvl1_sentry_stand;
 		newmis.nextthink = time + 0.5;
 		newmis.touch = Sentry_Touch;
 		// Rotate Details
-		newmis.yaw_speed = 10;  //Turn rate
+		newmis.yaw_speed = 10;	//Turn rate
 		newmis.heat = 0;	// Turn Right
 		newmis.angles_x = 0;
 		newmis.angles_y = ceil(oldself.angles_y); //CH remove decimal
@@ -1053,25 +1055,25 @@ void() TeamFortress_FinishedBuilding =
 
 		newmis.angles_y = ((ceil(newmis.angles_y / 10)) * 10); //CH set last int to 0
 		
-        #ifdef SENTRY_SMOOTHROTATION
-        newmis.waitmin = newmis.angles_y - #SENTRY_ROTATIONWIDTH; // removed anglemod
+		#ifdef SENTRY_SMOOTHROTATION
+		newmis.waitmin = newmis.angles_y - #SENTRY_ROTATIONWIDTH; // removed anglemod
 		newmis.waitmax = newmis.angles_y + #SENTRY_ROTATIONWIDTH;
-        #else
-        newmis.waitmin = anglemod(newmis.angles_y - #SENTRY_ROTATIONWIDTH); 
-		newmis.waitmax = anglemod(newmis.angles_y + #SENTRY_ROTATIONWIDTH);        
-        #endif
+		#else
+		newmis.waitmin = anglemod(newmis.angles_y - #SENTRY_ROTATIONWIDTH); 
+		newmis.waitmax = anglemod(newmis.angles_y + #SENTRY_ROTATIONWIDTH); 	   
+		#endif
 
 		// Give the Gun some ammo
 		newmis.ammo_shells = 75; //WK
 		newmis.maxammo_shells = 100;
 		newmis.maxammo_rockets = 20;
 
-        newmis.all_active=0; // OfN - reset HACKER improvements
-        newmis.is_malfunctioning = 0;
-        newmis.attack_finished=time; //- controls time after loosing track of enemy to not be rotating
-        newmis.has_holo=0;
+		newmis.all_active=0; // OfN - reset HACKER improvements
+		newmis.is_malfunctioning = 0;
+		newmis.attack_finished=time; //- controls time after loosing track of enemy to not be rotating
+		newmis.has_holo=0;
 
-        newmis.has_fieldgen = time; // resets invulnerability of attacking holos 'sindrome'
+		newmis.has_fieldgen = time; // resets invulnerability of attacking holos 'sindrome'
 
 	}
 	else if (oldself.weapon == #BUILD_TESLA)
@@ -1079,12 +1081,12 @@ void() TeamFortress_FinishedBuilding =
 		//CH special sbar for eng.
 		self.StatusBarScreen = 4;
 		//self.has_tesla = #TRUE;
-        self.has_tesla = self.has_tesla | oldself.dont_do_triggerwork;
+		self.has_tesla = self.has_tesla | oldself.dont_do_triggerwork;
 		sprint (self, #PRINT_HIGH, "You finish building the tesla.\n");
 
-        teamprefixsprint(self.team_no,self); //- OfN
-        
-        teamsprint(self.team_no, self, self.netname);
+		teamprefixsprint(self.team_no,self); //- OfN
+		
+		teamsprint(self.team_no, self, self.netname);
 		teamsprint(self.team_no, self, " has built a tesla.\n");
 		sound (oldself, #CHAN_ITEM, "weapons/guerset.wav", 1, #ATTN_NORM);
 			
@@ -1104,16 +1106,16 @@ void() TeamFortress_FinishedBuilding =
 		oldself.flags = oldself.flags - (oldself.flags & #FL_ONGROUND);
 		oldself.team_no = self.team_no;
 		
-        //- OfN -
-        //oldself.think = Tesla_Idle;
-        oldself.think = tsla_on1;
+		//- OfN -
+		//oldself.think = Tesla_Idle;
+		oldself.think = tsla_on1;
 		//oldself.nextthink = time + 2;
-        oldself.nextthink = time + 0.1;
-        oldself.has_holo = time + 2; // next Tesla_Idle run
-        oldself.job = 0; // this flag will determine which frame animation is currently on
-        //oldself.job_finished = time; // change for frame animation purposes, instead of increasing its nextthing during charging
-        oldself.no_grenades_1 = #FALSE; // first think reset
-        oldself.no_grenades_2 = 0; // cloak touch delay reset
+		oldself.nextthink = time + 0.1;
+		oldself.has_holo = time + 2; // next Tesla_Idle run
+		oldself.job = 0; // this flag will determine which frame animation is currently on
+		//oldself.job_finished = time; // change for frame animation purposes, instead of increasing its nextthing during charging
+		oldself.no_grenades_1 = #FALSE; // first think reset
+		oldself.no_grenades_2 = 0; // cloak touch delay reset
 
 		oldself.touch = Tesla_Touch;
 		oldself.enemy = world;
@@ -1165,6 +1167,9 @@ void() TeamFortress_FinishedBuilding =
 		oldself.waitmax = #FALSE; //No target yet
 
 		oldself.frags = 0; //CH how many people has your sent killed?
+		oldself.money = 0; //WK How many building frags have you spent?
+		oldself.demon_blood = 0; //WK Holds our bitfield for new building upgrades
+
 		oldself.lip   = 0; //WK How many tinkers have been done
 		modelindex_tesla = oldself.modelindex; //CH
 
@@ -1178,9 +1183,9 @@ void() TeamFortress_FinishedBuilding =
 		self.has_teleporter = (self.has_teleporter + 1);
 		sprint (self, #PRINT_HIGH, "You finish building the Teleporter Pad.\n");
 
-        teamprefixsprint(self.team_no,self); //- OfN
+		teamprefixsprint(self.team_no,self); //- OfN
 
-        teamsprint(self.team_no, self, self.netname);
+		teamsprint(self.team_no, self, self.netname);
 		teamsprint(self.team_no, self, " has built a Teleporter Pad.\n");
 		sound (oldself, #CHAN_ITEM, "weapons/guerset.wav", 1, #ATTN_NORM);
 
@@ -1189,7 +1194,7 @@ void() TeamFortress_FinishedBuilding =
 		// Create the teleporter
 		oldself.classname = "building_teleporter";
 		oldself.netname = "teleporter";
-//		oldself.blocked = Teleporter_touch;		// Actual touch function
+//		oldself.blocked = Teleporter_touch; 	// Actual touch function
 		oldself.touch = Teleporter_touch;
 		oldself.max_health = #BUILD_HEALTH_TELEPORTER;
 		oldself.health = #BUILD_HEALTH_TELEPORTER;
@@ -1217,17 +1222,17 @@ void() TeamFortress_FinishedBuilding =
 		oldself.nextthink = time + 1;
 		oldself.spawnflags = 4; //CH cause extensive checks for height
 
-        oldself.is_malfunctioning = 0;
-        oldself.all_active=0; // OfN - reset HACKER improvements
+		oldself.is_malfunctioning = 0;
+		oldself.all_active=0; // OfN - reset HACKER improvements
 	}
-    else if (oldself.weapon == #BUILD_FIELDGEN)
+	else if (oldself.weapon == #BUILD_FIELDGEN)
 	{
 		self.has_fieldgen = (self.has_fieldgen + 1);
 		sprint (self, #PRINT_HIGH, "You finish building the Field Generator.\n");
 
-        teamprefixsprint(self.team_no,self); //- OfN
+		teamprefixsprint(self.team_no,self); //- OfN
 
-        teamsprint(self.team_no, self, self.netname);
+		teamsprint(self.team_no, self, self.netname);
 		teamsprint(self.team_no, self, " has built a Field Generator.\n");
 		sound (oldself, #CHAN_ITEM, "weapons/guerset.wav", 1, #ATTN_NORM);
 
@@ -1236,7 +1241,7 @@ void() TeamFortress_FinishedBuilding =
 		// Create the field generator
 		oldself.classname = "building_fieldgen";
 		oldself.netname = "field generator";
-//		oldself.blocked = Teleporter_touch;		// Actual touch function
+//		oldself.blocked = Teleporter_touch; 	// Actual touch function
 		//oldself.touch = Teleporter_touch;
 		oldself.max_health = #BUILD_HEALTH_FIELDGEN;
 		oldself.health = #BUILD_HEALTH_FIELDGEN;
@@ -1244,7 +1249,7 @@ void() TeamFortress_FinishedBuilding =
 		oldself.mdl = "progs/ffgen2.mdl";		// Actual mdl
 		oldself.team_no = self.team_no;
 		
-        oldself.maxammo_cells = #FIELDGEN_NUMCELLS;	//CH Max of 20 field recharges
+		oldself.maxammo_cells = #FIELDGEN_NUMCELLS; //CH Max of 20 field recharges
 		oldself.ammo_cells = #FIELDGEN_NUMCELLS / 2;	//CH start not at full*/
 
 		oldself.real_owner = self;			// The Engineer owns this item
@@ -1257,9 +1262,9 @@ void() TeamFortress_FinishedBuilding =
 
 		oldself.solid = #SOLID_BBOX;
 
-        oldself.angles = '0 0 0';
+		oldself.angles = '0 0 0';
 
-        setmodel(oldself, oldself.mdl);
+		setmodel(oldself, oldself.mdl);
 		setsize (oldself, '-6 -6 0', '6 6 54');
 		setorigin(oldself, oldself.origin + '0 0 8'); //CH does jump
 
@@ -1271,20 +1276,20 @@ void() TeamFortress_FinishedBuilding =
 
 		oldself.spawnflags = 4; //CH cause extensive checks for height
 
-        oldself.is_malfunctioning = 0;
-        oldself.all_active=0; // OfN - reset HACKER improvements
+		oldself.is_malfunctioning = 0;
+		oldself.all_active=0; // OfN - reset HACKER improvements
 
-        FieldGen_Built(oldself);
+		FieldGen_Built(oldself);
 	}
 
-    // Add string flags used for earthquake and storm find()'s
-    if (oldself.weapon == #BUILD_SENTRYGUN)
-        UpdateVulnerability(newmis);
-    else
-        UpdateVulnerability(oldself);        
-    
-    if (self.ammo_cells < 0)
-        self.ammo_cells = 0;
+	// Add string flags used for earthquake and storm find()'s
+	if (oldself.weapon == #BUILD_SENTRYGUN)
+		UpdateVulnerability(newmis);
+	else
+		UpdateVulnerability(oldself);		 
+	
+	if (self.ammo_cells < 0)
+		self.ammo_cells = 0;
 
 	W_SetCurrentAmmo();
 };
@@ -1329,36 +1334,36 @@ void() T_Dispenser =
 // this is needed to avoid stack overflow
 
 void() Dispenser_Explode =
-{    
-    T_RadiusDamage(self.demon_one, self.demon_one, self.has_holo, world);
+{	 
+	T_RadiusDamage(self.demon_one, self.demon_one, self.has_holo, world);
 
-    local entity sprite;
+	local entity sprite;
 
-    sprite = SpawnSprite(1,#SPRITE_AIRBURST,self.demon_one.origin,'0 0 0',#SPRITEMOVE_UPSLOW,0.1);
+	sprite = SpawnSprite(1,#SPRITE_AIRBURST,self.demon_one.origin,'0 0 0',#SPRITEMOVE_UPSLOW,0.1);
 
-    if (sprite)
-    {
-        sprite.effects = #EF_DIMLIGHT;
+	if (sprite)
+	{
+		sprite.effects = #EF_DIMLIGHT;
 
-        if (self.demon_one.real_owner.team_no == 1)
-            sprite.effects = #EF_DIMLIGHT | #EF_BLUE;
-        else if (self.demon_one.real_owner.team_no == 2)
-            sprite.effects = #EF_DIMLIGHT | #EF_RED;
-    }
+		if (self.demon_one.real_owner.team_no == 1)
+			sprite.effects = #EF_DIMLIGHT | #EF_BLUE;
+		else if (self.demon_one.real_owner.team_no == 2)
+			sprite.effects = #EF_DIMLIGHT | #EF_RED;
+	}
 
-    WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
 	WriteCoord (#MSG_BROADCAST, self.demon_one.origin_x);
 	WriteCoord (#MSG_BROADCAST, self.demon_one.origin_y);
 	WriteCoord (#MSG_BROADCAST, self.demon_one.origin_z);
 #ifdef QUAKE_WORLD
 	multicast (self.demon_one.origin, #MULTICAST_PHS);
-    dremove(self.demon_one);
+	dremove(self.demon_one);
 #else
-    BecomeExplosion ();
+	BecomeExplosion ();
 #endif
 
-    dremove(self); // remove explosion timer for this dispenser
+	dremove(self); // remove explosion timer for this dispenser
 };
 
 void() Dispenser_Die =
@@ -1371,18 +1376,18 @@ void() Dispenser_Die =
 	damg = damg + self.ammo_shells * 0.2;
 	damg = damg + self.ammo_rockets / 2;
 	
-    //- OfN causes overflow so we need a timer for dispenser explosion
-    newmis = spawn();
-    newmis.has_holo = damg;
-    newmis.demon_one = self;
-    newmis.nextthink = time + 0.1;
-    newmis.think = Dispenser_Explode;
-    /*T_RadiusDamage(self, self, damg, world); // OfN - Fixme, stack overflow??*/
+	//- OfN causes overflow so we need a timer for dispenser explosion
+	newmis = spawn();
+	newmis.has_holo = damg;
+	newmis.demon_one = self;
+	newmis.nextthink = time + 0.1;
+	newmis.think = Dispenser_Explode;
+	/*T_RadiusDamage(self, self, damg, world); // OfN - Fixme, stack overflow??*/
 
 
 	sprint(self.real_owner, #PRINT_HIGH, "Your dispenser was destroyed.\n");
 
-    ThrowGib("progs/dgib1.mdl", -30, #TRUE, 0, 0, #FALSE);
+	ThrowGib("progs/dgib1.mdl", -30, #TRUE, 0, 0, #FALSE);
 	ThrowGib("progs/dgib2.mdl", -50, #TRUE, 0, 0, #FALSE);
 	ThrowGib("progs/dgib3.mdl", -50, #TRUE, 0, 0, #FALSE);
 };
@@ -1398,9 +1403,9 @@ void(entity disp) Engineer_UseDispenser =
 	sprint (self, #PRINT_HIGH, "Dispenser has ");
 	st = ftos(disp.health);
 	sprint(self, #PRINT_HIGH, st);
-    sprint(self, #PRINT_HIGH, "Ø");
+	sprint(self, #PRINT_HIGH, "Ø");
 	st = ftos(disp.max_health);
-    sprint(self, #PRINT_HIGH, st);
+	sprint(self, #PRINT_HIGH, st);
 	sprint (self, #PRINT_HIGH, " ËÂ·ÏÙË\n");
 	st = ftos(disp.ammo_shells);
 	sprint (self, #PRINT_HIGH, st);
@@ -1418,32 +1423,32 @@ void(entity disp) Engineer_UseDispenser =
 	sprint (self, #PRINT_HIGH, st);
 	sprint (self, #PRINT_HIGH, " ·ÚÌÔÚ\n");
 
-    if (disp.all_active & #IMPROVED_FOUR)
-    {
-        st = ftos(disp.ammo_medikit);
-    	sprint (self, #PRINT_HIGH, st);
-    	
+	if (disp.all_active & #IMPROVED_FOUR)
+	{
+		st = ftos(disp.ammo_medikit);
+		sprint (self, #PRINT_HIGH, st);
+		
 
-        local float f;
-        f = 1;
+		local float f;
+		f = 1;
 
-        if (disp.all_active & #IMPROVED_ONE)
-            f = 2;
-        
-        sprint (self, #PRINT_HIGH, "Ø");
+		if (disp.all_active & #IMPROVED_ONE)
+			f = 2;
+		
+		sprint (self, #PRINT_HIGH, "Ø");
 
-        st = ftos(#BUILD_DISPENSER_MAX_MEDIKIT * f);
-    	sprint (self, #PRINT_HIGH, st);
-        sprint (self, #PRINT_HIGH, " ÕÂ‰ÈÎÈÙ\n");
-                
-        st = ftos(floor(disp.ammo_detpack));
-    	sprint (self, #PRINT_HIGH, st);
-    	sprint (self, #PRINT_HIGH, " ƒÂÙ·„ÎÛ ");
+		st = ftos(#BUILD_DISPENSER_MAX_MEDIKIT * f);
+		sprint (self, #PRINT_HIGH, st);
+		sprint (self, #PRINT_HIGH, " ÕÂ‰ÈÎÈÙ\n");
+				
+		st = ftos(floor(disp.ammo_detpack));
+		sprint (self, #PRINT_HIGH, st);
+		sprint (self, #PRINT_HIGH, " ƒÂÙ·„ÎÛ ");
 
-        st = ftos(floor(disp.ammo_c4det));
-    	sprint (self, #PRINT_HIGH, st);
-    	sprint (self, #PRINT_HIGH, " √ñ ƒÂÙ·„ÎÛ\n");
-    }
+		st = ftos(floor(disp.ammo_c4det));
+		sprint (self, #PRINT_HIGH, st);
+		sprint (self, #PRINT_HIGH, " √ñ ƒÂÙ·„ÎÛ\n");
+	}
 
 	// Pop up the menu
 	self.current_menu = #MENU_ENGINEER_FIX_DISPENSER;
@@ -1461,12 +1466,104 @@ void(entity disp) Engineer_UseDispenser =
 	dist_checker.nextthink = time + 0.3;
 };
 
+//WK 1/15/8 Moved here from Menu.qc since whacks now autorepair/rearm guns
+//Returns true if it put any ammo in at all
+float() Engineer_RearmSentryGun = 
+{
+	local float am, healed;
+
+	if (self.classname != "player" || self.building == world)
+		return;
+
+	healed = 0;
+
+	// shells
+	am = (#DROP_SHELLS * 2);
+	if (am > self.ammo_shells)
+		am = self.ammo_shells;
+	if (am > (self.building.maxammo_shells - self.building.ammo_shells))
+		am = (self.building.maxammo_shells - self.building.ammo_shells);
+	self.ammo_shells = self.ammo_shells - am;
+	self.building.ammo_shells = self.building.ammo_shells + am;
+
+	if (am >= 1) healed = 1;
+
+	// If it's level 3, put some rockets in too
+	if (self.building.weapon >= 3)
+	{
+		am = (#DROP_ROCKETS * 2);
+		if (am > self.ammo_rockets)
+			am = self.ammo_rockets;
+		if (am > (self.building.maxammo_rockets - self.building.ammo_rockets))
+			am = (self.building.maxammo_rockets - self.building.ammo_rockets);
+		self.ammo_rockets = self.ammo_rockets - am;
+		self.building.ammo_rockets = self.building.ammo_rockets + am;
+		if (am > 1) healed = 1;
+	}
+	return healed;
+};
+
+float() Engineer_RepairSentryGun = 
+{
+	local float metalcost, healed;
+
+	if (self.classname != "player" || self.building == world)
+		return;
+
+	healed = 0;
+	metalcost = (self.building.max_health - self.building.health) / 5;
+
+	if (metalcost > self.ammo_cells)
+		metalcost = self.ammo_cells;
+
+	self.ammo_cells = self.ammo_cells - metalcost;
+	self.building.health = self.building.health + (metalcost * 5);
+
+	if (metalcost >= 1) healed = 1;
+	return healed;
+};
+
+float() Engineer_RepairTesla =
+{
+	local float cost, totalcost;
+	local float maxcells;
+	cost = 0;
+	if (self.building.health < self.building.max_health) //CH allow repair with limited cells
+	{
+		cost = (self.building.max_health - self.building.health) / 2;
+		if (cost > self.ammo_cells)
+			cost = self.ammo_cells;
+
+		self.ammo_cells = self.ammo_cells - cost;
+		self.building.health = self.building.health + (cost * 2);
+		if (self.building.health >= self.building.max_health)
+			self.building.health = self.building.max_health;
+	}
+
+	totalcost = cost;
+
+	maxcells = self.building.maxammo_cells;
+
+	cost = maxcells - self.building.ammo_cells;
+	if (cost > self.ammo_cells) cost = self.ammo_cells;
+	self.ammo_cells = self.ammo_cells - cost;
+	self.building.ammo_cells = self.building.ammo_cells + cost;
+	if (self.building.ammo_cells >= maxcells)
+		self.building.ammo_cells = maxcells;
+
+	totalcost = totalcost + cost;
+	return totalcost;
+};
+
 //=========================================================================
 // Engineer has used a Spanner on the SentryGun
 void(entity gun) Engineer_UseSentryGun =
 {
 	local entity dist_checker;
+	local float healed;
 	local string st;
+
+	self.building = gun; //Set the building we're currently operating on
 
 	// Print the gun's details
 	sprint(self, #PRINT_HIGH, "ÃÂˆÂÏ ");
@@ -1475,14 +1572,14 @@ void(entity gun) Engineer_UseSentryGun =
 	sprint(self, #PRINT_HIGH, " Sentry Gun has ");
 	st = ftos(gun.health);
 	sprint(self, #PRINT_HIGH, st);
-    sprint(self, #PRINT_HIGH, "Ø");
+	sprint(self, #PRINT_HIGH, "Ø");
 	st = ftos(gun.max_health);
-    sprint(self, #PRINT_HIGH, st);
+	sprint(self, #PRINT_HIGH, st);
 	sprint(self, #PRINT_HIGH, " ËÂ·ÏÙË, ");
 	st = ftos(gun.ammo_shells);
 	sprint(self, #PRINT_HIGH, st);
 	sprint(self, #PRINT_HIGH, " ÛËÂÏÏÛ");
-	if (gun.weapon == 3)
+	if (gun.weapon >= 3)
 	{
 		st = ftos(gun.ammo_rockets);
 		sprint(self, #PRINT_HIGH, ", ");
@@ -1494,13 +1591,28 @@ void(entity gun) Engineer_UseSentryGun =
 	sprint(self, #PRINT_HIGH, "Sentry Gun ∆“¡«”: "); //CH Displays kills of sent
 		st = ftos(gun.frags);
 	sprint(self, #PRINT_HIGH, st);
+	sprint(self, #PRINT_HIGH, " ∆“¡«” spent: "); //WK We can spend gun frags now
+		st = ftos(gun.money);
+	sprint(self, #PRINT_HIGH, st);
 	sprint(self, #PRINT_HIGH, "\n");
+
+	//TODO: Add in pretty print of frag upgrades we have.
+
+	//WK 1/15/08 Auto-repair builds
+	if (Teammate(self.building.real_owner.team_no,self.team_no)) {
+		healed = Engineer_RearmSentryGun();
+		healed = healed + Engineer_RepairSentryGun();
+
+		//Auto-repair and auto-recharge sentries, and make sound if successful
+		if (healed) { //Only make healing sound if recharged
+			sprint(self, #PRINT_HIGH, "Rearmed and Repaired!\n");
+			sound(self, #CHAN_ITEM, "items/r_item1.wav", 1, #ATTN_NORM);
+		}
+	}
 
 	// Pop up the menu
 	self.current_menu = #MENU_ENGINEER_FIX_SENTRYGUN;
 	self.menu_count = #MENU_REFRESH_RATE;
-
-	self.building = gun;
 
 	//dodgy
 	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no,self.team_no)) {
@@ -1509,12 +1621,12 @@ void(entity gun) Engineer_UseSentryGun =
 	}
 
 	// - OfN - Adds 4-6 seconds of smart sentry gun targetting (no holos)
-    gun.has_fieldgen = time + 4 + 2*random();
-    
-    if (gun.enemy.classname=="holo" && gun.enemy.has_holo == 1)
-        sprint(self, #PRINT_HIGH,"You adjust the sentry gun to ignore the holo\n");
-    
-    // Start a Distance checker, which removes the menu if the player
+	gun.has_fieldgen = time + 4 + 2*random();
+	
+	if (gun.enemy.classname=="holo" && gun.enemy.has_holo == 1)
+		sprint(self, #PRINT_HIGH,"You adjust the sentry gun to ignore the holo\n");
+	
+	// Start a Distance checker, which removes the menu if the player
 	// gets too far away from the sentry.
 	dist_checker = spawn();
 	dist_checker.classname = "timer";
@@ -1530,6 +1642,10 @@ void(entity gun) Engineer_UseTesla =
 {
 	local entity dist_checker;
 	local string st;
+	local float healed;
+
+	self.building = gun;
+
 
 	// Print the gun's details
 	sprint(self, #PRINT_HIGH, "»Â·ÏÙË:");
@@ -1604,13 +1720,25 @@ void(entity gun) Engineer_UseTesla =
 	sprint(self, #PRINT_HIGH, "Tesla Sentry ∆“¡«”: "); //CH Displays kills of tesla
 		st = ftos(gun.frags);
 	sprint(self, #PRINT_HIGH, st);
+	sprint(self, #PRINT_HIGH, " ∆“¡«” Spent: "); //WK We can spend frags now
+		st = ftos(gun.money);
+	sprint(self, #PRINT_HIGH, st);
 	sprint(self, #PRINT_HIGH, "\n");
+
+	//WK 1/15/08 Auto-repair builds
+	if (Teammate(self.building.real_owner.team_no,self.team_no)) {
+		healed = Engineer_RepairTesla();
+
+		//Auto-repair and auto-recharge teslas, and make sound if successful
+		if (healed) { //Only make healing sound if recharged
+			sprint(self, #PRINT_HIGH, "Recharged and Repaired!\n");
+			sound(self, #CHAN_ITEM, "items/r_item1.wav", 1, #ATTN_NORM);
+		}
+	}
 
 	// Pop up the menu
 	self.current_menu = #MENU_ENGINEER_FIX_TESLA;
 	self.menu_count = #MENU_REFRESH_RATE;
-
-	self.building = gun;
 
 	// dodgy
 	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no, self.team_no)) {
@@ -1618,13 +1746,13 @@ void(entity gun) Engineer_UseTesla =
 		return;
 	}
 
-    // - OfN - Adds 6-9 seconds of smart tesla targetting (no holos)
-    gun.has_fieldgen = time + 6 + 3*random();
-        
-    if (gun.enemy.classname == "holo" && gun.enemy.has_holo == 1)
-    {        
-        sprint(self, #PRINT_HIGH,"You adjust the tesla sentry to ignore the holo\n");
-    }
+	// - OfN - Adds 6-9 seconds of smart tesla targetting (no holos)
+	gun.has_fieldgen = time + 6 + 3*random();
+		
+	if (gun.enemy.classname == "holo" && gun.enemy.has_holo == 1)
+	{		 
+		sprint(self, #PRINT_HIGH,"You adjust the tesla sentry to ignore the holo\n");
+	}
 
 	// Start a Distance checker, which removes the menu if the player
 	// gets too far away from the tesla.

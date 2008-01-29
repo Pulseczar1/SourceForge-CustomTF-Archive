@@ -376,7 +376,55 @@ void(vector org) spawn_tfog =
 #endif
 };
 
+//Gizmo's Tdeath Fix
+void() tdeath_touch =
+{
+   //local entity spot;
+   local entity other2;
 
+   if (other == self.owner)
+      return;
+
+    //- OfN Hack to avoid turretized teles to be telefragged when beeing used
+    if (other.classname == "building_teleporter" && other.tf_items & #NIT_TURRET)
+        return;
+
+// frag anyone who teleports in on top of an invincible player
+   if (other.classname == "player")
+   {
+      // Gizmo - enable double 666 telefrags
+      if (other.invincible_finished > time &&
+         self.owner.invincible_finished > time) {
+         self.classname = "teledeath3";
+         other.invincible_finished = 0;
+         self.owner.invincible_finished = 0;
+         T_Damage (other, self, self, 50000);
+         other2 = self.owner;
+         self.owner = other;
+         T_Damage (other2, self, self, 50000);
+      }
+
+      if (other.invincible_finished > time) {
+         self.classname = "teledeath2";
+         T_Damage (self.owner, self, self, 50000);
+         return;
+      }
+
+      if (self.owner.classname != "player")
+      {   
+         T_Damage (self.owner, self, self, 5000);
+         return;
+      }
+   }
+   
+   if (other.health)
+   {
+      T_Damage(other, self, self, 5000);
+   }
+};
+
+
+/*
 void() tdeath_touch =
 {
 	//local entity spot;
@@ -405,7 +453,7 @@ void() tdeath_touch =
 	{
 		T_Damage(other, self, self, 5000);
 	}
-};
+}; */
 
 
 void(vector org, entity death_owner) spawn_tdeath =

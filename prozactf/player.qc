@@ -157,9 +157,9 @@ void() player_touch =
 			if (self.job & #JOB_TKD) { //TWO TKD GUYS!
 				//Issue TKD Challenge (if neither side is juiced already)
 				local float score;
-				score = 5;
+				score = 4;
 				if (!(self.items & #IT_QUAD) && !(other.items & #IT_QUAD)) {
-					if (random() < 0.33) {
+					if (random() < 0.4) {
 						bprint(#PRINT_HIGH,other.netname);
 						bprint(#PRINT_HIGH," issues a Tae Kwon Do challenge to ");
 						bprint(#PRINT_HIGH,self.netname);
@@ -171,28 +171,28 @@ void() player_touch =
 						bprint(#PRINT_HIGH,self.netname);
 						bprint(#PRINT_HIGH," yells TAE KWON DO!\n");
 						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
-						score = 10;
+						score = 6;
 					} else if (random() < 0.5) {
 						bprint(#PRINT_HIGH,other.netname);
 						bprint(#PRINT_HIGH," and ");
 						bprint(#PRINT_HIGH,self.netname);
-						bprint(#PRINT_HIGH," begin the Duel of the Iron Mic! (15s)\n");
+						bprint(#PRINT_HIGH," begin the Duel of the Iron Mic! (10s)\n");
+						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
+						score = 10;
+					} else if (random() < 0.66) {
+						bprint(#PRINT_HIGH,other.netname);
+						bprint(#PRINT_HIGH," and ");
+						bprint(#PRINT_HIGH,self.netname);
+						bprint(#PRINT_HIGH," begin their samurai showdown! (15s)\n");
 						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
 						score = 15;
-					} else if (random() < 0.5) {
-						bprint(#PRINT_HIGH,other.netname);
-						bprint(#PRINT_HIGH," and ");
-						bprint(#PRINT_HIGH,self.netname);
-						bprint(#PRINT_HIGH," begin their samurai showdown! (20s)\n");
-						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
-						score = 20;
 					} else {
 						bprint(#PRINT_HIGH,other.netname);
 						bprint(#PRINT_HIGH," and ");
 						bprint(#PRINT_HIGH,self.netname);
-						bprint(#PRINT_HIGH," begin a duel without honor or humanity! (40s)\n");
+						bprint(#PRINT_HIGH," begin a duel without honor or humanity! (30s)\n");
 						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
-						score = 40;
+						score = 30;
 					}
 
 					//Juiced

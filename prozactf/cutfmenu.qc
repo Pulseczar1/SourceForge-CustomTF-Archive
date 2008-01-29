@@ -223,12 +223,12 @@ void(float cost, float type) BuyCuTF2;
 #define STR_GR_MIRV 		   "MIRV            "
 
 #define COST_GR_NORMAL			 500
-#define COST_GR_NAPALM			1400
-#define COST_GR_GAS 			1300
+#define COST_GR_NAPALM			1000
+#define COST_GR_GAS 			1600
 #define COST_GR_EMP 			1200
-#define COST_GR_FRAG			1300
-#define COST_GR_NAIL			1400
-#define COST_GR_MIRV			1500
+#define COST_GR_FRAG			1600
+#define COST_GR_NAIL			1600
+#define COST_GR_MIRV			1600
 
 // PAGE 13 - Utility Grenades
 #define STR_GR_FLARE		   "Flare           "
@@ -243,16 +243,18 @@ void(float cost, float type) BuyCuTF2;
 #define COST_GR_CALTROP 		 500
 #define COST_GR_CONCUSSION		1000
 #define COST_GR_PSIONIC 		1200
-#define COST_GR_ANTIGRAV		1000
+#define COST_GR_ANTIGRAV		700
 #define COST_GR_BIOLOGICAL		1100
-#define COST_GR_KRAC			1400
+#define COST_GR_KRAC			1300
 
 // PAGE 14 - Professions
 #define STR_THIEF			   "Thief     ¨Hide©"
+  #define STR_THIEF_EXTRA1       "«Shadowstep    "
+  #define STR_THIEF_EXTRA2       "«Shadowsprint  "
 #define STR_RUNNER		   "Runner  ¨Sprint©"
 #define STR_WARLOCK 		   "Warlock ¨Summon©"
-  #define STR_WARLOCK_EXTRA1   "2nd Extra Soul  "
-  #define STR_WARLOCK_EXTRA2   "3rd Extra Soul  "
+  #define STR_WARLOCK_EXTRA1     "2nd Extra Soul  "
+  #define STR_WARLOCK_EXTRA2     "3rd Extra Soul  "
 #define STR_CHAPLAN 		   "Chaplan¨Inspire©"
 #define STR_BERSERKER		   "Berserker ¨Fury©"
 #define STR_GUERILLA		   "Guerilla ¨Mines©"
@@ -260,11 +262,13 @@ void(float cost, float type) BuyCuTF2;
   #define STR_GUERILLA_EXTRA2  "Mine Specialist "
 #define STR_JUDOKA		   "Judoka  ¨Disarm©"
 
-#define COST_THIEF			 950
+#define COST_THIEF			 800
+  #define COST_THIEF_EXTRA1	     	 700
+  #define COST_THIEF_EXTRA2	 	 500
 #define COST_RUNNER 			 400
 #define COST_WARLOCK			1150
-  #define COST_WARLOCK_EXTRA1	 	700
-  #define COST_WARLOCK_EXTRA2	 	950
+  #define COST_WARLOCK_EXTRA1	 	 700
+  #define COST_WARLOCK_EXTRA2	 	 950
 #define COST_CHAPLAN			1200
 #define COST_BERSERKER			1200
 #define COST_GUERILLA			1600
@@ -2376,7 +2380,7 @@ void() Menu_Profession =
 
 	MenuResetCount();
 
-	l1 = ConstructMenuJobStr(1,#STR_THIEF,#JOB_THIEF,#COST_THIEF,0,0,"","");
+	l1 = ConstructMenuJobStr(1,#STR_THIEF,#JOB_THIEF,#COST_THIEF,#COST_THIEF_EXTRA1,#COST_THIEF_EXTRA2,#STR_THIEF_EXTRA1,#STR_THIEF_EXTRA2);
 	str = ConstructMenuJobStr(2,#STR_RUNNER,#JOB_RUNNER,#COST_RUNNER,0,0,"","");
 	l1 = strcat(l1,str);
 
@@ -2397,8 +2401,18 @@ void() Menu_Profession =
 void(float inp) Menu_Profession_Input =
 {
 	if (inp == 1) {
-		BuyJob( #COST_THIEF,#JOB_THIEF);
-		HelpString("When you activate this job, you become invisible. You are 'eyes-invisible' when walking, and fully invisible when standing still.");
+		if (extras_mode == 0)
+		{
+			if (self.job & #JOB_THIEF)
+				BuyExtra(#COST_THIEF_EXTRA1,#COST_THIEF_EXTRA2);
+			else {
+				BuyJob(#COST_THIEF,#JOB_THIEF);
+				HelpString("You become 'eyes-invisible' when walking, and fully invisible when standing still. With Shadowstep, you can walk briefly while fully invis. With Shadowsprint you move faster while hiding.");
+			}
+		}
+		else {
+			BuyJob(#COST_THIEF,#JOB_THIEF);
+		}
 		Menu_Profession();
 	}
 	if (inp == 2) {
