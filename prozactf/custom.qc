@@ -101,7 +101,7 @@ float(float targteam, float attackteam) Teammate =
 	return #FALSE;
 };
 
-/*
+
 void (string temp) DebugSprint =
 {
 	sprint(self,#PRINT_HIGH,temp);
@@ -115,7 +115,6 @@ void (float foo)  DebugSprintFloat =
 	sprint(self,#PRINT_HIGH,temp);
 	sprint(self,#PRINT_HIGH,"\n");
 };
-*/
 
 void() DropToCustomClassGen =
 {
@@ -754,6 +753,10 @@ void (float cost1, float cost2) BuyExtra =
             {
                 allcost = #COST_PSION + cost1;
             }
+            else if (self.job & #JOB_THIEF)
+            {
+                allcost = #COST_THIEF + cost1;
+            }
 
             self.job = 0;
        	PrintNotEnoughMoney(cost1);
@@ -787,6 +790,10 @@ void (float cost1, float cost2) BuyExtra =
         {
             allcost = (cost1+cost2)+#COST_PSION;
         }
+        else if (self.job & #JOB_THIEF)
+        {
+            allcost = (cost1+cost2)+#COST_THIEF;
+        }
             
         self.job = 0;
         PrintRefund(allcost);
@@ -811,6 +818,10 @@ void (float cost1, float cost2) BuyExtra =
             else if (self.job & #JOB_PSION)
             {
                 allcost = #COST_PSION;
+            }
+            else if (self.job & #JOB_THIEF)
+            {
+                allcost = #COST_THIEF;
             }
 
 		self.job = 0;
@@ -1453,7 +1464,7 @@ void(entity bastard,float threshold) createBastard =
 void() Autoitem_think =
 {
 	local entity oself,head;
-	local float happy, radius;
+	local float happy, radius, dist;
 	self.heat = self.heat + 1;
 	if (self.heat > 4) self.heat = 0;
 	if (self.heat == 1)
@@ -1476,6 +1487,7 @@ void() Autoitem_think =
 			TeamFortress_Scan(15,#TRUE); //Do a scan15
 		}
 	}
+	//WK 10/10/7 Reduce radius to spy revealer to almost touching
 	if (self.job & #JOB_PSION && !self.is_undercover && !self.is_feigning && self.health > 0) { //Uncover all enemy spies and thieves
 		radius = 200; //Level 1 Psion has smallest range
 		if (self.job & #JOB_EXTRA1) radius = 400; //Level 2 Psion increases range
@@ -1484,7 +1496,9 @@ void() Autoitem_think =
 		deathmsg = #DMSG_PSION;
 
 		head = findradius(self.origin, radius);
+
 		while (head) {
+			dist = vlen(self.origin - head.origin);
 			if (head.classname == "player" && head.takedamage && head.health > 0 && head.playerclass != #PC_UNDEFINED)
 			{
 				traceline (self.origin, head.origin, #TL_BSP_ONLY, self);
@@ -1508,8 +1522,8 @@ void() Autoitem_think =
 						#endif
 						sound (self, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM);
 					}
-					//Uncover all non-psion spies within the radius
-					else if (head.is_undercover && !(head.job & #JOB_PSION) && !Teammate(self.team_no,head.team_no))
+					//Uncover all non-psion spies within a short radius
+					else if (head.is_undercover && !(head.job & #JOB_PSION) && !Teammate(self.team_no,head.team_no) && (dist < 80))
 					{
 						//Zot the spy for 20 damage!!
 						TF_T_Damage (head, self, self, 20, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY); 

@@ -831,30 +831,29 @@ void(entity targ, entity attacker) ClientObituary =
 
 		 	if (!Teammate(targ.team_no,attacker.owner.team_no) || attacker.owner.team_no < 1)
 				Give_Frags_Out(attacker.owner, attacker.owner, 1, 0, 1, 1, 0);
-
-/*				attacker.owner.real_frags = attacker.owner.real_frags + 1;
-			if (!(toggleflags & #TFLAG_TEAMFRAGS))
-				attacker.owner.frags = attacker.owner.real_frags;
-*/
 			return;
 		}
 
 		if (attacker.classname == "teledeath2")
 		{
-			bprint (#PRINT_MEDIUM, "Satan's power deflects ");
+			bprint (#PRINT_MEDIUM, "Invulnerability's power deflects ");
 			bprint (#PRINT_MEDIUM, targ.netname);
 			bprint (#PRINT_MEDIUM, "'s telefrag\n");
 
 			Give_Frags_Out(targ, targ, -1, 1, 1, 1, 0);
+			return;
+		}
 
-/*			targ.real_frags = targ.real_frags - 1;
- 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
-				targ.frags = targ.real_frags;
-			
-#ifdef QUAKE_WORLD
-			logfrag (targ, targ);
-#endif
-*/
+		// Gizmo - added idsoftware qw deathmatch code for double 666 telefrag, see tdeath_touch also
+		// double 666 telefrag (can happen often in deathmatch 4)
+		if (attacker.classname == "teledeath3") 
+		{
+			bprint (#PRINT_MEDIUM, targ.netname);
+			bprint (#PRINT_MEDIUM, " was telefragged by ");
+			bprint (#PRINT_MEDIUM, attacker.owner.netname);
+			bprint (#PRINT_MEDIUM, "'s a confluence of invulnerability\n");
+
+			Give_Frags_Out (targ, targ, -1, 1, 1, 1, 0);
 			return;
 		}
 

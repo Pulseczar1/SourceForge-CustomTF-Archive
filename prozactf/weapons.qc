@@ -5360,7 +5360,6 @@ ImpulseCommands
 ============
 */
 void() DeadImpulses;
-
 float(float inp) BuildingImpulses =
 {
 	if (inp < 10) return #TRUE;
@@ -5382,20 +5381,25 @@ float(float inp) BuildingImpulses =
 	return #FALSE;
 };
 
-void() ImpulseCommands =
+
+//WK 10/10/7 This function now holds all the impulses that can be done during
+//   an attack_finished global cooldown. Fixed sticky grens, sticky jobs, etc.
+// RETURNS: 1 if the function handled the command, 0 if it didn't
+float() NoCooldownImpulseCommands =
 {
+	//WK 10/10/7
 	if ((self.impulse== #TF_CHANGEPC + #PC_CUSTOM || self.impulse==#TF_SELL) && custom_mode==2)
 	{
 		self.impulse=0;
 		sprint(self,#PRINT_MEDIUM,"Custom player classes are disabled\n");
-		return;
+		return 1;
 	}
 
 	if (self.impulse <= #TF_CHANGEPC + #PC_RANDOM && self.impulse >= #TF_CHANGEPC + #PC_SCOUT && stock_mode==2)
 	{
 		self.impulse=0;
 		sprint(self,#PRINT_MEDIUM,"Stock player classes are disabled\n");
-		return;
+		return 1;
 	}
 
 	//local entity te; //- OfN - Unused!
@@ -5406,20 +5410,87 @@ void() ImpulseCommands =
 		if (!BuildingImpulses(self.impulse))
 		{
 			self.impulse = 0;
-			return;
+			return 1;
 		}
 	}
 
 	//WK Don't allow bastards to do any commands
 	if (self.penance_time > time)
-		return;
+		return 1;
 		
 	if (prematch >= time)
 		if (self.impulse > 10 || self.impulse < 1)
 		{
 			self.impulse = 0;
-			return;
+			return 1;
 		}
+
+	// Uses the special skill of the player's job
+	if (self.impulse == #TF_SKILL) { UseJobSkill(); return 1; }
+
+	//WK We can toss grens while chaplaining. Readme says so. :p
+	if (!self.is_building && !self.is_detpacking && !self.is_feigning)
+	{
+		// TeamFortress Prime Grenade Type 1
+		if (self.impulse == #TF_GRENADE_1)
+			{ TeamFortress_PrimeGrenade(); return 1; }
+		// TeamFortress Prime Grenade Type 2
+		else if (self.impulse == #TF_GRENADE_2)
+			{ TeamFortress_PrimeGrenade(); return 1; }
+	}
+
+	// TeamFortress Inventory
+	if (self.impulse == #TF_INVENTORY)
+		{ TeamFortress_Inventory(); return 1; }
+	if (self.impulse == #TF_MEDIC_HELPME)
+		{ TeamFortress_SaveMe(); return 1; }
+	if (self.impulse == #TF_TAUNT) {
+		if (self.last_saveme_sound < time) {
+			sound(self, #CHAN_WEAPON, "enforcer/sight1.wav", 1, #ATTN_NORM);
+			self.last_saveme_sound = time + 4;
+			return 1;
+		}
+	}
+	if (self.impulse == #TF_TAUNT2) {
+		if (self.last_saveme_sound < time) {
+			sound(self, #CHAN_WEAPON, "enforcer/sight2.wav", 1, #ATTN_NORM);
+			self.last_saveme_sound = time + 4;
+			return 1;
+		}
+	}
+	if (self.impulse == #TF_TAUNT3) {
+		if (self.last_saveme_sound < time) {
+			sound(self, #CHAN_WEAPON, "enforcer/sight3.wav", 1, #ATTN_NORM);
+			self.last_saveme_sound = time + 4;
+			return 1;
+		}
+	}
+	if (self.impulse == #TF_TAUNT4) {
+		if (self.last_saveme_sound < time) {
+			sound(self, #CHAN_WEAPON, "enforcer/sight4.wav", 1, #ATTN_NORM);
+			self.last_saveme_sound = time + 4;
+			return 1;
+		}
+	}
+	if (self.impulse == #TF_TAUNT5) {
+		if (self.last_saveme_sound < time) {
+			sound(self, #CHAN_WEAPON, "weapons/fith.wav", 1, #ATTN_NORM);
+			self.last_saveme_sound = time + 4;
+			return 1;
+		}
+	}
+	// TeamFortress Throw Grenade 
+	if (self.impulse == #TF_GRENADE_T)
+		{ TeamFortress_ThrowGrenade(); return 1; }
+	if (self.impulse == #TF_ID)
+		{ TeamFortress_ID(#FALSE); return 1; }
+
+	return 0;
+};
+
+void() ImpulseCommands =
+{
+	//WK 10/10/7 Shifted the code here up into NoCooldownImpulseCommands
 
 	/*=====================
 	These Impulse commands rely on the use of self.last_impulse. Since they use 
@@ -5442,7 +5513,8 @@ void() ImpulseCommands =
 	// Catch the 8 key to reprint the classhelp.
 	// Remove this when we return the lightning gun
 	//CH was on impulse 8, but thats lgun
-	if (self.impulse == 9 && self.current_menu != #MENU_CLASSHELP && (self.playerclass > 0 && self.playerclass < 11))
+	//WK 10/10/7 Replaced literals with constants
+	if (self.impulse == 9 && self.current_menu != #MENU_CLASSHELP && (self.playerclass > #PC_UNDEFINED && self.playerclass <= #PC_RANDOM))
 	{
 		self.current_menu = #MENU_CLASSHELP;
 		self.menu_count = #MENU_REFRESH_RATE;
@@ -5452,10 +5524,6 @@ void() ImpulseCommands =
 	// uses the special skill of the player's class
 	if (self.impulse == #TF_SPECIAL_SKILL)
 		UseSpecialSkill();
-
-	// uses the special skill of the player's class
-	if (self.impulse == #TF_SKILL)
-		UseJobSkill();
 
 	// No weapon related impulses can be done when setting detpacks or building WK or chaplaning
 	if (!self.is_building && !self.is_detpacking && !self.is_feigning && !(self.job & #JOB_CHAPLAN && self.job & #JOB_ACTIVE))
@@ -5492,6 +5560,10 @@ void() ImpulseCommands =
 		else if (self.impulse == #TF_SCAN_FRIENDLY)
 			TeamFortress_Scan(#TF_SCAN_FRIENDLY,#FALSE);
 
+		//WK Discarding during an attack spins down the ass cannon
+		else if (self.impulse == #TF_DISCARD)
+			TeamFortress_Discard();
+
 		// TeamFortress Set Detpack Impulses
 		else if (self.impulse == #TF_DETPACK_5)
 			TeamFortress_SetDetpack(5);
@@ -5504,8 +5576,6 @@ void() ImpulseCommands =
 			self.current_menu = #MENU_DROP;
 			self.menu_count = #MENU_REFRESH_RATE - 5;
 		}
-		else if (self.impulse == #TF_DISCARD)
-			TeamFortress_Discard();
 //CH
 		else if (self.impulse == #TF_DROPITEMS)
 		{
@@ -5517,72 +5587,11 @@ void() ImpulseCommands =
 			DropKey();
 #endif
 	}
-	//WK We can toss grens while chaplaining. Readme says so. :p
-	if (!self.is_building && !self.is_detpacking && !self.is_feigning)
-	{
-		// TeamFortress Prime Grenade Type 1
-		if (self.impulse == #TF_GRENADE_1)
-			TeamFortress_PrimeGrenade();
-		// TeamFortress Prime Grenade Type 2
-		else if (self.impulse == #TF_GRENADE_2)
-			TeamFortress_PrimeGrenade();
-	}
 
-	// TeamFortress Inventory
-	if (self.impulse == #TF_INVENTORY)
-		TeamFortress_Inventory();
-
-	else if (self.impulse == #TF_MEDIC_HELPME)
-		TeamFortress_SaveMe();
-	else if (self.impulse == #TF_TAUNT) {
-		if (self.last_saveme_sound < time) {
-			sound(self, #CHAN_WEAPON, "enforcer/sight1.wav", 1, #ATTN_NORM);
-			self.last_saveme_sound = time + 4;
-		}
-	}
-	else if (self.impulse == #TF_TAUNT2) {
-		if (self.last_saveme_sound < time) {
-			sound(self, #CHAN_WEAPON, "enforcer/sight2.wav", 1, #ATTN_NORM);
-			self.last_saveme_sound = time + 4;
-		}
-	}
-	else if (self.impulse == #TF_TAUNT3) {
-		if (self.last_saveme_sound < time) {
-			sound(self, #CHAN_WEAPON, "enforcer/sight3.wav", 1, #ATTN_NORM);
-			self.last_saveme_sound = time + 4;
-		}
-	}
-	else if (self.impulse == #TF_TAUNT4) {
-		if (self.last_saveme_sound < time) {
-			sound(self, #CHAN_WEAPON, "enforcer/sight4.wav", 1, #ATTN_NORM);
-			self.last_saveme_sound = time + 4;
-		}
-	}
-	else if (self.impulse == #TF_TAUNT5) {
-		if (self.last_saveme_sound < time) {
-			sound(self, #CHAN_WEAPON, "weapons/fith.wav", 1, #ATTN_NORM);
-			self.last_saveme_sound = time + 4;
-		}
-	}
-
-	// TeamFortress Throw Grenade 
-	else if (self.impulse == #TF_GRENADE_T)
-		TeamFortress_ThrowGrenade();
-		
-	//else if (self.impulse == #BUILD_SENSOR && self.cutf_items & #CUTF_SENSOR) // SB build sensor (not enough room on menu...)
-	//	SBBuildSensor();
-		
-	else if (self.impulse == #IMPULSE_THROWDETPACK)
+	if (self.impulse == #IMPULSE_THROWDETPACK)
 		PrimeC4Det();
-
-	/*else if (self.impulse == IMPULSE_INTERFACE)
-		SBInitiateInterface();*/
-
 	else if (self.impulse == #IMPULSE_HOLO)
 		ActivateHolo(self);
-
-	else if (self.impulse == #TF_ID)
-		TeamFortress_ID(#FALSE);
 
 	// TeamFortress Detonate Pipebombs	(yep, can be done while setting a detpack :)
 	else if (self.impulse == #TF_PB_DETONATE)
@@ -5615,9 +5624,6 @@ void() ImpulseCommands =
 	else if (self.impulse == #TF_DISPLAYLOCATION)
 		display_location();
 		
-	/*else if (self.impulse == 199)
-		CameraSwitchView();
-*/
 #ifdef DEMO_STUFF
 	// Camera Impulses
 	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_TARGET)
@@ -5918,6 +5924,8 @@ Called every frame so impulse events can be handled as well as possible
 */
 void() W_WeaponFrame =
 {
+	local float handled;
+
 	if (self.flags & #FL_FINALIZED)
 		return;
 	
@@ -5966,32 +5974,24 @@ void() W_WeaponFrame =
 			}
 		}
 	}
-  
-  // 9/21/7 correct fix to remove gren delay - phrosty
-  if (self.impulse != 0 && self.penance_time <= time) {		
-    if (prematch >= time) {
-      if (self.impulse > 10 || self.impulse < 1) {
-        self.impulse = 0;
-      }
-    }
-    else if (!self.is_building && !self.is_detpacking && !self.is_feigning && (self.impulse == #TF_GRENADE_1 || self.impulse == #TF_GRENADE_2)) {
-      TeamFortress_PrimeGrenade();
-      self.impulse = 0;
-    }
-    else if (self.impulse == #TF_GRENADE_T) {
-      TeamFortress_ThrowGrenade();
-      self.impulse = 0;
-    }
-  }
 
-	//WK 8/4/7 Moved this down below Impulse Commands
-  // 9/21/7 reverted - phrosty
-	if (time < self.attack_finished)
-		return;
-
-	// Stop calling this function so much
+	//WK 10/10/7 Fixed sticky grens in the proper fashion -- by having a set of commands that can trigger before attack_finished
+	//Handled is true if the function handled the impulse
 	if (self.impulse != 0)
-		ImpulseCommands ();
+		handled = NoCooldownImpulseCommands();
+
+	if (handled) {
+		self.impulse = 0;
+		return;
+	}
+
+	//WK Global cooldown stops all impulses after this
+	if (time < self.attack_finished)
+		return;    
+
+	//WK 10/10/7 ImpulseCommands now only holds commands that can't be executed during global cooldown
+	if (self.impulse != 0)
+		ImpulseCommands();
 
 	// Can't fire while setting a detpack or building something
 	if ((self.is_building != 0) || (self.is_detpacking != 0) || (self.is_feigning != 0) || (self.is_haxxxoring != 0) || (self.is_toffingadet != 0))

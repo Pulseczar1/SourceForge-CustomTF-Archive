@@ -925,9 +925,10 @@ Level 3: Passive Ability: Uncovering radius increases to 45 feet. Active Ability
 //   the psion doesn't die from it.
 //The code which handles people dying and destroying the other pair is buggy, but the psion is functional.
 //It works except in weird dying situations like suicide or detdispenser
+#define HAULING_THINK_RATE 0.01
 void() HaulingTimer = 
 {
-	local float dropit,boom,dist,af_det_delay;
+	local float dropit,boom,dist,af_det_delay,owner_speed;
 	local vector target_loc,target_vel;
 
 	deathmsg = #DMSG_PSION;
@@ -976,13 +977,15 @@ void() HaulingTimer =
 							setorigin(self.oldenemy.trigger_field,self.oldenemy.origin - '0 0 8');
 				}
 			} else if (self.oldenemy.classname == "detpack") {
-				//WK Dropping a det messes up its circuits
-				af_det_delay = 2 + floor(5*random());
+				//10/10/7 Remove the purple glow from stasis
+				self.oldenemy.effects = self.oldenemy.effects - (self.oldenemy.effects & (#EF_PURPLE));
 
+				//Dropping a det messes up its circuits
+				af_det_delay = 10 + floor(10*random()); //WK 10/10/7 Was 2+rand(5)
 				self.oldenemy.nextthink = self.oldenemy.nextthink + af_det_delay; //WK Scramble the detpack's timer. :)
 				self.oldenemy.oldenemy.health = self.oldenemy.oldenemy.health + af_det_delay;
-				sprint(self,#PRINT_HIGH,"You damage the detpack circuits\n");
-				if (self != self.oldenemy.owner) 
+				sprint(self.owner,#PRINT_HIGH,"You damage the detpack's circuits\n");
+				if (self.owner != self.oldenemy.owner) 
 					sprint(self.oldenemy.owner,#PRINT_HIGH,"Your detpack circuits have been damaged!\n");
 				self.oldenemy.avelocity = '0 0 0';
 				self.oldenemy.angles = '90 0 0';
@@ -1041,14 +1044,24 @@ void() HaulingTimer =
 		self.oldenemy.movetype = #MOVETYPE_FLY;
 
 		makevectors(self.owner.v_angle);
-		target_loc = self.owner.origin + v_forward*60 + v_up*15; //Goal is up ahead of us
+		//WK 10/10/7 Correct for different centers of mass between the different builds
+		target_loc = self.owner.origin + v_forward*60 + v_up*(self.oldenemy.maxs_z/2); //Goal is up ahead of us
 		dist = vlen(target_loc - self.oldenemy.origin);
+		owner_speed = vlen(self.owner.velocity); //WK 10/10/7 Have it match our speed
 		target_vel = normalize (target_loc - self.oldenemy.origin); //Move it toward target location
-		if (dist < 150)
+
+		//WK 10/10/7 We used to move slower in short distances, but this made pushing into it too tedious a process
+		// which caused doors to slam shut on us it took so long, blowing the fully upgrades tes and killing us.
+		if (dist < self.owner.maxspeed && owner_speed < 20) {
+			//Slow precision moving
 			target_vel = target_vel * dist;
-		else
-			target_vel = target_vel * 150;
-		self.oldenemy.velocity = target_vel;
+			self.oldenemy.velocity = target_vel;
+		}
+		else {
+			//Running while hauling a building
+			target_vel = target_vel * self.owner.maxspeed; //Match its speed to ours
+			self.oldenemy.velocity = self.oldenemy.velocity * 0.90 + target_vel * 0.10; //Smooth velocity wobbling out			
+		}
 
 		if (self.oldenemy.classname == "building_sentrygun") { //Handle two-part sentries	
 //.trigger_field is the base
@@ -1065,9 +1078,15 @@ void() HaulingTimer =
 				}
 			}
 		}
-	
+		//WK 10/10/7 TKII has been weak, and hauling dets doesn't work right since they tend to blow while moving them
+		//  so now TK will place detpacks into statis while moving them
+		if (self.oldenemy.classname == "detpack") {
+			self.oldenemy.nextthink = self.oldenemy.nextthink + #HAULING_THINK_RATE; //No time progresses while carried
+			self.oldenemy.oldenemy.nextthink = time + 1 + #HAULING_THINK_RATE; //No countdown
+			self.oldenemy.effects = self.oldenemy.effects | #EF_PURPLE; //Make it glow in stasis
+		}
 	}
-	self.nextthink = time + 0.01;
+	self.nextthink = time + #HAULING_THINK_RATE; 
 };
 
 void() JobPsion =
@@ -1097,10 +1116,10 @@ void() JobPsion =
 				dotproduct = dir * dir2;
 
 				grabbed = 0; //Set this true if we pick up something so we don't push it away
-				if (dotproduct > 0.95) { //We hit people & things in a 18 degree cone ahead of us
+				if (dotproduct > 0.90) { //10/10/7 We hit things in a 25 degree cone, but people in a 18 degree cone
 					//Mind Blast
-					if (head.classname == "player") { //Enemy player
-						//Zot them!! 20,40,60 damage depending on job rank
+					if (head.classname == "player" && dotproduct > 0.95) { //Enemy player
+						//Zot them!! 20,30,40 damage depending on job rank
 						TF_T_Damage (head, self, self, radius/10, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY); 
 						WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 						WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
@@ -1123,9 +1142,9 @@ void() JobPsion =
 							newmis.team_no = self.team_no;
 							newmis.owner = head;
 							newmis.think = PsionicTimer;
-							newmis.nextthink = time + 1;
-							if (self.job & #JOB_EXTRA1) newmis.nextthink = time + 1.5; //Level 2
-							else if (self.job & #JOB_EXTRA2) newmis.nextthink = time + 2; //Level 3
+							newmis.nextthink = time + 0.75; //WK 10/10/7 Was 1,1.5,2s
+							if (self.job & #JOB_EXTRA1) newmis.nextthink = time + 1; //Level 2
+							else if (self.job & #JOB_EXTRA2) newmis.nextthink = time + 1.5; //Level 3
 							head.tfstate = head.tfstate | #TFSTATE_PSIONIZED;
 							head.button0 = 0;
 							head.button1 = 0;
@@ -1161,7 +1180,7 @@ void() JobPsion =
 						if (self == head.real_owner) allowed = 1; //We can always move our own builds
 
 						if (head.classname == "detpack" && (self.job & (#JOB_EXTRA1 | #JOB_EXTRA2))) {
-							sprint(self,#PRINT_HIGH,"Grabbed a detpack\n");
+							sprint(self,#PRINT_HIGH,"Placing a detpack in statis...\n");
 							grabbed = ever_grabbed = 1;
 						}
 						//.trigger_field is the sentry's base
@@ -1217,12 +1236,19 @@ void() JobPsion =
 								head.velocity = dir2 * 600; //Else just knock em away
 								if (head.velocity_z < 200) head.velocity_z = 200;
 							}
-							//Reown it to get credit for the kill, and to stop laser guided
+
+							//Reown it to get credit for the kill
 							head.owner = self;
+
+							//WK 10/10/7 Fix to let heat seeking rockets get reflected
+							if (head.classname == "rocket") {
+								head.nextthink = time + 5;
+								head.think = SUB_Remove;
+							}
 						} else
 						{
 							head.velocity = dir2 * 600;
-							if (head.velocity_z < 250 && head.classname != "rocket") head.velocity_z = 250;
+							if (head.velocity_z < 250) head.velocity_z = 250;
 						}		
 					}
 				}
@@ -1314,7 +1340,8 @@ void() UseJobSkill =
 #define EXPOSURE_NOHIDE_TIME 20
 #define EXPOSURE_NORELOAD_TIME 7
 #define FULLH_NORELOAD_TIME 1.5
-void (entity targ, float pain) RevealThief = {
+void (entity targ, float pain) RevealThief =
+{
 	if (targ.classname != "player") return;
 	targ.modelindex = modelindex_player;
 	if (pain) {
@@ -1330,6 +1357,10 @@ void (entity targ, float pain) RevealThief = {
 	}
 	targ.job = targ.job - (targ.job & #JOB_FULL_HIDE);
 	targ.job = targ.job - (targ.job & #JOB_ACTIVE);
+	//WK 10/10/7 Added in shadowstep support
+	targ.items = targ.items - (targ.items & #IT_INVISIBILITY);
+	if (targ.shadowstep_time > 0) targ.shadowstep_time = 0;
+	targ.shadowstep_active = 0;
 	TeamFortress_SetSpeed(targ);
 };
 
@@ -1338,16 +1369,20 @@ void (entity targ, float pain) RevealThief = {
 
 void() InitJobStuff =
 {
-    // Abort if already initialized
-    if (self.goal_activation) return;
+	// Abort if already initialized
+	if (self.goal_activation) return;
 
-    // Initialize respective jobs
-    if (self.job & #JOB_ARMY)
-        ArmyInit(self);
-    else if (self.job & #JOB_GUERILLA)
-        GuerillaInit(self);
-    else
-        return; // If nothing done just return
+	// Initialize respective jobs
+	if (self.job & #JOB_ARMY)
+		ArmyInit(self);
+	else if (self.job & #JOB_GUERILLA)
+		GuerillaInit(self);
+	else if (self.job & #JOB_THIEF) {
+		self.shadowstep_time = 0;
+		self.shadowstep_active = 0;
+	}
+	else
+		return; // If nothing done just return
     
     // Set our "initialization done" flag to true
     self.goal_activation = #TRUE;

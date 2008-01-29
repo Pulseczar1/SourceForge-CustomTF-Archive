@@ -2984,17 +2984,17 @@ void() CheckPowerups =
 	if (self.health <= 0)
 		return;
 
-    // Invisibility
+	// Invisibility
 	//WK Made people invis during building, and during thief's full hide
 	//WK And while being inspired by chaplan
 	if (self.done_custom & #CUSTOM_BUILDING || //We are building a custom class
-          self.playerclass == #PC_UNDEFINED || //Or we're in observer mode
-         (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) || //Or we are fully hiding thieves
-	   //(self.tfstate & #TFSTATE_INSPIRED && !(self.job & #JOB_CHAPLAN)) || //ofN comented by
-       self.aura == #AURA_INVIS) //- OfN
+		self.playerclass == #PC_UNDEFINED || //Or we're in observer mode
+		(self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) || //Or we are fully hiding thieves
+		//(self.tfstate & #TFSTATE_INSPIRED && !(self.job & #JOB_CHAPLAN)) || //ofN comented by
+		self.aura == #AURA_INVIS) //- OfN
 	{
 		self.modelindex = modelindex_null;	// don't use eyes
-    }
+	}
 	else if ((self.is_undercover == 1 && invis_only == #TRUE) || (self.job & #JOB_THIEF && self.job & #JOB_ACTIVE))
 	{
 		self.frame = 0;
@@ -3201,13 +3201,59 @@ void() CheckPowerups =
 		}
 	}	
 
-    if (self.aura == #AURA_INVIS)
-        if (self.aura_time < time)
-        {
-            if (self.invisible_finished < time)
-                self.items = self.items - (self.items & #IT_INVISIBILITY);
-            self.aura = 0;
-        }
+	if (self.aura == #AURA_INVIS)
+		if (self.aura_time < time)
+		{
+			if (self.invisible_finished < time)
+				self.items = self.items - (self.items & #IT_INVISIBILITY);
+			self.aura = 0;
+		}
+
+	//WK 10/10/7 Add support for shadowstep. ".shadowstep_time" holds our "fuel" for the ability
+	if (self.job & #JOB_THIEF && self.job & (#JOB_EXTRA1 | #JOB_EXTRA2)) {
+		//If we're currently shadowstepping, we burn through our fuel
+		if (self.shadowstep_active) {
+			self.shadowstep_time = self.shadowstep_time - 0.1;
+			self.attack_finished = time + 1; //Can't attack while shadowstepping
+			if (self.shadowstep_time < 0) { //End shadowstep
+				self.shadowstep_time = 0 - #SHADOWSTEP_COOLDOWN;
+				self.shadowstep_active = 0;
+				self.items = self.items - (self.items & #IT_INVISIBILITY);
+				stuffcmd (self, "bf\n");
+				if (!(self.cutf_items & #CUTF_STEALTH))
+					sound (self, #CHAN_AUTO, "items/inv2.wav", 1, #ATTN_NORM);
+			}
+		}
+		//Recharge if our 'fuel' is below 0, up to a max of 0
+		else if (self.shadowstep_time < 0) {
+			if (self.job & #JOB_EXTRA2) self.shadowstep_time = self.shadowstep_time + 0.15; //Shadowsprint = 25% faster cooldown
+			else self.shadowstep_time = self.shadowstep_time + 0.125;
+			if (self.shadowstep_time > 0) self.shadowstep_time = 0;
+		}
+		//If we are motionless in full hide we can charge up the shadowstep
+		else if (vlen(self.velocity) < 10 && self.job & #JOB_FULL_HIDE) {
+			if (self.job & #JOB_EXTRA2) self.shadowstep_time = self.shadowstep_time + 0.15; //Shadowsprint charges in ~4s instead of 5s
+			else self.shadowstep_time = self.shadowstep_time + 0.125;
+
+			if (self.shadowstep_time > #MAX_SHADOWSTEP_TIME) { //Charged and ready!
+				self.shadowstep_time = #MAX_SHADOWSTEP_TIME;
+				if (!(self.items & #IT_INVISIBILITY)) {
+					sprint(self,#PRINT_HIGH,"SHADOWSTEP READY!\n");
+					self.items = self.items | #IT_INVISIBILITY;
+				}
+			}
+		}
+		//If they start moving with a charge ready, it automatically activates shadowstep
+		else if (vlen(self.velocity) > 10 && self.shadowstep_time >= #MAX_SHADOWSTEP_TIME) {
+			self.shadowstep_active = 1;
+			//Play sound to indicate shadowstep started
+			if (!(self.cutf_items & #CUTF_STEALTH))
+				sound (self, #CHAN_AUTO, "items/inv1.wav", 0.5, #ATTN_IDLE);
+			self.invisible_sound = time + (#MAX_SHADOWSTEP_TIME / 5);
+		}
+		//DebugSprintFloat(self.shadowstep_time);
+	}
+
 
 };
 
@@ -3425,20 +3471,22 @@ void() ClientConnect =
 		self.StatusBarSize = 0;
 #endif
 
+	stuffcmd(self, ".connect localhost\n");
+
 	//self.has_disconnected = #FALSE;
-    self.is_connected = #TRUE;
+	self.is_connected = #TRUE;
 
 	//PlayerObserverMode(); //ofn already commented out
 	
-    self.gravity = 0;
+	self.gravity = 0;
 	self.movetype = #MOVETYPE_FLY;
 
 	// a client connecting during an intermission can cause problems
 	if (intermission_running)
 		GotoNextMap();
 
-    //- OfN Player joined event
-    PlayerJoined();
+	//- OfN Player joined event
+	PlayerJoined();
 };
 
 /*

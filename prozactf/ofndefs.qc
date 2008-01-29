@@ -150,8 +150,8 @@
 
 // Holograph 
 #define HOLO_POWER_COST     10   //
-#define HOLO_CYCLE_COST      2   //
-#define HOLO_CYCLE_TIME      1.5 //
+#define HOLO_CYCLE_COST     0.2   //WK 2
+#define HOLO_CYCLE_TIME     0.15 //WK 1.5
 
 #define FLARE_DURATION      60   //
 

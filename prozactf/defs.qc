@@ -403,6 +403,7 @@ void		end_sys_fields;			// flag for structure dumping
 #define CHAN_MISC   6
 #define CHAN_EARTHQUAKE 7
 //#define CHAN_MONSTER 7
+#define CHAN_NO_PHS_ADD 8 //Ofn Fix for looping sound bug
 
 #define ATTN_NONE	0 
 #define ATTN_NORM	1 
@@ -550,43 +551,41 @@ float		deathmatch;
 .float 		gravity;
 //WK -- Holds how much money we have left while building, and
 // for toggling between engineer and spy menus in the game (hackish, yes)
+//WK 1/15/08 -- And why not? We'll store our sentryguns' frags spent in this field too.
 .float 		money;
 .float 		custom_speed;
 .float 		ff_count;	//How many friendlies killed
-//.float		be_count;	//Bad Engy count, break threshold, RESTICTED BUILD
 .float		penance_time; //Time your penance will cease
 .float		last_attacked_time; //Time that you were last shot at
 .entity		inspirator; //Holds pointer to your chaplan
 .float		has_cheated; //Holds if the user has tried to cheat or not
 // SB - for demons
-//.float		demon_points;  UNUSED - OfN
-//.float		demon_choice;
-.float		demon_blood;
+.float		demon_blood; //WK 1/15/08 We'll appropriate this for the new building upgrades field
 .entity		demon_one;
 .entity		demon_two; //- OfN
 .entity     demon_three; // OfN
-//.entity     demon_two;
-//.float      has_monster;
-//.entity     demon_p; // current demon selected
 
-//- OfN -
-//.float      army_ready; //- if #TRUE, soldier ready for teleport, this is set by the army_timer's
-                //--> Uses delay_time now
-//.float      num_mines; -->all_active // OfN Number of guerilla mines the player has
-                       // Also used for friendly hacks on machines
-
-//- OfN - Cool gibs data stored on each TF_T_Damage
-//.vector    gb_origin; // Origin of last damage
-//.float     gb_disable; // if #TRUE don't use cool gibs
-
-// hacker defences
-//.float		hacker_defence; // -OfN by SB, I use all_active instead, for hacker improvements/ice
+//WK 1/15/08 New frag upgrades for buildings -- stored in build's .demon_blood
+#define BUILD_FLAME_ADDITION	1
+#define BUILD_FROST_ADDITION	2
+#define BUILD_AIR_ADDITION	4
+#define BUILD_WOOD_ADDITION	8
+#define BUILD_WEAPON_UPGRADE	16
+#define BUILD_OPTIC_UPGRADE	32
+#define BUILD_BLACK_HOLE	64
+#define BUILD_ANTIPSIONIC_AI	128
+//Gel armor is #9
 
 //For the demon
 .void()		th_fireball;
 
 #define MAX_HOVER_FUEL 5 //Boots will recharge up to this maximum
 .float		hover_time; //How much fuel we have left in boots
+
+#define MAX_SHADOWSTEP_TIME 40 //WK 1/15/08 25 //Can walk full invis for 8 seconds (Constant divided by about 5 equals the constant here in seconds)
+#define SHADOWSTEP_COOLDOWN 100 //After finishing, can't do it again for 20 seconds
+.float		shadowstep_time; //How much time left we have in shadowstep
+.float		shadowstep_active; //TRUE when we're shadowstepping
 
 #define CUSTOM_ON_SPAWN 1  //When dead, rebuild
 #define CUSTOM_FINISHED 2  //Normal gameplay
@@ -1785,7 +1784,7 @@ float       rj;					// Rocket Jump Modifier
 
 // Maximum velocity you can move and fire the Sniper Rifle
 #define WEAP_SNIPER_RIFLE_MAX_MOVE  50
-#define WEAP_SNIPER_RIFLE_MAX_TIME  4 // WK 1/7/7 3 // PZ - Randomer's charge-up fix
+#define WEAP_SNIPER_RIFLE_MAX_TIME  3 //Time to go from MIN to MAX damage
 #define WEAP_SNIPER_RIFLE_MIN_DAMG  60 //WK 2/8/7 Increase snapshot damage from 50 to 60
 #define WEAP_SNIPER_RIFLE_MAX_DAMG  190 //WK 1/7/7 400 6/1/7 220, to compensate for LPB code removal
 #define WEAP_SNIPER_MAX_RANGE 8092
