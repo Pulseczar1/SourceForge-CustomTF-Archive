@@ -30,15 +30,15 @@ float (entity pickupee) zg_getpickupdist;
 
 
 /*
-	NotInSolid - checks if the entity is inside the world or another entity, if
+	InSolid - checks if the entity is inside the world or another entity
 
 	FIXME: use this for validating spawn points too?
 */
 
-float (entity ent) NotInSolid =
+float (entity ent) InSolid =
 {
 	local entity tent, oself;
-	local vector oldorg, neworg;
+	local vector oldownerorg, oldorg, neworg;
 	local float ret;
 
 /*
@@ -72,6 +72,13 @@ float (entity ent) NotInSolid =
 	return ret;
 */
 
+	// 2/28/08: since we can't use ent.owner as the owner for tent.owner, link ent.owner out of the way
+	if ( ent.owner != world ) {
+		oldownerorg = ent.owner.origin;
+		ent.owner.origin_z = ent.owner.origin_z + ent.owner.maxs_z * 2;
+		setorigin( ent.owner, ent.owner.origin + '0 0 200' );
+	}
+
 	tent = spawn ();
 	tent.owner = ent;
 	tent.solid = #SOLID_SLIDEBOX;
@@ -95,8 +102,13 @@ float (entity ent) NotInSolid =
 
 	self = oself;
 
+	// set origin back to normal if needed
+	if ( ent.owner != world )
+		setorigin( ent.owner, oldownerorg );
+
 	remove (tent);
-	return ret;
+	return !ret;
+//	return qc_droptofloor (ent, 4096, #TRUE);
 };
 
 
@@ -237,6 +249,9 @@ void () zg_think =
 	pickuper = self.owner;
 	pickupee = self.owner.pickedupobject_hands;
 
+	// remove onground flag
+	pickupee.flags = pickupee.flags - (pickupee.flags & (#FL_ONGROUND | #FL_PARTIALGROUND));
+
 	// if the pickuper doesn't have anything picked up then remove ourself
 	// FIXME: this should never happen, zg_drop should be the only thing that messes with pickupee and removes the thinker
 	if (pickupee == world)
@@ -303,11 +318,15 @@ void (entity pickuper, float toss) zg_drop =
 	} else
 		pickupee.velocity_z = pickupee.velocity_z + 10;	// *
 
+	// 1/18/07: Gizmo - added this above InSolid() so it can check properly, and also if it fails
+	pickuper.owner = pickuper._oldowner;
+
 	// before we reset owner, check if we're inside him
-	if (!NotInSolid(pickupee)) {
+	if (InSolid(pickupee)) {
 		oldself = self;
 		self = pickupee;
 		self.velocity = '0 0 0';
+		pickuper.owner = pickupee;
 		droptofloor ();
 		self = oldself;
 	}

@@ -142,6 +142,7 @@ void (float respawntime, void() spawn_func) COOP_SetupRespawn;
 void(entity targ, entity attacker) Killed =
 {
 	local string st;
+
     // SOLVES BUG ???? // Stack overflow?
     if (targ.is_killed == #TRUE)
     {
@@ -327,7 +328,7 @@ float (entity test) COOP_IsCoopMonster;
 #endif
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage =
 {
-    local	vector	dir;
+	local	vector	dir;
 	local	entity	te; //<-- oldself,
 	//local	float	save; --> knockem
 	local	float	take; 
@@ -343,8 +344,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	//mirror = 0;
 #ifdef QUAKE_WORLD // culled by KK. was QUAKE_WORLD
-	/*if (infokey(world,"ceasefire")=="on") //Cyto
-		return;*/
     if (ceasefire)
         return;
 #endif
@@ -354,12 +353,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 	if (!targ.takedamage)
 		return;
-
-#ifdef EOG_BESTTEAMKILLER
-	// Gizmo - we do this even if team damage isn't enabled to make fun of people who can't hit the enemy
-	if (targ != attacker && attacker.classname == "player" && Teammate(targ.team_no, attacker.team_no) && !IsBuilding(targ))
-		attacker.#team_damage_dealt = attacker.#team_damage_dealt + damage;
-#endif
 
 #ifdef COOP_MODE_ENHANCED
 	// certain monsters are weaker/stronger against certain types of attack
@@ -414,19 +407,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	damage_attacker = attacker;
 
 	// INVINCIBILITY
-    /*
-	if (targ.flags & #FL_GODMODE)
-		return;
 	if (targ.invincible_finished >= time)
-	{
-		if (self.invincible_sound < time)
-		{
-			sound (targ, #CHAN_ITEM, "items/protect3.wav", 1, #ATTN_NORM);
-			self.invincible_sound = time + 2;
-		}
-		return;
-	}*/
-    if (targ.invincible_finished >= time)
 	{
 		if (targ.invincible_sound < time)
 		{
@@ -462,6 +443,26 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
     // OfN - Apply damage factors of attacker and target if any
     damage = damage * GetDamageOutFactor(attacker);
+#ifdef EOG_BESTTEAMKILLER
+	// ugly, but QC does mutliple if statements faster than || or &&
+	// this counts total damage dealt in general, without regard to armor protection
+	if (targ != attacker) {
+		if (attacker.classname == "player") {
+			// Gizmo - we do this even if team damage isn't enabled to make fun of people who can't hit the enemy
+			if (Teammate(targ.team_no, attacker.team_no)) {
+				if (!IsBuilding(targ))
+					attacker.#team_damage_dealt = attacker.#team_damage_dealt + damage;
+			} else
+				attacker.#enemy_damage_dealt = attacker.#enemy_damage_dealt + damage;
+		}
+
+		if (targ.classname == "player") {
+			if (attacker != world)
+			if (!Teammate(targ.team_no, attacker.team_no))
+				targ.#damage_taken = targ.#damage_taken + damage;
+		}
+	}
+#endif
     if (!(T_flags & #TF_TD_IGNORERESIST))
         damage = damage * GetDamageInFactor(targ);
 
@@ -472,43 +473,18 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
         return;
     }
 
-    // QUAD DAMAGE
-	/*if (attacker.super_damage_finished > time) {
-		if (attacker.tfstate & #TFSTATE_INSPIRED)
-			damage = damage * 1.8; // was 1.5
-		if (attacker.job & #JOB_BERSERKER && attacker.job & #JOB_ACTIVE)
-            damage = damage * #BERSERKER_DMGFACTOR;
-        else
-			damage = damage * 4;
-	}
-
-   	if (attacker.aura == #AURA_POWER)
-		damage = damage * 2; // was 1.5
-
-    if (attacker.#runes & #RUNE_TRIAD)
-        damage = damage * 3;
-	*/
 	if (targ.aura == #AURA_RESIS || targ.#runes & #RUNE_RESIS)
-    {
-        if (targ.invincible_sound < time) {
+	{
+		if (targ.invincible_sound < time) {
 			sound (targ, #CHAN_ITEM, "auras/aura1b.wav", 1, #ATTN_NORM);
 			targ.invincible_sound = time + 1.5;
-        }
-        
-        /*if (targ.aura == #AURA_RESIS)
-            damage = damage * 0.6; // was 0.66
-
-        if (targ.#runes & #RUNE_RESIS)
-            damage = damage * 0.4;*/
-    }
+		}
+	}
 
 	//DAMAGE ADJUSTMENT
 	//- OfN - if (deathmsg != #DMSG_MARTYR && targ.classname != "monster_demon1" && targ.classname != "monster_shambler" && targ.classname != "monster_army")
     if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))
-	{ 
-		/* OfN done in GetDamageInFactor()
-        if (targ.tfstate & #TFSTATE_INSPIRED) //Chaplan defense
-			damage = damage * 0.66;*/
+	{
 		//WK Ping fairness code. LPB is < 200 ping
 		if (attacker.classname == "player" && targ.classname == "player" && attacker != targ)
 		{
@@ -579,7 +555,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	}
 	//WK Friendly Sentrygun protection - you can't hurt friendly sentries
 	if (IsBuilding(targ)) {
-		if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker) && !(targ.tf_items & #NIT_SECURITY_CAMERA)) {
+		if (Teammate(targ.team_no, attacker.team_no) && targ != attacker && !(targ.tf_items & #NIT_SECURITY_CAMERA)) {
 			return;
 		}
 		targ.armorvalue = 1; //CH so that the armors are counted
@@ -796,6 +772,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		{
 			//A teamkill
 			local float threshold;
+
 			threshold = 0;
 			st = infokey(world, "curse");
 			if (st != string_null)
@@ -840,9 +817,6 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		if (COOP_IsCoopMonster(self))
 			self.#npc_lastruntime = 0;
 #endif
-		// nightmare mode monsters don't go into pain frames often
-		/*if (skill >= 3)
-			self.pain_finished = time + 5;		*/
 	}
 
 	self = te;

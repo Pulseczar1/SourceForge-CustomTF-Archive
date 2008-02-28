@@ -86,8 +86,8 @@ float(float v) anglemod =
 
 float(entity test) AI_Check_Contents =
 {
-    local float contval;
 	local string MName;
+    local float contval;
  
     if (test.health <= 0)
         return #FALSE;
@@ -794,7 +794,6 @@ float() FindTarget =
 	local entity	client;
 //	local float		r;
 //	local float		gotatarget;
-	client = world;
 
 // if the first spawnflag bit is set, the monster will only wake up on
 // really seeing the player, not another monster getting angry

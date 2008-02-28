@@ -493,8 +493,6 @@ float() Tesla_Fire =
 	local float damage;
 	local float cheater;
 	local vector below;
-	damage = 0;
-	cheater = 0;
 
 	// OfN - Psionized teslas don't shot
 	/*if (self.tfstate & #TFSTATE_PSIONIZED)
@@ -508,14 +506,16 @@ float() Tesla_Fire =
 		// Check a varity of locations for a door. 5 and -5 should be the with of tesla
 		if (DoorsAt(self.origin - below + '0 0 0'))
 			cheater = #TRUE;
-		if (DoorsAt(self.origin - below + '8 0 0'))
+		else if (DoorsAt(self.origin - below + '8 0 0'))
 			cheater = #TRUE;
-		if (DoorsAt(self.origin - below + '-8 0 0'))
+		else if (DoorsAt(self.origin - below + '-8 0 0'))
 			cheater = #TRUE;
-		if (DoorsAt(self.origin - below + '0 8 0'))
+		else if (DoorsAt(self.origin - below + '0 8 0'))
 			cheater = #TRUE;
-		if (DoorsAt(self.origin - below + '0 -8 0'))
+		else if (DoorsAt(self.origin - below + '0 -8 0'))
 			cheater = #TRUE;
+		else
+			cheater = #FALSE;
 
 		if (cheater){
 			sprint(self.real_owner,#PRINT_HIGH,"The door's wiring conflicts with your tesla's!\n");
@@ -694,10 +694,14 @@ float() Tesla_Fire =
 	if (self.#tesla_amps == 2) damage = 160;
 	if (self.#tesla_amps == 3) damage = 320;*/
 
-	if (self.#tesla_amps == 0) damage = 40;
-	if (self.#tesla_amps == 1) damage = 80;
-	if (self.#tesla_amps == 2) damage = 130;
-	if (self.#tesla_amps == 3) damage = 240;
+	if (self.#tesla_amps <= 0)
+		damage = 40;
+	else if (self.#tesla_amps == 1)
+		damage = 80;
+	else if (self.#tesla_amps == 2)
+		damage = 130;
+	else
+		damage = 240;
 
 	if (self.all_active & #IMPROVED_FOUR) damage = damage * 1.15; //- OfN - Improved circuit hack - was 1.2 - TOO LOW NOW?
 
@@ -998,7 +1002,8 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 	{
 		local entity te;
 		local float gotone;
-		gotone = 0;
+
+		gotone = #FALSE;
 
 		te = find(world, classname,"holo");
 

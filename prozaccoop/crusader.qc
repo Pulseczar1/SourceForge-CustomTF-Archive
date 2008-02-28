@@ -279,8 +279,6 @@ void(float aur) AddAura =
 		local float oldaur;
 		local string oldstrung;
 
-		strung = oldstrung = "";
-
 		oldaur = targ.aura;
 		targ.aura = aur;
 		targ.crusader_inspirator = self;
@@ -308,6 +306,8 @@ void(float aur) AddAura =
 			strung = "Aura of Regeneration.\n";
 		else if (targ.aura == #AURA_SPEED)
 			strung = "Aura of Speed.\n";
+		else
+			strung = "Aura of Bugs.\n";	// Gizmo
 
 		if (oldaur == #AURA_POWER)
 			oldstrung = "Aura of Power";
@@ -319,6 +319,8 @@ void(float aur) AddAura =
 			oldstrung = "Aura of Regeneration";
 		else if (oldaur == #AURA_SPEED)
 			oldstrung = "Aura of Speed";
+		else
+			oldstrung = "Aura of Bugs";	// Gizmo
 
 		if (IsMonster(targ)) // Monsters
 		{
@@ -476,8 +478,7 @@ void() CrusaderAddInvisibility =
 		}
 
 	#ifndef ALLOW_AURAS_ON_CRUSADERS
-	}
-	else
+	} else
 		sprint(self, #PRINT_HIGH, "You cannot bestow invisibility upon another Crusader\n");
 	#endif
 };
@@ -705,6 +706,8 @@ void() Aura_Regenerate =
 
 
 //=========================================
+
+// Gizmo - resurrect related stuff
 
 void() ClientResurrected =
 {

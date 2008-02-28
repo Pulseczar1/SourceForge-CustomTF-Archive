@@ -444,64 +444,60 @@ void() Rune_touch =
 entity(float runetype) SpawnRune =
 {
     local entity rune;
-    rune = world;
 
     // Spawn a new entity for it
     rune = spawn();
 
     // This is the safest entity spawn ever on a quakeworld mod! :-)
-    if (rune)
+    // Critical entity settings
+    #ifndef IDABLE_RUNES
+    rune.flags = #FL_ITEM;
+    #else
+    rune.flags = #FL_ITEM | #FL_FINDABLE_NONSOLID;
+    #endif
+    rune.classname = "rune";    
+    rune.movetype = #MOVETYPE_TOSS;
+    rune.solid = #SOLID_TRIGGER;    
+    rune.takedamage = #DAMAGE_NO;
+    rune.owner = world;  
+
+    // Choose the correspoding model
+    if (runetype == #RUNE_TRIAD)
+        rune.mdl = "progs/end1.mdl";
+    else if (runetype == #RUNE_RESIS)
+        rune.mdl = "progs/end2.mdl";
+    else if (runetype == #RUNE_SPEED)
+        rune.mdl = "progs/end3.mdl";
+    else if (runetype == #RUNE_REGEN)
+        rune.mdl = "progs/end4.mdl";
+    else
     {
-        // Critical entity settings
-        #ifndef IDABLE_RUNES
-        rune.flags = #FL_ITEM;
-        #else
-        rune.flags = #FL_ITEM | #FL_FINDABLE_NONSOLID;
-        #endif
-        rune.classname = "rune";    
-        rune.movetype = #MOVETYPE_TOSS;
-        rune.solid = #SOLID_TRIGGER;    
-        rune.takedamage = #DAMAGE_NO;
-        rune.owner = world;  
-        
-        // Choose the correspoding model
-        if (runetype == #RUNE_TRIAD)
-            rune.mdl = "progs/end1.mdl";
-        else if (runetype == #RUNE_RESIS)
-            rune.mdl = "progs/end2.mdl";
-        else if (runetype == #RUNE_SPEED)
-            rune.mdl = "progs/end3.mdl";
-        else if (runetype == #RUNE_REGEN)
-            rune.mdl = "progs/end4.mdl";
-        else
-        {
-            RPrint("BUG: Unknown rune type on SpawnRune()!\n");
-            dremove(rune);
-            return world;
-        }
-
-        // Assign model
-        setmodel(rune,rune.mdl);
-
-        // Use standard item size
-        setsize (rune, '-16 -16 -24', '16 16 32');
-        
-        // Indicate which kind of rune this one is
-        rune.has_sentry = runetype;
-
-        // Assign description to it
-        rune.netname = GetRuneString(runetype);
-
-        // Set its main subroutines
-        rune.think = Rune_think;
-        rune.touch = Rune_touch;
-
-        // First "rune-hop" or think
-        rune.nextthink = time + 6 + random()*6;
-
-        // Set our "spawned at" time flag
-        rune.ltime = time;
+        RPrint("BUG: Unknown rune type on SpawnRune()!\n");
+        dremove(rune);
+        return world;
     }
+
+    // Assign model
+    setmodel(rune,rune.mdl);
+
+    // Use standard item size
+    setsize (rune, '-16 -16 -24', '16 16 32');
+
+    // Indicate which kind of rune this one is
+    rune.has_sentry = runetype;
+
+    // Assign description to it
+    rune.netname = GetRuneString(runetype);
+
+    // Set its main subroutines
+    rune.think = Rune_think;
+    rune.touch = Rune_touch;
+
+    // First "rune-hop" or think
+    rune.nextthink = time + 6 + random()*6;
+
+    // Set our "spawned at" time flag
+    rune.ltime = time;
 
     // Return a pointer to our rune
     return rune;

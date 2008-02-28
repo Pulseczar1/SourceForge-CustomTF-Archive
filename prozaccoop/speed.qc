@@ -63,7 +63,6 @@ void () TeamFortress_CheckForSpeed =
 {
 	local vector tempvec;
 	local float max, dist, check, immune;
-	immune = 0;
 	//local string ip;	
 	local string nospeed;
 	local float off;
@@ -74,6 +73,8 @@ void () TeamFortress_CheckForSpeed =
 		off = stof(nospeed);
 	}
 	if (off) return;
+
+	immune = 0;
 
 max = self.owner.maxspeed;
 if ((self.owner.job & #JOB_RUNNER) && (self.owner.job & #JOB_ACTIVE))

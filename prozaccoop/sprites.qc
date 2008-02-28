@@ -64,8 +64,6 @@ entity(float num, float type, vector org, vector direction, float animtype, floa
     local entity sprite, oself;
     local float counter;
 
-	sprite = world;
-
     counter = 0;
     
     oself = self;
@@ -137,7 +135,10 @@ entity(float num, float type, vector org, vector direction, float animtype, floa
 
             self = sprite;
             ab_exp1();
-        }
+        } else {
+			error ("unknown sprite type");
+			sprite = world;		// shutup warnings
+		}
 
         counter = counter + 1;
     }

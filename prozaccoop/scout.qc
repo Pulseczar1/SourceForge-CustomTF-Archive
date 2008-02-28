@@ -480,7 +480,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 	// added in for the direction scanner code
 	local float enemy_detected;
 	local float any_detected;
-	list = world;
 
 	//local vector vf, vr, e;  // transformed versions of v_forward, v_right and the enemy vector
 	//local float res1, res2, res3; // for the vector work
@@ -575,7 +574,8 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 
 		// Get the list of entities the scanner finds
 		list = T_RadiusScan(self, scanrange, scen, scfr);
-	}
+	} else
+		list = world;
 	// Base Defence scanning code here
 
 	// Reset the entity counts
@@ -1006,6 +1006,7 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 	local entity list_head;
 	local entity list;
 	local float gotatarget;
+
 	list = world;
 	list_head = world;
 

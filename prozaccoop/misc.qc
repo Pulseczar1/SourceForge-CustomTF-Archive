@@ -423,7 +423,7 @@ void(vector org, vector vec) LaunchLaser =
 		sound (self, #CHAN_WEAPON, "enforcer/enfire.wav", 1, #ATTN_NORM);
 
 	vec = normalize(vec);
-	
+
 	newmis = spawn();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLY;
@@ -450,7 +450,6 @@ void(vector org, vector vec) LaunchLaser =
 void(vector org, vector vec) TFFireRocket =
 {
 	vec = normalize(vec);
-
 
 //?	KickPlayer(-2, self);
 	newmis = spawn ();
@@ -490,13 +489,12 @@ void(vector org, vector vec) TFFireGrenade =
 	newmis.movetype = #MOVETYPE_BOUNCE;
 	newmis.solid = #SOLID_BBOX;
 
-		newmis.weapon = #DMSG_GRENADEL;
-		newmis.classname = "grenade";
-		newmis.skin = 1;
-		newmis.touch = GrenadeTouch;
-		newmis.nextthink = time + 1.5; //CH 2.5 is too long for the gren
-	
-		
+	newmis.weapon = #DMSG_GRENADEL;
+	newmis.classname = "grenade";
+	newmis.skin = 1;
+	newmis.touch = GrenadeTouch;
+	newmis.nextthink = time + 1.5; //CH 2.5 is too long for the gren
+
 	// set newmis speed	
 	makevectors (self.v_angle);
 	if (self.v_angle_x)
@@ -522,10 +520,9 @@ void(vector org, vector vec) TFFireGrenade =
 void() Flamer_stream_touch;
 void(vector org, vector vec) TFFireFlame =
 {
-	vec = normalize(vec);
+	local entity flame;
 
-    local   entity flame;
-//    local   float rn;
+	vec = normalize(vec);
 
     flame = spawn ();
 

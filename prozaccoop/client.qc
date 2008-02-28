@@ -1733,9 +1733,9 @@ Returns the entity to spawn at
 entity() SelectSpawnPoint =
 {
 	local	entity spot;
-	//local	entity at_spot;
-	//local	float  spot_found;
-	//local	float  attempts;
+//	local	entity at_spot;
+//	local	float  spot_found;
+//	local	float  attempts;
 	
 	// testinfo_player_start is only found in regioned levels
 	/*
@@ -3466,14 +3466,6 @@ void() ClientDisconnect =
 	if (self.modelindex == modelindex_player)	// are we visible and on a player model? (not a head)
 		GibPlayerOut(); // ok, gib him
 
-	// Remove our permanent strings (if any in use by us)
-	if (self.#sname1 != "")
-		delstr(self.#sname1);
-	if (self.#sname2 != "")
-		delstr(self.#sname2);
-	if (self.#sname3 != "")
-		delstr(self.#sname3);	 
-
 	// OfN - Adjust army rating of our teammates as needed
 	ArmyRatingLeave(self);
 
@@ -3607,6 +3599,15 @@ void() ClientDisconnect =
 	setsize(self, '0 0 0', '0 0 0');
 
 	self.classname = "emptyclient";
+
+	// Gizmo - this used to be above ArmyRatingLeave() and under GibPlayerOut(), for whoever put it up there
+	// Remove our permanent strings (if any in use by us)
+	if (self.#sname1 != "")
+		delstr(self.#sname1);
+	if (self.#sname2 != "")
+		delstr(self.#sname2);
+	if (self.#sname3 != "")
+		delstr(self.#sname3);	
 };
 
 //==============================================================
@@ -3768,14 +3769,14 @@ void() PlayerQuit =
 void() UpdateMapSettings =
 {
 	local float result;
+
 	if (mapname == "huntedr")
 	{
 		result = floor(TeamFortress_TeamGetNoPlayers(2) * #HUNTED_YELLOWTEAM_FACTOR);
 		team3maxplayers = result;
 		if (team3maxplayers < 1) team3maxplayers = 1;
 	}
-	else
-	if (mapname == "border1" || mapname == "border1r")
+	else if (mapname == "border1" || mapname == "border1r")
 	{
 		result = floor(TeamFortress_TeamGetNoPlayers(2) * #BORDER_FACTOR);
 		team3maxplayers = result;

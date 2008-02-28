@@ -288,8 +288,6 @@ void() W_FireAxe =
 	local	vector	dir;
 	local entity oself; // OfN
 
-	dir = '0 0 0';
-
 	if (self.classname == "player")
 		makevectors(self.v_angle);
 	else
@@ -988,6 +986,7 @@ void(float inAuto) W_FireMedikit =
 		else if (IsMonster(trace_ent))//- OfN - Monsters 
 		{
 			local string tmps;
+
 			if (Teammate(trace_ent.real_owner.team_no, self.team_no))
 			{
 				if (trace_ent.health < trace_ent.max_health)
@@ -1027,7 +1026,7 @@ void(float inAuto) W_FireMedikit =
 				if (trace_ent.tfstate & #TFSTATE_INFECTED) // infected monsters
 				{
 					trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_INFECTED;
-					
+
 					tmps = GetMonsterName(trace_ent);
 					
 					// Inform the medic
@@ -1730,8 +1729,6 @@ void() W_FireSniperRifle =
 	local vector dir, src;
 	local float dam_mult, zdif, use_this, damg;
 
-	dir = '0 0 0';
-
 	sound (self ,#CHAN_WEAPON, "weapons/sniper.wav", 1, #ATTN_NORM);
 	KickPlayer(-2, self);
 	//self.currentammo = self.ammo_shells = self.ammo_shells - 1; // ofn moved!
@@ -1741,7 +1738,8 @@ void() W_FireSniperRifle =
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	use_this = #FALSE;
-	traceline (src, src + dir*8092, #TL_ANY_SOLID, self);
+	dir = v_forward;
+	traceline (src, src + dir*8192, #TL_ANY_SOLID, self);
 	if (trace_fraction != 1.0)
 	{
 		if (trace_ent != world)
@@ -2190,7 +2188,7 @@ void() W_FireRocket =
 {
 	local float loops;
 	local vector olorigin, dir;
-	dir = '0 0 0';
+
 	loops = 0;
 	if (self.tf_items & #NIT_CLUSTER_ROCKETS && self.cluster_mode == #TRUE)
 		loops = 5;
@@ -2221,6 +2219,10 @@ void() W_FireRocket =
 	}
 	else if (self.classname == "monster_army")
 		dir = Grunty_LeadShot();
+	else {
+		makevectors (self.angles);
+		dir = v_forward;
+	}
 			
 	newmis.velocity = dir;	
 	if (!loops)
@@ -2381,6 +2383,7 @@ void() W_FireLightning =
 {
 	local	vector	org;
 	local float 	cells;
+//	local float		excess;
 
 	if (self.ammo_cells < 1)
 	{
@@ -3418,6 +3421,7 @@ float() CheckForReload =
 {
 	local float speedmult;
 	local entity tWeapon;
+
 	speedmult = 1;
 
 	if (self.#runes & #RUNE_SPEED)
@@ -3426,9 +3430,7 @@ float() CheckForReload =
 	//---------------- CLIP EXTENDER (same as below but with _EX values -------------//
 	if (self.cutf_items & #CUTF_CLIPEXTEND)
 	{
-
 		//---//
-
 		if (self.current_weapon == #WEAP_SHOTGUN)
 		{
 			if (self.reload_shotgun >= #RE_SHOTGUN_EX && self.ammo_shells > 0)
@@ -3572,8 +3574,7 @@ float() CheckForReload =
 
 	//---//
 	}
-	
-	
+
 	if (self.current_weapon == #WEAP_SHOTGUN)
 	{
 		if (self.reload_shotgun >= #RE_SHOTGUN && self.ammo_shells > 0)
@@ -5637,29 +5638,27 @@ void() T_DaedalusTouch =
 	local vector org;
 	local entity head;
 
-	points = 0;
-
 	head = findradius(self.origin, #BOUNCE);	
 	while (head) {
 		//Conc
-		if (head.takedamage && !IsBuilding(head) && head.health > 0)
-		{
-			org = head.origin + (head.mins + head.maxs)*0.5;
-			points = 0.5*vlen (org - self.origin);
-			if (points < 0) points = 0;
-				points = #BOUNCE - points;
-			if (points > 0)
-			{
-				head.velocity = org - self.origin;
-				head.velocity = head.velocity * (points / 20);
-				if (head.cutf_items & #CUTF_GYMNAST)
+		if (head.takedamage) {
+			if (!IsBuilding(head) && head.health > 0) {
+				org = head.origin + (head.mins + head.maxs)*0.5;
+				points = 0.5*vlen (org - self.origin);
+				if (points < 0) points = 0;
+					points = #BOUNCE - points;
+				if (points > 0)
+				{
+					head.velocity = org - self.origin;
 					head.velocity = head.velocity * (points / 20);
-				if (head.classname != "player" && head.flags & #FL_ONGROUND)
-					head.flags = head.flags - #FL_ONGROUND;
-			}
-		}
-		if (head.takedamage)
-		{
+					if (head.cutf_items & #CUTF_GYMNAST)
+						head.velocity = head.velocity * (points / 20);
+					if (head.classname != "player" && head.flags & #FL_ONGROUND)
+						head.flags = head.flags - #FL_ONGROUND;
+				}
+			} else
+				points = 0;
+
 			//Krac
 			if (IsBuilding(head))
 				TF_T_Damage (head, self, self.owner, 100, #TF_TD_NOTTEAM, #TF_TD_FIRE);

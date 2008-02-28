@@ -20,7 +20,6 @@ void () DoTinker = {
 		local float prob, thresh, enough;
         //local entity te;
 
-		enough = 0;
 		if (self.building.has_sentry > 0) {
 			sprint(self,#PRINT_HIGH,"You have to fully upgrade before tinkering\n");
 			return;
@@ -53,6 +52,8 @@ void () DoTinker = {
 
 		if ((self.building.ammo_shells + self.building.ammo_nails + self.building.ammo_rockets) >= 7)
 			enough = #TRUE;
+		else
+			enough = #FALSE;
 		// Ok, good tinker.
 		prob = random();
 		if (prob <= 0.2){ // Zilch, yet again.

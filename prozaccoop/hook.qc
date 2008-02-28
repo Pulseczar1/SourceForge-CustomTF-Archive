@@ -396,7 +396,6 @@ void () Throw_Grapple =
 void () Service_Grapple =
 {
         local   vector  hook_dir;
-		hook_dir = '0 0 0';
 
         // drop the hook if player lets go of button
         if (!self.button0)
@@ -409,8 +408,7 @@ void () Service_Grapple =
         // If hooked to a player, track them directly!
         if (self.hook.enemy.classname == "player")
                 hook_dir = (self.hook.enemy.origin - self.origin);
-        // else, track to hook
-        else if (self.hook.enemy.classname != "player")
+        else	// else, track to hook
                 hook_dir = (self.hook.origin - self.origin);
 
 		// set the facing of the grapple
