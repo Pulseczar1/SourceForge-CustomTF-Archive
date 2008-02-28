@@ -233,7 +233,6 @@ void() coop_swimmonster_start_go =
 	}
 
 	self.takedamage = #DAMAGE_AIM;
-	total_monsters = total_monsters + 1;
 
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
@@ -277,7 +276,6 @@ void() coop_swimmonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = coop_swimmonster_start_go;
-	//total_monsters = total_monsters + 1;
 
 	// make up for monster respawns on total monsters
 	if (!server_spawned)
