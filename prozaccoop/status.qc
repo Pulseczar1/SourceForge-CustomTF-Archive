@@ -219,8 +219,6 @@ void(entity pl) RefreshStatusBar1 =
 	local entity te;
 	local entity sent;
 
-	sent = world;
-
 	if (pl.StatusBarSize == 0)
 	{
 		pl.StatusRefreshTime = time + 60;
@@ -232,6 +230,8 @@ void(entity pl) RefreshStatusBar1 =
 		return;
 
 	s1 = GetStatusSize(pl);
+
+	sent = world;
 
     if (self.tf_items & #NIT_DOUBLETESLA)
     {
@@ -331,8 +331,6 @@ void(entity pl) RefreshStatusBar4 =
 	local entity te;
 	local entity sent;
 
-	sent = world;
-
 	if (pl.StatusBarSize == 0)
 	{
 		pl.StatusRefreshTime = time + 60;
@@ -344,6 +342,8 @@ void(entity pl) RefreshStatusBar4 =
 		return;
 
 	s1 = GetStatusSize(pl);
+
+	sent = world;
 
     if (self.cutf_items & #CUTF_DOUBLESENTRY)
     {
@@ -593,7 +593,6 @@ void(entity pl) RefreshStatusBar3 =
 	local string s5, s6;//, s7;
 	//local entity tg;
 	//local float num;
-	s2 = "";
 
 	if (pl.StatusBarSize == 0)
 	{
@@ -630,6 +629,7 @@ void(entity pl) RefreshStatusBar3 =
 	{
         local entity targ;
         local float targnum;
+		local string tmp;
         
         if (self.increase_team4 > 2) // because guerilla may set this field
             self.increase_team4 = 0;
@@ -685,8 +685,9 @@ void(entity pl) RefreshStatusBar3 =
         	s2 = "\n׀יעבמטב";
         else if (targ.classname == "monster_gremlin")
         	s2 = "\nַעוםלימ";
+		else
+			s2 = "";
 
-		local string tmp;
         if (self.job & #JOB_WARLOCK)
         {
             // Get number of monsters of this kind the player has
@@ -830,7 +831,7 @@ string(entity pl) ClipSizeToString100 =
 //CH edited b/c nothing has over 20
 {
 	local float num;
-	num = 0;
+
     //---------------- CLIP EXTENDER (same as below but with _EX values -------------//
     if (pl.cutf_items & #CUTF_CLIPEXTEND)
     {

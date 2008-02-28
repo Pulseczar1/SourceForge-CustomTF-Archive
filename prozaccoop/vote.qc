@@ -159,7 +159,6 @@ void() Player_Punish =
 void() Menu_Punish =
 {
 	local string st, st2, st3;
-	st = "";
 		
 	// if we didn't disconnect and we are a valid class, player or spectator..
 	if (HasValidAdminTarget2(self))
@@ -172,7 +171,10 @@ void() Menu_Punish =
 			st="Õóåò:             \n\n";
 	}
 	else
+	{
+		st = "";
 		st2 = "Õóåò:             \n\nNo user selected! ";
+	}
 
 	if (self.g_a == #PUNISH_BAN)
 		st3 = ".. Ban¡          ";
@@ -1154,10 +1156,11 @@ float(float final) CheckVoting =
 	}	 
 
 	local float num_for, num_against, num_total;
-	num_total = 0;
+	local entity te;
+
 	num_for = 0;
 	num_against = 0;
-	local entity te;
+	num_total = 0;
 	
 	// Count the number of votes for, against and total clients.
 	te = nextent(world);
@@ -1199,6 +1202,7 @@ float(float final) CheckVoting =
 
 	local float numclients;
 	local string st;
+	local float uid;
 	
 	numclients = GetNoClients();
 	
@@ -1213,7 +1217,6 @@ float(float final) CheckVoting =
 			return #TRUE;
 		}
 		
-		local float uid;
 		if (current_voteent.g_a == #PUNISH_CURSE) // Curse
 		{
 			if (num_for > num_total * #VOTESNEEDED_CURSE) // success?
@@ -1583,7 +1586,9 @@ void() bprintVotesLeft =
 	local string st;
 	local float num_for, num_against;
 	local entity te;
-	num_for = num_against = 0;
+
+	num_for = 0;
+	num_against = 0;
 	
 	// Count the number of votes for and against.
 	te = nextent(world);

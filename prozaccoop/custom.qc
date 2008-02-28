@@ -81,7 +81,6 @@ void(entity player) ResetStripedAndGiven;
 float(float targteam, float attackteam) Teammate =
 {
 	local float teammask;
-	teammask = 0;
 
 	if ( !targteam ) return #FALSE;
 	if ( targteam == attackteam ) return #TRUE;
@@ -91,6 +90,8 @@ float(float targteam, float attackteam) Teammate =
 	else if ( targteam == 2 ) teammask = 2;
 	else if ( targteam == 3 ) teammask = 4;
 	else if ( targteam == 4 ) teammask = 8;
+	else
+		teammask = 0;						// Gizmo - only happens if there's a bug
 
 	if      ( attackteam == 1 && (friends1_mask & teammask)) return #TRUE;
 	else if ( attackteam == 2 && (friends2_mask & teammask)) return #TRUE;
@@ -1253,7 +1254,7 @@ void() KracGrenadeExplode =
 	local entity te;
 	local entity oldself;
 	local float damage;
-	damage = 0;
+
 	te = findradius(self.origin, 150);
 	while (te)
 	{	
@@ -1310,11 +1311,29 @@ void() KracGrenadeExplode =
 			te.think = GuerillaExplode;
 			te.nextthink = time + 0.1;
 		}
-		else if (te.classname == "building_sentrygun")
+		else if (te.classname == "building_sentrygun") {
+			// Gizmo - this was left out here...
+			damage = 200 - vlen(te.origin - self.origin);
+			if (damage > 200 || damage < 0) {
+				bprint(#PRINT_MEDIUM,"Logic error in krac occured.\n");
+				dremove(self);
+				return;
+			}
+			if (damage < 75) damage = 75;
+
 			TF_T_Damage(te, self, self.owner, damage, 0, 0); //WK 1/7/7 Teslas and sentries take less now
-		else if (te.classname == "building_tesla")
+		} else if (te.classname == "building_tesla") {
+			// Gizmo - this was left out here...
+			damage = 200 - vlen(te.origin - self.origin);
+			if (damage > 200 || damage < 0) {
+				bprint(#PRINT_MEDIUM,"Logic error in krac occured.\n");
+				dremove(self);
+				return;
+			}
+			if (damage < 75) damage = 75;
+
 			TF_T_Damage(te, self, self.owner, damage, 0, 0);
-		else if (te.classname == "building_dispenser")
+		} else if (te.classname == "building_dispenser")
 			TF_T_Damage(te, self, self.owner, 500, 0, 0);
 		else if (te.classname == "building_camera")
 			TF_T_Damage(te, self, self.owner, 400, 0, 0);
@@ -1362,8 +1381,7 @@ void() KracGrenadeExplode =
 #ifdef COOP_MODE_ENHANCED
 		// Gizmo - enable kracs to work on monsters
 		else if (COOP_IsCoopMonster(te)) {
-			//WK 1/7/7 Krac nerf
-			//Deals 200, tapers off linearly with radius (min 75)
+			// code is just copied from above
 			damage = 200 - vlen(te.origin - self.origin);
 			if (damage > 200 || damage < 0) {
 				bprint(#PRINT_MEDIUM,"Logic error in krac occured.\n");
@@ -1371,7 +1389,6 @@ void() KracGrenadeExplode =
 				return;
 			}
 			if (damage < 75) damage = 75;
-			//if (te.armorclass & #AT_SAVEMELEE) damage = floor(damage / 2);
 			te.armorvalue = te.armorvalue - damage;
 			if (te.armorvalue < 10) te.armorvalue = 10;
 		}

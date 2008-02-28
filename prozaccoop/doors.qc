@@ -740,7 +740,7 @@ void () fd_secret_use =
 void (entity attacker, float damage) fd_secret_pain =
 {
 	fd_secret_use ();
-}
+};
 
 // Wait after first movement...
 void () fd_secret_move1 = 

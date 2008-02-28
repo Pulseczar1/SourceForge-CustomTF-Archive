@@ -10,7 +10,7 @@ void(entity targ, entity attacker) ClientObituary =
 {
 	local float rnum;
 	local string deathstring, deathstring2;
-	local string tst;			 
+	local string tst;
 	//local float attackerteam, targteam;
 	//local entity te;
 	//local entity oself;
@@ -54,7 +54,7 @@ void(entity targ, entity attacker) ClientObituary =
 		if (deathmsg==#DMSG_CYBERNET)
 		{
 			tst=GetBuildingName(attacker);
-			
+
 			if (rnum < 0.4)
 			{
 				bprint (#PRINT_MEDIUM, targ.netname);
@@ -68,7 +68,7 @@ void(entity targ, entity attacker) ClientObituary =
 			else
 			{
 				bprint (#PRINT_MEDIUM, targ.netname);
-				bprint (#PRINT_MEDIUM, " wastes his life hacking a \n");
+				bprint (#PRINT_MEDIUM, " wastes his life hacking a ");
 				bprint (#PRINT_MEDIUM, tst);
 				bprint (#PRINT_MEDIUM, "\n");
 			}
@@ -4251,18 +4251,17 @@ void(entity targ, entity attacker) ClientObituary =
 		//- OfN - Weird but may happen.. like when a sentry is blown up by its own rocket
 		if (attacker == targ)
 		{
-			local string st;
 			if (deathmsg == #DMSG_EARTHQUAKE)
 			{
-				st = GetBuildingName(targ);
-				bprint(#PRINT_MEDIUM,targ.real_owner.netname,"'s ",st," is destroyed by the earthquake!\n");
+				tst = GetBuildingName(targ);
+				bprint(#PRINT_MEDIUM,targ.real_owner.netname,"'s ",tst," is destroyed by the earthquake!\n");
 				return;
 			}
 
 			if (deathmsg == #DMSG_STORM)
 			{
-				st = GetBuildingName(targ);
-				bprint(#PRINT_MEDIUM,targ.real_owner.netname,"'s ",st," is destroyed by the storm lightning!\n");
+				tst = GetBuildingName(targ);
+				bprint(#PRINT_MEDIUM,targ.real_owner.netname,"'s ",tst," is destroyed by the storm lightning!\n");
 				return;
 			}
 			
@@ -4286,7 +4285,7 @@ void(entity targ, entity attacker) ClientObituary =
 				else
 					bprint (#PRINT_MEDIUM, "??Building??");
 			
-			bprint (#PRINT_MEDIUM, " destroys itself.\n");
+			bprint (#PRINT_MEDIUM, " destroys itself\n");
 			return;
 		}
 		

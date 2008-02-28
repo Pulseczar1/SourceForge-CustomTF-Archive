@@ -680,7 +680,6 @@ void() Menu_Team =
 void(float inp) Menu_Team_Input =
 {
 	local float teamSet; // bool
-	teamSet = 0;
 
 	//WK Remove starting observer gravity. It might come right back.
 	self.gravity = 1;
@@ -1345,8 +1344,6 @@ void() Menu_Engineer =
 	local string line6;
 	local string line7;
 
-	line5 = line7 = "";
-
 	//Check line for Dispenser
 	if (self.has_dispenser == #TRUE)
 		line1 = "Αγτιοξ:                           \n\n®® Destroy Dispenser             \n";
@@ -1409,12 +1406,12 @@ void() Menu_Engineer =
 	
 	if (self.has_teleporter != 0) //CH messy, yes
 	{
-		if (self.has_teleporter == 1 && self.ammo_cells >= #BUILD_COST_TELEPORTER)
-			line5 = ".. Build a Teleporter Pad        \n®® Destroy a Teleporter Pad      \n"; //ofn the number is 5
-		else if (self.has_teleporter == 1 && self.ammo_cells < #BUILD_COST_TELEPORTER)
-			line5 = "®® Destroy a Teleporter Pad      \n"; // 6
-		if (self.has_teleporter == 2)
+		if (self.has_teleporter >= 2)
 			line5 = "®® Destroy Both Teleporter Pads  \n"; // 6
+		else if (self.ammo_cells >= #BUILD_COST_TELEPORTER)
+			line5 = ".. Build a Teleporter Pad        \n®® Destroy a Teleporter Pad      \n"; //ofn the number is 5
+		else
+			line5 = "®® Destroy a Teleporter Pad      \n"; // 6
 	}
 	else if (self.ammo_cells >= #BUILD_COST_TELEPORTER && self.tf_items & #NIT_TELEPORTER)
 		line5 = ".. Build a Teleporter Pad        \n";
@@ -1436,11 +1433,6 @@ void() Menu_Engineer =
 
 	if (self.has_fieldgen != 0) //CH messy, yes
 	{
-		if (self.has_fieldgen == 1 && self.ammo_cells >= #BUILD_COST_FIELDGEN)
-			line7 = ".. Build a Field Generator       \n®® Destroy a Field Generator     \n\n.. Ξοτθιξη                       \n"; //ofn the number is 5
-		else if (self.has_fieldgen == 1 && self.ammo_cells < #BUILD_COST_FIELDGEN)
-			line7 = "®® Destroy a Field Generator     \n\n.. Ξοτθιξη                       \n"; // 6
-
 #ifdef FIELD_FORCEMODE
 
 		if (self.has_fieldgen >= 2)
@@ -1457,6 +1449,10 @@ void() Menu_Engineer =
 			line7 = "®® Destroy Both Field Generators \n\n.. Ξοτθιξη                       \n"; // 6
 
 #endif
+		else if (self.ammo_cells >= #BUILD_COST_FIELDGEN)
+			line7 = ".. Build a Field Generator       \n®® Destroy a Field Generator     \n\n.. Ξοτθιξη                       \n"; //ofn the number is 5
+		else
+			line7 = "®® Destroy a Field Generator     \n\n.. Ξοτθιξη                       \n"; // 6
 
 	}
 	else if (self.ammo_cells >= #BUILD_COST_FIELDGEN && self.cutf_items & #CUTF_FIELDGEN)
@@ -3139,10 +3135,11 @@ float(entity doc, entity patient, vector org) CureAdverseEffects;
 
 void(float inp) Menu_Dispenser_Input =
 {
+	local float am, empty;
+	local string desc;
+
 	if (self.classname != "player" || self.building == world)
 		return;
-	
-	local float am, empty;
 
 	empty = #FALSE;
 	if (inp == 1)
@@ -3224,7 +3221,6 @@ void(float inp) Menu_Dispenser_Input =
 			self.building.ammo_rockets = self.building.ammo_rockets - am * 15;
 			self.no_grenades_1 = self.no_grenades_1 + am;
 
-			local string desc;
 			if (am > 0)
 			{
 				anydone = #TRUE;

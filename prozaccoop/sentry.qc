@@ -307,9 +307,8 @@ float() Sentry_FindTarget =
 #endif
 	
 	local entity client;
-	local float r, gotone, loopc;
 	local entity te;
-	client = world;
+	local float r, gotone, loopc;
 
 	//WK Hack to get floating sentry working
 	if (self.tf_items & #NIT_TURRET) {
@@ -384,7 +383,6 @@ float() Sentry_FindTarget =
 	if (!gotone && (self.all_active & #IMPROVED_FOUR)) //if no player target found lets scan for monsters and army..
 	{
 #endif
-
 		te = find(world, #monsterflag,#STRFLAG_MONSTER);
 
 		while (te != world && gotone == #FALSE)

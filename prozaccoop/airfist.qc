@@ -135,7 +135,6 @@ void() launch_horn =
   local entity e;
   local vector delta;
   local vector dir;
-  local vector temp_velocity;
   local float eSpeed;
   local float dist;
   local float percent;
@@ -503,23 +502,6 @@ void() launch_horn =
   // recoil self
   self.velocity = self.velocity + v_forward * recoil * -1;
 
-  //WK 1/7/7 Airfist Nerf, no more speedboating	
-  //You can use the airfist normally, but it needs to recharge
-  //after giving the player free SuperDuperSpeed
-
-  //WK 2/26/7 Only give discharges to unupgraded AF
-if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE)) {
-	  temp_velocity = self.velocity;
-	  temp_velocity_z = temp_velocity_z = 0;
-	  if (vlen(temp_velocity) > self.maxspeed + 200) {
-		sprint(self,#PRINT_HIGH,"You discharge your airfist.\n");
-		self.attack_finished = time + 4; 
-	  }
-	  else if (vlen(temp_velocity) > self.maxspeed + 100) {
-		sprint(self,#PRINT_HIGH,"You partially discharge your airfist.\n");
-		self.attack_finished = time + 2; 
-	  }
-  }
   if(self.waterlevel > 2)
   {  // below the water, play under water sound
     sound (self, #CHAN_AUTO, "weapons/agwater.wav", 1, #ATTN_NORM);

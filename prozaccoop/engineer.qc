@@ -643,6 +643,7 @@ void() TeamFortress_EngineerBuild =
 
 float(entity obj, entity builder) CheckArea =
 {
+/*
 	local vector src, end;
 	local float pos;
 
@@ -691,6 +692,10 @@ float(entity obj, entity builder) CheckArea =
 
 	pos = pointcontents(end); 
 	if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) 
+		return #FALSE;
+*/
+
+	if (InSolid(obj))
 		return #FALSE;
 
 	// Trace a line from the player to the object too
@@ -761,10 +766,8 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	}
 
 	local float btime;
-	btime = 0;
 	//local entity te;
 	local vector tmp1, tmp2;
-	tmp1 = tmp2 = '0 0 0';
 
 	newmis = spawn();
 
@@ -942,10 +945,18 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 		newmis.netname = "field generator";
 	
 		btime = time + #BUILD_TIME_FIELDGEN;
+	} else {
+		error ("TeamFortress_Build: unknown object to build");
+
+		// Gizmo - just to get rid of qfcc warnings
+		btime = 0;
+		tmp1 = tmp2 = '0 0 0';
 	}
-	
+
 	// before we start building it, check it out
 	// check for validity of point
+	setsize (newmis, tmp1, tmp2);
+	setorigin (newmis, newmis.origin);
 	if (CheckArea(newmis, self) == #FALSE)
 	{
 		sprint(self, #PRINT_HIGH, "Not enough room to build here\n");
@@ -1047,8 +1058,8 @@ void() DispenserThink =
 void() TeamFortress_FinishedBuilding =
 {
 	local entity oldself;
-	//local float current_yaw;
-	//local vector source;
+//	local float current_yaw;
+//	local vector source;
 
 	if (self.owner.is_building != 1)
 		return;

@@ -366,8 +366,6 @@ void() armor_touch =
 	local string s;
 	local entity oldself;
 
-	bit = value = type = 0;
-	
 	if (other.health <= 0)
 		return;
 	if (other.classname != "player")
@@ -400,7 +398,8 @@ void() armor_touch =
 		value = 150;
 		bit = #IT_ARMOR2;
 	}
-	else if (self.classname == "item_armorInv")
+//	else if (self.classname == "item_armorInv")
+	else
 	{
 		type = 0.8;
 		value = 300; //CH was 200, 300 allows for high armor
@@ -451,7 +450,8 @@ void() armor_touch =
 			bit = #IT_ARMOR1;
 		else if (type == 0.6)
 			bit = #IT_ARMOR2;
-		else if (type == 0.8)
+//		else if (type == 0.8)
+		else
 			bit = #IT_ARMOR3;
 	}
 
@@ -702,8 +702,6 @@ void() weapon_touch =
 	local	entity	stemp;
 	local	float	leave;
 
-	new = 0;
-
 	if (!(other.flags & #FL_CLIENT))
 		return;
 
@@ -788,7 +786,10 @@ void() weapon_touch =
 		other.ammo_cells = other.ammo_cells + 15;
 	}
 	else
+	{
 		objerror ("weapon_touch: unknown classname");
+		return;		// shut up qfcc warnings hopefully
+	}
 
 	sprint (other, #PRINT_LOW, "You got the ");
 	sprint (other, #PRINT_LOW, self.netname);

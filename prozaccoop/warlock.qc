@@ -204,7 +204,6 @@ void() flymonster_start_go;
 void() Menu_Demon =
 {
 	local string st,st3,st2,st4,st5,st6,st7;
-	st2 = st4 = "";
 	
     local float knifekills;
     knifekills = GetHearts(self);
@@ -265,6 +264,8 @@ void() Menu_Demon =
             else
                 st4 = "\n.. Stop there¡              \n\n®® Unsummon                 \n\n.. Îïôèéîç     .. Îåøô Óïõì\n\n";
         }
+		else
+			st2 = st4 = "";
         
         st6 = ftos(GetMeat(self));
 
@@ -485,19 +486,19 @@ void() SummonThink =
 void(float inp) Menu_Demon_Input =
 {
 	local entity SummonTimer;
-
 	local float points;
+	local float knifekills;
+	local float neededhearts;
+	local string st;
+	local entity soul;
+	local float currentsoul;
+	local float extras;
 
-    local float knifekills;
-    local float neededhearts;
     knifekills = GetHearts(self);
 
-    local float currentsoul;
-    local entity soul;
     currentsoul = GetCurrentSoul(self);
     soul = GetSummon(self,currentsoul);
 
-    local float extras;
     extras = GetJobExtras(self);
 	
     if (inp == 10) // nothing
@@ -506,7 +507,6 @@ void(float inp) Menu_Demon_Input =
 		self.impulse = 0;
         return;
 	}
-	local string st;
     if (inp == 1 && soul != world) // Come here!
     {	        
         if (!IsMonster(soul)) return;
@@ -551,7 +551,7 @@ void(float inp) Menu_Demon_Input =
 		if (!IsMonster(soul)) return;
 
 		soul.penance_time = 2;
-        
+
         st=GetMonsterName(soul);
         
         if (soul.enemy != world)
@@ -872,17 +872,19 @@ void(entity monster) MakeMonsterName =
 {
     local string happy;
     local float r;
-	happy = "";
 
+	// ~~~
     if (monster.increase_team2 == 0)
     {
-        if (monster.increase_team1 == 0) // 1st monster slot, ".demon_one"
+		if (monster.increase_team1 == 0) // 1st monster slot, ".demon_one"
             happy = monster.real_owner.#sname1;
-        else if (monster.increase_team1 == 1)
+		else if (monster.increase_team1 == 1)
             happy = monster.real_owner.#sname2;
-        else if (monster.increase_team1 == 2)
-            happy = monster.real_owner.#sname3;        
-    }
+ //		else if (monster.increase_team1 == 2)
+		else
+            happy = monster.real_owner.#sname3;
+    } else
+		happy = "";
     
     if (happy == "") // should we use a default name?
     {
@@ -1937,10 +1939,10 @@ void() MonsterTouch =
                 Bio.owner = other; //Person getting hurt
                 Bio.classname = "timer";
                 Bio.netname = "biotimer";
-                
+
                 other.tfstate = other.tfstate | #TFSTATE_INFECTED;
                 other.infection_team_no = self.infection_team_no;
-                
+
                 tmps = GetMonsterName(self);
 
                 sprint(other, #PRINT_MEDIUM, "You have been infected by the ");
@@ -2195,6 +2197,8 @@ void(entity warlock) GibPickSound =
 
 void (entity attacker) WarlockKnifeKill =
 {
+	local float extras;
+
     if (attacker.job & #JOB_WARLOCK)
     {
         local float numhearts;
@@ -2209,7 +2213,6 @@ void (entity attacker) WarlockKnifeKill =
         attacker.dont_do_triggerwork = attacker.dont_do_triggerwork + 1;
         numhearts = attacker.dont_do_triggerwork;
 
-		local float extras;
         if (numhearts == #WARLOCK_BONUS1)
         {
             bprint(#PRINT_HIGH,attacker.netname);
@@ -2333,7 +2336,6 @@ float(entity monster) GetMonsterLevel =
 float(entity monster) GetHPforMeat =
 {
     local float hp, type, meatkgs, meatusage, meatused;
-	hp = 0;
     
     type = monster.#monster_type;
     meatkgs = GetMeat(monster.real_owner);
@@ -2382,7 +2384,8 @@ float(entity monster) GetHPforMeat =
         else
             hp = rint(#SCRAG_MIN_HP + ((#SCRAG_MAX_HP - #SCRAG_MIN_HP)*(meatused/#SCRAG_MAX_MEAT)));
     }
-    else if (type == #MONSTER_FISH)
+//    else if (type == #MONSTER_FISH)
+	else
     {
         if (meatused > #FISH_MAX_MEAT)
         {
@@ -2391,7 +2394,7 @@ float(entity monster) GetHPforMeat =
         }
         else
             hp = rint(#FISH_MIN_HP + ((#FISH_MAX_HP - #FISH_MIN_HP)*(meatused/#FISH_MAX_MEAT)));
-    }   
+    }
 
     // Decrease our used meat ammount
     SetMeat(monster.real_owner,meatkgs - meatused);

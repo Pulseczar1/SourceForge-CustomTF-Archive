@@ -33,7 +33,6 @@ float() Security_Camera_FindTarget =
 {
 	local entity client;
 	local float	r, gotone, loopc;
-	client = world;
 
 	if (self.is_malfunctioning & #SCREWUP_TWO) // SB how tragic, camera can't see
 		return #FALSE;
@@ -105,7 +104,6 @@ float() Security_Camera_FindFakeTarget =
 {
 	local entity client;
 	local float	r, gotone, loopc;
-	client = world;
 
 	if (self.is_malfunctioning & #SCREWUP_THREE) // SB how tragic, camera can't see
 		return #FALSE;

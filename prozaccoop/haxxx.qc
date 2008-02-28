@@ -79,9 +79,8 @@ void () Menu_Friend_Hax =
 		ResetMenu();
 		return;
 	}
-	
+
 	local string st,st2,st3,st4,st5,st6,st7;
-	st = st3 = "";
 
 	st6="\n\nCom≠Link ÂÛÙ·‚ÏÈÛËÂ‰";
 	st7=" ¡„ÙÈÔÓ:                    \n\n";
@@ -89,7 +88,8 @@ void () Menu_Friend_Hax =
 	st4="";
 	st2="\n.. Add ÏÂˆÂÏ  ICE  €20 sec›";
 
-	if (!visible2x(self,self.demon_two)) st6="\n\nLost connection with target!\n";
+	if (!visible2x(self,self.demon_two))
+		st6="\n\nLost connection with target!\n";
 /*	  else 
 	{
 		local float dist;
@@ -149,7 +149,9 @@ void () Menu_Friend_Hax =
 			st=   ".. Improve capacity €#HAXTIME_FG_CAPACITY sec›"; // DONE
 			st3="\n.. Enhance armour   €#HAXTIME_FG_ARMOR sec›"; // DONE
 			st4="\n.. Increase range   €#HAXTIME_FG_RANGE sec›"; // DONE
-		}
+		} else
+			// Gizmo - this can probably be avoided but too lazy for now ~~~
+			st = st3 = "";
 	}
 
 	if (self.demon_two.all_active & #IMPROVED_ONE)
@@ -280,20 +282,20 @@ void () Menu_Enemy_Hax =
 	}
 
 	local string st,st2,st3,st4,st5,st6,st7;
-	st = st2 = st3 = st4 = "";
 
 	st6="\n\nCom≠Link ÂÛÙ·‚ÏÈÛËÂ‰";
 	st5="\n\n.. ŒÔÙËÈÓÁ                  ";
 	st7=" ¡„ÙÈÔÓ:                    \n\n";
 
-	if (!visible2x(self,self.demon_two)) st6="\n\nLost connection with target!\n";
+	if (!visible2x(self,self.demon_two))
+		st6 = "\n\nLost connection with target!\n";
 	else 
 	{
 		local float dist;
 		dist = vlen(self.origin - self.demon_two.origin);
 		if (dist > #HAX_UNSTABLEDIST)
 		{
-			st6="\n\nUnstable connection with target!\n";
+			st6 = "\n\nUnstable connection with target!\n";
 		}
 	}
 
@@ -354,7 +356,9 @@ void () Menu_Enemy_Hax =
 			st2="\n.. Engineer Trap     €7 sec›";
 			st3="\n.. Reduce Output     €5 sec›";
 			st4="\n.. Disable           €2 sec›";
-		}
+		} else
+			// Gizmo - this can probably be avoided ~~~
+			st = st2 = st3 = st4 = "";
 
 	}
 
@@ -391,23 +395,23 @@ OfN - Rewritten
 void() SBFireInterface =
 {
 	if (CheckHaxxx() == #FALSE) return;
-	
+
 	local entity oself;
 	local entity targ;
 	local float hackThis;
 	local string st;
-	
+
 	targ = self.martyr_enemy;
 	hackThis = self.has_camera;   
-	
+
 	oself = self;
-	
+
 	self = self.owner;
-	
+
 	oself.think = SUB_Remove;	
 	oself.nextthink = 0.1;
 	dremove(oself);
-	
+
 	self.is_haxxxoring = 0;
 
 	self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
@@ -607,7 +611,7 @@ void() SBFireInterface =
 				targ.is_malfunctioning = 0;
 
 				sprint(self, #PRINT_HIGH, "You correct the machine's malfunction.\n");
-				
+
 				st=GetBuildingName(targ);
 
 				if (self!=targ.real_owner)
@@ -640,7 +644,7 @@ void() SBFireInterface =
 			st=GetBuildingName(targ);
 
 			sprint(self, #PRINT_HIGH, "You make a few adjustments...\n");
-			
+
 			if (hackThis == #IMPROVED_ONE)
 			{
 				if (targ.classname=="building_sensor")

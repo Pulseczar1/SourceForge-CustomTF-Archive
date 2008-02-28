@@ -1135,7 +1135,6 @@ void() TeamFortress_GrenadePrimed;
 void() TeamFortress_PrimeGrenade =
 {
 	local float gtype;
-	gtype = 0;
 	local string gs, ptime;
 	local entity tGrenade;
 
@@ -1247,7 +1246,8 @@ void() TeamFortress_PrimeGrenade =
 			return;
 		}
 	}
-	if (self.impulse == #TF_GRENADE_2)
+	//if (self.impulse == #TF_GRENADE_2)
+	else
 	{
 		if (self.tp_grenades_2 == #GR_TYPE_FRAG  && self.no_grenades_2 > 0) {
 			if ((self.team_no == 1 && team1nextspam >= time) ||
@@ -1635,7 +1635,6 @@ void() TeamFortress_ThrowGrenade =
 float(float pc) IsLegalClass =
 {
 	local float bit;
-	bit = 0;
 
 	// Spy may be turned off
 	if (spy_off == #TRUE && pc == #PC_SPY)
@@ -1659,7 +1658,8 @@ float(float pc) IsLegalClass =
 		bit = #TF_ILL_SPY;
 	else if (pc == #PC_ENGINEER)
 		bit = #TF_ILL_ENGINEER;
-	else if (pc == #PC_RANDOM)
+//	else if (pc == #PC_RANDOM)
+	else
 //WK	else if (pc == #PC_RANDOM || pc == #PC_CUSTOM) //WK Disabling randompc disables //WK customclass
 		bit = #TF_ILL_RANDOMPC;
 
@@ -2051,12 +2051,13 @@ void() TeamFortress_SetEquipment =
 	local entity automan;
 	local string st;
 	local float kept_items;
-	kept_items = 0;
 
 	if (self.classname != "player")
 		return;
 
-#ifndef COOP_MODE_ENHANCED
+#ifdef COOP_MODE_ENHANCED
+	kept_items = 0;
+#else
 	kept_items = self.tf_items & (#IT_KEY1 | #IT_KEY2);
 #endif
 	
@@ -2757,7 +2758,7 @@ float(entity Retriever, entity Items) TeamFortress_AddBackpackItems =
 	// weapons, then you may want them to be able to pick up weapons
 	// from backpacks. If so, this is where to do it.
 	// For now, return. 
-	return 0;
+	return #FALSE;	// Gizmo - what is this suppose to be returning?
 };
 
 //=========================================================================
@@ -3173,7 +3174,6 @@ void() TeamFortress_CheckClassStats =
 void (float type) TeamFortress_DropAmmo =
 {
 	local float ammo;
-	ammo = 0;
 
     if (type == 1)
 	{
@@ -3244,7 +3244,8 @@ void (float type) TeamFortress_DropAmmo =
 
 		self.ammo_rockets = self.ammo_rockets - ammo;
 	}
-	else if (type == 4)
+//	else if (type == 4)
+	else
 	{
 		ammo = #DROP_CELLS;
 		if (self.ammo_cells < ammo)

@@ -792,8 +792,6 @@ void(entity tstorm) StormThunder =
     local float thundernum;
     local float th1, th2, th3, counter, done, hs_sensor;
 
-	thundernum = 0;
-
     if (tstorm.has_holo == -1 && tstorm.has_sensor == -1)
     {
         thundernum = rint(random()*3);
@@ -860,7 +858,7 @@ void(entity tstorm) StormThunder =
                 thundernum = th1;
             else if (counter == 1)
                 thundernum = th2;
-            else if (counter == 2)
+            else
                 thundernum = th3;
         }
         else
@@ -869,7 +867,7 @@ void(entity tstorm) StormThunder =
 
             if (counter == 0)
                 thundernum = th1;
-            else if (counter == 1)
+            else
                 thundernum = th2;            
         }
     }

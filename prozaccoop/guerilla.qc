@@ -170,8 +170,6 @@ void() Menu_Guerilla =
 	local string header, st1, st2, st3, st4, st5, foot, tmp;
 	local float extras, points, bitfield, minesup;
 
-	st1 = st2 = st3 = "";
-	
 	extras = GetJobExtras(self);
 	points = GetMinePoints(self);
 	minesup = GetMinesUp(self);
@@ -194,7 +192,7 @@ void() Menu_Guerilla =
 			header = strcat(header," mines up©\n\n");
 		}
 		
-		if (points == 0)
+		if (points <= 0)
 		{
 			st1 = ".. Level 1 Mine        (1 point)\n.. Level 2 Mine       (2 points)\n\n.. Concussion Mine     (1 point)\n.. Psionic Mine       (2 points)\n";
 			
@@ -233,7 +231,7 @@ void() Menu_Guerilla =
 			
 			st3 = ".. MIRV Mine          (3 points)\n\n";
 		}
-		else if (points > 2)
+		else
 		{
 			st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       ( ποιξτσ)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       ( ποιξτσ)\n";
 
@@ -268,7 +266,7 @@ void() Menu_Guerilla =
 			header = strcat(header," mines up©\n\n");
 		}
 			
-		if (points == 0)
+		if (points <= 0)
 		{
 			st1 = ".. Level 1 Mine        (1 point)\n.. Level 2 Mine       (2 points)\n.. Level 3 Mine       (3 points)\n\n.. Concussion Mine     (1 point)\n.. Psionic Mine       (2 points)\n";
 			
@@ -307,7 +305,7 @@ void() Menu_Guerilla =
 			
 			st3 = ".. MIRV Mine          (3 points)\n\n";
 		}
-		else if (points > 2)
+		else
 		{
 			st1 = ".. Level 1 Mine        ( ποιξτ)\n.. Level 2 Mine       ( ποιξτσ)\n.. Level 3 Mine       ( ποιξτσ)\n\n.. Concussion Mine     ( ποιξτ)\n.. Psionic Mine       ( ποιξτσ)\n";
 
@@ -1595,6 +1593,7 @@ float(entity player) GuerillaGetMaxPointsForJob =
 void(entity player) GuerillaUpgradeJob =
 {
 	local float currentpoints, spent;
+
 	if (player.job & #JOB_EXTRA2)
 		return; // cant upgrade anymore
 	 

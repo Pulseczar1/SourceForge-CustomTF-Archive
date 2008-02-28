@@ -392,8 +392,6 @@ float() MotionSensorFindTarget =
 	local entity client;
 	local float	r, gotone, loopc;
 
-	client = world;
-
 	// Try a few checks to make it react faster
 	r = 0;
 	loopc = 0;

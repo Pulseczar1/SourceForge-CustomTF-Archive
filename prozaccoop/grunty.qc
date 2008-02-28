@@ -670,25 +670,24 @@ entity (entity scanner) LookAroundGrunty =
 
 entity () GruntyPharse =
 {
-	local entity retarg;
 	local float r;
+
 	r = random();
-	retarg = world;
 	
 	#ifdef MAD_GRUNTY
 
 	if (r < 0.30 && (visible(self.real_owner)) && self.real_owner.health > 0)
-		retarg = self.real_owner;
+		return self.real_owner;
 	
 	#else
 
 	//- ofn - lot of shit changed in lookaround to make them target well
 	if (r < 0.30)
-		retarg = LookAroundGrunty(self);
+		return LookAroundGrunty(self);
 	
 	#endif	  
 
-	return retarg;
+	return world;
 };
 
 void() GruntyScanTargets =
@@ -822,7 +821,6 @@ void() GruntyScanTargets =
 void() GruntyCheckFire =
 {
 	local float dist, vis, allowedweaps;
-	allowedweaps = 0;
 
 	if (self.attack_finished > time)
 		return;
@@ -884,7 +882,8 @@ void() GruntyCheckFire =
 					dist = 399;
 			}
 			allowedweaps = #WEAP_SUPER_SHOTGUN | #WEAP_SHOTGUN | #WEAP_ROCKET_LAUNCHER;
-		} else if (self.delay_time == 3) {
+//		} else if (self.delay_time == 3) {
+		} else {
 			allowedweaps = #WEAP_NAILGUN | #WEAP_ROCKET_LAUNCHER;
 		}
 	} else
@@ -1779,8 +1778,9 @@ void () GruntyPayThink =
 	if (self.health < self.max_health && self.money >= #GRUNTY_COST_HEALTHPACK)
 	{
 		local float loops, bought;
+
 		loops = 0;
-		bought=0;
+		bought = 0;
 
 		while (loops < (0.75+(self.has_sensor/4)) && self.money >= #GRUNTY_COST_HEALTHPACK && self.max_health > self.health)
 		{
@@ -2010,7 +2010,7 @@ void() grunty_touch =
 {
 	if (self.health <= 0) // If we r dead, go away
 		return;
-	
+
 	local entity Bio;
 	local string tmps;
 
@@ -2030,10 +2030,10 @@ void() grunty_touch =
 				Bio.owner = other; //Person getting hurt
 				Bio.classname = "timer";
 				Bio.netname = "biotimer";
-				
+
 				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
 				other.infection_team_no = self.infection_team_no;
-				
+
 				tmps = GetMonsterName(self);
 
 				sprint(other, #PRINT_MEDIUM, "You have been infected by the ");
@@ -2056,6 +2056,7 @@ void() grunty_touch =
 				sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
 
 				// Report to teammates of owner
+				local string tmps;
 				tmps = GetMonsterName(other);
 				teamprefixsprint(other.real_owner.team_no,other.real_owner);
 				teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");

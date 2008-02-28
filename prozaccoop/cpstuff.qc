@@ -1135,6 +1135,7 @@ entity() GetBestKiller =
 	return theplayer;
 };
 
+#ifdef EOG_BESTTEAMKILLER
 // Gizmo
 entity() GetBestTeamKiller =
 {
@@ -1152,6 +1153,49 @@ entity() GetBestTeamKiller =
 
 	return bestplayer;
 };
+entity() GetBestDamager =
+{
+	local entity	bestplayer, head;
+	local float		bestvalue;
+
+	head		= world;
+	bestplayer	= world;
+	bestvalue	= 0;
+
+	head = find (world, classname, "player");
+	while (head != world) {
+		if (head.#enemy_damage_dealt > bestvalue) {
+			bestplayer = head;
+			bestvalue = head.#enemy_damage_dealt;
+		}
+
+		head = find (head, classname, "player");
+	}
+
+	return bestplayer;
+};
+entity() GetBiggestTarget =
+{
+	local entity	bestplayer, head;
+	local float		bestvalue;
+
+	head		= world;
+	bestplayer	= world;
+	bestvalue	= 0;
+
+	head = find (world, classname, "player");
+	while (head != world) {
+		if (head.#damage_taken > bestvalue) {
+			bestplayer = head;
+			bestvalue = head.#damage_taken;
+		}
+
+		head = find (head, classname, "player");
+	}
+
+	return bestplayer;
+};
+#endif
 
 void() bprintline =
 {
@@ -1237,6 +1281,25 @@ void() PrintResults =
 		bprint(#PRINT_HIGH,"None");
 
 #ifdef EOG_BESTTEAMKILLER
+	// Gizmo - player that dealt the most damage
+	bprint(#PRINT_HIGH,"\nΝοστ Δαναηε: ");
+	theplayer = GetBestDamager();
+
+	if (theplayer != world)
+	{
+		tmpf = floor(theplayer.#enemy_damage_dealt);
+		tmps = ftos(tmpf);
+
+		bprint(#PRINT_HIGH,theplayer.netname);
+		bprint(#PRINT_HIGH," (");
+		bprint(#PRINT_HIGH,GetTrueTeamName(theplayer.team_no));
+		bprint(#PRINT_HIGH,") with ");
+		bprint(#PRINT_HIGH,tmps);
+		bprint(#PRINT_HIGH," damage dealt to enemies");
+	}
+	else
+		bprint(#PRINT_HIGH,"None");
+
 	// Gizmo - best team killer
 	bprint(#PRINT_HIGH,"\n\nΤεαν Λιμμιξη Ναγθιξε: ");
 	theplayer = GetBestTeamKiller();
@@ -1252,6 +1315,25 @@ void() PrintResults =
 		bprint(#PRINT_HIGH,") with ");
 		bprint(#PRINT_HIGH,tmps);
 		bprint(#PRINT_HIGH," team-damage dealt");
+	}
+	else
+		bprint(#PRINT_HIGH,"None");
+
+	// Gizmo - player that took the most damage
+	bprint(#PRINT_HIGH,"\nΒιηηεστ Ταςηετ: ");
+	theplayer = GetBiggestTarget();
+
+	if (theplayer != world)
+	{
+		tmpf = floor(theplayer.#damage_taken);
+		tmps = ftos(tmpf);
+
+		bprint(#PRINT_HIGH,theplayer.netname);
+		bprint(#PRINT_HIGH," (");
+		bprint(#PRINT_HIGH,GetTrueTeamName(theplayer.team_no));
+		bprint(#PRINT_HIGH,") with ");
+		bprint(#PRINT_HIGH,tmps);
+		bprint(#PRINT_HIGH," damage taken");
 	}
 	else
 		bprint(#PRINT_HIGH,"None");

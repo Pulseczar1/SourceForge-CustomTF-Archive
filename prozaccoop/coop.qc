@@ -103,10 +103,13 @@ float() DoorShouldOpen =
 	local float plyrcount;
 	local entity plyr1;
 	local entity plyr2;
-	plyr1 = plyr2 = world;
 
 	if (coop != 2)
 		return #TRUE;
+
+	// Gizmo - although this might show up as a warning, it's impossible for plyr1 and plyr2
+	// to be used without being initialized, if you look at the below code, you'll see why
+//	plyr1 = plyr2 = world;
 
 	plyrcount = 0;
 	ptr = find(world, classname, "player");

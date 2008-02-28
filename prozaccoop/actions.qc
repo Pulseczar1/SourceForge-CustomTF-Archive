@@ -20,14 +20,14 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer;
 //=========================================================================
 // Discard Command. Drops all ammo useless to the player's class.
 void() TeamFortress_Discard =
-{ 
+{
 	// Create a backpack
 	newmis = spawn();
 //CH to save space. Dont do class specific checks
 //
 //CH new setup, checks if you have weapon that uses that ammo
 //and if you dont, throws it away
-	 if (self.playerclass != #PC_UNDEFINED)
+	if (self.playerclass != #PC_UNDEFINED)
 	{
 		if (!(self.weapons_carried & #WEAP_SNIPER_RIFLE || self.weapons_carried & #WEAP_AUTO_RIFLE || self.weapons_carried & #WEAP_SHOTGUN || self.weapons_carried & #WEAP_SUPER_SHOTGUN || self.weapons_carried & #WEAP_ASSAULT_CANNON || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER)))
 			newmis.ammo_shells = self.ammo_shells;
@@ -99,12 +99,19 @@ void() TeamFortress_Discard =
 		newmis.velocity_z = 200;
 	}
 	newmis.avelocity = '0 300 0';
-	setsize (newmis, '0 0 0', '0 0 0'); 	
+	setsize (newmis, '-16 -16 0', '16 16 56');
 	setorigin (newmis, self.origin);
 	newmis.nextthink = time + 30;	// remove after 30 seconds
 	newmis.think = SUB_Remove;
 	newmis.touch = TeamFortress_AmmoboxTouch;
-	setmodel (newmis, "progs/backpack.mdl");	
+	setmodel (newmis, "progs/backpack.mdl");
+
+	// Gizmo - make sure it's not going to fall off the map, because of the new size
+	newmis.owner = self;
+	if ( InSolid( newmis ) ) {
+		setorigin( newmis, self.origin - '0 0 24' );
+	}
+	newmis.owner = world;
 };
 
 //=========================================================================
@@ -671,7 +678,6 @@ void(float inAuto) TeamFortress_ID =
 #ifdef COOP_MODE_ENHANCED
 		else if (trace_ent.team_no == #TEAMNO_MONSTERS) {
 			local string s1;
-			s1 = "";
 			local string bullet, nail, exp, elec, fire, melee;
 			local string strong, weak;
 			local string ar;
@@ -695,6 +701,7 @@ void(float inAuto) TeamFortress_ID =
 			//fire = colstr (fire, #COLSTR_NUMBER);
 			//melee = colstr (melee, #COLSTR_NUMBER);
 
+			s1 = string_null;
 			strong = "Strong";
 			weak = "Weak";
 			if (trace_ent.#npc_bulletmult) {
@@ -774,6 +781,9 @@ void(float inAuto) TeamFortress_ID =
 // Reloads the current weapon
 void() TeamFortress_ReloadCurrentWeapon =
 {
+	local float rt;
+	local entity tWeapon;
+
 	// OfN - Psionized guys can't reload
 	if (self.tfstate & #TFSTATE_PSIONIZED)
 	{
@@ -782,8 +792,6 @@ void() TeamFortress_ReloadCurrentWeapon =
 	}
 
 	//---------------- CLIP EXTENDER (same as below but with _EX values -------------//
-	local float rt;
-	local entity tWeapon;
 	if (self.cutf_items & #CUTF_CLIPEXTEND)
 	{
 		if (self.current_weapon == #WEAP_SHOTGUN)
@@ -1029,7 +1037,6 @@ void() TeamFortress_ReloadCurrentWeapon =
 	} // CLIP EXTENDER
 	else
 	{
-
 		if (self.current_weapon == #WEAP_SHOTGUN)
 		{
 			if (self.reload_shotgun == 0)

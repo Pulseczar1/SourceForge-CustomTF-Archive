@@ -107,10 +107,10 @@ void(entity soul, float currentsoul) Menu_Army1 =
 	local float readytime,temp;
 	local string st,st2,st3;
 	local string st4, st5;
+	local float extras;
 
 	st2 = st3 = "";
 
-	local float extras;
 	extras = GetJobExtras(self);
 	   
 	if (soul)
@@ -329,8 +329,8 @@ void(entity soul, float currentsoul) Menu_Army1 =
 void(entity soul, float currentsoul) Menu_Army2 =
 {
 	local string st,st2,st3,st4,st5,st6,st7, tmp;
-
 	local float extras;
+
 	extras = GetJobExtras(self);
 
 	st = st2 = st3 = st4 = st6 = "";
@@ -370,7 +370,7 @@ void(entity soul, float currentsoul) Menu_Army2 =
 			st2 = strcat(" Σομδιες £³ Στατυσ ",st2);
 	}
 
-	st5=""; // this will be static range
+	st5 = ""; // this will be static range
 	
    if (soul.is_malfunctioning==0)
 	{

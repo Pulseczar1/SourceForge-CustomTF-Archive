@@ -12,6 +12,9 @@
 
 void () weapon_dummy_touch =
 {
+	if (!(other.flags & #FL_CLIENT))
+		return;
+
 	sound (other, #CHAN_ITEM, self.noise, 1, #ATTN_NORM);
 
 	Respawn_Item(self, other);
