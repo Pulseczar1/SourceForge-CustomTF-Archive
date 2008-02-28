@@ -676,7 +676,7 @@ void () COOP_SetLives =
 
 /*
 	COOP_SetupRespawn - sets up a monster to respawn, self will be the newly allocated entity to respawn.
-	This way we can simple put the same function that the map calls to spawn monsters
+	This way we can simply put the same function that the map calls to spawn monsters
 	self must be the monster respawning, that means you must call this BEFORE the monster is removed
 */
 
@@ -696,9 +696,8 @@ void () respawn_monster =
 	self.lives = savedlives;
 
 	// check if he's in a wall
-	// FIXME: move and rename NotInSolid
-	if (!NotInSolid(self)) {
-		// This is kind of like a hack, but it works to ensure monster count is bumped
+	if (InSolid(self)) {
+		// this is kind of like a hack, but it works to ensure monster count is bumped
 		self.flags = self.flags | #FL_MONSTER;
 		self.deathtype = "monster_respawn";
 		self.health = -60;
@@ -782,9 +781,16 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 			indmg = indmg * 0.5;
 	}
 
+	if (targ.team_no != #TEAMNO_MONSTERS) {		// !COOP_IsCoopMonster(targ)
+		// make summons and army soldiers stronger
+		if (GetMonsterName(targ) != "unknown monster")
+			return indmg * 0.5;
+		else
+			return indmg;
+	}
 
 	// automatic adjustment to the number of players
-	if (attacker.flags & #FL_CLIENT && COOP_IsCoopMonster(targ)) {
+	if (attacker.flags & #FL_CLIENT) {
 		if (num_players <= 2)
 			indmg = indmg * 1.7;	// 2
 		else if (num_players <= 4)
@@ -794,7 +800,6 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 		else if (num_players >= 8)
 			indmg = indmg * 0.8;
 	}
-
 
 	if (!targ.#npc_bulletmult)
 		targ.#npc_bulletmult = 1;
@@ -810,12 +815,6 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 		targ.#npc_meleemult = 1;
 	if (!targ.#npc_othermult)
 		targ.#npc_othermult = 1;
-
-	// make summons and army soldiers stronger
-	if (GetMonsterName(targ) != "unknown monster" && targ.team_no != #TEAMNO_MONSTERS)
-		return indmg * 0.50;
-	else if (targ.team_no != #TEAMNO_MONSTERS)
-		return indmg;
 
 	// if the target is a coop monster then do the special stuff
 	if (attacktype == #TF_TD_SHOT)

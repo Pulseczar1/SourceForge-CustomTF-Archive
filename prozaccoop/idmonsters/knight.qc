@@ -269,6 +269,7 @@ float() KnightPreAttack =
 	len = vlen(self.enemy.origin+self.enemy.view_ofs - (self.origin+self.view_ofs));
 
 /*
+	// TODO: make ai_charge_side and ai_melee_side for coop
 	if (len < 80)
 		knight_atk1 ();
 	else

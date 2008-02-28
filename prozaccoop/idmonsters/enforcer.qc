@@ -96,7 +96,7 @@ void(vector org, vector vec) _LaunchLaser =
 		sound (self, #CHAN_WEAPON, "enforcer/enfire.wav", 1, #ATTN_NORM);
 
 	vec = normalize(vec);
-	
+
 	newmis = spawn();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLY;
