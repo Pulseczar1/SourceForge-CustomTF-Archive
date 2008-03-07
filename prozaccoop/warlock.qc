@@ -760,7 +760,9 @@ void(float inp) Menu_Demon_Input =
     
     // TEMP
     points = 5;
-    
+
+/*
+	// Gizmo - this is now handled when a monster is spawned to avoid losing your hearts
     SetHearts(self,knifekills - neededhearts);
     
     if (!neededhearts)
@@ -774,6 +776,7 @@ void(float inp) Menu_Demon_Input =
             self.weaponmodel = "progs/v_knife.mdl";
         }
     }
+*/
 
     stuffcmd(self,"v_idlescale 100000\n");
 
@@ -1383,13 +1386,8 @@ void (float points, float type) custom_demon_create =
     newmis.health = GetHPforMeat(newmis);
 
     MakeMonsterName(newmis);
-    
-    if (!CheckArea(newmis,self)) { //No room for el diablo
-		sprint(self,#PRINT_HIGH,"Not enough room to summon creature!\n");
-		newmis.think = SUB_Remove;
-		newmis.nextthink = time + 0.1;
-    	return;
-	}
+
+	// checkarea used to be here
 
     setmodel (newmis, newmis.mdl);
 
@@ -1423,6 +1421,16 @@ void (float points, float type) custom_demon_create =
 		setsize (newmis, #VEC_HULL2_MIN, #VEC_HULL2_MAX);
 		setorigin (newmis, newmis.origin + '0 0 30');
     }
+
+	// Gizmo - moved this after size and origin
+	newmis.owner = self;
+	if (!CheckArea(newmis,self)) { //No room for el diablo
+		sprint(self,#PRINT_HIGH,"Not enough room to summon creature!\n");
+		newmis.think = SUB_Remove;
+		newmis.nextthink = time + 0.1;
+		return;
+	}
+	newmis.owner = newmis;
 	
 	//Test successful, so go ahead and finish summon
 
@@ -1461,6 +1469,23 @@ void (float points, float type) custom_demon_create =
         newmis.velocity='0 0 0';
         newmis.movetype = #MOVETYPE_STEP;
     }
+
+	// Gizmo - remove used hearts
+	local float knifekills, neededhearts;
+
+	knifekills = GetHearts( self );
+	neededhearts = GetNeededHearts( self, type );	// type should be same as input
+	SetHearts( self, knifekills - neededhearts );
+    
+	if ( !neededhearts ) {
+		if ( self.job & #JOB_BLOODY_KNIFE && ( type == 1 || type == 2 ) )
+			self.job = self.job - #JOB_BLOODY_KNIFE; //- OfN - caused bug
+        
+		if ( self.current_weapon == #WEAP_AXE && ( type == 1 || type == 2 ) ) {
+			self.weaponmode = 0; // Remove blood on the knife
+			self.weaponmodel = "progs/v_knife.mdl";
+		}
+	}
     	    
     //if ( newmis.classname == "monster_demon1" )
     if (type == 3)

@@ -17,6 +17,7 @@
 #define VOTE_SWITCHMAP		3
 #define VOTE_NEXTMAP_AGR	4 // PZ - AGR mode
 #define VOTE_SWITCHMAP_AGR	5 // PZ - AGR mode
+#define VOTE_USEOBJECT		6	// Gizmo - similar to admin use
 
 // punish types
 #define PUNISH_NONE 		0
@@ -550,6 +551,14 @@ void() bprintVoteIssue =
 		bprint(#PRINT_HIGH,", in ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode©");
 	}
 	// PZ - end AGR code
+	else if ( current_voteent.has_sentry == #VOTE_USEOBJECT ) {
+		local string objectName;
+
+		objectName = GetUseObjectName( current_voteent.enemy );
+		bprint( #PRINT_HIGH, " ®use object " );
+		bprint( #PRINT_HIGH, objectName );
+		bprint( #PRINT_HIGH, "©" );
+	}
 };
 
 //==============================================================
@@ -1053,6 +1062,51 @@ void() VoteMap_Think =
 #endif
 };
 
+//=================================================================
+
+void() StartUseObjectVote = {
+	local string objectName, objectAction;
+
+	makevectors( self.v_angle );
+	traceline( self.origin + '0 0 16', ( self.origin + '0 0 16' ) + v_forward * 4096, #TL_ANY_SOLID, self );
+
+	if ( !IsValidUseObject( trace_ent ) ) {
+		sprint( self, #PRINT_HIGH, "Not a valid object to use!\n" );
+		return;
+	}
+
+	BroadcastSound( "misc/medkey" );
+
+	objectName = GetUseObjectName( trace_ent );
+	objectAction = GetUseObjectAction( trace_ent );
+	bprint( #PRINT_HIGH, "Votingç ", self.netname, " wants to force a ", objectName, " to ", objectAction );
+	bprint( #PRINT_HIGH, ", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n" );
+
+	BackFlash( self, 1 );
+	CleanClientVotes ();
+
+	self.goal_no = time + #VOTE_DELAY;
+	self.owned_by = #VOTED_YES;		// we already voted yes
+
+	local entity voteent;
+
+	voteent = spawn ();
+	voteent.think = PunishVote_Think;
+	voteent.nextthink = time + #VOTE_TIME;
+	voteent.classname = "voteent";
+	voteent.owner = world; // ADDED
+	voteent.all_active = 1;
+	voteent.has_holo = 0;
+	voteent.enemy = trace_ent;
+	voteent.has_sentry = #VOTE_USEOBJECT;
+
+	current_voteent = voteent;
+
+	ResetClientsMenu ();			// reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
+	CheckVoting( #FALSE );			// if we are the only player on server checks
+};
+
+
 //==================================================================
 // resets all clients to ready-to-vote state
 
@@ -1544,6 +1598,31 @@ float(float final) CheckVoting =
 		}
 	} 
 	// PZ - end AGR code
+	// Gizmo - use object voting
+	else if ( current_voteent.has_sentry == #VOTE_USEOBJECT ) {
+		local string objectAction;
+
+		if ( VotePassed( num_for, num_against ) ) {
+			st = GetUseObjectName( current_voteent.enemy );
+			objectAction = GetUseObjectAction( current_voteent.enemy );
+			bprint( #PRINT_HIGH, "Votingç Success° ", st, " will now ", objectAction, "\n" );
+
+			UseObject( current_voteent.enemy );
+
+			BroadcastSound( "misc/runekey" );
+			ResetVoteEnt(); // removes current vote entity
+
+			return #TRUE;
+		} else {
+			bprint( #PRINT_HIGH, "Votingç Use voting failed" );
+			bprintVoteIssue ();
+			bprint( #PRINT_HIGH, "\n" );
+			
+			BroadcastSound( "misc/runekey" );
+			
+			ResetVoteEnt ();
+		}
+	}
 
 	return #FALSE;
 };

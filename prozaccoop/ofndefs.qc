@@ -35,7 +35,7 @@
 #ifndef _RELEASE_BUILD_                     //
 //------------------------------------------//
 //#define VERBOSE_GRUNTY
-#define WARLOCK_TEST // free summon
+//#define WARLOCK_TEST // free summon
 //#define ARMY_TEST // only 5 seconds for tele the soldier
 //#define CRUSADER_TEST
 //#define ALIASES_TEST
