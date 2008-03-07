@@ -873,18 +873,21 @@ float(float slot) TeleSoldier =
 	newmis.increase_team2 = GetNameType(self,newmis.increase_team1,#FALSE);
 	MakeMonsterName(newmis);
 	newmis.#monster_type = #MONSTER_ARMY;
- 
+	
+	setmodel (newmis, "progs/grunty.mdl");
+	setsize (newmis, '-16 -16 -24', '16 16 32');
+
+	// Gizmo - this and spawn_tfog used to be above setmodel and setsize
+	newmis.owner = self;
 	if (!CheckArea(newmis,self)) { //No room for el diablo
 		sprint(self,#PRINT_HIGH,"Not enough room to teleport soldier!\n");
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 0.1;
 		return #FALSE;
 	}
+	newmis.owner = newmis;
 
 	spawn_tfog(newmis.origin);
-	
-	setmodel (newmis, "progs/grunty.mdl");
-	setsize (newmis, '-16 -16 -24', '16 16 32');
 
 	newmis.skin = self.team_no - 1;
 	
@@ -1024,7 +1027,7 @@ void(entity player, float start) SetArmyTimer =
 		sprint(player,#PRINT_HIGH,"Army HQç Reinforcement soldier will be ready in ",st," minutes\n");
 
 #ifdef ARMY_TEST
-	newmis.nextthink = time + 1; 
+	newmis.nextthink = time + 1;
 #endif
 };
 

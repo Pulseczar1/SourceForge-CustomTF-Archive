@@ -1921,6 +1921,10 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
                 return #TRUE;
             }
         }
+		else if ( !strcasecmp( arg2, "use" ) ) {
+			StartUseObjectVote ();
+			return #TRUE;
+		}
 
         // Unknown vote command
         CmdBadArg("÷ÔÙÂ: Unknown vote command ¢",arg2,"¢ passed in!\nType ¢cmd help vote¢ to see possible commands.\n");
