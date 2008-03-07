@@ -454,6 +454,17 @@ float() HisPunishmentAllowed =
     return #TRUE;
 };
 
+//==============================================================
+// Generic is vote allowed function
+
+float() IsVoteAllowedGeneric = {
+	if ( current_voteent != world ) {
+		CmdMsg( "Already running a vote!\n" );
+		return #FALSE;
+	}
+	return #TRUE;
+};
+
 //===================================================================
 // This is the anti-spam mechanism used for monster name changes
 // Also used for anti-spam on "cheater" commands
@@ -1922,7 +1933,8 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
             }
         }
 		else if ( !strcasecmp( arg2, "use" ) ) {
-			StartUseObjectVote ();
+			if ( IsVoteAllowedGeneric() )
+				StartUseObjectVote ();
 			return #TRUE;
 		}
 
