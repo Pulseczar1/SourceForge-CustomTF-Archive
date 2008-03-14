@@ -1157,29 +1157,6 @@ void() Admin_Check =
 
 
 // Gizmo
-void() Admin_Remove =
-{
-	makevectors (self.v_angle);
-	traceline (self.origin + '0 0 16', (self.origin + '0 0 16') + v_forward * 4096, #TL_BSP_ONLY, self);
-
-	if (trace_ent != world && trace_ent.solid == #SOLID_BSP) {
-		bprint (#PRINT_HIGH, "The admin ", self.netname, " removes part of the map\n");
-
-		sprint (self, #PRINT_HIGH, trace_ent.classname);
-		sprint (self, #PRINT_HIGH, " has been removed\n");
-
-//		remove (trace_ent);
-
-		trace_ent.solid = #SOLID_NOT;
-		trace_ent.movetype = #MOVETYPE_NONE;
-		setmodel (trace_ent, "");
-	} else {
-		sprint (self, #PRINT_HIGH, trace_ent.classname);
-		sprint (self, #PRINT_HIGH, " is not a valid BSP object\n");
-	}
-};
-
-// Gizmo
 float( entity object ) IsValidUseObject;
 string( entity object ) GetUseObjectAction;
 string( entity object ) GetUseObjectName;
