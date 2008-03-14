@@ -183,7 +183,7 @@ float (entity tester, entity test) zg_invalidtarget =
 	if (!unlockedZeroGrav) {
 		if (test.flags & #FL_ITEM)
 			return 3;
-		if (test.flags & #FL_CLIENT)
+		if (test.flags & #FL_CLIENT || test.classname == "player")
 			return #TRUE;
 	}
 
@@ -257,11 +257,18 @@ void () zg_think =
 	if (pickupee == world)
 		remove (self);
 
-	// 10/12/07: if the pickupee's movetype has changed, save it and reset it back to MOVETYPE_FLY, can happen
-	// FIXME: if the object's new movetype is actually set somewhere to MOVETYPE_FLY, there's no way to know it changed, and the old movetype will still be set when dropped instead of fly
-	if (pickupee.movetype != #MOVETYPE_FLY) {
-		pickupee.oldmovetype = pickupee.movetype;
-		pickupee.movetype = #MOVETYPE_FLY;
+	if ( pickupee.classname == "player" ) {
+		if ( pickupee.gravity ) {
+			pickupee.oldmovetype = pickupee.gravity;
+			pickupee.gravity = 0;
+		}
+	} else {
+		// 10/12/07: if the pickupee's movetype has changed, save it and reset it back to MOVETYPE_FLY, can happen
+		// FIXME: if the object's new movetype is actually set somewhere to MOVETYPE_FLY, there's no way to know it changed, and the old movetype will still be set when dropped instead of fly
+		if ( pickupee.movetype != #MOVETYPE_FLY ) {
+			pickupee.oldmovetype = pickupee.movetype;
+			pickupee.movetype = #MOVETYPE_FLY;
+		}
 	}
 
 	// check if the pickuper is dead, FIXME: change if pickuper left
@@ -332,7 +339,12 @@ void (entity pickuper, float toss) zg_drop =
 	}
 
 	pickuper.owner = pickuper._oldowner;
-	pickupee.movetype = pickupee.oldmovetype;
+
+	// players are handled differently
+	if ( pickupee.classname == "player" )
+		pickupee.gravity = pickupee.oldmovetype;
+	else
+		pickupee.movetype = pickupee.oldmovetype;
 
 	pickupee.pickedupby = world;					// *
 
@@ -361,32 +373,18 @@ void (entity pickuper) zg_pickup =
 	if (pickuper.pickedupobject_hands != world)
 		return;
 
-/*
-	// check if there's nothing within reach
-	if (trace_fraction == 1.0 || trace_ent.solid == #SOLID_BSP || trace_ent == world || trace_ent.movetype == #MOVETYPE_NONE) {
-		if (pickuper.flags & #FL_CLIENT)
-			sprint (pickuper, #PRINT_HIGH, "There's nothing there to pickup\n");
-
-		return;
-	}
-*/
-
-	// check if it's too heavy
-	/*
-	if (trace_ent.size_x > 32 || trace_ent.size_y > 32) {
-		if (pickuper.flags & #FL_CLIENT)
-			sprint (pickuper, #PRINT_HIGH, "It's too heavy to lift\n");
-
-		return;
-	}
-	*/
-
 	// setup pickuper and pickupee
 	pickuper._oldowner = pickuper.owner;			// *
 	pickuper.owner = trace_ent;					// *
 
-	trace_ent.oldmovetype = trace_ent.movetype;
-	trace_ent.movetype = #MOVETYPE_FLY;
+	// players are handled differently, since .gravity only works on players
+	if ( trace_ent.classname == "player" ) {
+		trace_ent.oldmovetype = trace_ent.gravity;
+		trace_ent.gravity = 0;
+	} else {
+		trace_ent.oldmovetype = trace_ent.movetype;
+		trace_ent.movetype = #MOVETYPE_FLY;
+	}
 	trace_ent.pickedupby = pickuper;				// * for knowing if it's picked up
 
 	trace_ent.flags = trace_ent.flags - #FL_ONGROUND;	// *
@@ -402,7 +400,7 @@ void (entity pickuper) zg_pickup =
 	thinker = spawn ();
 	thinker.owner = pickuper;
 
-	thinker.nextthink = time + 0.01;			// TODO: raise this?
+	thinker.nextthink = time + 0.01;
 	thinker.think = zg_think;
 
 	pickuper.pickupthink_hands = thinker;
