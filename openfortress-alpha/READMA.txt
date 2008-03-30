@@ -1,0 +1,13 @@
+Open Fortress Test .01
+
+as of now this mod uses content from:
+Quake 3 Fortress
+Enemy Territory Fortress
+Open Arena
+ioQuake3
+
+As of this build I have added nothing besides some quick changes
+to ioq3 to make it load ET(F) maps. This release is for
+TESTING PURPOSES ONLY and should not be considered final, beta,
+alpha, or any release candidate.
+~ XavioR (avirox38@hotmail.com)
