@@ -1,2 +1,0 @@
-ioq3 1.35 win_msvc-x86 Mar 30 2008
------ FS_Startup -----
