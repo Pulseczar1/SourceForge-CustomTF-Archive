@@ -1403,6 +1403,17 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 			Admin_Use ();
 			return #TRUE;
 		}
+
+#ifdef COOP_MODE_ENHANCED
+		else if ( !strcasecmp( arg2, "spawn" ) ) {
+			if ( num_args < 3 ) {
+				sprint( self, #PRINT_HIGH, "You must specify a monster classname!\n" );
+				return #TRUE;
+			}
+			Admin_Spawn( arg3 );
+			return #TRUE;
+		}
+#endif
         }
 
         // non-valid admin command 

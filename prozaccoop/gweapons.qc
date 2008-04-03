@@ -272,8 +272,10 @@ void () zg_think =
 	}
 
 	// check if the pickuper is dead, FIXME: change if pickuper left
-	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "" || !pickuper.is_connected)	// *
+	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "" || !pickuper.is_connected) {	// *
 		zg_drop (pickuper, #FALSE);
+		return;
+	}
 
 	makevectors (pickuper.v_angle);
 

@@ -8,6 +8,9 @@
 #define enemy_damage_dealt			volume			// total amount of damage done to enemies only
 #define damage_taken				distance			// player that took the most amount of damage from enemies
 
+// grunt.qc
+#define allowed_weapons				wait				// weapons the grunt can use
+
 // prototypes
 float (entity ent) InSolid;
 
@@ -89,3 +92,91 @@ float(entity e, float dist, float nodrop) qc_droptofloor =
 	self = oself;
 	return #FALSE;
 };
+
+
+#ifdef NEVER_DEFINED
+/*
+	precache_sound - prevents precache_*** overflow crashes
+*/
+
+float precached_sounds;
+
+string( string s ) precache_sound = {
+	local string mp;
+
+	// check if it's already precached
+	mp = infokey( world, s );
+	if ( mp == "1" )
+		return;
+
+	if ( precached_sounds + 1 > 256 ) {
+		dprint( "WARNING: precache_sound: attempted to precache more than 256 sounds\n" );
+		return "";
+	}
+
+	localcmd( "localinfo \"" );
+	localcmd( s );
+	localcmd( "\" 1\n" );
+
+	precached_sounds = precached_sounds + 1;
+
+	precache_sound_C( s );
+	return s;
+};
+
+
+/*
+	precache_model
+*/
+
+float precached_models;
+
+string( string s ) precache_model = {
+	local string mp;
+
+	// check if it's already precached
+	mp = infokey( world, s );
+	if ( mp == "1" )
+		return;
+
+	if ( precached_models + 1 > 256 ) {
+		dprint( "WARNING: precache_model: attempted to precache more than 256 models\n" );
+		return "";
+	}
+
+	localcmd( "localinfo \"" );
+	localcmd( s );
+	localcmd( "\" 1\n" );
+
+	precached_models = precached_models + 1;
+
+	precache_model_C( s );
+	return s;
+};
+
+
+/*
+	setmodel
+*/
+
+void( entity e, string m ) setmodel = {
+	local string s;
+
+	if ( m == "" ) {
+		setmodel_C( e, m );
+		return;
+	}
+
+	s = infokey( world, m );
+
+	if ( s != "1" ) {
+		dprint( "WARNING: setmodel: " );
+		dprint( m );
+		dprint( " not precached\n" );
+		setmodel_C( e, "progs/player.mdl" );
+		return;
+	}
+
+	setmodel_C( e, m );
+};
+#endif

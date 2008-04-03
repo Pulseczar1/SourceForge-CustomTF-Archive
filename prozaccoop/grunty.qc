@@ -818,6 +818,121 @@ void() GruntyScanTargets =
 	}
 };
 
+// Gizmo
+float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon = {
+	if ( dist < 64 ) {
+		if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE && bot.cutf_items & #CUTF_KNIFE )
+			return #WEAP_AXE;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE )
+			return #WEAP_AXE;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+
+		// at this range we try them all
+		return 0;
+	} else if ( dist < 200 ) {
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+	} else if ( dist < 400 ) {
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+	} else if ( dist < 1100 ) {
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	} else if ( dist < 1400 ) {
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 && random() > 0.75 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	} else if ( dist < 2000 ) {
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 && random() > 0.98 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	} else {
+		local float r;
+
+		// at this extreme range randomly switch between weapons
+		r = random();
+
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 && r < 0.33 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 && r < 0.66 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		// not going to be very effective (if at all), but use it as a last resort
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	}
+
+	// all we can use is an axe, oh well, it'll look funny
+	if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE )
+		return #WEAP_AXE;
+	return 0;
+};
+
+
 void() GruntyCheckFire =
 {
 	local float dist, vis, allowedweaps;
@@ -865,31 +980,13 @@ void() GruntyCheckFire =
 	dist = vlen(self.origin - self.enemy.origin);
 	self.weaponframe = 0;
 
-	// Gizmo - added static range for just which range of weapons to use
-	// TODO: later on make him obey the static range physically
-	if (self.is_malfunctioning == 2 && self.delay_time) {
-		// ignore actual dist, we're forcing the weapons on
-		if (self.delay_time == 1) {
-			if (dist >= 400)
-				dist = 399;
-			allowedweaps = #WEAP_AXE | #WEAP_SUPER_SHOTGUN | #WEAP_SHOTGUN;
-		} else if (self.delay_time == 2) {
-			if (self.weapons_carried & #WEAP_ROCKET_LAUNCHER) {
-				if (dist >= 1100)
-					dist = 1099;
-			} else {
-				if (dist >= 400)
-					dist = 399;
-			}
-			allowedweaps = #WEAP_SUPER_SHOTGUN | #WEAP_SHOTGUN | #WEAP_ROCKET_LAUNCHER;
-//		} else if (self.delay_time == 3) {
-		} else {
-			allowedweaps = #WEAP_NAILGUN | #WEAP_ROCKET_LAUNCHER;
-		}
-	} else
-		allowedweaps = #WEAP_AXE | #WEAP_SHOTGUN | #WEAP_SUPER_SHOTGUN | #WEAP_NAILGUN | #WEAP_ROCKET_LAUNCHER;
+	// Gizmo - grunty can be limited on his weapon's use (defaults to all weapons allowed)
+	allowedweaps = self.#allowed_weapons;
 
+	if ( !allowedweaps )
+		return;
 
+#ifdef NEVER_DEFINED
 	if (dist < 64 && self.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE && self.cutf_items & #CUTF_KNIFE)
 	{
 		self.current_weapon = #WEAP_AXE;
@@ -1013,12 +1110,71 @@ void() GruntyCheckFire =
 		#endif	
 //		  RPrint("NONE\n");
 	}
+#endif
+
+	allowedweaps = GruntyPickBestWeapon( self, allowedweaps, dist );
+	if ( allowedweaps == #WEAP_AXE ) {
+		self.current_weapon = #WEAP_AXE;
+		Attack_Finished(0.5);
+		if (self.health > 0) self.think = grunty_axeatt;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to axe/knife...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_SHOTGUN ) {
+		self.current_weapon = #WEAP_SHOTGUN;
+		Attack_Finished(0.5);
+		W_FireShotgun();
+		if (self.health > 0) self.think = grunty_shotgun;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to shotgun...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_SUPER_SHOTGUN ) {
+		self.current_weapon = #WEAP_SUPER_SHOTGUN;
+		Attack_Finished(0.7);
+		W_FireSuperShotgun();
+		if (self.health > 0) self.think = grunty_shotgun;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to super shotgun...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_ROCKET_LAUNCHER ) {
+		self.current_weapon = #WEAP_ROCKET_LAUNCHER;
+		Attack_Finished(0.8);
+		W_FireRocket();
+		if (self.health > 0) self.think = grunty_rocket;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to rocket...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_NAILGUN ) {
+		self.current_weapon = #WEAP_NAILGUN;
+		Attack_Finished(0.2);
+		if (self.health > 0) self.think = grunty_nail1;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to nail...\n");
+		#endif
+		return;
+	}
+
+	// nothing to shoot
+	self.effects = self.effects - (self.effects & #EF_DIMLIGHT);
+	if (self.health > 0) self.think = grunty_run;
+	#ifdef VERBOSE_GRUNTY
+	sprint(self.real_owner, #PRINT_HIGH, "GruntyCheckFire defaulting to none...\n");
+	#endif	
 };
 
 void() GRun =
 {
-	local float dist;
-	local vector loc;
+	local float		dist;
+	local vector	loc;
+	local float		r;
 
 	// ok, we're trying to get somewhere
 	// first look at where we are trying to go
@@ -1100,36 +1256,60 @@ void() GRun =
 		}
 
 		botmovedist(vectoyaw(v_forward), dist); // move
-		if (random() * 20 < 1 && self.enemy != world)				// if we get a score
-		{															// of one on a d20,
-			local float r;											// special
-			r = random();
-			if (r < 0.25)
-				self.has_teleporter = -1; // left
-			else if (r < 0.5)
-				self.has_teleporter = 1; // right
-			else if (r < 0.75)
-				self.has_teleporter = 2; // jump!
-			else
-				self.has_teleporter = 3; // italian style!
+
+		// Gizmo - modified this for static range
+		if ( self.enemy != world ) {
+			// check if static range is set and we need to stay within range
+			if ( self.is_malfunctioning == 2 && self.delay_time ) {
+				r = vlen( self.enemy.origin - self.origin );
+
+				if ( self.delay_time == 1 ) {
+					if ( r >= 200 ) {
+						self.has_teleporter = 0;
+						return;
+					}
+				} else if ( self.delay_time == 2 ) {
+					if ( r >= 1100 ) {
+						self.has_teleporter = 0;
+						return;
+					} else if ( r < 400 ) {
+						self.has_teleporter = 3;
+						return;
+					}
+				} else if ( self.delay_time == 3 ) {
+					if ( r < 800 ) {
+						self.has_teleporter = 3;
+						return;
+					}
+				}
+			}
+			if (random() * 20 < 1 ) {					// if we get a score of one on a d20, special
+				r = random();
+				if (r < 0.25)
+					self.has_teleporter = -1; // left
+				else if (r < 0.5)
+					self.has_teleporter = 1; // right
+				else if (r < 0.75)
+					self.has_teleporter = 2; // jump!
+				else
+					self.has_teleporter = 3; // italian style!
+			}
 		}
 	}
 };
 
 void (float angle, float dist) botmovedist =
-{ 
-	
+{
 	local float success;
-//	local float suitable;
-	
+
 	//- OfN - Don't annoy owner if following him! heh
 	#ifndef MAD_GRUNTY
 	if (self.goalentity==self.real_owner) //if in "follow me!" state...
 	{			
 		local float dist2;
-	
+
 		dist2 = vlen(self.origin - self.real_owner.origin);
-	
+
 		if (dist2<64)
 		{
 			stand_frames();
@@ -1157,14 +1337,25 @@ void (float angle, float dist) botmovedist =
 				self.has_cheated = time + 0.5;
 				if (self.attack_finished < time) stand_frames();
 
-			// Gizmo - let owner know he's blocked
-			if (!self.enemy && self.super_time < time) {
-				PrintFromSoldier(self, self.real_owner, "Hey! I'm trapped over here!\n", #PRINT_MEDIUM);
-				self.super_time = time + 10;
-			}
+				// Gizmo - let owner know he's blocked
+				if (!self.enemy && self.super_time < time) {
+					PrintFromSoldier(self, self.real_owner, "Hey! I'm trapped over here!\n", #PRINT_MEDIUM);
+					self.super_time = time + 10;
+				}
 				return;
 			}
-			
+
+			// Gizmo - let him accelerate in the air, he always instantly goes to 30 though if lower than that
+			if ( !( self.flags & #FL_ONGROUND ) && self.velocity_z < 40 && self.velocity_z > -10 ) {
+				local float addspeed;
+
+				// v_forward is the desired direction
+				makevectors( self.angles );
+				addspeed = 30 - self.velocity * v_forward;
+				if ( addspeed > 0 )
+					self.velocity = self.velocity + addspeed * v_forward;
+			}
+
 			if (self.has_cheated > time)
 				return;
 			self.has_teleporter = 0; // abort dodging

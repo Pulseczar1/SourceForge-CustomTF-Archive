@@ -21,6 +21,8 @@ entity() GetQueEntry;
 
 void() main =
 {
+// Gizmo - commented this out since it is unneeded
+/*
 	dprint ("main function\n");
 	
 // these are just commands the the prog compiler to copy these files
@@ -169,6 +171,7 @@ void() main =
 	precache_file2 ("maps/dm4.bsp");
 	precache_file2 ("maps/dm5.bsp");
 	precache_file2 ("maps/dm6.bsp");
+*/
 };
 
 

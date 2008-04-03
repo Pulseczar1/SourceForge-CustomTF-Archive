@@ -11,6 +11,8 @@ Defines for the compilable options within TF.
 #define COOP_MODE_ENHANCED	// Gizmo - the new coop mode
 #define MIRV_VELOCITY		// Gizmo - enables the spamlets of mirvs to take on the original mirv's velocity
 #define EOG_BESTTEAMKILLER	// Gizmo - enables the reporting of the best team killer at the end of the game
+//#define CLASSIC_PROZAC	// Gizmo - classic prozac compilation: ZGG disabled, stock classes, etc. are what they should be for classic
+					// but a few minor things like vote code, bug fixes, end of game awards, no stock sniper caltrops, etc. are not the same
 #define NET_SERVER
 //#define BOTS			// doesn't do anything yet
 //#define DEMO_STUFF

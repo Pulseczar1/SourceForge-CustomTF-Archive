@@ -1295,6 +1295,29 @@ void() TeamFortress_FinishedBuilding =
 		}
 		oldself.has_teleporter = 0; //CH for frag related upgrades
 		if (!(self.weapons_carried & #WEAP_SPANNER)) { //No spanner
+#ifndef CLASSIC_PROZAC
+			// Gizmo - make use of the upgrade if you have no spanner
+			if ( self.tf_items & #NIT_TESLA_UPGRADE ) {
+				// building an upgraded prefab tesla uses all cells
+				self.ammo_cells = 0;
+
+				oldself.ammo_shells = 2;
+				oldself.ammo_nails = 2;
+				oldself.ammo_rockets = 2;
+				oldself.has_sentry = oldself.has_sentry - 6;
+				oldself.max_health = 325;
+				oldself.ammo_cells = #MAXCELLS2; //Initial ammo allocation
+				oldself.maxammo_cells = #MAXCELLS2;
+			} else {
+				oldself.ammo_shells = 1;
+				oldself.ammo_nails = 2;
+				oldself.ammo_rockets = 1;
+				oldself.has_sentry = oldself.has_sentry - 4; //Take away 3
+				oldself.max_health = 225;
+				oldself.ammo_cells = #MAXCELLS1; //Initial ammo allocation
+				oldself.maxammo_cells = #MAXCELLS1;
+			}
+#else
 			oldself.ammo_shells = 1;
 			oldself.ammo_nails = 2;
 			oldself.ammo_rockets = 1;
@@ -1302,6 +1325,7 @@ void() TeamFortress_FinishedBuilding =
 			oldself.max_health = 225;
 			oldself.ammo_cells = #MAXCELLS1; //Initial ammo allocation
 			oldself.maxammo_cells = #MAXCELLS1;
+#endif
 		}
 		oldself.health = oldself.max_health;
 		oldself.waitmin = (oldself.ammo_shells + 2) * (oldself.ammo_nails + 2);

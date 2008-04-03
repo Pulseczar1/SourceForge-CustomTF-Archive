@@ -46,7 +46,8 @@
 #define VOTESNEEDED_CUFF	0.5
 #define VOTESNEEDED_BAN 	0.5
 #define VOTESNEEDED_MAP 	0.5
-#define VOTESNEEDED_NEXTMAP 0.5
+#define VOTESNEEDED_NEXTMAP	0.5
+#define VOTESNEEDED_USE		0.5
 
 //#define BAN_VOTED_TIME		0 // permanent ban
 #define BAN_VOTED_TIME		 60 // 60 minutes
@@ -1181,19 +1182,18 @@ void() ResetClientsMenu =
 	Gizmo - added this function to check if votes have passed
 */
 
-float (float numFor, float numAgainst) VotePassed =
-{
+float( float numFor, float numAgainst, float fraction ) VotePassed = {
 //	bprint (#PRINT_HIGH, ftos(numAgainst));
 //	bprint (#PRINT_HIGH, "<against> + ((", ftos(num_players - (numFor + numAgainst)), ") / 2) == ");
 
-	// divide the players that didn't vote by 2 then add that to the number of against voters
+	// get the number of players that didn't vote, and count them as half a voteno
 	// FIXME: spectators
-	if (num_players - (numFor + numAgainst) > 0)
-		numAgainst = numAgainst + ((num_players - (numFor + numAgainst)) / 2);
+	if ( num_players - ( numFor + numAgainst ) > 0 )
+		numAgainst = numAgainst + ( ( num_players - ( numFor + numAgainst ) ) * fraction );
 
 //	bprint (#PRINT_HIGH, ftos(numAgainst), "\n");
 
-	if (numFor > numAgainst)
+	if ( numFor > numAgainst )
 		return #TRUE;
 
 	return #FALSE;
@@ -1273,7 +1273,8 @@ float(float final) CheckVoting =
 		
 		if (current_voteent.g_a == #PUNISH_CURSE) // Curse
 		{
-			if (num_for > num_total * #VOTESNEEDED_CURSE) // success?
+//			if (num_for > num_total * #VOTESNEEDED_CURSE) // success?
+			if ( VotePassed( num_for, num_against, #VOTESNEEDED_CURSE ) )
 			{
 				local float tf;
 				
@@ -1295,7 +1296,8 @@ float(float final) CheckVoting =
 
 				return #TRUE;
 			}
-			else if (num_against >= num_total * (1 - #VOTESNEEDED_CURSE))
+//			else if (num_against >= num_total * (1 - #VOTESNEEDED_CURSE))
+			else
 			{
 				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
 				bprintVoteIssue();
@@ -1308,7 +1310,8 @@ float(float final) CheckVoting =
 		}
 		else if (current_voteent.g_a == #PUNISH_KICK) // Kick
 		{
-			if (num_for > num_total * #VOTESNEEDED_KICK) // success?
+//			if (num_for > num_total * #VOTESNEEDED_KICK) // success?
+			if ( VotePassed( num_for, num_against, #VOTESNEEDED_KICK ) )
 			{
 				bprint(#PRINT_HIGH,"Votingç Democracy says ");
 				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
@@ -1327,7 +1330,8 @@ float(float final) CheckVoting =
 
 				return #TRUE;
 			}
-			else if (num_against >= num_total * (1 - #VOTESNEEDED_KICK))
+//			else if (num_against >= num_total * (1 - #VOTESNEEDED_KICK))
+			else
 			{
 				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
 				bprintVoteIssue();
@@ -1340,7 +1344,8 @@ float(float final) CheckVoting =
 		}
 		else if (current_voteent.g_a == #PUNISH_BAN) // Ban!
 		{
-			if (num_for > num_total * #VOTESNEEDED_BAN) // success?
+//			if (num_for > num_total * #VOTESNEEDED_BAN) // success?
+			if ( VotePassed( num_for, num_against, #VOTESNEEDED_BAN ) )
 			{
 				bprint(#PRINT_HIGH,"Votingç Democracy says ");
 
@@ -1384,7 +1389,8 @@ float(float final) CheckVoting =
 
 				return #TRUE;
 			}
-			else if (num_against >= num_total * (1 - #VOTESNEEDED_BAN))
+//			else if (num_against >= num_total * (1 - #VOTESNEEDED_BAN))
+			else
 			{
 				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
 				bprintVoteIssue();
@@ -1397,7 +1403,8 @@ float(float final) CheckVoting =
 		}
 		else if (current_voteent.g_a == #PUNISH_MUTE) // Mute
 		{
-			if (num_for > num_total * #VOTESNEEDED_MUTE) // success?  
+//			if (num_for > num_total * #VOTESNEEDED_MUTE) // success?
+			if ( VotePassed( num_for, num_against, #VOTESNEEDED_MUTE ) )
 			{
 				bprint(#PRINT_HIGH,"Votingç Democracy says ");
 				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
@@ -1422,7 +1429,8 @@ float(float final) CheckVoting =
 
 				return #TRUE;
 			}
-			else if (num_against >= num_total * (1 - #VOTESNEEDED_MUTE))
+//			else if (num_against >= num_total * (1 - #VOTESNEEDED_MUTE))
+			else
 			{
 				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
 				bprintVoteIssue();
@@ -1435,7 +1443,8 @@ float(float final) CheckVoting =
 		}		 
 		else if (current_voteent.g_a == #PUNISH_CUFF) // Cuff
 		{
-			if (num_for > num_total * #VOTESNEEDED_CUFF) // success?  
+//			if (num_for > num_total * #VOTESNEEDED_CUFF) // success?  
+			if ( VotePassed( num_for, num_against, #VOTESNEEDED_CUFF ) )
 			{
 				bprint(#PRINT_HIGH,"Votingç Democracy says ");
 				bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
@@ -1460,7 +1469,8 @@ float(float final) CheckVoting =
 
 				return #TRUE;
 			}
-			else if (num_against >= num_total * (1 - #VOTESNEEDED_CUFF))
+//			else if (num_against >= num_total * (1 - #VOTESNEEDED_CUFF))
+			else
 			{
 				bprint(#PRINT_HIGH,"Votingç Punishment vote has failed");
 				bprintVoteIssue();
@@ -1475,7 +1485,7 @@ float(float final) CheckVoting =
 	else if (current_voteent.has_sentry == #VOTE_NEXTMAP)
 	{
 //		if (num_for > num_total * #VOTESNEEDED_NEXTMAP) // success?
-		if (VotePassed(num_for, num_against))
+		if ( VotePassed( num_for, num_against, #VOTESNEEDED_NEXTMAP ) )
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
 			
@@ -1508,7 +1518,7 @@ float(float final) CheckVoting =
 	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
 	{
 //		if (num_for > num_total * #VOTESNEEDED_MAP) // success?
-		if (VotePassed(num_for, num_against))
+		if ( VotePassed( num_for, num_against, #VOTESNEEDED_MAP ) )
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
 
@@ -1539,7 +1549,8 @@ float(float final) CheckVoting =
 	// PZ - begin AGR code
 	else if (current_voteent.has_sentry == #VOTE_NEXTMAP_AGR) 
 	{
-		if (num_for > num_total * #VOTESNEEDED_NEXTMAP) // success?
+//		if (num_for > num_total * #VOTESNEEDED_NEXTMAP) // success?
+		if ( VotePassed( num_for, num_against, #VOTESNEEDED_NEXTMAP ) )
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
 			
@@ -1557,7 +1568,8 @@ float(float final) CheckVoting =
 
 			return #TRUE;
 		}
-		else if (num_against >= num_total * (1 - #VOTESNEEDED_NEXTMAP))
+//		else if (num_against >= num_total * (1 - #VOTESNEEDED_NEXTMAP))
+		else
 		{
 			bprint(#PRINT_HIGH,"Votingç Map voting failed");
 			bprintVoteIssue();
@@ -1570,7 +1582,8 @@ float(float final) CheckVoting =
 	}
 	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR)
 	{
-		if (num_for > num_total * #VOTESNEEDED_MAP) // success?
+//		if (num_for > num_total * #VOTESNEEDED_MAP) // success?
+		if ( VotePassed( num_for, num_against, #VOTESNEEDED_MAP ) )
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
 
@@ -1586,7 +1599,8 @@ float(float final) CheckVoting =
 
 			return #TRUE;
 		}
-		else if (num_against >= num_total * (1 - #VOTESNEEDED_MAP))
+//		else if (num_against >= num_total * (1 - #VOTESNEEDED_MAP))
+		else
 		{
 			bprint(#PRINT_HIGH,"Votingç Map voting failed");
 			bprintVoteIssue();
@@ -1602,7 +1616,7 @@ float(float final) CheckVoting =
 	else if ( current_voteent.has_sentry == #VOTE_USEOBJECT ) {
 		local string objectAction;
 
-		if ( VotePassed( num_for, num_against ) ) {
+		if ( VotePassed( num_for, num_against, #VOTESNEEDED_USE ) ) {
 			st = GetUseObjectName( current_voteent.enemy );
 			objectAction = GetUseObjectAction( current_voteent.enemy );
 			bprint( #PRINT_HIGH, "Votingç Success° ", st, " will now ", objectAction, "\n" );

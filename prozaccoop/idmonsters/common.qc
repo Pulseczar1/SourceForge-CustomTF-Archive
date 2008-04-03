@@ -656,17 +656,19 @@ void () COOP_SetLives =
 {
 	local string temp;
 
-/*
-	// already set, return
-	if (self.lives)
+	// if the map already has this set, return
+	// a respawning monster will ingore any changes made to .lives
+	if ( self.lives ) {
+		// subtract one for the initial life
+		self.lives = self.lives - 1;
 		return;
-*/
+	}
 
-	temp = infokey (world, "monster_lives");
-	self.lives = stof (temp);
+	temp = infokey( world, "monster_lives" );
+	self.lives = stof( temp );
 
 	// set default if none set already
-	if (!self.lives)
+	if ( !self.lives )
 		self.lives = 3;
 
 	// subtract one for the initial life
