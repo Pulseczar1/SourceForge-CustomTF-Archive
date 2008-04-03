@@ -82,6 +82,7 @@ void() JobArmy =
 
 void(entity soul, float currentsoul) Menu_Army1;
 void(entity soul, float currentsoul) Menu_Army2;
+void(entity soul, float currentsoul) Menu_Army3;
 
 void() Menu_Army =
 {
@@ -94,9 +95,11 @@ void() Menu_Army =
 	if (soul)
 	{
 		if (soul.is_haxxxoring == 1) 
-			Menu_Army2(soul, currentsoul); // tactical menu
+			Menu_Army2(soul, currentsoul);		// tactical menu
+		else if ( soul.is_haxxxoring == 2 )
+			Menu_Army3( soul, currentsoul );	// allowed weapons menu
 		else 
-			Menu_Army1(soul, currentsoul); // normal soldier menu
+			Menu_Army1(soul, currentsoul);		// normal soldier menu
 	}
 	else 
 		Menu_Army1(soul, currentsoul); // army tele menu
@@ -196,6 +199,10 @@ void(entity soul, float currentsoul) Menu_Army1 =
 		
 		if (!extras)
 		{
+			// Gizmo - does this fix the bug where it says in-use/ready for reserve when you don't have reserve?
+			// if ( self.delay_time > 0 )
+			if ( self.delay_time != -1 && self.delay_time != #FALSE )
+				self.delay_time = currentsoul + 1;
 			st3 = "ֱדפיןמ:                  \n\n";
 			st4 = ".. ־ןפטימח               \n\n";
 		}
@@ -418,24 +425,24 @@ void(entity soul, float currentsoul) Menu_Army2 =
 	if (!extras)
 	{
 		if (soul.all_active==0)
-			st6=".. ׂונןעפף:        all   \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        all   \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 		else if (soul.all_active==1) 
-			st6=".. ׂונןעפף:        most  \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        most  \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 		else if (soul.all_active==2) 
-			st6=".. ׂונןעפף:        some  \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        some  \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 		else if (soul.all_active==3) 
-			st6=".. ׂונןעפף:        none  \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        none  \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. Inventory             \n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 	}
 	else
 	{
 		if (soul.all_active==0)
-			st6=".. ׂונןעפף:        all   \n\n.. Back to standard menu \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        all   \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 		else if (soul.all_active==1) 
-			st6=".. ׂונןעפף:        most  \n\n.. Back to standard menu \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        most  \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 		else if (soul.all_active==2) 
-			st6=".. ׂונןעפף:        some  \n\n.. Back to standard menu \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        some  \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 		else if (soul.all_active==3) 
-			st6=".. ׂונןעפף:        none  \n\n.. Back to standard menu \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
+			st6=".. ׂונןעפף:        none  \n\n.. Back to standard menu \n\n.. Allowed Weapons       \n\n.. ׂוףועצו  .. Inventory\n\n.. ־ןפטימח               \n\nֽבר ָ׀: ";
 	}
 									 
 	st7=ftos(floor(soul.max_health));
@@ -446,8 +453,41 @@ void(entity soul, float currentsoul) Menu_Army2 =
 	CenterPrint7(self,st,st2,st3,st4,st5,st6,st7);
 };
 
+void( entity soul, float currentsoul ) Menu_Army3 = {
+	local string st1, st2, st3, st4, st5;
+
+	if ( soul == world ) {
+		ResetMenu ();
+		return;
+	}
+
+	if ( soul.#allowed_weapons & #WEAP_AXE )
+		st1 = "#CHAR_BOUGHT “.. Axe                  \n";
+	else
+		st1 = "  “.. Axe                  \n";
+	if ( soul.#allowed_weapons & #WEAP_SHOTGUN )
+		st2 = "#CHAR_BOUGHT ”.. Shotgun              \n";
+	else
+		st2 = "  ”.. Shotgun              \n";
+	if ( soul.#allowed_weapons & #WEAP_SUPER_SHOTGUN )
+		st3 = "#CHAR_BOUGHT •.. Super Shotgun        \n";
+	else
+		st3 = "  •.. Super Shotgun        \n";
+	if ( soul.#allowed_weapons & #WEAP_NAILGUN )
+		st4 = "#CHAR_BOUGHT –.. Nailgun              \n";
+	else
+		st4 = "  –.. Nailgun              \n";
+	if ( soul.#allowed_weapons & #WEAP_ROCKET_LAUNCHER )
+		st5 = "#CHAR_BOUGHT —.. Rocket Launcher      \n\n";
+	else
+		st5 = "  —.. Rocket Launcher      \n\n";
+
+	CenterPrint7( self, " ֱללןקוה ׳ובנןמף \n\n", st1, st2, st3, st4, st5, "  ’.. Back to tactical menu" );
+};
+
 void(float inp, entity soul, float currentsoul) Menu_Army_Input1;
 void(float inp, entity soul, float currentsoul) Menu_Army_Input2;
+void(float inp, entity soul, float currentsoul) Menu_Army_Input3;
 
 void(float inp) Menu_Army_Input =
 {
@@ -461,11 +501,80 @@ void(float inp) Menu_Army_Input =
 	{
 		if (soul.is_haxxxoring == 1) 
 			Menu_Army_Input2(inp, soul, currentsoul);
+		else if ( soul.is_haxxxoring == 2 )
+			Menu_Army_Input3( inp, soul, currentsoul );
 		else 
 			Menu_Army_Input1(inp, soul, currentsoul);		 
 	}
 	else 
 		Menu_Army_Input1(inp, soul, currentsoul);
+};
+
+void( float inp, entity soul, float currentsoul ) Menu_Army_Input3 = {
+	if ( soul == world ) {
+		ResetMenu ();
+		self.impulse = 0;
+		return;
+	}
+
+	if ( inp == 1 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_AXE )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_AXE;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_AXE;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 2 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_SHOTGUN )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_SHOTGUN;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_SHOTGUN;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 3 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_SUPER_SHOTGUN )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_SUPER_SHOTGUN;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_SUPER_SHOTGUN;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 4 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_NAILGUN )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_NAILGUN;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_NAILGUN;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 5 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_ROCKET_LAUNCHER )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_ROCKET_LAUNCHER;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_ROCKET_LAUNCHER;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+
+	if ( inp == 10 ) {
+		self.impulse = 0;
+		soul.is_haxxxoring = 1;
+		Menu_Army2( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
 };
 
 void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
@@ -587,6 +696,15 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 		return;
 	}
 
+	// Gizmo - allowed weapons
+	if ( inp == 8 ) {
+		self.impulse = 0;
+		soul.is_haxxxoring = 2;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+
 	if (inp == 9) // Army info
 	{
 		ResetMenu();
@@ -598,7 +716,6 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 		self.impulse = 0;
 		return;
 	}
-
 };
 
 void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
@@ -859,6 +976,7 @@ float(float slot) TeleSoldier =
 	v_forward = normalize(v_forward) * 64;
 
 	newmis = spawn();
+	newmis.#allowed_weapons = #WEAP_AXE | #WEAP_SHOTGUN | #WEAP_SUPER_SHOTGUN | #WEAP_NAILGUN | #WEAP_ROCKET_LAUNCHER;
 	newmis.owner = newmis; //WK Self
 	newmis.real_owner = self;
 	

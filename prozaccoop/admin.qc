@@ -1180,3 +1180,80 @@ void() Admin_Use =
 	bprint( #PRINT_HIGH, "The admin ", self.netname, " forces a ", objectName, " to ", objectAction, "\n" );
 	UseObject( trace_ent );
 };
+
+
+//==================================================
+
+
+#ifdef COOP_MODE_ENHANCED
+void() monster_zombie;
+void() monster_shambler;
+void() monster_knight;
+void() monster_enforcer;
+void() monster_demon1;
+void() monster_army;
+void() monster_ogre;
+void() monster_shalrath;
+void() monster_wizard;
+void() monster_dog;
+void() monster_fish;
+void() monster_hell_knight;
+void() monster_tarbaby;
+
+void( string monster_classname ) Admin_Spawn = {
+	local entity e, oldself;
+	local vector vec;
+
+	vec = self.v_angle;
+	vec_z = 0;
+	makevectors( vec );
+	traceline( self.origin + '0 0 16', ( self.origin + '0 0 16' ) + v_forward * 128, #TL_ANY_SOLID, self );
+
+	e = spawn();
+	setorigin( e, trace_endpos );
+
+	oldself = self;
+	self = e;
+	if ( monster_classname == "monster_zombie" )
+		monster_zombie ();
+	else if ( monster_classname == "monster_shambler" )
+		monster_shambler ();
+	else if ( monster_classname == "monster_knight" )
+		monster_knight ();
+	else if ( monster_classname == "monster_enforcer" )
+		monster_enforcer ();
+	else if ( monster_classname == "monster_demon1" )
+		monster_demon1 ();
+	else if ( monster_classname == "monster_army" )
+		monster_army ();
+	else if ( monster_classname == "monster_ogre" )
+		monster_ogre ();
+	else if ( monster_classname == "monster_shalrath" )
+		monster_shalrath ();
+	else if ( monster_classname == "monster_wizard" )
+		monster_wizard ();
+	else if ( monster_classname == "monster_dog" )
+		monster_dog ();
+	else if ( monster_classname == "monster_fish" )
+		monster_fish ();
+	else if ( monster_classname == "monster_hell_knight" )
+		monster_hell_knight ();
+	else if ( monster_classname == "monster_tarbaby" )
+		monster_tarbaby ();
+	else {
+		self = oldself;
+		remove( e );
+		sprint( self, #PRINT_HIGH, "Unknown monster classname\n" );
+		return;
+	}
+	self = oldself;
+
+	e.lives = 0;
+
+	if ( InSolid( e ) ) {
+		remove( e );
+		sprint( self, #PRINT_HIGH, "Monster spawn position not valid!\n" );
+		return;
+	}
+};
+#endif
