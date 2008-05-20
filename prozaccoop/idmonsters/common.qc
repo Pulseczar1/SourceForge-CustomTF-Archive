@@ -200,14 +200,14 @@ entity( float t ) COOP_GetTeamList = {
 	local entity cur;
 
 	cur = npc_teamLists;
-	while ( !Teammate( cur.team_no, t ) ) {
-		if ( cur.npc_nextTeamList == world )
-			return world;
+	while ( cur ) {
+		if ( Teammate( cur.team_no, t ) )
+			return cur;
 
 		cur = cur.npc_nextTeamList;
 	}
 
-	return cur;
+	return world;
 };
 
 void( entity list ) COOP_AddTeamList = {
