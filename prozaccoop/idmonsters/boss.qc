@@ -282,7 +282,8 @@ void() monster_boss =
 	// these really aren't needed...
 	self.monsterweight = #MWEIGHT_HUGE;
 
-	self.team_no = #TEAMNO_MONSTERS;
+	if ( !self.team_no )
+		self.team_no = #TEAMNO_MONSTERS;
 	self.#monsterflag = #STRFLAG_MONSTER;
 
 	self.is_connected = #TRUE;

@@ -174,11 +174,18 @@ void(entity soul, float currentsoul) Menu_Army1 =
 			st4="\n.. Follow me΅            \n* .. Stay there΅             \n.. Use your waypoints΅   ";
 		else if (soul.penance_time==3)
 			st4="\n.. Follow me΅            \n.. Stay there΅           \n* .. Use your waypoints΅     ";
-		
+
+#ifndef NO_GRUNTY_EMERGENCY_TELE
+		if (!extras)
+			st5 = "\n\n.. Ταγτιγαμ              \n\n®® Detonate soldier brain\n\n.. Emergency teleport    \n\n.. Ξοτθιξη               \n";
+		else
+			st5 = "\n\n.. Ταγτιγαμ   .. Òεσεςφε\n\n®® Detonate soldier brain\n\n.. Emergency teleport    \n\n.. Ξοτθιξη               \n";
+#else
 		if (!extras)
 			st5 = "\n\n.. Ταγτιγαμ              \n\n®® Detonate soldier brain\n\n.. Ξοτθιξη               \n";
 		else
 			st5 = "\n\n.. Ταγτιγαμ   .. Òεσεςφε\n\n®® Detonate soldier brain\n\n.. Ξοτθιξη               \n";
+#endif
 
 		CenterPrint7(self, soul.undercover_name, soul.netname,"\n\n", st2, st3,st4,st5);			 
 		return;
@@ -966,6 +973,44 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 		CuTFMenuSound(#MENUSOUND_BROWSE);
 		return;
 	}
+#ifndef NO_GRUNTY_EMERGENCY_TELE
+	// Gizmo
+	else if ( inp == 9 ) {
+		ResetMenu();
+		self.impulse = 0;
+
+		if ( GetArmyTimer( self ) == world ) {
+			local vector oldorg;
+
+			makevectors( self.v_angle );
+			v_forward_z = 0;
+			v_forward = normalize( v_forward );
+
+			oldorg = soul.origin;
+			setorigin( soul, self.origin + v_forward * 64 );
+
+			soul.owner = self;
+			if ( !CheckArea( soul, self ) ) {
+				sprint( self, #PRINT_HIGH, "Not enough room to teleport soldier!\n" );
+				setorigin( soul, oldorg );
+				soul.owner = soul;
+				return;
+			}
+			soul.owner = soul;
+
+			spawn_tfog( soul.origin );
+
+			self.delay_time = #FALSE; // needed for setarmytimer
+			SetArmyTimer( self, #FALSE ); // prepare reserve soldier
+		} else {
+			sprint( self, #PRINT_HIGH, "Army HQ Still " );
+			PrintArmyTime( self );
+			sprint( self, #PRINT_HIGH, " time left until next teleporting\n" );
+		}
+
+		return;
+	}
+#endif
 };
 
 

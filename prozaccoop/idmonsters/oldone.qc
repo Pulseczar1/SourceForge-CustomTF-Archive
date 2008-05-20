@@ -306,8 +306,9 @@ void() monster_oldone =
 	self.monsterweight = #MWEIGHT_HUGE;
 	self.monsterflags = #MFLAG_NOHEART;
 
-	// Monsters have a team of their own
-	self.team_no = #TEAMNO_MONSTERS;
+	// monsters have a team of their own
+	if ( !self.team_no )
+		self.team_no = #TEAMNO_MONSTERS;
 	self.#monsterflag = #STRFLAG_MONSTER;
 
 	self.is_connected = #TRUE;

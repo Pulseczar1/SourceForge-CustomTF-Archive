@@ -2872,26 +2872,27 @@ void(float inp) Menu_EngineerFix_Tesla_Input =
 
 			self.building.ammo_rockets = self.building.ammo_rockets + 1;
 			//Upgrade them //- OfN - teslas start with 150 hp
+			// Gizmo - fixed tinkering for health and then tinkering again for power and losing your health bonuses
 			if (self.building.ammo_rockets == 1) {
 				//self.building.max_health = self.building.max_health + 75; // 225
-				self.building.max_health = floor(225*HPfactor);
+				self.building.max_health = floor( self.building.max_health + 75 * HPfactor );
 				//self.building.health = self.building.health + 75;
-				self.building.maxammo_cells = (#MAXCELLS0 + #ADDCELLS1) * AMMOfactor;
+				self.building.maxammo_cells = self.building.maxammo_cells + #ADDCELLS1 * AMMOfactor;
 				self.building.ammo_cells = self.building.maxammo_cells;
 			}
 			else if (self.building.ammo_rockets == 2) {
 				//self.building.max_health = self.building.max_health + 100;// 325
-				self.building.max_health = floor(325*HPfactor);// 325
+				self.building.max_health = floor( self.building.max_health + 100 * HPfactor );// 325
 				//self.building.health = self.building.health + 100;
 				//self.building.maxammo_cells = self.building.maxammo_cells + #ADDCELLS2; //Add
-				self.building.maxammo_cells = (#MAXCELLS0 + #ADDCELLS1 + #ADDCELLS2)*AMMOfactor;
+				self.building.maxammo_cells = self.building.maxammo_cells + #ADDCELLS2 * AMMOfactor;
 				self.building.ammo_cells = self.building.maxammo_cells;
 			}
 			else if (self.building.ammo_rockets == 3) {
 				//self.building.max_health = self.building.max_health + 75; // 400
-				self.building.max_health = floor(400*HPfactor); // 400
+				self.building.max_health = floor( self.building.max_health + 75 * HPfactor ); // 400
 				//self.building.health = self.building.health + 75;
-				self.building.maxammo_cells = (#MAXCELLS0 + #ADDCELLS1 + #ADDCELLS2 + #ADDCELLS3)*AMMOfactor; //Add
+				self.building.maxammo_cells = self.building.maxammo_cells + #ADDCELLS3 * AMMOfactor; //Add
 				self.building.ammo_cells = self.building.maxammo_cells;
 			}
 

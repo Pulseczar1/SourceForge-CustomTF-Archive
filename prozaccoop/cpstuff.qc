@@ -3746,8 +3746,7 @@ void(entity corpse) GibCorpse =
 		ThrowGib ("progs/gib3.mdl", 0,#TRUE,0,#GIB3_KGS,#TRUE);
 	}
 #ifdef COOP_MODE_ENHANCED
-	// for the above, use tabs! damn you people...
-	else if (self.team_no == #TEAMNO_MONSTERS) {
+	else if ( COOP_IsCoopMonster( self ) ) {
 		if (self.mdl != string_null)
 			ThrowMonsterHead (self.mdl, 0);
 

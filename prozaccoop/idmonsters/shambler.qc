@@ -76,6 +76,7 @@ void() _ShamHeal =
 	sound(self, #CHAN_ITEM, "items/r_item1.wav", 1, #ATTN_NORM);
 };
 
+void() _sham_throw;
 void() _sham_stand1	=[	$stand1,	_sham_stand2	] {COOP_Idle();};
 void() _sham_stand2	=[	$stand2,	_sham_stand3	] {};
 void() _sham_stand3	=[	$stand3,	_sham_stand4	] {};
@@ -113,6 +114,7 @@ void() _sham_walk12      =[      $walk12,       _sham_walk1 ] {COOP_Walk(7);
 	_ShamHeal ();
 };
 
+void() _sham_throw;
 void() _sham_run1       =[      $run1,        _sham_run2      ] {COOP_Run(20);};
 void() _sham_run2       =[      $run2,        _sham_run3      ] {COOP_Run(24);};
 void() _sham_run3       =[      $run3,        _sham_run4      ] {COOP_Run(20);};
@@ -124,6 +126,26 @@ if (random() > 0.8)
 
 	if (self.enemy.health <= 0 || self.enemy == world)
 		self.th_stand ();
+
+	// check if things are in the way
+	if ( random() < 0.25 ) {
+		local entity head;
+
+		head = findradius( self.origin, 128 );
+		while ( head ) {
+			if ( !head.takedamage )
+			if ( head.solid != #SOLID_BSP && head.movetype != #MOVETYPE_NONE && infront( head ) ) {
+				_sham_throw();
+				return;
+			}
+
+			if ( head.touch == NailGrenadeTouch || head.think == NailGrenadeExplode ) {
+				_sham_throw();
+				return;
+			}
+			head = head.chain;
+		}
+	}
 };
 
 void() _sham_smash1     =[      $smash1,       _sham_smash2    ] {
@@ -226,12 +248,73 @@ void() _sham_melee =
 	local float chance;
 	
 	chance = random();
-	if (chance > 0.6 || self.health == 600)
+	if (chance > 0.6 || self.health == #IDMON_SHAMBLER_HEALTH)
 		_sham_smash1 ();
 	else if (chance > 0.3)
 		_sham_swingr1 ();
 	else
 		_sham_swingl1 ();
+};
+
+
+//============================================================================
+
+
+/*
+=============
+_ShamThrowObjects
+
+Knocks objects out of the way
+=============
+*/
+void() _ShamThrowObjects = {
+	local entity	head;
+	local vector	dir;
+
+	head = findradius( self.origin, 128 );
+	while ( head ) {
+		if ( head.solid != #SOLID_BSP && head.movetype != #MOVETYPE_NONE && infront( head ) ) {
+			if ( head.flags & #FL_ONGROUND ) {
+				head.flags = head.flags - #FL_ONGROUND;
+				head.velocity_z = head.velocity_z + ( ( random() + 1 ) * 300 );
+			}
+
+			dir = normalize( head.origin - self.origin );
+			head.velocity = head.velocity + dir * ( ( random() + 1 ) * 500 );
+		}
+
+		head = head.chain;
+	}
+};
+
+void() _sham_throwl1	=[      $swingl1,      _sham_throwl2   ] {
+sound (self, #CHAN_VOICE, "shambler/melee2.wav", 1, #ATTN_NORM);};
+void() _sham_throwl2 =[      $swingl2,      _sham_throwl3   ] {};
+void() _sham_throwl3 =[      $swingl3,      _sham_throwl4   ] {};
+void() _sham_throwl4 =[      $swingl4,      _sham_throwl5   ] {};
+void() _sham_throwl5 =[      $swingl5,      _sham_throwl6   ] {};
+void() _sham_throwl6 =[      $swingl6,      _sham_throwl7   ] {};
+void() _sham_throwl7 =[      $swingl7,      _sham_throwl8   ] {_ShamThrowObjects();};
+void() _sham_throwl8 =[      $swingl8,      _sham_throwl9   ] {};
+void() _sham_throwl9 =[      $swingl9,      _sham_run1  ] {};
+
+void() _sham_throwr1	=[      $swingr1,      _sham_throwr2   ] {
+sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);};
+void() _sham_throwr2	=[      $swingr2,      _sham_throwr3   ] {};
+void() _sham_throwr3 =[      $swingr3,      _sham_throwr4   ] {};
+void() _sham_throwr4 =[      $swingr4,      _sham_throwr5   ] {};
+void() _sham_throwr5 =[      $swingr5,      _sham_throwr6   ] {};
+void() _sham_throwr6 =[      $swingr6,      _sham_throwr7   ] {};
+void() _sham_throwr7 =[      $swingr7,      _sham_throwr8   ] {_ShamThrowObjects();};
+void() _sham_throwr8 =[      $swingr8,      _sham_throwr9   ] {};
+void() _sham_throwr9 =[      $swingr9,      _sham_run1  ] {};
+
+void() _sham_throw =
+{
+	if (random() < 0.5)
+		_sham_throwr1 ();
+	else
+		_sham_throwl1 ();
 };
 
 
@@ -474,8 +557,9 @@ void() monster_shambler =
 	self.monsterweight = #MWEIGHT_LARGE;
 	self.monsterflags = #MFLAG_NOBREATHING;
 
-	// Monsters have a team of their own
-	self.team_no = #TEAMNO_MONSTERS;
+	// monsters have a team of their own
+	if ( !self.team_no )
+		self.team_no = #TEAMNO_MONSTERS;
 	self.#monsterflag = #STRFLAG_MONSTER;
 
 	self.is_connected = #TRUE;

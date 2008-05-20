@@ -13,12 +13,11 @@
 
 
 /*
-	COOP_IsCoopMonster - returns true only if this is a new coop monster, not if it's a monster in general
+	COOP_IsCoopMonster - returns true only if this is a coop monster, not if it's a monster in general
 */
 
-float (entity test) COOP_IsCoopMonster =
-{
-	if (test.team_no == #TEAMNO_MONSTERS)
+float( entity test ) COOP_IsCoopMonster = {
+	if (test.#npc_isCoopMonster == #TRUE)
 		return #TRUE;
 	return #FALSE;
 };
@@ -108,7 +107,7 @@ float (entity start, entity end) COOP_FindShootOffset =
 
 
 /*
-	COOP_SightBlocked - checks if an entities sight to the given entity is blocked
+	COOP_SightBlocked - checks if an entity's sight to the given entity is blocked
 
 	8/8/07: Gizmo - updated this function for better monster targeting
 */
@@ -146,17 +145,12 @@ float (entity start, entity end) COOP_SightBlocked =
 /*
 	COOP_IsValidTarget
 
-	NOTE: all targeting is done in common.qc, so the prozac bugs where monsters and sentries spaz out because of
-	dead enemy monster (etc) corpses shouldn't be present... That bug was caused by Often forgetting to check the
-	enemy's health before targeting the enemy monster, a simple "if (head.health <= 0)" fixed that (I fixed it).
+	NOTE: health and takedamage are not checked by this function
 */
 
-float (entity us, entity test) COOP_IsValidTarget =
-{
+float( entity us, entity test ) COOP_IsValidTarget = {
 	local float r;
 
-	//if (us.team_no != #TEAMNO_MONSTERS && test.team_no == #TEAMNO_MONSTERS)
-	//	return #TRUE;
 	if (test.classname == "monster_demon1" || test.classname == "monster_army" || test.classname == "monster_shambler" ||
 		test.classname == "monster_wizard" || test.classname == "monster_fish" || test.classname == "monster_gremlin") {
 		if (!Teammate(test.real_owner.team_no, us.team_no))
@@ -173,9 +167,11 @@ float (entity us, entity test) COOP_IsValidTarget =
 			r = vlen(test.origin - us.origin);
 
 			// use Pharse_Client for client checking
-			if (Pharse_Client(test, us, 0, 0, 0, 0) && r < 2000) {
+			if ( Pharse_Client( test, us, 0, 0, 0, 0 ) ) {
+				if ( r > 2048 && !visible2( test, us ) )
+					return #FALSE;
 				if (!(test.flags & #FL_NOTARGET) && !(test.items & #IT_INVISIBILITY)) {
-					// Check if he's a theif
+					// check if he's a theif
 					if (test.job & #JOB_THIEF && ((test.job & #JOB_ACTIVE && !(test.job & #JOB_FULL_HIDE) && r >= 140) || test.job & #JOB_FULL_HIDE))
 						return #FALSE;
 
@@ -183,6 +179,8 @@ float (entity us, entity test) COOP_IsValidTarget =
 				}
 			}
 		}
+		else if ( IsMonster( test ) )		// IsMonster() should return true for both coop and non-coop monsters
+			return #TRUE;
 	}
 
 	return #FALSE;
@@ -194,6 +192,62 @@ float (entity us, entity test) COOP_IsValidTarget =
 */
 
 float worldscan_delay;
+entity npc_teamLists;
+.entity npc_nextTeamList;
+.entity npc_nextEntInTeamList;
+
+entity( float t ) COOP_GetTeamList = {
+	local entity cur;
+
+	cur = npc_teamLists;
+	while ( !Teammate( cur.team_no, t ) ) {
+		if ( cur.npc_nextTeamList == world )
+			return world;
+
+		cur = cur.npc_nextTeamList;
+	}
+
+	return cur;
+};
+
+void( entity list ) COOP_AddTeamList = {
+	// npc_teamLists points to the first one
+	if ( npc_teamLists == world ) {
+		npc_teamLists = list;
+		list.npc_nextTeamList = world;
+		list.npc_nextEntInTeamList = world;
+		return;
+	}
+
+	list.npc_nextEntInTeamList = world;
+	list.npc_nextTeamList = npc_teamLists;
+	npc_teamLists = list;
+};
+
+entity _npc_lastTeamEntity;
+void( entity e ) COOP_AddToTeamList = {
+	local entity list;
+
+	// this is to enhance performance, and to prevent runaway loop errors
+	// it prevents us from going through every ent every time in the current list for every entity we add to it
+	if ( npc_teamLists == world || _npc_lastTeamEntity == world || !Teammate( _npc_lastTeamEntity.team_no, e.team_no ) ) {
+		list = COOP_GetTeamList( e.team_no );
+
+		if ( list == world ) {
+			COOP_AddTeamList( e );
+			return;
+		}
+
+		while ( list.npc_nextEntInTeamList != world )
+			list = list.npc_nextEntInTeamList;
+	} else
+		list = _npc_lastTeamEntity;
+
+	list.npc_nextEntInTeamList = e;
+	e.npc_nextEntInTeamList = world;
+	e.npc_nextTeamList = world;
+	_npc_lastTeamEntity = e;
+};
 
 entity (entity scanner) COOP_FindTarget =
 {
@@ -229,16 +283,20 @@ entity (entity scanner) COOP_FindTarget =
 
 	// check if we should scan for new entities that weren't present before
 	if (worldscan_delay <= time) {
+		npc_teamLists = world;
+
 		head = findradius (world.origin, 65536);
 
 		while (head) {
-			if (head.classname == "monster_demon1" || head.classname == "monster_army" || head.classname == "monster_shambler" ||
-				head.classname == "monster_wizard" || head.classname == "monster_fish" || head.classname == "monster_gremlin")
-				head.isNPCTargetable = #TARGETABLE_YES;
-			else if (IsBuilding(head) && head.classname != "building_sentrygun_base")
-				head.isNPCTargetable = #TARGETABLE_YES;
-			else if (head.flags & #FL_CLIENT)
-				head.isNPCTargetable = #TARGETABLE_YES;
+			if ( head.classname == "monster_demon1" || head.classname == "monster_army" || head.classname == "monster_shambler" ||
+				head.classname == "monster_wizard" || head.classname == "monster_fish" || head.classname == "monster_gremlin" )
+				COOP_AddToTeamList( head );
+			else if ( IsBuilding(head) && head.classname != "building_sentrygun_base" )
+				COOP_AddToTeamList( head );
+			else if ( head.flags & #FL_CLIENT )
+				COOP_AddToTeamList( head );
+			else if ( COOP_IsCoopMonster( head ) )
+				COOP_AddToTeamList( head );
 
 			head = head.chain;
 		}
@@ -258,9 +316,14 @@ entity (entity scanner) COOP_FindTarget =
 	// use a random delay so it doesn't all happen at once
 	self.#npc_noticedelay = time + 0.3 + random();		// old delay was 1.3
 
-	head = find (world, isNPCTargetable, #TARGETABLE_YES);
+	if ( npc_teamLists == world )
+		return world;
 
-	while (head) {
+	head = npc_teamLists;
+	while ( head != world && Teammate( head.team_no, scanner.team_no ) )
+		head = head.npc_nextTeamList;
+
+	while ( head ) {
 		if (visible2(head, scanner) && head.takedamage && head.health > 0) {
 			if (COOP_IsValidTarget(scanner, head)) {
 				// pick the closest player if only players are visible
@@ -272,7 +335,12 @@ entity (entity scanner) COOP_FindTarget =
 			}
 		}
 
-		head = find (head, isNPCTargetable, #TARGETABLE_YES);
+		if ( head.npc_nextEntInTeamList == world ) {
+			do {
+				head = head.npc_nextTeamList;
+			} while ( head != world && Teammate( head.team_no, scanner.team_no ) );
+		} else
+			head = head.npc_nextEntInTeamList;
 	}
 
 	// players are always picked last, so if a player was found then return it, but if not bestp will be world
@@ -385,6 +453,9 @@ void (entity en) COOP_AttackTarget =
 	self.think = self.th_run;
 
 	self.ideal_yaw = vectoyaw (en.origin - self.origin);
+
+	// erase last time
+	self.#npc_lastEnemyTime = 0;
 };
 
 
@@ -565,6 +636,10 @@ void (float dist) COOP_Run =
 			c_attack = #TRUE;
 
 		if (c_attack) {
+			// mark this position as valid
+			self.#npc_lastEnemyOrigin = self.enemy.origin;
+			self.#npc_lastEnemyTime = time;
+
 			if (r <= #RANGE_MELEE && visible(self.enemy)) {
 				if (self.th_melee) {
 					// TODO: check if facing, no that's done above if state is set
@@ -590,6 +665,19 @@ void (float dist) COOP_Run =
 
 		if (e != world && e != self.enemy)
 			COOP_AttackTarget (e);
+/*	TODO: need to also face that direction
+		else if ( random() > 0.80 ) {
+			// check if we can shoot blindly where they last were, in hopes for a lucky shot
+			if ( self.#npc_lastEnemyTime && time - self.#npc_lastEnemyTime < 10 ) {
+				if ( self.attack_finished < time ) {
+					if ( self.#NPCFireBlind ) {
+						self.#NPCFireBlind();
+						return;
+					}
+				}
+			}
+		}
+*/
 	}
 
 // at this point we're either sliding or are just heading straight into the enemy
@@ -737,24 +825,23 @@ void () respawn_think =
 	force_retouch = 2;		// make sure even still objects get hit
 };
 
-void (float respawntime, void() spawn_func) COOP_SetupRespawn =
-{
+void( float respawntime, void() spawn_func ) COOP_SetupRespawn = {
 	local entity newmon;
 
-	if (!spawn_func) {
-//		bprint (#PRINT_HIGH, "Invalid spawn func!\n");
+	// check for a valid spawn function
+	if ( !spawn_func )
 		return;
-	}
 
-	if (self.lives <= 0) {
-//		bprint (#PRINT_HIGH, "Out of lives!\n");
+	// check if it's out of lives
+	if ( self.lives <= 0 )
 		return;
-	}
 
-	newmon = spawn ();
+	newmon = spawn();
 	newmon.lives = self.lives - 1;
-	setsize (newmon, self.mins, self.maxs);
-	setorigin (newmon, self.#npc_originalloc);
+	newmon.angles = newmon.#npc_originalAngles = self.#npc_originalAngles;
+	newmon.target = self.target;
+	setsize( newmon, self.mins, self.maxs );
+	setorigin( newmon, self.#npc_originalloc );
 
 	newmon.nextthink = time + respawntime;
 	newmon.think = respawn_think;
@@ -775,7 +862,7 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 	// check for insane mode, thought about putting this in StartFrame, but I'd bet T_Damage gets called less overall
 	monster_mode = stof (infokey(world, "monster_mode"));
 	if (monster_mode & 1) {
-		if (attacker.team_no == #TEAMNO_MONSTERS && targ.classname == "player")
+		if ( COOP_IsCoopMonster( attacker ) && targ.classname == "player" )
 			return indmg * 2;
 	}
 	if (monster_mode & 2) {
@@ -783,7 +870,7 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 			indmg = indmg * 0.5;
 	}
 
-	if (targ.team_no != #TEAMNO_MONSTERS) {		// !COOP_IsCoopMonster(targ)
+	if ( !COOP_IsCoopMonster( targ ) ) {
 		// make summons and army soldiers stronger
 		if (GetMonsterName(targ) != "unknown monster")
 			return indmg * 0.5;

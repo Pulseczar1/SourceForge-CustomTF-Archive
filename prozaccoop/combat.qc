@@ -65,6 +65,10 @@ void() monster_death_use =
 
 	if (!self.target)
 		return;
+#ifdef COOP_MODE_ENHANCED
+	if ( COOP_IsCoopMonster( self ) && !self.#npc_useTargetsOnRespawn )
+		return;
+#endif
 
 	activator = self.enemy;
 	SUB_UseTargets ();
@@ -248,7 +252,7 @@ void(entity targ, entity attacker) Killed =
 
 	// bump the monster counter
 #ifdef COOP_MODE_ENHANCED
-	if (self.flags & #FL_MONSTER && self.team_no == #TEAMNO_MONSTERS)
+	if ( self.flags & #FL_MONSTER && COOP_IsCoopMonster( self ) )
 #else
 	if (self.flags & #FL_MONSTER)
 #endif
@@ -267,7 +271,7 @@ void(entity targ, entity attacker) Killed =
 #ifdef COOP_MODE_ENHANCED
 	// setup respawn
 	//void (float respawntime, void() spawn_func) COOP_SetupRespawn
-	if (self.team_no == #TEAMNO_MONSTERS)
+	if ( COOP_IsCoopMonster( self ) )
 		COOP_SetupRespawn (self.#npc_spawndelay, self.#npc_spawnfunc);
 #endif
 
@@ -356,7 +360,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 #ifdef COOP_MODE_ENHANCED
 	// certain monsters are weaker/stronger against certain types of attack
-	//if (targ.team_no == #TEAMNO_MONSTERS)
+	//if ( COOP_IsCoopMonster( targ ) )
 		damage = COOP_CalcEntityDamage (targ, attacker, damage, T_AttackType);
 #endif
 

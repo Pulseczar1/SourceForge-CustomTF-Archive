@@ -347,7 +347,7 @@ void() W_FireAxe =
 		SpawnBlood (org, 20);
 
 #ifdef COOP_MODE_ENHANCED
-		if (!(self.cutf_items & #CUTF_KNIFE) || (trace_ent.classname != "player" && trace_ent.team_no != #TEAMNO_MONSTERS))
+		if (!(self.cutf_items & #CUTF_KNIFE) || (trace_ent.classname != "player" && !COOP_IsCoopMonster( trace_ent )))
 #else
 		if (!(self.cutf_items & #CUTF_KNIFE) || trace_ent.classname != "player")
 #endif
@@ -1050,6 +1050,11 @@ void(float inAuto) W_FireMedikit =
 			}
 			else // enemy monsters
 			{
+#ifdef COOP_MODE_ENHANCED
+				// Gizmo - no more auto-infection of monsters
+				if ( inAuto )
+					return;
+#endif
 				trace_ent.axhitme = 1;
 				SpawnBlood(org, 20);
 #ifdef COOP_MODE_ENHANCED
@@ -1062,7 +1067,7 @@ void(float inAuto) W_FireMedikit =
 
 				// Report to owner, only if first infection
 #ifdef COOP_MODE_ENHANCED
-				if (trace_ent.team_no == #TEAMNO_MONSTERS && !(trace_ent.tfstate & #TFSTATE_INFECTED)) {
+				if (COOP_IsCoopMonster( trace_ent ) && !(trace_ent.tfstate & #TFSTATE_INFECTED)) {
 					// report to infecter
 					sprint (self, #PRINT_HIGH, "You infect ", trace_ent.netname, "!\n");
 
@@ -5894,7 +5899,7 @@ void() HIP_LaserTouch =
 		spawn_touchblood (self.dmg);
 
 #ifdef COOP_MODE_ENHANCED
-		if (other.team_no != #TEAMNO_MONSTERS) {
+		if ( !COOP_IsCoopMonster( other ) ) {
 #endif
 			//- OfN laser hurts monsters a lot
 			if (IsMonsterNonArmy(other)) self.dmg = self.dmg * 2;

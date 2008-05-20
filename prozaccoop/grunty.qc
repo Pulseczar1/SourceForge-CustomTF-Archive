@@ -28,7 +28,7 @@ void () GruntyScanTargets;
 void () GruntyCheckFire;
 void (entity targ) GetRank;
 void () Grunty_Check_Frags;
-void (float angle, float dist) botmovedist;
+float (float angle, float dist) botmovedist;
 float () ReturnWeaponVelocity;
 void () GruntyPayThink;
 void () GruntyDrawPay;
@@ -1227,11 +1227,17 @@ void() GRun =
 	// Test to see if we want to do an evasive maneuver
 	// If we're already doing a move, don't do another
 	if (self.has_teleporter == -1) // left dodge move
-		botmovedist(vectoyaw(v_right * -1), dist);// move left
-	
+	{
+		// Gizmo - if blocked while doing strafe do another move
+		if ( !botmovedist( vectoyaw( v_right * -1 ), dist ) )	// move left
+			self.has_teleporter = 0;
+	}
 	else if (self.has_teleporter == 1) // right dodge move
-		botmovedist(vectoyaw(v_right), dist); // move right
-	
+	{
+		// Gizmo - if blocked while doing strafe do another move
+		if ( !botmovedist( vectoyaw( v_right ), dist ) )	// move right
+			self.has_teleporter = 0;
+	}
 	else if (self.has_teleporter == 2) // jump!
 	{
 		if (self.flags & #FL_ONGROUND) // only jump if we're on the ground
@@ -1243,8 +1249,20 @@ void() GRun =
 		self.has_teleporter = 0; // don't jump
 	}
 	else if (self.has_teleporter == 3) //(backwards)// HE'S AFTER US, RUN!@#$ HE WILL KILL US ALL!!@
-		botmovedist(vectoyaw(v_forward), dist * -1); // flee, I tell you!
-	
+	{
+		if ( !botmovedist( vectoyaw( v_forward ), dist * -1 ) ) { // flee, I tell you!
+			// Gizmo - if he's blocked while trying to run backwards in static range, then strafe
+			if ( self.enemy != world ) {
+				// check if static range is set
+				if ( self.is_malfunctioning == 2 && self.delay_time ) {
+					if ( random() < 0.5 )
+						self.has_teleporter = 1;
+					else
+						self.has_teleporter = -1;
+				}
+			}
+		}
+	}
 	else if (self.has_teleporter == 0) // no evasive, standard move (forward)
 	{
 		//- OfN - force move to forward if we r going to a last seen enemy waypoint
@@ -1298,7 +1316,8 @@ void() GRun =
 	}
 };
 
-void (float angle, float dist) botmovedist =
+// Gizmo - changed return type to float
+float (float angle, float dist) botmovedist =
 {
 	local float success;
 
@@ -1315,7 +1334,7 @@ void (float angle, float dist) botmovedist =
 			stand_frames();
 			self.has_cheated = time + 0.5;
 			walkmove(angle, 0);
-			return;
+			return #TRUE;
 		}
 	}///////////////////////////////*/
 	#endif
@@ -1328,7 +1347,7 @@ void (float angle, float dist) botmovedist =
 		if (success) // We walked sucessfully, woohoo
 		{
 			self.has_cheated = time + 0.5;
-			return;
+			return #TRUE;
 		}
 		else // We just ran into something...
 		{
@@ -1342,7 +1361,7 @@ void (float angle, float dist) botmovedist =
 					PrintFromSoldier(self, self.real_owner, "Hey! I'm trapped over here!\n", #PRINT_MEDIUM);
 					self.super_time = time + 10;
 				}
-				return;
+				return #FALSE;
 			}
 
 			// Gizmo - let him accelerate in the air, he always instantly goes to 30 though if lower than that
@@ -1357,7 +1376,7 @@ void (float angle, float dist) botmovedist =
 			}
 
 			if (self.has_cheated > time)
-				return;
+				return #FALSE;
 			self.has_teleporter = 0; // abort dodging
 			makevectors(self.angles);
 			// First, we'll see if jumping would be suitable
@@ -1371,10 +1390,12 @@ void (float angle, float dist) botmovedist =
 					//sound (self, #CHAN_BODY, "player/plyrjmp8.wav", 1, #ATTN_NORM);
 					sound (self, #CHAN_VOICE, "player/plyrjmp8.wav", 1, #ATTN_NORM);
 					self.has_cheated = time + 0.5;
-					return;
+					return #FALSE;
 				}
 			}
 		}
+
+		return #FALSE;
 	/*}
 	else
 	{
