@@ -90,23 +90,23 @@ void() coop_monster_death_use =
 
 void() coop_walkmonster_start_go =
 {
+	self.#npc_isCoopMonster = #TRUE;
+
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 	droptofloor();
 
+	// save original spawn angles
+	self.#npc_originalAngles = self.angles;
+
 	if (!walkmove(0,0))
 	{
-		dprint ("walkmonster in wall at: ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
+		dprint( "walkmonster " );
+		dprint( self.classname );
+		dprint( " in wall at: " );
+		dprint( vtos( self.origin ) );
+		dprint( "\n" );
 	}
 
-	// test! Used to remove all monster but the one we're testing
-//	if (self.classname != "idmonster_shambler") {
-//		remove (self);
-//		return;
-//	} else
-//		bprint (#PRINT_HIGH, "single monster spawned\n");
-	
 	self.takedamage = #DAMAGE_AIM;
 
 	self.ideal_yaw = self.angles * '0 1 0';
@@ -158,14 +158,21 @@ void() coop_walkmonster_start =
 	self.think = coop_walkmonster_start_go;
 
 	// make up for monster respawns on total monsters
-	if (!server_spawned)
+	if (!server_spawned) {
+		self.#npc_useTargetsOnRespawn = #TRUE;
 		total_monsters = total_monsters + (self.lives + 1);
+	}
 };
 
 
 
 void() coop_flymonster_start_go =
 {
+	self.#npc_isCoopMonster = #TRUE;
+
+	// save original spawn angles
+	self.#npc_originalAngles = self.angles;
+
 	self.takedamage = #DAMAGE_AIM;
 
 	self.ideal_yaw = self.angles * '0 1 0';
@@ -179,9 +186,11 @@ void() coop_flymonster_start_go =
 
 	if (!walkmove(0,0))
 	{
-		dprint ("flymonster in wall at: ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
+		dprint( "flymonster " );
+		dprint( self.classname );
+		dprint( " in wall at: " );
+		dprint( vtos( self.origin ) );
+		dprint( "\n" );
 	}
 
 	if (self.target)
@@ -219,18 +228,19 @@ void() coop_flymonster_start =
 	self.think = coop_flymonster_start_go;
 
 	// make up for monster respawns on total monsters
-	if (!server_spawned)
+	if (!server_spawned) {
+		self.#npc_useTargetsOnRespawn = #TRUE;
 		total_monsters = total_monsters + (self.lives + 1);
+	}
 };
 
 
 void() coop_swimmonster_start_go =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
+	self.#npc_isCoopMonster = #TRUE;
+
+	// save original spawn angles
+	self.#npc_originalAngles = self.angles;
 
 	self.takedamage = #DAMAGE_AIM;
 
@@ -278,8 +288,115 @@ void() coop_swimmonster_start =
 	self.think = coop_swimmonster_start_go;
 
 	// make up for monster respawns on total monsters
-	if (!server_spawned)
+	if (!server_spawned) {
+		self.#npc_useTargetsOnRespawn = #TRUE;
 		total_monsters = total_monsters + (self.lives + 1);
+	}
 };
+
+
+//============================================================================
+
+/*
+void() monster_spawner_spawn = {
+	local entity e, oself;
+
+	e = spawn();
+	e.lives = 1;
+	e.target = self.target;
+	setorigin( e, self.origin );
+
+	oself = self;
+	self = e;
+
+	if ( oself.netname == "monster_zombie" )
+		monster_zombie();
+	else if ( oself.netname == "monster_shambler" )
+		monster_shambler();
+	else if ( oself.netname == "monster_knight" )
+		monster_knight();
+	else if ( oself.netname == "monster_enforcer" )
+		monster_enforcer();
+	else if ( oself.netname == "monster_demon1" )
+		monster_demon1();
+	else if ( oself.netname == "monster_army" )
+		monster_army();
+	else if ( oself.netname == "monster_ogre" )
+		monster_ogre();
+	else if ( oself.netname == "monster_shalrath" )
+		monster_shalrath();
+	else if ( oself.netname == "monster_wizard" )
+		monster_wizard();
+	else if ( oself.netname == "monster_dog" )
+		monster_dog();
+	else if ( oself.netname == "monster_fish" )
+		monster_fish();
+	else if ( oself.netname == "monster_hell_knight" )
+		monster_hell_knight();
+	else if ( oself.netname == "monster_tarbaby" )
+		monster_tarbaby();
+	else {
+		self = oself;
+		objerror( "unknown monster classname in netname" );
+	}
+
+	self = oself;
+};
+*/
+
+/*QUAKED monster_spawner (0 .5 .8) (-8 -8 -8) (8 8 8)
+Spawns the specified monster when triggered if targetname is set, otherwise set wait and maximum monsters to be spawned at a time
+*/
+/*
+void() monster_spawner = {
+	local entity temp, oself;
+
+	// first precache sounds and models
+	temp = spawn();
+	temp.netname = self.netname;
+
+	oself = self;
+	self = temp;
+
+	if ( self.netname == "monster_zombie" )
+		monster_zombie();
+	else if ( self.netname == "monster_shambler" )
+		monster_shambler();
+	else if ( self.netname == "monster_knight" )
+		monster_knight();
+	else if ( self.netname == "monster_enforcer" )
+		monster_enforcer();
+	else if ( self.netname == "monster_demon1" )
+		monster_demon1();
+	else if ( self.netname == "monster_army" )
+		monster_army();
+	else if ( self.netname == "monster_ogre" )
+		monster_ogre();
+	else if ( self.netname == "monster_shalrath" )
+		monster_shalrath();
+	else if ( self.netname == "monster_wizard" )
+		monster_wizard();
+	else if ( self.netname == "monster_dog" )
+		monster_dog();
+	else if ( self.netname == "monster_fish" )
+		monster_fish();
+	else if ( self.netname == "monster_hell_knight" )
+		monster_hell_knight();
+	else if ( self.netname == "monster_tarbaby" )
+		monster_tarbaby();
+	else {
+		self = oself;
+		objerror( "unknown monster classname in netname" );
+	}
+
+	self = oself;
+	remove( temp );
+
+	// setup to be trigger
+	if ( self.targetname ) {
+		self.use = monster_spawner_spawn;
+	}
+};
+*/
 
 #endif

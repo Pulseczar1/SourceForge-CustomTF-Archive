@@ -66,7 +66,7 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 	else
 	{
 #ifdef COOP_MODE_ENHANCED
-		if (targ.team_no != #TEAMNO_MONSTERS && IsMonster(targ)) {
+		if (!COOP_IsCoopMonster( targ ) && IsMonster(targ)) {
 #else
 		if (IsMonster(targ))
 		{
@@ -85,7 +85,7 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 			sprint (attacker, #PRINT_HIGH, "Your ", desc, " infects ", targ.netname, "!\n");
 
 #ifdef COOP_MODE_ENHANCED
-			if (targ.team_no != #TEAMNO_MONSTERS) {
+			if (!COOP_IsCoopMonster( targ )) {
 #endif
 				sprint (targ, #PRINT_HIGH, "You have been infected by a biological ", desc, "!\n");
 

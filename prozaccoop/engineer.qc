@@ -458,7 +458,7 @@ void() EMPGrenadeExplode =
 		}
 		// Backpack/Player?
 #ifdef COOP_MODE_ENHANCED
-		else if ((te.classname == "player" && te.health > 0) || (te.classname=="monster_army") || (te.classname=="monster_gremlin") || (te.touch == BackpackTouch) || te.team_no == #TEAMNO_MONSTERS)
+		else if ((te.classname == "player" && te.health > 0) || (te.classname=="monster_army") || (te.classname=="monster_gremlin") || (te.touch == BackpackTouch) || COOP_IsCoopMonster( te ))
 #else
 		else if ((te.classname == "player" && te.health > 0) || (te.classname=="monster_army") || (te.classname=="monster_gremlin") || (te.touch == BackpackTouch))
 #endif
@@ -1295,7 +1295,7 @@ void() TeamFortress_FinishedBuilding =
 		}
 		oldself.has_teleporter = 0; //CH for frag related upgrades
 		if (!(self.weapons_carried & #WEAP_SPANNER)) { //No spanner
-#ifndef CLASSIC_PROZAC
+#ifndef NO_PREFAB_TESLA_UPGRADE
 			// Gizmo - make use of the upgrade if you have no spanner
 			if ( self.tf_items & #NIT_TESLA_UPGRADE ) {
 				// building an upgraded prefab tesla uses all cells

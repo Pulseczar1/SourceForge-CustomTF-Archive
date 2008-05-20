@@ -754,7 +754,7 @@ void() GasGrenadeMakeGas =
 	while (te != world)
 	{
 #ifdef COOP_MODE_ENHANCED
-		if (te.team_no == #TEAMNO_MONSTERS && te.takedamage && te.health > 0) {
+		if (COOP_IsCoopMonster( te ) && te.takedamage && te.health > 0) {
 			// only effect monsters that breathe
 			if (!(te.monsterflags & #MFLAG_NOBREATHING)) {
 				deathmsg = #DMSG_GREN_GAS;

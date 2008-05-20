@@ -89,7 +89,7 @@ float (entity thing) canairpush =
 
 #ifdef COOP_MODE_ENHANCED
 	// Gizmo - enable monster pushing
-	else if (thing.team_no == #TEAMNO_MONSTERS && thing.monsterweight <= #MWEIGHT_MEDIUM)
+	else if ( COOP_IsCoopMonster( thing ) && thing.monsterweight <= #MWEIGHT_MEDIUM )
 		return #TRUE;
 #endif
 

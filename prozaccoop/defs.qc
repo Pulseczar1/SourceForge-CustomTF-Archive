@@ -1522,23 +1522,39 @@ float		rj; 				// Rocket Jump Modifier
 
 // Building health levels
 #define BUILD_HEALTH_DISPENSER	150 	// Built thru the menu
-#define BUILD_HEALTH_SENTRYGUN	180 	// Built thru the menu
-#define BUILD_HEALTH_TESLA		200 	// Built thru the menu
+#ifdef CLASSIC_BUILD_HEALTHS
+	#define BUILD_HEALTH_SENTRYGUN	150 	// Built thru the menu
+	#define BUILD_HEALTH_TESLA		150 	// Built thru the menu
+#else
+	#define BUILD_HEALTH_SENTRYGUN	180 	// Built thru the menu
+	#define BUILD_HEALTH_TESLA		200 	// Built thru the menu
+#endif
 #define BUILD_HEALTH_CAMERA 	400 	// They dont do much // was 600
 #define BUILD_HEALTH_SENSOR 	250 	// may not do much, but v. annoying // was 200
 #define BUILD_HEALTH_TELEPORTER 300
 #define BUILD_HEALTH_FIELDGEN	300 	//
 
 // Build upgrade/hacking levels
-//#define SENTRY_HEALTH_L1		180
-#define SENTRY_HEALTH_L2		210
-#define SENTRY_HEALTH_L3		240
+#ifdef CLASSIC_BUILD_HEALTHS
+	//#define SENTRY_HEALTH_L1		150
+	#define SENTRY_HEALTH_L2		180
+	#define SENTRY_HEALTH_L3		220
+#else
+	//#define SENTRY_HEALTH_L1		180
+	#define SENTRY_HEALTH_L2		210
+	#define SENTRY_HEALTH_L3		240
+#endif
 #define SENTRY_ARMORHACKFACTOR	2
 
 #define SENTRY_AMMO_L1			100
 #define SENTRY_AMMO_L2			120
 #define SENTRY_AMMO_L3			144
 #define SENTRY_AMMOHACKFACTOR		2
+
+#define TESLA_HEALTH_P1			225
+#define TESLA_HEALTH_P2			325
+#define TESLA_HEALTH_P3			400
+#define TESLA_ARMORHACKFACTOR		2
 
 // Building screwups
 #define SCREWUP_ONE 	1

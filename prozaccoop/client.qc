@@ -1303,6 +1303,44 @@ void() execute_changelevel =
 };
 
 
+// Gizmo
+void() changelevel_use =
+{
+	other = activator;
+
+	if (other.classname != "player")
+		return;
+
+	if (cvar("samelevel") == 2 || (cvar("samelevel") == 3 && mapname != "start")) {
+		T_Damage (other, self, self, 50000);
+		return;
+	}
+
+	bprint (#PRINT_HIGH, other.netname);
+	if ( self.message ) {
+		bprint( #PRINT_HIGH, self.message );
+		bprint( #PRINT_HIGH, "\n" );
+	} else
+		bprint (#PRINT_HIGH, " exited the level\n");
+
+	nextmap = self.map;
+
+	SUB_UseTargets ();
+
+	if ( (self.spawnflags & 1) && (deathmatch == 0) )
+	{	// NO_INTERMISSION
+		GotoNextMap();
+		return;
+	}
+	
+	self.touch = SUB_Null;
+
+	// we can't move people right now, because touch functions are called
+	// in the middle of C movement code, so set a think time to do it
+	self.think = execute_changelevel;
+	self.nextthink = time + 0.1;
+};
+
 void() changelevel_touch =
 {
 	//local entity pos;
@@ -1354,6 +1392,10 @@ void() trigger_changelevel =
 	
 	InitTrigger ();
 	self.touch = changelevel_touch;
+
+	// Gizmo - can now be triggered
+	if ( self.targetname )
+		self.use = changelevel_use;
 };
 
 

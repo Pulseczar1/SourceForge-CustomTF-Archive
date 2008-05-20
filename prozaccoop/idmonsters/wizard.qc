@@ -478,8 +478,9 @@ void() monster_wizard =
 	self.monsterweight = #MWEIGHT_SMALL;
 	self.monsterflags = 0;
 
-	// Monsters have a team of their own
-	self.team_no = #TEAMNO_MONSTERS;
+	// monsters have a team of their own
+	if ( !self.team_no )
+		self.team_no = #TEAMNO_MONSTERS;
 	self.#monsterflag = #STRFLAG_MONSTER;
 
 	self.is_connected = #TRUE;

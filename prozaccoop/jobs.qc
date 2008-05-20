@@ -664,7 +664,7 @@ void() JobJudoka =
 	}
 
 #ifdef COOP_MODE_ENHANCED
-	if (trace_ent.team_no == #TEAMNO_MONSTERS) {
+	if ( COOP_IsCoopMonster( trace_ent ) ) {
 		local float jdmg;
 
 		if (self.is_undercover) //Taking someone's weapon should give you away

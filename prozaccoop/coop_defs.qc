@@ -37,6 +37,11 @@
 #define npc_attackoffset			pos2				// where the npc shoots from, IE: '0 0 40' for shams
 #define npc_enemyoffset				dest				// offset that our enemy is visible
 #define npc_inpain				demon_one			// if the monster is currently in pain
+#define npc_originalAngles			finalangle			// original angles when first spawned
+#define npc_lastEnemyOrigin			dest1				// last visible origin our enemy was spotted at
+#define npc_lastEnemyTime			lip				// time enemy was last spotted at npc_lastEnemyOrigin
+#define npc_isCoopMonster			nextpc			// used for determining a coop monster from a normal monster
+#define npc_useTargetsOnRespawn		StatusBarSize		// if true then monster should call SUB_UseTargets() again when he dies after respawning
 
 // damage multipliers
 #define npc_bulletmult				money
@@ -55,12 +60,6 @@
 #define npc_smoothdist				demon_blood			// total distance we need to go
 #define npc_lastruntime				done_custom			// last time our lerp function was called
 #define npc_attemptednextthink		cnt
-
-// this string is set for entities that monsters search for with find()
-.string isNPCTargetable;
-
-#define TARGETABLE_NO				""
-#define TARGETABLE_YES				"."				// don't use ! or * at beginning of string, you get some bullshit error
 
 // globals
 float server_spawned;								// TRUE if server is spawned and ready to go
