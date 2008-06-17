@@ -4940,7 +4940,6 @@ ChangeToWeapon
 Gizmo: Switches to the specified weapon if possible
 ============
 */
-float( entity e, float weaponNum ) W_HasWeapon;
 void( string weaponName ) ChangeToWeapon = {
 	local float fl;
 
@@ -5023,11 +5022,6 @@ void( string weaponName ) ChangeToWeapon = {
 		sprint( self, #PRINT_HIGH, "you do not have that weapon\n" );
 		return;
 	}
-
-	if ( W_HasWeapon( self, 1 ) )
-		sprint( self, #PRINT_HIGH, "WE HAVE THAT WEAPON\n" );
-	else
-		sprint( self, #PRINT_HIGH, "WE do not HAVE THAT WEAPON\n" );
 
 	self.current_weapon = fl;
 	W_SetCurrentAmmo();
@@ -6288,6 +6282,7 @@ void(float stat) HIP_FireLaser =
 #define WEAP_FUNC_RELOAD		4		// weapon is being reloaded, return 1 if the weapon is out of ammo
 #define WEAP_FUNC_SERVERINIT	5		// precache models and sounds, etc. here
 
+#ifdef NEVER_DEFINED
 /*
 ============
 BitNumToValue
@@ -6428,3 +6423,4 @@ float( entity e, float func ) Weapon_Shotgun = {
 	return -1;
 };
 */
+#endif
