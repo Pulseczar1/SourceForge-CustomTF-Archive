@@ -887,10 +887,19 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 		{
 			if (visible2(soul,soul.enemy))
 			{
-				PrintFromSoldier(soul,self,"i'm fighting the enemy!\n",#PRINT_CHAT);
+				soul.penance_time = 1;
+
+				if ( soul.is_malfunctioning != 2 )
+					PrintFromSoldier( soul, self, "i'm fighting the enemy!\n", #PRINT_CHAT );
+				else {
+					if ( soul.goalentity != self ) {
+						soul.goalentity = self; 		
+						PrintFromSoldier( soul, self, "Ok!\n", #PRINT_HIGH );
+					} else
+						PrintFromSoldier( soul, self, "Already following you!\n", #PRINT_CHAT );
+				}
 				ResetMenu();
 				self.impulse=0;
-				soul.penance_time = 1;
 				return;
 			}			 
 		}
@@ -919,10 +928,16 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 		{
 			if (visible2(soul,soul.enemy))
 			{
-				PrintFromSoldier(soul,self,"i'm fighting the enemy!\n",#PRINT_CHAT);
+				soul.penance_time = 2;
+
+				if ( soul.is_malfunctioning != 2 )
+					PrintFromSoldier( soul, self, "i'm fighting the enemy!\n", #PRINT_CHAT );
+				else {
+					soul.goalentity = world;
+					PrintFromSoldier( soul, self, "Holding position...\n", #PRINT_HIGH );
+				}
 				ResetMenu();
 				self.impulse=0;
-				soul.penance_time = 2;
 				return;
 			}
 
@@ -947,10 +962,18 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 		{
 			if (visible2(soul,soul.enemy))
 			{
-				PrintFromSoldier(soul,self,"i'm fighting the enemy!\n",#PRINT_CHAT);
+				soul.penance_time = 3;
+
+				if ( soul.is_malfunctioning != 2 )
+					PrintFromSoldier( soul, self, "i'm fighting the enemy!\n", #PRINT_CHAT );
+				else {
+					soul.goalentity = ReturnEasyWaypoint( soul, soul );
+
+					if ( soul.goalentity != world )
+						PrintFromSoldier( soul, self, "Moving on!\n", #PRINT_HIGH );
+				}
 				ResetMenu();
 				self.impulse=0;
-				soul.penance_time = 3;
 				return;
 			}
 			soul.has_teleporter = 0;

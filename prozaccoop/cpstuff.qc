@@ -1982,9 +1982,13 @@ float(entity player, float damage) HurtLegs =
 			return 0;
 
 		// decrease monster speed by 10% each wound
-		player.#npc_speedfactor = player.#npc_speedfactor - 0.1;
-		if ( player.#npc_speedfactor < 0.1 )
-			player.#npc_speedfactor = 0.1;
+		if ( !player.#npc_speedfactor )
+			player.#npc_speedfactor = 0.9;
+		else {
+			player.#npc_speedfactor = player.#npc_speedfactor - 0.1;
+			if ( player.#npc_speedfactor < 0.1 )
+				player.#npc_speedfactor = 0.1;
+		}
 
 		return damage;
 	}
