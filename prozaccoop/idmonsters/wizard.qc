@@ -363,11 +363,11 @@ void()	_wiz_fast10	=[	$magatt2,		_wiz_run1	] {COOP_Turn();
 	r = range (self.enemy);
 
 	if (r <= #RANGE_MELEE)
-		self.attack_finished = time + 0.1;
+		Attack_Finished( 0.1 );
 	else if (r > #RANGE_NEAR)
-		self.attack_finished = time + 2;
+		Attack_Finished( 2 );
 	else
-		self.attack_finished = time + 0.5;
+		Attack_Finished( 0.5 );
 	_WizardAttackFinished ();
 };
 
@@ -476,7 +476,7 @@ void() monster_wizard =
 	self.netname = "scrag";
 
 	self.monsterweight = #MWEIGHT_SMALL;
-	self.monsterflags = 0;
+	self.monsterflags = #MFLAG_NOLEGS;
 
 	// monsters have a team of their own
 	if ( !self.team_no )
@@ -488,7 +488,6 @@ void() monster_wizard =
 	self.OnPreAttack = _WizardCheckAttack;
 	self.OnNoticeEnemy = _WizardOnSight;
 	self.#npc_speedfactor = 3;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_wizard;
 	COOP_SetLives ();
 

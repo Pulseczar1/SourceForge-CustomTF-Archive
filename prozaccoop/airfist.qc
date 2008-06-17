@@ -41,88 +41,107 @@ $frame ablast1 ablast2 ablast3 ablast4 ablast5 ablast6
 
 float (entity thing) canairpush =
 {
-	local float af_det_delay;
+	local float temp;
+
+	temp = GetTeam( thing );
 
 	if (thing.classname == "player")
-    {
-        #ifdef AIRFIST_DONT_PUSH_TEAMMATES
-        if (!Teammate(self.team_no,thing.team_no)) //WARNING: using self
-        #endif
+	{
+#ifdef AIRFIST_DONT_PUSH_TEAMMATES
+		if (!Teammate(self.team_no,thing.team_no)) //WARNING: using self
+#endif
         
-        return #TRUE;
+		return #TRUE;
 	}
-    else if (thing.classname == "pipebomb")
-    {
+	else if (thing.classname == "pipebomb")
+	{
 		thing.avelocity = '300 300 300';
-        return #TRUE;
-    }
+		return #TRUE;
+	}
 	else if (thing.classname == "spike")
 		return #TRUE;
 	else if (thing.classname == "grenade")
-    {
+	{
 		thing.avelocity = '300 300 300';
-        return #TRUE;
-    }
-    else if (thing.classname == "rocket")
+		return #TRUE;
+	}
+	else if (thing.classname == "rocket")
 		return #TRUE;
 
-    else if (thing.classname == "caltrop")
-    {
+	else if (thing.classname == "caltrop")
+	{
 		thing.avelocity = '500 500 500';
-        return #TRUE;
-    }
-
-    #ifdef PUSHABLE_ARMY    
-    else if (thing.classname == "monster_army")
 		return #TRUE;
-    #endif
+	}
 
-    #ifdef PUSHABLE_FIEND
-    else if (thing.classname == "monster_demon1")
+#ifdef PUSHABLE_ARMY    
+	else if (thing.classname == "monster_army")
 		return #TRUE;
-    #endif
+#endif
 
-    #ifdef PUSHABLE_SCRAG    
-    else if (thing.classname == "monster_wizard")
+#ifdef PUSHABLE_FIEND
+	else if (thing.classname == "monster_demon1")
+		return #TRUE;
+#endif
+
+#ifdef PUSHABLE_SCRAG    
+	else if (thing.classname == "monster_wizard")
 		return #TRUE;    
-    #endif
+#endif
 
 #ifdef COOP_MODE_ENHANCED
 	// Gizmo - enable monster pushing
 	else if ( COOP_IsCoopMonster( thing ) && thing.monsterweight <= #MWEIGHT_MEDIUM )
 		return #TRUE;
+	else if ( thing.owner != world ) {
+		// Gizmo - push away vore spikes
+		if ( thing.owner.classname == "idmonster_shalrath" ) {
+			if ( thing.model == "progs/v_spike.mdl" ) {
+				thing.nextthink = time + 1;
+				return #TRUE;
+			}
+		}
+		// Gizmo - enable pushing of all coop monster projectiles except enforcer lasers
+		else if ( COOP_IsCoopMonster( thing.owner ) ) {
+			// can't push lasers
+			if ( thing.model != "progs/laser.mdl" )
+				return #TRUE;
+		}
+	}
 #endif
 
-  	else if (thing.classname == "detpack" && no_detpush == 0)
-    {
-	//WK 1/7/7 Airfisting messes up the fuse. detpack.oldenemy is the countdown timer
-	af_det_delay = 2 + floor(5*random());
+	else if (thing.classname == "detpack" && no_detpush == 0)
+	{
+/*
+		//WK 1/7/7 Airfisting messes up the fuse. detpack.oldenemy is the countdown timer
+		af_det_delay = 2 + floor(5*random());
 
-	thing.nextthink = thing.nextthink + af_det_delay; //WK Scramble the detpack's timer. :)
-	thing.oldenemy.health = thing.oldenemy.health + af_det_delay;
-	sprint(self,#PRINT_HIGH,"Your airfist damages the detpack circuits\n");
-	if (self != thing.owner) 
-		sprint(thing.owner,#PRINT_HIGH,"Your detpack circuits have been damaged!\n");
+		thing.nextthink = thing.nextthink + af_det_delay; //WK Scramble the detpack's timer. :)
+		thing.oldenemy.health = thing.oldenemy.health + af_det_delay;
+		sprint(self,#PRINT_HIGH,"Your airfist damages the detpack circuits\n");
+		if (self != thing.owner) 
+			sprint(thing.owner,#PRINT_HIGH,"Your detpack circuits have been damaged!\n");
+*/
 
-	  thing.avelocity = '300 300 300';
-        thing.movetype = #MOVETYPE_BOUNCE;
-        return #TRUE;
-    }
+		thing.avelocity = '300 300 300';
+		thing.movetype = #MOVETYPE_BOUNCE;
+		return #TRUE;
+	}
 
-    else if (thing.#coolflag == #STRFLAG_COOL)
-    {
-        thing.avelocity = '500 500 500';
+	else if (thing.#coolflag == #STRFLAG_COOL)
+	{
+		thing.avelocity = '500 500 500';
 
-        if (thing.classname != "gib")
-        {
-            thing.avelocity_x = 0;
-            thing.avelocity_z = 0;
-        }
+		if (thing.classname != "gib")
+		{
+			thing.avelocity_x = 0;
+			thing.avelocity_z = 0;
+		}
 
-        thing.avelocity = thing.avelocity * crandom();
+		thing.avelocity = thing.avelocity * crandom();
 
-        return #TRUE;        
-    }
+		return #TRUE;        
+	}
 
 	return #FALSE;
 };
@@ -162,7 +181,7 @@ void() launch_horn =
   local float recoil; // recoil strength of the gun
 
 	// Reshot time for the airgun attack in seconds.
-	local float attackTime = 0.75; //WK 1/7/7 0.5
+	local float attackTime = 0.5;
 
 	// Max number of times that the weapon can fired in a period of time.
 	local float maxFireRate = 5;
@@ -371,8 +390,10 @@ void() launch_horn =
         // If its a missile, change the direction but keep the same speed.
         eSpeed = vlen(e.velocity);
         e.velocity = normalize(delta) * eSpeed;
+/*
 	  //WK Canairpush() should ensure only valid things will hit the line below...
 	  e.owner = self; //WK 2/26/7 Make reflected rockets hit their owners. <<Careful not to reflect something bad...>>
+*/
       }
       else
       {
@@ -472,11 +493,6 @@ void() launch_horn =
   // recoil code
   if (self.flags & #FL_ONGROUND)
   {
-   	// If self on the ground, raise me up so that the velocity will
-    // take affect.
-
-    // raise the bugger a bit 
-    //setorigin(self, self.origin + '0 0 1'); // - OfN - And make them stuck in wall? :) nope..
     self.flags = self.flags - #FL_ONGROUND;
    }
 
@@ -486,10 +502,8 @@ void() launch_horn =
   }
 
   // If we havent the upgrade reduce recoil
-/* WK 2/26/7 We give them discharge instead
-  if (!self.cutf_items & #CUTF_AIRFISTUPGRADE)
+  if (!(self.cutf_items & #CUTF_AIRFISTUPGRADE))
     recoil = recoil * #AIRFIST_RECOIL_REDUCTION;
-*/
 
   //WK 1/7/7 Gymnasts should benefit from this item... thats what gymn *does*.
   if (self.cutf_items & #CUTF_GYMNAST)

@@ -198,7 +198,7 @@ void() player_touch =
 				}				
 			}
 		}
-        else if (IsMonster(other))
+        else if (IsOwnedMonster(other))
         {
             if (!(other.tfstate & #TFSTATE_INFECTED))
             {
@@ -230,6 +230,30 @@ void() player_touch =
                 other.infection_team_no = self.infection_team_no;
             }
         }
+#ifdef COOP_MODE_ENHANCED
+		else if ( COOP_IsCoopMonster( other ) ) {
+			// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+			if (!(other.tfstate & #TFSTATE_INFECTED))
+			{
+				// Report infecter
+				sprint(self, #PRINT_HIGH, "You have infected ", other.netname, "!\n");
+
+				// Update infection flag
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+
+				// Infect it!
+				Bio = spawn ();
+				Bio.classname = "timer";
+				Bio.classname = "biotimer";
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_MonsterDecay;
+				Bio.owner = self;
+				Bio.enemy = other;
+
+				other.infection_team_no = self.infection_team_no;
+			}
+		}
+#endif
 	}
 
 #ifdef PLAYER_PUSHING
@@ -1035,7 +1059,8 @@ local entity	bubble_spawner;
 	bubble_spawner.air_finished = 0;
 	bubble_spawner.owner = self;
 	bubble_spawner.bubble_count = num_bubbles;
-    
+
+	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
     if (IsMonster(self))
         bubble_spawner.has_holo = 1; // forced mode
     else

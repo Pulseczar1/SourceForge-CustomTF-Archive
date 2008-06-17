@@ -241,7 +241,7 @@ void() monster_tarbaby =
 	self.netname = "spawn";
 
 	self.monsterweight = #MWEIGHT_SMALL;
-	self.monsterflags = #MFLAG_NOHEART;
+	self.monsterflags = #MFLAG_NOHEART | #MFLAG_NOLEGS;
 
 	// monsters have a team of their own
 	if ( !self.team_no )
@@ -249,7 +249,6 @@ void() monster_tarbaby =
 	self.#monsterflag = #STRFLAG_MONSTER;
 
 	self.OnNoticeEnemy = TarbabyOnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_tarbaby;
 	COOP_SetLives ();
 

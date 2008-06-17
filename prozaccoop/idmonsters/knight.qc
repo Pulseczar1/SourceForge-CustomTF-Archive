@@ -341,7 +341,6 @@ void() monster_knight =
 	self.OnPreAttack = KnightPreAttack;
 	self.OnNoticeEnemy = KnightOnSight;
 	self.#npc_speedfactor = 2;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_knight;
 	COOP_SetLives ();
 

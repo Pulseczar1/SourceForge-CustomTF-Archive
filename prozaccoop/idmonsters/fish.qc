@@ -215,7 +215,7 @@ void() monster_fish =
 	self.netname = "fish";
 
 	self.monsterweight = #MWEIGHT_SMALL;
-	self.monsterflags = #MFLAG_BITER;
+	self.monsterflags = #MFLAG_BITER | #MFLAG_NOLEGS;
 
 	// monsters have a team of their own
 	if ( !self.team_no )
@@ -226,7 +226,6 @@ void() monster_fish =
 
 	self.OnNoticeEnemy = _fish_noticeenemy;
 	self.#npc_speedfactor = 1.9;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_fish;
 	COOP_SetLives ();
 

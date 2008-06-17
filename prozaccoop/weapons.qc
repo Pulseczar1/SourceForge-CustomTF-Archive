@@ -983,11 +983,13 @@ void(float inAuto) W_FireMedikit =
 #endif
 
 		}
-		else if (IsMonster(trace_ent))//- OfN - Monsters 
+		else if (IsMonster(trace_ent))//- OfN - Monsters	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 		{
 			local string tmps;
+			local float temp;
 
-			if (Teammate(trace_ent.real_owner.team_no, self.team_no))
+			temp = GetTeam( trace_ent );
+			if (Teammate(temp, self.team_no))
 			{
 				if (trace_ent.health < trace_ent.max_health)
 				{
@@ -1032,12 +1034,14 @@ void(float inAuto) W_FireMedikit =
 					// Inform the medic
 					sprint(self,#PRINT_HIGH,"You have cured this ",tmps," from the infection\n");
 
-					// Report to the owner of the monster
-					sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," has been cured by ",self.netname,"\n");
-					
-					// Report to teammates
-					teamprefixsprintbi(trace_ent.real_owner.team_no,trace_ent.real_owner,self);
-					teamsprintbi(trace_ent.real_owner,self,self.netname, " cures the ",tmps," ",trace_ent.netname,"\n");
+					if ( IsOwnedMonster( trace_ent ) ) {
+						// Report to the owner of the monster
+						sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," has been cured by ",self.netname,"\n");
+						
+						// Report to teammates
+						teamprefixsprintbi(trace_ent.real_owner.team_no,trace_ent.real_owner,self);
+						teamsprintbi(trace_ent.real_owner,self,self.netname, " cures the ",tmps," ",trace_ent.netname,"\n");
+					}
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
 					if (!Teammate(trace_ent.infection_team_no, self.team_no))
@@ -1797,11 +1801,12 @@ void() W_FireSniperRifle =
 
 	if (trace_ent)
 	{
+		local vector f, g, h;
+		local float x;
+		local float legdmgdone;
+
 		if (trace_ent.classname == "player")
 		{
-			local float x;
-			local vector f, g, h;
-
 			f = trace_endpos - src;
 
 			g_x = trace_endpos_x;
@@ -1825,12 +1830,10 @@ void() W_FireSniperRifle =
 				// leg shot
 				dam_mult = 0.75;
 
-						local float legdmgdone; 			   
-
-					 if (OTR > 1)
-						 legdmgdone = HurtLegs(trace_ent,2);
-					   else
-						   legdmgdone = HurtLegs(trace_ent,1);
+				if (OTR > 1)
+					legdmgdone = HurtLegs(trace_ent,2);
+				else
+					legdmgdone = HurtLegs(trace_ent,1);
 
 				//TeamFortress_SetSpeed(trace_ent); 
 				deathmsg = #DMSG_SNIPERLEGSHOT;
@@ -1840,16 +1843,16 @@ void() W_FireSniperRifle =
 
 				if (trace_ent.health > 0 && legdmgdone)
 				{
-							if (OTR > 1)
-						   {
-								sprint(trace_ent, #PRINT_MEDIUM, "Leg injury! That was OTR stuff!\n");
+					if (OTR > 1)
+					{
+						sprint(trace_ent, #PRINT_MEDIUM, "Leg injury! That was OTR stuff!\n");
 						sprint(self, #PRINT_MEDIUM, "Leg shot - that really will slow him down!\n");
-						 }
-							   else
-						 {
-							  sprint(trace_ent, #PRINT_MEDIUM, "Leg injury!\n");
+					}
+					else
+					{
+						sprint(trace_ent, #PRINT_MEDIUM, "Leg injury!\n");
 						sprint(self, #PRINT_MEDIUM, "Leg shot - that'll slow him down!\n");
-							 }
+					}
 				}
 
 				return;
@@ -1857,7 +1860,7 @@ void() W_FireSniperRifle =
 			else if (zdif > 20)
 			{
 				// head shot
-				dam_mult = 1.5; //WK 1/7/7 Sniper nerf: 2
+				dam_mult = 2;
 
 				if (OTR > 1)
 					stuffcmd(trace_ent, "bf;bf\n");
@@ -1873,7 +1876,7 @@ void() W_FireSniperRifle =
 					if (OTR > 1)
 					{
 						sprint(trace_ent, #PRINT_MEDIUM, "Head injury! That was OTR stuff!\n");
-						sprint(self, #PRINT_MEDIUM, "Head shot - that really gotta hurt!\n");
+						sprint(self, #PRINT_MEDIUM, "Head shot - that's really gotta hurt!\n");
 					}
 					else
 					{
@@ -1888,6 +1891,69 @@ void() W_FireSniperRifle =
 				deathmsg = #DMSG_SNIPERRIFLE;
 
 		}
+#ifdef COOP_MODE_ENHANCED
+		else if ( COOP_IsCoopMonster( trace_ent ) ) {
+			f = trace_endpos - src;
+
+			g_x = trace_endpos_x;
+			g_y = trace_endpos_y;
+			g_z = 0;
+
+			h_x = trace_ent.origin_x;
+			h_y = trace_ent.origin_y;
+			h_z = 0;
+
+			x = vlen(g - h);
+
+			f = (normalize(f) * x) + trace_endpos;
+
+			zdif = f_z - trace_ent.origin_z;
+
+//			trace_ent.head_shot_vector = '0 0 0';
+			// Gizmo - monsters need special checking since they have multiple different sizes
+			if ( zdif < trace_ent.mins_z * 0.5 ) {
+				// leg shot
+				dam_mult = 0.75;
+
+				if (OTR > 1)
+					legdmgdone = HurtLegs(trace_ent,2);
+				else
+					legdmgdone = HurtLegs(trace_ent,1);
+
+				//TeamFortress_SetSpeed(trace_ent); 
+				deathmsg = #DMSG_SNIPERLEGSHOT;
+				//WK Kevlar ignored for snipers again.
+				TF_T_Damage (trace_ent, self, self, damg * dam_mult * OTR, 0, 0);
+
+
+				if (trace_ent.health > 0 && legdmgdone)
+				{
+					if (OTR > 1)
+						sprint(self, #PRINT_MEDIUM, "Leg shot - that really will slow him down!\n");
+					else
+						sprint(self, #PRINT_MEDIUM, "Leg shot - that'll slow him down!\n");
+				}
+
+				return;
+			}
+			if ( zdif > trace_ent.maxs_z * 0.75 ) {
+				// head shot
+				dam_mult = 2;
+
+				deathmsg = #DMSG_SNIPERHEADSHOT;
+				TF_T_Damage( trace_ent, self, self, damg * dam_mult * OTR, 0, #TF_TD_SHOT );
+
+				if ( trace_ent.health > 0 ) {
+					if ( OTR > 1 )
+						sprint( self, #PRINT_MEDIUM, "Head shot - that's really gotta hurt!\n" );
+					else
+						sprint( self, #PRINT_MEDIUM, "Head shot - that's gotta hurt!\n" );
+				}
+
+				return;
+			}
+		}
+#endif
 	}
 
 	ClearMultiDamage ();
@@ -2388,7 +2454,6 @@ void() W_FireLightning =
 {
 	local	vector	org;
 	local float 	cells;
-//	local float		excess;
 
 	if (self.ammo_cells < 1)
 	{
@@ -2420,16 +2485,38 @@ void() W_FireLightning =
 
 	KickPlayer(-2, self);
 
-#define BIGLIGHT
-#ifdef BIGLIGHT
-	// Gizmo - no more discharging all your cells
-	self.ammo_cells = self.ammo_cells - 0.75;
+#ifdef CLASSIC_LIGHTNING_GUN
+	local float excess;
+
+	#define BIGLIGHT
+	#ifdef BIGLIGHT
+		if (self.ammo_cells > 100) {
+			excess = (self.ammo_cells - 100) * 2 / 3;
+			if (excess < 50) excess = 50;
+			self.ammo_cells = 100;
+		} else {
+			excess = 0;
+			self.ammo_cells = self.ammo_cells - 0.75;
+		}
+	#else
+		//Or this method, which consumes cells at a rate to ensure we run out
+		//In a few seconds, no matter what. But resupplying is a bitch.
+		excess = 0;
+		self.ammo_cells = self.ammo_cells - ceil(self.maxammo_cells / 30);
+		if (self.ammo_cells < 0) self.ammo_cells = 0;
+	#endif
 #else
-	//Or this method, which consumes cells at a rate to ensure we run out
-	//In a few seconds, no matter what. But resupplying is a bitch.
-	excess = 0;
-	self.ammo_cells = self.ammo_cells - ceil(self.maxammo_cells / 30);
-	if (self.ammo_cells < 0) self.ammo_cells = 0;
+	#define BIGLIGHT
+	#ifdef BIGLIGHT
+		// Gizmo - no more discharging all your cells
+		self.ammo_cells = self.ammo_cells - 0.75;
+	#else
+		//Or this method, which consumes cells at a rate to ensure we run out
+		//In a few seconds, no matter what. But resupplying is a bitch.
+		excess = 0;
+		self.ammo_cells = self.ammo_cells - ceil(self.maxammo_cells / 30);
+		if (self.ammo_cells < 0) self.ammo_cells = 0;
+	#endif
 #endif
 	self.currentammo = self.ammo_cells;
 	
@@ -2478,9 +2565,17 @@ void() W_FireLightning =
 	multicast (org, #MULTICAST_PHS);
 #endif
 
-//WK 30. Lowered damage to make it a $2200 weapon
+#ifdef CLASSIC_LIGHTNING_GUN
+	if (excess) {
+		sprint(self,#PRINT_HIGH,"You discharge your excess cells\n");
+		LightningDamage (self.origin, trace_endpos + v_forward*4, self, excess);
+	} else
+		//WK 30. Lowered damage to make it a $2200 weapon
+		LightningDamage (self.origin, trace_endpos + v_forward*4, self, 12);
+#else
 	// Gizmo - increased damage to 18
 	LightningDamage (self.origin, trace_endpos + v_forward*4, self, 18);
+#endif
 };
 
 //=============================================================================
@@ -2975,7 +3070,9 @@ void() W_SetCurrentAmmo =
 	if (self.health <= 0 || self.current_weapon == 0)
 		return; 	// get out of any weapon firing states
 
-	player_run();
+	// Gizmo - ensure the assault cannon never gets messed up
+	if ( self.current_weapon != #WEAP_ASSAULT_CANNON )
+		player_run();
 
 	self.items = self.items - ( self.items & (#IT_SHELLS | #IT_NAILS | #IT_ROCKETS | #IT_CELLS) );
 	self.weapon = 0;
@@ -4836,6 +4933,109 @@ void() CycleWeaponCommand =
 	}
 };
 
+/*
+============
+ChangeToWeapon
+
+Gizmo: Switches to the specified weapon if possible
+============
+*/
+float( entity e, float weaponNum ) W_HasWeapon;
+void( string weaponName ) ChangeToWeapon = {
+	local float fl;
+
+	if ( self.tfstate & #TFSTATE_RELOADING )
+		return;
+
+	if ( self.tfstate & #TFSTATE_CANT_MOVE )
+		return;
+
+	// drop anything picked up
+	if ( self.pickedupobject_hands != world )
+		zg_drop( self, #FALSE );
+
+	// TODO: create macros for the weapon names
+	if ( !strcasecmp( weaponName, "Hook" ) )
+		fl = #WEAP_HOOK;
+	else if ( !strcasecmp( weaponName, "Medikit" ) )
+		fl = #WEAP_MEDIKIT;
+	else if ( !strcasecmp( weaponName, "Spanner" ) )
+		fl = #WEAP_SPANNER;
+	else if ( !strcasecmp( weaponName, "Axe" ) )
+		fl = #WEAP_AXE;
+	else if ( !strcasecmp( weaponName, "Sniper" ) )
+		fl = #WEAP_SNIPER_RIFLE;
+	else if ( !strcasecmp( weaponName, "AutoRifle" ) )
+		fl = #WEAP_AUTO_RIFLE;
+	else if ( !strcasecmp( weaponName, "Shotgun" ) )
+		fl = #WEAP_SHOTGUN;
+	else if ( !strcasecmp( weaponName, "SuperShotgun" ) )
+		fl = #WEAP_SUPER_SHOTGUN;
+	else if ( !strcasecmp( weaponName, "Nailgun" ) )
+		fl = #WEAP_NAILGUN;
+	else if ( !strcasecmp( weaponName, "LightAssault" ) )
+		fl = #WEAP_LIGHT_ASSAULT;
+	else if ( !strcasecmp( weaponName, "Grenade" ) ) {
+		self.weaponmode = #GL_NORMAL;
+		fl = #WEAP_GRENADE_LAUNCHER;
+	} else if ( !strcasecmp( weaponName, "Pipe" ) ) {
+		self.weaponmode = #GL_PIPEBOMB;
+		fl = #WEAP_GRENADE_LAUNCHER;
+	} else if ( !strcasecmp( weaponName, "Flame" ) )
+		fl = #WEAP_FLAMETHROWER;
+	else if ( !strcasecmp( weaponName, "Rocket" ) ) {
+		self.cluster_mode = #FALSE;
+		fl = #WEAP_ROCKET_LAUNCHER;
+	} else if ( !strcasecmp( weaponName, "Cluster" ) ) {
+		if ( self.tf_items & #NIT_CLUSTER_ROCKETS ) {
+			self.cluster_mode = #TRUE;
+			fl = #WEAP_ROCKET_LAUNCHER;
+		} else
+			fl = 0;
+	} else if ( !strcasecmp( weaponName, "Incendiary" ) )
+		fl = #WEAP_INCENDIARY;
+	else if ( !strcasecmp( weaponName, "Assault" ) )
+		fl = #WEAP_ASSAULT_CANNON;
+	else if ( !strcasecmp( weaponName, "Lightning" ) )
+		fl = #WEAP_LIGHTNING;
+	else if ( !strcasecmp( weaponName, "Daedalus" ) )
+		fl = #WEAP_DAEDALUS;
+	else if ( !strcasecmp( weaponName, "Tranq" ) )
+		fl = #WEAP_TRANQ;
+	else if ( !strcasecmp( weaponName, "Railgun" ) )
+		fl = #WEAP_RAILGUN;
+	else if ( !strcasecmp( weaponName, "Mauser" ) )
+		fl = #WEAP_MAUSER;
+	else if ( !strcasecmp( weaponName, "Airfist" ) )
+		fl = #WEAP_AIRF;
+	else if ( !strcasecmp( weaponName, "LaserCannon" ) )
+		fl = #WEAP_LASERCANNON;
+	else if ( !strcasecmp( weaponName, "SNG" ) )
+		fl = #WEAP_SNG;
+	else if ( !strcasecmp( weaponName, "ZeroGrav" ) )
+		fl = #WEAP_ZEROGRAVITY;
+	else {
+		sprint( self, #PRINT_HIGH, "invalid weapon specified\n" );
+		return;
+	}
+
+	if ( !( self.weapons_carried & fl ) ) {
+		sprint( self, #PRINT_HIGH, "you do not have that weapon\n" );
+		return;
+	}
+
+	if ( W_HasWeapon( self, 1 ) )
+		sprint( self, #PRINT_HIGH, "WE HAVE THAT WEAPON\n" );
+	else
+		sprint( self, #PRINT_HIGH, "WE do not HAVE THAT WEAPON\n" );
+
+	self.current_weapon = fl;
+	W_SetCurrentAmmo();
+	W_PrintWeaponMessage();
+
+	self.StatusRefreshTime = time + 0.1;
+};
+
 
 
 #ifndef QUAKE_WORLD
@@ -5902,7 +6102,7 @@ void() HIP_LaserTouch =
 		if ( !COOP_IsCoopMonster( other ) ) {
 #endif
 			//- OfN laser hurts monsters a lot
-			if (IsMonsterNonArmy(other)) self.dmg = self.dmg * 2;
+			if (IsSummon(other)) self.dmg = self.dmg * 2;
 
 			//- scrags get raped by the laser
 			if (other.classname == "monster_wizard") self.dmg = self.dmg * 2; // so.. this is *4
@@ -6071,3 +6271,160 @@ void(float stat) HIP_FireLaser =
 
 	if (CheckForReload() == #TRUE) return;
 };
+
+//======================================================
+// Gizmo's new weapon system, allows for any amount of weapons (greater than 24) and
+// in the future will allow for function pointers for weaponfire, hasenoughammo, etc. to make adding
+// new weapons very easy and only one place to make modifications instead of having to modify every
+// damn thing that does something other than just selecting a weapon
+
+// only reason these are used and not separate functions is to save entity field space
+// return -1 if the function isn't supported in your weapon (the default function will be used)
+// return 0 for every function that either doesn't have a return value, or for default success
+// each function can have it's own special return values and their meaning (besides -1 and 0)
+#define WEAP_FUNC_SELECTED		1		// weapon has become the current weapon, return 1 if the weapon doesn't have enough ammo
+#define WEAP_FUNC_UNSELECTED	2		// was the current weapon, but is no longer, no need to clear weapon model
+#define WEAP_FUNC_FIRE			3		// weapon is firing, return 1 if the weapon needs to be reloaded
+#define WEAP_FUNC_RELOAD		4		// weapon is being reloaded, return 1 if the weapon is out of ammo
+#define WEAP_FUNC_SERVERINIT	5		// precache models and sounds, etc. here
+
+/*
+============
+BitNumToValue
+
+Converts the bit number (0 - 23) to it's value, IE: 9 == 512.
+Similar to 1<<x in C since QC doesn't have the << operator
+============
+*/
+float( float bitNum ) BitNumToValue = {
+	local float value;
+
+	value = 1;
+
+	while ( bitNum ) {
+		value = value * 2;
+		bitNum = bitNum - 1;
+	}
+
+	return value;
+};
+
+/*
+============
+W_HasWeapon
+
+Returns non-zero if e has the specified weapon, otherwise returns zero
+============
+*/
+float( entity e, float weaponNum ) W_HasWeapon = {
+	// weapon indexes start from 1, zero indicates no weapon
+	if ( !weaponNum )
+		return 0;
+
+	if ( weaponNum <= 24 ) {
+		return e.weapons_carried & BitNumToValue( weaponNum - 1 );
+	}
+
+	return 0;
+};
+
+/*
+============
+W_AddWeapon
+============
+*/
+void( entity e, float weaponNum ) W_AddWeapon = {
+	// weapon indexes start from 1, zero indicates no weapon
+	if ( !weaponNum )
+		return;
+
+	if ( weaponNum <= 24 ) {
+		e.weapons_carried = e.weapons_carried | BitNumToValue( weaponNum - 1 );
+	}
+};
+
+/*
+============
+W_RemoveWeapon
+============
+*/
+void( entity e, float weaponNum ) W_RemoveWeapon = {
+	// weapon indexes start from 1, zero indicates no weapon
+	if ( !weaponNum )
+		return;
+
+//	if ( e.current_weapon == weaponNum )
+//		// call the weapon's unselected function and select a new weapon
+
+	if ( weaponNum <= 24 ) {
+		e.weapons_carried = e.weapons_carried - ( e.weapons_carried & BitNumToValue( weaponNum - 1 ) );
+	}
+};
+
+/*
+============
+W_SetCurrentWeapon
+
+TODO: change float weaponNum to void( entity e, float func ) type
+============
+*/
+void( entity e, float weaponNum ) W_SetCurrentWeapon = {
+	e.current_weapon = weaponNum;
+};
+
+
+//======================================================
+
+
+/*
+============
+Weapon_Shotgun
+
+The standard shotgun
+============
+*/
+/*
+float( entity e, float func ) Weapon_Shotgun = {
+	if ( func == #WEAP_FUNC_FIRE ) {
+		local vector dir;
+
+		sound( e, #CHAN_WEAPON, "weapons/guncock.wav", 1, #ATTN_NORM );	
+
+		if ( e.classname == "player" )
+			KickPlayer( -2, e );
+				 
+		e.currentammo = e.ammo_shells = e.ammo_shells - 1;
+		if ( e.classname == "player" )
+			dir = aim( e, 100000 );
+		else {
+			dir = e.enemy.origin - e.enemy.velocity * ( 0.08 / e.has_sensor );
+			dir = normalize( dir - e.origin );
+		}
+
+		deathmsg = #DMSG_SHOTGUN;
+		FireBullets( 6, dir, '0.04 0.04 0', 1536 );		// FIXME: uses self
+
+		return 0;
+	}
+	if ( func == #WEAP_FUNC_RELOAD ) {
+		// TODO
+		return 0;
+	}
+	if ( func == #WEAP_FUNC_SELECTED ) {
+		if ( e.ammo_shells < 1 )
+			return 1;
+		sprint( e, #PRINT_HIGH, "Shotgun selected\n" );
+		return 0;
+	}
+	if ( func == #WEAP_FUNC_UNSELECTED ) {
+		// no cleanup code
+		return 0;
+	}
+	if ( func == #WEAP_FUNC_SERVERINIT ) {
+		// no precaches for the shotgun
+		return 0;
+	}
+
+	return -1;
+};
+*/

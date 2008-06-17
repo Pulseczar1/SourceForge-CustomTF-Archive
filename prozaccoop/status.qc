@@ -32,7 +32,7 @@ string(float pc) TeamFortress_GetJobName;
 //void(entity demon) custom_demon_name;
 
 //- OfN -
-float(entity thing) IsMonster;
+float(entity thing) IsOwnedMonster;
 float(entity player) HasMonster;
 entity(entity warlock, float numsummon) GetSummon;
 float(entity player, float type) GetNumTypeMonster;
@@ -462,11 +462,9 @@ void(entity pl) RefreshStatusBar5 =
 		s5 = "\nRange: ";
 		centerprint(pl, s1, s2, s3, s4, s5, s6,s7);
 	}
-	//else if ((self.scaned.classname == "building_sentrygun" || self.scaned.classname == "building_tesla" || self.scaned.classname == "building_teleporter" || self.scaned.classname == "monster_demon1") && self.scaned.health > 0)
-    else if ((self.scaned.classname == "building_sentrygun" || self.scaned.classname == "building_tesla" || self.scaned.classname == "building_teleporter" || IsMonster(self.scaned)) && self.scaned.health > 0)
+    else if ((self.scaned.classname == "building_sentrygun" || self.scaned.classname == "building_tesla" || self.scaned.classname == "building_teleporter" || IsOwnedMonster(self.scaned)) && self.scaned.health > 0)
 	{
-		//- OfN - if (self.scaned.classname == "monster_demon1" || self.scaned.classname == "monster_army" || self.scaned.classname == "monster_shambler")
-        if (IsMonster(self.scaned))
+        if (IsOwnedMonster(self.scaned))
 		{
 			//custom_demon_name(self.scaned); //CH
 			s2 = GetTrueTeamName(self.scaned.real_owner.team_no); //demons are special

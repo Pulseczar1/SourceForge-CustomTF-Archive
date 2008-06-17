@@ -162,6 +162,9 @@ void() AntiGravGrenadeExplode;
 
 float(entity player, float damage) HurtLegs;
 
+float( entity thing ) IsOwnedMonster;
+float( entity thing ) IsMonster;
+
 //===============================================================
 // Guerilla menu (only used if we have job extras)
 
@@ -824,7 +827,7 @@ void() GuerillaThink = //Every second see if we have enemy nearby
 			}
 #endif
 		}
-		else if (IsMonster(head) && !Teammate(head.real_owner.team_no,self.owner.team_no)) { //- OfN - monsters and grunt are affected
+		else if (IsOwnedMonster(head) && !Teammate(head.real_owner.team_no,self.owner.team_no)) { //- OfN - monsters and grunt are affected
 			T_Damage(head,self,self.owner,#MINE_DMG); //Demons are vulnerable
 			self.has_tesla = 1; //- display no message on GuerillaExplode
 			GuerillaExplode();
@@ -849,7 +852,7 @@ void() GuerillaTouch =
 
 	#ifdef MINES_IGNORE_TEAMMATETOUCH
 	if (other != self.owner)
-	if (other.classname == "player" || IsMonster(other))
+	if (other.classname == "player" || IsMonster(other))	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 	if (Teammate(self.owner.team_no,other.team_no))
 	if (other.health > 0)
 		return;

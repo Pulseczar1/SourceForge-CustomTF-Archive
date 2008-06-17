@@ -73,10 +73,12 @@ void() _ShamHeal =
 	hp = ceil (hp);
 	self.health = self.health + hp;
 
+	// heal leg wounds
+	self.#npc_speedfactor = 2.8;
+
 	sound(self, #CHAN_ITEM, "items/r_item1.wav", 1, #ATTN_NORM);
 };
 
-void() _sham_throw;
 void() _sham_stand1	=[	$stand1,	_sham_stand2	] {COOP_Idle();};
 void() _sham_stand2	=[	$stand2,	_sham_stand3	] {};
 void() _sham_stand3	=[	$stand3,	_sham_stand4	] {};
@@ -133,6 +135,7 @@ if (random() > 0.8)
 
 		head = findradius( self.origin, 128 );
 		while ( head ) {
+			if ( !( head.flags & #FL_ITEM ) )
 			if ( !head.takedamage )
 			if ( head.solid != #SOLID_BSP && head.movetype != #MOVETYPE_NONE && infront( head ) ) {
 				_sham_throw();
@@ -273,6 +276,7 @@ void() _ShamThrowObjects = {
 
 	head = findradius( self.origin, 128 );
 	while ( head ) {
+		if ( !( head.flags & #FL_ITEM ) )
 		if ( head.solid != #SOLID_BSP && head.movetype != #MOVETYPE_NONE && infront( head ) ) {
 			if ( head.flags & #FL_ONGROUND ) {
 				head.flags = head.flags - #FL_ONGROUND;
@@ -494,8 +498,8 @@ float() _ShamCheckAttack =
 		
 	self.attack_state = #AS_MISSILE;
 	// make shamblers more aggressive against hwguys
-	if (!(self.enemy.flags & #FL_CLIENT) || self.enemy.current_weapon != #WEAP_ASSAULT_CANNON)
-		self.attack_finished = time + (1 + 2*random());
+	if ( !( self.enemy.flags & #FL_CLIENT ) || self.enemy.current_weapon != #WEAP_ASSAULT_CANNON )
+		Attack_Finished( 1 + 2*random() );
 	return #TRUE;
 };
 
@@ -567,7 +571,6 @@ void() monster_shambler =
 	self.OnPreAttack = _ShamCheckAttack;
 	self.OnNoticeEnemy = _ShamOnSight;
 	self.#npc_speedfactor = 2.8;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_shambler;
 	COOP_SetLives ();
 

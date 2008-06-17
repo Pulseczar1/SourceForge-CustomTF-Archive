@@ -665,9 +665,17 @@ void() FlareGrenadeExplode =
 // My stupid contributions to optimize something!		  //
 //========================================================//
 
-float(entity thing) IsMonster =
+float( entity thing ) IsMonster = {
+	if ( thing.flags & #FL_MONSTER )
+		return #TRUE;
+
+	return #FALSE;
+};
+
+float(entity thing) IsOwnedMonster =
 {
-	/*if (thing.classname=="monster_shambler")
+/*
+	if (thing.classname=="monster_shambler")
 		return #TRUE;
 	if (thing.classname=="monster_demon1")
 		return #TRUE;
@@ -678,17 +686,20 @@ float(entity thing) IsMonster =
 	if (thing.classname=="monster_fish")
 		return #TRUE;
 	if (thing.classname=="monster_gremlin")
-		return #TRUE;*/
+		return #TRUE;
+*/
 
-	if (thing.flags & #FL_MONSTER)
+	if ( thing.flags & #FL_MONSTER )
+	if ( thing.real_owner != world )	// Gizmo - added this because not all monsters are pets
 		return #TRUE;
 
 	return #FALSE;
 };
 
-float(entity thing) IsMonsterNonArmy =
+float(entity thing) IsSummon =
 {
-	/*if (thing.classname=="monster_shambler")
+/*
+	if (thing.classname=="monster_shambler")
 		return #TRUE;
 	if (thing.classname=="monster_demon1")
 		return #TRUE;
@@ -697,9 +708,12 @@ float(entity thing) IsMonsterNonArmy =
 	if (thing.classname=="monster_fish")
 		return #TRUE;
 	if (thing.classname=="monster_gremlin")
-		return #TRUE;*/
+		return #TRUE;
+*/
 
-	if (thing.flags & #FL_MONSTER && thing.classname != "monster_army")
+	if ( thing.flags & #FL_MONSTER )
+	if ( thing.real_owner != world )	// Gizmo - added this because not all monsters are pets
+	if ( thing.classname != "monster_army" )
 		return #TRUE;
 	
 	return #FALSE;
@@ -710,8 +724,8 @@ float(entity player) HasMonster =
 	local float res;
 	res = 0;
 
-	if ((player.job & #JOB_WARLOCK)
-	  ||(player.job & #JOB_ARMY))
+	if ( player.job & #JOB_WARLOCK
+		|| player.job & #JOB_ARMY )
 	{
 		if (player.demon_one)
 			res = 1;	 
@@ -738,6 +752,11 @@ string(entity themonster) GetMonsterName =
 		return "piranha";
 	if (themonster.classname == "monster_gremlin")
 		return "gremlin";
+
+#ifdef COOP_MODE_ENHANCED
+	if ( COOP_IsCoopMonster( themonster ) )
+		return themonster.netname;
+#endif
 	
 	return "unknown monster";
 };
@@ -1956,6 +1975,20 @@ void(entity ent) MuzzleFlash =
 
 float(entity player, float damage) HurtLegs =
 {
+#ifdef COOP_MODE_ENHANCED
+	// Gizmo - enabled leg damage for coop monsters
+	if ( COOP_IsCoopMonster( player ) ) {
+		if ( player.monsterflags & #MFLAG_NOLEGS || player.monsterflags & #MFLAG_NOLEGDAMAGE )
+			return 0;
+
+		// decrease monster speed by 10% each wound
+		player.#npc_speedfactor = player.#npc_speedfactor - 0.1;
+		if ( player.#npc_speedfactor < 0.1 )
+			player.#npc_speedfactor = 0.1;
+
+		return damage;
+	}
+#endif
 	if (player.classname != "player") return 0;
 	
 	if (player.#runes & #RUNE_RESIS)
@@ -3979,4 +4012,25 @@ void( entity object ) UseObject = {
 
 		self = oself;
 	}
+};
+
+//=======================================================================
+// Used to get the team number of any entity
+
+float( entity e ) GetTeam = {
+	if ( e.flags & #FL_MONSTER ) {
+		if ( e.real_owner != world )
+			return e.real_owner.team_no;
+		return e.team_no;
+	}
+	if ( e.classname == "player" )
+		return e.team_no;
+	if ( e.classname == "grenade" ) {
+		if ( e.netname == "land_mine" )
+			return e.owner.team_no;
+	}
+	if ( IsBuilding( e ) )
+		return e.real_owner.team_no;
+
+	return e.team_no;
 };

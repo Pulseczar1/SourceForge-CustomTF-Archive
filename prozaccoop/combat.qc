@@ -29,6 +29,7 @@ float(entity tester) IsBuilding;
 
 //- OfN -
 float(entity thing) IsMonster;
+float( entity thing ) IsOwnedMonster;
 void(entity body) ExpBody;
 string(entity thebuilding) GetBuildingName;
 string(entity thething) GetEnemyName;
@@ -141,7 +142,7 @@ Killed
 ============
 */
 #ifdef COOP_MODE_ENHANCED
-void (float respawntime, void() spawn_func) COOP_SetupRespawn;
+void( entity e ) COOP_SetupRespawn;
 #endif
 void(entity targ, entity attacker) Killed =
 {
@@ -272,7 +273,7 @@ void(entity targ, entity attacker) Killed =
 	// setup respawn
 	//void (float respawntime, void() spawn_func) COOP_SetupRespawn
 	if ( COOP_IsCoopMonster( self ) )
-		COOP_SetupRespawn (self.#npc_spawndelay, self.#npc_spawnfunc);
+		COOP_SetupRespawn( self );
 #endif
 
 	self.th_die ();
@@ -389,7 +390,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	//BUTTON TRIGGERING
 	if (attacker.classname == "player")
 	{
-		//if (targ.classname != "player" && !IsBuilding(targ) && targ.classname != "monster_demon1")
+		// Gizmo - allow non demons and non army soldiers to be excluded (coop monsters)
         if (targ.classname != "player" && !IsBuilding(targ) && !IsMonster(targ) && targ.#corpseflag != #STRFLAG_CORPSE)
 		{
 			if (!Activated(targ,attacker))
@@ -486,8 +487,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	}
 
 	//DAMAGE ADJUSTMENT
-	//- OfN - if (deathmsg != #DMSG_MARTYR && targ.classname != "monster_demon1" && targ.classname != "monster_shambler" && targ.classname != "monster_army")
-    if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))
+    if (deathmsg != #DMSG_MARTYR && !IsMonster(targ))	// Gizmo - allow non demons and non army soldiers to be excluded (coop monsters)
 	{
 		//WK Ping fairness code. LPB is < 200 ping
 		if (attacker.classname == "player" && targ.classname == "player" && attacker != targ)
@@ -534,8 +534,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	//WK Slight mirror demon protection
 	//Do 2 points of damage to a friendly teammate shooting a friendly demon
 	//SB 2 damage? no way, we're doing the full mirror damage
-	//- Ofn- if ((targ.classname == "monster_demon1" || targ.classname == "monster_army" || targ.classname == "monster_shambler") && targ.real_owner != world) {
-	if (IsMonster(targ) && targ.real_owner != world) {
+	if ( IsOwnedMonster( targ ) ) {
         targ.armorvalue = 1;
 		if (T_flags & #TF_TD_NOTTEAM)
 		{

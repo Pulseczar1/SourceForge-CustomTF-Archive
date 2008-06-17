@@ -549,7 +549,7 @@ void() monster_zombie =
 	self.netname = "zombie";
 
 	self.monsterweight = #MWEIGHT_SMALL;
-	self.monsterflags = #MFLAG_HUMANOID | #MFLAG_NOHEART | #MFLAG_NOBREATHING;
+	self.monsterflags = #MFLAG_HUMANOID | #MFLAG_NOHEART | #MFLAG_NOBREATHING | #MFLAG_NOLEGDAMAGE;
 
 	// monsters have a team of their own
 	if ( !self.team_no )
@@ -561,7 +561,6 @@ void() monster_zombie =
 
 	self.OnPreAttack = ZombieCheckAttack;
 	self.OnNoticeEnemy = ZombieOnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_zombie;
 	COOP_SetLives ();
 

@@ -232,7 +232,7 @@ void() army_fire =
 	deathmsg = #DMSG_SHOTGUN;
 	FireBullets (#IDMON_GRUNT_SGUNBULLETS, dir, '0.11 0.11 0', 9999);
 
-	self.attack_finished = time + (random() + 1);
+	Attack_Finished( random() + 1 );
 };
 
 
@@ -349,7 +349,6 @@ void() monster_army =
 	self.is_connected = #TRUE;
 
 	self.OnNoticeEnemy = ArmyOnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_army;
 	COOP_SetLives ();
 

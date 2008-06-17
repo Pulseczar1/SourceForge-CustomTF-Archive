@@ -615,12 +615,16 @@ entity (entity scanner) LookAroundGrunty =
 
 	while (client)
 	{
+		// Gizmo - added a traceline so he doesn't shoot through teammates
+		traceline( scanner.origin + '0 0 16', client.origin, #TL_ANY_SOLID, scanner );
+
+		if ( trace_ent == client )
 		if (client != scanner && visible2(client, scanner))
 		{
 			
 			#ifdef MAD_MONSTERS
 			
-			if (client.classname == "player" && IsMonsterNonArmy(scanner)) gotatarget = 1;
+			if (client.classname == "player" && IsSummon(scanner)) gotatarget = 1;
 			
 			#else
 			
@@ -642,9 +646,13 @@ entity (entity scanner) LookAroundGrunty =
 			
 			#endif
 
+			// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 			else if (IsMonster(client) && client.health > 0)
 			{
-				if (!Teammate(client.real_owner.team_no,scanner.real_owner.team_no))
+				local float temp;
+
+				temp = GetTeam( client );
+				if (!Teammate(temp, scanner.real_owner.team_no))
 					gotatarget = 1;
 			}
 			else if (client.classname == "grenade" && client.netname == "land_mine")
@@ -719,7 +727,11 @@ void() GruntyScanTargets =
 	{
 		local float vis;
 		vis = visible(self.enemy);
-		if (vis)
+
+		// Gizmo - added a traceline so he doesn't shoot through teammates
+		traceline( self.origin + '0 0 16', self.enemy.origin, #TL_ANY_SOLID, self );
+
+		if ( vis && trace_ent == self.enemy )
 		{
 			if (self.demon_one != world)
 			{
@@ -777,7 +789,7 @@ void() GruntyScanTargets =
 	else // otherwise look for a target
 	{
 		targ=GruntyPharse();
-		
+
 		if (targ == self)
 			return;
 		if (targ == world)
@@ -797,7 +809,7 @@ void() GruntyScanTargets =
 			}
 			return;
 		}
-		
+
 		if (self.super_time < time)
 		{
 			//local string targetstr;
@@ -806,14 +818,16 @@ void() GruntyScanTargets =
 			st = strcat("Target ",targ.netname);
 			st = strcat(st, " spotted!\n Engaging target...\n");
 			PrintFromSoldier(self,self.real_owner,st,#PRINT_HIGH);
-		   
+
 			//sprint(self.real_owner, #PRINT_HIGH, targ.netname);
 			//sprint(self.real_owner, #PRINT_HIGH, " spotted!\n Engaging target...\n");
 			self.super_time = time + 2.5;
 		}
-		
+
 		self.enemy = targ;
-		self.goalentity = self.enemy;
+		// Gizmo - check for static mode
+		if ( self.is_malfunctioning != 2 )
+			self.goalentity = self.enemy;
 		self.search_time = time + 3;
 	}
 };
@@ -1170,53 +1184,188 @@ void() GruntyCheckFire =
 	#endif	
 };
 
+/*
+==============
+GruntyPickClosestVector
+
+Picks the closest vector to the vector specified.
+Simulates real player movement by limiting to forward,
+backward, strafe left, and strafe right like normal players.
+
+NOTE: makevectors must be called first
+==============
+*/
+vector( vector desired ) GruntyPickClosestVector = {
+	local vector	bestv, tempv;
+	local float		bestdot;
+
+	// flatten it out
+	desired_z = 0;
+	desired = normalize( desired );
+
+	// start with forward
+	bestv = v_forward;
+	bestdot = desired * v_forward;
+
+	tempv = v_forward * -1;
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = v_right;
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = v_right * -1;
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+
+	tempv = normalize( v_forward + v_right );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = normalize( v_forward + v_right * -1 );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = normalize( v_forward * -1 + v_right );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = normalize( v_forward * -1 + v_right * -1 );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+
+	return bestv;
+};
+
+/*
+==============
+GruntyAutoObstacle
+
+This should only be called when the grunty
+is on the "auto" "on obstacle" mode.
+
+Returns 0 if the grunty should jump, returns 1
+if the grunty should stop (like when attacking an enemy),
+and returns 2 when the grunty should attempt to
+navigate to his goalentity (like monsters do).
+
+NOTE: makevectors must be called first
+==============
+*/
+float( entity g ) GruntyAutoObstacle = {
+	local float zdif, vis;
+
+	// we hit an obstacle with no enemy
+	if ( g.enemy == world ) {
+		// jump if we're not on valid ground
+		if ( !checkbottom( g ) )
+			return 0;
+
+		traceline( g.origin + '0 0 -8', g.origin + '0 0 -8' + v_forward * 64, #TL_ANY_SOLID, g );
+		zdif = ( g.goalentity.origin_z + g.goalentity.mins_z ) - ( g.origin_z + g.mins_z );
+		vis = visible2( g.goalentity, g );
+
+		// goalentity is on a higher/lower level
+		if ( zdif && trace_fraction == 1 )		// only jump if we have a clear path infront of us and our goalentity is up/down somewhere
+			return 0;
+		if ( zdif && trace_fraction != 1 ) {
+			if ( vis )
+				return 0;
+			return 2;
+		}
+		// we're perfectly even with our goalentity, assuming it's a ground based target
+		if ( !zdif )
+			return 2;
+		return 2;
+	}
+
+	// seek tactic mode
+	if ( g.is_malfunctioning == 1 ) {
+		// only allow navigating on seek mode if our enemy isn't visible
+		// don't ever jump on seek mode, to avoid being lured into water/slime/lava
+		if ( visible2( g.enemy, g ) )
+			return 1;
+		return 2;
+	}
+	// static tactic mode
+	if ( g.is_malfunctioning == 2 ) {
+		// always jump on static mode
+		return 0;
+	}
+
+	// default to stop
+	return 1;
+};
+
 void() GRun =
 {
 	local float		dist;
 	local vector	loc;
 	local float		r;
 
-	// ok, we're trying to get somewhere
-	// first look at where we are trying to go
-	// Version 1.0 of GruntyLead(tm)
-	if (self.enemy != world)
-	{
-		local vector pvel;
-		
-		if (self.enemy.classname == "player")
-			pvel = self.enemy.velocity;
-		else if (self.enemy.classname == "monster_army")
+	// Gizmo - .motd is set to TRUE to disallow ChangeYaw() while we're calling movetogoal()
+	if ( self.motd <= time ) {
+		// ok, we're trying to get somewhere
+		// first look at where we are trying to go
+		// Version 1.0 of GruntyLead(tm)
+		if (self.enemy != world)
 		{
-			makevectors(self.enemy.angles);
-			pvel = self.enemy.velocity + v_forward * self.enemy.custom_speed * 20;
-		}
-		else
-			pvel = '0 0 0';
-		if (ReturnWeaponVelocity() == 99999999)
-			pvel = '0 0 0';
-		loc = self.enemy.origin + pvel * (vlen(self.enemy.origin - self.origin) / ReturnWeaponVelocity());
-		self.ideal_yaw = vectoyaw(loc - self.origin);
-		self.ideal_yaw = anglemod(self.ideal_yaw);
-	}
-	else
-	{
-		if (self.goalentity!=world) //- OfN - dont change yaw if we r not after a goal
-		{
-			self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
+			local vector pvel;
+
+			if (self.enemy.classname == "player")
+				pvel = self.enemy.velocity;
+			else if (self.enemy.classname == "monster_army")
+			{
+				makevectors(self.enemy.angles);
+				pvel = self.enemy.velocity + v_forward * self.enemy.custom_speed * 20;
+			}
+			else
+				pvel = '0 0 0';
+
+			if (ReturnWeaponVelocity() == 99999999)
+				pvel = '0 0 0';
+
+			loc = self.enemy.origin + pvel * (vlen(self.enemy.origin - self.origin) / ReturnWeaponVelocity());
+			self.ideal_yaw = vectoyaw(loc - self.origin);
 			self.ideal_yaw = anglemod(self.ideal_yaw);
 		}
+		else
+		{
+			if (self.goalentity!=world) //- OfN - dont change yaw if we r not after a goal
+			{
+				self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
+				self.ideal_yaw = anglemod(self.ideal_yaw);
+			}
+		}
+
+		ChangeYaw();
 	}
-	
-	ChangeYaw();
 
 	// makevectors sets the global vars v_forward, v_right and v_up
 	makevectors(self.angles);
 
 	dist = self.custom_speed;
-		
+
 	if (self.tfstate & #TFSTATE_TRANQUILISED)
 		dist = dist * (#AI_TRANQ_FACTOR_UP / #AI_TRANQ_FACTOR_DN); //Tranq
-	
+
+	// Gizmo - when on static mode, we want to face our enemy while moving towards our goalentity
+	if ( self.is_malfunctioning == 2 ) {
+		if ( self.goalentity != world )
+			botmovedist( vectoyaw( GruntyPickClosestVector( self.goalentity.origin - self.origin ) ), dist );
+		return;
+	}
+
 	/* - OfN -if (self.enemy.classname == "monster_shambler" || self.enemy.weapons_carried & #WEAP_ASSAULT_CANNON)
 		if (self.has_teleporter == 0)
 			self.has_teleporter = 3;*/
@@ -1251,10 +1400,10 @@ void() GRun =
 	else if (self.has_teleporter == 3) //(backwards)// HE'S AFTER US, RUN!@#$ HE WILL KILL US ALL!!@
 	{
 		if ( !botmovedist( vectoyaw( v_forward ), dist * -1 ) ) { // flee, I tell you!
-			// Gizmo - if he's blocked while trying to run backwards in static range, then strafe
+			// Gizmo - if he's blocked while trying to run backwards with preferred range, then strafe
 			if ( self.enemy != world ) {
-				// check if static range is set
-				if ( self.is_malfunctioning == 2 && self.delay_time ) {
+				// check if preferred range is set
+				if ( self.is_malfunctioning != 2 && self.delay_time ) {
 					if ( random() < 0.5 )
 						self.has_teleporter = 1;
 					else
@@ -1268,17 +1417,16 @@ void() GRun =
 		//- OfN - force move to forward if we r going to a last seen enemy waypoint
 		if (self.goalentity == self.demon_one && self.demon_one!=world)
 		{
-			self.has_teleporter = 0;
 			botmovedist(vectoyaw(v_forward), dist); // move
 			return;
 		}
 
 		botmovedist(vectoyaw(v_forward), dist); // move
 
-		// Gizmo - modified this for static range
+		// Gizmo - modified this for preferred range
 		if ( self.enemy != world ) {
-			// check if static range is set and we need to stay within range
-			if ( self.is_malfunctioning == 2 && self.delay_time ) {
+			// check if preferred range is set and we need to stay within range
+			if ( self.is_malfunctioning != 2 && self.delay_time ) {
 				r = vlen( self.enemy.origin - self.origin );
 
 				if ( self.delay_time == 1 ) {
@@ -1319,7 +1467,8 @@ void() GRun =
 // Gizmo - changed return type to float
 float (float angle, float dist) botmovedist =
 {
-	local float success;
+	local float		success;
+	local float		obstacleMode;
 
 	//- OfN - Don't annoy owner if following him! heh
 	#ifndef MAD_GRUNTY
@@ -1329,9 +1478,14 @@ float (float angle, float dist) botmovedist =
 
 		dist2 = vlen(self.origin - self.real_owner.origin);
 
-		if (dist2<64)
+		// Gizmo - prevent grunties from cornering you in tight places
+		if ( dist2 < 40 )
+			dist = dist * -1;
+		else if (dist2 < 64)
 		{
-			stand_frames();
+			// Gizmo - only do stand frames if not in an attack
+			if ( self.attack_finished < time )
+				stand_frames();
 			self.has_cheated = time + 0.5;
 			walkmove(angle, 0);
 			return #TRUE;
@@ -1342,8 +1496,12 @@ float (float angle, float dist) botmovedist =
 	/*if (pointcontents(self.origin) == #CONTENT_EMPTY) // We're in open air
 	{*/
 
-		success = walkmove(angle, dist);
-		
+		if ( self.motd > time ) {
+			success = #TRUE;
+			movetogoal( dist );
+		} else
+			success = walkmove(angle, dist);
+
 		if (success) // We walked sucessfully, woohoo
 		{
 			self.has_cheated = time + 0.5;
@@ -1351,6 +1509,10 @@ float (float angle, float dist) botmovedist =
 		}
 		else // We just ran into something...
 		{
+			// Gizmo - if we're not on valid ground then fall, this is a work around for the QF bug
+			if ( !checkbottom( self ) )
+				self.flags = self.flags - ( self.flags & #FL_ONGROUND );
+
 			if (self.is_toffingadet==1) //if we r on stop on obstacles mode
 			{
 				self.has_cheated = time + 0.5;
@@ -1364,7 +1526,14 @@ float (float angle, float dist) botmovedist =
 				return #FALSE;
 			}
 
+			// Gizmo - decide what we should do
+			if ( !self.is_toffingadet )
+				obstacleMode = 0;
+			else
+				obstacleMode = GruntyAutoObstacle( self );
+
 			// Gizmo - let him accelerate in the air, he always instantly goes to 30 though if lower than that
+			if ( !obstacleMode ) // Gizmo - only air forward if we've decided to jump
 			if ( !( self.flags & #FL_ONGROUND ) && self.velocity_z < 40 && self.velocity_z > -10 ) {
 				local float addspeed;
 
@@ -1380,18 +1549,24 @@ float (float angle, float dist) botmovedist =
 			self.has_teleporter = 0; // abort dodging
 			makevectors(self.angles);
 			// First, we'll see if jumping would be suitable
-			if (self.flags & #FL_ONGROUND) // don't bother if we aren't on the ground
-			{
-				traceline(self.origin + '0 0 20', self.origin + '0 0 20' + v_forward * 10, #TL_ANY_SOLID, self);
-				if (trace_fraction == 1.0)
+			if ( !obstacleMode ) { // Gizmo - only jump if we've decided to
+				if (self.flags & #FL_ONGROUND) // don't bother if we aren't on the ground
 				{
-					self.velocity = self.velocity + v_forward * self.custom_speed * 20;
-					self.velocity_z = self.velocity_z + 270;
-					//sound (self, #CHAN_BODY, "player/plyrjmp8.wav", 1, #ATTN_NORM);
-					sound (self, #CHAN_VOICE, "player/plyrjmp8.wav", 1, #ATTN_NORM);
-					self.has_cheated = time + 0.5;
-					return #FALSE;
+					traceline(self.origin + '0 0 20', self.origin + '0 0 20' + v_forward * 10, #TL_ANY_SOLID, self);
+					if (trace_fraction == 1.0)
+					{
+						self.velocity = self.velocity + v_forward * self.custom_speed * 20;
+						self.velocity_z = self.velocity_z + 270;
+						//sound (self, #CHAN_BODY, "player/plyrjmp8.wav", 1, #ATTN_NORM);
+						sound (self, #CHAN_VOICE, "player/plyrjmp8.wav", 1, #ATTN_NORM);
+						self.has_cheated = time + 0.5;
+						return #FALSE;
+					}
 				}
+			} else if ( obstacleMode == 2 ) {
+				movetogoal( dist );
+				// Gizmo - disallow ChangeYaw() while we're wondering around
+				self.motd = time + 1;
 			}
 		}
 
@@ -1734,7 +1909,6 @@ void() Waypoint_Touch =
 
 	self.all_active = time + self.has_holo; // reset entity life time
 	//has_holo is the asigned life time in createwaypoint 
-
 
 	other.goalentity = self.goalentity; // Set grunty's movement target
 };
@@ -2259,7 +2433,7 @@ void() grunty_touch =
 				teamsprint(other.team_no,other, " has been infected!\n");
 			}			 
 		}
-		else if (IsMonster(other))
+		else if (IsOwnedMonster(other))
 		{
 			if (!(other.tfstate & #TFSTATE_INFECTED))
 			{
@@ -2288,6 +2462,26 @@ void() grunty_touch =
 				other.infection_team_no = self.infection_team_no;
 			}
 		}
+
+#ifdef COOP_MODE_ENHANCED
+		else if ( COOP_IsCoopMonster( other ) ) {
+			if ( !( other.tfstate & #TFSTATE_INFECTED ) ) {
+				// Update infection flag
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+
+				// Infect it!
+				Bio = spawn ();
+				Bio.classname = "timer";
+				Bio.classname = "biotimer";
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_MonsterDecay;
+				Bio.owner = self;
+				Bio.enemy = other;
+
+				other.infection_team_no = self.infection_team_no;
+			}
+		}
+#endif
 
 		return; // Dont display funny messages if we r going to infect half of our own team =)
 	}

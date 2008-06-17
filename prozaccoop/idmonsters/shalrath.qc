@@ -194,8 +194,9 @@ void() ShalMissileTouch =
 	if (other == self.owner)
 		return;		// don't explode on owner
 
-	if (other.classname == "monster_zombie")
-		T_Damage (other, self, self, 200);	
+	// Gizmo - I changed enemy monster classnames to prevent any current or future conflicts with summons
+	if (other.classname == "idmonster_zombie")
+		T_Damage (other, self, self.owner, 200);	
 	T_RadiusDamage (self, self.owner, #IDMON_SHALRATH_SPIKEDMG, world);
 	sound (self, #CHAN_WEAPON, "weapons/r_exp3.wav", 1, #ATTN_NORM);
 
@@ -266,7 +267,6 @@ void() monster_shalrath =
 	self.is_connected = #TRUE;
 
 	self.OnNoticeEnemy = ShalOnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_shalrath;
 	COOP_SetLives ();
 

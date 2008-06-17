@@ -198,6 +198,9 @@ void()  spy_upaxe9    = [   $axdeth1,   spy_upaxe9    ]
 
 //=========================================================================
 // Function handling the Spy's feign death ability
+
+#define VEC_FEIGNHULL_MIN	'-16 -16 -24'
+#define VEC_FEIGNHULL_MAX	'16 16 4'
 void(float type) TeamFortress_SpyFeignDeath =
 {
 	local float i;
@@ -215,6 +218,17 @@ void(float type) TeamFortress_SpyFeignDeath =
 				i = #FALSE;
 			
 			at_spot = at_spot.chain;			
+		}
+
+		// Gizmo - this prevents the spy getting up when an object is on him, like a tesla or sentry
+		if ( i == #TRUE ) {
+			setsize( self, #VEC_HULL_MIN, #VEC_HULL_MAX );
+
+			if ( InSolid( self ) ) {
+				setsize( self, #VEC_FEIGNHULL_MIN, #VEC_FEIGNHULL_MAX );
+				sprint( self, #PRINT_HIGH, "You can't get up while something is on top of you.\n" );
+				return;
+			}
 		}
 
 		if (i == #TRUE)
@@ -365,7 +379,7 @@ void(float type) TeamFortress_SpyFeignDeath =
 		// testifying to that fact...
 		// Here's how you do it, moron:
  		// setsize (self, '0 0 -10', '0 0 0');
-		setsize (self, '-16 -16 -24', '16 16 4');
+		setsize (self, #VEC_FEIGNHULL_MIN, #VEC_FEIGNHULL_MAX);
 		self.view_ofs = '0 0 4';
 		self.movetype = #MOVETYPE_TOSS;
 
@@ -945,7 +959,7 @@ void() W_FireTranq =
 		
 	makevectors (self.v_angle);
 	newmis.velocity = v_forward;
-	newmis.velocity = newmis.velocity * 2400;	//WK 2/8/7 4000 //WK 1/7/7 Tranq upgrade //Faster than a normal nail WK 1500
+	newmis.velocity = newmis.velocity * 1500;		// Faster than a normal nail WK 1500
 	newmis.angles = vectoangles(newmis.velocity);
 
 	newmis.touch = T_TranqDartTouch;
@@ -963,7 +977,6 @@ void() W_FireTranq =
 void() T_TranqDartTouch =
 {
 	local entity timer;
-	local float tranq_damage;
 
 	if (other.solid == #SOLID_TRIGGER)
 		return;	// trigger field, do nothing
@@ -983,81 +996,76 @@ void() T_TranqDartTouch =
 		//WK Make sure they aren't immune
 		if (!(other.tf_items & #NIT_SCUBA || other.invincible_finished > time || other.radsuit_finished > time))
 		{
-		spawn_touchblood (9);
-		deathmsg = #DMSG_TRANQ;
+			spawn_touchblood (9);
+			deathmsg = #DMSG_TRANQ;
 
-		// Do the Damage
-		//WK 1/7/7 Increased power of tranq to 25-45, ignoring armor
-		//WK 2/8/7 Lowered to 20-25, lowered speed from 4000 to 2400
-		//WK 2/26/7 Lowered to 8-12, because people kept bitching
-		tranq_damage = 8+floor(4*random()); //WK 1/7/7 Note: if you put this formula in the function call, it crashes the server!
-		TF_T_Damage (other, self, self.owner, tranq_damage, #TF_TD_NOTTEAM | #TF_TD_IGNOREARMOUR, #TF_TD_NAIL);
-		
-        if (other.classname == "player")
-        if (other.#runes & #RUNE_RESIS)
-            return;
+			// Do the Damage
+			TF_T_Damage (other, self, self.owner, 10, #TF_TD_NOTTEAM, #TF_TD_NAIL);
+			
+			if (other.classname == "player")
+			if (other.#runes & #RUNE_RESIS)
+				return;
 
-        // If its a player or demon, tranquilise them
-		//- OfN if (other.classname == "monster_demon1" && !(Teammate(other.real_owner.team_no,self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
-        if (IsMonster(other))// && !(Teammate(other.real_owner.team_no,self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
-		{
-			//bprint(#PRINT_HIGH, "demon tranq!\n");
-			// If they're already tranquilised, just make it last longer
-			if (other.tfstate & #TFSTATE_TRANQUILISED)
+			// If its a player or demon, tranquilise them
+			// Gizmo - allow non demons and non army soldiers to be tranquilised (coop monsters)
+			if (IsMonster(other))
 			{
-				timer = find(world, classname, "timer");
-				while (((timer.owner != other) || (timer.think != TranquiliserTimer2)) && (timer != world))
+				// If they're already tranquilised, just make it last longer
+				if (other.tfstate & #TFSTATE_TRANQUILISED)
 				{
-					timer = find(timer, classname, "timer");
+					timer = find(world, classname, "timer");
+					while ((timer.owner != other || timer.think != TranquiliserTimer2) && timer != world)
+					{
+						timer = find(timer, classname, "timer");
+					}
+					if (timer != world)
+					{
+						timer.nextthink = time + #TRANQ_TIME;
+					}
 				}
-				if (timer != world)
+				else
 				{
+					other.tfstate = other.tfstate | #TFSTATE_TRANQUILISED;
+					// Create a timer entity
+					timer = spawn();
 					timer.nextthink = time + #TRANQ_TIME;
+					timer.think = TranquiliserTimer2;
+					timer.classname = "timer";
+					timer.owner = other;
+					timer.team_no = self.owner.team_no;
 				}
-			}
-			else
+			}		
+			else if (other.classname == "player" && !(Teammate(other.team_no, self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
 			{
-				other.tfstate = other.tfstate | #TFSTATE_TRANQUILISED;
-				// Create a timer entity
-				timer = spawn();
-				timer.nextthink = time + #TRANQ_TIME;
-				timer.think = TranquiliserTimer2;
-				timer.classname = "timer";
-				timer.owner = other;
-				timer.team_no = self.owner.team_no;
-			}
-		}		
-		if (other.classname == "player" && !(Teammate(other.team_no, self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
-		{
-			// If they're already tranquilised, just make it last longer
-			if (other.tfstate & #TFSTATE_TRANQUILISED)
-			{
-				timer = find(world, classname, "timer");
-				while (((timer.owner != other) || (timer.think != TranquiliserTimer)) && (timer != world))
+				// If they're already tranquilised, just make it last longer
+				if (other.tfstate & #TFSTATE_TRANQUILISED)
 				{
-					timer = find(timer, classname, "timer");
+					timer = find(world, classname, "timer");
+					while (((timer.owner != other) || (timer.think != TranquiliserTimer)) && (timer != world))
+					{
+						timer = find(timer, classname, "timer");
+					}
+					if (timer != world)
+					{
+						timer.nextthink = time + #TRANQ_TIME;
+					}
 				}
-				if (timer != world)
+				else
 				{
+					sprint(other, #PRINT_HIGH, "You stop breathing...\n");
+					other.tfstate = other.tfstate | #TFSTATE_TRANQUILISED;
+					// Create a timer entity
+					timer = spawn();
 					timer.nextthink = time + #TRANQ_TIME;
+					timer.think = TranquiliserTimer;
+					timer.classname = "timer";
+					timer.owner = other;
+					timer.team_no = self.owner.team_no;
+
+					// now slow them down
+					TeamFortress_SetSpeed(other);
 				}
 			}
-			else
-			{
-				sprint(other, #PRINT_HIGH, "You stop breathing...\n");
-				other.tfstate = other.tfstate | #TFSTATE_TRANQUILISED;
-				// Create a timer entity
-				timer = spawn();
-				timer.nextthink = time + #TRANQ_TIME;
-				timer.think = TranquiliserTimer;
-				timer.classname = "timer";
-				timer.owner = other;
-				timer.team_no = self.owner.team_no;
-
-				// now slow them down
-				TeamFortress_SetSpeed(other);
-			}
-		}
 		}
 	}
 	else
@@ -1096,8 +1104,7 @@ void() TranquiliserTimer =
 //CH used for demons
 void() TranquiliserTimer2 =
 {
-	if (self.owner.tfstate & #TFSTATE_TRANQUILISED) //Just in case
-		self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_TRANQUILISED);
+	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_TRANQUILISED);
 	dremove(self);
 };
 

@@ -117,7 +117,7 @@ self.nextthink = time + 3;
 
 void()	_demon1_jump11	=[ 	$leap11,	_demon1_jump12	] {};
 void()	_demon1_jump12	=[ 	$leap12,	_demon1_run1	] {
-self.attack_finished = time + random()*2;
+Attack_Finished( random()*2 );
 };
 
 
@@ -260,7 +260,6 @@ void() monster_demon1 =
 
 	self.OnPreAttack = _DemonCheckAttack;
 	self.OnNoticeEnemy = _Demon_OnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_demon1;
 	COOP_SetLives ();
 

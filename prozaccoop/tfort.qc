@@ -1826,10 +1826,8 @@ void(entity p) TeamFortress_SetSpeed =
         p.maxspeed = p.maxspeed * #SPEEDRUNE_FACTOR;
 
     // OfN - Finally, the psionic stuff
-    /* WK 1-7-7 Psionic grenades no longer slow
     if (p.tfstate & #TFSTATE_PSIONIZED)
         p.maxspeed = p.maxspeed * #PSIONIC_MOVEFACTOR;
-    */
 
 	// WK See if they are ass cannoning WK 2/26/7 -- Slowed down 
 	// WK 2/8/7 We allow ass cannons to move now, slowly
@@ -3324,10 +3322,11 @@ void (float type) TeamFortress_DropAmmo =
 
 void () TeamFortress_AmmoboxTouch =
 {
-	local float took;
 	local string quantity;
 
-	took = 0;
+	// Gizmo - added this to prevent things messing up
+	if ( other.button0 )
+		return;
 
 	// Cant touch own ammobox for 2 seconds after throwing
 	if ((other == self.enemy) && (time < self.health + 2))

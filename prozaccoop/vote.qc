@@ -113,6 +113,7 @@ void() bprintVotesLeft;
 //float() GetRemainingVotes;
 void() CleanUpSleepVote;
 void() VoteSleep_think;
+void( float num_for, float num_against ) bprintVotesNeeded;
 
 // External
 void(string text) CmdMsg;
@@ -854,7 +855,10 @@ void() StartPunishmentVote =
 
 	bprint(#PRINT_HIGH,self.admin_kick.netname);
 
-	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
+	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote");
+	// Gizmo
+	bprintVotesNeeded( 1, 0 );
+	bprint( #PRINT_HIGH, "\n" );
 
 	current_voteent = voteent;
 
@@ -1039,7 +1043,10 @@ void(float nummap, string themap) StartVoteMap =
 	else // if (self.group_no == 3) // PZ - AGR mode
 		bprint(#PRINT_HIGH," wants to play ",themap," right now, in ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode");		
 	
-	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n");
+	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote");
+	// Gizmo
+	bprintVotesNeeded( 1, 0 );
+	bprint( #PRINT_HIGH, "\n" );
 		
 	ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
 
@@ -1081,7 +1088,10 @@ void() StartUseObjectVote = {
 	objectName = GetUseObjectName( trace_ent );
 	objectAction = GetUseObjectAction( trace_ent );
 	bprint( #PRINT_HIGH, "Votingç ", self.netname, " wants to force a ", objectName, " to ", objectAction );
-	bprint( #PRINT_HIGH, ", type ¢VoteYes¢ or ¢VoteNo¢ to vote\n" );
+	bprint( #PRINT_HIGH, ", type ¢VoteYes¢ or ¢VoteNo¢ to vote" );
+	// Gizmo
+	bprintVotesNeeded( 1, 0 );
+	bprint( #PRINT_HIGH, "\n" );
 
 	BackFlash( self, 1 );
 	CleanClientVotes ();
@@ -1177,17 +1187,16 @@ void() ResetClientsMenu =
 
 
 /*
-	VotePassed - called to check if a vote has passed
-
-	Gizmo - added this function to check if votes have passed
+=============
+VotePassed
+=============
 */
-
 float( float numFor, float numAgainst, float fraction ) VotePassed = {
 //	bprint (#PRINT_HIGH, ftos(numAgainst));
 //	bprint (#PRINT_HIGH, "<against> + ((", ftos(num_players - (numFor + numAgainst)), ") / 2) == ");
 
 	// get the number of players that didn't vote, and count them as half a voteno
-	// FIXME: spectators
+	// don't count spectators if they didn't vote
 	if ( num_players - ( numFor + numAgainst ) > 0 )
 		numAgainst = numAgainst + ( ( num_players - ( numFor + numAgainst ) ) * fraction );
 
@@ -1674,6 +1683,66 @@ string(float themap) GetMapString =
 //===============================================================
 // Prints remaining votes for success
 
+/*
+=============
+bprintVotesNeeded
+
+Prints the number of votes needed to
+make the vote not fail when the timer's up.
+Note that this may not print anything at all.
+=============
+*/
+void( float num_for, float num_against ) bprintVotesNeeded = {
+	local string	st;
+	local float		forTemp, againstTemp;
+	local float		fraction;
+
+	// only bother if people didn't vote yet
+	if ( num_players - ( num_for + num_against ) > 0 ) {
+		fraction = 0.5;
+
+		if ( current_voteent.has_sentry == #VOTE_PUNISH ) {
+			if (current_voteent.g_a == #PUNISH_CURSE)
+				fraction = #VOTESNEEDED_CURSE;
+			else if ( current_voteent.g_a == #PUNISH_KICK )
+				fraction = #VOTESNEEDED_KICK;
+			else if ( current_voteent.g_a == #PUNISH_BAN )
+				fraction = #VOTESNEEDED_BAN;
+			else if ( current_voteent.g_a == #PUNISH_MUTE )
+				fraction = #VOTESNEEDED_MUTE;
+			else if ( current_voteent.g_a == #PUNISH_CUFF )
+				fraction = #VOTESNEEDED_CUFF;
+		} else if ( current_voteent.has_sentry == #VOTE_NEXTMAP )
+			fraction = #VOTESNEEDED_NEXTMAP;
+		else if ( current_voteent.has_sentry == #VOTE_SWITCHMAP )
+			fraction = #VOTESNEEDED_MAP;
+		// PZ - begin AGR code
+		else if ( current_voteent.has_sentry == #VOTE_NEXTMAP_AGR )
+			fraction = #VOTESNEEDED_NEXTMAP;
+		else if ( current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR )
+			fraction = #VOTESNEEDED_MAP;
+		// PZ - end AGR code
+		// Gizmo - use object voting
+		else if ( current_voteent.has_sentry == #VOTE_USEOBJECT )
+			fraction = #VOTESNEEDED_USE;
+
+		num_against = num_against + ( num_players - ( num_for + num_against ) ) * fraction;
+
+		// if the vote won't pass at the end, then print the number of votes needed to make it pass
+		if ( num_for <= num_against ) {
+			forTemp = num_for;
+			againstTemp = num_against;
+			do {
+				forTemp = forTemp + 1;
+				againstTemp = againstTemp - fraction;
+			} while ( forTemp <= againstTemp );
+
+			st = colstr( ftos( forTemp - num_for ), #COLSTR_NUMBER );
+			bprint( #PRINT_HIGH, " (", st, " needed to not fail)" );
+		}
+	}
+};
+
 void() bprintVotesLeft =
 {
 	local string st;
@@ -1695,13 +1764,17 @@ void() bprintVotesLeft =
 		}
 		te = nextent(te);
 	}
-	
+
 	st = colstr(ftos(num_for), #COLSTR_NUMBER);
 	bprint(#PRINT_HIGH, " €", st, " for Ø ");
-	
+
 	st = colstr(ftos(num_against), #COLSTR_NUMBER);
-	bprint(#PRINT_HIGH, st, " against›\n");
-	
+	bprint(#PRINT_HIGH, st, " against");
+
+	// Gizmo - print the number of votes needed for the vote to pass
+	bprintVotesNeeded( num_for, num_against );
+
+	bprint( #PRINT_HIGH, "›\n" );
 	//›\n
 };
 

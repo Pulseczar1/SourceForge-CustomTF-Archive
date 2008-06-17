@@ -17,7 +17,8 @@
 */
 
 float( entity test ) COOP_IsCoopMonster = {
-	if (test.#npc_isCoopMonster == #TRUE)
+	if ( test.#npc_isCoopMonster )
+	if ( IsMonster( test ) )
 		return #TRUE;
 	return #FALSE;
 };
@@ -434,6 +435,8 @@ float (entity en) COOP_CanAttackEnemy =
 {
 	if (/*!visible2(en, self) || */!en.takedamage || en.health <= 0)
 		return #FALSE;
+	if ( self.tfstate & #TFSTATE_PSIONIZED )
+		return #FALSE;
 	return #TRUE;
 };
 
@@ -586,7 +589,7 @@ void (float dist) COOP_Run =
 		ChangeYaw ();
 
 		// if sight is blocked, reset the attack state
-		if (sightblocked) {
+		if ( sightblocked ) {
 			self.attack_state = #AS_STRAIGHT;
 			return;
 		}
@@ -685,8 +688,12 @@ void (float dist) COOP_Run =
 		return;
 
 	// decrease our speed if tranqed
-	if (self.tfstate & #TFSTATE_TRANQUILISED)
+	if ( self.tfstate & #TFSTATE_TRANQUILISED )
 		dist = dist * #NPC_TRANQ_FACTOR;
+	// decrease our speed if psionized
+	if ( self.tfstate & #TFSTATE_PSIONIZED )
+		dist = dist * #PSIONIC_MOVEFACTOR;
+
 	// increase our speed by the factor if there is one set
 	if (self.#npc_speedfactor)
 		COOP_WalkSmooth (dist * self.#npc_speedfactor);
@@ -825,27 +832,41 @@ void () respawn_think =
 	force_retouch = 2;		// make sure even still objects get hit
 };
 
-void( float respawntime, void() spawn_func ) COOP_SetupRespawn = {
+/*
+==============
+COOP_SetupRespawn
+
+Set .respawn_time and .#npc_spawnfunc before calling this,
+e must also be a valid spawned entity
+==============
+*/
+void( entity e ) COOP_SetupRespawn = {
 	local entity newmon;
 
 	// check for a valid spawn function
-	if ( !spawn_func )
+	if ( !e.#npc_spawnfunc )
 		return;
 
 	// check if it's out of lives
-	if ( self.lives <= 0 )
+	if ( e.lives <= 0 )
 		return;
 
-	newmon = spawn();
-	newmon.lives = self.lives - 1;
-	newmon.angles = newmon.#npc_originalAngles = self.#npc_originalAngles;
-	newmon.target = self.target;
-	setsize( newmon, self.mins, self.maxs );
-	setorigin( newmon, self.#npc_originalloc );
+	// check if there's no respawn time set
+	if ( e.respawn_time <= 0 )
+		e.respawn_time = 30;
 
-	newmon.nextthink = time + respawntime;
+	newmon = spawn();
+	newmon.lives = e.lives - 1;
+	newmon.angles = newmon.#npc_originalAngles = e.#npc_originalAngles;
+	newmon.target = e.target;
+	newmon.team_no = e.team_no;
+	newmon.respawn_time = e.respawn_time;
+	setsize( newmon, e.mins, e.maxs );
+	setorigin( newmon, e.#npc_originalloc );
+
+	newmon.nextthink = time + e.respawn_time;
 	newmon.think = respawn_think;
-	newmon.think1 = spawn_func;
+	newmon.think1 = e.#npc_spawnfunc;
 };
 
 

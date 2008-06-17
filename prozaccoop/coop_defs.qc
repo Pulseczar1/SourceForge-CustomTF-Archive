@@ -27,12 +27,14 @@
 #define MFLAG_BITER				8				// the monster can bite (IE: dogs)
 #define MFLAG_NOHEART				16				// mainly for warlock heart grabbing
 #define MFLAG_NOBREATHING			32				// monster doesn't breathe, (IE: shambler, enforcer (has suit))
+#define MFLAG_NOLEGDAMAGE			64				// monster has legs but doesn't take leg damage (tarbabys)
+#define MFLAG_NOLEGS				128				// monster doesn't even have legs
 
 // macros for certain variables so we can reuse unused variables and still give it a unique name
 #define npc_speedfactor				speed
 #define npc_noticedelay				invisible_finished
 #define npc_spawnfunc				think1			// safe to use?
-#define npc_spawndelay				walkframe			// was gravity
+//#define npc_spawndelay				walkframe			// was gravity
 #define npc_originalloc				pos1
 #define npc_attackoffset			pos2				// where the npc shoots from, IE: '0 0 40' for shams
 #define npc_enemyoffset				dest				// offset that our enemy is visible

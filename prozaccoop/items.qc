@@ -95,7 +95,7 @@ Sets the clipping size and plants the object on the floor
 */
 void() StartItem =
 {
-// this is only done because the cpqwsv breaks the qwsv standard (ED_LoadFromFile() in this case)
+// this is only done because certain qwsv servers (probably qw 2.40) refuse to ever load single player items (ED_LoadFromFile() in this case)
 // this is done in checkexistence now, but just incase, do it here too
 #ifdef COOP_MODE_ENHANCED
 	if (!IsSingleplayerItem()) {
@@ -1988,7 +1988,7 @@ void() BackpackTouch =
 	dremove(self);
 	
 	self = other;
-	if (!(other.current_weapon == #WEAP_ASSAULT_CANNON))
+	if (other.current_weapon != #WEAP_ASSAULT_CANNON)
 		W_SetCurrentAmmo ();
 };
 
