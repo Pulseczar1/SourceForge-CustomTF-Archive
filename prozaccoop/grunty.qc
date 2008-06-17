@@ -1509,10 +1509,6 @@ float (float angle, float dist) botmovedist =
 		}
 		else // We just ran into something...
 		{
-			// Gizmo - if we're not on valid ground then fall, this is a work around for the QF bug
-			if ( !checkbottom( self ) )
-				self.flags = self.flags - ( self.flags & #FL_ONGROUND );
-
 			if (self.is_toffingadet==1) //if we r on stop on obstacles mode
 			{
 				self.has_cheated = time + 0.5;
@@ -1568,6 +1564,10 @@ float (float angle, float dist) botmovedist =
 				// Gizmo - disallow ChangeYaw() while we're wondering around
 				self.motd = time + 1;
 			}
+
+			// Gizmo - if we're not on valid ground then fall, this is a work around for the QF bug
+			if ( !checkbottom( self ) )
+				self.flags = self.flags - ( self.flags & #FL_ONGROUND );
 		}
 
 		return #FALSE;
