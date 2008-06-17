@@ -1314,7 +1314,7 @@ void() GRun =
 	local float		r;
 
 	// Gizmo - .motd is set to TRUE to disallow ChangeYaw() while we're calling movetogoal()
-	if ( self.motd <= time ) {
+	if ( self.motd <= time || self.is_toffingadet != 2 ) {
 		// ok, we're trying to get somewhere
 		// first look at where we are trying to go
 		// Version 1.0 of GruntyLead(tm)
@@ -1496,9 +1496,25 @@ float (float angle, float dist) botmovedist =
 	/*if (pointcontents(self.origin) == #CONTENT_EMPTY) // We're in open air
 	{*/
 
-		if ( self.motd > time ) {
+		if ( self.motd > time && self.is_toffingadet == 2 ) {
 			success = #TRUE;
 			movetogoal( dist );
+
+			// Gizmo - check if we should still be navigating
+			if ( GruntyAutoObstacle( self ) == 2 ) {
+				// Gizmo - check if our path to our goal entity is still blocked
+				local vector	lastOrigin;
+				local float		tempYaw;
+
+				lastOrigin = self.origin;
+				tempYaw = vectoyaw( self.goalentity.origin - self.origin );
+
+				if ( !walkmove( tempYaw, dist ) )
+					self.motd = time + 1;
+				else
+					setorigin( self, lastOrigin );
+			} else
+				self.motd = 0;
 		} else
 			success = walkmove(angle, dist);
 
