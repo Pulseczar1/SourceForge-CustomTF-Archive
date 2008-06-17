@@ -599,9 +599,8 @@ void() walkmonster_start_go =
 /*		RPrint ("walkmonster in wall at: ");
 		RPrint (vtos(self.origin));
 		RPrint ("\n"); */
-		
-		//- OfN - if (self.classname == "monster_demon1" || self.classname == "monster_army" || self.classname == "monster_shambler")
-        if (IsMonster(self))
+
+        if (IsOwnedMonster(self))
 			if (self.real_owner.classname == "player")
 			{
 				//self.real_owner.job = self.real_owner.job - (self.real_owner.job & #JOB_DEMON_OUT);

@@ -770,10 +770,14 @@ void() Tesla_Touch =
 	if (other.takedamage && !(self.tf_items & #NIT_TURRET) && !self.velocity)  // OfN - fixme: doesn't check for enemy disguised spies
 	{
 		deathmsg = #DMSG_BUG_ZAPPER;
-		
+
+		// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 		if (IsMonster(other))
 		{
-			if (!Teammate(other.real_owner.team_no, self.real_owner.team_no))
+			local float temp;
+
+			temp = GetTeam( other );
+			if (!Teammate(temp, self.real_owner.team_no))
 			{
 				TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 				return;
@@ -928,10 +932,8 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 
 	while (head) {
 		gotatarget = 0;
-		// Gizmo - vlen and head != scanner aren't really needed...
-		// findradius only finds entities within the radius specified and
-		// findradius doesn't find the entity directly at the origin specified
-		if (/*vlen(head.origin - scanner.origin) <= scanrange && head != scanner && */visible2(head,scanner)) {
+
+		if (/*vlen(head.origin - scanner.origin) <= scanrange && */head != scanner && visible2(head,scanner)) {
 		//RPrint("TeslaScan()\n");
 			//RPrint(head.classname); RPrint("\n");
 			
@@ -943,40 +945,17 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 			#endif
 
 #ifdef COOP_MODE_ENHANCED
-			// teslas always target coop monsters in coop mode
-			else if (COOP_IsCoopMonster( head ) && head.health > 0 && head.takedamage)
-				gotatarget = 1;
+			// teslas always target coop monsters in coop mode, without improved targeter
+			else if (COOP_IsCoopMonster( head ) && head.health > 0 && head.takedamage) {
+				if ( !Teammate( head.team_no, scanner.team_no ) )
+					gotatarget = 1;
+			}
 #endif
 			else if (scanner.tf_items & #NIT_SCANNER && scanner.team_no > 0) //Improved targeter targets monsters and soldiers
 			{
-				if (head.classname == "monster_demon1")
-				{
-					if (!Teammate(head.real_owner.team_no,scanner.team_no))
-						gotatarget = 1;
-				}
-				else if (head.classname == "monster_army")
-				{
-					if (!Teammate(head.real_owner.team_no,scanner.team_no))
-						gotatarget = 1;
-				}
-				else if (head.classname == "monster_shambler")
-				{
-					if (!Teammate(head.real_owner.team_no,scanner.team_no))
-						gotatarget = 1;
-				}
-				else if (head.classname == "monster_wizard") //- OfN
-				{
-					if (!Teammate(head.real_owner.team_no,scanner.team_no))
-						gotatarget = 1;
-				}
-				else if (head.classname == "monster_gremlin") //- OfN
-				{
-					if (!Teammate(head.real_owner.team_no,scanner.team_no))
-						gotatarget = 1;
-				}
-				else if (head.classname == "monster_fish") //- OfN
-				{
-					if (!Teammate(head.real_owner.team_no,scanner.team_no))
+				if ( IsOwnedMonster( head ) ) {
+					if ( head.health > 0 )		// Gizmo
+					if ( !Teammate( head.real_owner.team_no, scanner.team_no ) )
 						gotatarget = 1;
 				}
 				else if (head.classname == "grenade" && head.netname == "land_mine")

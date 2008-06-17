@@ -190,7 +190,7 @@ void()	enf_atk12	=[	$attack8,	enf_atk13	] {COOP_Turn();};
 void()	enf_atk13	=[	$attack9,	enf_atk14	] {COOP_Turn();};
 void()	enf_atk14	=[	$attack10,	enf_run1	] {COOP_Turn();
 SUB_CheckRefire (enf_atk1);
-	self.attack_finished = time + random()*2;
+	Attack_Finished( random()*2 );
 };
 
 void()	enf_paina1	=[	$paina1,	enf_paina2	] {};
@@ -406,7 +406,6 @@ void() monster_enforcer =
 	self.is_connected = #TRUE;
 
 	self.OnNoticeEnemy = EnforcerOnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_enforcer;
 	COOP_SetLives ();
 

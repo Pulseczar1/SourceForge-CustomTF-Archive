@@ -154,7 +154,11 @@ void(entity player) UpdateArmorItem;
 
 // For the love of god, we needed this before!! (easily tweakable, SINGLE VALUES!)
 // PAGE 1 - Primary Weapons
-#define COST_SNIPERRIFLE		4800
+#ifdef CLASSIC_SNIPER_RIFLE
+	#define COST_SNIPERRIFLE		5000
+#else
+	#define COST_SNIPERRIFLE		4800
+#endif
 #define COST_ASSAULTCANNON		3000   
 #define COST_ROCKETLAUNCHER 	3000
 #define COST_PYROTOYS			3000
@@ -171,8 +175,8 @@ void(entity player) UpdateArmorItem;
 #define COST_SHOTGUN			  50
 // PAGE 3 - Misc/Extra Weapons
 #define COST_MAUSER 			2400
-#define COST_AIRF				2500 //WK 2/26/7 Was 2000
-#define COST_AIRFISTUPGRADE 	2500 //WK 2/26/7 Was 1850
+#define COST_AIRF				2000
+#define COST_AIRFISTUPGRADE 	1850
 #define COST_DAEDALUS			1500
 #define COST_LASERCANNON		1400
 #define COST_HOLO				1200

@@ -266,12 +266,7 @@ void() worldspawn =
 {
 #ifdef COOP_MODE_ENHANCED
 	local entity e;
-	// keys will only appear when this is set so...
-	// the stupid server that comes with custom is broken
-	// whoever it was who thinks you have to go fiddling around in the qwsv and changing
-	// stuff like the "ED_LoadFromFile()" function in the server to never allow
-	// non-deathmatch stuff... I'll just leave it at that.
-	// Anyways I'll "unbreak" the qwsv for you.
+
 	cvar_set ("deathmatch", "0");
 	coop = 1;
 	skill = 5;
@@ -291,10 +286,25 @@ void() worldspawn =
 	
 // custom map attributes
 #ifdef COOP_MODE_ENHANCED
-	//if (self.model == "maps/e1m8.bsp")
-	//	cvar_set ("sv_gravity", "100");
-	//else
-	//	cvar_set ("sv_gravity", "800");
+	local string	temps;
+	local float		tempf;
+
+	// Gizmo - allowed this to work without always forcing gravity to 800 when not on e1m8
+	if (self.model == "maps/e1m8.bsp") {
+		// save off the server's gravity setting
+		tempf = cvar( "sv_gravity" );
+		temps = ftos( tempf );
+		localcmd( "localinfo _saved_gravity " );
+		localcmd( temps );
+		localcmd( "\n" );
+
+		cvar_set ("sv_gravity", "100");
+	} else if ( infokey( world, "_saved_gravity" ) != string_null ) {
+		// restore server's gravity setting if changing from e1m8
+		temps = infokey( world, "_saved_gravity" );
+		cvar_set( "sv_gravity", temps );
+		localcmd( "localinfo _saved_gravity \"\"\n" );
+	}
 #endif
 
 #ifdef QUAKE_WORLD

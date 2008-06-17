@@ -4,7 +4,7 @@
 	TeamFortress v2.5	 29/2/97
 	Craig Hauser	 26/3/00
 ======================================================
-Functions for the SCOUT class and associated weaponry                          
+Functions for the SCOUT class and associated weaponry						   
 ======================================================*/
 // Functions outside this file
 
@@ -40,7 +40,7 @@ void() FlashGrenadeTouch =
 #ifdef NET_SERVER
 	#define SMOOTH_FLASH 1
 #else
-    #define SMOOTH_FLASH 0.1
+	#define SMOOTH_FLASH 0.1
 #endif
 
 void() FlashTimer =
@@ -59,9 +59,9 @@ void() FlashTimer =
 		te.FlashTime = 0;
 		stuffcmd(te, "v_cshift 0\n");
 		stuffcmd(te, "r_norefresh 0;wait;echo;wait;echo;wait;echo;wait;echo\n"); //WK
-        // OfN- now we use the centerprint replacement
+		// OfN- now we use the centerprint replacement
 		//centerprint(te,"Your 	 eyes 	 finally 	 clear\n");
-        StatusPrint(te,2,"Your 	 eyes 	 finally 	 clear\n");
+		StatusPrint(te,2,"Your 	 eyes 	 finally 	 clear\n");
 		return;
 	}
 
@@ -155,7 +155,7 @@ void() FlashGrenadeExplode =
 				stuffcmd(te, st);
 				stuffcmd(te, "\n");
 				stuffcmd(te, "r_norefresh 1;wait;echo;wait;echo;wait;echo;wait;echo\n"); //WK
-			    StatusPrint(te,2,"Your 	 eyes 	 burn\n		 with 		 the 		 pain\n	 of 	\n glowing phosphor\n			 			 			\n	 	 	 	 	\n");
+				StatusPrint(te,2,"Your 	 eyes 	 burn\n		 with 		 the 		 pain\n	 of 	\n glowing phosphor\n			 			 			\n	 	 	 	 	\n");
 			}
 		}
 
@@ -195,30 +195,39 @@ void() PsionicTimer =
 
 	if (!te.is_connected) //WK Safety, now that we call this to clean up after death
 	{
-        dremove(self);
-        return;
-    }
+		dremove(self);
+		return;
+	}
 
-    if (te.tfstate & #TFSTATE_PSIONIZED)
-    {
-        te.tfstate = te.tfstate - #TFSTATE_PSIONIZED;
+	if (te.tfstate & #TFSTATE_PSIONIZED)
+	{
+		te.tfstate = te.tfstate - #TFSTATE_PSIONIZED;
 
-        if (te.health > 0)
-        {
-            if (te.classname == "player")
-            {
-                if (random()<0.5)
-                    sound(te,#CHAN_VOICE,"player/gasp1.wav",1,#ATTN_NORM);
-                else
-                    sound(te,#CHAN_VOICE,"player/gasp2.wav",1,#ATTN_NORM);
+		if (te.health > 0)
+		{
+			if (te.classname == "player")
+			{
+				if (random()<0.5)
+					sound(te,#CHAN_VOICE,"player/gasp1.wav",1,#ATTN_NORM);
+				else
+					sound(te,#CHAN_VOICE,"player/gasp2.wav",1,#ATTN_NORM);
 
-                TeamFortress_SetSpeed(te);
-                sprint(te,#PRINT_HIGH,"Your psionic state is now restored\n");
-            }            
-        }
-    }
+				TeamFortress_SetSpeed(te);
+				sprint(te,#PRINT_HIGH,"Your psionic state is now restored\n");
+			}
 
-    dremove(self);
+#ifdef COOP_MODE_ENHANCED
+			else if ( COOP_IsCoopMonster( te ) ) {
+				if ( random() < 0.5 )
+					sound( te, #CHAN_VOICE, "player/gasp1.wav", 1, #ATTN_NORM );
+				else
+					sound( te, #CHAN_VOICE, "player/gasp2.wav", 1, #ATTN_NORM );
+			}
+#endif
+		}
+	}
+
+	dremove(self);
 };
 
 //=========================================================================
@@ -226,19 +235,19 @@ void() PsionicTimer =
 void() PsionicGrenadeExplode =
 {
 	local entity te, te2;
-    local float psionicstime;
-    local string desc;
+	local float psionicstime;
+	local string desc;
 
-    if (self.netname == "special_mine")
-    {
-        psionicstime = #MINE_PSIONICS_TIME;
-        desc = "mine";
-    }
-    else
-    {
-        psionicstime = #PSIONICS_TIME;
-        desc = "grenade";
-    }
+	if (self.netname == "special_mine")
+	{
+		psionicstime = #MINE_PSIONICS_TIME;
+		desc = "mine";
+	}
+	else
+	{
+		psionicstime = #PSIONICS_TIME;
+		desc = "grenade";
+	}
 
 	self.effects = self.effects | #EF_BRIGHTLIGHT;
 
@@ -251,7 +260,7 @@ void() PsionicGrenadeExplode =
 	multicast (self.origin, #MULTICAST_PHS);
 #endif
 
-    // TODO: explosion sound?        
+	// TODO: explosion sound?		 
 
 	// Find all people/sentries in area
 	te = findradius(self.origin, #PSIONIC_EXPLOSIONRANGE);
@@ -261,60 +270,60 @@ void() PsionicGrenadeExplode =
 		if (te.classname == "player")
 		{			
 			if (te.health > 0)
-            if (te.is_connected)
-            if (!(te.#runes & #RUNE_RESIS))
-            if (!(te.done_custom & #CUSTOM_BUILDING)) // skip ppl customizing
-            if (te.playerclass != #PC_UNDEFINED) // skip observers
-            if (te.invincible_finished <= time)
+			if (te.is_connected)
+			if (!(te.#runes & #RUNE_RESIS))
+			if (!(te.done_custom & #CUSTOM_BUILDING)) // skip ppl customizing
+			if (te.playerclass != #PC_UNDEFINED) // skip observers
+			if (te.invincible_finished <= time)
 			{
-				// report our success on hiting some1
-                if (te == self.owner)
-                    sprint(self.owner,#PRINT_HIGH,"Your psionic ",desc," affects yourself!\n");
-                else
-                    sprint(self.owner,#PRINT_HIGH,"Your psionic ",desc," affects ",te.netname,"!\n");
+				// report our success on hiting someone
+				if (te == self.owner)
+					sprint(self.owner,#PRINT_HIGH,"Your psionic ",desc," affects yourself!\n");
+				else
+					sprint(self.owner,#PRINT_HIGH,"Your psionic ",desc," affects ",te.netname,"!\n");
 
-                if (random()<0.5)
-                    sound(te,#CHAN_VOICE,"player/drown1.wav",1,#ATTN_NORM);
-                else
-                    sound(te,#CHAN_VOICE,"player/drown2.wav",1,#ATTN_NORM);
-                 
-                te2 = SpawnSprite(1,#SPRITE_ABLAST,te.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
+				if (random()<0.5)
+					sound(te,#CHAN_VOICE,"player/drown1.wav",1,#ATTN_NORM);
+				else
+					sound(te,#CHAN_VOICE,"player/drown2.wav",1,#ATTN_NORM);
+				 
+				te2 = SpawnSprite(1,#SPRITE_ABLAST,te.origin,'0 0 0',#SPRITEMOVE_UP,0.1);
 
-                if (te2)
-                {
-                    te2.effects = #EF_DIMLIGHT;
+				if (te2)
+				{
+					te2.effects = #EF_DIMLIGHT;
 
-                    if (te.team_no == 1)
-                        te2.effects = #EF_DIMLIGHT | #EF_BLUE;
-                    else if (te.team_no == 2)
-                        te2.effects = #EF_DIMLIGHT | #EF_RED;
-                }
+					if (te.team_no == 1)
+						te2.effects = #EF_DIMLIGHT | #EF_BLUE;
+					else if (te.team_no == 2)
+						te2.effects = #EF_DIMLIGHT | #EF_RED;
+				}
 
-                MuzzleFlash(te);
-                
-                if (te.tfstate & #TFSTATE_PSIONIZED) // already psionized
+				MuzzleFlash(te);
+				
+				if (te.tfstate & #TFSTATE_PSIONIZED) // already psionized
 				{
 					// find the timer for psionics
-                    local entity psion;
+					local entity psion;
 
-                    psion = find(world,netname,"psionictimer");
+					psion = find(world,netname,"psionictimer");
 
-                    while (psion != world)
-                    {
-                        if (psion.owner == te) 
-                        {
-                            // reset time
-                            psion.nextthink = time + psionicstime;
-                        }
+					while (psion != world)
+					{
+						if (psion.owner == te) 
+						{
+							// reset time
+							psion.nextthink = time + psionicstime;
+						}
 
-                        psion = find(psion,netname,"psionictimer");
-                    }                    
+						psion = find(psion,netname,"psionictimer");
+					}					 
 
-                    sprint(te,#PRINT_HIGH,"You receive another psionic discharge!\n");
+					sprint(te,#PRINT_HIGH,"You receive another psionic discharge!\n");
 				}
-                else // not psionized yet
-                {
-                    // create psionic timer
+				else // not psionized yet
+				{
+					// create psionic timer
 					newmis = spawn();
 
 					newmis.classname = "timer";
@@ -324,41 +333,96 @@ void() PsionicGrenadeExplode =
 					newmis.think = PsionicTimer;
 					newmis.nextthink = time + psionicstime;
 
-                    te.tfstate = te.tfstate | #TFSTATE_PSIONIZED;
+					te.tfstate = te.tfstate | #TFSTATE_PSIONIZED;
 
-                    te.button0 = 0;
-                    te.button1 = 0;
-                    te.button2 = 0;
-                    te.fire_held_down = #FALSE;
-                    te.heat = 0;
-                    
-                    local entity oself;
-                    oself = self;
-                    
-                    self = te;
+					te.button0 = 0;
+					te.button1 = 0;
+					te.button2 = 0;
+					te.fire_held_down = #FALSE;
+					te.heat = 0;
+					
+					local entity oself;
+					oself = self;
+					
+					self = te;
 
-                    if (self.current_weapon == #WEAP_ASSAULT_CANNON && self.fire_held_down) 
-                    {
-                        stuffcmd(self, "-attack;v_idlescale 0\n");
-                        self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-                        
-                        self.weaponframe = 0;
-                        self.count = 1;
-                        
-                        player_assaultcannondown1();                        
-				    }
-                    else
-                        player_run();
+					if (self.current_weapon == #WEAP_ASSAULT_CANNON && self.fire_held_down) 
+					{
+						stuffcmd(self, "-attack;v_idlescale 0\n");
+						self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+						
+						self.weaponframe = 0;
+						self.count = 1;
+						
+						player_assaultcannondown1();						
+					}
+					else
+						player_run();
 
-                    self = oself;
+					self = oself;
 
-                    sprint(te,#PRINT_HIGH,"Your body accepts a psionic discharge!\n");
+					sprint(te,#PRINT_HIGH,"Your body accepts a psionic discharge!\n");
 
-                    TeamFortress_SetSpeed(te);
-                }
+					TeamFortress_SetSpeed(te);
+				}
 			}
 		}
-        
+
+#ifdef COOP_MODE_ENHANCED
+		else if ( COOP_IsCoopMonster( te ) ) {
+			if ( te.health > 0 ) {
+				// report our success on hiting someone
+				sprint( self.owner, #PRINT_HIGH, "Your psionic ", desc, " affects ", te.netname, "!\n" );
+
+				if ( random() < 0.5 )
+					sound( te, #CHAN_VOICE, "player/drown1.wav", 1, #ATTN_NORM );
+				else
+					sound( te, #CHAN_VOICE, "player/drown2.wav", 1, #ATTN_NORM );
+				 
+				te2 = SpawnSprite( 1, #SPRITE_ABLAST, te.origin, '0 0 0', #SPRITEMOVE_UP, 0.1 );
+
+				if ( te2 ) {
+					te2.effects = #EF_DIMLIGHT;
+
+					if ( te.team_no == 1 )
+						te2.effects = #EF_DIMLIGHT | #EF_BLUE;
+					else if ( te.team_no == 2 )
+						te2.effects = #EF_DIMLIGHT | #EF_RED;
+				}
+
+				MuzzleFlash( te );
+
+				if ( te.tfstate & #TFSTATE_PSIONIZED ) { // already psionized
+					// find the timer for psionics
+					local entity psion;
+
+					psion = find( world, netname, "psionictimer" );
+
+					while ( psion != world ) {
+						if ( psion.owner == te ) {
+							// reset time
+							psion.nextthink = time + psionicstime;
+						}
+
+						psion = find( psion, netname, "psionictimer" );
+					}
+				} else { // not psionized yet
+					// create psionic timer
+					newmis = spawn();
+
+					newmis.classname = "timer";
+					newmis.netname = "psionictimer";
+					newmis.team_no = self.owner.team_no;
+					newmis.owner = te;
+					newmis.think = PsionicTimer;
+					newmis.nextthink = time + psionicstime;
+
+					te.tfstate = te.tfstate | #TFSTATE_PSIONIZED;
+				}
+			}
+		}
+#endif
+		
 		te = te.chain;
 	}
 
@@ -476,6 +540,7 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 	local entity list;
 	local float scen, scfr;
 	local vector lightningvec;
+	local float temp;
 
 	// added in for the direction scanner code
 	local float enemy_detected;
@@ -600,113 +665,66 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 
 		if (vlen(list.origin - self.origin) <= scanrange) //CH Secondary check NEEDED!!!
 		{
-		// If this scanner is a motion detector, don't record
-		// object that don't have the required velocity to be detected.
-		if (self.tf_items_flags & #NIT_SCANNER_MOVEMENT)
-		{
-			if (vlen(list.velocity) > #NIT_SCANNER_MIN_MOVEMENT)
+			// If this scanner is a motion detector, don't record
+			// object that don't have the required velocity to be detected.
+			if (self.tf_items_flags & #NIT_SCANNER_MOVEMENT)
 			{
-				/*if (list.classname == "monster_demon1" && list.health > 0) //Because they dont have teams
+				if (vlen(list.velocity) > #NIT_SCANNER_MIN_MOVEMENT)
 				{
-					if (Teammate(list.real_owner.team_no,self.team_no))
+					// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+					if (IsMonster(list))
 					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
+						if (list.health > 0)
+						{
+							temp = GetTeam( list );
+							if (Teammate(temp, self.team_no))
+							{
+								scfr = scfr + 1;
+								enemy_detected = #FALSE;
+							}
+							else
+							{
+								scen = scen + 1;
+								enemy_detected = #TRUE;
+							}
+						}
+					}
+					else if (list.classname == "item_tfgoal" && list.owned_by > 0 && list.team_no > 0 && self.team_no > 0) //Because they use owned_by
+					{
+						if (list.owned_by == self.team_no && list.team_no != self.team_no)
+						{
+							scfr = scfr + 1;
+							enemy_detected = #FALSE;
+						}
+						else if (list.owned_by == self.team_no && list.team_no == self.team_no)
+						{
+							scfr = scfr + 1;
+							enemy_detected = #FALSE;
+						}
+						else if (list.owned_by != self.team_no && list.team_no == self.team_no)
+						{
+							scen = scen + 1;
+							enemy_detected = #TRUE;
+						}
+						else
+							any_detected = #FALSE;
+					}
+					else if ((list.classname == "player" || list.classname == "building_sentrygun" || list.classname == "building_tesla" || list.classname == "building_teleporter") && list.health > 0 && !(list.cutf_items & #CUTF_JAMMER))
+					{
+						if (Teammate(list.team_no, self.team_no))
+						{
+							scfr = scfr + 1;
+							enemy_detected = #FALSE;
+						}
+						else
+						{
+							scen = scen + 1;
+							enemy_detected = #TRUE;
+						}
 					}
 					else
 					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-				}
-				else if (list.classname == "monster_army" && list.health > 0) //Because they dont have teams
-				{
-					if (Teammate(list.real_owner.team_no,self.team_no))
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-				}
-				else if (list.classname == "monster_shambler" && list.health > 0) //Because they dont have teams
-				{
-					if (Teammate(list.real_owner.team_no,self.team_no))
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-				}
-   				//- OfN -
-                else if (list.classname == "monster_wizard" && list.health > 0) //Because they dont have teams
-				{
-					if (Teammate(list.real_owner.team_no,self.team_no))
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-				}*/
-                if (IsMonster(list))
-                {
-                    if (list.health > 0)
-                    {
-                        if (Teammate(list.real_owner.team_no,self.team_no))
-                        {
-                            scfr = scfr + 1;
-                            enemy_detected = #FALSE;
-                        }
-                        else
-                        {
-                            scen = scen + 1;
-                            enemy_detected = #TRUE;
-                        }
-                    }
-                }
-
-				else if (list.classname == "item_tfgoal" && list.owned_by > 0 && list.team_no > 0 && self.team_no > 0) //Because they use owned_by
-				{
-					if (list.owned_by == self.team_no && list.team_no != self.team_no)
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else if (list.owned_by == self.team_no && list.team_no == self.team_no)
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else if (list.owned_by != self.team_no && list.team_no == self.team_no)
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-					else
 						any_detected = #FALSE;
-				}
-				else if ((list.classname == "player" || list.classname == "building_sentrygun" || list.classname == "building_tesla" || list.classname == "building_teleporter") && list.health > 0 && !(list.cutf_items & #CUTF_JAMMER))
-				{
-					if (Teammate(list.team_no, self.team_no))
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
 					}
 				}
 				else
@@ -716,82 +734,24 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 			}
 			else
 			{
-				any_detected = #FALSE;
-			}
-		}
-		else
-		{
+				// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 				if (IsMonster(list))
-                {
-                    if (list.health > 0)
-                    {
-                        if (Teammate(list.real_owner.team_no,self.team_no))
-                        {
-                            scfr = scfr + 1;
-                            enemy_detected = #FALSE;
-                        }
-                        else
-                        {
-                            scen = scen + 1;
-                            enemy_detected = #TRUE;
-                        }
-                    }
-                }
-
-
-                /*if (list.classname == "monster_demon1" && list.health > 0) //Because they dont have teams
 				{
-					if (Teammate(list.real_owner.team_no,self.team_no))
+					if (list.health > 0)
 					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
+						temp = GetTeam( list );
+						if (Teammate(temp, self.team_no))
+						{
+							scfr = scfr + 1;
+							enemy_detected = #FALSE;
+						}
+						else
+						{
+							scen = scen + 1;
+							enemy_detected = #TRUE;
+						}
 					}
 				}
-				if (list.classname == "monster_army" && list.health > 0) //Because they dont have teams
-				{
-					if (Teammate(list.real_owner.team_no, self.team_no))
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-				}
-				if (list.classname == "monster_shambler" && list.health > 0) //Because they dont have teams
-				{
-					if (Teammate(list.real_owner.team_no, self.team_no))
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-				}
-                //- OfN -
-                if (list.classname == "monster_wizard" && list.health > 0) //Because they dont have teams
-				{
-					if (Teammate(list.real_owner.team_no, self.team_no))
-					{
-						scfr = scfr + 1;
-						enemy_detected = #FALSE;
-					}
-					else
-					{
-						scen = scen + 1;
-						enemy_detected = #TRUE;
-					}
-				}*/
 				else if (list.classname == "item_tfgoal" && list.owned_by > 0 && list.team_no > 0 && self.team_no > 0) //Because they use owned_by
 				{
 					if (list.owned_by == self.team_no && list.team_no != self.team_no)
@@ -829,7 +789,7 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				{
 					any_detected = #FALSE;
 				}
-		}
+			}
 		}
 		else
 		{
@@ -837,27 +797,31 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 		}
 
 		// this displays the direction of the detected player
-		// using the cosine rule to find the angle   
-		//  cos theta = A.B divided by |A||B|
+		// using the cosine rule to find the angle	 
+		//	cos theta = A.B divided by |A||B|
 		// it should return a value between 1 and -1
 		if (any_detected)
 		{
-			// Get the unit vector
-			lightningvec = normalize(list.origin - self.origin);
-			lightningvec = lightningvec * (vlen(list.origin - self.origin) / 5);
-			lightningvec = lightningvec + self.origin;
+			// Gizmo - don't allow too many lightnings (if more than one actually does anything)
+			// if too many get sent, they seem to get cut off in the middle and corrupt the protocol
+			if ( scen + scfr <= 4 ) {
+				// Get the unit vector
+				lightningvec = normalize(list.origin - self.origin);
+				lightningvec = lightningvec * (vlen(list.origin - self.origin) / 5);
+				lightningvec = lightningvec + self.origin;
 
-			// Create the Lightning 
-			msg_entity = self;
-			WriteByte (#MSG_ONE, #SVC_TEMPENTITY);
-			WriteByte (#MSG_ONE, #TE_LIGHTNING1);
-			WriteEntity (#MSG_ONE, self);
-			WriteCoord (#MSG_ONE, self.origin_x);
-			WriteCoord (#MSG_ONE, self.origin_y);
-			WriteCoord (#MSG_ONE, self.origin_z + 8);
-			WriteCoord (#MSG_ONE, lightningvec_x);
-			WriteCoord (#MSG_ONE, lightningvec_y);
-			WriteCoord (#MSG_ONE, lightningvec_z + 8);
+				// Create the Lightning
+				msg_entity = self;
+				WriteByte (#MSG_ONE, #SVC_TEMPENTITY);
+				WriteByte (#MSG_ONE, #TE_LIGHTNING1);
+				WriteEntity (#MSG_ONE, self);
+				WriteCoord (#MSG_ONE, self.origin_x);
+				WriteCoord (#MSG_ONE, self.origin_y);
+				WriteCoord (#MSG_ONE, self.origin_z + 8);
+				WriteCoord (#MSG_ONE, lightningvec_x);
+				WriteCoord (#MSG_ONE, lightningvec_y);
+				WriteCoord (#MSG_ONE, lightningvec_z + 8);
+			}
 
 			self.scaned = list; //CH for the sbar
 			if (!inAuto)
@@ -889,10 +853,10 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 // from the explosion at a speed relative to the distance from the explosion's origin.
 void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusBounce =
 {
-	local	float 	points;
+	local	float	points;
 	local	entity	head, te;
 	local	vector	org;
-	//local	string	st;
+	//local string	st;
 
 	head = findradius(inflictor.origin, bounce+40);
 	
@@ -924,36 +888,36 @@ void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusBou
 					else
 					{
 						if (!(head.#runes & #RUNE_RESIS))
-                        {
-                            //WK Add cheat immunity since they fly
-                            makeImmune(head,time+3);
+						{
+							//WK Add cheat immunity since they fly
+							makeImmune(head,time+3);
 
-                            // Concuss 'em!!
-                            // If they are already concussed, set the concussion back up
-                            // Try to find a concusstimer entity for this player
-                            te = find(world, classname, "timer");
-                            while (((te.owner != head) || (te.think != ConcussionGrenadeTimer)) && (te != world))
-                                te = find(te, classname, "timer");
-                            if (te != world)
-                            {
-                                stuffcmd(head,"v_idlescale 100\n");
-                                te.health = 100;
-                                te.nextthink = time + #GR_CONCUSS_TIME;
-                            }
-                            else
-                            {
-                                stuffcmd(head,"v_idlescale 100\n");
-                                stuffcmd(head,"bf\n");
-                                // Create a timer entity
-                                te = spawn();
-                                te.nextthink = time + #GR_CONCUSS_TIME;
-                                te.think = ConcussionGrenadeTimer;
-                                te.team_no = attacker.team_no;
-                                te.classname = "timer";
-                                te.owner = head;
-                                te.health = 100;
-                            }
-                        }
+							// Concuss 'em!!
+							// If they are already concussed, set the concussion back up
+							// Try to find a concusstimer entity for this player
+							te = find(world, classname, "timer");
+							while (((te.owner != head) || (te.think != ConcussionGrenadeTimer)) && (te != world))
+								te = find(te, classname, "timer");
+							if (te != world)
+							{
+								stuffcmd(head,"v_idlescale 100\n");
+								te.health = 100;
+								te.nextthink = time + #GR_CONCUSS_TIME;
+							}
+							else
+							{
+								stuffcmd(head,"v_idlescale 100\n");
+								stuffcmd(head,"bf\n");
+								// Create a timer entity
+								te = spawn();
+								te.nextthink = time + #GR_CONCUSS_TIME;
+								te.think = ConcussionGrenadeTimer;
+								te.team_no = attacker.team_no;
+								te.classname = "timer";
+								te.owner = head;
+								te.health = 100;
+							}
+						}
 					}
 				}
 			}
@@ -1006,6 +970,7 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 	local entity list_head;
 	local entity list;
 	local float gotatarget;
+	local float temp;
 
 	list = world;
 	list_head = world;
@@ -1035,53 +1000,14 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 					else
 						gotatarget = 1;
 				}
-				else if ((head.classname == "monster_demon1") && head.health > 0) //CH demons trace back to real_owner
-				{
-					if (teamplay)
-					{
-						if ( friends &&  Teammate(head.real_owner.team_no, scanner.team_no) )
+				else if ( IsMonster( head ) && head.health > 0 ) {	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+					if ( teamplay ) {
+						temp = GetTeam( head );
+						if ( friends && Teammate( temp, scanner.team_no ) )
 							gotatarget = 1;
-						if ( enemies && !Teammate(head.real_owner.team_no, scanner.team_no) )
+						if ( enemies && !Teammate( temp, scanner.team_no ) )
 							gotatarget = 1;
-					}
-					else
-						gotatarget = 1;
-				}
-				else if ((head.classname == "monster_army") && head.health > 0) //CH demons trace back to real_owner
-				{
-					if (teamplay)
-					{
-						if ( friends &&  Teammate(head.real_owner.team_no, scanner.team_no) )
-							gotatarget = 1;
-						if ( enemies && !Teammate(head.real_owner.team_no, scanner.team_no) )
-							gotatarget = 1;
-					}
-					else
-						gotatarget = 1;
-				}
-				else if ((head.classname == "monster_shambler") && head.health > 0) //CH demons trace back to real_owner
-				{
-					if (teamplay)
-					{
-						if ( friends &&  Teammate(head.real_owner.team_no, scanner.team_no) )
-							gotatarget = 1;
-						if ( enemies && !Teammate(head.real_owner.team_no, scanner.team_no) )
-							gotatarget = 1;
-					}
-					else
-						gotatarget = 1;
-				}
-                //- OfN -
-                else if ((head.classname == "monster_wizard") && head.health > 0) //CH demons trace back to real_owner
-				{
-					if (teamplay)
-					{
-						if ( friends &&  Teammate(head.real_owner.team_no, scanner.team_no) )
-							gotatarget = 1;
-						if ( enemies && !Teammate(head.real_owner.team_no, scanner.team_no) )
-							gotatarget = 1;
-					}
-					else
+					} else
 						gotatarget = 1;
 				}
 			}
@@ -1203,9 +1129,9 @@ void (vector org, entity shooter) CreateCaltrop =
 	setsize (newmis, '-10 -10 -9', '0 0 0');
 //	setsize (newmis, '-5 -5 -4', '5 5 5');
 
-    /*#ifdef COOL_GIBS
-    newmis.#coolflag = #STRFLAG_COOL;
-    #endif*/
+	/*#ifdef COOL_GIBS
+	newmis.#coolflag = #STRFLAG_COOL;
+	#endif*/
 
 	setorigin (newmis, org);
 };
@@ -1268,5 +1194,25 @@ void() CaltropTouch =
 
 		dremove(self);
 	}
+#ifdef COOP_MODE_ENHANCED
+	if ( other.takedamage && COOP_IsCoopMonster( other ) ) {
+		if (Teammate(self.owner.team_no, other.team_no))
+			return;
+			
+		if (self.velocity == '0 0 0') // supposedly on the ground..
+		{
+			HurtLegs(other,2);
+			deathmsg = #DMSG_CALTROP;
+			TF_T_Damage(other, self, self.owner, 16, 0, #TF_TD_OTHER);
+		}
+		else // if its moving...
+		{
+			deathmsg = #DMSG_FLYCALTROP;
+			TF_T_Damage(other, self, self.owner, 20 + random() * 9, 0, #TF_TD_OTHER);
+		}
+
+		dremove(self);
+	}
+#endif
 };
 

@@ -140,7 +140,7 @@ void() OgreFireGrenade =
 	setsize (missile, '0 0 0', '0 0 0');		
 	setorigin (missile, self.origin);
 
-	self.attack_finished = time + 1;
+	Attack_Finished( 1 );
 };
 
 
@@ -501,7 +501,6 @@ void() monster_ogre =
 	self.is_connected = #TRUE;
 
 	self.OnNoticeEnemy = OgreOnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_ogre;
 	COOP_SetLives ();
 

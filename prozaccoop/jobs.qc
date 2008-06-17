@@ -53,8 +53,7 @@ void() TeamFortress_RegenerateCells; // for thief
 //- OfN Cyber Interface is now a job itself
 //---- OfN
 void(entity mine_owner) DetonateMines;
-float(entity thing) IsMonsterNonArmy;
-float(entity thing) IsMonster; // for mines
+float(entity thing) IsSummon;
 void() JobArmy;
 void() JobHacker;
 
@@ -282,10 +281,8 @@ void() ChaplanInspire = {
 	
 	while (head)
 	{
-#ifndef COOP_MODE_ENHANCED
 		//Dispel enemy demons
-		//- OfN - if (head.classname == "monster_demon1" || head.classname == "monster_shambler")
-		if (IsMonsterNonArmy(head))
+		if (IsSummon(head))
 		{ //No short circuit evaluation, so...
 			if (!Teammate(head.real_owner.team_no,self.team_no))
 			{ //...to avoid a crash from deref
@@ -302,10 +299,7 @@ void() ChaplanInspire = {
 				TF_T_Damage(head, self, self, 220, 0, 0); // OfN
 			}
 		}
-		else
-#endif
-
-		if (head.classname == "player" &&	//Person who is...
+		else if (head.classname == "player" &&	//Person who is...
 			   head.health > 0 && // OfN Alive
 			   Teammate(head.team_no,self.team_no) && //Same Team
 			   head != self &&			//Not me
@@ -664,7 +658,11 @@ void() JobJudoka =
 	}
 
 #ifdef COOP_MODE_ENHANCED
-	if ( COOP_IsCoopMonster( trace_ent ) ) {
+	local float temp;
+
+	temp = GetTeam( trace_ent );
+	temp = Teammate( temp, self.team_no );
+	if ( COOP_IsCoopMonster( trace_ent ) && !temp ) {
 		local float jdmg;
 
 		if (self.is_undercover) //Taking someone's weapon should give you away

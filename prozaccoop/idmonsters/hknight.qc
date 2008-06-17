@@ -157,7 +157,7 @@ if ( vlen (self.origin - self.enemy.origin) < 80)
 	return;		// use regular attack
 
 // charge		
-	self.attack_finished = time + 2;
+	Attack_Finished( 2 );
 	hknight_char_a1 ();
 
 };
@@ -166,7 +166,7 @@ void() CheckContinueCharge =
 {
 	if (time > self.attack_finished)
 	{
-		self.attack_finished = time + 3;
+		Attack_Finished( 3 );
 		hknight_run1 ();
 		return;		// done charging
 	}
@@ -532,7 +532,6 @@ void() monster_hell_knight =
 
 	self.OnNoticeEnemy = HKnightOnSight;
 	self.#npc_speedfactor = 1.3;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_hell_knight;
 	COOP_SetLives ();
 

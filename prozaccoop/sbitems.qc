@@ -299,40 +299,40 @@ void() ThrowC4Det =
 
 void() SBBuildSensor =
 {    
-    // Extra checks only required for cmnd "build" use
-    if (self.health <= 0 || self.done_custom & #CUSTOM_BUILDING)
-        return;    
-    if (!(self.cutf_items & #CUTF_SENSOR))
-    {
-        sprint(self,#PRINT_HIGH,"You can not build a motion sensor!\n");
-        return;
-    } 
+	// Extra checks only required for cmnd "build" use
+	if (self.health <= 0 || self.done_custom & #CUSTOM_BUILDING)
+		return;    
+	if (!(self.cutf_items & #CUTF_SENSOR))
+	{
+		sprint(self,#PRINT_HIGH,"You can not build a motion sensor!\n");
+		return;
+	} 
 
-    // OfN - Psionized guys can't throw any sensors
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You can't deploy anything while psionized!\n");
-        return;
-    }       
+	// OfN - Psionized guys can't throw any sensors
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You can't deploy anything while psionized!\n");
+		return;
+	}       
     
-    if (self.ammo_cells >= #BUILD_COST_SENSOR && self.has_sensor == 0)
+	if (self.ammo_cells >= #BUILD_COST_SENSOR && self.has_sensor == 0)
 	{
 		self.ammo_cells = self.ammo_cells - #BUILD_COST_SENSOR;
 		MotionSensorSpawn();
 		self.has_sensor = 1;
 		sprint(self, #PRINT_HIGH, "You place the motion sensor.\n");
-        self.option = time + 2;
+		self.option = time + 2;
 	}
 	else if (self.ammo_cells < #BUILD_COST_SENSOR && self.has_sensor == 0)
 		sprint(self, #PRINT_HIGH, "You do not have enough metal to build a motion sensor.\n");
 	else
 	{
 		if (self.option < time) // avoids ppl overflowing by destroying/building it repeatedly
-        {
-            Find_And_Dmg("building_sensor", self, 1,0);
-		    sprint(self, #PRINT_HIGH, "You detonate your motion sensor.\n");
-		    self.has_sensor = 0;
-        }
+		{
+			Find_And_Dmg("building_sensor", self, 1,0);
+			sprint(self, #PRINT_HIGH, "You detonate your motion sensor.\n");
+			self.has_sensor = 0;
+		}
 	}
 };
 
@@ -365,8 +365,8 @@ void() MotionSensorTossTouch =
 		return;
 	}
 
-    teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
-    teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
+	teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
+	teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
 	teamsprint(self.real_owner.team_no, self.real_owner, " has built a Motion Sensor.\n");
 
 	self.movetype = #MOVETYPE_NONE;
@@ -400,11 +400,11 @@ float() MotionSensorFindTarget =
 	if (self.is_malfunctioning & #SCREWUP_THREE)
 		return #FALSE;
 	
-    local float trange; //- OfN - Hack
-    trange=300; // was 250
+	local float trange; //- OfN - Hack
+	trange=300; // was 250
 
-    if (self.all_active & #IMPROVED_ONE)
-        trange=500; // was 400
+	if (self.all_active & #IMPROVED_ONE)
+		trange=500; // was 400
 
 	//CH Theortetically this will check every client on the server now
 	while (loopc < 32 && gotone == #FALSE)
@@ -424,7 +424,7 @@ float() MotionSensorFindTarget =
 	if (!gotone)
 	{
 		self.effects = 0;
-        self.skin=1;
+		self.skin=1;
 		return #FALSE;
 	}
 	

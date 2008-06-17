@@ -1775,16 +1775,16 @@ Returns the entity to spawn at
 entity() SelectSpawnPoint =
 {
 	local	entity spot;
-//	local	entity at_spot;
-//	local	float  spot_found;
-//	local	float  attempts;
+	local	entity at_spot;
+	local	float  spot_found;
+	local	float  attempts;
 	
 	// testinfo_player_start is only found in regioned levels
-	/*
+#ifdef COOP_MODE_ENHANCED
 	spot = find (world, classname, "testplayerstart");
 	if (spot)
 		return spot;
-	*/
+#endif
 
 	// If FortressMap option is on, we want to make the player spawn on a 
 	// spawnpoint marked as being one for his/her team.
@@ -1801,20 +1801,20 @@ entity() SelectSpawnPoint =
 
 	// choose a info_player_deathmatch point
 #ifdef COOP_MODE_ENHANCED
-//	if (coop)
-//	{
-			lastspawn = find(lastspawn, classname, "info_player_coop");
-			if (lastspawn == world)
-				lastspawn = find (world, classname, "info_player_coop");
+	if (coop)
+	{
+		lastspawn = find(lastspawn, classname, "info_player_coop");
+		if (lastspawn == world)
+			lastspawn = find (world, classname, "info_player_coop");
 				
-			if (lastspawn != world)
-				return lastspawn;
-//	}
+		if (lastspawn != world)
+			return lastspawn;
+	}
+	else
+#endif
 
-#else
-
-//	else if (deathmatch)
-//	{
+	if (deathmatch)
+	{
 		// search through
 		spot = find(lastspawn, classname, "info_player_deathmatch");
 		if (spot == world)
@@ -1851,8 +1851,7 @@ entity() SelectSpawnPoint =
 			if (spot == world)
 				spot = find(world, classname, "info_player_deathmatch");
 		}
-//	}
-#endif
+	}
 
 	if (serverflags)
 	{	// return with a rune to start

@@ -165,9 +165,9 @@ void(entity soul, float currentsoul) Menu_Army1 =
 			else
 				st2 = strcat(st2,"                  \n\n");
 		}
-		
+
 		st4="\n.. Follow me¡            \n.. Stay there¡           \n.. Use your waypoints¡   ";
-		
+
 		if (soul.penance_time==1)
 			st4="\n* .. Follow me¡              \n.. Stay there¡           \n.. Use your waypoints¡   ";
 		else if (soul.penance_time==2)
@@ -384,49 +384,40 @@ void(entity soul, float currentsoul) Menu_Army2 =
 			st2 = strcat("žŸ Óïìäéåò £³ Óôáôõó žŸ",st2);
 	}
 
-	st5 = ""; // this will be static range
-	
-   if (soul.is_malfunctioning==0)
-	{
-		if (soul.is_detpacking==0 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==0 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    jump  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    jump  \n";
-	}
-	else if (soul.is_malfunctioning==1)
-	{
-		if (soul.is_detpacking==0 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==0 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    jump  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    jump  \n";
-	}
-	else if (soul.is_malfunctioning==2)
-	{
-		if (soul.delay_time == 0)
-		   st5=".. Óôáôéã Òáîçå:   none  \n";		  
-		else if (soul.delay_time == 1)
-		   st5=".. Óôáôéã Òáîçå:   small \n";
-		else if (soul.delay_time == 2)
-		   st5=".. Óôáôéã Òáîçå:   medium\n";
-		else if (soul.delay_time == 3)
-		   st5=".. Óôáôéã Òáîçå:   large \n";
+	st5 = ""; // this will be preferred range
 
-		if (soul.is_detpacking==0 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==0 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    jump  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    jump  \n";
+	// tactic mode option
+	if (soul.is_malfunctioning==0)
+		st4 = "\n\n.. Ôáãôéã Íïäå:    normal\n";
+	else if (soul.is_malfunctioning==1)
+		st4 = "\n\n.. Ôáãôéã Íïäå:    seek  \n";
+	else if (soul.is_malfunctioning==2)
+		st4 = "\n\n.. Ôáãôéã Íïäå:    static\n";
+
+	// engage enemy option
+	if ( soul.is_detpacking )
+		st4 = strcat( st4, ".. Åîçáçå Åîåíù:   yes   \n" );
+	else
+		st4 = strcat( st4, ".. Åîçáçå Åîåíù:   no    \n" );
+
+	// on obstacle option
+	if ( !soul.is_toffingadet )
+		st4 = strcat( st4, ".. Ïî Ïâóôáãìå:    jump  \n" );
+	else if ( soul.is_toffingadet == 1 )
+		st4 = strcat( st4, ".. Ïî Ïâóôáãìå:    stop  \n" );
+	else
+		st4 = strcat( st4, ".. Ïî Ïâóôáãìå:    auto  \n" );
+
+	// attack range option, don't allow on static since he only moves to goto waypoints or to follow his owner on that mode
+	if ( soul.is_malfunctioning != 2 ) {
+		if (soul.delay_time == 0)
+			st5 = ".. Áôôáãë Òáîçå:   any   \n";
+		else if (soul.delay_time == 1)
+			st5 = ".. Áôôáãë Òáîçå:   small \n";
+		else if (soul.delay_time == 2)
+			st5 = ".. Áôôáãë Òáîçå:   medium\n";
+		else if (soul.delay_time == 3)
+			st5 = ".. Áôôáãë Òáîçå:   large \n";
 	}
 	
 	if (!extras)
@@ -599,7 +590,23 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 		soul.is_malfunctioning=soul.is_malfunctioning+1;
 
 		if (soul.is_malfunctioning > 2)
-		soul.is_malfunctioning=0;
+			soul.is_malfunctioning = 0;
+
+		if ( soul.enemy != world ) {
+			// Gizmo - check for static tactic mode
+			if ( soul.is_malfunctioning == 2 ) {
+				if ( soul.goalentity == soul.enemy ) {
+					if ( soul.penance_time == 1 )
+						soul.goalentity = soul.real_owner;
+					else if ( soul.penance_time == 3 )
+						soul.goalentity = ReturnEasyWaypoint( soul, soul );
+					else
+						soul.goalentity = world;
+				}
+			} else {
+				soul.goalentity = soul.enemy;
+			}
+		}
 
 		Menu_Army2(soul, currentsoul);
 		CuTFMenuSound(#MENUSOUND_BROWSE);
@@ -635,8 +642,9 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 	if (inp == 3) // jump or stop??
 	{
 		self.impulse = 0;
-		if (soul.is_toffingadet == 0) soul.is_toffingadet=1;
-		else soul.is_toffingadet=0;
+		soul.is_toffingadet = soul.is_toffingadet + 1;
+		if ( soul.is_toffingadet > 2 )
+			soul.is_toffingadet = 0;
 
 		Menu_Army2(soul, currentsoul);
 		CuTFMenuSound(#MENUSOUND_BROWSE);
@@ -644,17 +652,16 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 
 	if (inp == 4) 
 	{
-		if (soul.is_malfunctioning == 2) // static range, small mdeium or large
+		if (soul.is_malfunctioning != 2) // preferred range, none small medium or large
 		{
 			
 			soul.delay_time=soul.delay_time+1;
 
 			if (soul.delay_time > 3)
-			soul.delay_time=0;
+				soul.delay_time=0;
 
 			Menu_Army2(soul, currentsoul);
 			CuTFMenuSound(#MENUSOUND_BROWSE);
-			
 		}  
 
 		self.impulse = 0;
@@ -998,7 +1005,12 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 			}
 			soul.owner = soul;
 
+			spawn_tfog( oldorg );
 			spawn_tfog( soul.origin );
+
+			soul.velocity = v_forward * 640;
+			soul.angles = vectoangles( soul.velocity );
+			soul.flags = soul.flags - ( soul.flags & #FL_ONGROUND );	// don't let grunty get stuck in the air
 
 			self.delay_time = #FALSE; // needed for setarmytimer
 			SetArmyTimer( self, #FALSE ); // prepare reserve soldier
@@ -1116,8 +1128,9 @@ float(float slot) TeleSoldier =
 	newmis.last_saveme_sound = 0; // ? oh that
 	
 	newmis.touch = grunty_touch; //-OfN- 
-	newmis.has_holo = time+2; // touch messages delay
-	newmis.is_detpacking=1; //resets engage enemy to "yes"
+	newmis.has_holo = time+2;		// touch messages delay
+	newmis.is_detpacking=1;			// resets engage enemy to "yes"
+	newmis.is_toffingadet = 2;		// Gizmo - start with "auto" mode
 
 	if (slot == 0)
 		newmis.real_owner.demon_one = newmis;

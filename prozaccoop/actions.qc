@@ -765,9 +765,16 @@ void(float inAuto) TeamFortress_ID =
 
 			if (self.cutf_items & #CUTF_DEMONLORE) {
 				s1 = ConstructString (ar, " armor\n\n", s1, string_null, string_null, string_null, string_null, string_null);
-				centerprint (self, "\nAn εξενω ", trace_ent.netname, "\n\n", st, " health\n", s1);
-			} else
-				centerprint (self, "\nAn εξενω ", trace_ent.netname, "\n\n", s1);
+				if ( Teammate( trace_ent.team_no, self.team_no ) )
+					centerprint( self, "\nfriendly ", trace_ent.netname, "\n\n", st, " health\n", s1 );
+				else
+					centerprint( self, "\nAn εξενω ", trace_ent.netname, "\n\n", st, " health\n", s1 );
+			} else {
+				if ( Teammate( trace_ent.team_no, self.team_no ) )
+					centerprint( self, "\nfriendly ", trace_ent.netname, "\n\n", s1 );
+				else
+					centerprint( self, "\nAn εξενω ", trace_ent.netname, "\n\n", s1 );
+			}
 
 			// for when an observer
 			// Gizmo - wtf? why not use time + ... ? using every frame is unreliable

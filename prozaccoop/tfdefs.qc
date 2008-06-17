@@ -14,6 +14,8 @@
 // prototypes
 float (entity ent) InSolid;
 
+float( entity e ) GetTeam;
+
 
 // FIXME: a QC implementation of tracebox
 /*

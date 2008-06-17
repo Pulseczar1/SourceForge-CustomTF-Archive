@@ -1788,11 +1788,17 @@ float		rj; 				// Rocket Jump Modifier
 #define RE_GRENADE_LAUNCHER_TIME_EX 4
 
 
-// Maximum velocity you can move and fire the Sniper Rifle
-#define WEAP_SNIPER_RIFLE_MAX_MOVE	20
-#define WEAP_SNIPER_RIFLE_MAX_TIME	11.5
-#define WEAP_SNIPER_RIFLE_MIN_DAMG	60
-#define WEAP_SNIPER_RIFLE_MAX_DAMG	600		// 380
+#ifdef CLASSIC_SNIPER_RIFLE
+	#define WEAP_SNIPER_RIFLE_MAX_MOVE	50		// Maximum velocity you can move and fire the Sniper Rifle
+	#define WEAP_SNIPER_RIFLE_MAX_TIME	1.8
+	#define WEAP_SNIPER_RIFLE_MIN_DAMG	50
+	#define WEAP_SNIPER_RIFLE_MAX_DAMG	400
+#else
+	#define WEAP_SNIPER_RIFLE_MAX_MOVE	20		// Maximum velocity you can move and fire the Sniper Rifle
+	#define WEAP_SNIPER_RIFLE_MAX_TIME	11.5
+	#define WEAP_SNIPER_RIFLE_MIN_DAMG	60
+	#define WEAP_SNIPER_RIFLE_MAX_DAMG	600		// 380
+#endif
 
 // Medikit
 #define WEAP_MEDIKIT_HEAL	200  // Amount medikit heals per hit
@@ -1923,12 +1929,11 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_SCOUT_INITAMMO_NAIL		100 	// Amount of nail ammo this class has when respawned
 #define PC_SCOUT_INITAMMO_CELL		50		// Amount of cell ammo this class has when respawned
 #define PC_SCOUT_INITAMMO_ROCKET		0		// Amount of rocket ammo this class has when respawned
-#define PC_SCOUT_GRENADE_TYPE_1 	#GR_TYPE_NORMAL 		 //    <- 1st Type of Grenade this class has
-//#define PC_SCOUT_GRENADE_TYPE_1		#GR_TYPE_KRAC //WK Was caltrops //#GR_TYPE_FLASH			 //    <- 1st Type of Grenade this class has
-#define PC_SCOUT_GRENADE_TYPE_2 	#GR_TYPE_ANTIGRAV	   //WK Was concs //	<- 2nd Type of Grenade this class has
-#define PC_SCOUT_GRENADE_INIT_1 	2		// Number of grenades of Type 1 this class has when respawned
+#define PC_SCOUT_GRENADE_TYPE_1 	#GR_TYPE_CALTROP		//    <- 1st Type of Grenade this class has
+#define PC_SCOUT_GRENADE_TYPE_2 	#GR_TYPE_CONCUSSION		//	<- 2nd Type of Grenade this class has
+#define PC_SCOUT_GRENADE_INIT_1 	4		// Number of grenades of Type 1 this class has when respawned
 #define PC_SCOUT_GRENADE_INIT_2 	4		// Number of grenades of Type 2 this class has when respawned
-#define PC_SCOUT_TF_ITEMS			#NIT_SCANNER | #NIT_AUTOSCANNER | #NIT_HOVER_BOOTS | #NIT_HOVER_BOOTS_UPGRADE  // OfN Now with hover boots
+#define PC_SCOUT_TF_ITEMS			#NIT_SECURITY_CAMERA | #NIT_SCANNER | #NIT_AUTOSCANNER | #NIT_HOVER_BOOTS | #NIT_HOVER_BOOTS_UPGRADE  // OfN Now with hover boots
 #define PC_SCOUT_CUTFITEMS				#CUTF_HOLO | #CUTF_AIRFISTUPGRADE // | #CUTF_CYBERAUG // OfN Scouts with holo now and cyberaug!
 #define PC_SCOUT_JOB			#JOB_THIEF
 
@@ -1951,16 +1956,16 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_SNIPER_MAXAMMO_NAIL		100 
 #define PC_SNIPER_MAXAMMO_CELL		150 
 #define PC_SNIPER_MAXAMMO_ROCKET		25 
-#define PC_SNIPER_INITAMMO_SHOT 	40
+#define PC_SNIPER_INITAMMO_SHOT 	60
 #define PC_SNIPER_INITAMMO_NAIL 	50
 #define PC_SNIPER_INITAMMO_CELL 	0 
 #define PC_SNIPER_INITAMMO_ROCKET		0 
-#define PC_SNIPER_GRENADE_TYPE_1		#GR_TYPE_NORMAL
+#define PC_SNIPER_GRENADE_TYPE_1		#GR_TYPE_NORMAL	// Gizmo - changed this to normal to be more like Regular TF
 #define PC_SNIPER_GRENADE_TYPE_2		#GR_TYPE_FLARE //- OfN it was #GR_TYPE_FLASH 
 #define PC_SNIPER_GRENADE_INIT_1		4	 
 #define PC_SNIPER_GRENADE_INIT_2		6 // OfN it was 4
 #define PC_SNIPER_TF_ITEMS			#NIT_SECURITY_CAMERA // | #NIT_TESLA 
-#define PC_SNIPER_CUTF_ITEMS		#CUTF_JAMMER // #CUTF_OTR
+#define PC_SNIPER_CUTF_ITEMS		0 // #CUTF_OTR
 #define PC_SNIPER_JOB				#JOB_JUDOKA
 
 // Class Details for SOLDIER
@@ -1992,15 +1997,19 @@ float		rj; 				// Rocket Jump Modifier
 
 // Class Details for DEMOLITION MAN
 //#define PC_DEMOMAN_SKIN				1 
-#define PC_DEMOMAN_MAXHEALTH			100 //WK 2/8/7 90
+#define PC_DEMOMAN_MAXHEALTH			90
 #define PC_DEMOMAN_MAXSPEED 		290 		
 //#define PC_DEMOMAN_MAXSTRAFESPEED 	290 
 #define PC_DEMOMAN_MAXARMOR 		120 //WK 2/8/7 100
-#define PC_DEMOMAN_INITARMOR			60	//WK 2/8/7 50
+#define PC_DEMOMAN_INITARMOR			50
 #define PC_DEMOMAN_MAXARMORTYPE 	0.6 
 #define PC_DEMOMAN_INITARMORTYPE		0.6 
 //#define PC_DEMOMAN_ARMORCLASSES		31		// ALL
-#define PC_DEMOMAN_INITARMORCLASS		#AT_SAVEEXPLOSION		// AT_SAVEEXPLOSION 
+#ifdef NO_STOCK_DEMOMAN_BLASTARMOR
+	#define PC_DEMOMAN_INITARMORCLASS		0		// AT_SAVEEXPLOSION
+#else
+	#define PC_DEMOMAN_INITARMORCLASS		#AT_SAVEEXPLOSION		// AT_SAVEEXPLOSION
+#endif
 #define PC_DEMOMAN_WEAPONS			#WEAP_AXE | #WEAP_SHOTGUN | #WEAP_GRENADE_LAUNCHER
 #define PC_DEMOMAN_MAXAMMO_SHOT 	75 
 #define PC_DEMOMAN_MAXAMMO_NAIL 	50 
@@ -2018,7 +2027,11 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_DEMOMAN_GRENADE_INIT_2		3	 
 #define PC_DEMOMAN_TF_ITEMS 		0 
 #define PC_DEMOMAN_JOB				#JOB_GUERILLA
-#define PC_DEMOMAN_CUTFITEMS		#CUTF_DETPACK | #CUTF_TOSSABLEDET | #CUTF_HIGHJUMP //WK 2/8/7 Added highjump
+#ifdef NO_STOCK_DEMOMAN_HIGHJUMP
+	#define PC_DEMOMAN_CUTFITEMS		#CUTF_DETPACK | #CUTF_TOSSABLEDET
+#else
+	#define PC_DEMOMAN_CUTFITEMS		#CUTF_DETPACK | #CUTF_TOSSABLEDET | #CUTF_HIGHJUMP //WK 2/8/7 Added highjump
+#endif
 
 // Class Details for COMBAT MEDIC
 //#define PC_MEDIC_SKIN 			3 
@@ -2061,21 +2074,21 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_HVYWEAP_MAXARMORTYPE 	0.8 
 #define PC_HVYWEAP_INITARMORTYPE		0.8 
 //#define PC_HVYWEAP_ARMORCLASSES		31			// ALL
-#define PC_HVYWEAP_INITARMORCLASS		#AT_SAVEMELEE  //WK 2/8/7 HWGUY Buff		
+#define PC_HVYWEAP_INITARMORCLASS		0		
 #define PC_HVYWEAP_WEAPONS			#WEAP_ASSAULT_CANNON | #WEAP_AXE | #WEAP_SHOTGUN | #WEAP_SUPER_SHOTGUN
-#define PC_HVYWEAP_MAXAMMO_SHOT 	300 //WK 2/8/7 200
+#define PC_HVYWEAP_MAXAMMO_SHOT 	200
 #define PC_HVYWEAP_MAXAMMO_NAIL 	200 
-#define PC_HVYWEAP_MAXAMMO_CELL 	150 //WK 2/8/7 50, makes them more krac resistant
+#define PC_HVYWEAP_MAXAMMO_CELL 	50
 #define PC_HVYWEAP_MAXAMMO_ROCKET		25 
 #define PC_HVYWEAP_INITAMMO_SHOT		200 
 #define PC_HVYWEAP_INITAMMO_NAIL		0 
-#define PC_HVYWEAP_INITAMMO_CELL		75 //WK 2/8/7 24 
+#define PC_HVYWEAP_INITAMMO_CELL		24
 #define PC_HVYWEAP_INITAMMO_ROCKET		0 
 #define PC_HVYWEAP_GRENADE_TYPE_1		#GR_TYPE_NORMAL
 #define PC_HVYWEAP_GRENADE_TYPE_2		#GR_TYPE_MIRV
 #define PC_HVYWEAP_GRENADE_INIT_1		4	 
 #define PC_HVYWEAP_GRENADE_INIT_2		2	 
-#define PC_HVYWEAP_TF_ITEMS 		#NIT_GEL
+#define PC_HVYWEAP_TF_ITEMS 		0
 #define PC_HVYWEAP_JOB				#JOB_RUNNER
 
 
@@ -2102,8 +2115,8 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_PYRO_GRENADE_TYPE_1		#GR_TYPE_NORMAL
 #define PC_PYRO_GRENADE_TYPE_2		#GR_TYPE_NAPALM
 #define PC_PYRO_GRENADE_INIT_1		4
-#define PC_PYRO_GRENADE_INIT_2		2
-#define PC_PYRO_TF_ITEMS			#NIT_ASBESTOS | #NIT_HOVER_BOOTS | #NIT_HOVER_BOOTS_UPGRADE //WK 2/8/7 Added asbestos armor back to pyros
+#define PC_PYRO_GRENADE_INIT_2		4
+#define PC_PYRO_TF_ITEMS			#NIT_HOVER_BOOTS | #NIT_HOVER_BOOTS_UPGRADE
 #define PC_PYRO_JOB 				#JOB_THIEF
 
 // Class Details for SPY
@@ -2136,7 +2149,11 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_SPY_CELL_USAGE			25	// Amount of cells spent while invisible
 #define PC_SPY_GO_UNDERCOVER_TIME	4	// Time it takes to go undercover
 #define PC_SPY_JOB					#JOB_HACKER // OfN - It was JOB_WARLOCK
-#define PC_SPY_CUTFITEMS			#CUTF_SPY_KIT | #CUTF_KNIFE | #CUTF_CLOSECOMBAT | #CUTF_STEALTH
+#ifdef NO_STOCK_SPY_STEALTH
+	#define PC_SPY_CUTFITEMS			#CUTF_SPY_KIT | #CUTF_KNIFE
+#else
+	#define PC_SPY_CUTFITEMS			#CUTF_SPY_KIT | #CUTF_KNIFE | #CUTF_STEALTH
+#endif
 
 // Class Details for ENGINEER
 //#define PC_ENGINEER_SKIN			22		// Not used anymore
@@ -2152,18 +2169,30 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_ENGINEER_WEAPONS 		#WEAP_SPANNER | #WEAP_RAILGUN | #WEAP_SUPER_SHOTGUN | #WEAP_ZEROGRAVITY
 #define PC_ENGINEER_MAXAMMO_SHOT		75
 #define PC_ENGINEER_MAXAMMO_NAIL		50
-#define PC_ENGINEER_MAXAMMO_CELL		300 // synonymous with metal
+#ifdef CLASSIC_STOCK_ENGY_MAXCELLS
+	#define PC_ENGINEER_MAXAMMO_CELL	275 // synonymous with metal
+#else
+	#define PC_ENGINEER_MAXAMMO_CELL	300 // synonymous with metal
+#endif
 #define PC_ENGINEER_MAXAMMO_ROCKET		30
 #define PC_ENGINEER_INITAMMO_SHOT		30
 #define PC_ENGINEER_INITAMMO_NAIL		25
-#define PC_ENGINEER_INITAMMO_CELL		150 	// synonymous with metal
+#ifdef CLASSIC_STOCK_ENGY_MAXCELLS
+	#define PC_ENGINEER_INITAMMO_CELL		200 	// synonymous with metal
+#else
+	#define PC_ENGINEER_INITAMMO_CELL		150 	// synonymous with metal
+#endif
 #define PC_ENGINEER_INITAMMO_ROCKET 	0
 #define PC_ENGINEER_GRENADE_TYPE_1		#GR_TYPE_NORMAL
 #define PC_ENGINEER_GRENADE_TYPE_2		#GR_TYPE_EMP
 #define PC_ENGINEER_GRENADE_INIT_1		4
 #define PC_ENGINEER_GRENADE_INIT_2		4
 #define PC_ENGINEER_TF_ITEMS			#NIT_TESLA | #NIT_SECURITY_CAMERA | #NIT_TELEPORTER
-#define PC_ENGINEER_CUTFITEMS			#CUTF_SENTRYGUN | #CUTF_DISPENSER | #CUTF_SENSOR | #CUTF_FIELDGEN | #CUTF_HIGHJUMP
+#ifdef NO_STOCK_ENGY_HIGHJUMP
+	#define PC_ENGINEER_CUTFITEMS		#CUTF_SENTRYGUN | #CUTF_DISPENSER | #CUTF_SENSOR | #CUTF_FIELDGEN
+#else
+	#define PC_ENGINEER_CUTFITEMS		#CUTF_SENTRYGUN | #CUTF_DISPENSER | #CUTF_SENSOR | #CUTF_FIELDGEN | #CUTF_HIGHJUMP
+#endif
 #define PC_ENGINEER_JOB 				#JOB_HACKER //#JOB_JUDOKA
 
 // Class Details for CIVILIAN

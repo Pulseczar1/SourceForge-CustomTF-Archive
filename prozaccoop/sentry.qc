@@ -375,14 +375,8 @@ float() Sentry_FindTarget =
 		loopc = loopc + 1;
 	}
 
-#ifdef COOP_MODE_ENHANCED
-	// FIXME: this will make unhacked sentries scan for summon and grunty, but there is no enemy team in coop mode so...
-	// this findtarget function is ugly...
-	if (!gotone) {
-#else
 	if (!gotone && (self.all_active & #IMPROVED_FOUR)) //if no player target found lets scan for monsters and army..
 	{
-#endif
 		te = find(world, #monsterflag,#STRFLAG_MONSTER);
 
 		while (te != world && gotone == #FALSE)
@@ -391,7 +385,7 @@ float() Sentry_FindTarget =
 
 			if (Teammate(self.real_owner.team_no,te.real_owner.team_no))
 				gotone = #FALSE;
-			else if (!IsMonster(te))
+			else if (!IsOwnedMonster(te))
 				gotone = #FALSE;
 			else if (te.health <= 0)
 				gotone = #FALSE;
@@ -430,7 +424,6 @@ float() Sentry_FindTarget =
 				if (r == #RANGE_VERYFAR)
 					gotone = #FALSE;
 				//----------------------//
-
 			} 
 
 			if (gotone)
@@ -441,6 +434,59 @@ float() Sentry_FindTarget =
 		} // while
 
 	} //monster scanning
+
+#ifdef COOP_MODE_ENHANCED
+	if ( !gotone ) {
+		te = find( world, #monsterflag, #STRFLAG_MONSTER );
+
+		while ( te != world && !gotone ) {
+			gotone = #TRUE;
+
+			r = GetTeam( te );
+
+			if ( !COOP_IsCoopMonster( te ) )
+				gotone = #FALSE;
+			else if ( Teammate( self.real_owner.team_no, r ) )
+				gotone = #FALSE;
+			else if ( te.health <= 0 )
+				gotone = #FALSE;
+			else if ( ( !( self.tf_items & #NIT_TURRET ) && !visible2x( self, te ) )
+				|| ( self.tf_items & #NIT_TURRET && !visible2( self, te ) ) )
+				gotone = #FALSE;
+			else {
+				r = rangesentry( te );
+
+				//WK Hack, turret should be able to see in all directions...
+				if ( !( self.tf_items & #NIT_TURRET ) ) {
+
+					if ( r == #RANGE_NEAR ) {
+						if ( !infront( te ) )
+							gotone = #FALSE;
+					} else if ( r == #RANGE_MID ) {
+						if ( !infront( te ) )
+							gotone = #FALSE;
+					} else if ( r == #RANGE_FAR ) { //- OfN - Sentries with enhanced circuits can shot at far range
+						if ( !( self.all_active & #IMPROVED_FOUR ) || !infront( te ) )
+							gotone = #FALSE;
+					}
+				} else { //- OfN - a turretized sentry gun... 
+					if ( r == #RANGE_FAR && !( self.all_active & #IMPROVED_FOUR ) )
+						gotone = #FALSE;
+				}
+
+				//- OfN ----------------//
+				if ( r == #RANGE_VERYFAR )
+					gotone = #FALSE;
+				//----------------------//
+			}
+
+			if ( gotone )
+				client = te;
+
+			te = find( te, #monsterflag, #STRFLAG_MONSTER );
+		}
+	}
+#endif
 
 	//if no player or monsters found lets scan for possible holo fakes.. (if has improved circuits no scan for holos)
 	if (!gotone && !(self.all_active & #IMPROVED_FOUR)) 
@@ -932,9 +978,13 @@ void() Sentry_Touch =
 	{
 		deathmsg = #DMSG_BUG_ZAPPER;
 
+		// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 		if (IsMonster(other))
 		{
-			if (!Teammate(other.real_owner.team_no, self.real_owner.team_no))
+			local float temp;
+
+			temp = GetTeam( other );
+			if (!Teammate(temp, self.real_owner.team_no))
 			{
 				TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 				return;

@@ -17,7 +17,7 @@ void(entity etemp, entity stemp, entity stemp, float dmg) T_Damage;
 //- OfN -
 float()	WizardCheckAttack;
 float()  GremlinCheckAttack;
-float(entity thing) IsMonsterNonArmy;
+float(entity thing) IsSummon;
 void(entity themonster) MonsterDie;
 string(entity themonster) GetMonsterName;
 void (entity themonster) PutMonsterStand;
@@ -117,9 +117,8 @@ float(entity test) AI_Check_Contents =
             return #TRUE;
         }
         
-        if (IsMonster(self) && self.health < self.max_health)
+        if (IsOwnedMonster(self) && self.health < self.max_health)
         {
-            //if (self.classname == "monster_army" && self.aura != #AURA_REGEN)
             if (self.#monster_type == #MONSTER_ARMY && self.aura != #AURA_REGEN)
                 return #TRUE;
 
@@ -170,7 +169,7 @@ float(entity test) AI_Check_Contents =
 
 			// Asbestos armor helps against lava, but I doubt it'll save you :)
 			//TF_T_Damage (self, world, world, 25, 0, #TF_TD_FIRE);
-            if (IsMonster(self))            
+            if (IsOwnedMonster(self))            
             {
                 MName = GetMonsterName(self);
                 if (self.ltime > time - 4) //- OfN - if it felt just after summon
@@ -213,7 +212,7 @@ float(entity test) AI_Check_Contents =
 			//T_Damage (self, world, world, 4*self.waterlevel);
 			//TF_T_Damage (self, world, world, 5, 0, #TF_TD_ELECTRICITY);
 
-            if (IsMonster(self))            
+            if (IsOwnedMonster(self))            
             {
                 MName = GetMonsterName(self);
                 if (self.ltime > time - 4) //- OfN - if it felt just after summon
@@ -690,7 +689,7 @@ entity (entity scanner) LookAround =
             
             #ifdef MAD_MONSTERS
             
-            if (client.classname == "player" && IsMonsterNonArmy(scanner))
+            if (client.classname == "player" && IsSummon(scanner))
             {
                 if (client.health > 0)
                     gotatarget = 1;
@@ -716,51 +715,19 @@ entity (entity scanner) LookAround =
                                 gotatarget=0;		
                 }*/
             }
-            
-            #endif 
 
-            /*else if (client.classname == "monster_shambler")
-			{
-				if (!Teammate(client.real_owner.team_no,scanner.real_owner.team_no))
-					gotatarget = 1;
-			}
-            else if (client.classname == "monster_wizard") //- OfN -
-			{
-				if (!Teammate(client.real_owner.team_no,scanner.real_owner.team_no))
-					gotatarget = 1;
-			}
-			else if (client.classname == "monster_demon1")
-			{
-				if (!Teammate(client.real_owner.team_no,scanner.real_owner.team_no))
-					gotatarget = 1;
-			}
-			else if (client.classname == "monster_army")
-			{
-				if (!Teammate(client.real_owner.team_no,scanner.real_owner.team_no))
-					gotatarget = 1;
-			}*/
+            #endif
 
-		// Gizmo - stop monsters from getting a target, making their sound, and then deciding not to over and over again
+			// Gizmo - stop monsters from getting a target, making their sound, and then deciding not to over and over again
+			// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
             else if (IsMonster(client) && client.health > 0)
 			{
-				if (!Teammate(client.real_owner.team_no,scanner.real_owner.team_no))
+				local float temp;
+
+				temp = GetTeam( client );
+				if (!Teammate(temp, scanner.real_owner.team_no))
 					gotatarget = 1;
 			}
-			////////////////////////////////////////////////////////////////////////
-            //else if (scanner.classname != "monster_army") 
-				//gotatarget = 0;
-            //--- GRUNTY STUFF ---
-			/*else if (client.classname == "grenade" && client.netname == "land_mine")
-			{
-				if (!Teammate(client.owner.team_no,scanner.real_owner.team_no))
-					gotatarget = 1;
-			}
-			else if (!Teammate(client.team_no, scanner.real_owner.team_no))
-			{ //  && client.classname != "building_sentrygun_base"
-				if (IsOffenseBuilding(client)) // for teslas isoffensiveb only returns true if not cloaked
-					gotatarget = 1;                
-			}*/	
-            
 		}
 		if (gotatarget)
 			return client;
@@ -1417,7 +1384,7 @@ void(entity attacker) AI_CheckAttacker =
         return;
 
     if (attacker.classname != "player")
-    if (!IsMonster(attacker))
+    if (!IsOwnedMonster(attacker))
         return;
     
     if (Teammate(self.real_owner.team_no, attacker.team_no))

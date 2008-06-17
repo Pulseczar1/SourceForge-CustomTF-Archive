@@ -571,7 +571,7 @@ float(float myteam) HasFlag =
 void() TeamFortress_EngineerBuild =
 {
 	local entity te;
-	
+
 	// Can't build in the air
 	// WK Yes you can, why not? You can do it by pulling up this menu anyway
 	/*
@@ -581,7 +581,7 @@ void() TeamFortress_EngineerBuild =
 		return;
 	}
 	*/
-	
+
 
 
 	if (self.is_detpacking == 1) {

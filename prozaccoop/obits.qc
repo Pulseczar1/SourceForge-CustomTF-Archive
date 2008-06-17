@@ -2047,7 +2047,7 @@ void(entity targ, entity attacker) ClientObituary =
 
 #ifdef COOP_MODE_ENHANCED
 			// Gizmo - moved this first for obvious reasons
-			if ( attacker.flags & #FL_MONSTER && COOP_IsCoopMonster( attacker ) ) {
+			if ( COOP_IsCoopMonster( attacker ) ) {
 				if (attacker == targ)
 					deathstring = " killed itself\n";
 				else if (attacker.classname == "idmonster_army")
@@ -2181,7 +2181,7 @@ void(entity targ, entity attacker) ClientObituary =
 			return; //- ofn
 		}
 	}	 
-	else if (IsMonster(targ) && attacker.classname == "building_sentrygun")
+	else if (IsOwnedMonster(targ) && attacker.classname == "building_sentrygun")
 	{
 		//custom_demon_name(targ); //CH
 
@@ -4443,9 +4443,9 @@ void(entity targ, entity attacker) ClientObituary =
 
 	//- Miscellaneous monster/army deaths
 #ifdef COOP_MODE_ENHANCED
-	else if (IsMonster(targ)) {
+	else if (IsOwnedMonster(targ)) {
 #else
-	if (IsMonster(targ))
+	if (IsOwnedMonster(targ))
 	{
 #endif
 		if (attacker.classname == "explo_box")

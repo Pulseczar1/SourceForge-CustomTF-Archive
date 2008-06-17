@@ -175,7 +175,7 @@ entity(entity sold, entity viewpoint) ReturnEasyWaypoint;
 
 float()	WizardCheckAttack;
 float()  GremlinCheckAttack;
-float(entity thing) IsMonsterNonArmy;
+float(entity thing) IsSummon;
 void(entity themonster) MonsterDie;
 string(entity themonster) GetMonsterName;
 void (entity themonster) PutMonsterStand;
@@ -509,7 +509,7 @@ void(float inp) Menu_Demon_Input =
 	}
     if (inp == 1 && soul != world) // Come here!
     {	        
-        if (!IsMonster(soul)) return;
+        if (!IsOwnedMonster(soul)) return;
 
         soul.penance_time = 1;
 
@@ -548,7 +548,7 @@ void(float inp) Menu_Demon_Input =
 	}
     else if (inp == 2 && soul != world) // patrol!
 	{	
-		if (!IsMonster(soul)) return;
+		if (!IsOwnedMonster(soul)) return;
 
 		soul.penance_time = 2;
 
@@ -588,7 +588,7 @@ void(float inp) Menu_Demon_Input =
 	}
     else if (inp == 3 && soul != world) // stop there!
 	{	
-		if (!IsMonster(soul)) return;
+		if (!IsOwnedMonster(soul)) return;
 
         soul.penance_time = 0;
 
@@ -1979,9 +1979,9 @@ void() MonsterTouch =
                 teamprefixsprint(other.team_no,other);
                 teamsprint(other.team_no,other, other.netname);
                 teamsprint(other.team_no,other, " has been infected!\n");
-            }            
+            }
         }
-        else if (IsMonster(other))
+        else if (IsOwnedMonster(other))
         {
             if (!(other.tfstate & #TFSTATE_INFECTED))
             {
@@ -2009,6 +2009,26 @@ void() MonsterTouch =
                 other.infection_team_no = self.infection_team_no;
             }
         }
+#ifdef COOP_MODE_ENHANCED
+		else if ( COOP_IsCoopMonster( other ) ) {
+			if (!(other.tfstate & #TFSTATE_INFECTED))
+			{
+				// Update infection flag
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+
+				// Infect it!
+				Bio = spawn ();
+				Bio.classname = "timer";
+				Bio.classname = "biotimer";
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_MonsterDecay;
+				Bio.owner = self;
+				Bio.enemy = other;
+
+				other.infection_team_no = self.infection_team_no;
+			}
+		}
+#endif
     }
 };
 

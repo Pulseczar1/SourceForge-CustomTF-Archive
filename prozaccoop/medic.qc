@@ -65,12 +65,8 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 	}
 	else
 	{
-#ifdef COOP_MODE_ENHANCED
-		if (!COOP_IsCoopMonster( targ ) && IsMonster(targ)) {
-#else
-		if (IsMonster(targ))
+		if (IsOwnedMonster(targ))
 		{
-#endif
 			local string tmps;
 			tmps = GetMonsterName(targ);
 			sprint(attacker,#PRINT_HIGH,"Your ",desc," infects the ",tmps," ",targ.netname);
@@ -97,6 +93,7 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 		}
 	}
 
+	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 	if (IsMonster(targ))
 	{
 		targ.tfstate = targ.tfstate | #TFSTATE_INFECTED;
@@ -169,6 +166,7 @@ void() BioGrenadeExplode =
 		}
 		else
 		{
+			// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 			if (IsMonster(dier))
 			//if (visible(dier)) 
 			if (CanDamage(dier,self))

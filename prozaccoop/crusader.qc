@@ -40,8 +40,11 @@ void(float aur) AddAura;
 void() CrusaderAddInvisibility;
 void() CrusaderMassHeal;
 //void() CrusaderMassCure;
+#ifdef NO_RESURRECTION
 void() CrusaderDispel;
+#else
 void () CrusaderResurrect;
+#endif
 
 void() Menu_Crusader =
 {
@@ -57,7 +60,19 @@ void() Menu_Crusader =
 	if (self.weapons_carried & #WEAP_MEDIKIT)
 	{
 		//CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Resurrect            Û30 manaÝ\n.. Mass healing         Û20 manaÝ\n.. Mass cure            Û20 manaÝ\n.. Sing                 Û 0 manaÝ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-		
+
+#ifdef NO_RESURRECTION
+		if (amount >= 45)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û íáîáÝ\n.. Dispel Evil          Û íáîáÝ\n.. Mass healing         Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else if (amount >= 30)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û íáîáÝ\n.. Mass healing         Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else if (amount >= 20)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n.. Mass healing         Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else if (amount >= 15)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n.. Mass healing         Û20 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Speed        Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n.. Mass healing         Û20 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+#else
 		if (amount >= 45)
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û íáîáÝ\n.. Resurrect            Û íáîáÝ\n.. Mass healing         Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 30)
@@ -68,12 +83,25 @@ void() Menu_Crusader =
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Resurrect            Û íáîáÝ\n.. Mass healing         Û20 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Speed        Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Resurrect            Û15 manaÝ\n.. Mass healing         Û20 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+#endif
 	}
 	else
 	{
 		//CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Resurrect            Û30 manaÝ\n.. Sing                 Û 0 manaÝ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		//CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Speed        Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Resurrect            Û30 manaÝ\n.. Sing                 Û 0 manaÝ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 
+#ifdef NO_RESURRECTION
+		if (amount >= 45)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û íáîáÝ\n.. Dispel Evil          Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else if (amount >= 30)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else if (amount >= 20)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else if (amount >= 15)
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+		else
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Speed        Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Dispel Evil          Û30 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+#else
 		if (amount >= 45)
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û íáîáÝ\n.. Resurrect            Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 30)
@@ -84,6 +112,7 @@ void() Menu_Crusader =
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáÝ\n.. Aura of Resistance   Û íáîáÝ\n.. Aura of Haste        Û íáîáÝ\n.. Aura of Regeneration Û íáîáÝ\n.. Aura of Speed        Û íáîáÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Resurrect            Û íáîáÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaÝ\n.. Aura of Resistance   Û15 manaÝ\n.. Aura of Haste        Û15 manaÝ\n.. Aura of Regeneration Û15 manaÝ\n.. Aura of Speed        Û15 manaÝ\n.. Aura of Invisibility Û45 manaÝ\n.. Resurrect            Û15 manaÝ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+#endif
 	}
 
 	self.StatusRefreshTime = time + 1;
@@ -106,9 +135,13 @@ void(float inp) Menu_Crusader_Input =
 	else if (inp == 5)
 		AddAura(#AURA_SPEED);
 	else if (inp == 6)
-		CrusaderAddInvisibility();		
+		CrusaderAddInvisibility();
 	else if (inp == 7)
+#ifdef NO_RESURRECTION
+		CrusaderDispel();
+#else
 		CrusaderResurrect ();
+#endif
 	else if (inp == 8)
 		CrusaderMassHeal();
 		
@@ -136,10 +169,27 @@ void(float inp) Menu_Crusader_Input =
 
 entity (entity crusader) Crusader_FindIdiot =
 {
-	local entity guy;
-	local entity matched;
-	local vector store;
-	local float matchlevel, oldmatch;
+	local entity	guy;
+	local entity	matched;
+	local vector	source;
+	local vector	vec;
+	local float		matchlevel, oldmatch;
+	local float		matchResult, guyIsTeammate, matchIsTeammate;
+
+	// Gizmo - reworked aura targeting since the old one would do stupid things when someone was close but no where near your crosshairs
+	makevectors( crusader.v_angle );
+	source = crusader.origin + '0 0 16';
+	traceline( source, source + v_forward*250, #TL_ANY_SOLID, crusader );
+
+	// ugly, but should be faster since QC doesn't support short-circuit logical operators
+	// if we directly hit a valid target, then choose that one
+	if ( trace_ent != world )
+	if ( trace_ent.takedamage )
+	if ( trace_ent.health > 0 )
+	if ( trace_ent.classname == "player" || IsMonster( trace_ent ) )	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+		return trace_ent;
+
+	source = trace_endpos;		// Gizmo - for some reason trace_endpos was equal to guy.origin in the below code when I tested...
 
 	matchlevel = 0;
 	matched = crusader;
@@ -149,12 +199,28 @@ entity (entity crusader) Crusader_FindIdiot =
 	while (guy)
 	{
 		// Gizmo - target must be visible
-		if (((guy.classname == "player" && guy.health > 0) || IsMonster(guy)) && visible2(guy, crusader))
+		if ( guy != crusader )
+		if ( guy.takedamage )
+		if ( guy.health > 0 )
+		if ( guy.classname == "player" || IsMonster( guy ) )	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+		if ( visible2( guy, crusader ) )
 		{
-			store = normalize(guy.origin - crusader.origin);
-			matchlevel = crusader.v_angle * store;
-			if (matchlevel > oldmatch)
-			{
+			vec = normalize( guy.origin - crusader.origin );
+			vec_z = vec * v_forward;
+			matchlevel = vlen( guy.origin - source );		// guy.origin - trace_endpos
+
+			// Gizmo - don't prefer enemies over teammates, but still pick the closest enemy if all we've found are enemies
+			local float temp;
+
+			matchResult = matchlevel < oldmatch;
+			temp = GetTeam( guy );
+			guyIsTeammate = Teammate( crusader.team_no, temp );
+			temp = GetTeam( matched );
+			matchIsTeammate = Teammate( crusader.team_no, temp );
+
+			if ( vec_z > 0.3 )
+			if ( matched == crusader || ( !matchIsTeammate && guyIsTeammate )
+				|| ( matchResult && ( !matchIsTeammate || ( matchIsTeammate && guyIsTeammate ) ) ) ) {
 				matched = guy;
 				oldmatch = matchlevel;
 			}
@@ -162,7 +228,7 @@ entity (entity crusader) Crusader_FindIdiot =
 		guy = guy.chain;
 	}
 
-	if (oldmatch > 0.2)
+	if (oldmatch < 250)
 		return matched;
 	else
 		return crusader;
@@ -199,7 +265,7 @@ void(float aur) AddAura =
 		return;
 	}
 
-	if (IsMonster(targ))
+	if (IsOwnedMonster(targ))
 	{
 		if (aur == #AURA_HASTE)
 		{
@@ -227,7 +293,14 @@ void(float aur) AddAura =
 		sprint(self, #PRINT_HIGH, "You can't bestow auras onto enemies!\n");
 		return;
 	}
-	#endif	
+	#endif
+
+#ifdef COOP_MODE_ENHANCED
+	if ( COOP_IsCoopMonster( targ ) ) {
+		sprint( self, #PRINT_HIGH, "You cannot bestow an aura to this monster\n" );
+		return;
+	}
+#endif
 
 	#ifndef CRUSADER_TEST
 
@@ -322,7 +395,7 @@ void(float aur) AddAura =
 		else
 			oldstrung = "Aura of Bugs";	// Gizmo
 
-		if (IsMonster(targ)) // Monsters
+		if (IsOwnedMonster(targ)) // Monsters
 		{
 			local string thingname;
 			local string tmps;
@@ -408,7 +481,7 @@ void() CrusaderAddInvisibility =
 		return;
 	}
 
-	if (IsMonsterNonArmy(targ))
+	if (IsSummon(targ))
 	{
 		sprint(self, #PRINT_HIGH, "You can't make a monster invisible!\n");
 		return;
@@ -419,6 +492,12 @@ void() CrusaderAddInvisibility =
 		sprint(self, #PRINT_HIGH, "You can't make an Army soldier invisible!\n");
 		return;
 	}
+
+#ifdef COOP_MODE_ENHANCED
+	// this shouldn't happen, so don't print out a warning... infact if this happens, it's a bug
+	if ( COOP_IsCoopMonster( targ ) )
+		return;
+#endif
 
 	#ifndef ALLOW_AURAS_ON_CRUSADERS
 	if (!(targ.job & #JOB_CRUSADER))
@@ -527,9 +606,12 @@ void() CrusaderMassHeal =
 					//	sprint(te, #PRINT_HIGH, "Your deity restores you to full health\n");
 				}
 		}
-		else if (IsMonster(te))
+		else if (IsMonster(te))		// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 		{
-			if (Teammate(te.real_owner.team_no, self.team_no))
+			local float temp;
+
+			temp = GetTeam( te );
+			if (Teammate(temp, self.team_no))
 			{
 				te.health = te.health + 100;
 				if (te.health > te.max_health)
@@ -606,6 +688,7 @@ void() CrusaderMassCure =
 	
 };*/
 
+#ifdef NO_RESURRECTION
 void() CrusaderDispel =
 {
 	local entity te;
@@ -624,7 +707,7 @@ void() CrusaderDispel =
 	te = findradius(self.origin, 1000);
 	while (te)
 	{
-		if (!Teammate(self.team_no, te.team_no))
+		if (!Teammate(self.team_no, te.team_no)) {
 			/*if (te.classname == "monster_demon1")
 				TF_T_Damage(te, self, self, 500, 0, #TF_TD_OTHER);
 			else if (te.classname == "monster_shambler")
@@ -638,9 +721,9 @@ void() CrusaderDispel =
 				else if (te.classname == "monster_shalrath")
 					TF_T_Damage(te, self, self, 250, 0, #TF_TD_OTHER);
 			}*/
-			if (IsMonsterNonArmy(te))
+			if (IsSummon(te)) {
 				TF_T_Damage(te, self, self, 300 + 300*random(), 0, #TF_TD_OTHER); // Original 500
-			else if (te.classname == "player" && te.health > 0)
+			} else if (te.classname == "player" && te.health > 0) {
 				if (te.job & #JOB_WARLOCK)
 				{
 					local entity oself;
@@ -659,7 +742,15 @@ void() CrusaderDispel =
 					deathmsg = #DMSG_DISPEL;
 					TF_T_Damage(te, self, self, 25, 0, #TF_TD_OTHER);
 				}
-		
+			}
+#ifdef COOP_MODE_ENHANCED
+			else if ( COOP_IsCoopMonster( te ) ) {
+				deathmsg = #DMSG_DISPEL;
+				TF_T_Damage( te, self, self, 100 + 400*random(), 0, #TF_TD_OTHER );
+			}
+#endif
+		}
+
 		te = te.chain;
 	}
 	
@@ -667,6 +758,7 @@ void() CrusaderDispel =
 	self.job_finished = time - amount;
 	sound(self, #CHAN_ITEM, "misc/power.wav", 1, #ATTN_NORM);
 };
+#endif
 
 void() Aura_Regenerate =
 {
@@ -709,6 +801,7 @@ void() Aura_Regenerate =
 
 // Gizmo - resurrect related stuff
 
+#ifndef NO_RESURRECTION
 void() ClientResurrected =
 {
 	local float iszoom, lastframe;
@@ -946,3 +1039,4 @@ void () CrusaderResurrect =
 	//amount = amount - 30;
 	//self.job_finished = time - amount;
 };
+#endif

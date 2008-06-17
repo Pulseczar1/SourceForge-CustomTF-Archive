@@ -168,7 +168,7 @@ void() dog_atta6	=[	$attack6,	dog_atta7	] {ai_charge(10);};
 void() dog_atta7	=[	$attack7,	dog_atta8	] {ai_charge(10);};
 void() dog_atta8	=[	$attack8,	dog_run1	] {ai_charge(10);};
 
-void() dog_leap1	=[	$leap1,		dog_leap2	] {COOP_Turn(); self.attack_finished = time + 2;};
+void() dog_leap1	=[	$leap1,		dog_leap2	] {COOP_Turn(); Attack_Finished( 2 );};
 void() dog_leap2	=[	$leap2,		dog_leap3	]
 {
 	COOP_Turn();
@@ -414,7 +414,6 @@ void() monster_dog =
 	self.#npc_speedfactor = 2.8;
 	self.OnPreAttack = DogCheckAttack;
 	self.OnNoticeEnemy = DogOnSight;
-	self.#npc_spawndelay = 30;
 	self.#npc_spawnfunc = monster_dog;
 	COOP_SetLives ();
 

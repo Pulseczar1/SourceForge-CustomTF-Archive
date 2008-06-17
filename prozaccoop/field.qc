@@ -301,6 +301,7 @@ void() Field_touch_SUB =
     }
     else // non player entities (or player heads)
     {
+		// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
         if (IsMonster(other))
         {
             if (Field_ItCanPass(self, other))
@@ -472,18 +473,21 @@ float(entity tfield, entity who) Field_ItCanPass =
         if (Teammate(who.undercover_team, tfield.real_owner.team_no)) // spies disguised as our team
             return #TRUE;
     }
-    else if (IsMonster(who))  // MONSTERS/ARMY
+    else if (IsMonster(who))  // MONSTERS/ARMY		// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
     {
-        if (Teammate(who.real_owner.team_no, tfield.real_owner.team_no)) // team monster
+		local float temp;
+
+		temp = GetTeam( who );
+        if (Teammate(temp, tfield.real_owner.team_no)) // team monster
             return #TRUE;
     }
-    #ifdef GIBABLE_CORPSES
+#ifdef GIBABLE_CORPSES
     else if (who.#corpseflag == #STRFLAG_CORPSE) // CORPSES
     {
         if (Teammate(who.team_no, tfield.real_owner.team_no)) // team corpse
             return #TRUE;
     }
-    #endif
+#endif
 
     return #FALSE;
 };
@@ -511,18 +515,21 @@ float(entity tfield, entity who) Field_ShouldDamage =
         if (Teammate(who.undercover_team, tfield.real_owner.team_no)) // spies disguised as our team
             return #FALSE;
     }
-    else if (IsMonster(who))  // MONSTERS/ARMY
+    else if (IsMonster(who))  // MONSTERS/ARMY		// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
     {
-        if (Teammate(who.real_owner.team_no, tfield.real_owner.team_no)) // team monster
+		local float temp;
+
+		temp = GetTeam( who );
+        if (Teammate(temp, tfield.real_owner.team_no)) // team monster
             return #FALSE;
     }
-    #ifdef GIBABLE_CORPSES
+#ifdef GIBABLE_CORPSES
     else if (who.#corpseflag == #STRFLAG_CORPSE) // CORPSES
     {
         if (Teammate(who.team_no, tfield.real_owner.team_no)) // team corpse
             return #FALSE;
     }
-    #endif
+#endif
 
     return #TRUE;
 };
