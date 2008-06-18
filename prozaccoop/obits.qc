@@ -2,7 +2,7 @@
 /*
 ===========
 ClientObituary
-	
+
 called when a player dies
 ============
 */

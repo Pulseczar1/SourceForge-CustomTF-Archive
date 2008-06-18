@@ -1263,7 +1263,8 @@ NOTE: makevectors must be called first
 ==============
 */
 float( entity g ) GruntyAutoObstacle = {
-	local float zdif, vis;
+	local vector	vtemp;
+	local float		zdif, vis, zdif2;
 
 	// we hit an obstacle with no enemy
 	if ( g.enemy == world ) {
@@ -1271,16 +1272,62 @@ float( entity g ) GruntyAutoObstacle = {
 		if ( !checkbottom( g ) )
 			return 0;
 
-		traceline( g.origin + '0 0 -8', g.origin + '0 0 -8' + v_forward * 64, #TL_ANY_SOLID, g );
 		zdif = ( g.goalentity.origin_z + g.goalentity.mins_z ) - ( g.origin_z + g.mins_z );
-		vis = visible2( g.goalentity, g );
+
+		// check for visibility
+		traceline( g.origin + g.view_ofs, g.goalentity.origin + g.goalentity.view_ofs, #TL_ANY_SOLID, g );
+		if ( trace_inopen && trace_inwater )
+			vis = #FALSE;
+		else if ( trace_ent == g.goalentity )
+			vis = #TRUE;
+		else
+			vis = #FALSE;
+
+		// if we're already navigating then use the vector facing our goalentity
+		if ( g.motd > time ) {
+			vtemp = g.goalentity.origin - g.origin;
+			vtemp_z = 0;
+			vtemp = normalize( vtemp );
+		} else
+			vtemp = v_forward;
+
+		traceline( g.origin + '0 0 -8', g.origin + '0 0 -8' + vtemp * 96, #TL_ANY_SOLID, g );
 
 		// goalentity is on a higher/lower level
-		if ( zdif && trace_fraction == 1 )		// only jump if we have a clear path infront of us and our goalentity is up/down somewhere
+		if ( zdif && trace_fraction == 1 ) {		// only jump if we have a clear path infront of us and our goalentity is up/down somewhere
+			// don't jump if we've just got done attacking an enemy, so we don't jump in the wrong direction
+			if ( g.attack_finished - time > -1 )
+				return 2;
+
+			// check if it's safe to jump here
+			traceline( trace_endpos, trace_endpos + v_up * -8192, #TL_ANY_SOLID, g );
+
+			// don't jump into water/slime/lava
+			if ( trace_inopen && trace_inwater )
+				return 2;
+
+			zdif2 = ( g.goalentity.origin_z + g.goalentity.mins_z ) - trace_endpos_z;
+			traceline( trace_endpos, g.goalentity.origin, #TL_ANY_SOLID, g );
+
+			// if our goalentity isn't visible at the estimated landing position then don't jump
+			if ( trace_ent != g.goalentity )
+				return 2;
+
+			// if our landing position is farther away z wise then don't jump
+			zdif2 = fabs( zdif2 );		// Gizmo - I've seen QC compiler/vm bugs when two functions calls are in the same expression
+			if ( zdif2 > fabs( zdif ) )
+				return 2;
+
 			return 0;
+		}
 		if ( zdif && trace_fraction != 1 ) {
+			// don't jump if we've just got done attacking an enemy, so we don't jump in the wrong direction
+			if ( g.attack_finished - time > -1 )
+				return 2;
+
 			if ( vis )
 				return 0;
+
 			return 2;
 		}
 		// we're perfectly even with our goalentity, assuming it's a ground based target
@@ -1313,7 +1360,7 @@ void() GRun =
 	local vector	loc;
 	local float		r;
 
-	// Gizmo - .motd is set to TRUE to disallow ChangeYaw() while we're calling movetogoal()
+	// Gizmo - .motd is set to a future time to disallow ChangeYaw() while we're calling movetogoal()
 	if ( self.motd <= time || self.is_toffingadet != 2 ) {
 		// ok, we're trying to get somewhere
 		// first look at where we are trying to go
@@ -1581,7 +1628,7 @@ float (float angle, float dist) botmovedist =
 				self.motd = time + 1;
 			}
 
-			// Gizmo - if we're not on valid ground then fall, this is a work around for the QF bug
+			// Gizmo - if we're not on valid ground then fall
 			if ( !checkbottom( self ) )
 				self.flags = self.flags - ( self.flags & #FL_ONGROUND );
 		}

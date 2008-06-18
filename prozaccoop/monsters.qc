@@ -27,7 +27,7 @@ returns 1 if the entity is visible to self, even if not infront ()
 float (entity targ) visible =
 {
 	local vector	spot1, spot2;
-	
+
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	traceline (spot1, spot2, #TL_BSP_ONLY, self);	// see through other monsters
