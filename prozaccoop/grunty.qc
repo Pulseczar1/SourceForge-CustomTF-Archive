@@ -1278,7 +1278,7 @@ float( entity g ) GruntyAutoObstacle = {
 		traceline( g.origin + g.view_ofs, g.goalentity.origin + g.goalentity.view_ofs, #TL_ANY_SOLID, g );
 		if ( trace_inopen && trace_inwater )
 			vis = #FALSE;
-		else if ( trace_ent == g.goalentity )
+		else if ( trace_ent == g.goalentity || trace_fraction == 1 )
 			vis = #TRUE;
 		else
 			vis = #FALSE;
@@ -1310,7 +1310,7 @@ float( entity g ) GruntyAutoObstacle = {
 			traceline( trace_endpos, g.goalentity.origin, #TL_ANY_SOLID, g );
 
 			// if our goalentity isn't visible at the estimated landing position then don't jump
-			if ( trace_ent != g.goalentity )
+			if ( trace_ent != g.goalentity && trace_fraction != 1 )
 				return 2;
 
 			// if our landing position is farther away z wise then don't jump
