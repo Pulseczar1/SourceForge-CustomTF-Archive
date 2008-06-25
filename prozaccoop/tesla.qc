@@ -1209,3 +1209,25 @@ entity(entity OldTesla) TeslaClone =
 	return newmis;
 };
 */
+
+/*
+==============
+Tesla_IsCloaked
+
+Gizmo: Added this external function so there can
+be a singular place where tesla cloaking is determined,
+useful if tesla cloaking ever changes in the future to
+make that easier to implement.
+==============
+*/
+float( entity tes ) Tesla_IsCloaked = {
+	if ( tes.classname != "building_tesla" )
+		return #FALSE;
+
+	if ( tes.tf_items & #NIT_TESLA_CLOAKING ) {
+		if ( tes.job != 2 )
+			return #TRUE;
+	}
+
+	return #FALSE;
+};
