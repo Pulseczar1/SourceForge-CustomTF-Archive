@@ -162,9 +162,11 @@ float( entity us, entity test ) COOP_IsValidTarget = {
 			return #TRUE;
 */
 	} else if (!Teammate(test.team_no, us.team_no)) {
-		if (IsBuilding(test) && test.classname != "building_sentrygun_base")
+		if (IsBuilding(test) && test.classname != "building_sentrygun_base") {
+			if ( Tesla_IsCloaked( test ) )		// only do this here, so the global list will include it
+				return #FALSE;				// and monsters will react faster
 			return #TRUE;
-		else if (test.classname == "player") {
+		} else if (test.classname == "player") {
 			r = vlen(test.origin - us.origin);
 
 			// use Pharse_Client for client checking
@@ -285,6 +287,7 @@ entity (entity scanner) COOP_FindTarget =
 	// check if we should scan for new entities that weren't present before
 	if (worldscan_delay <= time) {
 		npc_teamLists = world;
+		_npc_lastTeamEntity = world;		// this fixes the monsters randomly not finding targets because of this being some entity that isn't linked in the teamlist
 
 		head = findradius (world.origin, 65536);
 

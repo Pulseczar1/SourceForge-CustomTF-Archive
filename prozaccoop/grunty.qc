@@ -1346,8 +1346,8 @@ float( entity g ) GruntyAutoObstacle = {
 	}
 	// static tactic mode
 	if ( g.is_malfunctioning == 2 ) {
-		// always jump on static mode
-		return 0;
+		// always stop on static mode when attacking
+		return 1;
 	}
 
 	// default to stop

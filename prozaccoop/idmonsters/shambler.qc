@@ -122,7 +122,7 @@ void() _sham_run2       =[      $run2,        _sham_run3      ] {COOP_Run(24);};
 void() _sham_run3       =[      $run3,        _sham_run4      ] {COOP_Run(20);};
 void() _sham_run4       =[      $run4,        _sham_run5      ] {COOP_Run(20);};
 void() _sham_run5       =[      $run5,        _sham_run6      ] {COOP_Run(24);};
-void() _sham_run6       =[      $run6,        _sham_run1      ] {COOP_Run(20);
+void() _sham_run6       =[      $run6,        _sham_run1      ] {
 if (random() > 0.8)
 	sound (self, #CHAN_VOICE, "shambler/sidle.wav", 1, #ATTN_IDLE);
 
@@ -137,6 +137,7 @@ if (random() > 0.8)
 		while ( head ) {
 			if ( !( head.flags & #FL_ITEM ) )
 			if ( !head.takedamage )
+			if ( visible( head ) )
 			if ( head.solid != #SOLID_BSP && head.movetype != #MOVETYPE_NONE && infront( head ) ) {
 				_sham_throw();
 				return;
@@ -149,6 +150,9 @@ if (random() > 0.8)
 			head = head.chain;
 		}
 	}
+
+	// only run if we're not wacking something out of the way
+	COOP_Run(20);
 };
 
 void() _sham_smash1     =[      $smash1,       _sham_smash2    ] {
@@ -277,6 +281,7 @@ void() _ShamThrowObjects = {
 	head = findradius( self.origin, 128 );
 	while ( head ) {
 		if ( !( head.flags & #FL_ITEM ) )
+		if ( visible( head ) )
 		if ( head.solid != #SOLID_BSP && head.movetype != #MOVETYPE_NONE && infront( head ) ) {
 			if ( head.flags & #FL_ONGROUND ) {
 				head.flags = head.flags - #FL_ONGROUND;
