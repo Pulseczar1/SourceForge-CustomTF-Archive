@@ -7,9 +7,13 @@
 #else
 
 
+#define SPAWN_USETARGETSONRESPAWN		4		// if present, monsters that respawn will re-fire their triggers upon death
+
 .float() OnNoticeEnemy;						// self.enemy is the enemy noticed, return false for invalid targets
 //.void() OnRespawn;						// self is the new entity respawning
 .float() OnPreAttack;						// self is about to attack self.enemy, return false to prevent
+
+float monster_mode;						// updated every 1.3 seconds from infokey() if at least one monster is present
 
 
 /*
@@ -152,8 +156,7 @@ float (entity start, entity end) COOP_SightBlocked =
 float( entity us, entity test ) COOP_IsValidTarget = {
 	local float r;
 
-	if (test.classname == "monster_demon1" || test.classname == "monster_army" || test.classname == "monster_shambler" ||
-		test.classname == "monster_wizard" || test.classname == "monster_fish" || test.classname == "monster_gremlin") {
+	if ( IsOwnedMonster( test ) ) {
 		if (!Teammate(test.real_owner.team_no, us.team_no))
 			return #TRUE;
 /*
@@ -222,6 +225,10 @@ void( entity list ) COOP_AddTeamList = {
 		return;
 	}
 
+	// NOTE: this MUST be a backwards list, because every entity's npc_nextTeamList field points to the next team
+	// and if this isn't a backwards list, then you would have to go through and update every entity's npc_nextTeamList
+	// on the last teamlist (or maybe just the last entity on it), which would all point to world since it was the last,
+	// but is no longer the last. This way, every entity's npc_nextTeamList always remains correct when we add new lists
 	list.npc_nextEntInTeamList = world;
 	list.npc_nextTeamList = npc_teamLists;
 	npc_teamLists = list;
@@ -248,7 +255,7 @@ void( entity e ) COOP_AddToTeamList = {
 
 	list.npc_nextEntInTeamList = e;
 	e.npc_nextEntInTeamList = world;
-	e.npc_nextTeamList = world;
+	e.npc_nextTeamList = list.npc_nextTeamList;			// this fixes monsters not seeing other teams, used to be "= world"
 	_npc_lastTeamEntity = e;
 };
 
@@ -256,7 +263,6 @@ entity (entity scanner) COOP_FindTarget =
 {
 	local entity	head;
 	local entity	bestp;
-	local float		monster_mode;
 
 	bestp = world;
 
@@ -285,21 +291,25 @@ entity (entity scanner) COOP_FindTarget =
 */
 
 	// check if we should scan for new entities that weren't present before
-	if (worldscan_delay <= time) {
+	if ( worldscan_delay <= time ) {
+		// update the monster_mode global
+		monster_mode = stof( infokey( world, "monster_mode" ) );
+
+		// rescan the valid entity lists
 		npc_teamLists = world;
 		_npc_lastTeamEntity = world;		// this fixes the monsters randomly not finding targets because of this being some entity that isn't linked in the teamlist
 
-		head = findradius (world.origin, 65536);
+		head = findradius( world.origin, 65536 );
 
-		while (head) {
-			if ( head.classname == "monster_demon1" || head.classname == "monster_army" || head.classname == "monster_shambler" ||
-				head.classname == "monster_wizard" || head.classname == "monster_fish" || head.classname == "monster_gremlin" )
+		while ( head ) {
+			if ( IsMonster( head ) )			// used IsMonster() so coop monsters and owned monsters are added
 				COOP_AddToTeamList( head );
-			else if ( IsBuilding(head) && head.classname != "building_sentrygun_base" )
-				COOP_AddToTeamList( head );
-			else if ( head.flags & #FL_CLIENT )
-				COOP_AddToTeamList( head );
-			else if ( COOP_IsCoopMonster( head ) )
+			else if ( IsBuilding(head) ) {
+				// don't compare this string unless it's a building, since QC doesn't have short-circuit logical ops
+				// also this prevents further checks if it's the building_sentrygun_base
+				if ( head.classname != "building_sentrygun_base" )
+					COOP_AddToTeamList( head );
+			} else if ( head.flags & #FL_CLIENT )	// this will probably add spectators too, but comparing a string is much slower for every ent
 				COOP_AddToTeamList( head );
 
 			head = head.chain;
@@ -313,12 +323,11 @@ entity (entity scanner) COOP_FindTarget =
 		return world;
 
 	// check for the non-targeting mode
-	monster_mode = stof (infokey(world, "monster_mode"));
-	if (monster_mode & 4)
+	if ( monster_mode & 4 )
 		return world;
 
 	// use a random delay so it doesn't all happen at once
-	self.#npc_noticedelay = time + 0.3 + random();		// old delay was 1.3
+	scanner.#npc_noticedelay = time + 0.3 + random();		// old delay was 1.3
 
 	if ( npc_teamLists == world )
 		return world;
@@ -864,8 +873,14 @@ void( entity e ) COOP_SetupRespawn = {
 	newmon.target = e.target;
 	newmon.team_no = e.team_no;
 	newmon.respawn_time = e.respawn_time;
+	newmon.spawnflags = e.spawnflags;
+	newmon.endtime = e.endtime;
 	setsize( newmon, e.mins, e.maxs );
 	setorigin( newmon, e.#npc_originalloc );
+
+	// check if this monster should re-fire it's target when it dies again
+	if ( newmon.spawnflags & #SPAWN_USETARGETSONRESPAWN )
+		newmon.#npc_useTargetsOnRespawn = #TRUE;
 
 	newmon.nextthink = time + e.respawn_time;
 	newmon.think = respawn_think;
@@ -881,22 +896,19 @@ void( entity e ) COOP_SetupRespawn = {
 
 float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEntityDamage =
 {
-	local float monster_mode;
-
-	// check for insane mode, thought about putting this in StartFrame, but I'd bet T_Damage gets called less overall
-	monster_mode = stof (infokey(world, "monster_mode"));
-	if (monster_mode & 1) {
+	// check for insane mode
+	if ( monster_mode & 1 ) {
 		if ( COOP_IsCoopMonster( attacker ) && targ.classname == "player" )
 			return indmg * 2;
 	}
-	if (monster_mode & 2) {
+	if ( monster_mode & 2 ) {
 		if (attacker.flags & #FL_CLIENT && COOP_IsCoopMonster(targ))
 			indmg = indmg * 0.5;
 	}
 
 	if ( !COOP_IsCoopMonster( targ ) ) {
 		// make summons and army soldiers stronger
-		if (GetMonsterName(targ) != "unknown monster")
+		if ( IsOwnedMonster( targ ) )
 			return indmg * 0.5;
 		else
 			return indmg;

@@ -3953,6 +3953,8 @@ float( entity object ) IsValidUseObject = {
 		return #TRUE;
 	else if ( object.classname == "train" )
 		return #TRUE;
+	else if ( object.classname == "func_button" )
+		return #TRUE;
 
 	return #FALSE;
 };
@@ -3964,6 +3966,8 @@ string( entity object ) GetUseObjectAction = {
 		return "move up/down";
 	else if ( object.classname == "train" )
 		return "goto the next waypoint";
+	else if ( object.classname == "func_button" )
+		return "be pushed";
 
 	return "do nothing";
 };
@@ -4013,6 +4017,15 @@ void( entity object ) UseObject = {
 		self = trace_ent;
 
 		train_next ();
+
+		self = oself;
+	} else if ( trace_ent.classname == "func_button" ) {
+		trace_ent.enemy = self;
+
+		oself = self;
+		self = trace_ent;
+
+		button_fire();
 
 		self = oself;
 	}

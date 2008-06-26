@@ -826,7 +826,18 @@ void() MonsterDead =
 
 void() MonsterCorpse =
 {
-    self.nextthink = time + #MIN_CORPSE_TIME + (#MAX_CORPSE_TIME - #MIN_CORPSE_TIME)*random();	
+#ifdef COOP_MODE_ENHANCED
+	local float r;
+
+	if ( self.endtime > 0 && COOP_IsCoopMonster( self ) ) {
+		r = random();
+		if ( r < 0.5 )
+			r = 0.5 + random()*0.5;
+
+		self.nextthink = time + self.endtime*r;
+	} else
+#endif
+		self.nextthink = time + #MIN_CORPSE_TIME + (#MAX_CORPSE_TIME - #MIN_CORPSE_TIME)*random();	
 	self.think = SUB_Remove;
     
     #ifdef GIBABLE_CORPSES

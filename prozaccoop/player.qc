@@ -1251,6 +1251,17 @@ void(string gibname, float dm, float makecool, float gibskin, float gibkgs, floa
 	newmis.avelocity_z = crandom()*600;
 	newmis.think = SUB_Remove;
 	newmis.ltime = time;
+#ifdef COOP_MODE_ENHANCED
+	local float r;
+
+	if ( self.endtime > 0 && COOP_IsCoopMonster( self ) ) {
+		r = random();
+		if ( r < 0.5 )
+			r = 0.5 + random()*0.5;
+
+		newmis.nextthink = time + self.endtime*r;
+	} else
+#endif
 	newmis.nextthink = time + #MIN_GIB_TIME + random()*(#MAX_GIB_TIME - #MIN_GIB_TIME);
 	newmis.frame = 0;
 	newmis.flags = 0;
