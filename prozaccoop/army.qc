@@ -43,7 +43,7 @@ void(entity player) ArmyUpdateRating;
 void(entity player, float avg_score) AdjustArmyRating;
 
 // OfN moved files..
-void () Grunty_StateInv;
+void( entity dest, entity g, float printLevel ) Grunty_PrintDetails;
 void() grunty_stand;
 void() grunty_run;
 void() GruntyCheckFire;
@@ -722,11 +722,7 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 	if (inp == 9) // Army info
 	{
 		ResetMenu();
-		local entity oself;
-		oself=self;
-		self=soul;
-		Grunty_StateInv();
-		self=oself;
+		Grunty_PrintDetails( self, soul, 1 );
 		self.impulse = 0;
 		return;
 	}

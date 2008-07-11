@@ -152,10 +152,7 @@ void() dog_run8		=[	$run8  ,	dog_run9	] {COOP_Run(32);};
 void() dog_run9		=[	$run9  ,	dog_run10	] {COOP_Run(32);};
 void() dog_run10	=[	$run10  ,	dog_run11	] {COOP_Run(20);};
 void() dog_run11	=[	$run11  ,	dog_run12	] {COOP_Run(64);};
-void() dog_run12	=[	$run12  ,	dog_run1	] {COOP_Run(32);
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-};
+void() dog_run12	=[	$run12  ,	dog_run1	] {COOP_Run(32);};
 
 void() dog_atta1	=[	$attack1,	dog_atta2	] {ai_charge(10);};
 void() dog_atta2	=[	$attack2,	dog_atta3	] {ai_charge(10);};

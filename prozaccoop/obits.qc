@@ -43,6 +43,19 @@ void(entity targ, entity attacker) ClientObituary =
 */			return;
 		}
 
+#ifndef NO_ZEROGRAVGUN
+		// Gizmo - if we were teamkilled by a friendly engy using his teleporter
+		if ( targ.#teleporter_teamkiller ) {
+			if ( ( attacker == world && targ.watertype == #CONTENT_LAVA ) || ( attacker == targ && deathmsg == #DMSG_TELEOUTWORLD ) ) {
+				deathmsg = 0;		// prevent any possible incorrect teamkill messages
+				attacker = targ.#teleporter_teamkiller;
+			}
+
+			// we've died for other reasons or the above teamkill was successful so make sure we reset it
+			targ.#teleporter_teamkiller = world;
+		}
+#endif
+
 		// Gizmo - added world, easier that way since all entities are init'd to it
 #ifdef COOP_MODE_ENHANCED
 		if (targ.martyr_enemy != targ && targ.martyr_enemy != world)

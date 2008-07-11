@@ -7,8 +7,6 @@
 #else
 
 
-#define SPAWN_USETARGETSONRESPAWN		4		// if present, monsters that respawn will re-fire their triggers upon death
-
 .float() OnNoticeEnemy;						// self.enemy is the enemy noticed, return false for invalid targets
 //.void() OnRespawn;						// self is the new entity respawning
 .float() OnPreAttack;						// self is about to attack self.enemy, return false to prevent
@@ -156,6 +154,10 @@ float (entity start, entity end) COOP_SightBlocked =
 float( entity us, entity test ) COOP_IsValidTarget = {
 	local float r;
 
+	// if our target isn't solid then it's not a valid target
+	if ( test.solid == #SOLID_NOT )
+		return #FALSE;
+
 	if ( IsOwnedMonster( test ) ) {
 		if (!Teammate(test.real_owner.team_no, us.team_no))
 			return #TRUE;
@@ -190,6 +192,81 @@ float( entity us, entity test ) COOP_IsValidTarget = {
 	}
 
 	return #FALSE;
+};
+
+/*
+===============
+COOP_GetTargetPriority
+
+The maximum value this can return is 2. Distance calculation can
+add up to 1, and the target's priority in general can add another 1.
+NOTE: this assumes e is an enemy.
+===============
+*/
+float( entity scanner, entity e ) COOP_GetTargetPriority = {
+	local float	priority, ftmp;
+
+	// include distance in all priority calculations (adds up to nearly 1) (TODO: include sizebox in calculation so it _can_ return 1?)
+	priority = vlen( e.origin - scanner.origin );
+	priority = 1 - priority / 4096;
+	if ( priority < 0 )
+		priority = 0;
+
+	// if there's an obstacle between us, lower the priority
+	traceline( scanner.origin + scanner.view_ofs, e.origin, #TL_ANY_SOLID, scanner );
+	if ( trace_ent != e && trace_fraction != 1 )
+		priority = priority - 0.3;		// we will always add at least 0.3 below
+
+	// checking for monsters first can possibly be faster because IsBuilding() compares strings
+	if ( IsMonster( e ) ) {
+		// prefer monsters that are targeting us
+		if ( e.enemy == scanner )
+			priority = priority + random() * 0.5;
+
+		// protect our comrades!!
+		else if ( e.enemy != world ) {
+			if ( e.enemy != e ) {
+				ftmp = GetTeam( e.enemy );
+				if ( Teammate( ftmp, scanner.team_no ) )
+					priority = priority + random() * 0.4;
+			}
+		}
+
+		// monster priority can return up to 2 if the enemy monster is targeting us
+		return priority + 0.5;
+	}
+
+	if ( IsBuilding( e ) ) {
+		// prefer dispensers before everything (except maybe enemy monsters targeting us)
+		if ( e.classname == "building_dispenser" )
+			return priority + 1;
+		// builds that don't attack have lower priority than those that do
+		if ( !IsOffenseBuilding( e ) )
+			return priority + 0.4;
+		return priority + 0.9;
+	}
+
+	// client bonuses can add up to 0.2 for a total of 0.5 plus distance priority
+	if ( e.flags & #FL_CLIENT ) {
+		// give active chaplans an extra bonus
+		if ( e.job & #JOB_CHAPLAN && e.job & #JOB_ACTIVE )
+			priority = priority + 0.1;
+		// give snipers a small bonus also
+		else if ( e.current_weapon == #WEAP_SNIPER_RIFLE )
+			priority = priority + 0.1;
+		else if ( e.current_weapon == #WEAP_ASSAULT_CANNON )
+			priority = priority + 0.1;
+
+		// check if he's facing our general direction
+		if ( random() < 0.5 ) {
+			makevectors( e.v_angle );
+			if ( normalize( scanner.origin - e.origin ) * v_forward > 0.3 )
+				priority = priority + 0.1;
+		}
+	}
+		
+	// some other kind of enemy to destroy, 1.3 is max here for non-players, and 1.5 is max for players
+	return priority + 0.3;
 };
 
 
@@ -262,9 +339,11 @@ void( entity e ) COOP_AddToTeamList = {
 entity (entity scanner) COOP_FindTarget =
 {
 	local entity	head;
-	local entity	bestp;
+	local entity	best;
+	local float		bestPriority, priority;
 
-	bestp = world;
+	best = world;
+	bestPriority = 0;
 
 /*
 	// this is here to ease cpu with maps that have a lot of monsters, also adds a human factor for delayed notice
@@ -316,6 +395,9 @@ entity (entity scanner) COOP_FindTarget =
 		}
 
 		worldscan_delay = time + 1.3;
+
+		// return here to prevent us from doing too much at once and possibly tripping the infinite loop counter
+		return world;
 	}
 
 	// this is here to ease cpu with maps that have a lot of monsters, also adds a human factor for delayed notice
@@ -339,12 +421,11 @@ entity (entity scanner) COOP_FindTarget =
 	while ( head ) {
 		if (visible2(head, scanner) && head.takedamage && head.health > 0) {
 			if (COOP_IsValidTarget(scanner, head)) {
-				// pick the closest player if only players are visible
-				if (head.flags & #FL_CLIENT) {
-					if (bestp == world || vlen(head.origin - scanner.origin) < vlen(bestp.origin - scanner.origin))
-						bestp = head;
-				} else
-					return head;
+				priority = COOP_GetTargetPriority( scanner, head );
+				if ( priority > bestPriority ) {
+					best = head;
+					bestPriority = priority;
+				}
 			}
 		}
 
@@ -356,9 +437,9 @@ entity (entity scanner) COOP_FindTarget =
 			head = head.npc_nextEntInTeamList;
 	}
 
-	// players are always picked last, so if a player was found then return it, but if not bestp will be world
+	// players are always picked last, so if a player was found then return it, but if not best will be world
 	// findradius() did this automatically because it returns a chain backward through the entity list
-	return bestp;
+	return best;
 };
 
 
@@ -585,8 +666,10 @@ void (float dist) COOP_Run =
 			// walk our path again
 			self.goalentity = self.movetarget;
 			self.th_walk ();
-		} else
+		} else {
+			self.pausetime = 99999999;
 			self.th_stand ();
+		}
 		return;
 	}
 
@@ -643,7 +726,7 @@ void (float dist) COOP_Run =
 
 // check if we can attack
 	// TODO: possibly add another time for melee?
-	if (!sightblocked && COOP_CanAttackEnemy(self.enemy)) {
+	if ( !sightblocked && COOP_CanAttackEnemy( self.enemy ) ) {
 		// call the entity's custom attack checkers if they are present
 		if (self.OnPreAttack)
 			c_attack = self.OnPreAttack ();
@@ -664,7 +747,6 @@ void (float dist) COOP_Run =
 			}
 			if (self.th_missile) {
 				if (self.attack_finished < time) {
-					// TODO: add randomness on when he attacks and just keeps walking
 					self.th_missile ();
 					return;
 				}
@@ -907,8 +989,8 @@ float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEnt
 	}
 
 	if ( !COOP_IsCoopMonster( targ ) ) {
-		// make summons and army soldiers stronger
-		if ( IsOwnedMonster( targ ) )
+		// make summons and army soldiers stronger against coop monsters
+		if ( IsOwnedMonster( targ ) && COOP_IsCoopMonster( attacker ) )
 			return indmg * 0.5;
 		else
 			return indmg;

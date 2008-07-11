@@ -10,6 +10,11 @@
 // misc monster stuff
 #define NPC_TRANQ_FACTOR			0.6				// how much monsters slow down when tranqed
 
+// .spawnflags values
+#define SPAWN_USETARGETSONRESPAWN		4				// if present, monsters that respawn will re-fire their triggers upon death
+#define SPAWN_DONTCOUNT				8				// if present, monster doesn't count towards the total number of monsters or killed monsters
+#define SPAWN_RUN					16				// if present on a path_corner, any monster using that path_corner will run to the next path_corner; if present on a monster, the monster always runs
+
 // alternate teams
 #define TEAMNO_MONSTERS				100				// team number for monsters
 

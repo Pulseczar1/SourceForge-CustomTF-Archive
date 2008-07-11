@@ -86,10 +86,7 @@ void()	_demon1_run2	=[	$run2,		_demon1_run3	] {COOP_Run(15);};
 void()	_demon1_run3	=[	$run3,		_demon1_run4	] {COOP_Run(36);};
 void()	_demon1_run4	=[	$run4,		_demon1_run5	] {COOP_Run(20);};
 void()	_demon1_run5	=[	$run5,		_demon1_run6	] {COOP_Run(15);};
-void()	_demon1_run6	=[	$run6,		_demon1_run1	] {COOP_Run(36);
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-};
+void()	_demon1_run6	=[	$run6,		_demon1_run1	] {COOP_Run(36);};
 
 void()	_demon1_jump1	=[	$leap1,		_demon1_jump2	] {COOP_Turn();};
 void()	_demon1_jump2	=[	$leap2,		_demon1_jump3	] {COOP_Turn();};

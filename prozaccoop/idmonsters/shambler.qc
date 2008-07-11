@@ -126,9 +126,6 @@ void() _sham_run6       =[      $run6,        _sham_run1      ] {
 if (random() > 0.8)
 	sound (self, #CHAN_VOICE, "shambler/sidle.wav", 1, #ATTN_IDLE);
 
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-
 	// check if things are in the way
 	if ( random() < 0.25 ) {
 		local entity head;

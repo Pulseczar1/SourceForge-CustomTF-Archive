@@ -101,10 +101,7 @@ void()	knight_run4	=[	$runb4,		knight_run5	] {COOP_Run(7);};
 void()	knight_run5	=[	$runb5,		knight_run6	] {COOP_Run(16);};
 void()	knight_run6	=[	$runb6,		knight_run7	] {COOP_Run(20);};
 void()	knight_run7	=[	$runb7,		knight_run8	] {COOP_Run(14);};
-void()	knight_run8	=[	$runb8,		knight_run1	] {COOP_Run(6);
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-};
+void()	knight_run8	=[	$runb8,		knight_run1	] {COOP_Run(6);};
 
 
 void()	knight_runatk1	=[	$runattack1,		knight_runatk2	]

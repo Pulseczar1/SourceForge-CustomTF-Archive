@@ -160,7 +160,10 @@ void() coop_walkmonster_start =
 	// make up for monster respawns on total monsters
 	if (!server_spawned) {
 		self.#npc_useTargetsOnRespawn = #TRUE;
-		total_monsters = total_monsters + (self.lives + 1);
+
+		if ( !( self.spawnflags & #SPAWN_DONTCOUNT ) )
+		if ( number_of_teams > 1 || !Teammate( self.team_no, 1 ) )		// don't count friendly monsters
+			total_monsters = total_monsters + (self.lives + 1);
 	}
 };
 
@@ -230,7 +233,10 @@ void() coop_flymonster_start =
 	// make up for monster respawns on total monsters
 	if (!server_spawned) {
 		self.#npc_useTargetsOnRespawn = #TRUE;
-		total_monsters = total_monsters + (self.lives + 1);
+
+		if ( !( self.spawnflags & #SPAWN_DONTCOUNT ) )
+		if ( number_of_teams > 1 || !Teammate( self.team_no, 1 ) )		// don't count friendly monsters
+			total_monsters = total_monsters + (self.lives + 1);
 	}
 };
 
@@ -290,7 +296,10 @@ void() coop_swimmonster_start =
 	// make up for monster respawns on total monsters
 	if (!server_spawned) {
 		self.#npc_useTargetsOnRespawn = #TRUE;
-		total_monsters = total_monsters + (self.lives + 1);
+
+		if ( !( self.spawnflags & #SPAWN_DONTCOUNT ) )
+		if ( number_of_teams > 1 || !Teammate( self.team_no, 1 ) )		// don't count friendly monsters
+			total_monsters = total_monsters + (self.lives + 1);
 	}
 };
 

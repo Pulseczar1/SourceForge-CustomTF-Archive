@@ -170,10 +170,7 @@ void()	enf_run4	=[	$run4  ,	enf_run5	] {COOP_Run(12);};
 void()	enf_run5	=[	$run5  ,	enf_run6	] {COOP_Run(14);};
 void()	enf_run6	=[	$run6  ,	enf_run7	] {COOP_Run(14);};
 void()	enf_run7	=[	$run7  ,	enf_run8	] {COOP_Run(7);};
-void()	enf_run8	=[	$run8  ,	enf_run1	] {COOP_Run(11);
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-};
+void()	enf_run8	=[	$run8  ,	enf_run1	] {COOP_Run(11);};
 
 void()	enf_atk1	=[	$attack1,	enf_atk2	] {COOP_Turn();};
 void()	enf_atk2	=[	$attack2,	enf_atk3	] {COOP_Turn();};

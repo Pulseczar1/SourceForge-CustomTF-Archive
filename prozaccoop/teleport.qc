@@ -1,5 +1,5 @@
 /*======================================================
-	TELEPORT.QC			Custom TeamFortress v2.2
+	TELEPORT.QC 		Custom TeamFortress v2.2
 
 	(c) Craig Hauser			23/3/00
 ========================================================
@@ -15,7 +15,7 @@ float(entity targ) Teleporter_check_person;
 float(entity player) IsOutWorld;
 
 #define TELEPORTER_CELLS	8 //How many cells to use on teleport
-#define TELEPORTER_WAIT		2  //How long to wait after teleport (whole number)
+#define TELEPORTER_WAIT 	2  //How long to wait after teleport (whole number)
 
 //====================
 void() Teleporter_touch =
@@ -34,12 +34,12 @@ void() Teleporter_touch =
 			if (te != world)
 			{
 				local vector vec;
-                vec = '0 0 32';
+				vec = '0 0 32';
 
-                if (te.tf_items & #NIT_TURRET) //- OfN turretized teleporters
-                    vec = '0 0 -40';
-                
-                if (te.heat == 0 && te.ammo_cells >= #TELEPORTER_CELLS)
+				if (te.tf_items & #NIT_TURRET) //- OfN turretized teleporters
+					vec = '0 0 -40';
+				
+				if (te.heat == 0 && te.ammo_cells >= #TELEPORTER_CELLS)
 				{
 					self.heat = #TELEPORTER_WAIT;
 					te.heat = #TELEPORTER_WAIT;
@@ -49,8 +49,8 @@ void() Teleporter_touch =
 						return;
 					}
 					
-                    self.ammo_cells = self.ammo_cells - #TELEPORTER_CELLS;
-                    te.ammo_cells = te.ammo_cells - #TELEPORTER_CELLS;
+					self.ammo_cells = self.ammo_cells - #TELEPORTER_CELLS;
+					te.ammo_cells = te.ammo_cells - #TELEPORTER_CELLS;
 
 					local entity ote;
 					ote = te;
@@ -63,15 +63,30 @@ void() Teleporter_touch =
 					spawn_tdeath(te.origin + vec, other);
 					makeImmune(other,time + 2);
 					setorigin(other, te.origin + vec);
+
 					//- OfN
-                    if (IsOutWorld(other))
-                    {
-                        deathmsg = #DMSG_TELEOUTWORLD;
-                        TF_T_Damage(other, other, other,1000,0,#TF_TD_OTHER);
-                        return;
-                    }
-                    
-                    if (self.is_malfunctioning & #SCREWUP_ONE || te.is_malfunctioning & #SCREWUP_ONE) // SB
+					if (IsOutWorld(other))
+					{
+#ifndef NO_ZEROGRAVGUN
+						// Gizmo - if other was forced into a wall; we should die before PlayerPostThink() resets it
+						if ( self.pickedupby )
+							other.#teleporter_teamkiller = self.pickedupby;
+#endif
+						deathmsg = #DMSG_TELEOUTWORLD;
+						TF_T_Damage(other, other, other,1000,0,#TF_TD_OTHER);
+						return;
+					}
+
+#ifndef NO_ZEROGRAVGUN
+					// Gizmo - if other was forced to teleport into lava, make sure we count it as a teamkill
+					if ( pointcontents( other.origin ) == #CONTENT_LAVA || !checkbottom( other ) )
+					if ( self.pickedupby ) {
+						other.flags = other.flags - ( other.flags & ( #FL_ONGROUND | #FL_PARTIALGROUND ) );
+						other.#teleporter_teamkiller = self.pickedupby;
+					}
+#endif
+
+					if (self.is_malfunctioning & #SCREWUP_ONE || te.is_malfunctioning & #SCREWUP_ONE) // SB
 					{
 						other.ammo_cells = 0;
 						other.ammo_shells = 0;
@@ -102,33 +117,33 @@ void() Teleporter_touch =
 		}
 	}
 
-    if (other == world && self.tf_items & #NIT_TURRET && !(self.flags & #FL_ONGROUND)) 
-    { //The tele has landed! //- needed?
+	if (other == world && self.tf_items & #NIT_TURRET && !(self.flags & #FL_ONGROUND)) 
+	{ //The tele has landed! //- needed?
 		sprint(self.real_owner, #PRINT_HIGH, "Teleporter turretized succesfully!\n");
 		self.solid = #SOLID_BBOX; //#SOLID_BBOX;//SOLID_SLIDEBOX// SOLID_TRIGGER
-        self.flags = self.flags | #FL_ONGROUND;
-       // setsize(self, self.mins, self.maxs);
+		self.flags = self.flags | #FL_ONGROUND;
+	   // setsize(self, self.mins, self.maxs);
 		//self.movetype = #MOVETYPE_STEP;
 		self.origin_z = self.origin_z + 46;//32; // was 40, old custom bug? fixed
-        setorigin(self,self.origin);
+		setorigin(self,self.origin);
 
-        self.velocity = '0 0 0';
-        //setsize (self.building, '-16 -16 -48', '16 16 -52');
-        //setsize (self.building, '-16 -16 0', '16 16 1');
+		self.velocity = '0 0 0';
+		//setsize (self.building, '-16 -16 -48', '16 16 -52');
+		//setsize (self.building, '-16 -16 0', '16 16 1');
 		//return;
 	}
 
-    /*if (other.solid == #SOLID_BSP && self.tf_items & #NIT_TURRET && !(self.flags & #FL_ONGROUND))
-    {
+	/*if (other.solid == #SOLID_BSP && self.tf_items & #NIT_TURRET && !(self.flags & #FL_ONGROUND))
+	{
 		sprint(self.real_owner, #PRINT_HIGH, "Teleporter turretized succesfully!\n");
-        self.solid = #SOLID_TRIGGER; //#SOLID_BBOX;//SOLID_SLIDEBOX// SOLID_TRIGGER
-        self.flags = self.flags | #FL_ONGROUND; //MOVETYPE_NONE
+		self.solid = #SOLID_TRIGGER; //#SOLID_BBOX;//SOLID_SLIDEBOX// SOLID_TRIGGER
+		self.flags = self.flags | #FL_ONGROUND; //MOVETYPE_NONE
 		self.movetype = #MOVETYPE_NONE;
 		self.origin_z = self.origin_z + 8;//32; // was 40, old custom bug? fixed
-        //setsize (self.building, '-16 -16 -48', '16 16 -52');
-        //setsize (self.building, '-16 -16 -0', '16 16 -4');
+		//setsize (self.building, '-16 -16 -48', '16 16 -52');
+		//setsize (self.building, '-16 -16 -0', '16 16 -4');
 		//return;
-    }*/
+	}*/
 
 
 };
@@ -148,8 +163,8 @@ float(entity targ) Teleporter_check_person =
 #ifdef QUAKE_WORLD // culled by KK. was QUAKE_WORLD
 	/*if (infokey(world,"ceasefire")=="on") //To not cause loops
 		return #FALSE;*/
-    if (ceasefire)
-        return #FALSE;
+	if (ceasefire)
+		return #FALSE;
 #endif
 	if (targ == world)//that would be bad.
 		return #FALSE;
@@ -195,9 +210,9 @@ float(entity targ) Teleporter_check_person =
 //===============
 void() Teleporter_heat_think =
 {
-    //- OfN turretizing and stoped?
-    if (self.tf_items & #NIT_TURRET && !(self.flags & #FL_ONGROUND))
-        self.velocity_z = 200;
+	//- OfN turretizing and stoped?
+	if (self.tf_items & #NIT_TURRET && !(self.flags & #FL_ONGROUND))
+		self.velocity_z = 200;
 
 //CH used to reduce the heat and check pos
 	local float pos, num;
@@ -226,17 +241,17 @@ void() Teleporter_heat_think =
 		loc_x = loc_x + ((rint(random() * 3 + 1) * 16) - 32);
 		loc_y = loc_y + ((rint(random() * 3 + 1) * 16) - 32);
 
-		pos = pointcontents(loc);                      //-
+		pos = pointcontents(loc);					   //-
 		if ( ( (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) && !(self.tf_items & #NIT_TURRET)) || (self.tf_items & #NIT_TURRET && pos == #CONTENT_SKY) )
 		{
 			TF_T_Damage(self, world, world, self.health+1, 0, 0);
 			
-            if (self.tf_items & #NIT_TURRET) //- ofn
-                sprint (self.real_owner, #PRINT_HIGH, "Your teleporter flies away.\n");
-            else
-                sprint (self.real_owner, #PRINT_HIGH, "Not enough space for teleportation.\n");
+			if (self.tf_items & #NIT_TURRET) //- ofn
+				sprint (self.real_owner, #PRINT_HIGH, "Your teleporter flies away.\n");
+			else
+				sprint (self.real_owner, #PRINT_HIGH, "Not enough space for teleportation.\n");
 			
-            num = 100; //Get out of loop
+			num = 100; //Get out of loop
 		}
 		num = num + 1;
 	}
@@ -259,7 +274,7 @@ void() Teleporter_Die =
 	WriteCoord (#MSG_BROADCAST, self.origin_z);
 #ifdef QUAKE_WORLD
 	multicast (self.origin, #MULTICAST_PHS);
-    dremove(self);
+	dremove(self);
 #else
 	BecomeExplosion ();
 #endif
