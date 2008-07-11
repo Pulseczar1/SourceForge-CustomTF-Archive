@@ -323,13 +323,17 @@ void( float team_num ) GetHelperSpectatorScan = {
 
 	e = find( world, #monsterflag, #STRFLAG_MONSTER );
 	while ( e ) {
-		if ( IsOwnedMonster( e ) ) {
-			if ( e.real_owner.team_no == team_num ) {
-				sprint( self, #PRINT_HIGH, "Helper owner: ", e.real_owner.netname, "\n" );
-				PrintOwnedMonsterDetails( self, e );
-				sprint( self, #PRINT_HIGH, "\n" );
+		if ( e.takedamage ) {
+			if ( e.health > 0 ) {
+				if ( IsOwnedMonster( e ) ) {
+					if ( e.real_owner.team_no == team_num ) {
+						sprint( self, #PRINT_HIGH, "Helper owner: ", e.real_owner.netname, "\n" );
+						PrintOwnedMonsterDetails( self, e );
+						sprint( self, #PRINT_HIGH, "\n" );
 
-				numFound = numFound + 1;
+						numFound = numFound + 1;
+					}
+				}
 			}
 		}
 
