@@ -74,6 +74,13 @@
 #define SHAMBLER_XMAS_MAXHITS    4
 #endif
 
+// Gizmo - monster modes
+#define SUMMON_MODE_HOLDPOSITION	0
+#define SUMMON_MODE_FOLLOWOWNER	1
+#define SUMMON_MODE_PATROLZONE	2
+
+#define summon_mode			penance_time
+
 /*================================================================================
 
 EXPLANATION OF HOW THE ENTITY FIELDS ARE USED (thnx? np.. :P)
@@ -2879,3 +2886,54 @@ float(entity ai_entity) AI_Regenerate =
         ai_entity.health = ai_entity.max_health;
 };
 
+//============================================================================
+
+/*
+==============
+Summon_GetActionString
+
+printDest can be world.
+==============
+*/
+string( entity printDest, entity se ) Summon_GetActionString = {
+	if ( se.#summon_mode == #SUMMON_MODE_HOLDPOSITION )
+		return "holding position";
+	if ( se.#summon_mode == #SUMMON_MODE_FOLLOWOWNER ) {
+		if ( printDest == se.real_owner )
+			return "following you";
+		return "following it's owner";
+	}
+	return "patroling the zone";
+};
+
+/*
+==============
+Summon_PrintDetails
+
+Prints details about a summon/demon.
+All functions that print details about a summon should
+use this function to keep everything contained.
+==============
+*/
+void( entity printDest, entity se ) Summon_PrintDetails = {
+	local string	st;
+
+	st = GetMonsterName( se );
+	st = colstr( st, #COLSTR_RED );
+	if ( printDest == se.real_owner )
+		sprint( printDest, #PRINT_HIGH, "Your ", st, " ", se.netname, " has " );
+	else
+		sprint( printDest, #PRINT_HIGH, "The ", st, " ", se.netname, " has " );
+	st = ftos( se.health );
+	sprint( printDest, #PRINT_HIGH, st, "¯" );
+	st = ftos( se.max_health );
+	sprint( printDest, #PRINT_HIGH, st, " טובלפט, and is " );
+
+	if ( se.enemy != world ) {
+		st = GetEnemyName( se.enemy );
+		sprint( printDest, #PRINT_HIGH, "בפפבדכימח ", st, "\n" );
+	} else {
+		st = Summon_GetActionString( printDest, se );
+		sprint( printDest, #PRINT_HIGH, st, "\n" );
+	}
+};

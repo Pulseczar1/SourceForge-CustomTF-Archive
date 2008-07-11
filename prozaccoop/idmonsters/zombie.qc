@@ -142,9 +142,6 @@ if (random() < 0.2)
 	sound (self, #CHAN_VOICE, "zombie/z_idle.wav", 1, #ATTN_IDLE);
 if (random() > 0.8)
 	sound (self, #CHAN_VOICE, "zombie/z_idle1.wav", 1, #ATTN_IDLE);
-
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
 };
 
 /*

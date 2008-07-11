@@ -154,6 +154,8 @@ void() Player_Punish =
 		return;
 		//RPrint("BUG: Non-spec/player on Player_Punish()\n");
 
+	self.g_a = #PUNISH_CURSE;		// Gizmo - fix this stupid bug
+
 	CuTFMenuSound(#MENUSOUND_BUY);
 	Menu_Punish();
 	BackFlash(self,1);
@@ -214,7 +216,8 @@ void(float input) Menu_Punish_Input =
 			self.g_a = #PUNISH_BAN;
 		else if (self.g_a == #PUNISH_BAN)
 			self.g_a = #PUNISH_CUFF;
-		else self.g_a = #PUNISH_CURSE;
+		else
+			self.g_a = #PUNISH_CURSE;
 
 		CuTFMenuSound(#MENUSOUND_BUY);
 		Menu_Punish();

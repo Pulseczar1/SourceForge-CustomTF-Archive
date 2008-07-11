@@ -2012,7 +2012,9 @@ void() PutClientInServer =
 			cvar_set("teamplay", "21?TeamFortress");
 		}
 
-		TeamFortress_TeamSet(1);
+		// only set team if we're not already on a team
+		if ( !self.team_no )
+			TeamFortress_TeamSet(1);
 	}
 #endif
 
@@ -2029,7 +2031,7 @@ void() PutClientInServer =
 	// For players who've changed their classes in deathmatch 3, 
 	// their class may be PC_RANDOM, in which case we set the toggleflag
 #ifdef COOP_MODE_ENHANCED
-	if (self.nextpc != 0) {
+	if ( ( coop && self.nextpc != 0 ) || ( deathmatch == 3 && self.nextpc != 0 ) ) {
 #else
 	if ((deathmatch == 3) && (self.nextpc != 0)) {
 #endif
@@ -3321,6 +3323,15 @@ void() PlayerPostThink =
 			if (!(self.cutf_items & #CUTF_STEALTH)) //WK Judo teaches falling... SB ceaf judo
 				sound (self, #CHAN_VOICE, "player/land.wav", 1, #ATTN_NORM);
 	}
+
+#ifndef NO_ZEROGRAVGUN
+	// Gizmo - check if we were going to be teamkilled by a friendly engy and we made it out of the lava
+	if ( self.#teleporter_teamkiller )
+	if ( self.watertype != #CONTENT_LAVA )
+	if ( pointcontents( self.origin ) != #CONTENT_LAVA )
+	if ( self.flags & #FL_ONGROUND || self.flags & #FL_PARTIALGROUND )	// we're out of lava and we're on solid ground so we're safe
+		self.#teleporter_teamkiller = world;
+#endif
 
 
 	self.jump_flag = self.velocity_z;

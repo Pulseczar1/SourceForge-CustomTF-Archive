@@ -25,6 +25,7 @@ Defines for the compilable options within TF.
 //#define CLASSIC_SNIPER_RIFLE		// Gizmo - classic prozac sniper rifle
 //#define CLASSIC_LIGHTNING_GUN		// Gizmo - classic prozac lightning gun
 //#define NO_RESURRECTION			// Gizmo - removes resurrection, right now it's through crusaders, but may change in the future
+//#define NO_ZEROGRAVGUN			// Gizmo - disables the Zero-Gravity Gun
 
 
 #define NET_SERVER

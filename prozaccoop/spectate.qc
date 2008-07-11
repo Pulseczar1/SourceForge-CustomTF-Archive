@@ -180,9 +180,9 @@ void( float team_num ) GetTeslaSpectatorScan = {
 				st = ftos(gun.frags);
 			sprint(self, #PRINT_HIGH, st);
 			sprint(self, #PRINT_HIGH, "\n\n");
-		}
 
-		numFound = numFound + 1;
+			numFound = numFound + 1;
+		}
 
 		gun = find( gun, classname, "building_tesla" );
 	}
@@ -266,9 +266,9 @@ void( float team_num ) GetSentryGunSpectatorScan = {
 				st = ftos(gun.frags);
 			sprint(self, #PRINT_HIGH, st);
 			sprint(self, #PRINT_HIGH, "\n\n");
-		}
 
-		numFound = numFound + 1;
+			numFound = numFound + 1;
+		}
 
 		gun = find( gun, classname, "building_sentrygun" );
 	}
@@ -310,6 +310,68 @@ void() SentryGunSpectatorScan = {
 
 //============================================================
 
+/*
+===========
+GetHelperSpectatorScan
+===========
+*/
+void( float team_num ) GetHelperSpectatorScan = {
+	local entity	e;
+	local float		numFound;
+
+	numFound = 0;
+
+	e = find( world, #monsterflag, #STRFLAG_MONSTER );
+	while ( e ) {
+		if ( IsOwnedMonster( e ) ) {
+			if ( e.real_owner.team_no == team_num ) {
+				sprint( self, #PRINT_HIGH, "Helper owner: ", e.real_owner.netname, "\n" );
+				PrintOwnedMonsterDetails( self, e );
+				sprint( self, #PRINT_HIGH, "\n" );
+
+				numFound = numFound + 1;
+			}
+		}
+
+		e = find( e, #monsterflag, #STRFLAG_MONSTER );
+	}
+
+	if ( !numFound )
+		sprint( self, #PRINT_HIGH, "No helpers on this team\n" );
+};
+
+/*
+===========
+HelperSpectatorScan
+
+Shows details about all the helpers in the game
+===========
+*/
+void() HelperSpectatorScan = {
+	sprint(self, #PRINT_HIGH, "\n€‚ Helper Scan €‚\n");
+
+	sprintlineteam( 1 );
+	GetHelperSpectatorScan( 1 );
+
+	if ( number_of_teams > 1 ) {
+		sprintlineteam( 2 );
+		GetHelperSpectatorScan( 2 );
+
+		if ( number_of_teams > 2 ) {
+			sprintlineteam( 3 );
+			GetHelperSpectatorScan( 3 );
+
+			if ( number_of_teams > 3 ) {
+				sprintlineteam( 4 );
+				GetHelperSpectatorScan( 4 );
+			}
+		}
+	}
+
+	sprintlineb();
+};
+
+//============================================================
 
 /*
 ===========
@@ -569,7 +631,7 @@ void() Menu_Default =
 			st2 = ".. Scanner state (off)          \n.. ChaseCam state (off)         \n\n";
 	}		 
 
-	centerprint(self,"€‚ Σπεγτατος Νεξυ: €‚\n\n.. Machinery Battlefield Scan   \n.. Helpers Battlefield Scan     \n.. Player Classes Scan          \n.. Overall Balance (N/A)        \n.. SentryGun detail report      \n.. Tesla detail report          \n..                              \n",st2,"®® Hide Menu                    \n\n€‚€‚");
+	centerprint(self,"€‚ Σπεγτατος Νεξυ: €‚\n\n.. Machinery Battlefield Scan   \n.. Helpers Battlefield Scan     \n.. Player Classes Scan          \n.. Overall Balance (N/A)        \n.. SentryGun detail report      \n.. Tesla detail report          \n.. Helper detail report         \n",st2,"®® Hide Menu                    \n\n€‚€‚");
 };					  
 
 void(float inp) Menu_Default_Inp =
@@ -637,6 +699,14 @@ void(float inp) Menu_Default_Inp =
 	else if ( inp == 6 ) {
 		chargesound();
 		TeslaSpectatorScan();
+		self.has_sensor = time + #CHARGE_SENSORS_TIME;
+		Menu_Charging();
+	}
+
+	// Gizmo - added helper scan
+	else if ( inp == 7 ) {
+		chargesound();
+		HelperSpectatorScan();
 		self.has_sensor = time + #CHARGE_SENSORS_TIME;
 		Menu_Charging();
 	}
@@ -829,7 +899,7 @@ void() Menu_Charging =
 			st2 = "    Scanner state (off)          \n    ChaseCam state (off)         \n\n";
 	}		 
 	
-	centerprint(self,"€‚ Σπεγτατος Νεξυ: €‚\n\n    Machinery Battlefield Scan   \n    Helpers Battlefield Scan     \n    Player Classes Scan          \n    Overall Balance              \n    Sentry gun detail report     \n    Tesla detail report          \n                                 \n",st2,"    Hide Menu                    \n\n€‚€‚\n\nCharging sensors...");
+	centerprint(self,"€‚ Σπεγτατος Νεξυ: €‚\n\n    Machinery Battlefield Scan   \n    Helpers Battlefield Scan     \n    Player Classes Scan          \n    Overall Balance              \n    Sentry gun detail report     \n    Tesla detail report          \n    Helper detail report         \n",st2,"    Hide Menu                    \n\n€‚€‚\n\nCharging sensors...");
 	stuffcmd(self,"bf\n");
 //	centerprint(self,"Charging sensors...\n");
 };

@@ -17,6 +17,31 @@
 
 #define GRUNTY_PAINTIME 			8
 
+#define GRUNTY_MODE_FOLLOWOWNER		1
+#define GRUNTY_MODE_HOLDPOSITION		2
+#define GRUNTY_MODE_USEWAYPOINTS		3
+#define grunty_mode				penance_time
+
+#define GRUNTY_TACTICMODE_NORMAL		0
+#define GRUNTY_TACTICMODE_SEEK		1
+#define GRUNTY_TACTICMODE_STATIC		2
+#define grunty_tacticMode			is_malfunctioning
+
+#define GRUNTY_ENGAGEENEMY_NO			0
+#define GRUNTY_ENGAGEENEMY_YES		1
+#define grunty_engageEnemy			is_detpacking
+
+#define GRUNTY_ONOBSTACLE_JUMP		0
+#define GRUNTY_ONOBSTACLE_STOP		1
+#define GRUNTY_ONOBSTACLE_AUTO		2
+#define grunty_onObstacle			is_toffingadet
+
+#define GRUNTY_ATTACKRANGE_ANY		0
+#define GRUNTY_ATTACKRANGE_SMALL		1
+#define GRUNTY_ATTACKRANGE_MEDIUM		2
+#define GRUNTY_ATTACKRANGE_LARGE		3
+#define grunty_attackRange			delay_time
+
 // Function Prototypes
 // Whenever a function is added within the grunty, add it up here
 
@@ -544,8 +569,6 @@ vector () Grunty_LeadShot =
 	//lead_x = lead_x + (10 - random() * 20);
 	//lead_y = lead_y + (10 - random() * 20);
 	//------------------------------------//	self.view_ofs
-	
-	dir = normalize (loc - src);
 
 	traceline(src, targ, #TL_BSP_ONLY, self);
 	if (trace_fraction != 1.0)
@@ -556,9 +579,18 @@ vector () Grunty_LeadShot =
 	}
 	else
 	{
-		if (self.current_weapon == #WEAP_ROCKET_LAUNCHER && random() > 0.3)
-			loc_z = loc_z - self.enemy.maxs_z/2; 
+		if (self.current_weapon == #WEAP_ROCKET_LAUNCHER && random() > 0.3) {
+			loc_z = loc_z + self.enemy.mins_z/2;	// Gizmo - changed this to mins since we're aiming down and not up
 			//- OFN - makes grunty aim to the ground with RL sometimes, so evil! ^_^
+
+			// Gizmo - make sure their feet are actually visible
+			traceline( src, loc, #TL_ANY_SOLID, self );
+
+			// if feet aren't visible, aim back up
+			if ( trace_fraction != 1 )
+			if ( trace_ent != self.enemy )
+				loc_z = loc_z - self.enemy.mins_z/2;
+		}
 	}
 
 	dir = normalize (loc - src);
@@ -1644,59 +1676,6 @@ float (float angle, float dist) botmovedist =
 
 };
 
-void () Grunty_StateInv =
-{
-	local string talk;
-	
-	talk = ftos(self.health);
-	sprint(self.real_owner, #PRINT_HIGH, "Your σομδιες has ");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	talk = ftos(self.max_health);
-	sprint(self.real_owner, #PRINT_HIGH, "―");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " θεαμτθ");
-	if (self.weapons_carried & #WEAP_AXE)
-		if (self.cutf_items & #CUTF_KNIFE)
-			sprint(self.real_owner, #PRINT_HIGH, ", a combat knife");
-		else
-			sprint(self.real_owner, #PRINT_HIGH, ", an axe");
-	if (self.weapons_carried & #WEAP_SHOTGUN)
-		sprint(self.real_owner, #PRINT_HIGH, ", a shotgun");
-	if (self.weapons_carried & #WEAP_NAILGUN)
-		sprint(self.real_owner, #PRINT_HIGH, ", a nailgun");
-	if (self.weapons_carried & #WEAP_SUPER_SHOTGUN)
-		sprint(self.real_owner, #PRINT_HIGH, ", a double barreled shotgun");
-	if (self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
-		sprint(self.real_owner, #PRINT_HIGH, ", a rocket launcher");
-	if (self.tf_items & #NIT_SCANNER)
-		sprint(self.real_owner, #PRINT_HIGH, ", a scanner");
-	talk = ftos(self.custom_speed * 20);
-	sprint(self.real_owner, #PRINT_HIGH, ", moves at speed ");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	talk = ftos(self.money);
-	sprint(self.real_owner, #PRINT_HIGH, " with $");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, "\n");
-
-	sprint(self.real_owner, #PRINT_HIGH, "αννο: ");
-
-	talk = ftos(self.ammo_shells);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " shells, ");
-
-		talk = ftos(self.ammo_nails);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " nails and ");
-
-	/*	  talk = ftos(self.ammo_cells);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " cells\n");*/
-
-	talk = ftos(self.ammo_rockets);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " rockets\n");
-};
-
 /* ---------------------------------------------------------------------------------- */
 //						GRUNTY - PART SIX
 //					Time to Die
@@ -2702,4 +2681,204 @@ void(entity sld) grunty_boundammo =
 	if (sld.ammo_cells > sld.maxammo_cells) sld.ammo_cells = sld.maxammo_cells;
 	if (sld.ammo_shells > sld.maxammo_shells) sld.ammo_shells = sld.maxammo_shells;
 	if (sld.ammo_rockets > sld.maxammo_rockets) sld.ammo_rockets = sld.maxammo_rockets;
+};
+
+//=====================================================================
+
+/*
+==============
+Grunty_GetTacticModeString
+==============
+*/
+string( entity g ) Grunty_GetTacticModeString = {
+	if ( g.#grunty_tacticMode == #GRUNTY_TACTICMODE_NORMAL )
+		return "normal";
+	if ( g.#grunty_tacticMode == #GRUNTY_TACTICMODE_SEEK )
+		return "seek";
+	return "static";
+};
+
+/*
+==============
+Grunty_GetEngageEnemyString
+==============
+*/
+string( entity g ) Grunty_GetEngageEnemyString = {
+	if ( g.#grunty_engageEnemy == #GRUNTY_ENGAGEENEMY_NO )
+		return "no";
+	return "yes";
+};
+
+/*
+==============
+Grunty_GetOnObstacleString
+==============
+*/
+string( entity g ) Grunty_GetOnObstacleString = {
+	if ( g.#grunty_onObstacle == #GRUNTY_ONOBSTACLE_JUMP )
+		return "jump";
+	if ( g.#grunty_onObstacle == #GRUNTY_ONOBSTACLE_STOP )
+		return "stop";
+	return "auto";
+};
+
+/*
+==============
+Grunty_GetAttackRangeString
+
+Returns an empty string if attack range doesn't apply with
+the current tactic mode.
+==============
+*/
+string( entity g ) Grunty_GetAttackRangeString = {
+	if ( g.#grunty_tacticMode == #GRUNTY_TACTICMODE_STATIC )
+		return "";
+
+	if ( g.#grunty_attackRange == #GRUNTY_ATTACKRANGE_ANY )
+		return "any";
+	if ( g.#grunty_attackRange == #GRUNTY_ATTACKRANGE_SMALL )
+		return "small";
+	if ( g.#grunty_attackRange == #GRUNTY_ATTACKRANGE_MEDIUM )
+		return "medium";
+	return "large";
+};
+
+/*
+==============
+Grunty_GetActionString
+
+printDest can be world.
+==============
+*/
+string( entity printDest, entity g ) Grunty_GetActionString = {
+	if ( g.#grunty_mode == #GRUNTY_MODE_HOLDPOSITION )
+		return "holding position";
+	if ( g.#grunty_mode == #GRUNTY_MODE_FOLLOWOWNER ) {
+		if ( printDest == g.real_owner )
+			return "following you";
+		return "following it's owner";
+	}
+	return "following waypoints";
+};
+
+/*
+==============
+Grunty_PrintDetails
+
+Gizmo - This used to be Grunty_StateInv(), I changed
+it up some because I needed a more generic version of it.
+==============
+*/
+void( entity printDest, entity g, float printLevel ) Grunty_PrintDetails = {
+	local string	talk;
+	
+	talk = ftos(g.health);
+	if ( printDest == g.real_owner )
+		sprint(printDest, #PRINT_HIGH, "Your σομδιες ", g.netname, " has ");
+	else
+		sprint(printDest, #PRINT_HIGH, "The σομδιες ", g.netname, " has ");
+	sprint(printDest, #PRINT_HIGH, talk);
+	talk = ftos(g.max_health);
+	sprint(printDest, #PRINT_HIGH, "―");
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " θεαμτθ");
+
+	// if we don't care about the inventory
+	if ( !printLevel ) {
+		if ( g.enemy != world ) {
+			talk = GetEnemyName( g.enemy );
+			sprint( printDest, #PRINT_HIGH, ", and is ατταγλιξη ", talk, "\n" );
+		} else {
+			talk = Grunty_GetActionString( printDest, g );
+			sprint( printDest, #PRINT_HIGH, ", and is ", talk, "\n" );
+		}
+		return;
+	}
+
+	if (g.weapons_carried & #WEAP_AXE)
+		if (g.cutf_items & #CUTF_KNIFE)
+			sprint(printDest, #PRINT_HIGH, ", a combat knife");
+		else
+			sprint(printDest, #PRINT_HIGH, ", an axe");
+	if (g.weapons_carried & #WEAP_SHOTGUN)
+		sprint(printDest, #PRINT_HIGH, ", a shotgun");
+	if (g.weapons_carried & #WEAP_NAILGUN)
+		sprint(printDest, #PRINT_HIGH, ", a nailgun");
+	if (g.weapons_carried & #WEAP_SUPER_SHOTGUN)
+		sprint(printDest, #PRINT_HIGH, ", a double barreled shotgun");
+	if (g.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+		sprint(printDest, #PRINT_HIGH, ", a rocket launcher");
+	if (g.tf_items & #NIT_SCANNER)
+		sprint(printDest, #PRINT_HIGH, ", a scanner");
+	talk = ftos(g.custom_speed * 20);
+	sprint(printDest, #PRINT_HIGH, ", moves at speed ");
+	sprint(printDest, #PRINT_HIGH, talk);
+	talk = ftos(g.money);
+	sprint(printDest, #PRINT_HIGH, " with $");
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, ", and is ");
+
+	if ( g.enemy != world ) {
+		talk = GetEnemyName( g.enemy );
+		sprint( printDest, #PRINT_HIGH, "ατταγλιξη ", talk, "\n" );
+	} else {
+		talk = Grunty_GetActionString( printDest, g );
+		sprint( printDest, #PRINT_HIGH, talk, "\n" );
+	}
+
+	sprint(printDest, #PRINT_HIGH, "αννο: ");
+
+	talk = ftos(g.ammo_shells);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " shells, ");
+
+		talk = ftos(g.ammo_nails);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " nails and ");
+
+	/*	  talk = ftos(g.ammo_cells);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " cells\n");*/
+
+	talk = ftos(g.ammo_rockets);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " rockets\n");
+
+	if ( printLevel != 2 )
+		return;
+
+	// tactical stuff now
+	talk = Grunty_GetTacticModeString( g );
+	sprint( printDest, #PRINT_HIGH, "Ταγτιγ νοδε:", talk );
+
+	talk = Grunty_GetEngageEnemyString( g );
+	sprint( printDest, #PRINT_HIGH, " Εξηαηε εξενω:", talk );
+
+	talk = Grunty_GetOnObstacleString( g );
+	sprint( printDest, #PRINT_HIGH, " Οξ οβσταγμε:", talk );
+
+	talk = Grunty_GetAttackRangeString( g );
+	if ( talk != "" )
+		sprint( printDest, #PRINT_HIGH, " Ατταγλ ςαξηε:", talk );
+	sprint( printDest, #PRINT_HIGH, "\n" );
+
+/*
+	// allowed weapons
+	sprint( printDest, #PRINT_HIGH, " Allowed weapons: " );
+	if ( !g.#allowed_weapons )
+		sprint( printDest, #PRINT_HIGH, " None\n" );
+	else {
+		if ( g.#allowed_weapons & #WEAP_AXE )
+			sprint( printDest, #PRINT_HIGH, " Axe" );
+		if ( g.#allowed_weapons & #WEAP_SHOTGUN )
+			sprint( printDest, #PRINT_HIGH, " Shotgun" );
+		if ( g.#allowed_weapons & #WEAP_SUPER_SHOTGUN )
+			sprint( printDest, #PRINT_HIGH, " Super Shotgun" );
+		if ( g.#allowed_weapons & #WEAP_NAILGUN )
+			sprint( printDest, #PRINT_HIGH, " Nailgun" );
+		if ( g.#allowed_weapons & #WEAP_ROCKET_LAUNCHER )
+			sprint( printDest, #PRINT_HIGH, " Rocket Launcher" );
+	}
+	sprint( printDest, #PRINT_HIGH, "\n" );
+*/
 };

@@ -2026,7 +2026,18 @@ void() DropBackpack =
 	setmodel (newmis, "progs/backpack.mdl");
 	setsize (newmis, '-16 -16 0', '16 16 56');
 	newmis.touch = BackpackTouch;
-	
+
+#ifdef COOP_MODE_ENHANCED
+	local float r;
+
+	if ( self.endtime > 0 && COOP_IsCoopMonster( self ) ) {
+		r = random();
+		if ( r < 0.5 )
+			r = 0.5 + random()*0.5;
+
+		newmis.nextthink = time + self.endtime*r;
+	} else
+#endif
 	newmis.nextthink = time + 20;	// remove after 2 minutes
 	newmis.think = SUB_Remove;
 };

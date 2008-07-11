@@ -856,6 +856,34 @@ string(entity thething) GetEnemyName =
 	return "unknown stuff";
 };
 
+/*
+===============
+PrintOwnedMonsterInfo
+
+Prints basic information about the specified owned monster.
+===============
+*/
+void( entity printDest, entity thething ) PrintOwnedMonsterInfo = {
+	if ( IsSummon( thething ) )
+		Summon_PrintDetails( printDest, thething );
+	else
+		Grunty_PrintDetails( printDest, thething, 0 );
+};
+
+/*
+===============
+PrintOwnedMonsterDetails
+
+Prints detailed information about the specified owned monster.
+===============
+*/
+void( entity printDest, entity thething ) PrintOwnedMonsterDetails = {
+	if ( IsSummon( thething ) )
+		Summon_PrintDetails( printDest, thething );
+	else
+		Grunty_PrintDetails( printDest, thething, 2 );
+};
+
 //======================================================//
 void() ExpBodyThink;
 

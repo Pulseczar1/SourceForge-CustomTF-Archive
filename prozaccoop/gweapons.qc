@@ -24,9 +24,26 @@ Zero-Gravity gun
 .float	oldmovetype;
 
 float		unlockedZeroGrav;							// set to TRUE if unlocked
+entity	solidTestEntity;
 
 void (entity pickuper, float toss) zg_drop;
 float (entity pickupee) zg_getpickupdist;
+
+
+/*
+===============
+RemoveTestEntity
+
+This is just used to remove the test entity after
+half a second, to avoid create and removing a bunch
+of entities and causing the server's sv.num_edicts to
+increase a great deal.
+===============
+*/
+void() RemoveTestEntity = {
+	solidTestEntity = world;
+	remove( self );
+};
 
 
 /*
@@ -37,7 +54,7 @@ float (entity pickupee) zg_getpickupdist;
 
 float (entity ent) InSolid =
 {
-	local entity tent, oself;
+	local entity oself;
 	local vector oldownerorg, oldorg, neworg;
 	local float ret;
 
@@ -72,30 +89,37 @@ float (entity ent) InSolid =
 	return ret;
 */
 
-	// 2/28/08: since we can't use ent.owner as the owner for tent.owner, link ent.owner out of the way
+	// 2/28/08: since we can't use ent.owner as the owner for solidTestEntity.owner, link ent.owner out of the way
 	if ( ent.owner != world ) {
 		oldownerorg = ent.owner.origin;
 		ent.owner.origin_z = ent.owner.origin_z + ent.owner.maxs_z * 2;
 		setorigin( ent.owner, ent.owner.origin + '0 0 200' );
 	}
 
-	tent = spawn ();
-	tent.owner = ent;
-	tent.solid = #SOLID_SLIDEBOX;
-	tent.movetype = #MOVETYPE_STEP;
-	//tent.flags = #FL_FLY;
-	tent.flags = #FL_ONGROUND | #FL_PARTIALGROUND;
-	setsize (tent, ent.mins, ent.maxs);
-	setorigin (tent, ent.origin);
+	// don't spam a bunch of entity spawn() and remove() calls if this is called often
+	if ( !solidTestEntity ) {
+		solidTestEntity = spawn();
+		solidTestEntity.think = RemoveTestEntity;
+	}
+
+	solidTestEntity.nextthink = time + 0.6;
+
+	solidTestEntity.owner = ent;
+	solidTestEntity.solid = #SOLID_SLIDEBOX;
+	solidTestEntity.movetype = #MOVETYPE_STEP;
+	//solidTestEntity.flags = #FL_FLY;
+	solidTestEntity.flags = #FL_ONGROUND | #FL_PARTIALGROUND;
+	setsize (solidTestEntity, ent.mins, ent.maxs);
+	setorigin (solidTestEntity, ent.origin);
 
 // check if we're inside something
 	oself = self;
-	self = tent;
+	self = solidTestEntity;
 
-	oldorg = tent.origin;
+	oldorg = solidTestEntity.origin;
 	ret = walkmove (0, 0);
-	neworg = tent.origin;
-	setorigin (tent, oldorg);
+	neworg = solidTestEntity.origin;
+	setorigin (solidTestEntity, oldorg);
 
 	if (oldorg != neworg && !droptofloor())
 		ret = #FALSE;
@@ -106,7 +130,11 @@ float (entity ent) InSolid =
 	if ( ent.owner != world )
 		setorigin( ent.owner, oldownerorg );
 
-	remove (tent);
+	// make sure the test entity can't interact with anything now
+	solidTestEntity.solid = #SOLID_NOT;
+	solidTestEntity.movetype = #MOVETYPE_NONE;
+	solidTestEntity.owner = world;
+
 	return !ret;
 //	return qc_droptofloor (ent, 4096, #TRUE);
 };
@@ -158,7 +186,7 @@ float (entity source, entity targ) zg_infront =
 	local vector	vec;
 	local float		dot;
 	
-	makevectors (source.angles);
+	makevectors (source.angles);	// BUG: this makes up and down not work, use .v_angle for players instead
 
 	vec = normalize (targ.origin - source.origin);
 	dot = vec * v_forward;
@@ -271,7 +299,7 @@ void () zg_think =
 		}
 	}
 
-	// check if the pickuper is dead, FIXME: change if pickuper left
+	// check if the pickuper is dead
 	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "" || !pickuper.is_connected) {	// *
 		zg_drop (pickuper, #FALSE);
 		return;

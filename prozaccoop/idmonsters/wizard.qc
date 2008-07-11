@@ -343,10 +343,7 @@ void()	_wiz_run10	=[	$fly10,		_wiz_run11	] {COOP_Run(16);};
 void()	_wiz_run11	=[	$fly11,		_wiz_run12	] {COOP_Run(16);};
 void()	_wiz_run12	=[	$fly12,		_wiz_run13	] {COOP_Run(16);};
 void()	_wiz_run13	=[	$fly13,		_wiz_run14	] {COOP_Run(16);};
-void()	_wiz_run14	=[	$fly14,		_wiz_run1	] {COOP_Run(16);
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-};
+void()	_wiz_run14	=[	$fly14,		_wiz_run1	] {COOP_Run(16);};
 
 void()	_wiz_fast1	=[	$magatt1,		_wiz_fast2	] {COOP_Turn();_Wiz_StartFast();};
 void()	_wiz_fast2	=[	$magatt2,		_wiz_fast3	] {COOP_Turn();};

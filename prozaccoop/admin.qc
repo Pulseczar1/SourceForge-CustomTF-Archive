@@ -1200,60 +1200,221 @@ void() monster_fish;
 void() monster_hell_knight;
 void() monster_tarbaby;
 
-void( string monster_classname ) Admin_Spawn = {
-	local entity e, oldself;
-	local vector vec;
+/*
+===============
+Admin_SpawnEntityAtLocation
+
+This is a local function used to spawn an admin spawnable
+entity at the specified location.
+NOTE: does not check if the location is valid.
+===============
+*/
+entity( string entity_classname, vector pos ) Admin_SpawnEntityAtLocation = {
+	local entity	e, oldself;
+
+	e = spawn();
+	setorigin( e, pos );
+
+	oldself = self;
+	self = e;
+	if ( entity_classname == "monster_zombie" )
+		monster_zombie ();
+	else if ( entity_classname == "monster_shambler" )
+		monster_shambler ();
+	else if ( entity_classname == "monster_knight" )
+		monster_knight ();
+	else if ( entity_classname == "monster_enforcer" )
+		monster_enforcer ();
+	else if ( entity_classname == "monster_demon1" )
+		monster_demon1 ();
+	else if ( entity_classname == "monster_army" )
+		monster_army ();
+	else if ( entity_classname == "monster_ogre" )
+		monster_ogre ();
+	else if ( entity_classname == "monster_shalrath" )
+		monster_shalrath ();
+	else if ( entity_classname == "monster_wizard" )
+		monster_wizard ();
+	else if ( entity_classname == "monster_dog" )
+		monster_dog ();
+	else if ( entity_classname == "monster_fish" )
+		monster_fish ();
+	else if ( entity_classname == "monster_hell_knight" )
+		monster_hell_knight ();
+	else if ( entity_classname == "monster_tarbaby" )
+		monster_tarbaby ();
+	else {
+		self = oldself;
+		remove( e );
+		return world;
+	}
+	self = oldself;
+
+	e.lives = 0;
+	e.endtime = 5;		// remove corpses and gibs after around 5 seconds
+
+	return e;
+};
+
+/*
+===============
+Admin_Spawn
+
+Tries to spawn the the specified type of entity near self's origin.
+===============
+*/
+void( string entity_classname, float entity_team ) Admin_Spawn = {
+	local entity	e;
+	local vector	vec;
+	local string	tmps;
 
 	vec = self.v_angle;
 	vec_z = 0;
 	makevectors( vec );
 	traceline( self.origin + '0 0 16', ( self.origin + '0 0 16' ) + v_forward * 128, #TL_ANY_SOLID, self );
 
-	e = spawn();
-	setorigin( e, trace_endpos );
-
-	oldself = self;
-	self = e;
-	if ( monster_classname == "monster_zombie" )
-		monster_zombie ();
-	else if ( monster_classname == "monster_shambler" )
-		monster_shambler ();
-	else if ( monster_classname == "monster_knight" )
-		monster_knight ();
-	else if ( monster_classname == "monster_enforcer" )
-		monster_enforcer ();
-	else if ( monster_classname == "monster_demon1" )
-		monster_demon1 ();
-	else if ( monster_classname == "monster_army" )
-		monster_army ();
-	else if ( monster_classname == "monster_ogre" )
-		monster_ogre ();
-	else if ( monster_classname == "monster_shalrath" )
-		monster_shalrath ();
-	else if ( monster_classname == "monster_wizard" )
-		monster_wizard ();
-	else if ( monster_classname == "monster_dog" )
-		monster_dog ();
-	else if ( monster_classname == "monster_fish" )
-		monster_fish ();
-	else if ( monster_classname == "monster_hell_knight" )
-		monster_hell_knight ();
-	else if ( monster_classname == "monster_tarbaby" )
-		monster_tarbaby ();
-	else {
-		self = oldself;
-		remove( e );
-		sprint( self, #PRINT_HIGH, "Unknown monster classname\n" );
+	// spawn the entity at the location
+	e = Admin_SpawnEntityAtLocation( entity_classname, trace_endpos );
+	if ( !e ) {
+		sprint( self, #PRINT_HIGH, "Unknown entity classname\n" );
 		return;
 	}
-	self = oldself;
-
-	e.lives = 0;
 
 	if ( InSolid( e ) ) {
 		remove( e );
-		sprint( self, #PRINT_HIGH, "Monster spawn position not valid!\n" );
+		sprint( self, #PRINT_HIGH, "Entity spawn position not valid!\n" );
 		return;
 	}
+
+	if ( entity_team )
+		e.team_no = entity_team;
+
+	if ( entity_team ) {
+		tmps = ftos( entity_team );
+		bprint( #PRINT_HIGH, "The admin ", self.netname, " spawns a ", entity_classname, " on team ", tmps, "\n" );
+	} else
+		bprint( #PRINT_HIGH, "The admin ", self.netname, " spawns a ", entity_classname, "\n" );
+};
+
+/*
+===============
+Admin_MassSpawn
+
+Tries to spawn the specified amount of the specified type of
+entity near self's origin.
+===============
+*/
+void( string entity_classname, float entity_team, float ecount ) Admin_MassSpawn = {
+	local entity	e;
+	local vector	vec;
+	local vector	tempOrigin;
+	local string	tmps;
+	local float		biggestSide, ftmp;
+	local float		numSpawned;
+	local float		maxCount;
+
+	// don't allow too many to prevent invisible monsters
+	if ( ecount > 50 ) {
+		sprint( self, #PRINT_HIGH, "You cannot spawn more than 50 entities at a time!\n" );
+		return;
+	}
+
+	// default to 4 if 0 is specified
+	if ( !ecount )
+		ecount = 4;
+
+	// only allow up to 200 tries to find a good spot
+	maxCount = 200;
+
+	e = world;
+	biggestSide = numSpawned = 0;
+
+	// set the initial vectors
+	vec = self.v_angle;
+	vec_z = 0;
+	makevectors( vec );
+
+	// set the initial origin
+	tempOrigin = self.origin + v_forward * 128;
+
+	// make the vectors flat from here on in
+	vec_z = vec_x = 0;
+	vec_y = self.v_angle_y;
+	makevectors( vec );
+	vec = v_forward;
+
+	// spawn as many as possible
+	while ( numSpawned < ecount && maxCount ) {
+		// spawn the entity at the location
+		if ( !e ) {
+			e = Admin_SpawnEntityAtLocation( entity_classname, tempOrigin );
+			if ( !e ) {
+				sprint( self, #PRINT_HIGH, "Unknown entity classname\n" );
+				return;
+			}
+		} else
+			setorigin( e, tempOrigin );
+
+		// get the biggest side
+		if ( !biggestSide ) {
+			biggestSide = ( e.mins_x * -1 ) + e.maxs_x;
+			ftmp = ( e.mins_y * -1 ) + e.maxs_y;
+			if ( ftmp > biggestSide )
+				biggestSide = ftmp;
+
+			biggestSide = biggestSide + biggestSide / 2;
+		}
+
+		// check for invalid positions
+		traceline( e.origin, e.origin + v_up * -8192, #TL_BSP_ONLY, e );
+
+		// if the entity's current position isn't valid, then keep it and try it somewhere else
+		if ( trace_fraction == 1 || InSolid( e ) ) {
+			// stop trying if the first monster isn't valid
+			if ( !numSpawned ) {
+				remove( e );
+				sprint( self, #PRINT_HIGH, "Entity spawn position not valid!\n" );
+				return;
+			}
+
+			// backup and try a new direction
+			tempOrigin = tempOrigin - vec * biggestSide;
+
+			// randomize the direction a little
+			ftmp = random();
+			if ( ftmp <= 0.25 )
+				vec = v_forward;
+			else if ( ftmp <= 0.5 )
+				vec = v_forward * -1;
+			else if ( ftmp <= 0.75 )
+				vec = v_right;
+			else
+				vec = v_right * -1;
+		} else {
+			if ( entity_team )
+				e.team_no = entity_team;
+
+			e = world;					// spawn a new one now
+			numSpawned = numSpawned + 1;
+		}
+
+		// update origin and ecount
+		tempOrigin = tempOrigin + vec * biggestSide;
+		maxCount = maxCount - 1;
+	}
+
+	// remove the last monster if it didn't spawn
+	if ( e )
+		remove( e );
+
+	tmps = ftos( numSpawned );
+	sprint( self, #PRINT_HIGH, tmps, " entities spawned\n" );
+
+	if ( entity_team ) {
+		bprint( #PRINT_HIGH, "The admin ", self.netname, " spawns ", tmps, " " );
+		tmps = ftos( entity_team );
+		bprint( #PRINT_HIGH, entity_classname, " entities on team ", tmps, "\n" );
+	} else
+		bprint( #PRINT_HIGH, "The admin ", self.netname, " spawns ", tmps, " ", entity_classname, " entities\n" );
 };
 #endif

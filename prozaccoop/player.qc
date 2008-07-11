@@ -120,7 +120,7 @@ PLAYER
 void() player_touch =
 {
 	//local entity te;
-	
+
 	// Spies and Scouts can uncloak enemy spies
 	// WK Or those with Spy kits & Scanners
 	if (invis_only == #FALSE && (self.cutf_items & #CUTF_SPY_KIT || other.cutf_items & #CUTF_SPY_KIT))

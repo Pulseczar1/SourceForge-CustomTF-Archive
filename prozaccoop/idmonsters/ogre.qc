@@ -232,10 +232,7 @@ void() ogre_run4	=[	$run4,		ogre_run5	] {COOP_Run(22);};
 void() ogre_run5	=[	$run5,		ogre_run6	] {COOP_Run(16);};
 void() ogre_run6	=[	$run6,		ogre_run7	] {COOP_Run(4);};
 void() ogre_run7	=[	$run7,		ogre_run8	] {COOP_Run(13);};
-void() ogre_run8	=[	$run8,		ogre_run1	] {COOP_Run(24);
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-};
+void() ogre_run8	=[	$run8,		ogre_run1	] {COOP_Run(24);};
 
 void() ogre_swing1	=[	$swing1,		ogre_swing2	] {ai_charge(11);
 sound (self, #CHAN_WEAPON, "ogre/ogsawatk.wav", 1, #ATTN_NORM);

@@ -120,10 +120,7 @@ void()	army_run4	=[	$run4,		army_run5	] {COOP_Run(10);};
 void()	army_run5	=[	$run5,		army_run6	] {COOP_Run(8);};
 void()	army_run6	=[	$run6,		army_run7	] {COOP_Run(15);};
 void()	army_run7	=[	$run7,		army_run8	] {COOP_Run(10);};
-void()	army_run8	=[	$run8,		army_run1	] {COOP_Run(8);
-	if (self.enemy.health <= 0 || self.enemy == world)
-		self.th_stand ();
-};
+void()	army_run8	=[	$run8,		army_run1	] {COOP_Run(8);};
 
 void()	army_atk1	=[	$shoot1,	army_atk2	] {
 //	if (COOP_SightBlocked(self, self.enemy)) {
@@ -293,6 +290,54 @@ float() ArmyOnSight =
 };
 
 
+/*
+============
+_SoldierCheckAttack
+============
+*/
+float() _SoldierCheckAttack = {
+	local vector	spot1, spot2;	
+	local entity	targ;
+	local float		chance;
+
+	targ = self.enemy;
+
+// see if any entities are in the way of the shot
+	spot1 = self.origin + self.view_ofs;
+	spot2 = targ.origin + targ.view_ofs;
+
+	traceline( spot1, spot2, #TL_ANY_SOLID, self );
+
+	if ( trace_ent != targ )
+		return #FALSE;	// don't have a clear shot
+
+// missile attack
+	enemy_range = range( self.enemy );
+
+	if ( enemy_range == #RANGE_FAR )
+		return #FALSE;
+		
+	if ( enemy_range == #RANGE_MELEE )
+		chance = 0.9;
+	else if ( enemy_range == #RANGE_NEAR )
+		chance = 0.4;
+	else if ( enemy_range == #RANGE_MID )
+		chance = 0.05;
+	else
+		chance = 0;
+
+	if ( random() < chance ) {
+//		Attack_Finished( 1 + random() );
+		if ( random() < 0.3 )
+			self.lefty = !self.lefty;
+
+		return #TRUE;
+	}
+
+	return #FALSE;
+};
+
+
 /*QUAKED monster_army (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
 void() monster_army =
@@ -349,6 +394,7 @@ void() monster_army =
 	self.is_connected = #TRUE;
 
 	self.OnNoticeEnemy = ArmyOnSight;
+	self.OnPreAttack = _SoldierCheckAttack;
 	self.#npc_spawnfunc = monster_army;
 	COOP_SetLives ();
 

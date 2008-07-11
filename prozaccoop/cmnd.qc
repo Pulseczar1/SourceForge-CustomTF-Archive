@@ -1408,20 +1408,43 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 				}
 
 				return #TRUE;
-		} else if (!strcasecmp(arg2, "use")) {
-			Admin_Use ();
-			return #TRUE;
-		}
-
-#ifdef COOP_MODE_ENHANCED
-		else if ( !strcasecmp( arg2, "spawn" ) ) {
-			if ( num_args < 3 ) {
-				sprint( self, #PRINT_HIGH, "You must specify a monster classname!\n" );
+			} else if (!strcasecmp(arg2, "use")) {
+				Admin_Use ();
 				return #TRUE;
 			}
-			Admin_Spawn( arg3 );
-			return #TRUE;
-		}
+
+#ifdef COOP_MODE_ENHANCED
+			else if ( !strcasecmp( arg2, "spawn" ) ) {
+				if ( num_args < 3 ) {
+					sprint( self, #PRINT_HIGH, "You must specify a monster classname!\nSyntaxº cmd admin spawn <classname> [team]\n" );
+					return #TRUE;
+				}
+
+				if ( num_args == 3 )
+					Admin_Spawn( arg3, 0 );
+				else {
+					tmpf = stof( arg4 );
+					Admin_Spawn( arg3, tmpf );
+				}
+				return #TRUE;
+			} else if ( !strcasecmp( arg2, "mass_spawn" ) ) {
+				if ( num_args < 3 ) {
+					sprint( self, #PRINT_HIGH, "You must specify a monster classname!\nSyntaxº cmd admin mass_spawn <classname> [count] [team]\n" );
+					return #TRUE;
+				}
+
+				if ( num_args == 3 )
+					Admin_MassSpawn( arg3, 0, 0 );
+				else if ( num_args == 4 ) {
+					tmpf = stof( arg4 );
+					Admin_MassSpawn( arg3, 0, tmpf );
+				} else if ( num_args == 5 ) {
+					tmpf = stof( arg4 );
+					tmpf2 = stof( arg5 );
+					Admin_MassSpawn( arg3, tmpf2, tmpf );
+				}
+				return #TRUE;
+			}
 #endif
 		}
 

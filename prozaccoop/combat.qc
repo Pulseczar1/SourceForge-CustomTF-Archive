@@ -258,8 +258,15 @@ void(entity targ, entity attacker) Killed =
 	if (self.flags & #FL_MONSTER)
 #endif
 	{
-		killed_monsters = killed_monsters + 1;
-		WriteByte (#MSG_ALL, #SVC_KILLEDMONSTER);
+#ifdef COOP_MODE_ENHANCED
+		if ( !( self.spawnflags & #SPAWN_DONTCOUNT ) )
+		if ( number_of_teams > 1 || !Teammate( self.team_no, 1 ) ) {		// don't count friendly monsters
+#endif
+			killed_monsters = killed_monsters + 1;
+			WriteByte (#MSG_ALL, #SVC_KILLEDMONSTER);
+#ifdef COOP_MODE_ENHANCED
+		}
+#endif
 	}
 
 	ClientObituary(self, attacker);

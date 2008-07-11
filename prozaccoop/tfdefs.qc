@@ -7,6 +7,7 @@
 #define team_damage_dealt			cnt				// total amount of team damage this player has dealt
 #define enemy_damage_dealt			volume			// total amount of damage done to enemies only
 #define damage_taken				distance			// player that took the most amount of damage from enemies
+#define teleporter_teamkiller			trigger_field		// a teammate that teleported us into lava (requires teleporter.qc, client.qc: PlayerPostThink(), and obits.qc)
 
 // grunt.qc
 #define allowed_weapons				wait				// weapons the grunt can use
