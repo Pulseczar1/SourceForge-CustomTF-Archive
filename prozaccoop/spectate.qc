@@ -341,7 +341,7 @@ void( float team_num ) GetHelperSpectatorScan = {
 	}
 
 	if ( !numFound )
-		sprint( self, #PRINT_HIGH, "No helpers on this team\n" );
+		sprint( self, #PRINT_HIGH, "No helpers on this team.\n" );
 };
 
 /*
