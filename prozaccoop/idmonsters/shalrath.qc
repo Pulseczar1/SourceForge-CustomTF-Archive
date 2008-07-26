@@ -222,6 +222,11 @@ float() ShalOnSight =
 */
 void() monster_shalrath =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_shalrath";
 
 	if (!server_spawned) {

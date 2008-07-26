@@ -579,17 +579,20 @@ vector () Grunty_LeadShot =
 	}
 	else
 	{
+		//- OFN - makes grunty aim to the ground with RL sometimes, so evil! ^_^
 		if (self.current_weapon == #WEAP_ROCKET_LAUNCHER && random() > 0.3) {
-			loc_z = loc_z + self.enemy.mins_z/2;	// Gizmo - changed this to mins since we're aiming down and not up
-			//- OFN - makes grunty aim to the ground with RL sometimes, so evil! ^_^
+			// Gizmo - made a lot of changes to make him aim at feet better
+			if ( self.enemy.flags & #FL_ONGROUND ) {
+				loc_z = self.enemy.absmin_z;
 
-			// Gizmo - make sure their feet are actually visible
-			traceline( src, loc, #TL_ANY_SOLID, self );
+				// Gizmo - make sure their feet are actually visible
+				traceline( src, loc, #TL_ANY_SOLID, self );
 
-			// if feet aren't visible, aim back up
-			if ( trace_fraction != 1 )
-			if ( trace_ent != self.enemy )
-				loc_z = loc_z - self.enemy.mins_z/2;
+				// if feet aren't visible, aim back up
+				if ( trace_fraction != 1 )
+				if ( trace_ent != self.enemy )
+					loc_z = self.enemy.origin_z;
+			}
 		}
 	}
 

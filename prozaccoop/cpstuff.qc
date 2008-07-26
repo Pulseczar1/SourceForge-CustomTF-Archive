@@ -177,15 +177,28 @@ void (float startup) UpdateInfos =
 
 	st = infokey(world, "army_delay"); //
 #ifdef COOP_MODE_ENHANCED
-	if (st == string_null)
-		st = "2";
+	if ( st == string_null ) {
+		if ( !deathmatch )
+			st = "2";
+		else
+			st = "5";
+	}
 #else
 	if (st==string_null) st="5"; //was 5 ,sets default
 #endif
 	army_delay = stof(st);
 #ifdef COOP_MODE_ENHANCED
-	if (army_delay < 1 ) army_delay = 1; // the allowed minimum 
-	else if (army_delay > 60) army_delay = 60; //the allowed maximum
+	if ( !deathmatch ) {
+		if ( army_delay < 1 )
+			army_delay = 1; // the allowed minimum 
+		else if ( army_delay > 60 )
+			army_delay = 60; //the allowed maximum
+	} else {
+		if ( army_delay < 2 )
+			army_delay = 2; // the allowed minimum 
+		else if ( army_delay > 60 )
+			army_delay = 60; //the allowed maximum
+	}
 #else
 	if (army_delay < 2 ) army_delay = 2; // the allowed minimum 
 	else if (army_delay > 60) army_delay = 60; //the allowed maximum
@@ -1140,7 +1153,6 @@ entity() GetBestPlayer =
 	local entity theplayer, search;
 
 	theplayer = world;
-	search = world;
 	bestscore = 0;
 
 	search = find (world, classname, "player");
@@ -1164,7 +1176,6 @@ entity() GetBestKiller =
 	local entity theplayer, search;
 
 	theplayer = world;
-	search = world;
 	bestscore = 0;
 
 	search = find (world, classname, "player");
@@ -1182,67 +1193,64 @@ entity() GetBestKiller =
 	return theplayer;
 };
 
-#ifdef EOG_BESTTEAMKILLER
 // Gizmo
-entity() GetBestTeamKiller =
-{
-	local entity bestplayer, head;
+entity() GetBestTeamKiller = {
+	local entity	bestplayer, head;
+	local float		bestValue;
 
-	head		= world;
-	bestplayer	= world;
+	bestValue = 0;
+	bestplayer = world;
 
-	do {
-		head = find (head, classname, "player");
-
-		if (head.#team_damage_dealt > bestplayer.#team_damage_dealt)
+	head = find( world, classname, "player" );
+	while ( head ) {
+		if ( head.#team_damage_dealt > bestValue ) {
+			bestValue = head.#team_damage_dealt;
 			bestplayer = head;
-	} while (head != world);
+		}
+
+		head = find( head, classname, "player" );
+	}
 
 	return bestplayer;
 };
-entity() GetBestDamager =
-{
+entity() GetBestDamager = {
 	local entity	bestplayer, head;
 	local float		bestvalue;
 
-	head		= world;
 	bestplayer	= world;
 	bestvalue	= 0;
 
-	head = find (world, classname, "player");
-	while (head != world) {
-		if (head.#enemy_damage_dealt > bestvalue) {
+	head = find( world, classname, "player" );
+	while ( head ) {
+		if ( head.#enemy_damage_dealt > bestvalue ) {
 			bestplayer = head;
 			bestvalue = head.#enemy_damage_dealt;
 		}
 
-		head = find (head, classname, "player");
+		head = find( head, classname, "player" );
 	}
 
 	return bestplayer;
 };
-entity() GetBiggestTarget =
-{
+entity() GetBiggestTarget = {
 	local entity	bestplayer, head;
 	local float		bestvalue;
 
-	head		= world;
 	bestplayer	= world;
 	bestvalue	= 0;
 
-	head = find (world, classname, "player");
-	while (head != world) {
-		if (head.#damage_taken > bestvalue) {
+	head = find( world, classname, "player" );
+	while ( head ) {
+		if ( head.#damage_taken > bestvalue ) {
 			bestplayer = head;
 			bestvalue = head.#damage_taken;
 		}
 
-		head = find (head, classname, "player");
+		head = find( head, classname, "player" );
 	}
 
 	return bestplayer;
 };
-#endif
 
 void() bprintline =
 {
@@ -1327,7 +1335,6 @@ void() PrintResults =
 	else
 		bprint(#PRINT_HIGH,"None");
 
-#ifdef EOG_BESTTEAMKILLER
 	// Gizmo - player that dealt the most damage
 	bprint(#PRINT_HIGH,"\nÍïóô Äáíáçå: ");
 	theplayer = GetBestDamager();
@@ -1384,7 +1391,6 @@ void() PrintResults =
 	}
 	else
 		bprint(#PRINT_HIGH,"None");
-#endif
 
 	bprint(#PRINT_HIGH,"\n");
 	bprintline();
@@ -3812,12 +3818,12 @@ void(entity corpse) GibCorpse =
 	}
 #ifdef COOP_MODE_ENHANCED
 	else if ( COOP_IsCoopMonster( self ) ) {
-		if (self.mdl != string_null)
-			ThrowMonsterHead (self.mdl, 0);
+		if ( self.mdl != string_null )
+			ThrowMonsterHead( self.mdl, 0 );
 
-		ThrowGib("progs/gib1.mdl", -40, #TRUE, 0, #GIB1_KGS, #FALSE);
-		ThrowGib("progs/gib2.mdl", -40, #TRUE, 0, #GIB2_KGS, #FALSE);
-		ThrowGib("progs/gib3.mdl", -40, #TRUE, 0, #GIB3_KGS, #FALSE);
+		ThrowGib( "progs/gib1.mdl", -40, #TRUE, 0, #GIB1_KGS, #FALSE );
+		ThrowGib( "progs/gib2.mdl", -40, #TRUE, 0, #GIB2_KGS, #FALSE );
+		ThrowGib( "progs/gib3.mdl", -40, #TRUE, 0, #GIB3_KGS, #FALSE );
 	}
 #endif
 

@@ -448,6 +448,11 @@ float() OgreOnSight =
 */
 void() monster_ogre =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_ogre";
 
 	if (!server_spawned) {

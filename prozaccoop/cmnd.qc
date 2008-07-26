@@ -1416,7 +1416,7 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 #ifdef COOP_MODE_ENHANCED
 			else if ( !strcasecmp( arg2, "spawn" ) ) {
 				if ( num_args < 3 ) {
-					sprint( self, #PRINT_HIGH, "You must specify a monster classname!\nSyntaxº cmd admin spawn <classname> [team]\n" );
+					sprint( self, #PRINT_HIGH, "You must specify a classname!\nSyntaxº cmd admin spawn <classname> [team]\n" );
 					return #TRUE;
 				}
 
@@ -1429,7 +1429,7 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 				return #TRUE;
 			} else if ( !strcasecmp( arg2, "mass_spawn" ) ) {
 				if ( num_args < 3 ) {
-					sprint( self, #PRINT_HIGH, "You must specify a monster classname!\nSyntaxº cmd admin mass_spawn <classname> [count] [team]\n" );
+					sprint( self, #PRINT_HIGH, "You must specify a classname!\nSyntaxº cmd admin mass_spawn <classname> [count] [team]\n" );
 					return #TRUE;
 				}
 

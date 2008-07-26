@@ -1,5 +1,6 @@
 /*
 	common.qc - ai replacement functions, less messy and possibly improved upon
+	TODO: move into another folder and rename to something generic like npc_ai.qc or something
 */
 
 #ifndef COOP_MODE_ENHANCED
@@ -662,7 +663,10 @@ void (float dist) COOP_Run =
 		self.enemy = world;
 		self.attack_state = #AS_STRAIGHT;
 
-		if (self.movetarget) {
+		// this used to have 'if ( self.movetarget )', but now we just compare the string, and it's perfectly safe if it's world
+		// and if it's not a valid entity or world which would make the server crash, there's no way to check for that anyways...
+		// except looping through every ent, which would be painfully slow, but maybe good for debug builds
+		if (self.movetarget.classname == "path_corner") {
 			// walk our path again
 			self.goalentity = self.movetarget;
 			self.th_walk ();
@@ -836,6 +840,23 @@ string (entity monster) COOP_GenerateMonsterName =
 
 //====================================
 
+/*
+==============
+COOP_MonsterDead
+
+Called when a monster that uses these AI functions dies,
+but before .th_die() is called and after the monster is
+already setup for respawning. The monster's targets are
+also fired before this function is called.
+==============
+*/
+void( entity e ) COOP_MonsterDead = {
+	e.classname = "dead monster";
+	e.deadflag = #DEAD_DEAD;
+	e.targetname = "";
+	e.use = SUB_Null;
+};
+
 
 /*
 	COOP_SetLives - automatically sets a monster's lives, either by localinfo or the default
@@ -857,8 +878,13 @@ void () COOP_SetLives =
 	self.lives = stof( temp );
 
 	// set default if none set already
-	if ( !self.lives )
-		self.lives = 3;
+	if ( !self.lives ) {
+		// in singleplayer only do one spawn
+		if ( !deathmatch && !coop )
+			self.lives = 1;
+		else
+			self.lives = 3;
+	}
 
 	// subtract one for the initial life
 	self.lives = self.lives - 1;
@@ -875,6 +901,13 @@ void () respawn_monster =
 {
 	local float savedlives;
 
+	// this shouldn't really happen, but it does if deathmatch is changed mid-game
+	// possible other work arounds: check if deathmatch is being changed from zero to non-zero or non-zero to zero and handle it in StartFrame()
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	// make sure to erase the touch function, the rest should be reset by the spawn function (size, solid, and movetype)
 	self.touch = SUB_Null;
 
@@ -889,10 +922,12 @@ void () respawn_monster =
 	// check if he's in a wall
 	if (InSolid(self)) {
 		// this is kind of like a hack, but it works to ensure monster count is bumped
+		self.takedamage = #DAMAGE_AIM;
 		self.flags = self.flags | #FL_MONSTER;
+		self.#npc_isCoopMonster = #TRUE;
 		self.deathtype = "monster_respawn";
 		self.health = -60;
-		Killed (self, world);
+		Killed( self, world );
 	}
 };
 
@@ -950,9 +985,12 @@ void( entity e ) COOP_SetupRespawn = {
 		e.respawn_time = 30;
 
 	newmon = spawn();
+	newmon.classname = "respawning monster";
 	newmon.lives = e.lives - 1;
 	newmon.angles = newmon.#npc_originalAngles = e.#npc_originalAngles;
 	newmon.target = e.target;
+	newmon.targetname = e.targetname;
+	newmon.effects = e.effects;		// if map has a glow on monster
 	newmon.team_no = e.team_no;
 	newmon.respawn_time = e.respawn_time;
 	newmon.spawnflags = e.spawnflags;

@@ -276,6 +276,11 @@ void (entity attacker, float damage) nopain =
 */
 void() monster_oldone =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_oldone";
 
 	precache_model2 ("progs/oldone.mdl");

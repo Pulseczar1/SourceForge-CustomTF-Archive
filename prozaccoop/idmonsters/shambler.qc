@@ -519,6 +519,11 @@ float() _ShamOnSight =
 */
 void() monster_shambler =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_shambler";
 
 	if (!server_spawned) {
@@ -526,7 +531,7 @@ void() monster_shambler =
 		precache_model ("progs/s_light.mdl");
 		precache_model ("progs/h_shams.mdl");
 		precache_model ("progs/bolt.mdl");
-	
+
 		precache_sound ("shambler/sattck1.wav");
 		precache_sound ("shambler/sboom.wav");
 		precache_sound ("shambler/sdeath.wav");

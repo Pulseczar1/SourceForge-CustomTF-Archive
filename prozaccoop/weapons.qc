@@ -1054,11 +1054,10 @@ void(float inAuto) W_FireMedikit =
 			}
 			else // enemy monsters
 			{
-#ifdef COOP_MODE_ENHANCED
 				// Gizmo - no more auto-infection of monsters
 				if ( inAuto )
 					return;
-#endif
+
 				trace_ent.axhitme = 1;
 				SpawnBlood(org, 20);
 #ifdef COOP_MODE_ENHANCED
@@ -4111,11 +4110,13 @@ void() W_Attack =
 	{
 		launch_horn();
 	}
+#ifndef NO_ZEROGRAVGUN
 	// Gizmo - zero-gravity tool
-	else if (self.current_weapon == #WEAP_ZEROGRAVITY) {
-		zg_togglepickup (self, #FALSE);
-		Attack_Finished (0.4);
+	else if ( self.current_weapon == #WEAP_ZEROGRAVITY ) {
+		zg_togglepickup( self, #FALSE );
+		Attack_Finished( 0.4 );
 	}
+#endif
 	if (self.current_weapon == #WEAP_LASERCANNON)
 	{
 		if (CheckForReload() == #TRUE)
@@ -4209,9 +4210,11 @@ void() W_PrintWeaponMessage =
 		sprint(self, #PRINT_MEDIUM, "Super Shotgun selected\n");
 	else if (self.current_weapon == #WEAP_RAILGUN)
 		sprint(self, #PRINT_MEDIUM, "Railgun selected\n");
+#ifndef NO_ZEROGRAVGUN
 	// Gizmo -
 	else if (self.current_weapon == #WEAP_ZEROGRAVITY)
 		sprint (self, #PRINT_MEDIUM, "Zero-Gravity Gun selected\n");
+#endif
 };
 
 
@@ -4677,9 +4680,11 @@ void() W_ChangeWeapon =
 		return;
 	}
 
+#ifndef NO_ZEROGRAVGUN
 	// Gizmo - drop anything picked up
-	if (self.current_weapon == #WEAP_ZEROGRAVITY && self.pickedupobject_hands != world)
-		zg_drop (self, #FALSE);
+	if ( self.current_weapon == #WEAP_ZEROGRAVITY && self.pickedupobject_hands != world )
+		zg_drop( self, #FALSE );
+#endif
 
 	// set weapon, set ammo
 	self.current_weapon = fl;
@@ -4711,9 +4716,11 @@ void() CycleWeaponCommand =
 	if (self.tfstate & #TFSTATE_CANT_MOVE)
 		return;
 
+#ifndef NO_ZEROGRAVGUN
 	// Gizmo - drop anything picked up
-	if (self.pickedupobject_hands != world)
-		zg_drop (self, #FALSE);
+	if ( self.pickedupobject_hands != world )
+		zg_drop( self, #FALSE );
+#endif
 
 	it = self.weapons_carried;
 	self.impulse = 0;
@@ -4949,9 +4956,11 @@ void( string weaponName ) ChangeToWeapon = {
 	if ( self.tfstate & #TFSTATE_CANT_MOVE )
 		return;
 
+#ifndef NO_ZEROGRAVGUN
 	// drop anything picked up
 	if ( self.pickedupobject_hands != world )
 		zg_drop( self, #FALSE );
+#endif
 
 	// TODO: create macros for the weapon names
 	if ( !strcasecmp( weaponName, "Hook" ) )
@@ -5011,8 +5020,10 @@ void( string weaponName ) ChangeToWeapon = {
 		fl = #WEAP_LASERCANNON;
 	else if ( !strcasecmp( weaponName, "SNG" ) )
 		fl = #WEAP_SNG;
+#ifndef NO_ZEROGRAVGUN
 	else if ( !strcasecmp( weaponName, "ZeroGrav" ) )
 		fl = #WEAP_ZEROGRAVITY;
+#endif
 	else {
 		sprint( self, #PRINT_HIGH, "invalid weapon specified\n" );
 		return;
@@ -6280,9 +6291,11 @@ void(float stat) HIP_FireLaser =
 // each function can have it's own special return values and their meaning (besides -1 and 0)
 #define WEAP_FUNC_SELECTED		1		// weapon has become the current weapon, return 1 if the weapon doesn't have enough ammo
 #define WEAP_FUNC_UNSELECTED	2		// was the current weapon, but is no longer, no need to clear weapon model
-#define WEAP_FUNC_FIRE			3		// weapon is firing, return 1 if the weapon needs to be reloaded
-#define WEAP_FUNC_RELOAD		4		// weapon is being reloaded, return 1 if the weapon is out of ammo
+#define WEAP_FUNC_FIRE_DOWN		3		// weapon is firing, return 1 if the weapon needs to be reloaded
+#define WEAP_FUNC_FIRE_UP		4		// weapon fire button has been released, return 1 if the weapon needs to be reloaded
+#define WEAP_FUNC_RELOAD		4		// weapon is about to be reloaded, return 1 to prevent the default "reloading..." message, return 2 if the weapon is out of ammo (not enough ammo to reload), return 3 for the same as 2 except without the message
 #define WEAP_FUNC_SERVERINIT	5		// precache models and sounds, etc. here
+#define WEAP_FUNC_STATUSBARITEM	6	// one of the IT_SHOTGUN, etc. flags; this is for the client's status bar, highlights the selected weapon and displays the icons for it
 
 #ifdef NEVER_DEFINED
 /*
@@ -6369,34 +6382,76 @@ void( entity e, float weaponNum ) W_SetCurrentWeapon = {
 	e.current_weapon = weaponNum;
 };
 
-
 //======================================================
 
+/*
+============
+W_Sprint
+
+Weapon self print function, used to create generic weapon code
+that works on players and non-players without special checks.
+============
+*/
+void( entity e, string msg ) W_Sprint = {
+	if ( e.flags & #FL_CLIENT )
+		sprint( e, #PRINT_HIGH, msg );
+};
+
+/*
+============
+W_KickPlayer
+============
+*/
+void( float psize, entity p ) W_KickPlayer = {
+	if ( e.flags & #FL_CLIENT )
+		KickPlayer( psize, p );
+};
+
+/*
+============
+W_MakeEntityVectors
+============
+*/
+void( entity e ) W_MakeEntityVectors = {
+	if ( e.flags & #FL_CLIENT ) {
+		makevectors( e.v_angle );
+		return;
+	}
+
+	makevectors( e.angles );
+};
+
+/*
+============
+W_Aim
+============
+*/
+vector( entity e, float missilespeed ) W_Aim = {
+	if ( e.flags & #FL_CLIENT )
+		return aim( e, missilespeed );
+
+	return v_forward;
+};
+
+//======================================================
 
 /*
 ============
 Weapon_Shotgun
 
-The standard shotgun
+The standard shotgun.
 ============
 */
-/*
 float( entity e, float func ) Weapon_Shotgun = {
 	if ( func == #WEAP_FUNC_FIRE ) {
 		local vector dir;
 
 		sound( e, #CHAN_WEAPON, "weapons/guncock.wav", 1, #ATTN_NORM );	
 
-		if ( e.classname == "player" )
-			KickPlayer( -2, e );
+		W_KickPlayer( -2, e );
 				 
 		e.currentammo = e.ammo_shells = e.ammo_shells - 1;
-		if ( e.classname == "player" )
-			dir = aim( e, 100000 );
-		else {
-			dir = e.enemy.origin - e.enemy.velocity * ( 0.08 / e.has_sensor );
-			dir = normalize( dir - e.origin );
-		}
+		dir = W_Aim( e, 100000 );
 
 		deathmsg = #DMSG_SHOTGUN;
 		FireBullets( 6, dir, '0.04 0.04 0', 1536 );		// FIXME: uses self
@@ -6410,7 +6465,7 @@ float( entity e, float func ) Weapon_Shotgun = {
 	if ( func == #WEAP_FUNC_SELECTED ) {
 		if ( e.ammo_shells < 1 )
 			return 1;
-		sprint( e, #PRINT_HIGH, "Shotgun selected\n" );
+		W_Sprint( e, "Shotgun selected\n" );
 		return 0;
 	}
 	if ( func == #WEAP_FUNC_UNSELECTED ) {
@@ -6421,8 +6476,9 @@ float( entity e, float func ) Weapon_Shotgun = {
 		// no precaches for the shotgun
 		return 0;
 	}
+	if ( func == #WEAP_FUNC_STATUSBARITEM )
+		return #IT_SHOTGUN;
 
 	return -1;
 };
-*/
 #endif

@@ -15,6 +15,11 @@ void(entity targ, entity attacker) ClientObituary =
 	//local entity te;
 	//local entity oself;
 
+	// Gizmo - don't bother in single player
+	if ( !deathmatch && !coop )
+	if ( COOP_IsCoopMonster( targ ) )
+		return;
+
 	// FIXME:
 
 	//- OfN - Unidentified kill ---------//
@@ -276,7 +281,7 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (#PRINT_MEDIUM, ", removes ");
 					bprint (#PRINT_MEDIUM, targ.netname);
 					bprint (#PRINT_MEDIUM, "\n");					
-				}				 
+				}
 
 				Give_Frags_Out(attacker.real_owner, attacker.real_owner, 1, 0, 1, 1, 0);
 

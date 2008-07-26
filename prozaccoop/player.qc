@@ -1721,9 +1721,8 @@ void() PlayerDie =
 	local entity te;
 	//WK Stop orff
 	//sound (self, #CHAN_MUSIC, "items/r_item1.wav", 0.1, #ATTN_NORM);
-    sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
+	sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
 	//WK Stop glows!
-	self.flags = self.flags - (self.flags & (#EF_BRIGHTLIGHT | #EF_DIMLIGHT));
       self.effects = 0;
     // make dead guy release hook (wedge)
     if (self.hook_out)

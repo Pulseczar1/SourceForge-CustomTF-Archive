@@ -8,9 +8,8 @@ Defines for the compilable options within TF.
 #pragma DONT_COMPILE_THIS_FILE
 
 //#define COOP_MODE
-#define COOP_MODE_ENHANCED			// Gizmo - the new coop mode
+#define COOP_MODE_ENHANCED			// Gizmo - includes the new coop mode, does not make it a coop only compile
 #define MIRV_VELOCITY				// Gizmo - enables the spamlets of mirvs to take on the original mirv's velocity
-#define EOG_BESTTEAMKILLER			// Gizmo - enables the reporting of the best team killer at the end of the game
 
 // Gizmo - these are all the macros that can be used to compile for classic prozac
 // but a few minor things like vote code, bug fixes, end of game awards, no stock sniper caltrops (standard grenades instead), tesla power supply upgrade after health tinker, etc. are still included

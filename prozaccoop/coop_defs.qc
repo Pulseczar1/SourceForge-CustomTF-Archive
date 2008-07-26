@@ -35,6 +35,10 @@
 #define MFLAG_NOLEGDAMAGE			64				// monster has legs but doesn't take leg damage (tarbabys)
 #define MFLAG_NOLEGS				128				// monster doesn't even have legs
 
+// more attack states
+#define AS_PREDICT_MISSILE			10				// used to tell the monster to face the direction where he's going to shoot a predicted shot before he shoots
+#define AS_BLIND_MISSILE			11				// shooting randomly near enemy's last know location (if they entered water, player thiefed, or ducked behind cover)
+
 // macros for certain variables so we can reuse unused variables and still give it a unique name
 #define npc_speedfactor				speed
 #define npc_noticedelay				invisible_finished
@@ -65,11 +69,8 @@
 #define npc_oldthink				npc_oldthink
 #define npc_smoothtime				maxspeed			// this is the time when we need to give back control to monster and stop lerping
 #define npc_smoothdist				demon_blood			// total distance we need to go
-#define npc_lastruntime				done_custom			// last time our lerp function was called
+#define npc_lastruntime				axhitme			// last time our lerp function was called, BUG: RECUSTOMIZE
 #define npc_attemptednextthink		cnt
-
-// globals
-float server_spawned;								// TRUE if server is spawned and ready to go
 
 // coop monster fields
 .float monsterweight;

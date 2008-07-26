@@ -502,7 +502,11 @@ void() DecodeLevelParms =
 			// If the number_of_teams wasn't set, then there's not TF
 			// spawnpoints on this lvl... so guess at 4 teams.
 #ifdef COOP_MODE_ENHANCED
-			number_of_teams = 1;
+			if ( deathmatch ) {
+				if ( number_of_teams <= 0 || number_of_teams >= 5 )
+					number_of_teams = 4;
+			} else
+				number_of_teams = 1;	// Gizmo - only one team on singleplayer/coop
 #else
 			if (number_of_teams <= 0 || number_of_teams >= 5)
 				number_of_teams = 4;
@@ -527,7 +531,10 @@ void() DecodeLevelParms =
 				ent.think = CTF_FlagCheck;
 
 #ifdef COOP_MODE_ENHANCED
-				number_of_teams = 1;
+				if ( !deathmatch )
+					number_of_teams = 1;
+				else
+					number_of_teams = 2;
 #else
 				number_of_teams = 2;
 #endif
@@ -535,7 +542,10 @@ void() DecodeLevelParms =
 			else // Normal map
 			{
 #ifdef COOP_MODE_ENHANCED
-				number_of_teams = 1;
+				if ( !deathmatch )
+					number_of_teams = 1;
+				else
+					number_of_teams = 4;
 #else
 				number_of_teams = 4;
 #endif
@@ -1316,12 +1326,15 @@ void() changelevel_use =
 		return;
 	}
 
-	bprint (#PRINT_HIGH, other.netname);
 	if ( self.message ) {
+		if ( !( self.spawnflags & 4 ) )
+			bprint( #PRINT_HIGH, other.netname );
 		bprint( #PRINT_HIGH, self.message );
 		bprint( #PRINT_HIGH, "\n" );
-	} else
+	} else {
+		bprint (#PRINT_HIGH, other.netname);
 		bprint (#PRINT_HIGH, " exited the level\n");
+	}
 
 	nextmap = self.map;
 
@@ -1376,7 +1389,7 @@ void() changelevel_touch =
 	self.nextthink = time + 0.1;
 };
 
-/*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
+/*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION NOTOUCH NOPLAYERNAME
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
 void() trigger_changelevel =
@@ -1391,7 +1404,9 @@ void() trigger_changelevel =
 		objerror ("changelevel trigger doesn't have map");
 	
 	InitTrigger ();
-	self.touch = changelevel_touch;
+
+	if ( !( self.spawnflags & 2 ) )
+		self.touch = changelevel_touch;
 
 	// Gizmo - can now be triggered
 	if ( self.targetname )
@@ -1454,8 +1469,13 @@ void() respawn =
 		PutClientInServer ();
 	}
 	else
-	{	// restart the entire server
+	{
+#ifdef QUAKE_WORLD
+		// restart the level
+		changelevel( mapname );
+#else
 		localcmd ("restart\n");
+#endif
 	}
 };
 
@@ -1781,9 +1801,11 @@ entity() SelectSpawnPoint =
 	
 	// testinfo_player_start is only found in regioned levels
 #ifdef COOP_MODE_ENHANCED
-	spot = find (world, classname, "testplayerstart");
-	if (spot)
-		return spot;
+	if ( !deathmatch ) {
+		spot = find (world, classname, "testplayerstart");
+		if (spot)
+			return spot;
+	}
 #endif
 
 	// If FortressMap option is on, we want to make the player spawn on a 
@@ -2004,17 +2026,16 @@ void() PutClientInServer =
 //#ifdef COOP_MODE
 #ifdef COOP_MODE_ENHANCED
 	// Force all players to be on the same team in Coop mode
-	if (coop)
-	{
+	if ( coop ) {
 		// teamplay must be at least set to something
-		if (!teamplay) {
+		if ( !teamplay ) {
 			teamplay = 21;
-			cvar_set("teamplay", "21?TeamFortress");
+			cvar_set( "teamplay", "21?TeamFortress" );
 		}
 
 		// only set team if we're not already on a team
 		if ( !self.team_no )
-			TeamFortress_TeamSet(1);
+			TeamFortress_TeamSet( 1 );
 	}
 #endif
 
@@ -2250,6 +2271,11 @@ void() PutClientInServer =
 	self.tf_items & #NIT_RESPAWN_GUARD) {
 		self.items = self.items + #IT_INVULNERABILITY;
 		self.invincible_time = 1;
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch )
+			self.invincible_finished = time + #COOP_RESPAWN_GUARD_TIME;
+		else
+#endif
 		self.invincible_finished = time + #RESPAWN_GUARD_TIME;
 		if (self.custom_speed > 300)
 			self.invincible_finished = self.invincible_finished - 1;			
@@ -2266,6 +2292,41 @@ void() PutClientInServer =
 
 =============================================================================
 */
+
+
+#ifdef COOP_MODE_ENHANCED
+/*
+==============
+ValidSpawnPoint
+
+Checks if the given spawn point is stuck inside the world.
+For maps with bad coops spawns like terra6.
+==============
+*/
+float( entity point ) ValidSpawnPoint = {
+	local entity	tent, oself;
+	local float 	ret;
+
+	tent = spawn();
+	tent.solid = #SOLID_SLIDEBOX;
+	tent.movetype = #MOVETYPE_STEP;
+	setsize( tent, #VEC_HULL_MIN, #VEC_HULL_MAX );
+	setorigin( tent, point.origin );
+
+	oself = self;
+	self = tent;
+
+	self.origin_z = self.origin_z + 1;
+	droptofloor();
+
+	ret = walkmove( 0, 0 );
+
+	self = oself;
+
+	remove( tent );
+	return ret;
+};
+#endif
 
 
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 24)
@@ -2317,6 +2378,14 @@ void() info_player_deathmatch =
 		dremove(self);
 		return;
 	}
+
+#ifdef COOP_MODE_ENHANCED
+	// if we're in singleplayer or coop, then remove the spawn to save entities
+	if ( !deathmatch ) {
+		remove( self );
+		return;
+	}
+#endif
 };
 
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
@@ -2329,6 +2398,22 @@ void() info_player_coop =
 		dremove(self);
 		return;
 	}
+
+#ifdef COOP_MODE_ENHANCED
+	// if we're not in coop mode, then remove the spawn to save entities
+	if ( !coop ) {
+		remove( self );
+		return;
+	}
+	if ( !ValidSpawnPoint( self ) ) {
+		dprint( "Bad placement of coop spawn at: " );
+		dprint( vtos( self.origin ) );
+		dprint( "\n" );
+
+		remove( self );
+		return;
+	}
+#endif
 };
 
 /*

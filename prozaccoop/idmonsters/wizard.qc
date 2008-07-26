@@ -437,6 +437,11 @@ float() _WizardOnSight =
 */
 void() monster_wizard =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_wizard";
 
 	if (!server_spawned) {

@@ -86,14 +86,14 @@ float(float targteam, float attackteam) Teammate =
 	if ( targteam == attackteam ) return #TRUE;
 	if ( number_of_teams < 3 ) return #FALSE;
 
-	if      ( targteam == 1 ) teammask = 1;
+	if		( targteam == 1 ) teammask = 1;
 	else if ( targteam == 2 ) teammask = 2;
 	else if ( targteam == 3 ) teammask = 4;
 	else if ( targteam == 4 ) teammask = 8;
 	else
 		teammask = 0;						// Gizmo - only happens if there's a bug
 
-	if      ( attackteam == 1 && (friends1_mask & teammask)) return #TRUE;
+	if		( attackteam == 1 && (friends1_mask & teammask)) return #TRUE;
 	else if ( attackteam == 2 && (friends2_mask & teammask)) return #TRUE;
 	else if ( attackteam == 3 && (friends3_mask & teammask)) return #TRUE;
 	else if ( attackteam == 4 && (friends4_mask & teammask)) return #TRUE;
@@ -125,25 +125,31 @@ void() DropToCustomClassGen =
 	sell_no = 0;
 
 	self.gravity = 1;
-    self.aura = 0;
+	self.aura = 0;
 
-    //Remove everything he's carrying	
+	//Remove everything he's carrying	
 	self.job = 0;
 	
-    // This is the appropiate place to: (after clearing job due to armytimer stuff weirdness)
-    CleanUpEverything();
+	// This is the appropiate place to: (after clearing job due to armytimer stuff weirdness)
+	CleanUpEverything();
 
-    ResetStripedAndGiven(self);
+	ResetStripedAndGiven(self);
 
-    self.is_malfunctioning = 0;
+	self.is_malfunctioning = 0;
 	//self.is_cameraviewing = 0;
 #ifdef COOP_MODE_ENHANCED
-	self.tf_items = #NIT_AMMO_BANDOLIER;
+	if ( !deathmatch )
+		self.tf_items = #NIT_AMMO_BANDOLIER;
+	else
+		self.tf_items = 0;
 #else
 	self.tf_items = 0;
 #endif
 #ifdef COOP_MODE_ENHANCED
-	self.cutf_items = #CUTF_FULLARMOUR;
+	if ( !deathmatch )
+		self.cutf_items = #CUTF_FULLARMOUR;
+	else
+		self.cutf_items = 0;
 #else
 	self.cutf_items = 0;
 #endif
@@ -164,9 +170,9 @@ void() DropToCustomClassGen =
 	self.maxammo_detpack = 0;
 	self.ammo_c4det = 0;
 	
-    self.demon_one = world; //SB - this tells us who our demon is for easy reference
+	self.demon_one = world; //SB - this tells us who our demon is for easy reference
 	self.demon_two = world; //- OfN-  Used for hacker job, target building and for timer (% on sbar)
-    self.demon_three = world;
+	self.demon_three = world;
 
 	self.demon_blood = 0;
 
@@ -180,14 +186,14 @@ void() DropToCustomClassGen =
 	self.armor_allowed = 0.3; //Red yellow or green
 	self.armorclass = 0; //Red yellow or green
 	self.armorvalue = 0; //200 etc
-	self.maxarmor = 0;  //200 etc
+	self.maxarmor = 0;	//200 etc
 	self.weapon = 0; // #WEAP_HOOK & #WEAP_SHOTGUN etc
 	self.current_weapon = 0; // No current weapon
 	
 	if ((allow_hook) && (no_grapple != 1)) //If map allows it...
-      	self.weapons_carried = #WEAP_HOOK; // Start with grapple
+		self.weapons_carried = #WEAP_HOOK; // Start with grapple
 	else
-	    self.weapons_carried = 0; // Or remove everything
+		self.weapons_carried = 0; // Or remove everything
 
 	self.weaponmodel = ""; //Remove the model of a weapon in front
 
@@ -200,7 +206,7 @@ void() DropToCustomClassGen =
 	self.max_health = 50;
 	self.health = 50;
 
-    GiveFreeStuff(self);
+	GiveFreeStuff(self);
 
 #define PRICE_PER_FRAG 100
 #define MAX_FRAGS_TO_SELL 50
@@ -235,16 +241,16 @@ void() DropToCustomClassGen =
 	
 	//Destroy Buildings... again. :p
 	//DetonateAllGuns();
-    
+	
 
 	//And then kill all demons I own
 	
-    //kill_my_demon();
-    //DetonateMines(self);
-    //RemoveArmyTimer();
+	//kill_my_demon();
+	//DetonateMines(self);
+	//RemoveArmyTimer();
 
-      self.current_menu = #MENU_PRIMARY_WEAPON;
-      Menu_PrimaryWeapon();
+	  self.current_menu = #MENU_PRIMARY_WEAPON;
+	  Menu_PrimaryWeapon();
 	//return;
 };
 
@@ -252,10 +258,10 @@ void(vector org) spawn_tfog;
 
 void() DropFromCustomClassGen =
 {
-    // OfN
-    self.is_killed = #FALSE;
+	// OfN
+	self.is_killed = #FALSE;
 
-    self.done_custom = #CUSTOM_FINISHED;
+	self.done_custom = #CUSTOM_FINISHED;
 	self.maxspeed = self.custom_speed;
 	self.gravity = 1;
 
@@ -270,29 +276,29 @@ void() DropFromCustomClassGen =
 	if (self.job & #JOB_GUERILLA)
 		self.maxammo_rockets = self.maxammo_rockets + 20;
 
-    //OfN if we got the holo we get extra cells ammo space
-    if (self.cutf_items & #CUTF_HOLO)
+	//OfN if we got the holo we get extra cells ammo space
+	if (self.cutf_items & #CUTF_HOLO)
 		self.maxammo_cells = self.maxammo_cells + 40;
 
 	//If they bought weapons, remove their basic ammo allotment
 	if (self.maxammo_rockets > 10)
 		self.maxammo_rockets = self.maxammo_rockets - 10;
-      if (self.maxammo_nails > 10)
+	  if (self.maxammo_nails > 10)
 		self.maxammo_nails = self.maxammo_nails - 10;
-      if (self.maxammo_shells > 10)
+	  if (self.maxammo_shells > 10)
 		self.maxammo_shells = self.maxammo_shells - 10;
-      if (self.maxammo_cells > 10)
+	  if (self.maxammo_cells > 10)
 		self.maxammo_cells = self.maxammo_cells - 10;
 
 	//Increase their supply if they bought a backpack or bandolier
 	if (self.tf_items & #NIT_AMMO_BACKPACK) {
 		self.maxammo_rockets = self.maxammo_rockets + 30;
-		self.maxammo_nails   = self.maxammo_nails   + 100;
-		self.maxammo_shells  = self.maxammo_shells  + 100;
+		self.maxammo_nails	 = self.maxammo_nails	+ 100;
+		self.maxammo_shells  = self.maxammo_shells	+ 100;
 		if (self.weapons_carried & #WEAP_SPANNER)
-			self.maxammo_cells   = self.maxammo_cells   + 170;
+			self.maxammo_cells	 = self.maxammo_cells	+ 170;
 		else
-			self.maxammo_cells   = self.maxammo_cells   + 50;
+			self.maxammo_cells	 = self.maxammo_cells	+ 50;
 		if (self.maxammo_medikit > 0) //Only increase their medical supplies when...
 			self.maxammo_medikit = self.maxammo_medikit + 70;
 		if (self.maxammo_detpack > 0)
@@ -300,9 +306,9 @@ void() DropFromCustomClassGen =
 	}
 	if (self.tf_items & #NIT_AMMO_BANDOLIER) {
 		self.maxammo_rockets = self.maxammo_rockets + 10;
-		self.maxammo_nails   = self.maxammo_nails   + 50;
-		self.maxammo_shells  = self.maxammo_shells  + 50;
-		self.maxammo_cells   = self.maxammo_cells   + 30;
+		self.maxammo_nails	 = self.maxammo_nails	+ 50;
+		self.maxammo_shells  = self.maxammo_shells	+ 50;
+		self.maxammo_cells	 = self.maxammo_cells	+ 30;
 		if (self.maxammo_medikit > 0)
 			self.maxammo_medikit = self.maxammo_medikit + 50;
 		if (self.maxammo_detpack > 1) //Only give extra det if they bought both
@@ -320,43 +326,43 @@ void() DropFromCustomClassGen =
 	if (self.cutf_items & #CUTF_FIELDGEN) // SB
 		self.maxammo_cells = self.maxammo_cells + 140;
 
-    //- OfN
-    if (self.weapons_carried & #WEAP_LASERCANNON) self.maxammo_cells = self.maxammo_cells + 70;
-    if (self.weapons_carried & #WEAP_SNG) self.maxammo_nails = self.maxammo_nails + 70;
-    if (self.weapons_carried & #WEAP_AIRF) self.maxammo_cells = self.maxammo_cells + 60;
+	//- OfN
+	if (self.weapons_carried & #WEAP_LASERCANNON) self.maxammo_cells = self.maxammo_cells + 70;
+	if (self.weapons_carried & #WEAP_SNG) self.maxammo_nails = self.maxammo_nails + 70;
+	if (self.weapons_carried & #WEAP_AIRF) self.maxammo_cells = self.maxammo_cells + 60;
 
 	//Now cap the max ammo
 	if (self.maxammo_rockets > 100)
 		self.maxammo_rockets = 100;
-      if (self.maxammo_nails > 350)
+	  if (self.maxammo_nails > 350)
 		self.maxammo_nails = 350;
-      if (self.maxammo_shells > 300)
+	  if (self.maxammo_shells > 300)
 		self.maxammo_shells = 300;
-      if (self.maxammo_cells > #MAXAMMO_CELLS)
+	  if (self.maxammo_cells > #MAXAMMO_CELLS)
 		self.maxammo_cells = #MAXAMMO_CELLS;
 
 /* WK 1/7/7 We don't need all this complication
-      //- ofn
-      if (self.tf_items & #NIT_AMMO_BANDOLIER && self.tf_items & #NIT_AMMO_BACKPACK)
-      {
-        if (self.maxammo_cells > #MAXAMMO_CELLS + 100) 
-		    self.maxammo_cells = #MAXAMMO_CELLS + 100;
-      }
-      else if (self.tf_items & #NIT_AMMO_BACKPACK)
-      {
-        if (self.maxammo_cells > #MAXAMMO_CELLS + 50) // was 360
-		    self.maxammo_cells = #MAXAMMO_CELLS + 50;
-      }      
-      else
-      {
-        if (self.maxammo_cells > #MAXAMMO_CELLS) // was 320
-		    self.maxammo_cells = #MAXAMMO_CELLS;
-      }
+	  //- ofn
+	  if (self.tf_items & #NIT_AMMO_BANDOLIER && self.tf_items & #NIT_AMMO_BACKPACK)
+	  {
+		if (self.maxammo_cells > #MAXAMMO_CELLS + 100) 
+			self.maxammo_cells = #MAXAMMO_CELLS + 100;
+	  }
+	  else if (self.tf_items & #NIT_AMMO_BACKPACK)
+	  {
+		if (self.maxammo_cells > #MAXAMMO_CELLS + 50) // was 360
+			self.maxammo_cells = #MAXAMMO_CELLS + 50;
+	  } 	 
+	  else
+	  {
+		if (self.maxammo_cells > #MAXAMMO_CELLS) // was 320
+			self.maxammo_cells = #MAXAMMO_CELLS;
+	  }
 */
 
 	//- OFN HERE FRONTLIN HELI BUG FIX ---//
-    local entity spot;
-    spot = SelectSpawnPoint ();
+	local entity spot;
+	spot = SelectSpawnPoint ();
 
 	self.observer_list = spot;
 	self.origin = spot.origin + '0 0 1';
@@ -365,9 +371,9 @@ void() DropFromCustomClassGen =
 
 	makevectors(self.angles);
 	spawn_tfog (self.origin + v_forward*20);
-    //------------------------------------//
-    
-    //Telefrag anyone sitting on top of us
+	//------------------------------------//
+	
+	//Telefrag anyone sitting on top of us
 	spawn_tdeath(self.origin,self);
 	
 	//Remove observer-like mode
@@ -412,6 +418,11 @@ void() DropFromCustomClassGen =
 	if (self.tf_items & #NIT_RESPAWN_GUARD) {
 		self.items = self.items + #IT_INVULNERABILITY;
 		self.invincible_time = 1;
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch )
+			self.invincible_finished = time + #COOP_RESPAWN_GUARD_TIME;
+		else
+#endif
 		self.invincible_finished = time + #RESPAWN_GUARD_TIME;
 		if (self.custom_speed > 300)
 			self.invincible_finished = self.invincible_finished - 1;			
@@ -419,17 +430,17 @@ void() DropFromCustomClassGen =
 			self.invincible_finished = self.invincible_finished - 1;			
 	}
 
-    //Come again!
+	//Come again!
 	sprint(self,#PRINT_HIGH,"Type ╒custom╒ at the console to build a new class.\n");
 	return;
 };
 
 void() PrintMoney =
 {
-    CuTFMenuSound(#MENUSOUND_BUY);
-    
-    if (pay_msgs != 1)
-    	return;
+	CuTFMenuSound(#MENUSOUND_BUY);
+	
+	if (pay_msgs != 1)
+		return;
 
 	local string as;
 	sprint(self,#PRINT_HIGH,"You have ");
@@ -442,46 +453,46 @@ void() PrintMoney =
 
 void(float in) PrintRefund=
 {
-   	CuTFMenuSound(#MENUSOUND_SELL);
+	CuTFMenuSound(#MENUSOUND_SELL);
 
-    local string as;
+	local string as;
 
-    if (pay_msgs == 1)
-    {
+	if (pay_msgs == 1)
+	{
 		sprint(self,#PRINT_HIGH,"You sell it back for ");
 		as = ftos(in);
 		sprint(self,#PRINT_HIGH,as);
 		sprint(self,#PRINT_HIGH," dollars.\n");
-    }
+	}
 
 	self.money = self.money + in; //Give em a refund
 
-    if (pay_msgs == 1)
-    {
+	if (pay_msgs == 1)
+	{
 		sprint(self,#PRINT_HIGH,"You now have ");
 		as = ftos(self.money);
 		sprint(self,#PRINT_HIGH,as);
 		sprint(self,#PRINT_HIGH," dollars available.\n");
-    }
+	}
 
 	return;
 };
 
 void(float in) PrintNotEnoughMoney =
 {
-    CuTFMenuSound(#MENUSOUND_WRONG);
+	CuTFMenuSound(#MENUSOUND_WRONG);
 
-    self.tfstate = self.tfstate | #TFSTATE_NOTENOUGHMONEY;
+	self.tfstate = self.tfstate | #TFSTATE_NOTENOUGHMONEY;
 
-    if (pay_msgs != 1)
-    {
+	if (pay_msgs != 1)
+	{
 		sprint(self,#PRINT_HIGH,"Not enough money!\n");
 		return;
-    }
+	}
 
 	local string as;
-    
-    sprint(self,#PRINT_HIGH,"Sorry, that costs ");
+	
+	sprint(self,#PRINT_HIGH,"Sorry, that costs ");
 	as = ftos(in);
 	sprint(self,#PRINT_HIGH,as);
 	sprint(self,#PRINT_HIGH," dollars.\n");
@@ -574,15 +585,20 @@ void(float cost, float item) BuyWeapon =
 	
 	if (self.weapons_carried & item) //We are selling
 	{
-		if (item == #WEAP_ROCKET_LAUNCHER && self.tf_items & #NIT_RL_LASER_SIGHT)
-		{
-			self.money = self.money + #COST_RLASERGUIDED;
-			self.tf_items = self.tf_items - #NIT_RL_LASER_SIGHT;
-		}
-		if (item == #WEAP_ROCKET_LAUNCHER && self.tf_items & #NIT_CLUSTER_ROCKETS)
-		{
-			self.money = self.money + #COST_CLUSTER;
-			self.tf_items = self.tf_items - #NIT_CLUSTER_ROCKETS;
+		// Gizmo - changed this to just one rocket launcher check
+		if ( item == #WEAP_ROCKET_LAUNCHER ) {
+			if ( self.tf_items & #NIT_RL_LASER_SIGHT ) {
+				self.money = self.money + #COST_RLASERGUIDED;
+				self.tf_items = self.tf_items - #NIT_RL_LASER_SIGHT;
+			}
+			if ( self.tf_items & #NIT_CLUSTER_ROCKETS ) {
+				self.money = self.money + #COST_CLUSTER;
+				self.tf_items = self.tf_items - #NIT_CLUSTER_ROCKETS;
+			}
+			if ( self.cutf_moreitems & #CUTF_MI_FASTERROCKETS ) {
+				self.money = self.money + #COST_FASTERROCKETS;
+				self.cutf_moreitems = self.cutf_moreitems - #CUTF_MI_FASTERROCKETS;
+			}
 		}
 		self.maxammo_shells = self.maxammo_shells - countshells(item);
 		self.maxammo_nails = self.maxammo_nails - countnails(item);
@@ -614,16 +630,16 @@ void(float cost, float item) BuyCuTF =
 	if (item == 0) //Make sure we don't buy a null weapon
 		return;
 	
-    if (item == #CUTF_HOLO && !(self.cutf_items & #CUTF_HOLO)) {
+	if (item == #CUTF_HOLO && !(self.cutf_items & #CUTF_HOLO)) {
 		if (!(cost > self.money))
-            sprint(self,#PRINT_HIGH,"Use the 'holo' command to activate/deactivate the holograph\n");
+			sprint(self,#PRINT_HIGH,"Use the 'holo' command to activate/deactivate the holograph\n");
 	}
 
 	if (self.cutf_items & item) //We are selling
 	{
 		if (item & #CUTF_SENTRYGUN) {
 			self.maxammo_shells = self.maxammo_shells - 130;
-			self.maxammo_cells  = self.maxammo_cells  - 130;
+			self.maxammo_cells	= self.maxammo_cells  - 130;
 		}
 		PrintRefund(cost);
 		self.cutf_items = self.cutf_items - item;
@@ -637,7 +653,7 @@ void(float cost, float item) BuyCuTF =
 	//Add to max ammo if sentrygun purchase
 	if (item & #CUTF_SENTRYGUN) {
 		self.maxammo_shells = self.maxammo_shells + 130;
-		self.maxammo_cells  = self.maxammo_cells  + 130;
+		self.maxammo_cells	= self.maxammo_cells  + 130;
 	}
 
 	self.cutf_items = self.cutf_items | item;
@@ -693,12 +709,12 @@ void(float cost, float item) BuyItem =
 	//Special rules
 	if (item == #NIT_AUTOSCANNER && !(self.tf_items & #NIT_SCANNER)) {
 		sprint(self,#PRINT_HIGH,"Sorry, you have to buy the scanner first!\n");
-        CuTFMenuSound(#MENUSOUND_WRONG);
+		CuTFMenuSound(#MENUSOUND_WRONG);
 		return;
 	}
 	if ((item == #NIT_RL_LASER_SIGHT || item == #NIT_CLUSTER_ROCKETS) && !(self.weapons_carried & #WEAP_ROCKET_LAUNCHER)) {
 		sprint(self,#PRINT_HIGH,"Sorry, you have to buy the rocket launcher first!\n");
-        CuTFMenuSound(#MENUSOUND_WRONG);
+		CuTFMenuSound(#MENUSOUND_WRONG);
 		return;
 	}
 
@@ -707,7 +723,7 @@ void(float cost, float item) BuyItem =
 
 	if (item == #NIT_HOVER_BOOTS_UPGRADE && !(self.tf_items & #NIT_HOVER_BOOTS)) {
 		sprint(self,#PRINT_HIGH,"Sorry, you have to buy the hover boots first!\n");
-        CuTFMenuSound(#MENUSOUND_WRONG);
+		CuTFMenuSound(#MENUSOUND_WRONG);
 		return;
 	}
 	if (cost > self.money)
@@ -760,13 +776,13 @@ void(float cost, float type) BuyJob =
 	}
 	if (self.job) { //Make sure we haven't bought another kind already
 		sprint(self,#PRINT_HIGH,"You already have a job. Leave your other one first.\n");
-        CuTFMenuSound(#MENUSOUND_WRONG);
+		CuTFMenuSound(#MENUSOUND_WRONG);
 		return;
 	}
 	//Special rules for buying jobs
 	if (type == #JOB_WARLOCK && !(self.cutf_items & #CUTF_KNIFE)) {
 		sprint(self,#PRINT_HIGH,"Every Warlock needs a good bloody knife. Buy one.\n");
-        CuTFMenuSound(#MENUSOUND_WRONG);
+		CuTFMenuSound(#MENUSOUND_WRONG);
 		return;
 	}
 	/*if (type == #JOB_WARLOCK)
@@ -796,107 +812,107 @@ void(float cost, float type) BuyJob =
 
 void (float cost1, float cost2) BuyExtra =
 {
-    local float allcost;
-    allcost = 0;
-    
-    if (self.job & #JOB_EXTRA1) // we have extra1
-    {
-        if (self.money < cost2) // not enough money for extra2, sell back job and extra1 then..
-        {
-            if (self.job & #JOB_WARLOCK)
-            {
-                allcost = #COST_WARLOCK + cost1;
+	local float allcost;
+	allcost = 0;
+	
+	if (self.job & #JOB_EXTRA1) // we have extra1
+	{
+		if (self.money < cost2) // not enough money for extra2, sell back job and extra1 then..
+		{
+			if (self.job & #JOB_WARLOCK)
+			{
+				allcost = #COST_WARLOCK + cost1;
 
-                /*if (!self.cutf_items & #CUTF_DEMONLORE)
-                    allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
-                else
-                    self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
-            }
-            else if (self.job & #JOB_ARMY)
-            {
-                allcost = #COST_ARMY + cost1;
-            }
-            else if (self.job & #JOB_GUERILLA)
-            {
-                allcost = #COST_GUERILLA + cost1;
-            }
+				/*if (!self.cutf_items & #CUTF_DEMONLORE)
+					allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
+				else
+					self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
+			}
+			else if (self.job & #JOB_ARMY)
+			{
+				allcost = #COST_ARMY + cost1;
+			}
+			else if (self.job & #JOB_GUERILLA)
+			{
+				allcost = #COST_GUERILLA + cost1;
+			}
 
-            self.job = 0;
-       	PrintNotEnoughMoney(cost1);
-            PrintRefund(allcost);
-            return;
-        }
-        else // ok, buy second extra
-        {
-            self.job = self.job - (self.job & #JOB_EXTRA1);
-            self.job = self.job | #JOB_EXTRA2;
-            
-            // decrease our money
-            self.money = self.money - cost2;    
-        }
-    }
-    else if (self.job & #JOB_EXTRA2) // we have extra2, so sell back everything..
-    {
-        if (self.job & #JOB_WARLOCK)
-        {
-            allcost = (cost1+cost2)+#COST_WARLOCK;
+			self.job = 0;
+		PrintNotEnoughMoney(cost1);
+			PrintRefund(allcost);
+			return;
+		}
+		else // ok, buy second extra
+		{
+			self.job = self.job - (self.job & #JOB_EXTRA1);
+			self.job = self.job | #JOB_EXTRA2;
+			
+			// decrease our money
+			self.money = self.money - cost2;	
+		}
+	}
+	else if (self.job & #JOB_EXTRA2) // we have extra2, so sell back everything..
+	{
+		if (self.job & #JOB_WARLOCK)
+		{
+			allcost = (cost1+cost2)+#COST_WARLOCK;
 
-            /*if (!self.cutf_items & #CUTF_DEMONLORE)
-                allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
-            else
-                self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
-        }
-        else if (self.job & #JOB_ARMY)
-        {
-            allcost = (cost1+cost2)+#COST_ARMY;
-        }
-        else if (self.job & #JOB_GUERILLA)
-        {
-            allcost = (cost1+cost2)+#COST_GUERILLA;
-        }
-            
-        self.job = 0;
-        PrintRefund(allcost);
-        return;
-    }
-    else // we dont have any extra
-    {
-        if (self.money < cost1) // not enough money for 1st extra, so sell back job
-        {
-            if (self.job & #JOB_WARLOCK)
-            {
-                allcost = #COST_WARLOCK;
+			/*if (!self.cutf_items & #CUTF_DEMONLORE)
+				allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
+			else
+				self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
+		}
+		else if (self.job & #JOB_ARMY)
+		{
+			allcost = (cost1+cost2)+#COST_ARMY;
+		}
+		else if (self.job & #JOB_GUERILLA)
+		{
+			allcost = (cost1+cost2)+#COST_GUERILLA;
+		}
+			
+		self.job = 0;
+		PrintRefund(allcost);
+		return;
+	}
+	else // we dont have any extra
+	{
+		if (self.money < cost1) // not enough money for 1st extra, so sell back job
+		{
+			if (self.job & #JOB_WARLOCK)
+			{
+				allcost = #COST_WARLOCK;
 
-                /*if (!self.cutf_items & #CUTF_DEMONLORE)
-                    allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
-                else
-                    self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
-            }
-            else if (self.job & #JOB_ARMY)
-            {
-                allcost = #COST_ARMY;
-            }
-            else if (self.job & #JOB_GUERILLA)
-            {
-                allcost = #COST_GUERILLA;
-            }
+				/*if (!self.cutf_items & #CUTF_DEMONLORE)
+					allcost = allcost - #COST_DEMONLORE; // sync with demonlore cost
+				else
+					self.cutf_items = self.cutf_items - (self.cutf_items & #CUTF_DEMONLORE);*/
+			}
+			else if (self.job & #JOB_ARMY)
+			{
+				allcost = #COST_ARMY;
+			}
+			else if (self.job & #JOB_GUERILLA)
+			{
+				allcost = #COST_GUERILLA;
+			}
 
-            self.job = 0;
-       		PrintNotEnoughMoney(cost1);
-            PrintRefund(allcost);
-            return;
-        }
-        else // ok, buy 1st extra
-        {
-            self.job = self.job | #JOB_EXTRA1;
+			self.job = 0;
+			PrintNotEnoughMoney(cost1);
+			PrintRefund(allcost);
+			return;
+		}
+		else // ok, buy 1st extra
+		{
+			self.job = self.job | #JOB_EXTRA1;
 
-            // decrease our money
-            self.money = self.money - cost1;
-        }
-    }
+			// decrease our money
+			self.money = self.money - cost1;
+		}
+	}
 
-    // Print money
-    PrintMoney();
+	// Print money
+	PrintMoney();
 };
 
 void (float cost, float type) BuyGren =
@@ -975,7 +991,7 @@ void (float cost, float type) BuyGren =
 		{
 			PrintRefund(cost * 2);
 			//self.money_misc = self.money_misc - cost * 2;
-            //self.money = self.money + cost * 2; //*2
+			//self.money = self.money + cost * 2; //*2
 			self.tp_grenades_1 = 0;
 			self.tp_grenades_2 = 0;
 		}
@@ -983,29 +999,29 @@ void (float cost, float type) BuyGren =
 		{
 			PrintRefund(cost);
 			//self.money_misc = self.money_misc - cost;
-            //self.money = self.money + cost;
+			//self.money = self.money + cost;
 			self.tp_grenades_1 = 0;
 		}
 		else if (self.tp_grenades_2 == type) // otherwise if we have gren2s as the type..
 		{
 			PrintRefund(cost);
 			//self.money_misc = self.money_misc - cost;
-            //self.money = self.money + cost;
+			//self.money = self.money + cost;
 			self.tp_grenades_2 = 0;
 		}
 		else if (cost <= self.money)
-        {
-            CuTFMenuSound(#MENUSOUND_WRONG);
+		{
+			CuTFMenuSound(#MENUSOUND_WRONG);
 			sprint(self,#PRINT_HIGH,"You already have a full set of grenades. Sell some back first.\n");
 		}
-        else
+		else
 			PrintNotEnoughMoney(cost);
 		
 		return;
 	}
 	self.money = self.money - cost;
 	PrintMoney();
-    //self.money_misc = self.money_misc + cost;
+	//self.money_misc = self.money_misc + cost;
 	//self.money_spent = self.money_spent + cost;
 	/*talk = ftos(cost);
 	sprint(self, #PRINT_HIGH, talk);
@@ -1101,20 +1117,20 @@ void() fragspike_touch =
 			}
 		}
 		else {
-            if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-               //FieldExplosion(other,self.origin,self);
-               FieldEvent(other,self.origin,self);
-            else
-            {
-                WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-                WriteByte (#MSG_BROADCAST, #TE_SUPERSPIKE);
-                WriteCoord (#MSG_BROADCAST, self.origin_x);
-                WriteCoord (#MSG_BROADCAST, self.origin_y);
-                WriteCoord (#MSG_BROADCAST, self.origin_z);
-            #ifdef QUAKE_WORLD
-                multicast (self.origin, #MULTICAST_PHS);
-            #endif
-            }
+			if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+			   //FieldExplosion(other,self.origin,self);
+			   FieldEvent(other,self.origin,self);
+			else
+			{
+				WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+				WriteByte (#MSG_BROADCAST, #TE_SUPERSPIKE);
+				WriteCoord (#MSG_BROADCAST, self.origin_x);
+				WriteCoord (#MSG_BROADCAST, self.origin_y);
+				WriteCoord (#MSG_BROADCAST, self.origin_z);
+			#ifdef QUAKE_WORLD
+				multicast (self.origin, #MULTICAST_PHS);
+			#endif
+			}
 
 			dremove(self);
 		}
@@ -1153,7 +1169,7 @@ void() FragSpikeThink =
 void() FragGrenadeTouch =
 {
 	if (other == self.owner)
-		return;		// don't explode on owner
+		return; 	// don't explode on owner
 
 	// Thrown grenades don't detonate when hitting an enemy
 
@@ -1200,7 +1216,7 @@ void() FragGrenadeExplode =
 //		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 1;
 		setmodel (newmis, "progs/spike.mdl");
-		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN); 	
 		setorigin (newmis, self.origin);
 
 		//Start it over the ground
@@ -1237,7 +1253,7 @@ void() KracGrenadeTouch =
 {
 	//WK Have it detonate on impact
 	if (other == self.owner)
-		return;		// don't explode on owner
+		return; 	// don't explode on owner
 
 	sound (self, #CHAN_WEAPON, "weapons/bounce.wav", 1, #ATTN_NORM);	// bounce sound
 	
@@ -1288,8 +1304,8 @@ void() KracGrenadeExplode =
 			//WK 1/7/7 Fix the "dead thunderbolt" bug when you get kraced.
 			//This should force a weapon switch on the next frame.
 			if (te.current_weapon == #WEAP_LIGHTNING || te.current_weapon == #WEAP_LASERCANNON ||
-			    te.current_weapon == #WEAP_DAEDALUS || te.current_weapon == #WEAP_AIRF ||
-			    te.current_weapon == #WEAP_FLAMETHROWER)
+				te.current_weapon == #WEAP_DAEDALUS || te.current_weapon == #WEAP_AIRF ||
+				te.current_weapon == #WEAP_FLAMETHROWER)
 				te.currentammo = te.ammo_cells;
 
 			/* WK 1/7/7 Old damage code:
@@ -1339,16 +1355,16 @@ void() KracGrenadeExplode =
 			TF_T_Damage(te, self, self.owner, 400, 0, 0);
 		else if (te.classname == "building_teleporter")
 			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-        else if (te.classname == "building_sensor") //- Often - needed?
+		else if (te.classname == "building_sensor") //- Often - needed?
 			TF_T_Damage(te, self, self.owner, 200, 0, 0);
-        else if (te.classname == "building_fieldgen") //- Often - needed?
+		else if (te.classname == "building_fieldgen") //- Often - needed?
 			TF_T_Damage(te, self, self.owner, 200, 0, 0);
 		else if (te.classname == "item_armor1" || te.classname == "item_armor2" || te.classname == "item_armorInv") {
 			te.solid = #SOLID_NOT;
 			te.model = string_null;
 			te.nextthink = time + 45; //WK 20
 			te.think = SUB_regen;
-			//SUB_UseTargets();	
+			//SUB_UseTargets(); 
 		}
 		else if (te.classname == "detpack") {
 			if (te.owner.netname != self.owner.netname) {
@@ -1360,7 +1376,7 @@ void() KracGrenadeExplode =
 				sprint (te.owner, #PRINT_MEDIUM, "You Kraced your own detpack!\n");
 			}
 			// This code handles disarming a detpack
-			if (te.weaponmode == 1)	// Detpack was being disarmed
+			if (te.weaponmode == 1) // Detpack was being disarmed
 			{
 				te.enemy.tfstate = te.enemy.tfstate - (te.enemy.tfstate & #TFSTATE_CANT_MOVE);
 		#ifdef QUAKE_WORLD
@@ -1369,11 +1385,11 @@ void() KracGrenadeExplode =
 				te.enemy.pausetime = time;		
 		#endif
 
-				dremove(te.oldenemy);  	 // CountDown
+				dremove(te.oldenemy);	 // CountDown
 				dremove(te.observer_list); //	Disarm timer
 			}
 			else { //Not being disarmed
-				dremove(te.oldenemy);  	 // CountDown
+				dremove(te.oldenemy);	 // CountDown
 			}
 			te.think = BecomeExplosion;
 			te.nextthink = time + 0.1;
@@ -1436,9 +1452,9 @@ void() BastardTimer =
 		//Reset their color
 		stuffcmd(te, "color ");
 		st = ftos(TeamFortress_TeamGetColor(te.team_no) - 1);
-        
-        //- OfN - Nice colors
-        if (nicecolors==1) st =TeamGetNiceColor(te.team_no);
+		
+		//- OfN - Nice colors
+		if (nicecolors==1) st =TeamGetNiceColor(te.team_no);
 
 		stuffcmd(te, st);
 		stuffcmd(te, "\n");
@@ -1467,8 +1483,8 @@ void() BastardTimer =
 	te.ammo_shells = 0;
 	te.ammo_detpack = 0;
 	te.ammo_c4det = 0;
-      te.no_grenades_1 = 0;
-      te.no_grenades_2 = 0;
+	  te.no_grenades_1 = 0;
+	  te.no_grenades_2 = 0;
 	if (te.health > 50) te.health = 50;
 	if (te.armorvalue > 10) te.armorvalue = 10;
 
@@ -1478,10 +1494,10 @@ void() BastardTimer =
 void(entity bastard,float threshold) createBastard =
 {
 	//if (mapname == "border1" || mapname == "border1r") // dont curse ppl on these maps, thay use a bug
-    // done - TODO: Make triggers ignore cursed persons instead..
-    //    return;
-    
-    local entity te;
+	// done - TODO: Make triggers ignore cursed persons instead..
+	//	  return;
+	
+	local entity te;
 
 	if (bastard == world) return;
 
@@ -1492,28 +1508,28 @@ void(entity bastard,float threshold) createBastard =
 		return;
 	}
 
-    //---------------------------------------------------------------------------//
+	//---------------------------------------------------------------------------//
 	// Why do I not like MegaTF? ------------------------------------------------//
 	// Look at http://www.planetfortress.com/history/people/shaka.html ----------//
 	if (bastard.ff_count == threshold + 0.1 || bastard.ff_count == threshold + 0.6) {
 		//- OfN - lol
-        //bprint(#PRINT_HIGH,"тиме то кицк хиM\n");
-        bprint(#PRINT_HIGH,"ok, lets send ");
-        bprint(#PRINT_HIGH,bastard.netname);
-        bprint(#PRINT_HIGH," to a nice megaTF server...\n");
-        stuffcmd(bastard, "name \"CustomTF reject-wanna play Mega\"\n");        
-        //stuffcmd(bastard, "name \"im gay, wanna make new friends\"\n");  
-        
+		//bprint(#PRINT_HIGH,"тиме то кицк хиM\n");
+		bprint(#PRINT_HIGH,"ok, lets send ");
+		bprint(#PRINT_HIGH,bastard.netname);
+		bprint(#PRINT_HIGH," to a nice megaTF server...\n");
+		stuffcmd(bastard, "name \"CustomTF reject-wanna play Mega\"\n");		
+		//stuffcmd(bastard, "name \"im gay, wanna make new friends\"\n");  
+		
 		local string st;
 #ifdef QUAKE_WORLD
 		st = infokey(world,"curseserver");
 #endif
 		if (st == string_null) st = "amnesia.matrux.net:27502"; //WK 1/7/7 Updated ip
-        	stuffcmd(bastard, "connect ");
+			stuffcmd(bastard, "connect ");
 		stuffcmd(bastard, st);
 		stuffcmd(bastard, "\n");
 
-        return; //- OfN - (missing) OLD BUG?
+		return; //- OfN - (missing) OLD BUG?
 	} //---------------------------------------------------------------------------//
 
 
@@ -1554,24 +1570,25 @@ void(entity bastard,float threshold) createBastard =
 			if (CTF_Map == #TRUE && te.goal_no == #CTF_FLAG1)
 			{
 				bprint(#PRINT_HIGH, bastard.netname);
-      			bprint(#PRINT_HIGH, " лост the блуе flag!\n");
+				bprint(#PRINT_HIGH, " лост the блуе flag!\n");
 			}
 			else if (CTF_Map == #TRUE && te.goal_no == #CTF_FLAG2)
 			{
 				bprint(#PRINT_HIGH, bastard.netname);
-                bprint(#PRINT_HIGH, " лост the ред flag!\n");
+				bprint(#PRINT_HIGH, " лост the ред flag!\n");
 			}
 
 		}
 		te = find(te, classname, "item_tfgoal");
 	}
 
-    // Drop any runes too!
-    PlayerDropRunes(bastard);
+	// Drop any runes too!
+	PlayerDropRunes(bastard);
 
 	//return;
 };
 
+/*
 void() Autoitem_think =
 {
 	local entity oself;
@@ -1604,11 +1621,87 @@ void() Autoitem_think =
 	self = oself;
 	self.nextthink = time + 0.5;
 };
+*/
+void() Autoitem_think =
+{
+	local entity	oself;
+	local vector	src;
+	local float 	tmp;
+
+	oself = self;
+	self = self.owner;
+
+	// Gizmo - made extensive mods to this function, it's now a lot better
+	makevectors( self.v_angle );
+	src = self.origin + self.view_ofs;
+	traceline( src, src + v_forward*2048, #TL_ANY_SOLID, self );
+
+	// if trace_ent is world, everything should still work out fine
+	if ( trace_ent != oself.oldenemy ) {
+		if (self.tf_items & #NIT_AUTOID) {
+			if ( trace_ent != world && trace_ent.solid != #SOLID_BSP )
+				//Do an id
+				TeamFortress_ID(#TRUE); //TRUE means we are in autoitemthink
+			else
+				centerprint( self, "" );
+		}
+		// TODO: set initial crosshair color when spawning
+		if ( self.cutf_moreitems & #CUTF_MI_FRIENDORFOE ) {
+			if ( trace_ent != world && trace_ent.solid != #SOLID_BSP && trace_ent.takedamage ) {
+				// if teamplay is disabled, then always report as an enemy
+				if ( teamplay >= 1 ) {
+					tmp = GetTeam( trace_ent );
+
+					// team zero when teamplay is on should be neutral
+					if ( !tmp )
+						stuffcmd( self, "crosshaircolor 254\n" );
+					else if ( !Teammate( tmp, self.team_no ) ) {
+						// check for spies
+						if ( trace_ent.classname == "player" && trace_ent.cutf_items & #CUTF_SPY_KIT && trace_ent.undercover_team != 0 ) {
+							if ( Teammate( trace_ent.undercover_team, self.team_no ) )
+								stuffcmd( self, "crosshaircolor 210\n" );
+							else
+								stuffcmd( self, "crosshaircolor 79\n" );
+						} else
+							stuffcmd( self, "crosshaircolor 79\n" );
+					} else
+						stuffcmd( self, "crosshaircolor 210\n" );
+				} else
+					stuffcmd( self, "crosshaircolor 79\n" );
+			} else
+				stuffcmd( self, "crosshaircolor 254\n" );
+		}
+
+		oself.oldenemy = trace_ent;
+	}
+
+	if ( oself.attack_finished <= time ) {
+		if (self.weapons_carried & #WEAP_MEDIKIT) {
+			//Do a heal, passing it #TRUE tells it not to "tink"
+			//Don't automedic whack while fully invisible
+			if (!(self.job & #JOB_THIEF && (self.job & #JOB_ACTIVE || self.job & #JOB_FULL_HIDE)))
+				W_FireMedikit(#TRUE);
+		}
+		oself.attack_finished = time + 0.5;
+	}
+
+	// only do this every second
+	if ( oself.pain_finished <= time ) {
+		if (self.tf_items & #NIT_AUTOSCANNER) {
+			//Do a scan15
+			TeamFortress_Scan(15,#TRUE);
+		}
+		oself.pain_finished = time + 1;
+	}
+
+	self = oself;
+	self.nextthink = time + 0.1;
+};
 
 void() custom_lay =
 {
-    if (intermission_running)
-        return;
+	if (intermission_running)
+		return;
 
 	//local string st;
 	if (self.last_saveme_sound < time) {
@@ -1639,20 +1732,20 @@ void() DetonateAllGuns =
 		Find_And_Dmg("building_teleporter", self, 1,0);
 	if (!(self.cutf_items & #CUTF_SENSOR)) //SB
 		Find_And_Dmg("building_sensor", self, 1,0);
-    if (!(self.cutf_items & #CUTF_FIELDGEN)) //OfN
+	if (!(self.cutf_items & #CUTF_FIELDGEN)) //OfN
 		Find_And_Dmg("building_fieldgen", self, 1,0);
 };
 
 //Blow up all sentries, dispensers and teslas if we can no longer build them
 void() DetonateAllGunsForced =
 {
-    Find_And_Dmg("building_dispenser", self, 1,0);
+	Find_And_Dmg("building_dispenser", self, 1,0);
 	Find_And_Dmg("building_sentrygun", self, 1,0);
 	Find_And_Dmg("building_tesla", self, 1,0);
 	Find_And_Dmg("building_camera", self, 1,0);
 	Find_And_Dmg("building_teleporter", self, 1,0);
 	Find_And_Dmg("building_sensor", self, 1,0);
-    Find_And_Dmg("building_fieldgen", self, 1,0);
+	Find_And_Dmg("building_fieldgen", self, 1,0);
 };
 
 //Returns true if the entity is a building -- UPDATE THIS WHEN A NEW ONE IS ADDED
@@ -1666,7 +1759,7 @@ float(entity tester) IsBuilding =
 		tester.classname == "building_camera" ||
 		tester.classname == "building_arawana" ||
 		tester.classname == "building_teleporter"||
-   		tester.classname == "building_fieldgen"||
+		tester.classname == "building_fieldgen"||
 		tester.classname == "building_sensor"
 	   )
 		return #TRUE;
@@ -1675,122 +1768,122 @@ float(entity tester) IsBuilding =
 
 void() UpdateWeaponItems =
 {
-    //#ifdef CUSTOM_PC_USES_ITEMS
-    if (self.weapons_carried & #WEAP_SHOTGUN)
-        self.items = self.items | #IT_SHOTGUN;
-    else
-        self.items = self.items - (self.items & #IT_SHOTGUN);
+	//#ifdef CUSTOM_PC_USES_ITEMS
+	if (self.weapons_carried & #WEAP_SHOTGUN)
+		self.items = self.items | #IT_SHOTGUN;
+	else
+		self.items = self.items - (self.items & #IT_SHOTGUN);
 
-    if (self.weapons_carried & #WEAP_SUPER_SHOTGUN)
-        self.items = self.items | #IT_SUPER_SHOTGUN;
-    else
-        self.items = self.items - (self.items & #IT_SUPER_SHOTGUN);
+	if (self.weapons_carried & #WEAP_SUPER_SHOTGUN)
+		self.items = self.items | #IT_SUPER_SHOTGUN;
+	else
+		self.items = self.items - (self.items & #IT_SUPER_SHOTGUN);
 
-    if (self.weapons_carried & #WEAP_NAILGUN)
-        self.items = self.items | #IT_NAILGUN;
-    else
-        self.items = self.items - (self.items & #IT_NAILGUN);
+	if (self.weapons_carried & #WEAP_NAILGUN)
+		self.items = self.items | #IT_NAILGUN;
+	else
+		self.items = self.items - (self.items & #IT_NAILGUN);
 
-    if (self.weapons_carried & (#WEAP_LIGHT_ASSAULT | #WEAP_SNG))
-        self.items = self.items | #IT_LIGHT_ASSAULT;// #IT_SUPER_NAILGUN;
-    else
-        self.items = self.items - (self.items & #IT_LIGHT_ASSAULT);
+	if (self.weapons_carried & (#WEAP_LIGHT_ASSAULT | #WEAP_SNG))
+		self.items = self.items | #IT_LIGHT_ASSAULT;// #IT_SUPER_NAILGUN;
+	else
+		self.items = self.items - (self.items & #IT_LIGHT_ASSAULT);
 
-    if (self.weapons_carried & (#WEAP_GRENADE_LAUNCHER | #WEAP_FLAMETHROWER | #WEAP_DAEDALUS))
-        self.items = self.items | #IT_GRENADE_LAUNCHER;
-    else
-        self.items = self.items - (self.items & #IT_GRENADE_LAUNCHER);
+	if (self.weapons_carried & (#WEAP_GRENADE_LAUNCHER | #WEAP_FLAMETHROWER | #WEAP_DAEDALUS))
+		self.items = self.items | #IT_GRENADE_LAUNCHER;
+	else
+		self.items = self.items - (self.items & #IT_GRENADE_LAUNCHER);
 
-    if (self.weapons_carried & (#WEAP_ROCKET_LAUNCHER | #WEAP_INCENDIARY))
-        self.items = self.items | #IT_ROCKET_LAUNCHER;
-    else
-        self.items = self.items - (self.items & #IT_ROCKET_LAUNCHER);
+	if (self.weapons_carried & (#WEAP_ROCKET_LAUNCHER | #WEAP_INCENDIARY))
+		self.items = self.items | #IT_ROCKET_LAUNCHER;
+	else
+		self.items = self.items - (self.items & #IT_ROCKET_LAUNCHER);
 
-    if (self.weapons_carried & #WEAP_LIGHTNING)
-        self.items = self.items | #IT_LIGHTNING;
-    else
-        self.items = self.items - (self.items & #IT_LIGHTNING);
-    //#endif
+	if (self.weapons_carried & #WEAP_LIGHTNING)
+		self.items = self.items | #IT_LIGHTNING;
+	else
+		self.items = self.items - (self.items & #IT_LIGHTNING);
+	//#endif
 };
 
 float(float inp) CanBuyItem =
 {
-    local float mnu_offset;
-    local float mnu_num;
-    local float itm_num;
+	local float mnu_offset;
+	local float mnu_num;
+	local float itm_num;
 
-    mnu_offset = self.current_menu - #MENU_PRIMARY_WEAPON;
-    mnu_num = mnu_offset - (floor(mnu_offset/3))*3;
-    itm_num = inp + (mnu_num * 7);
+	mnu_offset = self.current_menu - #MENU_PRIMARY_WEAPON;
+	mnu_num = mnu_offset - (floor(mnu_offset/3))*3;
+	itm_num = inp + (mnu_num * 7);
 
-    if (mnu_offset < 3)
-    {
-        if (disabledstuff1 & itob(itm_num))
-            return #FALSE;
-    }
-    else if (mnu_offset < 6)
-    {
-        if (disabledstuff2 & itob(itm_num))
-            return #FALSE;
-    }
-    else if (mnu_offset < 9)
-    {
-        if (disabledstuff3 & itob(itm_num))
-            return #FALSE;
-    }
-    else if (mnu_offset < 12)
-    {
-        if (disabledstuff4 & itob(itm_num))
-            return #FALSE;
-    }
-    else if (mnu_offset < 15)
-    {
-        if (disabledstuff5 & itob(itm_num))
-            return #FALSE;
-    }
-    else
-        return #TRUE; // bug, anyway
+	if (mnu_offset < 3)
+	{
+		if (disabledstuff1 & itob(itm_num))
+			return #FALSE;
+	}
+	else if (mnu_offset < 6)
+	{
+		if (disabledstuff2 & itob(itm_num))
+			return #FALSE;
+	}
+	else if (mnu_offset < 9)
+	{
+		if (disabledstuff3 & itob(itm_num))
+			return #FALSE;
+	}
+	else if (mnu_offset < 12)
+	{
+		if (disabledstuff4 & itob(itm_num))
+			return #FALSE;
+	}
+	else if (mnu_offset < 15)
+	{
+		if (disabledstuff5 & itob(itm_num))
+			return #FALSE;
+	}
+	else
+		return #TRUE; // bug, anyway
 
-    return #TRUE;
+	return #TRUE;
 };
 
 float(float inp) ItemIsFree =
 {
-    local float mnu_offset;
-    local float mnu_num;
-    local float itm_num;
+	local float mnu_offset;
+	local float mnu_num;
+	local float itm_num;
 
-    mnu_offset = self.current_menu - #MENU_PRIMARY_WEAPON;
-    mnu_num = mnu_offset - (floor(mnu_offset/3))*3;
-    itm_num = inp + (mnu_num * 7);
+	mnu_offset = self.current_menu - #MENU_PRIMARY_WEAPON;
+	mnu_num = mnu_offset - (floor(mnu_offset/3))*3;
+	itm_num = inp + (mnu_num * 7);
 
-    if (mnu_offset < 3)
-    {
-        if (givenstuff1 & itob(itm_num))
-            return #TRUE;
-    }
-    else if (mnu_offset < 6)
-    {
-        if (givenstuff2 & itob(itm_num))
-            return #TRUE;
-    }
-    else if (mnu_offset < 9)
-    {
-        if (givenstuff3 & itob(itm_num))
-            return #TRUE;
-    }
-    else if (mnu_offset < 12)
-    {
-        if (givenstuff4 & itob(itm_num))
-            return #TRUE;
-    }
-    else if (mnu_offset < 15)
-    {
-        if (givenstuff5 & itob(itm_num))
-            return #TRUE;
-    }
-    else
-        return #FALSE; // bug, anyway
+	if (mnu_offset < 3)
+	{
+		if (givenstuff1 & itob(itm_num))
+			return #TRUE;
+	}
+	else if (mnu_offset < 6)
+	{
+		if (givenstuff2 & itob(itm_num))
+			return #TRUE;
+	}
+	else if (mnu_offset < 9)
+	{
+		if (givenstuff3 & itob(itm_num))
+			return #TRUE;
+	}
+	else if (mnu_offset < 12)
+	{
+		if (givenstuff4 & itob(itm_num))
+			return #TRUE;
+	}
+	else if (mnu_offset < 15)
+	{
+		if (givenstuff5 & itob(itm_num))
+			return #TRUE;
+	}
+	else
+		return #FALSE; // bug, anyway
 
-    return #FALSE;
+	return #FALSE;
 };

@@ -98,9 +98,11 @@ void() StartItem =
 // this is only done because certain qwsv servers (probably qw 2.40) refuse to ever load single player items (ED_LoadFromFile() in this case)
 // this is done in checkexistence now, but just incase, do it here too
 #ifdef COOP_MODE_ENHANCED
-	if (!IsSingleplayerItem()) {
-		remove (self);
-		return;
+	if ( !deathmatch ) {
+		if ( !IsSingleplayerItem() ) {
+			remove( self );
+			return;
+		}
 	}
 #endif
 
@@ -316,6 +318,8 @@ void() health_touch =
 		{
 			if (deathmatch)
 				self.nextthink = time + 20;
+			else if ( coop && coop != 1 )		// Gizmo - items don't respawn in coop 1
+				self.nextthink = time + 40;
 			self.think = SUB_regen;
 		}
 	}
@@ -347,7 +351,10 @@ void() item_megahealth_rot =
 
 	if (deathmatch != 2)	// deathmatch 2 is silly old rules
 	{
-		self.nextthink = time + 20;
+		if ( deathmatch )
+			self.nextthink = time + 20;
+		else if ( coop && coop != 1 )		// Gizmo - items don't respawn in coop 1
+			self.nextthink = time + 40;
 		self.think = SUB_regen;
 	}
 };
@@ -493,9 +500,9 @@ void() armor_touch =
 
 	self.solid = #SOLID_NOT;
 	self.model = string_null;
-	if (deathmatch != 2)
+	if (deathmatch && deathmatch != 2)
 		self.nextthink = time + 20;
-	if (coop)
+	else if (coop && coop != 1)		// Gizmo - items don't respawn in coop 1
 		self.nextthink = time + 40;
 
 	self.think = SUB_regen;
@@ -676,10 +683,10 @@ void(entity ritem, entity act) Respawn_Item =
 	// remove it in single player, or setup for respawning in deathmatch
 	self.model = string_null;
 	self.solid = #SOLID_NOT;
-	if (deathmatch != 2)
+	if (deathmatch && deathmatch != 2)
 		self.nextthink = time + 30;
-	else if (coop && ritem.touch == ammo_touch)
-		self.nextthink = time + 45;
+	else if (coop && coop != 1)	// Gizmo - items don't respawn in coop 1
+		self.nextthink = time + 50;
 
 	self.think = SUB_regen;
 
@@ -841,7 +848,8 @@ void() weapon_supershotgun =
 	setsize (self, '-16 -16 0', '16 16 56');
 
 #ifdef COOP_MODE_ENHANCED
-	if (!weapon_dummy())
+	if ( !deathmatch )
+	if ( !weapon_dummy() )
 		return;
 #endif
 
@@ -867,7 +875,8 @@ void() weapon_nailgun =
 	setsize (self, '-16 -16 0', '16 16 56');
 
 #ifdef COOP_MODE_ENHANCED
-	if (!weapon_dummy())
+	if ( !deathmatch )
+	if ( !weapon_dummy() )
 		return;
 #endif
 
@@ -893,7 +902,8 @@ void() weapon_supernailgun =
 	setsize (self, '-16 -16 0', '16 16 56');
 
 #ifdef COOP_MODE_ENHANCED
-	if (!weapon_dummy())
+	if ( !deathmatch )
+	if ( !weapon_dummy() )
 		return;
 #endif
 
@@ -919,7 +929,8 @@ void() weapon_grenadelauncher =
 	setsize (self, '-16 -16 0', '16 16 56');
 
 #ifdef COOP_MODE_ENHANCED
-	if (!weapon_dummy())
+	if ( !deathmatch )
+	if ( !weapon_dummy() )
 		return;
 #endif
 
@@ -945,7 +956,8 @@ void() weapon_rocketlauncher =
 	setsize (self, '-16 -16 0', '16 16 56');
 
 #ifdef COOP_MODE_ENHANCED
-	if (!weapon_dummy())
+	if ( !deathmatch )
+	if ( !weapon_dummy() )
 		return;
 #endif
 
@@ -973,7 +985,8 @@ void() weapon_lightning =
 	setsize (self, '-16 -16 0', '16 16 56');
 
 #ifdef COOP_MODE_ENHANCED
-	if (!weapon_dummy())
+	if ( !deathmatch )
+	if ( !weapon_dummy() )
 		return;
 #endif
 
@@ -1464,11 +1477,14 @@ void() key_touch =
 	sprint (other, #PRINT_LOW, "\n");
 
 #ifdef COOP_MODE_ENHANCED
-	// FIXME: change this to team message?
-	bprint (#PRINT_MEDIUM, other.netname);
-	bprint (#PRINT_MEDIUM, " got the ");
-	bprint (#PRINT_MEDIUM, self.netname);
-	bprint (#PRINT_MEDIUM, "\n");
+	// Gizmo - don't bother printing in singleplayer
+	if ( coop ) {
+		// FIXME: change this to team message?
+		bprint (#PRINT_MEDIUM, other.netname);
+		bprint (#PRINT_MEDIUM, " got the ");
+		bprint (#PRINT_MEDIUM, self.netname);
+		bprint (#PRINT_MEDIUM, "\n");
+	}
 #endif
 
 	sound (other, #CHAN_ITEM, self.noise, 1, #ATTN_NORM);
@@ -2038,7 +2054,7 @@ void() DropBackpack =
 		newmis.nextthink = time + self.endtime*r;
 	} else
 #endif
-	newmis.nextthink = time + 20;	// remove after 2 minutes
+	newmis.nextthink = time + 20;
 	newmis.think = SUB_Remove;
 };
 
