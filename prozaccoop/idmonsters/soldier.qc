@@ -342,6 +342,11 @@ float() _SoldierCheckAttack = {
 */
 void() monster_army =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_army";
 
 	if (!server_spawned) {

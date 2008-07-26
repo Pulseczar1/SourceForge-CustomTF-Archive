@@ -149,6 +149,7 @@ void(entity player) UpdateArmorItem;
 // PAGE 17 - More Equipment
 #define STR_FASTERROCKETS		"Faster Rockets  "
 #define STR_NONSTICKYGRENS		"Anti-Stick Grens"
+#define STR_FRIENDORFOE			"Friend or Foe   "
 
 #define STR_SELLEXTRAS		   "Sell stuff back "
 
@@ -284,6 +285,7 @@ void(entity player) UpdateArmorItem;
 // PAGE 17 - More Equipment
 #define COST_FASTERROCKETS		800
 #define COST_NONSTICKYGRENS		450
+#define COST_FRIENDORFOE		25
 
 // Leg settings (Speeds)
 #define CUSTOM_SPEED1	410 // Cheetah (shaka original = 650)
@@ -533,10 +535,10 @@ void(float inp) Menu_SecondaryWeapon_Input =
 		{
 			//Clean up knife-less warlocks (sync this with Custom.qc)
 			if (self.job & #JOB_WARLOCK) { // OfN Fix getting extra money with demon lore
-			   sprint(self, #PRINT_HIGH, "You will need this knife being a warlock!\n");
-			   CuTFMenuSound(#MENUSOUND_WRONG);
-			   self.impulse=0;
-			   return;
+				sprint(self, #PRINT_HIGH, "You will need this knife being a warlock!\n");
+				CuTFMenuSound(#MENUSOUND_WRONG);
+				self.impulse=0;
+				return;
 			}
 
 			PrintRefund(#COST_KNIFE);
@@ -736,8 +738,13 @@ void(float inp) Menu_ToolWeapon_Input =
   {
 
 		if (inp == 1) {
+#ifndef NO_ZEROGRAVGUN
 			BuyWeapon(#COST_ZEROGRAVITY, #WEAP_ZEROGRAVITY);
 			Menu_ToolWeapon ();
+#else
+			sprint( self, #PRINT_HIGH, "The Zero-Gravity Gun has been disabled in this compilation\n" );
+			CuTFMenuSound( #MENUSOUND_WRONG );
+#endif
 		}
 	   
 		if (inp == 8) {
@@ -1448,8 +1455,13 @@ void(float inp) Menu_Armor_Input =
 	}
 	if (inp == 7) {
 #ifdef COOP_MODE_ENHANCED
-		sprint (self, #PRINT_HIGH, "Ammo Bandolier is free in coop.\n");
-		CuTFMenuSound(#MENUSOUND_WRONG);
+		if ( !deathmatch ) {
+			sprint( self, #PRINT_HIGH, "Ammo Bandolier is free in coop.\n" );
+			CuTFMenuSound( #MENUSOUND_WRONG );
+		} else {
+			BuyItem( #COST_AMMOBANDOLIER, #NIT_AMMO_BANDOLIER );
+			Menu_Armor();
+		}
 #else
 		BuyItem(#COST_AMMOBANDOLIER,#NIT_AMMO_BANDOLIER);
 		Menu_Armor();
@@ -1691,8 +1703,13 @@ void(float inp) Menu_Special2_Input =
 	else if (inp == 5)//SB full armour
 	{
 #ifdef COOP_MODE_ENHANCED
-		sprint (self, #PRINT_HIGH, "Full armor is free in coop.\n");
-		CuTFMenuSound(#MENUSOUND_WRONG);
+		if ( !deathmatch ) {
+			sprint( self, #PRINT_HIGH, "Full armor is free in coop.\n" );
+			CuTFMenuSound( #MENUSOUND_WRONG );
+		} else {
+			BuyCuTF( #COST_FULLARMOUR, #CUTF_FULLARMOUR );
+			Menu_Special2();
+		}
 #else
 		BuyCuTF(#COST_FULLARMOUR,#CUTF_FULLARMOUR);
 		Menu_Special2();
@@ -2471,8 +2488,9 @@ void() Menu_MoreOption =
 	l1 = ConstructMenuItemStr(1, #STR_FASTERROCKETS, #COST_FASTERROCKETS, self.cutf_moreitems, #CUTF_MI_FASTERROCKETS);
 	str = ConstructMenuItemStr(2, #STR_NONSTICKYGRENS, #COST_NONSTICKYGRENS, self.cutf_moreitems, #CUTF_MI_NONSTICKYGRENS);
 	l1 = strcat(l1, str);
+	l2 = ConstructMenuItemStr( 3, #STR_FRIENDORFOE, #COST_FRIENDORFOE, self.cutf_moreitems, #CUTF_MI_FRIENDORFOE );
 
-	l2 = l3 = "\n\n";
+	l3 = "\n\n\n";
 
 	l4 = "\n";
 	l4 = strcat(l4, ".. –тец    \n..         \n.. ƒпое!   \n");
@@ -2497,8 +2515,8 @@ void(float inp) Menu_MoreOption_Input =
 					PrintNotEnoughMoney (#COST_FASTERROCKETS);
 			} else {
 				// TODO: add these into custom.qc; infact all this should be in a new moreitems function in custom.qc
-				sprint (self, #PRINT_HIGH, "Gonna lob these rockets at em'? Go buy a rocket launcher first\n");
-				CuTFMenuSound (#MENUSOUND_WRONG);
+				sprint( self, #PRINT_HIGH, "Sorry, you have to buy the rocket launcher first!\n" );
+				CuTFMenuSound( #MENUSOUND_WRONG );
 			}
 
 			Menu_MoreOption ();
@@ -2518,8 +2536,20 @@ void(float inp) Menu_MoreOption_Input =
 
 			Menu_MoreOption ();
 */
+		} else if ( inp == 3 ) {
+			if ( self.cutf_moreitems & #CUTF_MI_FRIENDORFOE ) {
+				PrintRefund( #COST_FRIENDORFOE );
+				self.cutf_moreitems = self.cutf_moreitems - #CUTF_MI_FRIENDORFOE;
+			} else if ( self.money >= #COST_FRIENDORFOE ) {
+				self.money = self.money - #COST_FRIENDORFOE;
+				self.cutf_moreitems = self.cutf_moreitems | #CUTF_MI_FRIENDORFOE;
+				PrintMoney();
+			} else
+				PrintNotEnoughMoney( #COST_FRIENDORFOE );
+
+			Menu_MoreOption();
 		}
-	   
+
 		if (inp == 8) {
 			CuTFMenuSound(#MENUSOUND_BROWSE);
 			self.current_menu = #MENU_OPTION;

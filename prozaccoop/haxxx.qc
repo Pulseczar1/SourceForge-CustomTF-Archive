@@ -10,31 +10,31 @@
 #ifdef COOP_MODE_ENHANCED
 
 // dispenser
-#define HAXTIME_DISP_CAPACITY			10
-#define HAXTIME_DISP_ARMOR			10
-#define HAXTIME_DISP_UPGRADE			20
+#define COOP_HAXTIME_DISP_CAPACITY			10
+#define COOP_HAXTIME_DISP_ARMOR			10
+#define COOP_HAXTIME_DISP_UPGRADE			20
 
 // sentry gun
-#define HAXTIME_SGUN_CAPACITY			10
-#define HAXTIME_SGUN_ARMOR			15
-#define HAXTIME_SGUN_CIRCUITS			20
+#define COOP_HAXTIME_SGUN_CAPACITY			10
+#define COOP_HAXTIME_SGUN_ARMOR			15
+#define COOP_HAXTIME_SGUN_CIRCUITS			20
 
 // tesla gun
-#define HAXTIME_TGUN_CAPACITY			10
-#define HAXTIME_TGUN_ARMOR			15
-#define HAXTIME_TGUN_CIRCUITS			20
+#define COOP_HAXTIME_TGUN_CAPACITY			10
+#define COOP_HAXTIME_TGUN_ARMOR			15
+#define COOP_HAXTIME_TGUN_CIRCUITS			20
 
 // teleporter
-#define HAXTIME_TELE_CAPACITY			5
-#define HAXTIME_TELE_ARMOR			10
-#define HAXTIME_TELE_RANGE			20
+#define COOP_HAXTIME_TELE_CAPACITY			5
+#define COOP_HAXTIME_TELE_ARMOR			10
+#define COOP_HAXTIME_TELE_RANGE			20
 
 // field generator
-#define HAXTIME_FG_CAPACITY			10
-#define HAXTIME_FG_ARMOR			10
-#define HAXTIME_FG_RANGE			10
+#define COOP_HAXTIME_FG_CAPACITY			10
+#define COOP_HAXTIME_FG_ARMOR			10
+#define COOP_HAXTIME_FG_RANGE			10
 
-#else
+#endif
 
 // dispenser
 #define HAXTIME_DISP_CAPACITY			15
@@ -60,8 +60,6 @@
 #define HAXTIME_FG_CAPACITY			10
 #define HAXTIME_FG_ARMOR			15
 #define HAXTIME_FG_RANGE			20
-
-#endif
 
 void(float input) InitiateInterface;
 string(entity thebuilding) GetBuildingName;
@@ -104,30 +102,63 @@ void () Menu_Friend_Hax =
 	{
 		if (self.demon_two.classname == "building_dispenser")
 		{
-			st7="Target∫ Friendly Dispenser\n\n"; 
-			st=   ".. Improve capacity €#HAXTIME_DISP_CAPACITY sec›"; // DONE
-			st3="\n.. Enhance armour   €#HAXTIME_DISP_ARMOR sec›"; // DONE
-			st4="\n.. Upgrade          €#HAXTIME_DISP_UPGRADE sec›";
+#ifdef COOP_MODE_ENHANCED
+			if ( !deathmatch ) {
+				st7="Target∫ Friendly Dispenser\n\n"; 
+				st=   ".. Improve capacity €#COOP_HAXTIME_DISP_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#COOP_HAXTIME_DISP_ARMOR sec›"; // DONE
+				st4="\n.. Upgrade          €#COOP_HAXTIME_DISP_UPGRADE sec›";
+			} else {
+#endif
+				st7="Target∫ Friendly Dispenser\n\n"; 
+				st=   ".. Improve capacity €#HAXTIME_DISP_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#HAXTIME_DISP_ARMOR sec›"; // DONE
+				st4="\n.. Upgrade          €#HAXTIME_DISP_UPGRADE sec›";
+#ifdef COOP_MODE_ENHANCED
+			}
+#endif
 		}
 		else if (self.demon_two.classname == "building_sentrygun")
 		{
-			st7="Target∫ Friendly Sentry Gun\n\n";			
-			st=   ".. Improve capacity €#HAXTIME_SGUN_CAPACITY sec›"; // DONE - increase shells only
-			st3="\n.. Enhance armour   €#HAXTIME_SGUN_ARMOR sec›";
-			st4="\n.. Enhance circuits €#HAXTIME_SGUN_CIRCUITS sec›"; // DONE
+#ifdef COOP_MODE_ENHANCED
+			if ( !deathmatch ) {
+				st7="Target∫ Friendly Sentry Gun\n\n";			
+				st=   ".. Improve capacity €#COOP_HAXTIME_SGUN_CAPACITY sec›"; // DONE - increase shells only
+				st3="\n.. Enhance armour   €#COOP_HAXTIME_SGUN_ARMOR sec›";
+				st4="\n.. Enhance circuits €#COOP_HAXTIME_SGUN_CIRCUITS sec›"; // DONE
+			} else {
+#endif
+				st7="Target∫ Friendly Sentry Gun\n\n";			
+				st=   ".. Improve capacity €#HAXTIME_SGUN_CAPACITY sec›"; // DONE - increase shells only
+				st3="\n.. Enhance armour   €#HAXTIME_SGUN_ARMOR sec›";
+				st4="\n.. Enhance circuits €#HAXTIME_SGUN_CIRCUITS sec›"; // DONE
+#ifdef COOP_MODE_ENHANCED
+			}
+#endif
 		}
 		else if (self.demon_two.classname == "building_tesla")
 		{
-			st7="Target∫ Friendly Tesla Sentry\n\n";
-			st=   ".. Improve capacity €#HAXTIME_TGUN_CAPACITY sec›"; // DONE
-			st3="\n.. Enhance armour   €#HAXTIME_TGUN_ARMOR sec›"; // DONE
-			st4="\n.. Enhance circuits €#HAXTIME_TGUN_CIRCUITS sec›"; //\n.. Add TractorBeam €20 sec›");
+#ifdef COOP_MODE_ENHANCED
+			if ( !deathmatch ) {
+				st7="Target∫ Friendly Tesla Sentry\n\n";
+				st=   ".. Improve capacity €#COOP_HAXTIME_TGUN_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#COOP_HAXTIME_TGUN_ARMOR sec›"; // DONE
+				st4="\n.. Enhance circuits €#COOP_HAXTIME_TGUN_CIRCUITS sec›"; //\n.. Add TractorBeam €20 sec›");
+			} else {
+#endif
+				st7="Target∫ Friendly Tesla Sentry\n\n";
+				st=   ".. Improve capacity €#HAXTIME_TGUN_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#HAXTIME_TGUN_ARMOR sec›"; // DONE
+				st4="\n.. Enhance circuits €#HAXTIME_TGUN_CIRCUITS sec›"; //\n.. Add TractorBeam €20 sec›");
+#ifdef COOP_MODE_ENHANCED
+			}
+#endif
 		}
 		else if (self.demon_two.classname == "building_camera")
 		{
 			st7="Target∫ Friendly Camera\n\n";
 			st=   ".. Improve sensors  €20 sec›"; // DONE
-			st3="\n.. Enhance armour   €20 sec›"; // DONE		 
+			st3="\n.. Enhance armour   €20 sec›"; // DONE
 		}
 		else if (self.demon_two.classname == "building_sensor")
 		{
@@ -138,17 +169,39 @@ void () Menu_Friend_Hax =
 		}
 		else if (self.demon_two.classname == "building_teleporter")
 		{
-			st7="Target∫ Friendly Teleporter\n\n";
-			st=   ".. Improve capacity  €#HAXTIME_TELE_CAPACITY sec›"; // DONE
-			st3="\n.. Enhance armour   €#HAXTIME_TELE_ARMOR sec›"; // DONE
-			st4="\n.. Increase range   €#HAXTIME_TELE_RANGE sec›"; // DONE
+#ifdef COOP_MODE_ENHANCED
+			if ( !deathmatch ) {
+				st7="Target∫ Friendly Teleporter\n\n";
+				st=   ".. Improve capacity  €#COOP_HAXTIME_TELE_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#COOP_HAXTIME_TELE_ARMOR sec›"; // DONE
+				st4="\n.. Increase range   €#COOP_HAXTIME_TELE_RANGE sec›"; // DONE
+			} else {
+#endif
+				st7="Target∫ Friendly Teleporter\n\n";
+				st=   ".. Improve capacity  €#HAXTIME_TELE_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#HAXTIME_TELE_ARMOR sec›"; // DONE
+				st4="\n.. Increase range   €#HAXTIME_TELE_RANGE sec›"; // DONE
+#ifdef COOP_MODE_ENHANCED
+			}
+#endif
 		}
 		else if (self.demon_two.classname == "building_fieldgen")
 		{
-			st7="Target∫ Friendly Field Generator\n\n";
-			st=   ".. Improve capacity €#HAXTIME_FG_CAPACITY sec›"; // DONE
-			st3="\n.. Enhance armour   €#HAXTIME_FG_ARMOR sec›"; // DONE
-			st4="\n.. Increase range   €#HAXTIME_FG_RANGE sec›"; // DONE
+#ifdef COOP_MODE_ENHANCED
+			if ( !deathmatch ) {
+				st7="Target∫ Friendly Field Generator\n\n";
+				st=   ".. Improve capacity €#COOP_HAXTIME_FG_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#COOP_HAXTIME_FG_ARMOR sec›"; // DONE
+				st4="\n.. Increase range   €#COOP_HAXTIME_FG_RANGE sec›"; // DONE
+			} else {
+#endif
+				st7="Target∫ Friendly Field Generator\n\n";
+				st=   ".. Improve capacity €#HAXTIME_FG_CAPACITY sec›"; // DONE
+				st3="\n.. Enhance armour   €#HAXTIME_FG_ARMOR sec›"; // DONE
+				st4="\n.. Increase range   €#HAXTIME_FG_RANGE sec›"; // DONE
+#ifdef COOP_MODE_ENHANCED
+			}
+#endif
 		} else
 			// Gizmo - this can probably be avoided but too lazy for now ~~~
 			st = st3 = "";
@@ -1099,36 +1152,75 @@ float(entity hacked, float r) ReturnFHackDelay =
 	}
 	else if (hacked.classname == "building_dispenser")
 	{
-		if (r == 1)
-			return #HAXTIME_DISP_CAPACITY;
-//		else if (r == 2)
-//			return 30;
-		else if (r == 3)
-			return #HAXTIME_DISP_ARMOR;
-		else
-			return #HAXTIME_DISP_UPGRADE;
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch ) {
+			if (r == 1)
+				return #COOP_HAXTIME_DISP_CAPACITY;
+			else if (r == 3)
+				return #COOP_HAXTIME_DISP_ARMOR;
+			else
+				return #COOP_HAXTIME_DISP_UPGRADE;
+		} else {
+#endif
+			if (r == 1)
+				return #HAXTIME_DISP_CAPACITY;
+//			else if (r == 2)
+//				return 30;
+			else if (r == 3)
+				return #HAXTIME_DISP_ARMOR;
+			else
+				return #HAXTIME_DISP_UPGRADE;
+#ifdef COOP_MODE_ENHANCED
+		}
+#endif
 	}
 	else if (hacked.classname == "building_sentrygun")
 	{
-		if (r == 1)
-			return #HAXTIME_SGUN_CAPACITY;
-//		else if (r == 2)
-//			return 30;
-		else if (r == 3)
-			return #HAXTIME_SGUN_ARMOR;
-		else
-			return #HAXTIME_SGUN_CIRCUITS;
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch ) {
+			if (r == 1)
+				return #COOP_HAXTIME_SGUN_CAPACITY;
+			else if (r == 3)
+				return #COOP_HAXTIME_SGUN_ARMOR;
+			else
+				return #COOP_HAXTIME_SGUN_CIRCUITS;
+		} else {
+#endif
+			if (r == 1)
+				return #HAXTIME_SGUN_CAPACITY;
+//			else if (r == 2)
+//				return 30;
+			else if (r == 3)
+				return #HAXTIME_SGUN_ARMOR;
+			else
+				return #HAXTIME_SGUN_CIRCUITS;
+#ifdef COOP_MODE_ENHANCED
+		}
+#endif
 	}
 	else if (hacked.classname == "building_tesla")
 	{
-		if (r == 1)
-			return #HAXTIME_TGUN_CAPACITY;
-//		else if (r == 2)
-//			return 30;
-		else if (r == 3)
-			return #HAXTIME_TGUN_ARMOR;
-		else
-			return #HAXTIME_TGUN_CIRCUITS;
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch ) {
+			if (r == 1)
+				return #COOP_HAXTIME_TGUN_CAPACITY;
+			else if (r == 3)
+				return #COOP_HAXTIME_TGUN_ARMOR;
+			else
+				return #COOP_HAXTIME_TGUN_CIRCUITS;
+		} else {
+#endif
+			if (r == 1)
+				return #HAXTIME_TGUN_CAPACITY;
+//			else if (r == 2)
+//				return 30;
+			else if (r == 3)
+				return #HAXTIME_TGUN_ARMOR;
+			else
+				return #HAXTIME_TGUN_CIRCUITS;
+#ifdef COOP_MODE_ENHANCED
+		}
+#endif
 	}
 	else if (hacked.classname == "building_sensor")
 	{
@@ -1156,31 +1248,47 @@ float(entity hacked, float r) ReturnFHackDelay =
 	}
 	else if (hacked.classname == "building_teleporter")
 	{
-		if (r == 1)
-			return #HAXTIME_TELE_CAPACITY;
-//		else if (r == 2)
-//			return 30;
-		else if (r == 3)
-			return #HAXTIME_TELE_ARMOR;
-		else// if (r == 4)
-			return #HAXTIME_TELE_RANGE;
-		//else
-		//	  return 8;
-		
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch ) {
+			if (r == 1)
+				return #COOP_HAXTIME_TELE_CAPACITY;
+			else if (r == 3)
+				return #COOP_HAXTIME_TELE_ARMOR;
+			else
+				return #COOP_HAXTIME_TELE_RANGE;
+		} else {
+#endif
+			if (r == 1)
+				return #HAXTIME_TELE_CAPACITY;
+			else if (r == 3)
+				return #HAXTIME_TELE_ARMOR;
+			else
+				return #HAXTIME_TELE_RANGE;
+#ifdef COOP_MODE_ENHANCED
+		}
+#endif
 	}
 	else if (hacked.classname == "building_fieldgen")
 	{
-		if (r == 1)
-			return #HAXTIME_FG_CAPACITY;
-//		else if (r == 2)
-//			return 30;
-		else if (r == 3)
-			return #HAXTIME_FG_ARMOR;
-		else// if (r == 4)
-			return #HAXTIME_FG_RANGE;
-		//else
-		//	  return 8;
-		
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch ) {
+			if (r == 1)
+				return #COOP_HAXTIME_FG_CAPACITY;
+			else if (r == 3)
+				return #COOP_HAXTIME_FG_ARMOR;
+			else
+				return #COOP_HAXTIME_FG_RANGE;
+		} else {
+#endif
+			if (r == 1)
+				return #HAXTIME_FG_CAPACITY;
+			else if (r == 3)
+				return #HAXTIME_FG_ARMOR;
+			else
+				return #HAXTIME_FG_RANGE;
+#ifdef COOP_MODE_ENHANCED
+		}
+#endif
 	}
 
 	return 999; // hehe, punishment to the bug generator :)

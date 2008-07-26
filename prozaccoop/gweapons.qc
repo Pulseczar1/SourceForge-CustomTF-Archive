@@ -7,28 +7,7 @@
 
 //==============================================================
 
-/*
-=============================
-Zero-Gravity gun
-=============================
-*/
-
-#define ZG_PICKUPDIST_EXTRA			48				// extra distance added to pickupee's maxs, was 32
-
-
-// FIXME: change some of these to macros
-.entity	pickedupobject_hands;
-.entity	pickupthink_hands;
-.entity	_oldowner;
-.entity	pickedupby;								// set if the object is being picked up
-.float	oldmovetype;
-
-float		unlockedZeroGrav;							// set to TRUE if unlocked
 entity	solidTestEntity;
-
-void (entity pickuper, float toss) zg_drop;
-float (entity pickupee) zg_getpickupdist;
-
 
 /*
 ===============
@@ -139,9 +118,32 @@ float (entity ent) InSolid =
 //	return qc_droptofloor (ent, 4096, #TRUE);
 };
 
+//==============================================================
+
+#ifndef NO_ZEROGRAVGUN
+
+/*
+=============================
+Zero-Gravity gun
+=============================
+*/
+
+#define ZG_PICKUPDIST_EXTRA			48				// extra distance added to pickupee's maxs, was 32
+
+
+// FIXME: change some of these to macros
+.entity	pickedupobject_hands;
+.entity	pickupthink_hands;
+.entity	_oldowner;
+.entity	pickedupby;								// set if the object is being picked up
+.float	oldmovetype;
+
+float		unlockedZeroGrav;							// set to TRUE if unlocked
+
+void (entity pickuper, float toss) zg_drop;
+float (entity pickupee) zg_getpickupdist;
 
 //=======================
-
 
 void (entity pickuper, entity pickupee, vector destt) zg_movetowards =
 {
@@ -451,3 +453,4 @@ void (entity pickuper, float toss) zg_togglepickup =
 	else
 		zg_drop (pickuper, toss);
 };
+#endif

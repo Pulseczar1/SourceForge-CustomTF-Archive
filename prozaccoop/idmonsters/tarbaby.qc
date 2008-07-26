@@ -210,6 +210,11 @@ float() TarbabyOnSight =
 */
 void() monster_tarbaby =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_tarbaby";
 
 	if (!server_spawned) {

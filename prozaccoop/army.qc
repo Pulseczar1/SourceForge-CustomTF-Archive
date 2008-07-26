@@ -1181,7 +1181,6 @@ float(float slot) TeleSoldier =
 
 	newmis.is_connected = #TRUE;
 
-	// Gizmo - grunts can now swim
 	newmis.flags = newmis.flags | #FL_MONSTER;
 
 	return #TRUE;

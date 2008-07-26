@@ -185,6 +185,11 @@ float() _fish_noticeenemy =
 */
 void() monster_fish =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_fish";
 
 	if (!server_spawned) {

@@ -72,6 +72,7 @@ float (string key, string oldvalue, string value) UserInfoChanged =
 	}
 
 	// spam the new color to the clients
+#ifdef NEVER_DEFINED
 	cl = nextent (world);
 	while (cl) {
 		if (cl.classname == "player" || cl.classname == "spec") {
@@ -85,6 +86,34 @@ float (string key, string oldvalue, string value) UserInfoChanged =
 				WriteString (#MSG_ONE, realcolor);
 		}
 		cl = nextent (cl);
+	}
+#endif
+	// Gizmo - faster way to send out to all clients (since it's always faster to let C do all the heavy stuff)
+	cl = find( world, classname, "player" );
+	while ( cl ) {
+		msg_entity = cl;
+		WriteByte (#MSG_ONE, 51);	// svc_setinfo
+		WriteByte (#MSG_ONE, clno);
+		WriteString (#MSG_ONE, key);
+		if (cl.team_no == myteam)
+			WriteString (#MSG_ONE, teamcolor);
+		else
+			WriteString (#MSG_ONE, realcolor);
+
+		cl = find( cl, classname, "player" );
+	}
+	cl = find( world, classname, "spec" );
+	while ( cl ) {
+		msg_entity = cl;
+		WriteByte (#MSG_ONE, 51);	// svc_setinfo
+		WriteByte (#MSG_ONE, clno);
+		WriteString (#MSG_ONE, key);
+		if (cl.team_no == myteam)
+			WriteString (#MSG_ONE, teamcolor);
+		else
+			WriteString (#MSG_ONE, realcolor);
+
+		cl = find( cl, classname, "spec" );
 	}
 	//tell the server we handled the change
 	return 1;

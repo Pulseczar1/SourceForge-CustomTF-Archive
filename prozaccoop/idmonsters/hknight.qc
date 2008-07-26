@@ -476,6 +476,11 @@ float() HKnightOnSight =
 */
 void() monster_hell_knight =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_hell_knight";
 
 	if (!server_spawned) {

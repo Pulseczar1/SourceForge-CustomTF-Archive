@@ -143,6 +143,7 @@ Killed
 */
 #ifdef COOP_MODE_ENHANCED
 void( entity e ) COOP_SetupRespawn;
+void( entity e ) COOP_MonsterDead;
 #endif
 void(entity targ, entity attacker) Killed =
 {
@@ -214,7 +215,7 @@ void(entity targ, entity attacker) Killed =
             }
             RPrint("\n");            */
         }
-    }        
+    }
 
     targ.is_killed = #TRUE;
     /////////////////////////////////////
@@ -243,10 +244,16 @@ void(entity targ, entity attacker) Killed =
 
 	// doors, triggers, etc // - ofn added sensor, it now calls clientobituary when dead
 	if ((self.movetype == #MOVETYPE_PUSH || self.movetype == #MOVETYPE_NONE) && self.classname != "building_camera" && self.classname!="building_sensor") //CH stop bug.
-	{	
-		self.th_die ();
-		self = oself;
-		return;
+	{
+#ifdef COOP_MODE_ENHANCED
+		if ( !COOP_IsCoopMonster( self ) ) {
+#endif
+			self.th_die ();
+			self = oself;
+			return;
+#ifdef COOP_MODE_ENHANCED
+		}
+#endif
 	}
 
 	self.enemy = attacker;
@@ -279,8 +286,12 @@ void(entity targ, entity attacker) Killed =
 #ifdef COOP_MODE_ENHANCED
 	// setup respawn
 	//void (float respawntime, void() spawn_func) COOP_SetupRespawn
-	if ( COOP_IsCoopMonster( self ) )
+	if ( COOP_IsCoopMonster( self ) ) {
+		// make sure we call this before any cleanup is done
 		COOP_SetupRespawn( self );
+		// this is called to allow transparent monster AI without affecting the monster's actual code
+		COOP_MonsterDead( self );
+	}
 #endif
 
 	self.th_die ();
@@ -368,7 +379,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 #ifdef COOP_MODE_ENHANCED
 	// certain monsters are weaker/stronger against certain types of attack
-	//if ( COOP_IsCoopMonster( targ ) )
+	if ( !deathmatch )
 		damage = COOP_CalcEntityDamage (targ, attacker, damage, T_AttackType);
 #endif
 
@@ -398,7 +409,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	if (attacker.classname == "player")
 	{
 		// Gizmo - allow non demons and non army soldiers to be excluded (coop monsters)
-        if (targ.classname != "player" && !IsBuilding(targ) && !IsMonster(targ) && targ.#corpseflag != #STRFLAG_CORPSE)
+		if (targ.classname != "player" && !IsBuilding(targ) && !IsMonster(targ) && targ.#corpseflag != #STRFLAG_CORPSE)
 		{
 			if (!Activated(targ,attacker))
 			{
@@ -455,7 +466,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
     // OfN - Apply damage factors of attacker and target if any
     damage = damage * GetDamageOutFactor(attacker);
-#ifdef EOG_BESTTEAMKILLER
+
 	// ugly, but QC does mutliple if statements faster than || or &&
 	// this counts total damage dealt in general, without regard to armor protection
 	if (targ != attacker) {
@@ -474,7 +485,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 				targ.#damage_taken = targ.#damage_taken + damage;
 		}
 	}
-#endif
+
     if (!(T_flags & #TF_TD_IGNORERESIST))
         damage = damage * GetDamageInFactor(targ);
 
@@ -824,7 +835,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		self.th_pain (attacker, take);
 #ifdef COOP_MODE_ENHANCED
 		// Gizmo - prevent the monster lerping from getting messed up when pausing a bit for pain
-		if (COOP_IsCoopMonster(self))
+		if ( COOP_IsCoopMonster( self ) )
 			self.#npc_lastruntime = 0;
 #endif
 	}

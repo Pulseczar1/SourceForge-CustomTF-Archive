@@ -167,7 +167,11 @@ void() TeamFortress_ChangeClass =
 
 	if (self.playerclass != #PC_UNDEFINED && !(self.playerclass == #PC_CUSTOM && (self.done_custom & #CUSTOM_BUILDING)))
 	{
-#ifndef COOP_MODE_ENHANCED
+#ifdef COOP_MODE_ENHANCED
+		// In Deathmatch 3, you can change class after you die
+		if (deathmatch != 3 && !coop)
+			return;
+#else
 		// In Deathmatch 3, you can change class after you die
 		if (deathmatch != 3)
 			return;
@@ -355,6 +359,11 @@ void() TeamFortress_ChangeClass =
 	if (self.playerclass >= #PC_SCOUT && self.playerclass <= #PC_RANDOM) {
 		self.items = self.items + #IT_INVULNERABILITY;
 		self.invincible_time = 1;
+#ifdef COOP_MODE_ENHANCED
+		if ( !deathmatch )
+			self.invincible_finished = time + #COOP_RESPAWN_GUARD_TIME;
+		else
+#endif
 		self.invincible_finished = time + #RESPAWN_GUARD_TIME;
 	}
 
@@ -2012,7 +2021,10 @@ void() TeamFortress_SetEquipment =
 		return;
 
 #ifdef COOP_MODE_ENHANCED
-	kept_items = 0;
+	if ( !deathmatch )
+		kept_items = 0;
+	else
+		kept_items = self.tf_items & (#IT_KEY1 | #IT_KEY2);
 #else
 	kept_items = self.tf_items & (#IT_KEY1 | #IT_KEY2);
 #endif
@@ -2123,24 +2135,32 @@ void() TeamFortress_SetEquipment =
 		/*self.no_grenades_1 = GetMaxGrens(self,1);
 		self.no_grenades_2 = GetMaxGrens(self,2);*/ //done at the end of this func
 
-#ifndef COOP_MODE_ENHANCED
-		if (self.tf_items & #NIT_AMMO_BANDOLIER)
-		{
-#endif
+#ifdef COOP_MODE_ENHANCED
+		if ( self.tf_items & #NIT_AMMO_BANDOLIER || !deathmatch ) {
 			self.ammo_rockets = self.maxammo_rockets / 2;
 			self.ammo_nails = (3 * self.maxammo_nails) / 4;
 			self.ammo_shells = (3 * self.maxammo_shells) / 4;
 			self.ammo_cells = (2 * self.maxammo_cells) / 3; 
-#ifndef COOP_MODE_ENHANCED
+		} else {
+			self.ammo_rockets = self.maxammo_rockets / 4;
+			self.ammo_nails = self.maxammo_nails / 2;
+			self.ammo_shells = self.maxammo_shells / 2;
+			self.ammo_cells = self.maxammo_cells / 2;
 		}
-		else
-		{
+#else
+		if ( self.tf_items & #NIT_AMMO_BANDOLIER ) {
+			self.ammo_rockets = self.maxammo_rockets / 2;
+			self.ammo_nails = (3 * self.maxammo_nails) / 4;
+			self.ammo_shells = (3 * self.maxammo_shells) / 4;
+			self.ammo_cells = (2 * self.maxammo_cells) / 3; 
+		} else {
 			self.ammo_rockets = self.maxammo_rockets / 4;
 			self.ammo_nails = self.maxammo_nails / 2;
 			self.ammo_shells = self.maxammo_shells / 2;
 			self.ammo_cells = self.maxammo_cells / 2;
 		}
 #endif
+
 		self.ammo_detpack = self.maxammo_detpack;
 		self.ammo_c4det = self.maxammo_detpack;
 		self.ammo_medikit = self.maxammo_medikit;
@@ -2172,7 +2192,14 @@ void() TeamFortress_SetEquipment =
 
 #ifdef COOP_MODE_ENHANCED
 		// Gizmo - changed this for coop
-		self.armorvalue = self.maxarmor;
+		// TODO: make free instead of this hack
+		if ( deathmatch ) {
+			if (self.cutf_items & #CUTF_FULLARMOUR)
+				self.armorvalue = self.maxarmor;
+			else
+				self.armorvalue = self.maxarmor / 2;
+		} else
+			self.armorvalue = self.maxarmor;
 #else
 		if (self.cutf_items & #CUTF_FULLARMOUR)
 			self.armorvalue = self.maxarmor;
@@ -2193,13 +2220,15 @@ void() TeamFortress_SetEquipment =
 			self.armorclass = self.armorclass | #AT_SAVEFIRE;
 
 		//Support for the "Auto" class itemry
-		if (self.tf_items & #NIT_AUTOSCANNER || self.weapons_carried & #WEAP_MEDIKIT || self.tf_items & #NIT_AUTOID) {
-				automan = spawn ();
-				automan.classname = "timer";
-				automan.nextthink = time + 2;
-				automan.think = Autoitem_think;
-				automan.owner = self;
-				automan.enemy = self;
+		if (self.tf_items & #NIT_AUTOSCANNER || self.weapons_carried & #WEAP_MEDIKIT || self.tf_items & #NIT_AUTOID
+			|| self.cutf_moreitems & #CUTF_MI_FRIENDORFOE) {
+			automan = spawn ();
+			automan.classname = "timer";
+			automan.nextthink = time + 2;
+			automan.think = Autoitem_think;
+			automan.owner = self;
+			automan.enemy = self;
+			automan.oldenemy = self;	// Gizmo - this is so the crosshair will change color initially
 		}
 
 		self.current_weapon = W_BestWeapon ();
@@ -2598,11 +2627,13 @@ void() TeamFortress_SetEquipment =
 
 // if in coop mode, give them the max
 #ifdef COOP_MODE_ENHANCED
-	self.armorvalue = self.maxarmor;
-	self.ammo_shells = self.maxammo_shells;
-	self.ammo_nails = self.maxammo_nails;
-	self.ammo_rockets = self.maxammo_rockets;
-	self.ammo_cells = self.maxammo_cells;
+	if ( !deathmatch ) {
+		self.armorvalue = self.maxarmor;
+		self.ammo_shells = self.maxammo_shells;
+		self.ammo_nails = self.maxammo_nails;
+		self.ammo_rockets = self.maxammo_rockets;
+		self.ammo_cells = self.maxammo_cells;
+	}
 #endif
 	
 	/*if (stock_mode==1) //- OfN - Stock classes don't get a job when stock_mode is 1
@@ -3008,7 +3039,13 @@ void(float Suicided) TeamFortress_SetupRespawn =
 		restime = 0;
 
 // Gizmo - remove respawn delay for coop, TODO: enable a toggleable amount in localinfo
-#ifndef COOP_MODE_ENHANCED
+#ifdef COOP_MODE_ENHANCED
+	if ( deathmatch ) {
+		// Suiciders can't respawn immediately
+		if (Suicided)
+			restime = restime + #SUICIDE_RESPAWN_DELAY;
+	}
+#else
 	// Suiciders can't respawn immediately
 	if (Suicided)
 		restime = restime + #SUICIDE_RESPAWN_DELAY;

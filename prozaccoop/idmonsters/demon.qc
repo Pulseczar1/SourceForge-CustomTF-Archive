@@ -211,6 +211,11 @@ float() _Demon_OnSight =
 */
 void() monster_demon1 =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_demon1";
 
 	if (!server_spawned) {

@@ -265,6 +265,11 @@ void() boss_awake =
 */
 void() monster_boss =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_boss";
 
 	precache_model ("progs/boss.mdl");

@@ -300,13 +300,15 @@ void() TF_StartGoal =
 float() CheckExistence =
 {
 #ifdef COOP_MODE_ENHANCED
-	if (!IsSingleplayerItem()) {
-		//bprint (#PRINT_HIGH, "removed ");
-		//bprint (#PRINT_HIGH, self.classname);
-		//bprint (#PRINT_HIGH, " ");
-		//bprint (#PRINT_HIGH, ftos(self.spawnflags));
-		//bprint (#PRINT_HIGH, "\n");
-		return #FALSE;
+	if ( !deathmatch ) {
+		if ( !IsSingleplayerItem() ) {
+			//bprint (#PRINT_HIGH, "removed ");
+			//bprint (#PRINT_HIGH, self.classname);
+			//bprint (#PRINT_HIGH, " ");
+			//bprint (#PRINT_HIGH, ftos(self.spawnflags));
+			//bprint (#PRINT_HIGH, "\n");
+			return #FALSE;
+		}
 	}
 #endif
 

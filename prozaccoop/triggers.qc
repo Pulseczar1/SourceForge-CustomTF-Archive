@@ -595,6 +595,7 @@ trigger_setskill
 ==============================================================================
 */
 
+#ifdef COOP_MODE_ENHANCED
 void() trigger_skill_touch =
 {
 	local entity te;
@@ -614,9 +615,19 @@ void() trigger_skill_touch =
 
 		return;
 	}
-	
-	cvar_set ("skill", self.message);
+
+	// Gizmo - if in singleplayer then save the new skill, coop is always in nightmare skill
+	if ( !deathmatch && !coop ) {
+		skill = stof( self.message );
+		localcmd( "serverinfo skill " );
+		localcmd( self.message );
+		localcmd( "\n" );
+
+		// Gizmo - quakeworld doesn't have this cvar, though some third party servers do
+		cvar_set ("skill", self.message);
+	}
 };
+#endif
 
 /*QUAKED trigger_setskill (.5 .5 .5) ?
 sets skill level to the value of "message".
@@ -624,10 +635,7 @@ Only used on start map.
 */
 void() trigger_setskill =
 {
-#ifdef QUAKE_WORLD
-	dremove(self);
-	return;
-#else
+#ifdef COOP_MODE_ENHANCED
 	if (CheckExistence() == #FALSE)
 	{
 		dremove(self);
@@ -644,6 +652,9 @@ void() trigger_setskill =
 		InitTrigger ();
 		self.touch = trigger_skill_touch;
 	}
+#else
+	dremove( self );
+	return;
 #endif
 };
 

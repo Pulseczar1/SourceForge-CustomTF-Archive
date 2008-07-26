@@ -352,7 +352,7 @@
 #define coolflag        message
 
 #ifdef COOP_MODE_ENHANCED
-#define monsterflag	weaponmodel
+#define monsterflag	team_str_carried
 #else
 #define monsterflag     message
 #endif

@@ -88,6 +88,31 @@ void() coop_monster_death_use =
 
 //============================================================================
 
+/*
+================
+COOP_FindMonsterPath
+
+This is a hack to allow monsters to have a path AND targets
+it fires at death. Only call this if self.target is set.
+================
+*/
+void() COOP_FindMonsterPath = {
+	local entity	te;
+
+	self.goalentity = self.movetarget = te = find( world, targetname, self.target );
+	while ( te ) {
+		if ( te.classname == "path_corner" ) {
+			self.goalentity = self.movetarget = te;
+			return;
+		}
+
+		te = find( te, targetname, self.target );
+	}
+
+	// if none are any path_corners, then goalentity and movetarget contain the first
+	// target found, if any, like the standard behavior
+};
+
 void() coop_walkmonster_start_go =
 {
 	self.#npc_isCoopMonster = #TRUE;
@@ -119,7 +144,7 @@ void() coop_walkmonster_start_go =
 	
 	if (self.target)
 	{
-		self.goalentity = self.movetarget = find(world, targetname, self.target);
+		COOP_FindMonsterPath();
 		self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
 		if (!self.movetarget)
 		{
@@ -128,9 +153,10 @@ void() coop_walkmonster_start_go =
 // this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
-		else
+		else {
 			self.pausetime = 99999999;
 			self.th_stand ();
+		}
 	}
 	else
 	{
@@ -198,7 +224,7 @@ void() coop_flymonster_start_go =
 
 	if (self.target)
 	{
-		self.goalentity = self.movetarget = find(world, targetname, self.target);
+		COOP_FindMonsterPath();
 		if (!self.movetarget)
 		{
 			coop_debugtargetprint ();
@@ -206,9 +232,10 @@ void() coop_flymonster_start_go =
 // this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
-		else
+		else {
 			self.pausetime = 99999999;
 			self.th_stand ();
+		}
 	}
 	else
 	{
@@ -261,14 +288,19 @@ void() coop_swimmonster_start_go =
 
 	if (self.target)
 	{
-		self.goalentity = self.movetarget = find(world, targetname, self.target);
+		COOP_FindMonsterPath();
 		if (!self.movetarget)
 		{
 			coop_debugtargetprint ();
 		}
 // this used to be an objerror
 		self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
-		self.th_walk ();
+		if (self.movetarget.classname == "path_corner")
+			self.th_walk ();
+		else {
+			self.pausetime = 99999999;
+			self.th_stand ();
+		}
 	}
 	else
 	{

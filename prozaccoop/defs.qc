@@ -1712,13 +1712,13 @@ float		rj; 				// Rocket Jump Modifier
 .float cutf_moreitems;					// cutfMoreItems
 #define CUTF_MI_FASTERROCKETS	1		// Gizmo - avirox's faster rocket mod
 #define CUTF_MI_NONSTICKYGRENS	2		// Gizmo - avirox's non-sticky grens
+#define CUTF_MI_FRIENDORFOE		4		// Gizmo - changes the crosshair to blue or red when looking at enemy or friend
 
 //Time to be invincible from the respawn guard
 #ifdef COOP_MODE_ENHANCED
-#define RESPAWN_GUARD_TIME		2
-#else
-#define RESPAWN_GUARD_TIME		5
+#define COOP_RESPAWN_GUARD_TIME	2
 #endif
+#define RESPAWN_GUARD_TIME		5
 
 //JOBS AVAILABLE
 #define JOB_THIEF				1 //WK CAUTION: IF YOU EVER CHANGE THIS, CPQWSV THIEF CODE WILL BREAK
@@ -2166,7 +2166,11 @@ float		rj; 				// Rocket Jump Modifier
 #define PC_ENGINEER_INITARMORTYPE		0.3
 //#define PC_ENGINEER_ARMORCLASSES		31		// ALL
 #define PC_ENGINEER_INITARMORCLASS		0
-#define PC_ENGINEER_WEAPONS 		#WEAP_SPANNER | #WEAP_RAILGUN | #WEAP_SUPER_SHOTGUN | #WEAP_ZEROGRAVITY
+#ifndef NO_ZEROGRAVGUN
+	#define PC_ENGINEER_WEAPONS 		#WEAP_SPANNER | #WEAP_RAILGUN | #WEAP_SUPER_SHOTGUN | #WEAP_ZEROGRAVITY
+#else
+	#define PC_ENGINEER_WEAPONS 		#WEAP_SPANNER | #WEAP_RAILGUN | #WEAP_SUPER_SHOTGUN
+#endif
 #define PC_ENGINEER_MAXAMMO_SHOT		75
 #define PC_ENGINEER_MAXAMMO_NAIL		50
 #ifdef CLASSIC_STOCK_ENGY_MAXCELLS

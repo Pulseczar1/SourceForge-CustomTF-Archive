@@ -363,6 +363,11 @@ float() DogOnSight =
 */
 void() monster_dog =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_dog";
 
 	if (!server_spawned) {

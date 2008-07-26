@@ -354,6 +354,11 @@ float() EnforcerOnSight =
 */
 void() monster_enforcer =
 {
+	if ( deathmatch ) {
+		remove( self );
+		return;
+	}
+
 	self.classname = "idmonster_enforcer";
 
 	if (!server_spawned) {

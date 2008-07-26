@@ -2,21 +2,31 @@
 	tfdefs.qc - to keep defs.qc a little cleaner, place teamfortress specific defs.qc stuff in here instead
 */
 
+//
+// globals
+//
+float	server_spawned;								// TRUE if server is spawned and ready to go
 
+//
 // player only fields
+//
 #define team_damage_dealt			cnt				// total amount of team damage this player has dealt
 #define enemy_damage_dealt			volume			// total amount of damage done to enemies only
 #define damage_taken				distance			// player that took the most amount of damage from enemies
 #define teleporter_teamkiller			trigger_field		// a teammate that teleported us into lava (requires teleporter.qc, client.qc: PlayerPostThink(), and obits.qc)
 
-// grunt.qc
+//
+// grunty.qc
+//
 #define allowed_weapons				wait				// weapons the grunt can use
 
+//
 // prototypes
-float (entity ent) InSolid;
-
+//
+float( entity ent ) InSolid;
 float( entity e ) GetTeam;
 
+//=======================================================================
 
 // FIXME: a QC implementation of tracebox
 /*

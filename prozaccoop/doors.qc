@@ -304,7 +304,8 @@ void() door_touch =
 	}
 
 #ifdef COOP_MODE_ENHANCED
-	else {
+	// Gizmo - only print this if in coop mode, don't bother in singleplayer
+	else if ( coop ) {
 		// FIXME: should this be a team message?
 		bprint (#PRINT_MEDIUM, other.netname);
 		bprint (#PRINT_MEDIUM, " unlocked the ");

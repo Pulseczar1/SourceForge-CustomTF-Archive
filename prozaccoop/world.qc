@@ -1,5 +1,5 @@
 //================================================================//
-//- CustomTF Worldspawn and related stuff              OfteN      //
+//- CustomTF Worldspawn and related stuff			   OfteN	  //
 //- 30-01-2001----------------------------------------------------//
 
 
@@ -21,7 +21,7 @@ entity() GetQueEntry;
 
 void() main =
 {
-// Gizmo - commented this out since it is unneeded
+// Gizmo - commented this out since it's not needed
 /*
 	dprint ("main function\n");
 	
@@ -175,77 +175,10 @@ void() main =
 };
 
 
-#ifdef COOP_MODE_ENHANCED
-/*
-	ValidSpawnPoint - checks if the given spawn point is in anyway inside the world
-	for maps with bad coops spawns like terra6
-*/
-
-float (entity point) ValidSpawnPoint =
-{
-	local entity tent, oself;
-	local float ret;
-
-	tent = spawn ();
-	tent.solid = #SOLID_SLIDEBOX;
-	tent.movetype = #MOVETYPE_STEP;
-	setsize (tent, #VEC_HULL_MIN, #VEC_HULL_MAX);
-	setorigin (tent, point.origin);
-
-	oself = self;
-	self = tent;
-
-	self.origin_z = self.origin_z + 1;
-	droptofloor ();
-
-	ret = walkmove (0, 0);
-
-	self = oself;
-
-	remove (tent);
-	return ret;
-};
-
-/*
-	ValidateCoopsSpawns - runs through all the coop spawns and deletes the ones that are in the world
-*/
-
-void () ValidateCoopsSpawns =
-{
-	local entity le, re;
-
-	// always start from world
-	le = world;
-	re = world;
-
-	do {
-		le = find (le, classname, "info_player_coop");
-
-		// this is just to prevent using find with entities that we removed
-		// technically it should still work on entities that were removed
-		// but there's no guarantee that will always be true on future versions of qwsv
-		if (re != world) {
-			dprint ("bad coop spawn (the spawn has been removed) at: ");
-			dprint (vtos(re.origin));
-			dprint ("\n");
-			remove (re);
-			re = world;
-		}
-
-		if (le != world && !ValidSpawnPoint(le))
-			re = le;
-	} while (le != world);
-};
-
-void () spawn_think =
-{
-	// remove coop spawns that are in walls (like terra6.bsp)
-	ValidateCoopsSpawns ();
-
+void() spawn_think = {
 	server_spawned = #TRUE;
-	remove (self);
+	remove( self );
 };
-#endif
 
 
 entity	lastspawn;
@@ -264,33 +197,53 @@ World Types:
 //=======================
 void() worldspawn =
 {
+	local entity	e;
+	local string	temps;
+	local float 	tempf;
+
 #ifdef COOP_MODE_ENHANCED
-	local entity e;
+	// the coop and skill cvars are removed in QW, in NQ SV_SpawnServer() updated the prog's coop and deathmatch globals from the cvar and skill was updated in StartFrame()
+	// so we'll emulate that by doing it here (deathmatch is in StartFrame())
+	// Gizmo - I'd like to set coop based on if it's a coop map or not, but there's no telling when a monster or the tf detect entity will spawn
+	// and we may need to know if it's coop before either of those spawn
+	temps = infokey( world, "coop" );
+	if ( temps == "" && deathmatch )	// if deathmatch is set and coop isn't defined then turn coop off
+		coop = 0;
+	else if ( temps == "" )			// if deathmatch is zero and coop isn't defined then turn coop on (you must explicitly set coop to 0 to play single-player)
+		coop = 1;
+	else {
+		coop = stof( temps );
 
-	cvar_set ("deathmatch", "0");
-	coop = 1;
-	skill = 5;
+		// Gizmo - force deathmatch off if coop is present
+		if ( coop ) {
+			deathmatch = 0;
+			cvar_set( "deathmatch", "0" );
+		}
+	}
+	temps = infokey( world, "skill" );
+	if ( temps == "" )
+		skill = 5;
+	else
+		skill = stof( temps );
 
-	// turn off grapple
-	if (infokey(world, "g") == string_null)
-		localcmd ("localinfo g off\n");
-
-	// create an entity that will let us know when everything's finished spawning
-	// and to also remove bad coop spawns
-	e = spawn ();
-	e.nextthink = time + 0.2;
-	e.think = spawn_think;
+	// Gizmo - if singleplayer or coop disable grapple by default
+	if ( !deathmatch ) {
+		if ( infokey( world, "g" ) == string_null )
+			localcmd( "localinfo g off\n" );
+	}
 #endif
 
-	lastspawn = world;
-	
-// custom map attributes
-#ifdef COOP_MODE_ENHANCED
-	local string	temps;
-	local float		tempf;
+	// Gizmo - create an entity that will let us know when everything's finished spawning
+	e = spawn();
+	e.nextthink = time + 0.2;
+	e.think = spawn_think;
 
+	lastspawn = world;
+
+// custom map attributes
 	// Gizmo - allowed this to work without always forcing gravity to 800 when not on e1m8
-	if (self.model == "maps/e1m8.bsp") {
+	// this now works on coop and non-coop as it should
+	if ( self.model == "maps/e1m8.bsp" ) {
 		// save off the server's gravity setting
 		tempf = cvar( "sv_gravity" );
 		temps = ftos( tempf );
@@ -298,61 +251,59 @@ void() worldspawn =
 		localcmd( temps );
 		localcmd( "\n" );
 
-		cvar_set ("sv_gravity", "100");
+		cvar_set( "sv_gravity", "100" );
 	} else if ( infokey( world, "_saved_gravity" ) != string_null ) {
 		// restore server's gravity setting if changing from e1m8
 		temps = infokey( world, "_saved_gravity" );
 		cvar_set( "sv_gravity", temps );
 		localcmd( "localinfo _saved_gravity \"\"\n" );
 	}
-#endif
 
 #ifdef QUAKE_WORLD
 	if (infokey(world, "*gamedir") != "fortress")
 		objerror("QW TF must be run with a gamedir of \"fortress\".\n");
 #endif
-	
-    //- OfteN globals -//
-    // OfN - Init global vars
-    num_players = 0;
-    num_specs = 0;	
 
-    // Retrieve prozac main localinfos
-    UpdateInfos(#TRUE);
+	//- OfteN globals -//
+	// OfN - Init global vars
+	num_players = 0;
+	num_specs = 0;	
+
+	// Retrieve prozac main localinfos
+	UpdateInfos(#TRUE);
 
 #ifdef COOP_MODE_ENHANCED
-	// turn off grapple and those sort of things by default if nothing is already set
-	// this overrides UpdateInfos from above
-	// This might be a little easier/cleaner than UpdateInfos
-	// TODO: modify UpdateInfos instead?
-	if (infokey(world, "no_grapple") == string_null) {
-		localcmd ("localinfo no_grapple 1\n");
-		no_grapple = 1;
-	}
-	if (infokey(world, "allow_watermonsters") == string_null) {
-		localcmd ("localinfo allow_watermonsters 1\n");
-		allow_watermonsters = 1;
+	// turn off grapple and those sort of things by default if nothing is already set if in singleplayer or coop
+	if ( !deathmatch ) {
+		if (infokey(world, "no_grapple") == string_null) {
+			localcmd ("localinfo no_grapple 1\n");
+			no_grapple = 1;
+		}
+		if (infokey(world, "allow_watermonsters") == string_null) {
+			localcmd ("localinfo allow_watermonsters 1\n");
+			allow_watermonsters = 1;
+		}
 	}
 #endif
 
-    // Init the body queue for corpses and heads of players
-    InitBodyQue ();
+	// Init the body queue for corpses and heads of players
+	InitBodyQue ();
 
-    // Clear this local used for map cycle error reporting (see client.qc)
-    localcmd("localinfo tmap \"\"\n");
-    localcmd("localinfo specialmap \"\"\n");
+	// Clear this local used for map cycle error reporting (see client.qc)
+	localcmd("localinfo tmap \"\"\n");
+	localcmd("localinfo specialmap \"\"\n");
 
-    current_voteent = world;
-    votesleeping = #FALSE;
+	current_voteent = world;
+	votesleeping = #FALSE;
 
-    debug_target=world;
-   	already_chosen_map = #FALSE;
-    triggered_cycle = #FALSE;
+	debug_target=world;
+	already_chosen_map = #FALSE;
+	triggered_cycle = #FALSE;
 
-    ceasefire = #FALSE;
-    ////////////////////
+	ceasefire = #FALSE;
+	////////////////////
 
-    // We set up Chris' Teamplay Plus Mode here cos that's fun
+	// We set up Chris' Teamplay Plus Mode here cos that's fun
 	/*st = infokey(world, "chris");
 	if (st == "on")
 		chris = #TRUE;
@@ -365,26 +316,26 @@ void() worldspawn =
 		roundtime = 300;
 	
 	roundstowin = 5;*/
-    
+	
 	////////////////////////////////
 
-	team_with_flag = 0;		//KK initial global sets
+	team_with_flag = 0; 	//KK initial global sets
 
 	// PZ - I'll stick my global initializers here too, I guess
 	playersOnTeam1 = 0; playersOnTeam2 = 0;
 	playersOnTeam3 = 0; playersOnTeam4 = 0;
 	agrTimerRunning = 0; agrTimeOfLastSound = 0;
 
-    //friends1_mask = stof(infokey(world,"friends1_mask"));
+	//friends1_mask = stof(infokey(world,"friends1_mask"));
 	//friends2_mask = stof(infokey(world,"friends2_mask"));
 	//friends3_mask = stof(infokey(world,"friends3_mask"));
 	//friends4_mask = stof(infokey(world,"friends4_mask"));
-    
+	
 
 
 // the area based ambient sounds MUST be the first precache_sounds
 
-// player precaches	
+// player precaches 
 	W_Precache ();			// get weapon precaches
 
 // sounds used from C physics code
@@ -393,17 +344,17 @@ void() worldspawn =
 
 // setup precaches allways needed
 	precache_sound ("items/itembk2.wav");		// item respawn sound
-	precache_sound ("player/plyrjmp8.wav");		// player jump
-	precache_sound ("player/land.wav");			// player landing
+	precache_sound ("player/plyrjmp8.wav"); 	// player jump
+	precache_sound ("player/land.wav"); 		// player landing
 	precache_sound ("player/land2.wav");		// player hurt landing
 	precache_sound ("player/drown1.wav");		// drowning pain
 	precache_sound ("player/drown2.wav");		// drowning pain
 	precache_sound ("player/gasp1.wav");		// gasping for air
 	precache_sound ("player/gasp2.wav");		// taking breath
-	precache_sound ("player/h2odeath.wav");		// drowning death
+	precache_sound ("player/h2odeath.wav"); 	// drowning death
 
 	precache_sound ("misc/talk.wav");			// talk
-	precache_sound ("player/teledth1.wav");		// telefrag
+	precache_sound ("player/teledth1.wav"); 	// telefrag
 	precache_sound ("misc/r_tele1.wav");		// teleport sounds
 	precache_sound ("misc/r_tele2.wav");
 	precache_sound ("misc/r_tele3.wav");
@@ -421,7 +372,7 @@ void() worldspawn =
 // player gib sounds
 	precache_sound ("player/gib.wav");			// player gib sound
 	precache_sound ("player/udeath.wav");		// player gib sound
-	precache_sound ("player/tornoff2.wav");		// gib sound
+	precache_sound ("player/tornoff2.wav"); 	// gib sound
 
 // player pain sounds
 
@@ -440,12 +391,12 @@ void() worldspawn =
 	precache_sound ("player/death5.wav");
 
 // ax sounds	
-	precache_sound ("weapons/ax1.wav");			// ax swoosh
+	precache_sound ("weapons/ax1.wav"); 		// ax swoosh
 	precache_sound ("player/axhit1.wav");		// ax hit meat
 	precache_sound ("player/axhit2.wav");		// ax hit world
 
 	precache_sound ("player/h2ojump.wav");		// player jumping into water
-	precache_sound ("player/slimbrn2.wav");		// player enter slime
+	precache_sound ("player/slimbrn2.wav"); 	// player enter slime
 	precache_sound ("player/inh2o.wav");		// player enter water
 	precache_sound ("player/inlava.wav");		// player enter lava
 	precache_sound ("misc/outwater.wav");		// leaving water sound
@@ -453,8 +404,8 @@ void() worldspawn =
 	precache_sound ("player/lburn1.wav");		// lava burn
 	precache_sound ("player/lburn2.wav");		// lava burn
 
-	precache_sound ("misc/water1.wav");			// swimming
-	precache_sound ("misc/water2.wav");			// swimming
+	precache_sound ("misc/water1.wav"); 		// swimming
+	precache_sound ("misc/water2.wav"); 		// swimming
 
 	precache_model ("progs/player.mdl");
 	precache_model ("progs/eyes.mdl");
@@ -476,11 +427,11 @@ void() worldspawn =
 	precache_model ("progs/v_rock2.mdl");
 	//UNUSED_TEST precache_model ("progs/grenade.mdl");
 
-    //precache_model ("progs/v_chain.mdl"); // OfN - Light assault
+	//precache_model ("progs/v_chain.mdl"); // OfN - Light assault
 
 	precache_model ("progs/bolt.mdl");		// for lightning gun
-	precache_model ("progs/bolt2.mdl");		// for lightning gun
-	precache_model ("progs/bolt3.mdl");		// for boss shock
+	precache_model ("progs/bolt2.mdl"); 	// for lightning gun
+	precache_model ("progs/bolt3.mdl"); 	// for boss shock
 	precache_model ("progs/lavaball.mdl");	// for testing
 	
 	precache_model ("progs/missile.mdl");
@@ -497,20 +448,20 @@ void() worldspawn =
 	precache_sound2 ("enforcer/enfstop.wav");
 	precache_sound2 ("hknight/attack1.wav");
 
-    //- OfN - Flare exp sound
-    precache_sound2 ("items/flare1.wav");
+	//- OfN - Flare exp sound
+	precache_sound2 ("items/flare1.wav");
 
-    // Team Fortress Weapon MDLs
+	// Team Fortress Weapon MDLs
 	//precache_model2("progs/sight.spr"); // OfN Moved to megatf source
 //	precache_model2("progs/cross1.mdl");
-    precache_model2("progs/v_medi.mdl");
-    //precache_model2("progs/v_bio.mdl");
+	precache_model2("progs/v_medi.mdl");
+	//precache_model2("progs/v_bio.mdl");
 	precache_model2("progs/hgren2.mdl");
 	precache_model2("progs/biggren.mdl");
 
-    //precache_model2("progs/lndmine.mdl"); 
-    precache_model2("progs/flare.mdl");
-    
+	//precache_model2("progs/lndmine.mdl"); 
+	precache_model2("progs/flare.mdl");
+	
 	precache_model2("progs/v_srifle.mdl");
 	precache_model2("progs/v_asscan.mdl");
 	precache_model2("progs/detpack.mdl");
@@ -520,107 +471,107 @@ void() worldspawn =
 	precache_model2("progs/v_span.mdl");	  // Engineer's Spanner
 	precache_model2("progs/e_spike1.mdl");	  // Engineer's RailGun
 	precache_model2("progs/e_spike2.mdl");	  // Engineer's RailGun
-	precache_model2("progs/v_rail.mdl");   	  // Engineer's RailGun
+	precache_model2("progs/v_rail.mdl");	  // Engineer's RailGun
 	
-    //precache_model2("progs/turrgun.mdl");	  // Sentry Gun
-    
-    //////////////////////////////////////////////////////
-    precache_model2("progs/trrgn2.mdl");
-    precache_sound2 ("weapons/sntr666.wav");
-    precache_sound2 ("weapons/trr2lost.wav");
+	//precache_model2("progs/turrgun.mdl");   // Sentry Gun
+	
+	//////////////////////////////////////////////////////
+	precache_model2("progs/trrgn2.mdl");
+	precache_sound2 ("weapons/sntr666.wav");
+	precache_sound2 ("weapons/trr2lost.wav");
 
 	//precache_model2("progs/turrbase.mdl");	  // Sentry Gun
-    precache_model2("progs/trrbs2.mdl");	  // Sentry Gun
+	precache_model2("progs/trrbs2.mdl");	  // Sentry Gun
 
-    //air-fist models and sounds--------//
-    precache_model2("progs/v_airgun.mdl");
-    precache_sound2("weapons/agfail.wav");
-    precache_sound2("weapons/agwfail.wav");
-    precache_sound2("weapons/agwater.wav");
-    precache_sound2("weapons/agfire.wav");
-    precache_model2("progs/s_ablast.spr");
-    //----------------------------------//
+	//air-fist models and sounds--------//
+	precache_model2("progs/v_airgun.mdl");
+	precache_sound2("weapons/agfail.wav");
+	precache_sound2("weapons/agwfail.wav");
+	precache_sound2("weapons/agwater.wav");
+	precache_sound2("weapons/agfire.wav");
+	precache_model2("progs/s_ablast.spr");
+	//----------------------------------//
 
-    //laser cannon models and sounds---//
-    precache_model2("progs/v_laserg.mdl");
-    precache_model2("progs/lasrspik.mdl");    
-    precache_sound2("weapons/laserric.wav");
-    precache_sound2("weapons/laserg.wav");
-    //-----------------------------------//
+	//laser cannon models and sounds---//
+	precache_model2("progs/v_laserg.mdl");
+	precache_model2("progs/lasrspik.mdl");	  
+	precache_sound2("weapons/laserric.wav");
+	precache_sound2("weapons/laserg.wav");
+	//-----------------------------------//
 
-    //field gen precaches-------------//
-    Field_Precache();
-    //---------------------------------//
+	//field gen precaches-------------//
+	Field_Precache();
+	//---------------------------------//
 
-    precache_sound("gibs/gibpick.wav");
-    /*precache_sound("gibs/gibpick2.wav");
-    precache_sound("gibs/gibpick3.wav");*/
-    //precache_sound2("blob/hit1.wav"); // For psionic grens
-    
-    #ifdef KICKABLE_HEADS
-    precache_sound("zombie/z_miss.wav");
-    #endif
+	precache_sound("gibs/gibpick.wav");
+	/*precache_sound("gibs/gibpick2.wav");
+	precache_sound("gibs/gibpick3.wav");*/
+	//precache_sound2("blob/hit1.wav"); // For psionic grens
+	
+	#ifdef KICKABLE_HEADS
+	precache_sound("zombie/z_miss.wav");
+	#endif
 
-    MenuPrecache();
+	MenuPrecache();
 
-    PrecacheRuneModels();
+	PrecacheRuneModels();
 
-    //- OfN -
-    precache_model2("progs/flarefly.mdl");
-    precache_model2("progs/tesgib4.mdl");
-  	precache_model ("progs/caltrop.mdl");		// A big, bad, caltrop
+	//- OfN -
+	precache_model2("progs/flarefly.mdl");
+	precache_model2("progs/tesgib4.mdl");
+	precache_model ("progs/caltrop.mdl");		// A big, bad, caltrop
 
-    precache_sound2("weapons/gren_emp.wav");    
+	precache_sound2("weapons/gren_emp.wav");	
 
 	precache_model2("progs/t2gib1.mdl");		  // Sentry Gun Gib
 	precache_model2("progs/t2gib2.mdl");		  // Sentry Gun Gib
 	precache_model2("progs/t2gib3.mdl");		  // Sentry Gun Gib
-  	
-    //- extra gib
-    precache_model2("progs/t2gib4.mdl");		  // Sentry Gun Gib
+	
+	//- extra gib
+	precache_model2("progs/t2gib4.mdl");		  // Sentry Gun Gib
 ///////////////////////////////////////
 
-    precache_model2("progs/disp.mdl");		  // Tmp dispenser mdl
-	precache_model2("progs/dgib1.mdl");		  // Dispenser Gib
-	precache_model2("progs/dgib2.mdl");		  // Dispenser Gib
-	precache_model2("progs/dgib3.mdl");		  // Dispenser Gib
+	precache_model2("progs/disp.mdl");		  // Tmp dispenser mdl
+	precache_model2("progs/dgib1.mdl"); 	  // Dispenser Gib
+	precache_model2("progs/dgib2.mdl"); 	  // Dispenser Gib
+	precache_model2("progs/dgib3.mdl"); 	  // Dispenser Gib
 
 	precache_model2("progs/grenade2.mdl");	  // New grenade
 	precache_model2("progs/v_grap.mdl");	  // Grapple gun
 	precache_model2("progs/hook.mdl");		  // Grapple hook
 //#ifndef QUAKE_WORLD
 	/*if (headless==1)
-       precache_model2("progs/headless.mdl");	  // Player with no head*/
+	   precache_model2("progs/headless.mdl");	  // Player with no head*/
 //#endif hehe why??
 
-    precache_model2("progs/sencer.mdl");
+	precache_model2("progs/sencer.mdl");
 
-    precache_model2("progs/grunty.mdl");
+	precache_model2("progs/grunty.mdl");
 
-    //- OfN
-    Wiz_Precache();
-    Fish_Precache();
+	//- OfN
+	Wiz_Precache();
+	Fish_Precache();
 	#ifndef GREMLIN_NOTDONE // PZ - let's not let these occupy resources if grem is disabled
 		Gremlin_Precache();
 	#endif
 
-    precache_sound2("weapons/detpack.wav");
+	precache_sound2("weapons/detpack.wav");
 
 	precache_sound2("speech/saveme1.wav");	  // Saveme Sound
 	precache_sound2("speech/saveme2.wav");	  // Saveme Sound
 
-    //- OfN sounds for flares and holo
-    //precache_sound2("effects/bodyhit1.wav");	  
-    //precache_sound2("effects/bodyhit2.wav");
-    
-    //- OfN - Aura sounds
-    precache_sound2("auras/aura1b.wav");
-    precache_sound2("auras/aura2b.wav");
-    precache_sound2("auras/aura3b.wav");
-    precache_sound2("auras/aura4b.wav");
-    
-    //precache_sound2("weapons/pinpull.wav");
-    //precache_sound2("weapons/throw.wav");
+	//- OfN sounds for flares and holo
+	//precache_sound2("effects/bodyhit1.wav");	  
+	//precache_sound2("effects/bodyhit2.wav");
+	
+	//- OfN - Aura sounds
+	precache_sound2("auras/aura1b.wav");
+	precache_sound2("auras/aura2b.wav");
+	precache_sound2("auras/aura3b.wav");
+	precache_sound2("auras/aura4b.wav");
+	
+	//precache_sound2("weapons/pinpull.wav");
+	//precache_sound2("weapons/throw.wav");
 
 #ifdef SPEECH
 	precache_sound2("speech/scout.wav");
@@ -645,8 +596,8 @@ void() worldspawn =
 
 	// 0 normal
 	//lightstyle(0, "f"); // default starting settin was "m" (half bright)
-    //SetWorldBrightness(#ENVIRO_DARKNESS); // Done on InitEnvironment()
-    
+	//SetWorldBrightness(#ENVIRO_DARKNESS); // Done on InitEnvironment()
+	
 	// 1 FLICKER (first variety)
 	lightstyle(1, "mmnmmommommnonmmonqnmmo");
 	
@@ -669,7 +620,7 @@ void() worldspawn =
 	lightstyle(7, "mmmaaaabcdefgmmmmaaaammmaamm");
 	
 	// 8 CANDLE (third variety)
-	lightstyle(8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");                   
+	lightstyle(8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");				   
 	
 	// 9 SLOW STROBE (fourth variety)
 	lightstyle(9, "aaaaaaaazzzzzzzz");
@@ -684,9 +635,9 @@ void() worldspawn =
 
 	// 63 testing
 	lightstyle(63, "a");
-    
-    // Init environment stuff, in environ.qc
-    InitEnvironment();
+	
+	// Init environment stuff, in environ.qc
+	InitEnvironment();
 };
 
 void(float tno, float scoretoadd) TeamFortress_TeamIncreaseScore;
@@ -723,8 +674,8 @@ void() InitBodyQue =
 {
 	//local entity	e; UNUSED
 	
-/*  OfN - Original code
-    bodyque_head = spawn();
+/*	OfN - Original code
+	bodyque_head = spawn();
 	bodyque_head.classname = "bodyque";
 	bodyque_head.owner = spawn();
 	bodyque_head.owner.classname = "bodyque";
@@ -734,46 +685,46 @@ void() InitBodyQue =
 	bodyque_head.owner.owner.owner.classname = "bodyque";
 	bodyque_head.owner.owner.owner.owner = bodyque_head;*/
 
-    // OfN - Now the serious "pro" code :)
-    local entity te;
+	// OfN - Now the serious "pro" code :)
+	local entity te;
 
-    local float counter;
-    counter = 1;
+	local float counter;
+	counter = 1;
 
-    te = spawn();
-    te.ltime = 0;
-    te.classname = "bodyque";
-    te.modelindex = modelindex_null;
-    bodyque_head = te;
+	te = spawn();
+	te.ltime = 0;
+	te.classname = "bodyque";
+	te.modelindex = modelindex_null;
+	bodyque_head = te;
 
-    while (counter < bodyque_size) // i wouldnt recommend more than 16
-    {
-        te.owner = spawn();
-        te.owner.ltime = 0;
-        te.owner.classname = "bodyque";
-        te.owner.modelindex = modelindex_null;
-        
-        te = te.owner;
+	while (counter < bodyque_size) // i wouldnt recommend more than 16
+	{
+		te.owner = spawn();
+		te.owner.ltime = 0;
+		te.owner.classname = "bodyque";
+		te.owner.modelindex = modelindex_null;
+		
+		te = te.owner;
 
-        counter = counter + 1;
-    }
+		counter = counter + 1;
+	}
 
-    te.owner = bodyque_head;
+	te.owner = bodyque_head;
 };
 
 // make a body que entry for the given ent so the ent can be
 // respawned elsewhere
 void(entity ent) CopyToBodyQue =
 {
-    local entity que_item;
-    
-    if (ent.modelindex == modelindex_null)
-        return; // OfN Dont let invisible stuff on bodyque
+	local entity que_item;
+	
+	if (ent.modelindex == modelindex_null)
+		return; // OfN Dont let invisible stuff on bodyque
 
-    // Get an appropiate item on que
-    que_item = GetQueEntry();
+	// Get an appropiate item on que
+	que_item = GetQueEntry();
 
-    que_item.angles = ent.angles;
+	que_item.angles = ent.angles;
 	que_item.model = ent.model;
 	que_item.skin = ent.skin;
 	que_item.modelindex = ent.modelindex;
@@ -781,67 +732,67 @@ void(entity ent) CopyToBodyQue =
 	que_item.colormap = ent.colormap;
 	que_item.movetype = ent.movetype;
 	que_item.velocity = ent.velocity;
-    
-    // OfN
-    que_item.takedamage = ent.takedamage;
-    que_item.avelocity = ent.avelocity; 
-    if (ent.modelindex == modelindex_player) // stop any spin movement if a corpse
-        que_item.avelocity = '0 0 0';
+	
+	// OfN
+	que_item.takedamage = ent.takedamage;
+	que_item.avelocity = ent.avelocity; 
+	if (ent.modelindex == modelindex_player) // stop any spin movement if a corpse
+		que_item.avelocity = '0 0 0';
 
-    if (ent.flags & #FL_FINDABLE_NONSOLID)
-        que_item.flags = #FL_FINDABLE_NONSOLID;
-    else
-    	que_item.flags = 0; // <-- original was always this
+	if (ent.flags & #FL_FINDABLE_NONSOLID)
+		que_item.flags = #FL_FINDABLE_NONSOLID;
+	else
+		que_item.flags = 0; // <-- original was always this
 
-    que_item.ltime = time;
+	que_item.ltime = time;
 	// OfN end
 
-    setorigin (que_item, ent.origin);
+	setorigin (que_item, ent.origin);
 	setsize (que_item, ent.mins, ent.maxs);
-    
-    // OfN
-    que_item.touch = ent.touch;
-    que_item.solid = ent.solid;
-    que_item.team_no = ent.team_no;
-    que_item.message = ent.message;
+	
+	// OfN
+	que_item.touch = ent.touch;
+	que_item.solid = ent.solid;
+	que_item.team_no = ent.team_no;
+	que_item.message = ent.message;
 
-    #ifdef KICKABLE_HEADS
-    que_item.t_length = ent.t_length;
-    que_item.t_width = ent.t_width;
-    que_item.oldenemy = ent.oldenemy;
-    #endif
+	#ifdef KICKABLE_HEADS
+	que_item.t_length = ent.t_length;
+	que_item.t_width = ent.t_width;
+	que_item.oldenemy = ent.oldenemy;
+	#endif
 
-    que_item.#corpse_HP = ent.#corpse_HP;
-    // OfN end
+	que_item.#corpse_HP = ent.#corpse_HP;
+	// OfN end
 
-    // Cycle-advance que pointer if current was used
-    /*if (que_item == bodyque_head)
-        bodyque_head = bodyque_head.owner;*/
+	// Cycle-advance que pointer if current was used
+	/*if (que_item == bodyque_head)
+		bodyque_head = bodyque_head.owner;*/
 };
 
 entity() GetQueEntry =
 {
-    local float counter;
-    local entity te, oldest;
-    counter = 0;
-    te = oldest = bodyque_head;
-    
-    // Check all items in que
-    while (counter < bodyque_size)
-    {
-        // Empty one?
-        if (te.modelindex == modelindex_null)
-            return te; // Ok, return it for use..
-        
-        // Check how old is this one
-        if (te.ltime < oldest.ltime)
-            oldest = te; // set it as the oldest found
+	local float counter;
+	local entity te, oldest;
+	counter = 0;
+	te = oldest = bodyque_head;
+	
+	// Check all items in que
+	while (counter < bodyque_size)
+	{
+		// Empty one?
+		if (te.modelindex == modelindex_null)
+			return te; // Ok, return it for use..
+		
+		// Check how old is this one
+		if (te.ltime < oldest.ltime)
+			oldest = te; // set it as the oldest found
 
-        // Cycle-advance to continue checks
-        te = te.owner;
-        counter = counter + 1;
-    }
+		// Cycle-advance to continue checks
+		te = te.owner;
+		counter = counter + 1;
+	}
 
-    // No empty que items found, so return oldest one..
-    return oldest;
+	// No empty que items found, so return oldest one..
+	return oldest;
 };

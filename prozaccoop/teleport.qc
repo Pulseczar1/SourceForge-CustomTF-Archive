@@ -70,6 +70,7 @@ void() Teleporter_touch =
 #ifndef NO_ZEROGRAVGUN
 						// Gizmo - if other was forced into a wall; we should die before PlayerPostThink() resets it
 						if ( self.pickedupby )
+						if ( Teammate( self.pickedupby.team_no, other.team_no ) )
 							other.#teleporter_teamkiller = self.pickedupby;
 #endif
 						deathmsg = #DMSG_TELEOUTWORLD;
@@ -80,7 +81,8 @@ void() Teleporter_touch =
 #ifndef NO_ZEROGRAVGUN
 					// Gizmo - if other was forced to teleport into lava, make sure we count it as a teamkill
 					if ( pointcontents( other.origin ) == #CONTENT_LAVA || !checkbottom( other ) )
-					if ( self.pickedupby ) {
+					if ( self.pickedupby )
+					if ( Teammate( self.pickedupby.team_no, other.team_no ) ) {
 						other.flags = other.flags - ( other.flags & ( #FL_ONGROUND | #FL_PARTIALGROUND ) );
 						other.#teleporter_teamkiller = self.pickedupby;
 					}
