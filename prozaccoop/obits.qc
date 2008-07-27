@@ -22,8 +22,6 @@ void(entity targ, entity attacker) ClientObituary =
 
 	// FIXME:
 
-	bprint( #PRINT_HIGH, "target: ", targ.classname, "; attacker: ", attacker.classname, "\n" );
-
 	//- OfN - Unidentified kill ---------//
 	deathstring=" is killed by ";
 	deathstring2="\n";
