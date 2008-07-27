@@ -851,8 +851,8 @@ also fired before this function is called.
 ==============
 */
 void( entity e ) COOP_MonsterDead = {
-	e.classname = "dead monster";
-	e.deadflag = #DEAD_DEAD;
+//	e.classname = "dead monster";		// messes up obits.qc when it checks monster classname, use deadflag instead
+	e.deadflag = #DEAD_DEAD;		// incase any monster doesn't takedamage and has no health, this is used to check if it's dead
 	e.targetname = "";
 	e.use = SUB_Null;
 };
