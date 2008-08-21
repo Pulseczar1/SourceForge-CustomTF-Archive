@@ -6300,27 +6300,6 @@ void(float stat) HIP_FireLaser =
 #ifdef NEVER_DEFINED
 /*
 ============
-BitNumToValue
-
-Converts the bit number (0 - 23) to it's value, IE: 9 == 512.
-Similar to 1<<x in C since QC doesn't have the << operator
-============
-*/
-float( float bitNum ) BitNumToValue = {
-	local float value;
-
-	value = 1;
-
-	while ( bitNum ) {
-		value = value * 2;
-		bitNum = bitNum - 1;
-	}
-
-	return value;
-};
-
-/*
-============
 W_HasWeapon
 
 Returns non-zero if e has the specified weapon, otherwise returns zero

@@ -443,23 +443,20 @@ entity (entity scanner) COOP_FindTarget =
 	return best;
 };
 
-
 //====================================
-
 
 #define NPC_FRAMETIME			0.1
 #define NPC_LERPTIME			0.031
 
-
 /*
-	COOP_SmoothFrame
+===============
+COOP_SmoothFrame
+===============
 */
-
-void () COOP_SmoothFrame =
-{
+void() COOP_SmoothFrame = {
 	local float oldyaw;
 
-	if (time >= self.#npc_smoothtime) {
+	if ( time >= self.#npc_smoothtime ) {
 		// FIXME: is it ok to call #npc_oldthink directly here?
 		self.nextthink = time;
 		self.think = self.#npc_oldthink;
@@ -468,39 +465,41 @@ void () COOP_SmoothFrame =
 	}
 
 	// make sure lastruntime is set to something
-	if (!self.#npc_lastruntime) {
+	if ( !self.#npc_lastruntime ) {
 		self.#npc_lastruntime = self.lastruntime;
 
 		self.nextthink = time + #NPC_LERPTIME;
 		return;
 	}
 
-	movedist = (self.#npc_smoothdist / #NPC_FRAMETIME) * (self.lastruntime - self.#npc_lastruntime);
+	movedist = ( self.#npc_smoothdist / #NPC_FRAMETIME ) * ( self.lastruntime - self.#npc_lastruntime );
 
 	// movetogoal if there's distance to move, it should only be zero if SV_RunThink is in an infinite loop
 	// this prevents infinite SV_RunThink loops in the engine
-	if (movedist) {
+	if ( movedist ) {
 		oldyaw = self.yaw_speed;
-		self.yaw_speed = (oldyaw / #NPC_FRAMETIME) * (self.lastruntime - self.#npc_lastruntime);
-		movetogoal (movedist);
+		self.yaw_speed = ( oldyaw / #NPC_FRAMETIME ) * ( self.lastruntime - self.#npc_lastruntime );
+		movetogoal( movedist );
 		self.yaw_speed = oldyaw;
 
 		self.#npc_lastruntime = self.lastruntime;
 		self.#npc_attemptednextthink = self.nextthink = time + #NPC_LERPTIME;
-	} else if (self.#npc_smoothdist) {
-		//bprint (#PRINT_HIGH, "infinite loop prevented!\n");
+	} else if ( self.#npc_smoothdist ) {
+		//bprint( #PRINT_HIGH, "infinite loop prevented!\n" );
 		self.#npc_attemptednextthink = self.nextthink = self.#npc_attemptednextthink + 0.01;
 	}
 };
 
-
 /*
-	COOP_WalkSmooth - this is called, in sort of like a wrapper to movetogoal, to provide lerping movement
-*/
+===============
+COOP_WalkSmooth
 
-void (float dist) COOP_WalkSmooth =
-{
-	if (!dist)
+This is called, in sort of like a wrapper to movetogoal,
+to provide lerping movement.
+===============
+*/
+void( float dist ) COOP_WalkSmooth = {
+	if ( !dist )
 		return;
 
 	// save old stuff
@@ -514,134 +513,138 @@ void (float dist) COOP_WalkSmooth =
 	self.think = COOP_SmoothFrame;
 
 	// do one right away
-	COOP_SmoothFrame ();
+	COOP_SmoothFrame();
 };
-
 
 //====================================
 
-
 /*
-	COOP_CanAttackEnemy
+===============
+COOP_CanAttackEnemy
+===============
 */
-
-float (entity en) COOP_CanAttackEnemy =
-{
-	if (/*!visible2(en, self) || */!en.takedamage || en.health <= 0)
+float( entity en ) COOP_CanAttackEnemy = {
+	if ( /*!visible2( en, self ) || */!en.takedamage || en.health <= 0 )
 		return #FALSE;
 	if ( self.tfstate & #TFSTATE_PSIONIZED )
 		return #FALSE;
 	return #TRUE;
 };
 
-
-
 /*
-	COOP_AttackTarget - sets up the monster to start attacking his enemy
+===============
+COOP_AttackTarget
 
-	TODO: add random delay for first catching a player, 0.1 is the standard in-between frame time
+Sets up the monster to start attacking his enemy.
+===============
 */
+float( entity en, float check ) COOP_AttackTarget = {
+	local entity	lasten;
+	local float		ret;
 
-void (entity en) COOP_AttackTarget =
-{
+	// check if enemy is valid
+	if ( check ) {
+		lasten = self.enemy;
+		self.enemy = en;
+
+		if ( self.OnNoticeEnemy )
+			ret = self.OnNoticeEnemy();
+		else
+			ret = #TRUE;
+
+		// be sure not to call any run, walk, etc. functions here (could make the monster's frames stop)
+		if ( !ret ) {
+			self.enemy = lasten;
+			return #FALSE;
+		}
+	}
+
 	self.goalentity = self.enemy = en;
 
 	self.nextthink = time + 0.1;
 	self.think = self.th_run;
 
-	self.ideal_yaw = vectoyaw (en.origin - self.origin);
+	self.ideal_yaw = vectoyaw( en.origin - self.origin );
 
 	// erase last time
 	self.#npc_lastEnemyTime = 0;
-};
-
-
-/*
-	COOP_NoticeEnemy
-*/
-
-float () COOP_NoticeEnemy =
-{
-	local entity e, lasten;
-	local float ret;
-
-	e = COOP_FindTarget (self);
-
-	if (e == world)
-		return #FALSE;
-
-// check if enemy is valid
-	lasten = self.enemy;
-	self.enemy = e;
-	if (self.OnNoticeEnemy)
-		ret = self.OnNoticeEnemy ();
-	else
-		ret = #TRUE;
-
-	// FIXME: check self.enemy, self.movetarget, and self.goalentity (like COOP_Run() does for invalid targets)
-	// be sure not to call any run, walk, etc. functions here (could make the monster's frames stop)
-	if (!ret) {
-		self.enemy = lasten;
-		return #FALSE;
-	}
-
-// attack the target if it was valid
-	COOP_AttackTarget (e);
 
 	return #TRUE;
 };
 
+/*
+===============
+COOP_NoticeEnemy
+===============
+*/
+float() COOP_NoticeEnemy = {
+	local entity	e;
 
+	e = COOP_FindTarget( self );
+
+	if ( e == world )
+		return #FALSE;
+
+// attack the target if valid
+	if ( !COOP_AttackTarget( e, #TRUE ) )
+		return #FALSE;
+
+	return #TRUE;
+};
 
 /*
-	COOP_Idle - default idle function for searching
+===============
+COOP_Idle
+
+Default idle function for searching.
+===============
 */
-
-void () COOP_Idle =
-{
+void() COOP_Idle = {
 	// if we got a target somehow, attack it
-	if (self.enemy != world && self.enemy != self)
-		COOP_AttackTarget (self.enemy);
+	if ( self.enemy != world && self.enemy != self )
+		COOP_AttackTarget( self.enemy, #FALSE );
 
-	if (COOP_NoticeEnemy())
+	if ( COOP_NoticeEnemy() )
 		return;
 
 	// check for pausetime
-	if (time > self.pausetime)
-		self.th_walk ();
+	if ( time > self.pausetime )
+		self.th_walk();
 };
 
-
 /*
-	COOP_Walk - default walking function
+===============
+COOP_Walk
+
+Default walking function.
+===============
 */
-
-void (float dist) COOP_Walk =
-{
+void( float dist ) COOP_Walk = {
 	// if we got a target somehow, attack it
-	if (self.enemy != world && self.enemy != self)
-		COOP_AttackTarget (self.enemy);
+	if ( self.enemy != world && self.enemy != self )
+		COOP_AttackTarget( self.enemy, #FALSE );
 
-	if (COOP_NoticeEnemy())
+	if ( COOP_NoticeEnemy() )
 		return;
 
 	movedist = dist;
-	movetogoal (dist);
+	movetogoal( dist );
 };
 
-
 /*
-	COOP_Turn - faces ideal_yaw slowly, doesn't move the monster
-*/
+===============
+COOP_Turn
 
-void () COOP_Turn =
-{
-	if (self.enemy)
-		self.ideal_yaw = vectoyaw (self.enemy.origin - self.origin);
-	else if (COOP_NoticeEnemy())
+Faces ideal_yaw slowly, doesn't move the monster.
+===============
+*/
+void() COOP_Turn = {
+	if ( self.enemy )
+		self.ideal_yaw = vectoyaw( self.enemy.origin - self.origin );
+	else if ( COOP_NoticeEnemy() )
 		return;
 
-	ChangeYaw ();
+	ChangeYaw();
 };
 
 
@@ -765,7 +768,7 @@ void (float dist) COOP_Run =
 		e = COOP_FindTarget (self);
 
 		if (e != world && e != self.enemy)
-			COOP_AttackTarget (e);
+			COOP_AttackTarget( e, #FALSE );
 /*	TODO: need to also face that direction
 		else if ( random() > 0.80 ) {
 			// check if we can shoot blindly where they last were, in hopes for a lucky shot

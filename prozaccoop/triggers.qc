@@ -484,9 +484,18 @@ void() teleport_touch =
 // put a tfog where the player was
 	spawn_tfog (other.origin);
 
+/*
 	t = find (world, targetname, self.target);
 	if (!t)
 		objerror ("couldn't find target");
+*/
+	// Gizmo - teleports now cycle through their .targets
+	t = self.oldenemy = find( self.oldenemy, targetname, self.target );
+	if ( !t ) {
+		t = self.oldenemy = find( world, targetname, self.target );
+		if (!t)
+			objerror ("couldn't find target");
+	}
 		
 // spawn a tfog flash in front of the destination
 	makevectors (t.mangle);
