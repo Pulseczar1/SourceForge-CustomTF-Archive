@@ -387,7 +387,6 @@ void() monster_spawner_spawn = {
 	self = e;
 
 	maxCount = 100;
-	ftmp = 0;
 
 	// .currentammo is checked for being zero before this is performed
 	rchance = 1 / oself.currentammo;
