@@ -1307,6 +1307,7 @@ float( entity g ) GruntyAutoObstacle = {
 		if ( !checkbottom( g ) )
 			return 0;
 
+		// FIXME: use absmin_z
 		zdif = ( g.goalentity.origin_z + g.goalentity.mins_z ) - ( g.origin_z + g.mins_z );
 
 		// check for visibility
