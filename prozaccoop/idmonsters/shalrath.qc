@@ -278,8 +278,7 @@ void() monster_shalrath =
 	self.#npc_explosionmult = 0.75;
 	self.#npc_electricitymult = 1.25;
 
-	self.think = coop_walkmonster_start;
-	self.nextthink = time + 0.1 + random ()*0.1;	
+	coop_walkmonster_start();
 };
 
 #endif
