@@ -340,6 +340,8 @@ void() coop_swimmonster_start =
 
 #define DEFAULT_SPAWNER_TARGETNAME	"monster_spawner"
 
+float	spawner_noTriggerId;		// next id of a spawner without a targetname, so we can tell them apart
+
 void() monster_spawner_spawn = {
 	local entity	e, oself;
 	local float		maxCount, ftmp, rchance;
@@ -435,7 +437,10 @@ void() monster_spawner_spawn = {
 	self = oself;
 
 	// set monster specific things
-	e.#npc_isCoopMonster = 2;		// so we can tell spawned monsters from map monsters
+	if ( self.targetname == #DEFAULT_SPAWNER_TARGETNAME )
+		e.#npc_isCoopMonster = self.ammo_detpack;
+	else
+		e.#npc_isCoopMonster = 2;		// so we can tell spawned monsters from map monsters
 	e.#npc_useTargetsOnRespawn = #TRUE;	// make sure we always fire our targets
 	e.lives = 0;
 	e.endtime = self.endtime;
@@ -506,7 +511,7 @@ void() monster_spawner_use = {
 
 	// check if we're being used because of a monster death
 	// map monsters can have a monster_spawner as a target and things will work fine
-	if ( COOP_IsCoopMonster( other ) && other.enemy == activator && other.#npc_isCoopMonster == 2 ) {
+	if ( COOP_IsCoopMonster( other ) && other.enemy == activator && other.#npc_isCoopMonster == self.ammo_detpack ) {
 		self.cnt = self.cnt - 1;
 
 		// since one died, the only way we can't spawn another one is
@@ -588,6 +593,10 @@ void() monster_spawner = {
 	local entity	temp, oself;
 	local float		ftmp;
 
+	// this is stored in the #isCoopMonster field, so make sure it's greater than 1
+	if ( !spawner_noTriggerId )
+		spawner_noTriggerId = 2;
+
 	if ( CheckExistence() == #FALSE ) {
 		dremove( self );
 		return;
@@ -647,8 +656,12 @@ void() monster_spawner = {
 	// set the default targetname to notify us of monster deaths
 	if ( self.targetname == #DEFAULT_SPAWNER_TARGETNAME )
 		objerror( "targetname cannot be \"" #DEFAULT_SPAWNER_TARGETNAME "\"\n" );
-	if ( !self.targetname )
+	if ( !self.targetname ) {
+		self.ammo_detpack = spawner_noTriggerId;
+		spawner_noTriggerId = spawner_noTriggerId + 1;
 		self.targetname = #DEFAULT_SPAWNER_TARGETNAME;
+	} else
+		self.ammo_detpack = 2;				// doesn't have to be unique if a targetname was specified
 
 	// only increase monster count if we're not on a team or we're not on team one
 	if ( !self.team_no || !Teammate( self.team_no, 1 ) )
