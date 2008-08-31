@@ -1435,6 +1435,9 @@ void (float points, float type) custom_demon_create =
 		sprint(self,#PRINT_HIGH,"Not enough room to summon creature!\n");
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 0.1;
+
+		// Gizmo - don't let the initial monster be visible when spawn position is invalid
+		setmodel( newmis, "" );
 		return;
 	}
 	newmis.owner = newmis;
@@ -1466,10 +1469,11 @@ void (float points, float type) custom_demon_create =
 		newmis.flags = newmis.flags - #FL_ONGROUND;
     
     newmis.velocity = v_forward * 10;
-    
+
+	// Gizmo - removed '.takedamage = DAMAGE_AIM' as it causes a bug if the demon gets hurt before *monster_start_go is called
+	// ... the monster start function sets .takedamage
     newmis.movetype = #MOVETYPE_TOSS;
     newmis.solid = #SOLID_SLIDEBOX;
-	newmis.takedamage = #DAMAGE_AIM;
 
     if (type==1) // scrags start specially
     {
