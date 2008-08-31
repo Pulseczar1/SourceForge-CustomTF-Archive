@@ -1077,6 +1077,9 @@ float(float slot) TeleSoldier =
 		sprint(self,#PRINT_HIGH,"Not enough room to teleport soldier!\n");
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 0.1;
+
+		// Gizmo - don't let the soldier stay visible
+		setmodel( newmis, "" );
 		return #FALSE;
 	}
 	newmis.owner = newmis;

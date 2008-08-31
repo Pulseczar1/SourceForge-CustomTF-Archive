@@ -698,7 +698,9 @@ void() walkmonster_start =
 	self.nextthink = self.nextthink + 1; //WK Give time to run from demons
 	//WK self.nextthink = self.nextthink + random()*0.5;
 	self.think = walkmonster_start_go;
-	total_monsters = total_monsters + 1;
+	// Gizmo - don't count summoned monsters in the total monster count
+	if ( !IsOwnedMonster( self ) )
+		total_monsters = total_monsters + 1;
 	set_monster_health();
 };
 
@@ -753,7 +755,9 @@ void() flymonster_start =
 	self.nextthink = self.nextthink + random()*0.5;
         
 	self.think = flymonster_start_go;
-	total_monsters = total_monsters + 1;
+	// Gizmo - don't count summoned monsters in the total monster count
+	if ( !IsOwnedMonster( self ) )
+		total_monsters = total_monsters + 1;
 	set_monster_health();
 };
 
@@ -767,7 +771,6 @@ void() swimmonster_start_go =
 	}*/
 
 	self.takedamage = #DAMAGE_AIM;
-	total_monsters = total_monsters + 1;
 
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
@@ -806,7 +809,9 @@ void() swimmonster_start =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 	self.think = swimmonster_start_go;
-	total_monsters = total_monsters + 1;
+	// Gizmo - don't count summoned monsters in the total monster count
+	if ( !IsOwnedMonster( self ) )
+		total_monsters = total_monsters + 1;
 	set_monster_health();
 };
 // WK #endif
