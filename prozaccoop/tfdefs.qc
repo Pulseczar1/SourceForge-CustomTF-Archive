@@ -215,3 +215,94 @@ void( entity e, string m ) setmodel = {
 	setmodel_C( e, m );
 };
 #endif
+
+//========================================================================
+
+#ifdef COOP_MODE_ENHANCED
+entity	headActiveSound;
+
+/*
+==============
+RemoveActiveSound
+==============
+*/
+void() RemoveActiveSound = {
+	local entity	head;
+
+	// unlink
+	if ( headActiveSound == self )
+		headActiveSound = headActiveSound.enemy;
+	else {
+		head = headActiveSound;
+		while ( head ) {
+			// we know headActiveSound isn't self since we checked that above, so start with headActiveSound.enemy
+			if ( head.enemy == self ) {
+				head.enemy = head.enemy.enemy;
+				head = world;
+			} else
+				head = head.enemy;
+		}
+	}
+
+	remove( self );
+};
+
+/*
+==============
+sound
+
+Hack to get monsters to hear sounds.
+==============
+*/
+void( entity e, float chan, string samp, float vol, float atten ) sound = {
+	local entity	soundEnt;
+	local entity	playerEnt;
+
+	// play the actual sound
+	sound_C( e, chan, samp, vol, atten );
+
+	if ( e == world )
+		return;
+
+	// only sounds from players cause monsters to wake up
+	if ( e.classname == "player" )
+		playerEnt = e;
+	else if ( e.owner.classname == "player" )
+		playerEnt = e.owner;
+	else if ( e.real_owner.classname == "player" )
+		playerEnt = e.real_owner;
+	else
+		return;
+
+	// only alert monsters in coop or single player, cause they don't exist in deathmatch usually
+	if ( deathmatch || atten != #ATTN_NORM )
+		return;
+
+	// only allow one sound per player
+	soundEnt = headActiveSound;
+	while ( soundEnt ) {
+		if ( soundEnt.owner == playerEnt ) {
+			soundEnt.nextthink = time + 0.5 + random() * 0.8;
+			setorigin( soundEnt, e.origin );
+			return;
+		}
+
+		soundEnt = soundEnt.enemy;
+	}
+
+	soundEnt = spawn();
+	soundEnt.owner = playerEnt;
+	soundEnt.nextthink = time + 0.5 + random() * 0.8;
+	soundEnt.think = RemoveActiveSound;
+	setorigin( soundEnt, e.origin );			// used for distance calculation
+
+	// we do it like this because find() has too much overhead with a lot of monsters
+	// so only go through the sound entities
+	if ( !headActiveSound )
+		headActiveSound = soundEnt;
+	else {
+		soundEnt.enemy = headActiveSound;
+		headActiveSound = soundEnt;
+	}
+};
+#endif
