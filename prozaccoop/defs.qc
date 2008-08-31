@@ -707,7 +707,11 @@ void(entity e, vector min, vector max) setsize = #4;
 // #5 was removed
 void() break					= #6;
 float() random					= #7;		// returns 0 - 1
+#ifdef COOP_MODE_ENHANCED
+void(entity e, float chan, string samp, float vol, float atten) sound_C = #8;
+#else
 void(entity e, float chan, string samp, float vol, float atten) sound = #8;
+#endif
 vector(vector v) normalize			= #9;
 void(string e) error				= #10;
 void(string e) objerror 			= #11;

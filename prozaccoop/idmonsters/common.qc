@@ -26,6 +26,28 @@ float( entity test ) COOP_IsCoopMonster = {
 	return #FALSE;
 };
 
+/*
+=============
+infront2
+
+returns 1 if the entity is in front (in sight) of check
+=============
+*/
+float( entity targ, entity check ) infront2 = {
+	local vector	vec;
+	local float		dot;
+	
+	makevectors( check.angles );
+	vec = normalize( targ.origin - check.origin );
+	dot = vec * v_forward;
+	
+	if ( dot > 0.3 )
+		return #TRUE;
+	return #FALSE;
+};
+
+//==============================================================================
+
 
 /*
 	COOP_FindShootOffset - replacement for COOP_SightBlocked()
@@ -343,9 +365,6 @@ entity (entity scanner) COOP_FindTarget =
 	local entity	best;
 	local float		bestPriority, priority;
 
-	best = world;
-	bestPriority = 0;
-
 /*
 	// this is here to ease cpu with maps that have a lot of monsters, also adds a human factor for delayed notice
 	if (scanner.#npc_noticedelay > time)
@@ -415,12 +434,17 @@ entity (entity scanner) COOP_FindTarget =
 	if ( npc_teamLists == world )
 		return world;
 
+	best = world;
+	bestPriority = 0;
+
 	head = npc_teamLists;
 	while ( head != world && Teammate( head.team_no, scanner.team_no ) )
 		head = head.npc_nextTeamList;
 
 	while ( head ) {
 		if (visible2(head, scanner) && head.takedamage && head.health > 0) {
+			// Gizmo - now that monsters can hear sounds, only make them see things infront
+			if ( infront2( head, scanner ) )
 			if (COOP_IsValidTarget(scanner, head)) {
 				priority = COOP_GetTargetPriority( scanner, head );
 				if ( priority > bestPriority ) {
@@ -436,6 +460,29 @@ entity (entity scanner) COOP_FindTarget =
 			} while ( head != world && Teammate( head.team_no, scanner.team_no ) );
 		} else
 			head = head.npc_nextEntInTeamList;
+	}
+
+	// if nothing was found, and there are active sounds from players, search for one within range
+	if ( headActiveSound ) {
+		if ( !best ) {
+			head = headActiveSound;
+			do {
+				priority = vlen( head.origin - scanner.origin );
+				if ( priority <= 1024 ) {
+					priority = 1 - priority / 1024;
+					if ( random() < priority ) {
+						if ( head.owner.takedamage && head.owner.health > 0 ) {
+							if ( COOP_IsValidTarget( scanner, head.owner ) )
+								return head.owner;
+						}
+					}
+				}
+
+				head = head.enemy;
+			} while ( head );
+
+			return world;
+		}
 	}
 
 	// players are always picked last, so if a player was found then return it, but if not best will be world
