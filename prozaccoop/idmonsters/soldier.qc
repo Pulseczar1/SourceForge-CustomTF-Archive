@@ -180,10 +180,6 @@ void(entity attacker, float damage)	army_pain =
 {
 	local float r;
 
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-	
 	if (self.pain_finished > time)
 		return;
 

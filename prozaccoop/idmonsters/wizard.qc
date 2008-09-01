@@ -409,10 +409,6 @@ void() _wiz_die =
 
 void(entity attacker, float damage) _Wiz_Pain =
 {
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 	sound (self, #CHAN_VOICE, "wizard/wpain.wav", 1, #ATTN_NORM);
 	if (random()*70 > damage)
 		return;		// didn't flinch

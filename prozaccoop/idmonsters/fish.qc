@@ -161,10 +161,6 @@ void() f_pain9  =[      $pain9, f_run1 ] {ai_pain(6);};
 
 void(entity attacker, float damage)	_fish_pain =
 {
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 // fish allways do pain frames
 	f_pain1 ();
 };

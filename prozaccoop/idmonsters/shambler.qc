@@ -413,10 +413,6 @@ void(entity attacker, float damage)	_sham_pain =
 {
 	sound (self, #CHAN_VOICE, "shambler/shurt2.wav", 1, #ATTN_NORM);
 
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 	if (self.health <= 0)
 		return;		// allready dying, don't go into pain frame
 

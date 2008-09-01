@@ -892,6 +892,47 @@ string (entity monster) COOP_GenerateMonsterName =
 
 /*
 ==============
+COOP_PrePain
+
+Called when an entity using the AI functions is about to
+have pain. This is called before .th_pain() is called.
+NOTE: uses self
+==============
+*/
+void( entity attacker ) COOP_PrePain = {
+	local float	currentPriority, attackerPriority;
+
+	// the .think will get overridden but that's ok
+	if ( !self.enemy ) {
+		if ( COOP_IsValidTarget( self, attacker ) )
+			COOP_AttackTarget( attacker, #TRUE );
+		return;
+	}
+
+	// don't bother if our attacker is hurting us
+	if ( attacker == self.enemy )
+		return;
+
+	if ( !visible( self.enemy ) ) {
+		if ( COOP_IsValidTarget( self, attacker ) )
+			COOP_AttackTarget( attacker, #FALSE );
+		return;
+	}
+
+	// otherwise check if the one attacking is a higher priority
+	if ( random() < 0.45 ) {
+		currentPriority = COOP_GetTargetPriority( self, self.enemy );
+		attackerPriority = COOP_GetTargetPriority( self, attacker );
+		if ( attackerPriority > currentPriority ) {
+			if ( COOP_IsValidTarget( self, attacker ) )
+				COOP_AttackTarget( attacker, #FALSE );
+			return;
+		}
+	}
+};
+
+/*
+==============
 COOP_MonsterDead
 
 Called when a monster that uses these AI functions dies,

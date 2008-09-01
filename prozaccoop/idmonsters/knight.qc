@@ -164,10 +164,6 @@ void(entity attacker, float damage)	knight_pain =
 {
 	local float r;
 
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 	// don't bother doing pain if on hard mode
 	if (skill >= 2)
 		return;
