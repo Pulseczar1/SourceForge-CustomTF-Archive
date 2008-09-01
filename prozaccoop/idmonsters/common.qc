@@ -465,21 +465,24 @@ entity (entity scanner) COOP_FindTarget =
 	// if nothing was found, and there are active sounds from players, search for one within range
 	if ( headActiveSound ) {
 		if ( !best ) {
-			head = headActiveSound;
-			do {
-				priority = vlen( head.origin - scanner.origin );
-				if ( priority <= 1024 ) {
-					priority = 1 - priority / 1024;
-					if ( random() < priority ) {
-						if ( head.owner.takedamage && head.owner.health > 0 ) {
-							if ( COOP_IsValidTarget( scanner, head.owner ) )
-								return head.owner;
+			// monsters with ambush don't pay attention to sounds
+			if ( !( scanner.spawnflags & 1 ) ) {
+				head = headActiveSound;
+				do {
+					priority = vlen( head.origin - scanner.origin );
+					if ( priority <= 768 ) {
+						priority = 1 - priority / 768;
+						if ( random() < priority ) {
+							if ( head.owner.takedamage && head.owner.health > 0 ) {
+								if ( COOP_IsValidTarget( scanner, head.owner ) )
+									return head.owner;
+							}
 						}
 					}
-				}
 
-				head = head.enemy;
-			} while ( head );
+					head = head.enemy;
+				} while ( head );
+			}
 
 			return world;
 		}
