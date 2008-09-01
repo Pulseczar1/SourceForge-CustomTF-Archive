@@ -102,10 +102,6 @@ void() shal_death7      =[      $death7,        shal_death7    ] {MonsterCorpse(
 
 void(entity attacker, float damage) shalrath_pain =
 {
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 	if (self.pain_finished > time)
 		return;
 

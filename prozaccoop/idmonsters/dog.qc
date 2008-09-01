@@ -212,10 +212,6 @@ void() dog_painb16	=[	$painb16 ,	dog_run1	] {};
 
 void(entity attacker, float damage) dog_pain =
 {
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 	// if it's in hard mode, don't do pain as often
 	if (skill >= 2 && random() > 0.3)
 		return;

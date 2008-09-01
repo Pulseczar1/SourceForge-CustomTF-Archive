@@ -335,10 +335,6 @@ void(entity attacker, float damage)	ogre_pain =
 {
 	local float	r;
 
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 // don't make multiple pain sounds right after each other
 	if (self.pain_finished > time)
 		return;

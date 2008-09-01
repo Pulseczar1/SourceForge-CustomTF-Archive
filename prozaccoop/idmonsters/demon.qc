@@ -143,10 +143,6 @@ void()	_demon1_pain6	=[	$pain6,		_demon1_run1	] {};
 
 void(entity attacker, float damage)	_demon1_pain =
 {
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 	if (self.touch == _Demon_JumpTouch)
 		return;
 

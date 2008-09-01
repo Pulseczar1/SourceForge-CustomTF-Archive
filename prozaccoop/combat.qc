@@ -348,6 +348,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 #ifdef COOP_MODE_ENHANCED
 float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEntityDamage;
 float (entity test) COOP_IsCoopMonster;
+void( entity attacker ) COOP_PrePain;
 #endif
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage =
 {
@@ -830,9 +831,16 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	te = self;
 	self = targ;
 
+#ifdef COOP_MODE_ENHANCED
+	// Gizmo - call the default AI pain function
+	if ( COOP_IsCoopMonster( self ) )
+		COOP_PrePain( attacker );
+#endif
+
 	if (self.th_pain)
 	{
 		self.th_pain (attacker, take);
+
 #ifdef COOP_MODE_ENHANCED
 		// Gizmo - prevent the monster lerping from getting messed up when pausing a bit for pain
 		if ( COOP_IsCoopMonster( self ) )

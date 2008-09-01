@@ -443,10 +443,6 @@ void(entity attacker, float take) zombie_pain =
 {
 	local float r;
 
-	// if he has no enemy give him one
-	if (self.enemy == world || self.enemy == self)
-		self.enemy = attacker;
-
 	self.health = #IDMON_ZOMBIE_HEALTH;		// always reset health
 
 	if (take < #IDMON_ZOMBIE_DMGIGNORE)
