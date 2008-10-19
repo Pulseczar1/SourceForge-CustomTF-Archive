@@ -344,6 +344,7 @@ float	spawner_noTriggerId;		// next id of a spawner without a targetname, so we 
 
 void() monster_spawner_spawn = {
 	local entity	e, oself;
+	local string	oldTarget;
 	local float		maxCount, ftmp, rchance;
 
 	// if lives are up, then all monsters are or have been spawned
@@ -484,10 +485,11 @@ void() monster_spawner_spawn = {
 	spawn_tfog( e.origin );
 
 	// fire event
-	e.target = self.event;
+	oldTarget = self.target;
+	self.target = self.event;
 	activator = e;
 	SUB_UseTargets();
-	e.target = self.targetname;
+	self.target = oldTarget;
 
 	// setup to spawn another monster if needed
 	// don't worry about zero waits because those are done as they die
