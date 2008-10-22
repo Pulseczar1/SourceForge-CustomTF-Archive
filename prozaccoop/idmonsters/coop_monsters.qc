@@ -564,6 +564,20 @@ void() monster_spawner_use = {
 			self.state = 1;
 			self.nextthink = time + self.wait;
 			self.think = monster_spawner_spawn;
+
+			// the code below, if used, won't break as nextthink is reset when a spawned monster dies
+			// and monster_spawner_spawn checks count and lives before spawning a monster
+			// also state is managed in monster_spawner_spawn()
+
+			// check if SPAWN_COUNT_TOGGLE or SPAWN_TOGGLE are set
+			if ( self.spawnflags & 512 ) {
+				// spawn up to count now that we're toggled on, this may not spawn any at all
+				while ( self.cnt < self.count && self.lives )
+					monster_spawner_spawn();
+			} else if ( self.spawnflags & 256 ) {
+				// spawn one right away (if we're suppose to)
+				monster_spawner_spawn();
+			}
 		} else {
 			self.state = 0;
 			self.think = SUB_Null;
@@ -572,7 +586,7 @@ void() monster_spawner_use = {
 		monster_spawner_spawn();
 };
 
-/*QUAKED monster_spawner (0 .5 .8) (-8 -8 -8) (8 8 8) RANDOM_POS VISIBLE_RANDOM_POS START_ON SPAWN_FIRST SPAWN_COUNT_FIRST OFF_AT_COUNT LOOK_AT LOOK_AWAY
+/*QUAKED monster_spawner (0 .5 .8) (-8 -8 -8) (8 8 8) RANDOM_POS VISIBLE_RANDOM_POS START_ON SPAWN_FIRST SPAWN_COUNT_FIRST OFF_AT_COUNT LOOK_AT LOOK_AWAY SPAWN_TOGGLE SPAWN_COUNT_TOGGLE
 Spawns random monsters at random positions with a maximum and current limit.
 If "targetname" and "wait" are set, then the trigger is toggled on/off, and defaults to off unless START_ON spawnflag is set.
 If just "targetname" is set, then the only way for a monster to spawn is when the monster_spawner is fired.
@@ -636,9 +650,12 @@ void() monster_spawner = {
 	if ( self.target == self.targetname )
 		objerror( "target == targetname" );
 
-	if ( self.spawnflags & 32 )
-	if ( self.wait <= 0 || self.targetname == "" )
-		objerror( "off_at_count is only valid if targetname and wait are set" );
+	if ( self.wait <= 0 || self.targetname == "" ) {
+		if ( self.spawnflags & 32 )
+			objerror( "off_at_count is only valid if targetname and wait are set" );
+		if ( self.spawnflags & 256 || self.spawnflags & 512 )
+			objerror( "spawn_toggle and spawn_count_toggle are only valid if targetname and wait are set" );
+	}
 
 	// set the default random placement range
 	if ( self.t_length <= 0 )
