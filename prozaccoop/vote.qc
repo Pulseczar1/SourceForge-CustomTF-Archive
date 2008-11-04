@@ -11,13 +11,12 @@
 // Flag defines
 
 // vote entity types
-#define VOTE_NONE			0
+// Gizmo - if voting for AGR in coop, TF will be enabled with AGR
+#define VOTE_NONE			0	// Gizmo - this MUST be zero!
 #define VOTE_PUNISH 		1
-#define VOTE_NEXTMAP		2
+#define VOTE_NEXTMAP		2	// Gizmo - use VOTEMAP_ macros to determine the type of next or switchmap vote
 #define VOTE_SWITCHMAP		3
-#define VOTE_NEXTMAP_AGR	4 // PZ - AGR mode
-#define VOTE_SWITCHMAP_AGR	5 // PZ - AGR mode
-#define VOTE_USEOBJECT		6	// Gizmo - similar to admin use
+#define VOTE_USEOBJECT		4	// Gizmo - similar to admin use
 
 // punish types
 #define PUNISH_NONE 		0
@@ -26,6 +25,14 @@
 #define PUNISH_BAN			3
 #define PUNISH_MUTE 		4
 #define PUNISH_CUFF 		5
+
+// Gizmo - map vote types, nextmap or switchmap is determined by the #VOTE_*** type itself, not this
+#define VOTEMAP_DEFAULT		0	// the default mode the server has set
+#define VOTEMAP_AGR		1	// if TF is default, this acts normally, if coop is default then it'll be in TF mode with AGR
+#ifdef COOP_MODE_ENHANCED
+#define VOTEMAP_TF		2	// only valid if the server has coop as default
+#define VOTEMAP_COOP		3	// only valid if the server has TF as default
+#endif
 
 // player voting status
 #define VOTED_READY 		0
@@ -76,8 +83,7 @@ For player entity:
 
 .g_a			  - Contains the type of punishment selected on menu
 .goal_no		  - Controls delay between same client votes
-.group_no		  - Flag determines if we are choosing next map, or switch to modes
-					PZ - 0 = nextmap, 1 = map, 2 = nextmap AGR, 3 = map AGR
+.group_no		  - Gizmo - first byte is #VOTE_NEXTMAP, etc.. second byte is one of the #VOTEMAP_ modes above
 .goal_state 	  - Determines what page of maps to be shown for voting
 .owned_by		  - Contains #VOTED_XXXX, yes, no or none
 
@@ -89,8 +95,7 @@ For vote entity:
 .admin_kick 		 - Player to be punished
 .all_active 		 - Number of affirmative votes
 .has_holo			 - Number of negative votes
-.group_no			 - Type of votemap, nextmap or switchmap
-					   PZ - 0 = nextmap, 1 = map, 2 = nextmap AGR, 3 = map AGR
+.group_no			 - Gizmo - one of the #VOTEMAP_ modes above
 .has_tesla			 - Number of map beeing voted
 .dont_do_triggerwork - If TRUE, means the player to be banned has left
 	(when banning a user that left)
@@ -117,6 +122,50 @@ void( float num_for, float num_against ) bprintVotesNeeded;
 
 // External
 void(string text) CmdMsg;
+
+//====================================================================================================
+
+/*
+============
+IsMapVote
+
+Determines if the current vote is a map related vote.
+============
+*/
+float() IsMapVote = {
+	if ( current_voteent.has_sentry == #VOTE_NEXTMAP )
+		return #TRUE;
+	if ( current_voteent.has_sentry == #VOTE_SWITCHMAP )
+		return #TRUE;
+
+	return #FALSE;
+};
+
+/*
+============
+PrintVoteMapType
+
+May print nothing at all.
+============
+*/
+void( string preString, float voteMapType, string postString ) PrintVoteMapType = {
+	if ( voteMapType == #VOTEMAP_AGR ) {
+		bprint( #PRINT_HIGH, preString );
+		bprint( #PRINT_HIGH, "¡ÙÙ·„ÎÂÚÛ «Ô “Â‰" );
+		bprint( #PRINT_HIGH, postString );
+	}
+#ifdef COOP_MODE_ENHANCED
+	else if ( voteMapType == #VOTEMAP_TF ) {
+		bprint( #PRINT_HIGH, preString );
+		bprint( #PRINT_HIGH, "‘Â·Ì ∆ÔÚÙÚÂÛÛ" );
+		bprint( #PRINT_HIGH, postString );
+	} else if ( voteMapType == #VOTEMAP_COOP ) {
+		bprint( #PRINT_HIGH, preString );
+		bprint( #PRINT_HIGH, "√ÔÔ" );
+		bprint( #PRINT_HIGH, postString );
+	}
+#endif
+};
 
 //====================================================================================================
 // both player and spectators share the same menu handlers for voting, so we need this
@@ -280,6 +329,9 @@ void() Player_VoteMap =
 	}
 
 	if (time < #VOTE_MIN_TIME)
+#ifdef COOP_MODE_ENHANCED
+	if ( deathmatch || mapname != "start" )
+#endif
 	{
 		sprint(self,#PRINT_HIGH,"Too early for a map vote!\n");
 		return;
@@ -305,6 +357,9 @@ void() Player_VoteMap =
 		return;
 	//RPrint("BUG: Non-spec/player on Player_VoteMap()\n");
 
+	// Gizmo
+	self.group_no = #VOTE_NEXTMAP;
+
 	CuTFMenuSound(#MENUSOUND_BUY);
 	Menu_VoteMap();
 	BackFlash(self,1);
@@ -313,6 +368,7 @@ void() Player_VoteMap =
 void() Menu_VoteMap =
 {
 	local string paddedstr,st1,st2,st3,st4,st5,st6,st7,keyst,color;
+	local float	voteMapType;
 	
 	keyst = GetMapString(self.goal_state*6+1);
 	if (mapname == keyst)
@@ -415,16 +471,33 @@ void() Menu_VoteMap =
 	paddedstr = padstr(color,18);
 	st6 = strcat("\n.. ",paddedstr);
 
-	// PZ - begin AGR code
-	if (self.group_no == 0)
-		st7 ="\n\n.. ÕÔ‰Â: as next map \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
-	else if (self.group_no == 1)
-		st7 ="\n\n.. ÕÔ‰Â: play now°   \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
-	else if (self.group_no == 2)
-		st7 ="\n\n.. ÕÔ‰Â: as next map \n              ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰\n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
-	else
-		st7 ="\n\n.. ÕÔ‰Â: play now°   \n              ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰\n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
-	// PZ - end AGR code
+	// Gizmo
+	voteMapType = GetByte2( self.group_no );
+
+	// Gizmo - modified AGR vote code
+	if ( GetByte1( self.group_no ) == #VOTE_NEXTMAP ) {
+		if ( voteMapType == #VOTEMAP_AGR )
+			st7 ="\n\n.. ÕÔ‰Â: as next map \n              ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰\n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+#ifdef COOP_MODE_ENHANCED
+		else if ( voteMapType == #VOTEMAP_TF )
+			st7 ="\n\n.. ÕÔ‰Â: as next map \n              ‘Â·Ì ∆ÔÚÙÚÂÛÛ   \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+		else if ( voteMapType == #VOTEMAP_COOP )
+			st7 ="\n\n.. ÕÔ‰Â: as next map \n              √ÔÔ            \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+#endif
+		else
+			st7 ="\n\n.. ÕÔ‰Â: as next map \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+	} else { //if ( self.group_no == #VOTE_SWITCHMAP )
+		if ( voteMapType == #VOTEMAP_AGR )
+			st7 ="\n\n.. ÕÔ‰Â: play now°   \n              ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰\n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+#ifdef COOP_MODE_ENHANCED
+		else if ( voteMapType == #VOTEMAP_TF )
+			st7 ="\n\n.. ÕÔ‰Â: play now°   \n              ‘Â·Ì ∆ÔÚÙÚÂÛÛ   \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+		else if ( voteMapType == #VOTEMAP_COOP )
+			st7 ="\n\n.. ÕÔ‰Â: play now°   \n              √ÔÔ            \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+#endif
+		else
+			st7 ="\n\n.. ÕÔ‰Â: play now°   \n\n.. –ÚÂˆ –·ÁÂ         \n.. ŒÂ¯Ù –·ÁÂ         \n\nÆÆ ≈¯ÈÙ              \n";
+	}
 
 	CenterPrint7(self,st1,st2,st3,st4,st5,st6,st7);
 
@@ -433,6 +506,8 @@ void() Menu_VoteMap =
 
 void(float input) Menu_VoteMap_Input =
 {
+	local float	voteType, voteMapType;
+
 	if (input >= 1 && input <= 6)
 	{
 		if (current_voteent != world)
@@ -452,16 +527,28 @@ void(float input) Menu_VoteMap_Input =
 	}	
 	else if (input == 7)
 	{
-		// PZ - begin AGR code
-		if		(self.group_no == 0)
-					self.group_no = 1;
-		else if (self.group_no == 1)
-					self.group_no = 2;
-		else if (self.group_no == 2)
-					self.group_no = 3;
-		else
-					self.group_no = 0;
-		// PZ - end AGR code
+		voteType = GetByte1( self.group_no );
+		voteMapType = GetByte2( self.group_no );
+
+		if ( voteMapType == #VOTEMAP_DEFAULT )
+			voteMapType = #VOTEMAP_AGR;
+#ifdef COOP_MODE_ENHANCED
+		else if ( voteMapType == #VOTEMAP_AGR )
+			voteMapType = #VOTEMAP_TF;
+		else if ( voteMapType == #VOTEMAP_TF )
+			voteMapType = #VOTEMAP_COOP;
+#endif
+		else {
+			voteMapType = #VOTEMAP_DEFAULT;
+
+			if ( voteType == #VOTE_NEXTMAP )
+				voteType = #VOTE_SWITCHMAP;
+			else
+				voteType = #VOTE_NEXTMAP;
+		}
+
+		self.group_no = voteType;
+		self.group_no = AssignByte2( self.group_no, voteMapType );
 
 		CuTFMenuSound(#MENUSOUND_BUY);
 
@@ -534,29 +621,21 @@ void() bprintVoteIssue =
 	{
 		bprint(#PRINT_HIGH," ®"); // FIXME: CPQCCX compiler says 'Not a name' if only "(" is used ???
 		bprint(#PRINT_HIGH, current_voteent.netname);
-		bprint(#PRINT_HIGH," as next map©");
+		bprint(#PRINT_HIGH," as next map");
+
+		PrintVoteMapType( ", in ", current_voteent.group_no, " mode" );
+
+		bprint( #PRINT_HIGH, "©" );
 	} 
 	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP)
 	{
 		bprint(#PRINT_HIGH," ®switch to ");
 		bprint(#PRINT_HIGH,current_voteent.netname);
-		bprint(#PRINT_HIGH,"©");
-	}	 
-	// PZ - begin AGR code
-	else if (current_voteent.has_sentry == #VOTE_NEXTMAP_AGR) // as next map
-	{
-		bprint(#PRINT_HIGH," ®"); // FIXME: CPQCCX compiler says 'Not a name' if only "(" is used ???
-		bprint(#PRINT_HIGH, current_voteent.netname);
-		bprint(#PRINT_HIGH," as next map, in ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode©");
-	} 
-	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR)
-	{
-		bprint(#PRINT_HIGH," ®switch to ");
-		bprint(#PRINT_HIGH,current_voteent.netname);
-		bprint(#PRINT_HIGH,", in ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode©");
-	}
-	// PZ - end AGR code
-	else if ( current_voteent.has_sentry == #VOTE_USEOBJECT ) {
+
+		PrintVoteMapType( ", in ", current_voteent.group_no, " mode" );
+
+		bprint( #PRINT_HIGH, "©" );
+	} else if ( current_voteent.has_sentry == #VOTE_USEOBJECT ) {
 		local string objectName;
 
 		objectName = GetUseObjectName( current_voteent.enemy );
@@ -736,11 +815,8 @@ void() ResetVoteEnt =
 {
 	if (current_voteent.classname == "voteent")
 	{
-		if (current_voteent.has_sentry == #VOTE_NEXTMAP || 
-			current_voteent.has_sentry == #VOTE_SWITCHMAP ||
-			current_voteent.has_sentry == #VOTE_NEXTMAP_AGR ||
-			current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR)
-				delstr(current_voteent.netname);
+		if ( IsMapVote() )
+			delstr( current_voteent.netname );
 
 		if (current_voteent.dont_do_triggerwork)
 		{
@@ -894,7 +970,8 @@ void() VoteMap_Think;
 
 void(float nummap, string themap) StartVoteMap =
 {
-	local string temp;
+	local string	temp;
+	local float		voteType, voteMapType;
 
 	if (no_votemap)
 	{
@@ -909,6 +986,9 @@ void(float nummap, string themap) StartVoteMap =
 	}
 
 	if (time < #VOTE_MIN_TIME)
+#ifdef COOP_MODE_ENHANCED
+	if ( deathmatch || mapname != "start" )
+#endif
 	{
 		sprint(self,#PRINT_HIGH,"Too early for a map change!\n");
 		return;
@@ -925,8 +1005,13 @@ void(float nummap, string themap) StartVoteMap =
 		sprint(self,#PRINT_HIGH,"Server update is taking place, no map changes are allowed!\n");
 		return;
 	}
+
+	voteType = GetByte1( self.group_no );
+	voteMapType = GetByte2( self.group_no );
+
 	// PZ - AGR begin
-	if (self.group_no == 2 || self.group_no == 3)
+	if ( voteMapType == #VOTEMAP_AGR )
+	if ( voteType == #VOTE_NEXTMAP || voteType == #VOTE_SWITCHMAP )
 	{
 		local float x;
 		x = GetNoPlayers(#TRUE, #TRUE);
@@ -960,8 +1045,9 @@ void(float nummap, string themap) StartVoteMap =
 		#ifdef UNABLE_TOVOTE_FORSAME_MAP
 		// Don't let votes to switch to current map
 		// PZ ..unless they are changing to/from AGR
-		if (voteent.netname == mapname && 
-		   ((self.group_no == 1 && !agr) || (self.group_no == 3 && agr)))
+		if ( voteent.netname == mapname )
+		if ( voteType == #VOTE_SWITCHMAP )
+		if ( ( ( voteMapType != #VOTEMAP_AGR && !agr) || ( voteMapType == #VOTEMAP_AGR && agr ) ) )
 		{
 			sprint(self,#PRINT_HIGH,"You can't start voting for a map that is currently being played!\n");
 			CuTFMenuSound(#MENUSOUND_WRONG);
@@ -991,8 +1077,9 @@ void(float nummap, string themap) StartVoteMap =
 		#ifdef UNABLE_TOVOTE_FORSAME_MAP
 		// Don't let votes to switch to current map
 		// PZ ..unless they are changing to/from AGR
-		if (voteent.netname == mapname && 
-		   ((self.group_no == 1 && !agr) || (self.group_no == 3 && agr)))
+		if ( voteent.netname == mapname )
+		if ( voteType == #VOTE_SWITCHMAP )
+		if ( ( ( voteMapType != #VOTEMAP_AGR && !agr ) || ( voteMapType == #VOTEMAP_AGR && agr ) ) )
 		{
 			sprint(self,#PRINT_HIGH,"You can't start voting for a map that is currently being played!\n");
 			CuTFMenuSound(#MENUSOUND_WRONG);
@@ -1011,14 +1098,8 @@ void(float nummap, string themap) StartVoteMap =
 	voteent.all_active = 1;
 	voteent.has_holo = 0;
 
-	if (self.group_no == 0)
-		voteent.has_sentry = #VOTE_NEXTMAP;
-	else if (self.group_no == 1)
-		voteent.has_sentry = #VOTE_SWITCHMAP;  
-	else if (self.group_no == 2) // PZ - AGR mode
-		voteent.has_sentry = #VOTE_NEXTMAP_AGR;
-	else // if (self.group_no == 3) // PZ - AGR mode
-		voteent.has_sentry = #VOTE_SWITCHMAP_AGR;
+	// Gizmo - check for vote nextmap switchmap
+	voteent.has_sentry = voteType;		// has_sentry is the generic vote type field
 
 	current_voteent = voteent;
 
@@ -1026,7 +1107,7 @@ void(float nummap, string themap) StartVoteMap =
 
 	self.owned_by = #VOTED_YES; // we already voted yes
 	
-	voteent.group_no = self.group_no;
+	voteent.group_no = voteMapType;		// group_no on the vote entity is the map vote type
 
 	current_voteent.dont_do_triggerwork = #FALSE;
 
@@ -1036,22 +1117,23 @@ void(float nummap, string themap) StartVoteMap =
 
 	bprint(#PRINT_HIGH,"Votingç ",self.netname);
 	last_vote_starter = self.netname; // for AGR -PZ
-	
-	if (self.group_no == 0)
+
+	if ( voteType == #VOTE_NEXTMAP ) {
 		bprint(#PRINT_HIGH," suggests ",themap," as next map");
-	else if (self.group_no == 1)
+
+		PrintVoteMapType( ", in ", voteMapType, " mode" );
+	} else /*if ( voteType == #VOTE_SWITCHMAP )*/ {
 		bprint(#PRINT_HIGH," wants to play ",themap," right now");
-	else if (self.group_no == 2) // PZ - AGR mode
-		bprint(#PRINT_HIGH," suggests ",themap," as next map, in ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode");
-	else // if (self.group_no == 3) // PZ - AGR mode
-		bprint(#PRINT_HIGH," wants to play ",themap," right now, in ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode");		
-	
+
+		PrintVoteMapType( ", in ", voteMapType, " mode" );
+	}
+
 	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote");
 	// Gizmo
 	bprintVotesNeeded( 1, 0 );
 	bprint( #PRINT_HIGH, "\n" );
-		
-	ResetClientsMenu(); // reset menus on players/specs which r on MENU_PUNISH or MENU_VOTEMAP
+
+	ResetClientsMenu(); // reset menus on players/specs which are on MENU_PUNISH or MENU_VOTEMAP
 
 	CheckVoting(#FALSE); // If we are the only player on server must check
 };
@@ -1255,10 +1337,7 @@ float(float final) CheckVoting =
 // GIZMO END
 
 	// If an update is taking place, dont allow map voting
-	if (current_voteent.has_sentry == #VOTE_NEXTMAP || 
-		current_voteent.has_sentry == #VOTE_SWITCHMAP ||
-		current_voteent.has_sentry == #VOTE_NEXTMAP_AGR || 
-		current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR)
+	if ( IsMapVote() )
 	if (ServerUpdating())
 	{
 		bprint(#PRINT_HIGH,"Votingç Server update is taking place, no map changes are allowed\n");
@@ -1500,10 +1579,32 @@ float(float final) CheckVoting =
 		if ( VotePassed( num_for, num_against, #VOTESNEEDED_NEXTMAP ) )
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
-			
-			bprint(#PRINT_HIGH,"Votingç Success° Setting ",st," as next map\n");
 
-			localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+			bprint(#PRINT_HIGH,"Votingç Success° Setting ",st," as next map");
+			// Gizmo - print the map vote type
+			PrintVoteMapType( ", in ", current_voteent.group_no, " mode" );
+			bprint( #PRINT_HIGH, "\n" );
+
+			// Gizmo
+			if ( current_voteent.group_no == #VOTEMAP_AGR ) {
+				localcmd( "localinfo agr 1\n" );
+				if ( coop )
+					localcmd( "localinfo _voted_coop 0\n" );
+				if ( !deathmatch )
+					localcmd( "localinfo _voted_deathmatch 3\n" );
+			} else if ( current_voteent.group_no == #VOTEMAP_TF ) {
+				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+				if ( coop )
+					localcmd( "localinfo _voted_coop 0\n" );
+				if ( !deathmatch )
+					localcmd( "localinfo _voted_deathmatch 3\n" );
+			} else /*if ( current_voteent.group_no == #VOTEMAP_COOP )*/ {
+				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+				if ( !coop )
+					localcmd( "localinfo _voted_coop 1\n" );
+				if ( deathmatch )
+					localcmd( "localinfo _voted_deathmatch 0\n" );
+			}
 
 			localcmd("localinfo nmap \"");
 			localcmd(current_voteent.netname);
@@ -1534,9 +1635,31 @@ float(float final) CheckVoting =
 		{
 			st = colstr(current_voteent.netname,#COLSTR_RED);
 
-			bprint(#PRINT_HIGH,"Votingç Success° Switching map to ",st,"\n");
+			bprint(#PRINT_HIGH,"Votingç Success° Switching map to ",st);
+			// Gizmo - print the map vote type
+			PrintVoteMapType( ", with ", current_voteent.group_no, " mode" );
+			bprint( #PRINT_HIGH, "\n" );
 
-			localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+			// Gizmo
+			if ( current_voteent.group_no == #VOTEMAP_AGR ) {
+				localcmd( "localinfo agr 1\n" );
+				if ( coop )
+					localcmd( "localinfo _voted_coop 0\n" );
+				if ( !deathmatch )
+					localcmd( "localinfo _voted_deathmatch 3\n" );
+			} else if ( current_voteent.group_no == #VOTEMAP_TF ) {
+				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+				if ( coop )
+					localcmd( "localinfo _voted_coop 0\n" );
+				if ( !deathmatch )
+					localcmd( "localinfo _voted_deathmatch 3\n" );
+			} else /*if ( current_voteent.group_no == #VOTEMAP_COOP )*/ {
+				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+				if ( !coop )
+					localcmd( "localinfo _voted_coop 1\n" );
+				if ( deathmatch )
+					localcmd( "localinfo _voted_deathmatch 0\n" );
+			}
 
 			BroadcastSound("misc/runekey");
 
@@ -1558,72 +1681,6 @@ float(float final) CheckVoting =
 			ResetVoteEnt();
 		}
 	}
-	// PZ - begin AGR code
-	else if (current_voteent.has_sentry == #VOTE_NEXTMAP_AGR) 
-	{
-//		if (num_for > num_total * #VOTESNEEDED_NEXTMAP) // success?
-		if ( VotePassed( num_for, num_against, #VOTESNEEDED_NEXTMAP ) )
-		{
-			st = colstr(current_voteent.netname,#COLSTR_RED);
-			
-			bprint(#PRINT_HIGH,"\nVotingç Success° Setting ",st," as next map, in ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode\n");
-
-			localcmd("localinfo agr 1\n");
-
-			localcmd("localinfo nmap \"");
-			localcmd(current_voteent.netname);
-			localcmd("\"\n");
-			
-			BroadcastSound("misc/runekey");
-
-			ResetVoteEnt(); // removes current vote entity
-
-			return #TRUE;
-		}
-//		else if (num_against >= num_total * (1 - #VOTESNEEDED_NEXTMAP))
-		else
-		{
-			bprint(#PRINT_HIGH,"Votingç Map voting failed");
-			bprintVoteIssue();
-			bprint(#PRINT_HIGH,"\n");
-			
-			BroadcastSound("misc/runekey");
-			
-			ResetVoteEnt();
-		}
-	}
-	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR)
-	{
-//		if (num_for > num_total * #VOTESNEEDED_MAP) // success?
-		if ( VotePassed( num_for, num_against, #VOTESNEEDED_MAP ) )
-		{
-			st = colstr(current_voteent.netname,#COLSTR_RED);
-
-			bprint(#PRINT_HIGH,"\nVotingç Success° Switching map to ",st,", with ¡ÙÙ·„ÎÂÚÛ «Ô “Â‰ mode\n");
-
-			localcmd("localinfo agr 1\n");
-
-			BroadcastSound("misc/runekey");
-
-			LaunchMap(current_voteent.netname);
-
-			ResetVoteEnt(); // removes current vote entity
-
-			return #TRUE;
-		}
-//		else if (num_against >= num_total * (1 - #VOTESNEEDED_MAP))
-		else
-		{
-			bprint(#PRINT_HIGH,"Votingç Map voting failed");
-			bprintVoteIssue();
-			bprint(#PRINT_HIGH,"\n");
-			
-			BroadcastSound("misc/runekey");
-			
-			ResetVoteEnt();
-		}
-	} 
-	// PZ - end AGR code
 	// Gizmo - use object voting
 	else if ( current_voteent.has_sentry == #VOTE_USEOBJECT ) {
 		local string objectAction;
@@ -1719,12 +1776,6 @@ void( float num_for, float num_against ) bprintVotesNeeded = {
 			fraction = #VOTESNEEDED_NEXTMAP;
 		else if ( current_voteent.has_sentry == #VOTE_SWITCHMAP )
 			fraction = #VOTESNEEDED_MAP;
-		// PZ - begin AGR code
-		else if ( current_voteent.has_sentry == #VOTE_NEXTMAP_AGR )
-			fraction = #VOTESNEEDED_NEXTMAP;
-		else if ( current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR )
-			fraction = #VOTESNEEDED_MAP;
-		// PZ - end AGR code
 		// Gizmo - use object voting
 		else if ( current_voteent.has_sentry == #VOTE_USEOBJECT )
 			fraction = #VOTESNEEDED_USE;
@@ -1879,36 +1930,3 @@ void(entity sleepent, entity targetclient) SleepVoteResume =
 	bprint(#PRINT_HIGH,current_voteent.admin_kick.netname);
 	bprintVotesLeft();
 };
-
-//========================================================================
-// Returns number of votes remaining for a success
-
-#ifdef NOTDEFINED
-float() GetRemainingVotes =
-{
-	if (!current_voteent)
-		return 666; // BUG
-
-	if (current_voteent.has_sentry == #VOTE_PUNISH)
-	{
-		if (current_voteent.g_a == #PUNISH_CURSE)
-			return #VOTESNEEDED_CURSE - (current_voteent.all_active - current_voteent.has_holo);
-		else if (current_voteent.g_a == #PUNISH_MUTE)
-			return #VOTESNEEDED_MUTE - (current_voteent.all_active - current_voteent.has_holo);
-		else if (current_voteent.g_a == #PUNISH_KICK)
-			return #VOTESNEEDED_KICK - (current_voteent.all_active - current_voteent.has_holo);
-		else if (current_voteent.g_a == #PUNISH_BAN)
-			return #VOTESNEEDED_BAN - (current_voteent.all_active - current_voteent.has_holo);
-		else if (current_voteent.g_a == #PUNISH_CUFF)
-			return #VOTESNEEDED_CUFF - (current_voteent.all_active - current_voteent.has_holo);
-	}
-	else if (current_voteent.has_sentry == #VOTE_NEXTMAP || 
-			 current_voteent.has_sentry == #VOTE_NEXTMAP_AGR) // PZ - AGR
-		return #VOTESNEEDED_NEXTMAP - (current_voteent.all_active - current_voteent.has_holo);
-	else if (current_voteent.has_sentry == #VOTE_SWITCHMAP || 
-			 current_voteent.has_sentry == #VOTE_SWITCHMAP_AGR) // PZ - AGR
-		return #VOTESNEEDED_MAP - (current_voteent.all_active - current_voteent.has_holo);
-	
-	return 666; // If this happens, its a bug.. and evil!
-};
-#endif

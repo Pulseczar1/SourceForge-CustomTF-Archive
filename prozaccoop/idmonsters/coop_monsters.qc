@@ -340,7 +340,7 @@ void() coop_swimmonster_start =
 
 #define DEFAULT_SPAWNER_TARGETNAME	"monster_spawner"
 
-float	spawner_noTriggerId;		// next id of a spawner without a targetname, so we can tell them apart
+float	spawner_id;	// next id of a spawner, so we can tell them apart for ones without targetnames and duplicate targetnames
 
 void() monster_spawner_spawn = {
 	local entity	e, oself;
@@ -438,10 +438,7 @@ void() monster_spawner_spawn = {
 	self = oself;
 
 	// set monster specific things
-	if ( self.targetname == #DEFAULT_SPAWNER_TARGETNAME )
-		e.#npc_isCoopMonster = self.ammo_detpack;
-	else
-		e.#npc_isCoopMonster = 2;		// so we can tell spawned monsters from map monsters
+	e.#npc_isCoopMonster = self.ammo_detpack;	// so we can tell spawned monsters from map monsters, and if two spawners have the same classname
 	e.#npc_useTargetsOnRespawn = #TRUE;	// make sure we always fire our targets
 	e.lives = 0;
 	e.endtime = self.endtime;
@@ -482,7 +479,9 @@ void() monster_spawner_spawn = {
 	else if ( self.spawnflags & 128 )
 		e.angles = vectoangles( e.origin - self.origin );
 
-	spawn_tfog( e.origin );
+	// play the teleport effect if we're suppose to
+	if ( !( self.spawnflags & 1024 ) )
+		spawn_tfog( e.origin );
 
 	// fire event
 	oldTarget = self.target;
@@ -586,7 +585,7 @@ void() monster_spawner_use = {
 		monster_spawner_spawn();
 };
 
-/*QUAKED monster_spawner (0 .5 .8) (-8 -8 -8) (8 8 8) RANDOM_POS VISIBLE_RANDOM_POS START_ON SPAWN_FIRST SPAWN_COUNT_FIRST OFF_AT_COUNT LOOK_AT LOOK_AWAY SPAWN_TOGGLE SPAWN_COUNT_TOGGLE
+/*QUAKED monster_spawner (0 .5 .8) (-8 -8 -8) (8 8 8) RANDOM_POS VISIBLE_RANDOM_POS START_ON SPAWN_FIRST SPAWN_COUNT_FIRST OFF_AT_COUNT LOOK_AT LOOK_AWAY SPAWN_TOGGLE SPAWN_COUNT_TOGGLE NO_TELEPORT_EFFECT
 Spawns random monsters at random positions with a maximum and current limit.
 If "targetname" and "wait" are set, then the trigger is toggled on/off, and defaults to off unless START_ON spawnflag is set.
 If just "targetname" is set, then the only way for a monster to spawn is when the monster_spawner is fired.
@@ -610,8 +609,8 @@ void() monster_spawner = {
 	local float		ftmp;
 
 	// this is stored in the #isCoopMonster field, so make sure it's greater than 1
-	if ( !spawner_noTriggerId )
-		spawner_noTriggerId = 2;
+	if ( !spawner_id )
+		spawner_id = 2;
 
 	if ( CheckExistence() == #FALSE ) {
 		dremove( self );
@@ -675,12 +674,13 @@ void() monster_spawner = {
 	// set the default targetname to notify us of monster deaths
 	if ( self.targetname == #DEFAULT_SPAWNER_TARGETNAME )
 		objerror( "targetname cannot be \"" #DEFAULT_SPAWNER_TARGETNAME "\"\n" );
-	if ( !self.targetname ) {
-		self.ammo_detpack = spawner_noTriggerId;
-		spawner_noTriggerId = spawner_noTriggerId + 1;
+	if ( !self.targetname )
 		self.targetname = #DEFAULT_SPAWNER_TARGETNAME;
-	} else
-		self.ammo_detpack = 2;				// doesn't have to be unique if a targetname was specified
+
+	// because there could be two spawners with the same targetname...
+	// make sure each spawner has a unique id
+	self.ammo_detpack = spawner_id;
+	spawner_id = spawner_id + 1;
 
 	// only increase monster count if we're not on a team or we're not on team one
 	if ( !self.team_no || !Teammate( self.team_no, 1 ) )

@@ -169,11 +169,13 @@ float (entity start, entity end) COOP_SightBlocked =
 
 
 /*
-	COOP_IsValidTarget
+===============
+COOP_IsValidTarget
 
-	NOTE: health and takedamage are not checked by this function
+NOTE: health and takedamage are not checked by this function
+NOTE: this will change trace_ent
+===============
 */
-
 float( entity us, entity test ) COOP_IsValidTarget = {
 	local float r;
 
@@ -224,6 +226,7 @@ COOP_GetTargetPriority
 The maximum value this can return is 2. Distance calculation can
 add up to 1, and the target's priority in general can add another 1.
 NOTE: this assumes e is an enemy.
+NOTE: this will change trace_ent
 ===============
 */
 float( entity scanner, entity e ) COOP_GetTargetPriority = {
@@ -904,11 +907,16 @@ NOTE: uses self
 */
 void( entity attacker ) COOP_PrePain = {
 	local float	currentPriority, attackerPriority;
+	local entity	oldTraceEnt;
+
+	oldTraceEnt = trace_ent;
 
 	// the .think will get overridden but that's ok
 	if ( !self.enemy ) {
 		if ( COOP_IsValidTarget( self, attacker ) )
 			COOP_AttackTarget( attacker, #TRUE );
+
+		trace_ent = oldTraceEnt;
 		return;
 	}
 
@@ -919,6 +927,8 @@ void( entity attacker ) COOP_PrePain = {
 	if ( !visible( self.enemy ) ) {
 		if ( COOP_IsValidTarget( self, attacker ) )
 			COOP_AttackTarget( attacker, #FALSE );
+
+		trace_ent = oldTraceEnt;
 		return;
 	}
 
@@ -929,9 +939,13 @@ void( entity attacker ) COOP_PrePain = {
 		if ( attackerPriority > currentPriority ) {
 			if ( COOP_IsValidTarget( self, attacker ) )
 				COOP_AttackTarget( attacker, #FALSE );
+
+			trace_ent = oldTraceEnt;
 			return;
 		}
 	}
+
+	trace_ent = oldTraceEnt;
 };
 
 /*

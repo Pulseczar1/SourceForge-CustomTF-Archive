@@ -1418,3 +1418,53 @@ void( string entity_classname, float entity_team, float ecount ) Admin_MassSpawn
 		bprint( #PRINT_HIGH, "The admin ", self.netname, " spawns ", tmps, " ", entity_classname, " entities\n" );
 };
 #endif
+
+//==================================================
+
+/*
+===============
+Admin_ValidEntityToKill
+===============
+*/
+float( entity te ) Admin_ValidEntityToKill = {
+	if ( !te )
+		return #FALSE;
+	if ( !te.takedamage )
+		return #FALSE;
+
+	if ( te.classname == "misc_explobox" )
+		return #TRUE;
+	if ( te.classname == "misc_explobox2" )
+		return #TRUE;
+	if ( te.classname == "player" )
+		return #TRUE;
+	if ( COOP_IsCoopMonster( te ) )
+		return #TRUE;
+
+	return #FALSE;
+};
+
+/*
+===============
+Admin_Kill
+
+Kills the entity directly infront of self.
+===============
+*/
+void() Admin_Kill = {
+	makevectors( self.v_angle );
+	traceline( self.origin + '0 0 16', ( self.origin + '0 0 16' ) + v_forward * 4096, #TL_ANY_SOLID, self );
+
+	if ( !Admin_ValidEntityToKill( trace_ent ) ) {
+		sprint( self, #PRINT_HIGH, "Invalid entity to kill\n" );
+		return;
+	}
+
+	if ( trace_ent.netname )
+		bprint( #PRINT_HIGH, "The admin ", self.netname, " deems ", trace_ent.netname, " dead\n" );
+	else
+		bprint( #PRINT_HIGH, "The admin ", self.netname, " deems the entity ", trace_ent.classname, " dead\n" );
+
+	deathmsg = #DMSG_ADMINKILL;
+	TF_T_Damage( trace_ent, self, self, trace_ent.health + 10000, #TF_TD_IGNOREARMOUR | #TF_TD_NOPAIN, #TF_TD_OTHER );
+};

@@ -60,6 +60,8 @@ float() weapon_dummy =
 
 //============================================================================
 
+#define touch_finished	attack_finished			// this allows trigger_monsterteam entities with targetname to be touched
+
 /*
 =============
 monsterteam_touch
@@ -84,10 +86,11 @@ void() monsterteam_touch = {
 	}
 
 	if ( self.targetname ) {
-		if ( self.nextthink < time )
+		if ( self.#touch_finished < time )
 			return;			// not fired yet
 		else {
 			if ( self.spawnflags & 2 ) {
+				// every monster except the one that fired can get changed
 				if ( other == self.enemy ) {
 					self.enemy = world;
 					return;
@@ -98,8 +101,15 @@ void() monsterteam_touch = {
 				else					// some other monster besides the activator, just return
 					return;
 			}
+
+			// trigger-touch bypasses .wait for obvious reasons
+			self.nextthink = time;
 		}
 	}
+
+	// already triggered
+	if ( self.nextthink > time )
+		return;
 
 	// tf goal code
 	if (!Activated(self,other))
@@ -120,7 +130,18 @@ void() monsterteam_touch = {
 		other.team_no = self.team;
 
 	activator = other;
-	SUB_UseTargets();				// could do some neat stuff here when a monster touches
+	SUB_UseTargets();
+
+	if ( !self.targetname ) {
+		// allow zero to be instant no waits
+		if ( self.wait < 0 ) {
+			self.use = SUB_Null;		// don't allow it to be triggered again
+			self.touch = SUB_Null;
+			self.nextthink = time + 0.1;
+			self.think = SUB_Remove;
+		} else
+			self.nextthink = time + self.wait;
+	}
 };
 
 /*
@@ -134,6 +155,9 @@ void() monsterteam_use = {
 
 	// don't allow non-players to fire the trigger if spawnflags 1 is present
 	if ( self.spawnflags & 1 && !( activator.flags & #FL_CLIENT ) )
+		return;
+	// already triggered
+	if ( self.nextthink > time )
 		return;
 
 	if ( self.event ) {
@@ -154,8 +178,17 @@ void() monsterteam_use = {
 			te = find( te, targetname, self.event );
 		}
 
-		if ( numChanged )
+		if ( numChanged ) {
 			SUB_UseTargets();
+
+			// allow zero to be instant no waits
+			if ( self.wait < 0 ) {
+				self.use = SUB_Null;		// don't allow it to be triggered again
+				self.nextthink = time + 0.3;	// leave time for it to be trigger-touched
+				self.think = SUB_Remove;
+			} else
+				self.nextthink = time + self.wait;
+		}
 	}
 
 	// spawnflags 8 means no touch, so return if it's present
@@ -167,9 +200,9 @@ void() monsterteam_use = {
 	if ( self.spawnflags & 2 || self.spawnflags & 4 )
 		self.enemy = activator;
 
-	self.nextthink = time + 0.2;
+	// allow the trigger to be touched
+	self.#touch_finished = time + 0.2;
 	force_retouch = 2;		// make sure even still objects get hit
-	self.think = SUB_Null;
 };
 
 /*QUAKED trigger_monsterteam (.5 .5 .5) PLAYER_ONLY NOACTIVATOR ACTIVATOR_ONLY NOTOUCH
@@ -177,6 +210,7 @@ Gizmo - Any non-player owned monster touching this (unless the notouch spawnflag
 The trigger_monsterteam will fire it's targets if it has been touched and notouch isn't present (even if "team" isn't present), or if the trigger_monsterteam is fired and "event" is present and at least one monster (that isn't already on "team") is affected.
 This trigger can have all the fields a trigger_relay can have for firing it's targets.
 
+If the trigger_monsterteam has a wait field, this will be the time in seconds to wait after being fired before it can be fired again.
 If the trigger_monsterteam has the "event" field, all monsters that have a matching "targetname" field will have their team set to "team" when fired, spawnflags and "team_no" still apply when this happens. Note that "event" works on monsters that are dead and are respawning but haven't respawned yet, whereas with touch this is not possible.
 If the trigger_monsterteam has a "targetname" field, it will only change any monster's teams by touch or "event" when it has been fired.
 If the trigger_monsterteam has a "targetname" the following spawnflags are valid:
@@ -211,6 +245,99 @@ void() trigger_monsterteam = {
 	if ( !( self.spawnflags & 8 ) )
 		self.touch = monsterteam_touch;
 	self.use = monsterteam_use;
+	self.think = SUB_Null;
+};
+
+#undef touch_finished
+
+//============================================================================
+
+void() info_tfgoal;
+
+/*QUAKED info_tfgoal_monster (.5 .5 .5)
+Gizmo - Exactly the same as a normal info_tfgoal except this only allows coop monsters to touch.
+*/
+void() info_tfgoal_monster = {
+	// Gizmo - this is a separately named entity so we can have
+	// a portable way of letting an info_tfgoal know it allows monsters to touch
+	// DO NOT set option2 manually in an info_tfgoal in your map, it's not guaranteed to work
+	self.option2 = 1;
+
+	self.classname = "info_tfgoal";
+	info_tfgoal();
+};
+
+//============================================================================
+
+void() multi_trigger;
+void() multi_touch;
+void() trigger_multiple;
+
+/*
+=============
+multi_touch_monster
+=============
+*/
+void() multi_touch_monster = {
+	local entity	te;
+
+	// Gizmo - this differs from a standard trigger_multiple
+	if ( self.team_no )
+	if ( other.team_no != self.team_no )	// Gizmo - we don't use Teammate() here because the trigger may not want allied teams to touch
+		return;
+
+	if ( !COOP_IsCoopMonster( other ) )
+		return;
+
+	if (other.health <= 0) // dead players out
+		return;
+
+	if (!Activated(self,other))
+	{
+		// If an else goal should be activated, activate it
+		if (self.else_goal != 0)
+		{
+			te = Findgoal(self.else_goal);
+			if (te)
+				DoResults(te, other, (self.goal_result & #TFGR_ADD_BONUSES));
+		}
+
+		return;
+	}
+
+// if the trigger has an angles field, check player's facing direction
+	if (self.movedir != '0 0 0')
+	{
+		makevectors (other.angles);
+		if (v_forward * self.movedir < 0)
+			return;		// not facing the right way
+	}
+
+	self.enemy = other;
+	multi_trigger();
+};
+
+/*
+=============
+multi_init_monster
+=============
+*/
+void() multi_init_monster = {
+	if ( self.touch == multi_touch )
+		self.touch = multi_touch_monster;
+};
+
+/*QUAKED trigger_multiple_monster (.5 .5 .5) ? notouch
+Gizmo - Exactly the same as a normal trigger_multiple except this only allows coop monsters to touch,
+and the team_no field applies to touching.
+*/
+void() trigger_multiple_monster =
+{
+	// the entity may have been removed afterwords
+	self.nextthink = time + 0.1;
+	self.think = multi_init_monster;
+
+	trigger_multiple();
 };
 
 #endif

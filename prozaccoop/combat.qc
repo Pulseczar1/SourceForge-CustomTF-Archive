@@ -821,7 +821,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 			Killed(targ, attacker);
 		return;
 
-	}        
+	}
 
     // Should we do any pain stuff?
     if (T_flags & #TF_TD_NOPAIN)

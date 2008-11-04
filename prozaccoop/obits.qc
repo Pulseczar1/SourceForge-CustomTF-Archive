@@ -1896,6 +1896,11 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " gets well done by ";
 					deathstring2 = "'s incendiary rocket\n";
 				}
+				else if ( deathmsg == #DMSG_ADMINKILL )
+				{
+					deathstring = " was struck down by the admin ";
+					deathstring2 = "\n";
+				}
 
 				bprint (#PRINT_MEDIUM, targ.netname);
 				bprint (#PRINT_MEDIUM, deathstring);

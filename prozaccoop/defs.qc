@@ -2647,6 +2647,7 @@ float deathmsg; 	// Global, which is set before every T_Damage, to indicate
 #define DMSG_XMAS				71
 #define DMSG_EARTHQUAKE 		72
 #define DMSG_STORM				73
+#define DMSG_ADMINKILL			74		// Gizmo - "cmd admin kill" command
 
 //Defs for objects a spikeshooter can spawn  Misc.qc
 #define SPAWNFLAG_SUPERSPIKE	1 
