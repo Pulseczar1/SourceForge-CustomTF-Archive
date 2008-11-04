@@ -210,9 +210,16 @@ Gizmo - Any non-player owned monster touching this (unless the notouch spawnflag
 The trigger_monsterteam will fire it's targets if it has been touched and notouch isn't present (even if "team" isn't present), or if the trigger_monsterteam is fired and "event" is present and at least one monster (that isn't already on "team") is affected.
 This trigger can have all the fields a trigger_relay can have for firing it's targets.
 
-If the trigger_monsterteam has a wait field, this will be the time in seconds to wait after being fired before it can be fired again.
 If the trigger_monsterteam has the "event" field, all monsters that have a matching "targetname" field will have their team set to "team" when fired, spawnflags and "team_no" still apply when this happens. Note that "event" works on monsters that are dead and are respawning but haven't respawned yet, whereas with touch this is not possible.
 If the trigger_monsterteam has a "targetname" field, it will only change any monster's teams by touch or "event" when it has been fired.
+
+If the trigger_monsterteam has a "wait" field, it waits this amount of time before it's able to be
+fired again after it has been fired. If it has a "targetname" field, then "wait" affects how often
+it can be fired. If it does not have a "targetname" field, then "wait" affects how often it can be touched.
+Note that if "targetname" is present then the wait time does not affect the trigger being touched
+after the trigger_monsterteam has been fired to touch entities. If "wait" is less than zero then the
+trigger removes itself after being used and firing it's targets (triggered touches still work).
+
 If the trigger_monsterteam has a "targetname" the following spawnflags are valid:
 Bit 1:	Can only be fired by players (IE: if a monster dies from another monster and the dead monster has a "target" matching the trigger_monsterteam's "targetname" the trigger_monsterteam will not be fired).
 Bit 2:	Every monster except the monster that fired the trigger_monsterteam (and those filtered by the "team_no" field) can get their team changed.
