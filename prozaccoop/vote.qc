@@ -1592,7 +1592,10 @@ float(float final) CheckVoting =
 					localcmd( "localinfo _voted_coop 0\n" );
 				if ( !deathmatch )
 					localcmd( "localinfo _voted_deathmatch 3\n" );
-			} else if ( current_voteent.group_no == #VOTEMAP_TF ) {
+			}
+
+#ifdef COOP_MODE_ENHANCED
+			else if ( current_voteent.group_no == #VOTEMAP_TF ) {
 				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
 				if ( coop )
 					localcmd( "localinfo _voted_coop 0\n" );
@@ -1605,6 +1608,7 @@ float(float final) CheckVoting =
 				if ( deathmatch )
 					localcmd( "localinfo _voted_deathmatch 0\n" );
 			}
+#endif
 
 			localcmd("localinfo nmap \"");
 			localcmd(current_voteent.netname);
@@ -1647,7 +1651,10 @@ float(float final) CheckVoting =
 					localcmd( "localinfo _voted_coop 0\n" );
 				if ( !deathmatch )
 					localcmd( "localinfo _voted_deathmatch 3\n" );
-			} else if ( current_voteent.group_no == #VOTEMAP_TF ) {
+			}
+
+#ifdef COOP_MODE_ENHANCED
+			else if ( current_voteent.group_no == #VOTEMAP_TF ) {
 				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
 				if ( coop )
 					localcmd( "localinfo _voted_coop 0\n" );
@@ -1660,6 +1667,7 @@ float(float final) CheckVoting =
 				if ( deathmatch )
 					localcmd( "localinfo _voted_deathmatch 0\n" );
 			}
+#endif
 
 			BroadcastSound("misc/runekey");
 
