@@ -2658,8 +2658,25 @@ void() tfgoal_touch =
 	if (!(self.goal_activation & #TFGA_TOUCH))
 		return;
 
+#ifdef COOP_MODE_ENHANCED
+	// Gizmo - if it's an info_tfgoal_monster, allow monsters to touch
+	if ( self.option2 ) {
+		if ( !COOP_IsCoopMonster( other ) )
+			return;
+	} else {
+		if (other.classname != "player")
+			return;
+		// Gizmo - this used to be down below health check and above active check
+		if (other.penance_time >= time)
+			return;
+	}
+#else
 	if (other.classname != "player")
 		return;
+	// Gizmo - this used to be down below health check and above active check
+	if (other.penance_time >= time)
+		return;
+#endif
 
 	// If we're in prematch mode, ignore the touch
 	if (prematch >= time)
@@ -2667,9 +2684,6 @@ void() tfgoal_touch =
 
     if (other.health <= 0) // dead players out
         return;
-		
-	if (other.penance_time >= time)
-		return;
 	
 	// If it's already active, don't bother
 	if (self.goal_state == #TFGS_ACTIVE)

@@ -220,6 +220,41 @@ void() worldspawn =
 			cvar_set( "deathmatch", "0" );
 		}
 	}
+
+	// restore previous coop and deathmatch
+	temps = infokey( world, "_saved_coop" );
+	if ( temps != "" ) {
+		coop = stof( temps );
+		localcmd( "localinfo _saved_coop \"\"\n" );
+	}
+	temps = infokey( world, "_saved_deathmatch" );
+	if ( temps != "" ) {
+		deathmatch = stof( temps );
+		cvar_set( "deathmatch", temps );
+		localcmd( "localinfo _saved_deathmatch \"\"\n" );
+	}
+
+	// Gizmo - check if we voted for coop or tf mode
+	temps = infokey( world, "_voted_coop" );
+	if ( temps != "" ) {
+		// save off the previous stuff
+		localcmd( "localinfo _saved_coop " );
+		localcmd( ftos( coop ) );
+		localcmd( "\n" );
+		coop = stof( temps );
+		localcmd( "localinfo _voted_coop \"\"\n" );
+	}
+	temps = infokey( world, "_voted_deathmatch" );
+	if ( temps != "" ) {
+		// save off the previous stuff
+		localcmd( "localinfo _saved_deathmatch " );
+		localcmd( ftos( deathmatch ) );
+		localcmd( "\n" );
+		deathmatch = stof( temps );
+		cvar_set( "deathmatch", temps );
+		localcmd( "localinfo _voted_deathmatch \"\"\n" );
+	}
+
 	temps = infokey( world, "skill" );
 	if ( temps == "" )
 		skill = 5;

@@ -84,6 +84,10 @@ admin
   killstuff
   endgame
   silence
+  use							// Gizmo - uses the entity that the admin is looking at
+  spawn <classname> [team]			// Gizmo - spawns an entity, usually a monster in coop mode
+  mass_spawn <classname> [count] [team]	// Gizmo - spawns count entities (4 is default if not specified)
+  kill						// Gizmo - kills the entity that the admin is looking at (if allowed)
 
   stuff
 	makefree ITEM PAGE|all
@@ -94,8 +98,12 @@ admin
 vote
   map xxxxxx
 	agr // PZ - Attackers Go Red mode
+	tf	// Gizmo - Team Fortress (non-coop) mode
+	coop	// Gizmo - Co-op mode
   nextmap xxxx
 	agr // PZ
+	tf	// Gizmo - Team Fortress (non-coop) mode
+	coop	// Gizmo - Co-op mode
   kick xxxxx
   curse xxxx
   ban xxxxx
@@ -119,7 +127,7 @@ game
 		rockets x
 		nails x
 		shells x
-	weapon weaponname
+	weapon weaponname		// Gizmo
 
 ==========================================================================================*/
 
@@ -314,9 +322,9 @@ void(float command) CmdHelp =
 	else if (command == #CMDHELP_VOTE)
 		CmdHelpParse("Vote","Commands for starting several kind of votes.\nAvaliable vote types are:\n",#CMDS_VOTE,"");
 	else if (command == #CMDHELP_MAP)
-		CmdHelpParse("Map","Starts voting for a switch to the specified map.\nSyntaxº cmd vote map (MapName) [agr]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
+		CmdHelpParse("Map","Starts voting for a switch to the specified map.\nSyntaxº cmd vote map (MapName) [agr|tf|coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
 	else if (command == #CMDHELP_NEXTMAP)
-		CmdHelpParse("NextMap","Suggests the specified map as next map.\nSyntaxº cmd vote nextmap (MapName) [agr]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
+		CmdHelpParse("NextMap","Suggests the specified map as next map.\nSyntaxº cmd vote nextmap (MapName) [agr|tf|coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
 	else if (command == #CMDHELP_KICK)
 		CmdHelpParse("Kick","Proposes to kick the specified user from server.\nSyntaxº cmd vote kick (user)\n","","");
 	else if (command == #CMDHELP_CURSE)
@@ -380,6 +388,9 @@ float() HisMapVoteAllowed =
 	}
 
 	if (time/60 < #MIN_MINUTES_TOVOTEMAP)
+#ifdef COOP_MODE_ENHANCED
+	if ( deathmatch || mapname != "start" )
+#endif
 	{
 		CmdMsg("Too early for a map change!\n");
 		return #FALSE;
@@ -1446,6 +1457,10 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 				return #TRUE;
 			}
 #endif
+			else if ( !strcasecmp( arg2, "kill" ) ) {
+				Admin_Kill();
+				return #TRUE;
+			}
 		}
 
 		// non-valid admin command 
@@ -1757,11 +1772,20 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 				if (self.increase_team1 < #CMD_MAX_MAPREQUESTS)
 				{
 					if (validatemap(arg3))
-					{	
+					{
+						// Gizmo - set the first byte to the vote type
+						self.group_no = #VOTE_NEXTMAP;
+
 						if (arg4 != "") // PZ - begin AGR code
-						{	
+						{
 							if (!strcasecmp(arg4, "agr"))
-								self.group_no = 2; // next map mode with AGR
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_AGR ); // next map mode with AGR
+#ifdef COOP_MODE_ENHANCED
+							else if ( !strcasecmp( arg4, "tf" ) )
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_TF );
+							else if ( !strcasecmp( arg4, "coop" ) )
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_COOP );
+#endif
 							else
 							{
 								sprint3(self, #PRINT_HIGH, "Unrecognized command argument: ", arg4, "\n");
@@ -1769,7 +1793,7 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 							}
 						}
 						else			// PZ - end AGR code
-							self.group_no = 0; // next map mode 
+							self.group_no = AssignByte2( self.group_no, #VOTEMAP_DEFAULT );
 
 						StartVoteMap(0,arg3);						 
 						return #TRUE;
@@ -1810,10 +1834,19 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 				{
 					if (validatemap(arg3))
 					{
+						// Gizmo - set the first byte to the vote type
+						self.group_no = #VOTE_SWITCHMAP;
+
 						if (arg4 != "") // PZ - begin AGR code
 						{
 							if (!strcasecmp(arg4, "agr"))
-								self.group_no = 3; // switch map mode with AGR
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_AGR ); // switch map mode with AGR
+#ifdef COOP_MODE_ENHANCED
+							else if ( !strcasecmp( arg4, "tf" ) )
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_TF );
+							else if ( !strcasecmp( arg4, "coop" ) )
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_COOP );
+#endif
 							else
 							{
 								sprint3(self, #PRINT_HIGH, "Unrecognized command argument: ", arg4, "\n");
@@ -1821,7 +1854,8 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 							}
 						}
 						else			// PZ - end AGR code
-							self.group_no = 1; // switch to mode											 
+							self.group_no = AssignByte2( self.group_no, #VOTEMAP_DEFAULT );
+
 						StartVoteMap(0,arg3);						 
 						return #TRUE;
 					}

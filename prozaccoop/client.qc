@@ -1318,9 +1318,6 @@ void() changelevel_use =
 {
 	other = activator;
 
-	if (other.classname != "player")
-		return;
-
 	if (cvar("samelevel") == 2 || (cvar("samelevel") == 3 && mapname != "start")) {
 		T_Damage (other, self, self, 50000);
 		return;
@@ -1345,7 +1342,8 @@ void() changelevel_use =
 		GotoNextMap();
 		return;
 	}
-	
+
+	self.use = SUB_Null;
 	self.touch = SUB_Null;
 
 	// we can't move people right now, because touch functions are called
@@ -1380,7 +1378,8 @@ void() changelevel_touch =
 		GotoNextMap();
 		return;
 	}
-	
+
+	self.use = SUB_Null;
 	self.touch = SUB_Null;
 
 	// we can't move people right now, because touch functions are called

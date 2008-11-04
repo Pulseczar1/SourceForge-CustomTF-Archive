@@ -656,7 +656,7 @@ void(float inAuto) W_FireMedikit =
 	local	vector	source;
 	local	vector	org;
 	local	float healam;	
-	local	entity te, BioInfection;
+	local	entity te, BioInfection, tempTraceEnt;
 
 	source = self.origin + '0 0 16';
 	if (self.cutf_items & #CUTF_CLOSECOMBAT)
@@ -672,27 +672,30 @@ void(float inAuto) W_FireMedikit =
 	if (!trace_ent) // OfN - Fixes crash?
 		return;
 
-	if (trace_ent.takedamage)
+	// Gizmo - sometimes trace_ent will change down in all this code
+	tempTraceEnt = trace_ent;
+
+	if (tempTraceEnt.takedamage)
 	{
-		if (trace_ent.classname == "player")
+		if (tempTraceEnt.classname == "player")
 		{
-			if (Teammate(trace_ent.team_no, self.team_no) || (coop))
+			if (Teammate(tempTraceEnt.team_no, self.team_no) || (coop))
 			{
 				healam = #WEAP_MEDIKIT_HEAL;
 
 				// remove concussion from player
 				// Try to find a concusstimer entity for this player
 				te = find(world, classname, "timer");
-				while (((te.owner != trace_ent) || (te.think != ConcussionGrenadeTimer)) && (te != world))
+				while (((te.owner != tempTraceEnt) || (te.think != ConcussionGrenadeTimer)) && (te != world))
 				{
 					te = find(te, classname, "timer");
 				}
 
 				if (te != world)
 				{
-					stuffcmd(trace_ent ,"v_idlescale 0\n");
+					stuffcmd(tempTraceEnt ,"v_idlescale 0\n");
 					SpawnBlood(org, 20);
-					sprint(trace_ent, #PRINT_HIGH, "you have been healed of your concussion\n");
+					sprint(tempTraceEnt, #PRINT_HIGH, "you have been healed of your concussion\n");
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
 					if (!Teammate(self.team_no,te.team_no))
@@ -707,20 +710,20 @@ void(float inAuto) W_FireMedikit =
 
 				// remove hallucination from player
 				// Try to find a hallucination timer entity for this player
-				if (trace_ent.tfstate & #TFSTATE_HALLUCINATING)
+				if (tempTraceEnt.tfstate & #TFSTATE_HALLUCINATING)
 				{
 					te = find(world, classname, "timer");
-					while (((te.owner != trace_ent) || (te.think != HallucinationTimer)) && (te != world))
+					while (((te.owner != tempTraceEnt) || (te.think != HallucinationTimer)) && (te != world))
 					{
 						te = find(te, classname, "timer");
 					}
 
 					if (te != world)
 					{
-						trace_ent.tfstate = trace_ent.tfstate - (trace_ent.tfstate & #TFSTATE_HALLUCINATING);
+						tempTraceEnt.tfstate = tempTraceEnt.tfstate - (tempTraceEnt.tfstate & #TFSTATE_HALLUCINATING);
 
 						SpawnBlood(org, 20);
-						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your hallucinations\n");
+						sprint(tempTraceEnt, #PRINT_HIGH, "you have been healed of your hallucinations\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						if (!Teammate(self.team_no,te.team_no))
@@ -740,21 +743,21 @@ void(float inAuto) W_FireMedikit =
 
 				// remove tranquilisation from player
 				// Try to find a tranquilisation timer entity for this player
-				if (trace_ent.tfstate & #TFSTATE_TRANQUILISED)
+				if (tempTraceEnt.tfstate & #TFSTATE_TRANQUILISED)
 				{
 					te = find(world, classname, "timer");
-					while (((te.owner != trace_ent) || (te.think != TranquiliserTimer)) && (te != world))
+					while (((te.owner != tempTraceEnt) || (te.think != TranquiliserTimer)) && (te != world))
 					{
 						te = find(te, classname, "timer");
 					}
 
 					if (te != world)
 					{
-						trace_ent.tfstate = trace_ent.tfstate - (trace_ent.tfstate & #TFSTATE_TRANQUILISED);
-						TeamFortress_SetSpeed(trace_ent);
+						tempTraceEnt.tfstate = tempTraceEnt.tfstate - (tempTraceEnt.tfstate & #TFSTATE_TRANQUILISED);
+						TeamFortress_SetSpeed(tempTraceEnt);
 
 						SpawnBlood(org, 20);
-						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your tranquilisation\n");
+						sprint(tempTraceEnt, #PRINT_HIGH, "you have been healed of your tranquilisation\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						if (!Teammate(self.team_no,te.team_no))
@@ -774,20 +777,20 @@ void(float inAuto) W_FireMedikit =
 				
 				#ifdef OLD_FLASH
 				// check if the healed player is blinded
-				if (trace_ent.FlashTime > 0)
+				if (tempTraceEnt.FlashTime > 0)
 				{
 					te = find(world, netname, "flashtimer");
-					while ((te.owner != trace_ent || te.classname != "timer") && (te != world))
+					while ((te.owner != tempTraceEnt || te.classname != "timer") && (te != world))
 						te = find(te, netname, "flashtimer");
 
 					if (te != world)
 					{
-						trace_ent.FlashTime = 0;
+						tempTraceEnt.FlashTime = 0;
 						SpawnBlood(org, 20);
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						stuffcmd(trace_ent, "v_cshift 0\n"); //WK -- /CH te -> trace_ent
-						stuffcmd(trace_ent, "r_norefresh 0;wait;echo;wait;echo;wait;echo;wait;echo\n"); //WK -- /CH te -> trace_ent
+						stuffcmd(tempTraceEnt, "v_cshift 0\n"); //WK -- /CH te -> tempTraceEnt
+						stuffcmd(tempTraceEnt, "r_norefresh 0;wait;echo;wait;echo;wait;echo;wait;echo\n"); //WK -- /CH te -> tempTraceEnt
 
 						if (!Teammate(self.team_no,te.team_no))
 						{
@@ -801,28 +804,28 @@ void(float inAuto) W_FireMedikit =
 					else
 					{
 						RPrint("Warning: Error in Flash Timer logic.\n");
-						trace_ent.FlashTime = 0;
+						tempTraceEnt.FlashTime = 0;
 					}
 				}
 
 				#else // OLD_FLASH
 
-				if (trace_ent.tfstate & #TFSTATE_PSIONIZED && trace_ent != world) // << FIX?
+				if (tempTraceEnt.tfstate & #TFSTATE_PSIONIZED && tempTraceEnt != world) // << FIX?
 				{
-					trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_PSIONIZED;
+					tempTraceEnt.tfstate = tempTraceEnt.tfstate - #TFSTATE_PSIONIZED;
 
-					TeamFortress_SetSpeed(trace_ent);
+					TeamFortress_SetSpeed(tempTraceEnt);
 
 					te = find(world, netname, "psionictimer");
-					while ((te.owner != trace_ent || te.classname != "timer") && (te != world))
+					while ((te.owner != tempTraceEnt || te.classname != "timer") && (te != world))
 						te = find(te, netname, "psionictimer");
 
 					if (te != world)
 					{
 						SpawnBlood(org, 20);
 
-						sprint(trace_ent, #PRINT_HIGH, self.netname, " restores your psionic problems!\n");
-						sprint(self, #PRINT_HIGH, "You restore ", trace_ent.netname, "'s psionic normality\n");
+						sprint(tempTraceEnt, #PRINT_HIGH, self.netname, " restores your psionic problems!\n");
+						sprint(self, #PRINT_HIGH, "You restore ", tempTraceEnt.netname, "'s psionic normality\n");
 						
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						if (!Teammate(self.team_no,te.team_no))
@@ -839,33 +842,33 @@ void(float inAuto) W_FireMedikit =
 				#endif // FLASH/PSIONIC
 
 				// check if the healed player is infected
-				if (trace_ent.tfstate & #TFSTATE_INFECTED && trace_ent != world) // << FIX?
+				if (tempTraceEnt.tfstate & #TFSTATE_INFECTED && tempTraceEnt != world) // << FIX?
 				{
-					healam = rint(trace_ent.health / 2);
+					healam = rint(tempTraceEnt.health / 2);
 
 					// remove the infection
-					trace_ent.tfstate = trace_ent.tfstate - (trace_ent.tfstate & #TFSTATE_INFECTED);
+					tempTraceEnt.tfstate = tempTraceEnt.tfstate - (tempTraceEnt.tfstate & #TFSTATE_INFECTED);
 
 					// some damage is caused (because of the use of leeches!)
 					// remove half their remaining health
 					deathmsg = #DMSG_MEDIKIT;
-					T_Damage(trace_ent, self, self, healam);
+					T_Damage(tempTraceEnt, self, self, healam);
 
 					SpawnBlood(org, 30);
-					sprint(trace_ent, #PRINT_HIGH,self.netname);
-					sprint(trace_ent, #PRINT_HIGH, " cures your infection!\n");
+					sprint(tempTraceEnt, #PRINT_HIGH,self.netname);
+					sprint(tempTraceEnt, #PRINT_HIGH, " cures your infection!\n");
 
 					if (self.classname == "player")
 					{
 						sprint(self, #PRINT_HIGH, "You have healed ");
-						sprint(self, #PRINT_HIGH, trace_ent.netname);
+						sprint(self, #PRINT_HIGH, tempTraceEnt.netname);
 						sprint(self, #PRINT_HIGH, " of the infection.\n");
 
-						teamprefixsprintbi(self.team_no,self,trace_ent);
-						teamsprintbi(self,trace_ent,trace_ent.netname," infection has been cured by ",self.netname,"\n","","");
+						teamprefixsprintbi(self.team_no,self,tempTraceEnt);
+						teamsprintbi(self,tempTraceEnt,tempTraceEnt.netname," infection has been cured by ",self.netname,"\n","","");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						if (!Teammate(trace_ent.infection_team_no, self.team_no))
+						if (!Teammate(tempTraceEnt.infection_team_no, self.team_no))
 						{
 							self.real_frags = self.real_frags + 1;
 							if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -877,50 +880,50 @@ void(float inAuto) W_FireMedikit =
 				}
 
 				// put out the fire if they are burning
-				if (trace_ent.numflames > 0)
+				if (tempTraceEnt.numflames > 0)
 				{
-					sound(trace_ent, #CHAN_WEAPON, "items/r_item1.wav", 1, #ATTN_NORM);
+					sound(tempTraceEnt, #CHAN_WEAPON, "items/r_item1.wav", 1, #ATTN_NORM);
 
-					trace_ent.numflames = 0;
+					tempTraceEnt.numflames = 0;
 
-					sprint(trace_ent, #PRINT_HIGH, "The flames have been doused!\n");
+					sprint(tempTraceEnt, #PRINT_HIGH, "The flames have been doused!\n");
 
 					if (self.classname == "player")
 					{		
 						sprint(self, #PRINT_MEDIUM, "You have put out ");
-						sprint(self, #PRINT_MEDIUM, trace_ent.netname);
+						sprint(self, #PRINT_MEDIUM, tempTraceEnt.netname);
 						sprint(self, #PRINT_MEDIUM, "'s fire.\n");	
 					}
 					
 					return;
 				}
 
-				if (healam > 0 && trace_ent.health < trace_ent.max_health)
+				if (healam > 0 && tempTraceEnt.health < tempTraceEnt.max_health)
 				{
-					sound(trace_ent, #CHAN_WEAPON, "items/r_item1.wav", 1, #ATTN_NORM);
-					trace_ent.axhitme = 1;
+					sound(tempTraceEnt, #CHAN_WEAPON, "items/r_item1.wav", 1, #ATTN_NORM);
+					tempTraceEnt.axhitme = 1;
 					SpawnBlood (org, 20);
 
-					T_Heal(trace_ent, healam, 0);
+					T_Heal(tempTraceEnt, healam, 0);
 				}
-				else if (trace_ent.health >= trace_ent.max_health && trace_ent.health < (trace_ent.max_health + #WEAP_MEDIKIT_OVERHEAL))
+				else if (tempTraceEnt.health >= tempTraceEnt.max_health && tempTraceEnt.health < (tempTraceEnt.max_health + #WEAP_MEDIKIT_OVERHEAL))
 				{
 					healam = 10;
 					if (healam > (self.ammo_medikit * 10))
 						healam = (self.ammo_medikit * 10);
 					if (healam > 0)
 					{
-						sound(trace_ent, #CHAN_ITEM, "items/r_item2.wav", 1, #ATTN_NORM);
-						T_Heal(trace_ent, healam, 1);
+						sound(tempTraceEnt, #CHAN_ITEM, "items/r_item2.wav", 1, #ATTN_NORM);
+						T_Heal(tempTraceEnt, healam, 1);
 						self.ammo_medikit = self.ammo_medikit - rint(healam / 10);
-						if (!(trace_ent.items & #IT_SUPERHEALTH))
+						if (!(tempTraceEnt.items & #IT_SUPERHEALTH))
 						{
-							trace_ent.items = trace_ent.items | #IT_SUPERHEALTH;
+							tempTraceEnt.items = tempTraceEnt.items | #IT_SUPERHEALTH;
 							newmis = spawn();
 							newmis.classname = "medikit_rot";
 							newmis.nextthink = time + 20;
 							newmis.think = item_megahealth_rot;
-							newmis.owner = trace_ent;
+							newmis.owner = tempTraceEnt;
 						}
 					}
 				}
@@ -928,79 +931,79 @@ void(float inAuto) W_FireMedikit =
 
 #ifdef MEDIKIT_IS_BIOWEAPON
 			//WK Don't infect if they're invincible or observing
-			else if (!(trace_ent.invincible_finished) && !(trace_ent.playerclass == #PC_UNDEFINED))
+			else if (!(tempTraceEnt.invincible_finished) && !(tempTraceEnt.playerclass == #PC_UNDEFINED))
 			{
 				if (inAuto)
 					return;
-				trace_ent.axhitme = 1;
+				tempTraceEnt.axhitme = 1;
 				SpawnBlood (org, 20);
 
 				deathmsg = #DMSG_BIOWEAPON_ATT;
 				if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
-					T_Damage (trace_ent, self, self, 10);
+					T_Damage (tempTraceEnt, self, self, 10);
 				else
-					T_Damage (trace_ent, self, self, 20);
+					T_Damage (tempTraceEnt, self, self, 20);
 					
-				if (trace_ent.weapons_carried & #WEAP_MEDIKIT) //WK
+				if (tempTraceEnt.weapons_carried & #WEAP_MEDIKIT) //WK
 					return;
 
 				//Melee armor stops infection 75% of the time
-				if (trace_ent.tf_items & #NIT_GEL && random() < 0.75)
+				if (tempTraceEnt.tf_items & #NIT_GEL && random() < 0.75)
 					return;
 
-				if (trace_ent.#runes & #RUNE_RESIS)
+				if (tempTraceEnt.#runes & #RUNE_RESIS)
 					return;
 
-				if (trace_ent.penance_time > time) // Don't let lame teamkillers get infected
+				if (tempTraceEnt.penance_time > time) // Don't let lame teamkillers get infected
 					return;
 
 				// Reports, only if first infection
-				if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
+				if (!(tempTraceEnt.tfstate & #TFSTATE_INFECTED))
 				{
-					sprint(trace_ent,#PRINT_HIGH,"You have been infected!\n");
+					sprint(tempTraceEnt,#PRINT_HIGH,"You have been infected!\n");
 
 					// Report to infecter
-					sprint(self,#PRINT_HIGH,"You infect ",trace_ent.netname,"!\n");
+					sprint(self,#PRINT_HIGH,"You infect ",tempTraceEnt.netname,"!\n");
 
 					// Report to teammates of infected
-					teamprefixsprint(trace_ent.team_no,trace_ent);
-					teamsprint6(trace_ent,trace_ent.netname," has been infected!\n","","","","");
+					teamprefixsprint(tempTraceEnt.team_no,tempTraceEnt);
+					teamsprint6(tempTraceEnt,tempTraceEnt.netname," has been infected!\n","","","","");
 
 					// Update infection flag
-					trace_ent.tfstate = trace_ent.tfstate | #TFSTATE_INFECTED;
+					tempTraceEnt.tfstate = tempTraceEnt.tfstate | #TFSTATE_INFECTED;
 				}
 
 				BioInfection = spawn ();
 				BioInfection.classname = "timer";
 				BioInfection.netname = "biotimer";
-				BioInfection.owner = trace_ent;
+				BioInfection.owner = tempTraceEnt;
 				BioInfection.nextthink = time + 2;
 				BioInfection.think = BioInfection_Decay;
 				BioInfection.enemy = self;
 
-				trace_ent.infection_team_no = self.team_no;
+				tempTraceEnt.infection_team_no = self.team_no;
 			}
 #endif
 
 		}
-		else if (IsMonster(trace_ent))//- OfN - Monsters	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+		else if (IsMonster(tempTraceEnt))//- OfN - Monsters	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 		{
 			local string tmps;
 			local float temp;
 
-			temp = GetTeam( trace_ent );
+			temp = GetTeam( tempTraceEnt );
 			if (Teammate(temp, self.team_no))
 			{
-				if (trace_ent.health < trace_ent.max_health)
+				if (tempTraceEnt.health < tempTraceEnt.max_health)
 				{
 					local float healfactor;
 					healfactor = 3;
 
-					if (trace_ent.classname == "monster_army")
+					if (tempTraceEnt.classname == "monster_army")
 						healfactor = 2;
 
-					if (trace_ent.max_health - trace_ent.health < 50 * healfactor) // 50 for players
-						healam = trace_ent.max_health - trace_ent.health;
+					if (tempTraceEnt.max_health - tempTraceEnt.health < 50 * healfactor) // 50 for players
+						healam = tempTraceEnt.max_health - tempTraceEnt.health;
 					else
 						healam = 50 * healfactor;
 					if (healam > self.ammo_medikit * healfactor)
@@ -1009,11 +1012,11 @@ void(float inAuto) W_FireMedikit =
 					if (healam == 0)
 						return;
 
-					sound(trace_ent, #CHAN_WEAPON, "items/r_item1.wav", 1, #ATTN_NORM);
-					trace_ent.axhitme = 1;
+					sound(tempTraceEnt, #CHAN_WEAPON, "items/r_item1.wav", 1, #ATTN_NORM);
+					tempTraceEnt.axhitme = 1;
 					SpawnBlood (org, 20);
 
-					T_Heal(trace_ent, healam, 0);
+					T_Heal(tempTraceEnt, healam, 0);
 					self.ammo_medikit = self.ammo_medikit - (healam/healfactor);
 
 					self.ammo_medikit = rint(self.ammo_medikit);
@@ -1021,30 +1024,30 @@ void(float inAuto) W_FireMedikit =
 					if (self.ammo_medikit < 0)
 						self.ammo_medikit = 0;
 
-					if (trace_ent.health > trace_ent.max_health)
-						trace_ent.health = trace_ent.max_health;
+					if (tempTraceEnt.health > tempTraceEnt.max_health)
+						tempTraceEnt.health = tempTraceEnt.max_health;
 				}
 
-				if (trace_ent.tfstate & #TFSTATE_INFECTED) // infected monsters
+				if (tempTraceEnt.tfstate & #TFSTATE_INFECTED) // infected monsters
 				{
-					trace_ent.tfstate = trace_ent.tfstate - #TFSTATE_INFECTED;
+					tempTraceEnt.tfstate = tempTraceEnt.tfstate - #TFSTATE_INFECTED;
 
-					tmps = GetMonsterName(trace_ent);
+					tmps = GetMonsterName(tempTraceEnt);
 					
 					// Inform the medic
 					sprint(self,#PRINT_HIGH,"You have cured this ",tmps," from the infection\n");
 
-					if ( IsOwnedMonster( trace_ent ) ) {
+					if ( IsOwnedMonster( tempTraceEnt ) ) {
 						// Report to the owner of the monster
-						sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," has been cured by ",self.netname,"\n");
+						sprint(tempTraceEnt.real_owner,#PRINT_HIGH,"Your ",tmps," has been cured by ",self.netname,"\n");
 						
 						// Report to teammates
-						teamprefixsprintbi(trace_ent.real_owner.team_no,trace_ent.real_owner,self);
-						teamsprintbi(trace_ent.real_owner,self,self.netname, " cures the ",tmps," ",trace_ent.netname,"\n");
+						teamprefixsprintbi(tempTraceEnt.real_owner.team_no,tempTraceEnt.real_owner,self);
+						teamsprintbi(tempTraceEnt.real_owner,self,self.netname, " cures the ",tmps," ",tempTraceEnt.netname,"\n");
 					}
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
-					if (!Teammate(trace_ent.infection_team_no, self.team_no))
+					if (!Teammate(tempTraceEnt.infection_team_no, self.team_no))
 					{
 						self.real_frags = self.real_frags + 1;
 						if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -1058,40 +1061,41 @@ void(float inAuto) W_FireMedikit =
 				if ( inAuto )
 					return;
 
-				trace_ent.axhitme = 1;
+				tempTraceEnt.axhitme = 1;
 				SpawnBlood(org, 20);
 #ifdef COOP_MODE_ENHANCED
 				deathmsg = #DMSG_BIOWEAPON_ATT;
 #endif
+
 				if (!(self.cutf_items & #CUTF_CLOSECOMBAT))
-					T_Damage (trace_ent, self, self, 10);
+					T_Damage (tempTraceEnt, self, self, 10);
 				else
-					T_Damage (trace_ent, self, self, 20);
+					T_Damage (tempTraceEnt, self, self, 20);
 
 				// Report to owner, only if first infection
 #ifdef COOP_MODE_ENHANCED
-				if (COOP_IsCoopMonster( trace_ent ) && !(trace_ent.tfstate & #TFSTATE_INFECTED)) {
+				if (COOP_IsCoopMonster( tempTraceEnt ) && !(tempTraceEnt.tfstate & #TFSTATE_INFECTED)) {
 					// report to infecter
-					sprint (self, #PRINT_HIGH, "You infect ", trace_ent.netname, "!\n");
+					sprint (self, #PRINT_HIGH, "You infect ", tempTraceEnt.netname, "!\n");
 
 					// update infection flag
-					trace_ent.tfstate = trace_ent.tfstate | #TFSTATE_INFECTED;
+					tempTraceEnt.tfstate = tempTraceEnt.tfstate | #TFSTATE_INFECTED;
 				} else
 #endif
-				if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
+				if (!(tempTraceEnt.tfstate & #TFSTATE_INFECTED))
 				{
-					tmps = GetMonsterName(trace_ent);
-					sprint(trace_ent.real_owner,#PRINT_HIGH,"Your ",tmps," ",trace_ent.netname," has been infected!\n");
+					tmps = GetMonsterName(tempTraceEnt);
+					sprint(tempTraceEnt.real_owner,#PRINT_HIGH,"Your ",tmps," ",tempTraceEnt.netname," has been infected!\n");
 
 					// Report to infecter
-					sprint(self,#PRINT_HIGH,"You infect the ",tmps, " ", trace_ent.netname,"!\n");
+					sprint(self,#PRINT_HIGH,"You infect the ",tmps, " ", tempTraceEnt.netname,"!\n");
 
 					// Report to teammates of owner
-					teamprefixsprint(trace_ent.real_owner.team_no,trace_ent.real_owner);
-					teamsprint6(trace_ent.real_owner,"The ",tmps," ", trace_ent.netname," has been infected!\n","");
+					teamprefixsprint(tempTraceEnt.real_owner.team_no,tempTraceEnt.real_owner);
+					teamsprint6(tempTraceEnt.real_owner,"The ",tmps," ", tempTraceEnt.netname," has been infected!\n","");
 
 					// Update infection flag
-					trace_ent.tfstate = trace_ent.tfstate | #TFSTATE_INFECTED;
+					tempTraceEnt.tfstate = tempTraceEnt.tfstate | #TFSTATE_INFECTED;
 				}
 
 				// Infect it!
@@ -1101,20 +1105,20 @@ void(float inAuto) W_FireMedikit =
 				BioInfection.nextthink = time + 2;
 				BioInfection.think = BioInfection_MonsterDecay;
 				BioInfection.owner = self;
-				BioInfection.enemy = trace_ent;
+				BioInfection.enemy = tempTraceEnt;
 
-				trace_ent.infection_team_no = self.team_no;
+				tempTraceEnt.infection_team_no = self.team_no;
 			}
 		} 
 		else // OfN - Buttons, Switches, doors
 		{
 			if (!inAuto)
-			if (trace_ent.classname == "func_button" || trace_ent.classname == "door")
+			if (tempTraceEnt.classname == "func_button" || tempTraceEnt.classname == "door")
 			{
-				trace_ent.axhitme = 1;
+				tempTraceEnt.axhitme = 1;
 				SpawnBlood (org, 30);
 
-				T_Damage(trace_ent, self, self, 40);
+				T_Damage(tempTraceEnt, self, self, 40);
 			}
 		}
 	}
@@ -1189,7 +1193,7 @@ void() W_FireBioweapon =
 				trace_ent.infection_team_no = self.team_no;
 			}
 		}
-		else if (trace_ent.flags & #FL_MONSTER)
+		else if ( IsMonster( trace_ent ) )		// Gizmo - both coop monsters and summons
 		{
 			if (trace_ent.classname == "monster_zombie")
 			{
