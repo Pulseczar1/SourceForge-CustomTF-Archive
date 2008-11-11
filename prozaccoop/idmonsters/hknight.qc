@@ -518,7 +518,7 @@ void() monster_hell_knight =
 	self.th_die = hknight_die;
 
 
-	self.netname = "hell knight";
+	self.netname = "death knight";
 
 	self.monsterweight = #MWEIGHT_NORMAL;
 	self.monsterflags = #MFLAG_HUMANOID;

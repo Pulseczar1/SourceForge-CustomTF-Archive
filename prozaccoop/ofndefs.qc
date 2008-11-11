@@ -213,7 +213,7 @@
 
 #define GAS_GREN_CYCLES  9 // Original value = 3
 
-#define MINHP_TOKILL_MONSTERS   300 // Minimum hp monsters/soldiers must have to be able to unsummon/detonate them
+//#define MINHP_TOKILL_MONSTERS   300 // Minimum hp monsters/soldiers must have to be able to unsummon/detonate them
 // Obsolete --> #define MAX_PLAYER_HP    150 // Maximum player hp allowed
 
 // Gibs/Heads/Monster corpses duration settings (in seconds)

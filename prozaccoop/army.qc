@@ -782,7 +782,8 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 	else if (inp == 8) // Kill it!
 	{
 		if (soul!=world)
-		{			 
+		{
+/*
 			if (soul.health < #MINHP_TOKILL_MONSTERS)
 			{
 				ResetMenu();
@@ -807,13 +808,13 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 			}
 			else
 			{
-				ResetMenu();
-				sprint(self,#PRINT_HIGH,"You detonate the micro-explosive implanted in his brain!\n");
-				KillSoul(self,soul.increase_team1);
-				teamprefixsprint(self.team_no, self);
-				teamsprint6(self,self.netname, " detonates his soldier ",soul.netname,"\n","","");
-				self.impulse = 0;
-			}
+*/
+			ResetMenu();
+			sprint(self,#PRINT_HIGH,"You detonate the micro-explosive implanted in his brain!\n");
+			KillSoul(self,soul.increase_team1);
+			teamprefixsprint(self.team_no, self);
+			teamsprint6(self,self.netname, " detonates his soldier ",soul.netname,"\n","","");
+			self.impulse = 0;
 		} 
 		return;
 	}

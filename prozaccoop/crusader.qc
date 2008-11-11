@@ -40,10 +40,8 @@ void(float aur) AddAura;
 void() CrusaderAddInvisibility;
 void() CrusaderMassHeal;
 //void() CrusaderMassCure;
-#ifdef NO_RESURRECTION
+#ifdef NO_REVIVE
 void() CrusaderDispel;
-#else
-void () CrusaderResurrect;
 #endif
 
 void() Menu_Crusader =
@@ -61,7 +59,7 @@ void() Menu_Crusader =
 	{
 		//CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û30 manaİ\n.. Mass healing         Û20 manaİ\n.. Mass cure            Û20 manaİ\n.. Sing                 Û 0 manaİ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 
-#ifdef NO_RESURRECTION
+#ifdef NO_REVIVE
 		if (amount >= 45)
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û íáîáİ\n.. Dispel Evil          Û íáîáİ\n.. Mass healing         Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 30)
@@ -74,15 +72,15 @@ void() Menu_Crusader =
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Speed        Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Dispel Evil          Û30 manaİ\n.. Mass healing         Û20 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 #else
 		if (amount >= 45)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û íáîáİ\n.. Resurrect            Û íáîáİ\n.. Mass healing         Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-		else if (amount >= 30)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û íáîáİ\n.. Mass healing         Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û íáîáİ\n.. Mass healing/revive  Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+//		else if (amount >= 30)
+//			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Mass healing/revive  Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 20)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û íáîáİ\n.. Mass healing         Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Mass healing/revive  Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 15)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û íáîáİ\n.. Mass healing         Û20 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Mass healing/revive  Û20 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Speed        Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û15 manaİ\n.. Mass healing         Û20 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Speed        Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Mass healing/revive  Û20 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 #endif
 	}
 	else
@@ -90,28 +88,28 @@ void() Menu_Crusader =
 		//CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û30 manaİ\n.. Sing                 Û 0 manaİ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		//CenterPrint3(self, " Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Speed        Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û30 manaİ\n.. Sing                 Û 0 manaİ\n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 
-#ifdef NO_RESURRECTION
+#ifdef NO_REVIVE
 		if (amount >= 45)
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û íáîáİ\n.. Dispel Evil          Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 30)
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Dispel Evil          Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-		else if (amount >= 20)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Dispel Evil          Û30 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+//		else if (amount >= 20)
+//			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Dispel Evil          Û30 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 15)
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Dispel Evil          Û30 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else
 			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Speed        Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Dispel Evil          Û30 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 #else
 		if (amount >= 45)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û íáîáİ\n.. Resurrect            Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-		else if (amount >= 30)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
-		else if (amount >= 20)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+//		else if (amount >= 30)
+//			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+//		else if (amount >= 20)
+//			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else if (amount >= 15)
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û íáîáİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û íáîáİ\n.. Aura of Resistance   Û íáîáİ\n.. Aura of Haste        Û íáîáİ\n.. Aura of Regeneration Û íáîáİ\n.. Aura of Speed        Û íáîáİ\n.. Aura of Invisibility Û45 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 		else
-			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Speed        Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n.. Resurrect            Û15 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
+			CenterPrint3(self, "Áãôéïî:                 \n\n.. Aura of Power        Û15 manaİ\n.. Aura of Resistance   Û15 manaİ\n.. Aura of Haste        Û15 manaİ\n.. Aura of Regeneration Û15 manaİ\n.. Aura of Speed        Û15 manaİ\n.. Aura of Invisibility Û45 manaİ\n\n.. Start Singing                 \n\nÍáîá ìåæô: ", str1,"\n\n.. Îïôèéîç                       ");
 #endif
 	}
 
@@ -136,11 +134,9 @@ void(float inp) Menu_Crusader_Input =
 		AddAura(#AURA_SPEED);
 	else if (inp == 6)
 		CrusaderAddInvisibility();
+#ifdef NO_REVIVE
 	else if (inp == 7)
-#ifdef NO_RESURRECTION
 		CrusaderDispel();
-#else
-		CrusaderResurrect ();
 #endif
 	else if (inp == 8)
 		CrusaderMassHeal();
@@ -569,7 +565,11 @@ void() CrusaderMassHeal =
 	
 	if (!(self.weapons_carried & #WEAP_MEDIKIT))
 	{
+#ifdef NO_REVIVE
 		sprint(self, #PRINT_HIGH, "You cannot perform mass heal without a medikit\n");
+#else
+		sprint( self, #PRINT_HIGH, "You cannot perform mass heal/revive without a medikit\n" );
+#endif
 		return;
 	}
 
@@ -579,7 +579,11 @@ void() CrusaderMassHeal =
 	
 	if (amount < 20)
 	{
+#ifdef NO_REVIVE
 		sprint(self, #PRINT_HIGH, "You don't have enough mana to perform a mass heal\n");
+#else
+		sprint( self, #PRINT_HIGH, "You don't have enough mana to perform a mass heal/revive\n" );
+#endif
 		return;
 	}
 	
@@ -588,23 +592,35 @@ void() CrusaderMassHeal =
 	{
 		if (te.classname == "player")
 		{
-			if (te.is_connected)
-			if (te != self) // Skip crusader casting this heal
-			if (te.health > 0) // alive?
-			if (!(te.done_custom & #CUSTOM_BUILDING)) // skip ppl customizing
-			if (te.playerclass != #PC_UNDEFINED) // skip observers
-			if (te.penance_time < time) // Don't let lame teamkillers take runes
-			if (Teammate(te.team_no, self.team_no))
-				if (te.health < te.max_health)
+			if ( Teammate( te.team_no, self.team_no ) )
+			{
+#ifndef NO_REVIVE
+				if ( MedicRevive( self, te, 0 ) )
+					sprint( te, #PRINT_HIGH, self.netname, " revives you\n" );
+				else
 				{
-					sound (te, #CHAN_ITEM, "auras/aura3b.wav", 1, #ATTN_NORM);
-					
-					te.health = te.max_health;
-					//if (self != te)
-						sprint(te, #PRINT_HIGH, self.netname, " restores you to full health\n");
-					//else
-					//	sprint(te, #PRINT_HIGH, "Your deity restores you to full health\n");
+#endif
+					if (te.is_connected)
+					if (te != self) // Skip crusader casting this heal
+					if (te.health > 0) // alive?
+					if (!(te.done_custom & #CUSTOM_BUILDING)) // skip ppl customizing
+					if (te.playerclass != #PC_UNDEFINED) // skip observers
+					if (te.penance_time < time) // Don't let lame teamkillers take runes
+//					if (Teammate(te.team_no, self.team_no))
+						if (te.health < te.max_health)
+						{
+							sound (te, #CHAN_ITEM, "auras/aura3b.wav", 1, #ATTN_NORM);
+							
+							te.health = te.max_health;
+							//if (self != te)
+								sprint(te, #PRINT_HIGH, self.netname, " restores you to full health\n");
+							//else
+							//	sprint(te, #PRINT_HIGH, "Your deity restores you to full health\n");
+						}
+#ifndef NO_REVIVE
 				}
+#endif
+			}
 		}
 		else if (IsMonster(te))		// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 		{
@@ -688,7 +704,7 @@ void() CrusaderMassCure =
 	
 };*/
 
-#ifdef NO_RESURRECTION
+#ifdef NO_REVIVE
 void() CrusaderDispel =
 {
 	local entity te;
@@ -795,248 +811,3 @@ void() Aura_Regenerate =
 	// Cya soon!
 	self.nextthink = time + #AURA_REGEN_RATE;
 };
-
-
-//=========================================
-
-// Gizmo - resurrect related stuff
-
-#ifndef NO_RESURRECTION
-void() ClientResurrected =
-{
-	local float iszoom, lastframe;
-
-	self.touch = player_touch;
-	self.classname = "player";
-
-	self.flags = self.flags - (self.flags & #FL_FINDABLE_NONSOLID);
-
-	self.takedamage = #DAMAGE_AIM;
-	self.solid = #SOLID_SLIDEBOX;
-	self.movetype = #MOVETYPE_WALK;
-	self.show_hostile = 0;
-	self.is_malfunctioning = 0;
-	self.is_abouttodie = 0;
-
-	// OfN
-	self.has_holo = 0;
-	self.is_killed = #FALSE;
-
-	self.message = ""; // reset for gremlin and cool gibs (heads)
-
-	self.FlashTime = 0;
-	self.flags = #FL_CLIENT;
-	self.aura = 0; //- OfN
-	self.crusader_inspirator=world; // OfN - needed?
-	self.gravity = 1; //WK
-	self.air_finished = time + 12;
-	self.dmg = 2;			// initial water damage
-	self.super_damage_finished = 0;
-	self.radsuit_finished = 0;
-	self.invisible_finished = 0;
-	self.invincible_finished = 0;
-	self.effects = 0;
-	self.invincible_time = 0;
-	self.reload_shotgun = 0;
-	self.reload_super_shotgun = 0;
-	self.reload_grenade_launcher = 0;
-	self.reload_rocket_launcher = 0;
-	self.reload_light_assault = 0;
-	self.reload_laser_cannon = 0;
-	
-	self.last_attacked_time = 0; //WK For chaplan healing purposes
-
-	// grapple stuff
-	self.on_hook = #FALSE;
-	self.hook_out = #FALSE;
-	self.fire_held_down = #FALSE;
-
-	// some states are kept
-	iszoom = 0;
-
-	if (self.tfstate & #TFSTATE_ZOOMOFF)
-		iszoom = 1;
-
-	self.tfstate = 0;
-
-	if (iszoom == 1)
-		self.tfstate = self.tfstate | #TFSTATE_ZOOMOFF;
-
-	// Set the speed for the player based on class
-	TeamFortress_SetSpeed(self);
-	stuffcmd(self, "v_idlescale 0\n");
-	stuffcmd(self, "v_cshift 0 0 0 0\n");
-	//WK Clear Bastard Rotation
-	stuffcmd(self, "-left;-right;cl_yawspeed 140\n");
-
-	self.current_weapon = #WEAP_AXE;
-	lastframe = self.frame;
-	W_SetCurrentAmmo ();
-	self.frame = lastframe;
-
-	self.attack_finished = time + 0.3;
-
-	self.th_pain = player_pain;
-	self.th_die = PlayerDie;
-
-	// make sure that autozoom is reset
-	if (self.height != 0)
-	{
-		self.height = 0;
-		TF_zoom(90);
-	}
-		
-	self.deadflag = #DEAD_NO;
-	// pausetime is set by teleporters to keep the player from moving a while
-	self.pausetime = 0;
-
-/*
-	setmodel (self, string_null);
-	modelindex_null = self.modelindex;
-
-	setmodel (self, "progs/eyes.mdl");
-	modelindex_eyes = self.modelindex;
-
-	setmodel (self, "progs/player.mdl");
-	modelindex_player = self.modelindex;
-*/
-
-	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);
-	
-	self.view_ofs = '0 0 22';
-};
-
-
-void () resurrect_think =
-{
-	local entity oself, head;
-
-	// FIXME: the player could have died and respawned by now, but the functions that handle that are ugly...
-	if (self.owner.health <= 0) {
-		remove (self);
-		return;
-	}
-
-	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_CANT_MOVE);
-	TeamFortress_SetSpeed (self.owner);
-
-	if (vlen(self.real_owner.origin - self.owner.origin) > 200) {
-		//sprint (self.owner, #PRINT_HIGH, "Resurrect failed!\n");
-		remove (self);
-		return;
-	}
-
-	// make life easier
-	head = self.real_owner;
-
-	if (head.health <= 0 && head.modelindex == modelindex_player) {
-		head.health = head.max_health;
-		head.armorvalue = 40;
-		head.armortype = head.armor_allowed;
-
-		// FIXME: leave this at what they already have?
-		head.ammo_shells = head.maxammo_shells / 4;
-		head.ammo_nails = head.maxammo_nails / 4;
-		head.ammo_rockets = head.maxammo_rockets / 4;
-		head.ammo_cells = head.maxammo_cells / 4;
-
-		// reset his stuff
-		oself = self;
-		self = self.real_owner;
-		ClientResurrected ();
-		self = oself;
-
-		head.nextthink = time + 0.1;
-		head.think = spy_upb1;
-
-		// tell the fallen teammate
-		sprint (head, #PRINT_HIGH, "You have been resurrected by ");
-		sprint (head, #PRINT_HIGH, self.owner.netname);
-		sprint (head, #PRINT_HIGH, "\n");
-
-		// tell medic
-		sprint (self.owner, #PRINT_HIGH, "Resurrected!\n");
-
-		// 9/11/07: medic/resurrecter gets 2 frags
-		Give_Frags_Out (self.owner, self.owner, 2, 0, 1, 1, 0);
-	} else
-		sprint (self.owner, #PRINT_HIGH, "Resurrect failed!\n");
-
-	remove (self);
-};
-
-
-void () CrusaderResurrect =
-{
-	local entity head, ress;
-	local float amount;
-
-	amount = time - self.job_finished;
-	if (amount > 60)
-		amount = 60;
-
-	// 9/11/07: lowered from 30 to 15
-	if (amount < 15) {
-		sprint (self, #PRINT_HIGH, "You don't have enough mana to resurrect anyone\n");
-		return;
-	}
-
-	// 9/11/07: make sure he's not in the air
-	if (!(self.flags & #FL_ONGROUND) && !(self.flags & #FL_PARTIALGROUND)) {
-		sprint (self, #PRINT_HIGH, "You cannot resurrect someone while in the air!\n");
-		return;
-	}
-
-	// search for dead players
-	head = findradius (self.origin, 200);
-
-	while (head) {
-		// FIXME: self.modelindex == modelindex_player
-		if (head.classname == "player" && head.health <= 0 && head.takedamage && head.is_connected && Teammate(self.team_no, head.team_no)) {
-			if (vlen(head.origin - self.origin) <= 56) {
-				sprint (self, #PRINT_HIGH, "You cannot stand on ");
-				sprint (self, #PRINT_HIGH, head.netname);
-				sprint (self, #PRINT_HIGH, " and resurrect him at the same time!\n");
-				return;
-			}
-
-			// prevent an unsuspecting dead person from respawning
-			if (head.respawn_time - time < 4)
-				head.respawn_time = time + 4;
-
-			// ambience/thunder1.wav
-			// environ/thunder2.wav
-			// environ/thunder3.wav
-			// environ/thunder4.wav
-			// environ/thundrk.wav
-			sound (head, #CHAN_MISC, "ambience/thunder1.wav", 1, #ATTN_NORM);
-
-			sprint (self, #PRINT_HIGH, "You attempt to resurrect ");
-			sprint (self, #PRINT_HIGH, head.netname);
-			sprint (self, #PRINT_HIGH, "...\n");
-
-			self.tfstate = self.tfstate | #TFSTATE_CANT_MOVE;
-			TeamFortress_SetSpeed (self);
-
-
-			ress = spawn ();
-			ress.owner = self;			// the medic
-			ress.real_owner = head;			// fallen teammate
-
-			ress.nextthink = time + 3;
-			ress.think = resurrect_think;
-
-			amount = amount - 15;
-			self.job_finished = time - amount;
-			return;
-		}
-
-		head = head.chain;
-	}
-
-	sprint (self, #PRINT_HIGH, "There's nobody dead around here\n");
-
-	//amount = amount - 30;
-	//self.job_finished = time - amount;
-};
-#endif

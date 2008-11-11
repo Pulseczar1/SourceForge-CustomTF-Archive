@@ -650,6 +650,7 @@ W_FireMedikit
 
 void(entity ignore, entity ignore2, string st, string st2, string st3, string st4, string st5, string st6) teamsprintbi;
 void(float tno, entity ignore, entity ignore2) teamprefixsprintbi;
+float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive;
 
 void(float inAuto) W_FireMedikit =
 {
@@ -657,6 +658,13 @@ void(float inAuto) W_FireMedikit =
 	local	vector	org;
 	local	float healam;	
 	local	entity te, BioInfection, tempTraceEnt;
+
+#ifndef NO_REVIVE
+	// Gizmo - check for reviving dead teammates
+	if ( !inAuto )
+	if ( MedicRevive( self, world, #REVIVE_PRINTMSGS | #REVIVE_MEDIKITAMMO ) )		// don't continue if we revived someone
+		return;
+#endif
 
 	source = self.origin + '0 0 16';
 	if (self.cutf_items & #CUTF_CLOSECOMBAT)
@@ -5634,10 +5642,12 @@ void() DeadImpulses =
 		self.impulse = 0;
 	}
 
-#ifndef NO_RESURRECTION
+#ifndef NO_REVIVE
 	// Gizmo - allow dead players to call for medic now that medics can resurrect
-	else if (self.impulse == #TF_MEDIC_HELPME && self.modelindex == modelindex_player)
+	else if (self.impulse == #TF_MEDIC_HELPME && self.modelindex == modelindex_player) {
+		muzzleflash();
 		TeamFortress_SaveMe();
+	}
 #endif
 };
 

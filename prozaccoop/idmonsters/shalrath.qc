@@ -254,7 +254,7 @@ void() monster_shalrath =
 	self.th_missile = shal_attack1;
 
 
-	self.netname = "shalrath";
+	self.netname = "vore";
 
 	// weight: bigger than MEDIUM, but less than LARGE
 	self.monsterweight = 380;

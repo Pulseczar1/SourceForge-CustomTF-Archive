@@ -108,6 +108,7 @@ vote
   curse xxxx
   ban xxxxx
   mute xxxx
+  use							// Gizmo - vote to use an object
 
 Cheater xxxxx "reasons for accusing.."
 

@@ -1976,26 +1976,34 @@ void() Waypoint_DoNothing = // A waypoint checks for redundancy
 
 	if (self.all_active < time) // if it wasnt touched for specified life-time remove it
 	{
-	   // FIXME: Do .goalentity clean up on other waypoints (using removewaypoint() instead?)
+		// Gizmo - make sure we don't remove the waypoint if the grunty only has one and is standing on it
+		if ( self.real_owner.#grunty_mode == #GRUNTY_MODE_USEWAYPOINTS )
+		if ( vlen( self.origin - self.real_owner.origin ) <= 96 ) {
+			self.all_active = time + self.has_holo;	// reset entity life time
+										// has_holo is the asigned life time in createwaypoint
+			return;
+		}
+		
+		// FIXME: Do .goalentity clean up on other waypoints (using removewaypoint() instead?)
 
-	   if (self.has_sensor == #WAYPOINT_TYPE_PRIMARY
-		&& self.real_owner.martyr_enemy == self)
-	   {
-		   self.real_owner.martyr_enemy = world;
-		   PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my primary waypoint sir!\n",#PRINT_HIGH);
-	   }
-	   else if (self.has_sensor == #WAYPOINT_TYPE_SECONDARY
-		&& self.real_owner.demon_two == self)
-	   {
-		   self.real_owner.demon_two = world;
-		   PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my secondary waypoint sir!\n",#PRINT_HIGH);
-	   }
-	   else if (self.has_sensor == #WAYPOINT_TYPE_ENEMYLASTSEEN
-		&& self.real_owner.demon_one == self)
-		   self.real_owner.demon_one = world;
+		if (self.has_sensor == #WAYPOINT_TYPE_PRIMARY
+			&& self.real_owner.martyr_enemy == self)
+		{
+			self.real_owner.martyr_enemy = world;
+			PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my primary waypoint sir!\n",#PRINT_HIGH);
+		}
+		else if (self.has_sensor == #WAYPOINT_TYPE_SECONDARY
+			&& self.real_owner.demon_two == self)
+		{
+			self.real_owner.demon_two = world;
+			PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my secondary waypoint sir!\n",#PRINT_HIGH);
+		}
+		else if (self.has_sensor == #WAYPOINT_TYPE_ENEMYLASTSEEN
+			&& self.real_owner.demon_one == self)
+			self.real_owner.demon_one = world;
 	   
-	   dremove(self);
-	   return;
+		dremove(self);
+		return;
 	}
 };
 

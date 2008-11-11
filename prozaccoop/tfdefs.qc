@@ -26,6 +26,12 @@ float	server_spawned;								// TRUE if server is spawned and ready to go
 float( entity ent ) InSolid;
 float( entity e ) GetTeam;
 
+//
+// MedicRevive() flags
+//
+#define REVIVE_PRINTMSGS				1			// display messages to the medic and dead player
+#define REVIVE_MEDIKITAMMO			2				// medikit ammo required
+
 //=======================================================================
 
 /*

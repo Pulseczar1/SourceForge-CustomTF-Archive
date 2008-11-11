@@ -673,6 +673,10 @@ Default walking function.
 ===============
 */
 void( float dist ) COOP_Walk = {
+	// make sure we're solid
+	if ( self.solid == #SOLID_NOT )
+		self.solid = #SOLID_SLIDEBOX;
+
 	// if we got a target somehow, attack it
 	if ( self.enemy != world && self.enemy != self )
 		COOP_AttackTarget( self.enemy, #FALSE );

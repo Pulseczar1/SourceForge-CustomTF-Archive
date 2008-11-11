@@ -624,23 +624,14 @@ void(float inp) Menu_Demon_Input =
 	{
 		if (soul != world)
         {
-            if (soul.health < #MINHP_TOKILL_MONSTERS)
-            {
-                sprint(self,#PRINT_HIGH,"The mystic link between you and ");
-                sprint(self,#PRINT_HIGH,soul.netname);
-                sprint(self,#PRINT_HIGH," is too weak to unsummon!\n");
-            }
-            else
-            {
-                local string MName;
-                MName=GetMonsterName(soul);    
+			local string MName;
+			MName=GetMonsterName(soul);    
 
-                teamprefixsprint(self.team_no, self);
+			teamprefixsprint(self.team_no, self);
 
-                teamsprint6(self,self.netname, " unsummons his ",MName, " ",soul.netname,"\n");
+			teamsprint6(self,self.netname, " unsummons his ",MName, " ",soul.netname,"\n");
 
-                KillSoul(self,soul.increase_team1);
-            }
+			KillSoul(self,soul.increase_team1);
         }
         else // meat usage
         {
@@ -768,22 +759,22 @@ void(float inp) Menu_Demon_Input =
     // TEMP
     points = 5;
 
-/*
-	// Gizmo - this is now handled when a monster is spawned to avoid losing your hearts
-    SetHearts(self,knifekills - neededhearts);
+	// Gizmo - renabled this, if the monster goes inside a wall, we'll give the hearts back
+	// it's done like this so the warlock will lose hearts if he dies while summoning
+	// but not lose hearts if there's not enough room
+	SetHearts(self,knifekills - neededhearts);
     
-    if (!neededhearts)
-    {
-        if (self.job & #JOB_BLOODY_KNIFE && (inp == 1 || inp == 2))
-            self.job = self.job - #JOB_BLOODY_KNIFE; //- OfN - caused bug
+	if (!neededhearts)
+	{
+		if (self.job & #JOB_BLOODY_KNIFE && (inp == 1 || inp == 2))
+			self.job = self.job - #JOB_BLOODY_KNIFE; //- OfN - caused bug
         
-        if (self.current_weapon == #WEAP_AXE && (inp == 1 || inp == 2))
-        {
-            self.weaponmode = 0; // Remove blood on the knife
-            self.weaponmodel = "progs/v_knife.mdl";
-        }
-    }
-*/
+		if (self.current_weapon == #WEAP_AXE && (inp == 1 || inp == 2))
+		{
+			self.weaponmode = 0; // Remove blood on the knife
+			self.weaponmodel = "progs/v_knife.mdl";
+		}
+	}
 
     stuffcmd(self,"v_idlescale 100000\n");
 
@@ -1389,9 +1380,6 @@ void (float points, float type) custom_demon_create =
     newmis.increase_team2 = GetNameType(self,newmis.increase_team1,#FALSE);
     newmis.#monster_type = type; // kind of monster
 
-    newmis.increase_team4 = GetMonsterLevel(newmis);
-    newmis.health = GetHPforMeat(newmis);
-
     MakeMonsterName(newmis);
 
 	// checkarea used to be here
@@ -1438,6 +1426,13 @@ void (float points, float type) custom_demon_create =
 
 		// Gizmo - don't let the initial monster be visible when spawn position is invalid
 		setmodel( newmis, "" );
+
+		// Gizmo - give back the hearts used
+		local float knifekills, neededhearts;
+
+		knifekills = GetHearts( self );
+		neededhearts = GetNeededHearts( self, type );	// type should be same as input
+		SetHearts( self, knifekills + neededhearts );
 		return;
 	}
 	newmis.owner = newmis;
@@ -1481,23 +1476,6 @@ void (float points, float type) custom_demon_create =
         newmis.movetype = #MOVETYPE_STEP;
     }
 
-	// Gizmo - remove used hearts
-	local float knifekills, neededhearts;
-
-	knifekills = GetHearts( self );
-	neededhearts = GetNeededHearts( self, type );	// type should be same as input
-	SetHearts( self, knifekills - neededhearts );
-    
-	if ( !neededhearts ) {
-		if ( self.job & #JOB_BLOODY_KNIFE && ( type == 1 || type == 2 ) )
-			self.job = self.job - #JOB_BLOODY_KNIFE; //- OfN - caused bug
-        
-		if ( self.current_weapon == #WEAP_AXE && ( type == 1 || type == 2 ) ) {
-			self.weaponmode = 0; // Remove blood on the knife
-			self.weaponmodel = "progs/v_knife.mdl";
-		}
-	}
-    	    
     //if ( newmis.classname == "monster_demon1" )
     if (type == 3)
 	{
@@ -1618,6 +1596,10 @@ void (float points, float type) custom_demon_create =
     else
         newmis.real_owner.demon_three = newmis;
 
+	// Gizmo - .increase_team4 used to be right above MakeMonsterName(), moved it down here so heads aren't lost if inside wall
+	newmis.increase_team4 = GetMonsterLevel(newmis);
+	// Gizmo - .health used to be right above MakeMonsterName(), moved it down here so meat isn't lost if inside wall
+	newmis.health = GetHPforMeat(newmis);
 	newmis.max_health = newmis.health;
 
     newmis.penance_time = 0; // Start in standing mode

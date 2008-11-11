@@ -16,6 +16,7 @@ void () BioGrenadeExplode;
 
 void() BioInfection_Decay;
 void(entity p) TeamFortress_SetSpeed;
+float( entity targ, entity check ) infront2;
 
 //=========================================================================
 // Attacker attempts to infect targ.
@@ -436,3 +437,245 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 	}
 };
 
+#ifndef NO_REVIVE
+/*
+================
+ClientRevived
+================
+*/
+void() ClientRevived =
+{
+	local float iszoom, lastframe;
+
+	self.touch = player_touch;
+	self.classname = "player";
+
+	self.flags = self.flags - (self.flags & #FL_FINDABLE_NONSOLID);
+
+	self.takedamage = #DAMAGE_AIM;
+	self.solid = #SOLID_SLIDEBOX;
+	self.movetype = #MOVETYPE_WALK;
+	self.show_hostile = 0;
+	self.is_malfunctioning = 0;
+	self.is_abouttodie = 0;
+
+	// OfN
+	self.has_holo = 0;
+	self.is_killed = #FALSE;
+
+	self.message = ""; // reset for gremlin and cool gibs (heads)
+
+	self.FlashTime = 0;
+	self.flags = #FL_CLIENT;
+	self.aura = 0; //- OfN
+	self.crusader_inspirator=world; // OfN - needed?
+//	self.gravity = 1; //WK
+	self.air_finished = time + 12;
+	self.dmg = 2;			// initial water damage
+	self.super_damage_finished = 0;
+	self.radsuit_finished = 0;
+	self.invisible_finished = 0;
+	self.invincible_finished = 0;
+	self.effects = 0;
+	self.invincible_time = 0;
+	self.reload_shotgun = 0;
+	self.reload_super_shotgun = 0;
+	self.reload_grenade_launcher = 0;
+	self.reload_rocket_launcher = 0;
+	self.reload_light_assault = 0;
+	self.reload_laser_cannon = 0;
+	
+	self.last_attacked_time = 0; //WK For chaplan healing purposes
+
+	// grapple stuff
+	self.on_hook = #FALSE;
+	self.hook_out = #FALSE;
+	self.fire_held_down = #FALSE;
+
+	// some states are kept
+	iszoom = 0;
+
+	if (self.tfstate & #TFSTATE_ZOOMOFF)
+		iszoom = 1;
+
+	self.tfstate = 0;
+
+	if (iszoom == 1)
+		self.tfstate = self.tfstate | #TFSTATE_ZOOMOFF;
+
+	// Set the speed for the player based on class
+	TeamFortress_SetSpeed(self);
+	stuffcmd(self, "v_idlescale 0\n");
+	stuffcmd(self, "v_cshift 0 0 0 0\n");
+	//WK Clear Bastard Rotation
+	stuffcmd(self, "-left;-right;cl_yawspeed 140\n");
+
+	self.current_weapon = #WEAP_AXE;
+	lastframe = self.frame;
+	W_SetCurrentAmmo ();
+	self.frame = lastframe;
+
+	self.attack_finished = time + 0.3;
+
+	self.th_pain = player_pain;
+	self.th_die = PlayerDie;
+
+	// make sure that autozoom is reset
+	if (self.height != 0)
+	{
+		self.height = 0;
+		TF_zoom(90);
+	}
+		
+	self.deadflag = #DEAD_NO;
+	// pausetime is set by teleporters to keep the player from moving a while
+	self.pausetime = 0;
+
+/*
+	setmodel (self, string_null);
+	modelindex_null = self.modelindex;
+
+	setmodel (self, "progs/eyes.mdl");
+	modelindex_eyes = self.modelindex;
+
+	setmodel (self, "progs/player.mdl");
+	modelindex_player = self.modelindex;
+*/
+
+	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);
+	
+	self.view_ofs = '0 0 22';
+};
+
+/*
+================
+MedicRevive
+
+Revives a dead player.
+
+If deadPlayer is set, this only checks to make sure
+it's a valid entity to revive, and ignores things
+like if it's a teammate, if it's nearby, and if it's
+infront.
+
+WARNING: if deadPlayer is world, makevectors() will
+be called and traceline() will also. So you'll have
+to save off those values before calling this if you
+need them to stay after this returns.
+================
+*/
+float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive = {
+	local entity	ent;
+	local vector	tmins, tmaxs, src;
+	local float		healam;
+
+	// if deadPlayer is world then try to find one
+#ifdef NEVER_DEFINED
+	if ( !deadPlayer ) {
+		ent = find( world, classname, "player" );
+		while ( ent != world && deadPlayer == world ) {
+			if ( ent.health <= 0 && ent.takedamage && ent.is_connected )
+			if ( ent.modelindex == modelindex_player )
+			if ( Teammate( medic.team_no, ent.team_no ) )
+			if ( vlen( ent.origin - medic.origin ) <= 96 )
+			if ( infront2( ent, medic ) )
+				deadPlayer = ent;
+
+			if ( !deadPlayer )
+				ent = find( ent, classname, "player" );
+		}
+
+		if ( !deadPlayer )
+			return #FALSE;
+	}
+#else
+	if ( !deadPlayer ) {
+		makevectors( medic.v_angle );
+
+		src = medic.origin + '0 0 16';
+		traceline( src, src + v_forward * 96, #TL_EVERYTHING, medic );
+
+		if ( trace_ent )
+		if ( trace_ent.classname == "player" )
+		if ( Teammate( medic.team_no, trace_ent.team_no ) )
+			deadPlayer = trace_ent;
+
+		if ( !deadPlayer )
+			return #FALSE;
+	}
+#endif
+
+	// try to revive the dead player
+	if ( deadPlayer.health > 0 || !deadPlayer.takedamage || !deadPlayer.is_connected || deadPlayer.modelindex != modelindex_player )
+		return #FALSE;
+
+	if ( reviveFlags & #REVIVE_MEDIKITAMMO && medic.ammo_medikit < 10 ) {
+		if ( reviveFlags & #REVIVE_PRINTMSGS && medic.flags & #FL_CLIENT )
+			sprint( medic, #PRINT_HIGH, "You need at least 10 medikit to revive.\n" );
+		return #FALSE;
+	}
+
+	// make sure there's room
+	if ( deadPlayer.classname == "player" ) {
+		tmins = deadPlayer.mins;
+		tmaxs = deadPlayer.maxs;
+		setsize( deadPlayer, #VEC_HULL_MIN, #VEC_HULL_MAX );
+
+		if ( InSolid( deadPlayer ) ) {
+			if ( reviveFlags & #REVIVE_PRINTMSGS && medic.flags & #FL_CLIENT )
+				sprint( medic, #PRINT_HIGH, "You need a clear area around him to revive.\n" );
+			setsize( deadPlayer, tmins, tmaxs );
+			return #FALSE;
+		}
+	}
+
+	// tell the medic
+	if ( reviveFlags & #REVIVE_PRINTMSGS && medic.flags & #FL_CLIENT ) {
+		sprint( medic, #PRINT_HIGH, "You have revived " );
+		sprint( medic, #PRINT_HIGH, deadPlayer.netname );
+		sprint( medic, #PRINT_HIGH, ".\n" );
+	}
+	// tell the dead player
+	if ( reviveFlags & #REVIVE_PRINTMSGS && deadPlayer.flags & #FL_CLIENT ) {
+		sprint( deadPlayer, #PRINT_HIGH, medic.netname );
+		sprint( deadPlayer, #PRINT_HIGH, " has revived you!\n" );
+	}
+
+	// TODO: give the medic a frag for doing it, only if it was caused by an enemy
+
+	// remove medikit ammo
+	if ( reviveFlags & #REVIVE_MEDIKITAMMO )
+		medic.ammo_medikit = medic.ammo_medikit - 10;
+
+	// revive the dead player
+	deadPlayer.health = deadPlayer.max_health;
+
+	// Gizmo - give them some temporary bonus health so they stand a chance
+	// Gizmo - note that we don't change their armor amount, so they keep whatever they had when they died
+	healam = rint( #WEAP_MEDIKIT_OVERHEAL * 0.5 );
+	T_Heal( deadPlayer, healam, 1 );
+
+	if ( !( deadPlayer.items & #IT_SUPERHEALTH ) ) {
+		deadPlayer.items = deadPlayer.items | #IT_SUPERHEALTH;
+		newmis = spawn();
+		newmis.classname = "medikit_rot";
+		newmis.nextthink = time + 10;		// Gizmo - original from medikit is 20
+		newmis.think = item_megahealth_rot;
+		newmis.owner = deadPlayer;
+	}
+
+	// reset his stuff
+	ent = self;
+	self = deadPlayer;
+	ClientRevived();
+	self = ent;
+
+	deadPlayer.nextthink = time + 0.1;
+	deadPlayer.think = spy_upb1;
+	deadPlayer.attack_finished = time + 1.5;		// don't let them fire for a little bit
+
+	sound( deadPlayer, #CHAN_VOICE, "player/gasp2.wav", 1, #ATTN_NORM );
+
+	return #TRUE;
+};
+#endif

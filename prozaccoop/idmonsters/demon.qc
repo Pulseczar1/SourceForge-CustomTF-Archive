@@ -244,7 +244,7 @@ void() monster_demon1 =
 	self.th_pain = _demon1_pain;
 
 
-	self.netname = "demon";
+	self.netname = "fiend";
 	//self.netname = COOP_GenerateMonsterName (self);
 
 	self.monsterweight = #MWEIGHT_MEDIUM;
