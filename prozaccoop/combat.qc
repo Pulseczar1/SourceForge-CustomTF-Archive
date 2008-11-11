@@ -364,7 +364,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	//WK -- For LPB calculation
 	local string st;
 	//local float ping; --> knockem
-    
+
 
 	//mirror = 0;
 #ifdef QUAKE_WORLD // culled by KK. was QUAKE_WORLD
@@ -721,7 +721,12 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 	}
 
 	// TEAMPLAY FLAGS
-	if (attacker.classname == "player" && targ.classname == "player")	{
+	// Gizmo - monsters are now affected by teamplay flags for no team damage
+	// if there's an idiot blocking with his summon on purpose, we can always vote kick/ban
+	if ( ( attacker.classname == "player" && targ.classname == "player" )
+		|| ( attacker.classname == "player" && IsMonster( targ ) )
+//		|| ( IsMonster( attacker ) && targ.classname == "player" )
+		|| ( IsBuilding( attacker ) && IsMonster( targ ) ) )	{
 		if (T_flags & #TF_TD_NOTTEAM)	{
 			if (Teammate(targ.team_no, attacker.team_no) && (targ != attacker))	{
 				if (teamplay & #TEAMPLAY_NODIRECT) return;

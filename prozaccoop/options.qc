@@ -23,7 +23,7 @@ Defines for the compilable options within TF.
 //#define NO_STOCK_ENGY_HIGHJUMP		// Gizmo - the stock engineer doesn't start with highjump
 //#define CLASSIC_SNIPER_RIFLE		// Gizmo - classic prozac sniper rifle
 //#define CLASSIC_LIGHTNING_GUN		// Gizmo - classic prozac lightning gun
-//#define NO_RESURRECTION			// Gizmo - removes resurrection, right now it's through crusaders, but may change in the future
+//#define NO_REVIVE				// Gizmo - disables medics being able to revive dead players before they respawn; if crusader, enables mass revive
 //#define NO_ZEROGRAVGUN			// Gizmo - disables the Zero-Gravity Gun
 
 
