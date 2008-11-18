@@ -1,0 +1,39 @@
+Source file: progs.src
+Outputfile: ../qwprogs.dat
+Outputfile: ../progs.dat
+Recognised progs as regular Quake
+Progs should run on any Quake executor
+defs.qc:428: warning: empty_float  no references
+defs.qc:483: warning: maxspeed  no references
+defs.qc:672: warning: wad  no references
+defs.qc:672: warning: light_lev  no references
+hl_defs.qc:9: warning: rendercolor  no references
+hl_defs.qc:69: warning: building  no references
+weapons.qc:574: warning: hit_z  no references
+weapons.qc:577: warning: rand  no references
+weapons.qc:617: warning: rand  no references
+misc.qc:385: warning: air_bubbles  no references
+misc.qc:474: warning: viewthing  no references
+108492 strofs (of 1000000)
+ 27337 numstatements (of 524288)
+  2439 numfunctions (of 16384)
+  5324 numglobaldefs (of 32768)
+   278 numfielddefs (198 unique) (of 2048)
+  5436 numpr_globals (of 65536)
+Writing ../progs.dat
+481740 TOTAL SIZE
+Writing ../progs.lno
+235 unique precache_sounds
+104 unique precache_models
+104 unique precache_files
+Compile Complete
+
+optres_shortenifnots 132
+optres_overlaptemps 10270
+optres_constantarithmatic 40
+optres_nonvec_parms 4923
+optres_assignments 588
+optres_unreferenced 18
+optres_dupconstdefs 39
+numtemps 164
+11 warnings
