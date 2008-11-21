@@ -27,7 +27,7 @@ void () func_pushable_think =
 
 void () func_pushable =
 {
-	precache_sound ("wall/push.wav");
+	//precache_sound ("wall/push.wav");			// ADDME: New or dynamic push sound
 	self.mangle = self.angles;
 	self.angles = '0 0 0';
 	self.classname = "pushwall";

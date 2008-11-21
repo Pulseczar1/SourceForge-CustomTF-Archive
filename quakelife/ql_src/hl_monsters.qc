@@ -1,5 +1,6 @@
 // Convert Half-Life 1 monsters to quake 1
 float chthon_spawned;		// only one monster_tentacle per map pls ;/
+
 void () monster_human_grunt =
 {
 	self.origin_z += 30;
@@ -424,4 +425,10 @@ void () monstermaker =
 		bprint(2, "teleport_spawner: No monstertype specified.\n");
 		dremove(self);
 	}
+	if (self.has_tesla) {
+		self.think = monstermaker_use;
+		self.nextthink = time + self.has_tesla;
+	}
 };
+
+// final boss is in hl_nihilanth.qc

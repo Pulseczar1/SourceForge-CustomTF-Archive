@@ -83,6 +83,7 @@
 #include "hl_monsters.qc"	// monster replacements
 #include "hl_misc.qc"
 #include "hl_multis.qc"		// multisource and related entities
+#include "hl_nihilanth.qc"	// replacement for the nihilinth end boss
 #include "hl_rot_button.qc"	// rotating entities and buttons
 #include "hl_scripts.qc"	// *incomplete* script support
 #include "hl_sound.qc"		// sound and scripted sentence parser

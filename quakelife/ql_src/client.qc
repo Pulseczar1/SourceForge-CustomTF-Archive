@@ -361,7 +361,6 @@ void() changelevel_use =
 {
 	other = activator;
 
-	bprint(2,"wheee1\n");
 	if (other.classname != "player")
 		other = checkclient();
 
@@ -369,7 +368,6 @@ void() changelevel_use =
 		T_Damage (other, self, self, 50000, MOD_HLIFE);
 		return;
 	}
-bprint(2,"wheee2\n");
 #ifdef HALFLIFE
 bprint(2,"USED!\n");
 	local entity te;
@@ -398,7 +396,6 @@ bprint(2,"USED!\n");
 		HalfLife_SetupLandmark();
 	}
 #endif
-	bprint(2,"wheee3\n");
 	bprint (#PRINT_HIGH, other.netname);
 	if ( self.message ) {
 		bprint( #PRINT_HIGH, self.message );

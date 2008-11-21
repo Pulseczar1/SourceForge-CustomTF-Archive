@@ -7,7 +7,7 @@
 .string LightningEnd, LightningStart;
 .string TriggerTarget;
 .vector rendercolor;
-.float damagetype;
+//.float damagetype;
 .float rendermode;
 .float renderamt;
 void () HalfLife_DoRender;
@@ -112,6 +112,7 @@ void () ladder_touch;
 .float m_imaxlivechildren;		// max spawned ents that can be alive.
 
 // misc monsters
+.vector orig_origin;			// monster's original origin (see nihilanth)
 .string reachtarget;
 					
 // megatf coop carry-overs (AKA stuff that i was too lazy to change)
@@ -160,3 +161,18 @@ string(float ccase, float redalpha, float redchars, string str, ...) strconv = #
 string ( string cstr ) hl_script_str;
 float MOD_HLIFE =			666;
 
+// hldprint: I only used this function for testing various things. You may find calls to it throughout the code, but they are useless now.
+//#define HLDPM
+void (float nno, string msg) hldprint =
+{
+#ifdef HLDM
+	bprint( nno, msg );
+#endif
+};
+void () compiler_likes_me_so_much_yay =
+{
+	empty_float = 0;
+	self.maxspeed = 0;
+	self.light_lev = 0;
+	self.wad = "";
+};

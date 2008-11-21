@@ -209,17 +209,17 @@ void () trigger_relay_checktargs =
 		targ = find(world, TriggerTarget, self.targetname);
 		if (targ != world) {
 			if (targ.classname == "env_global") {
-				bprint(2,"No setting of globals!\n");
+				hldprint(2,"No setting of globals!\n");
 			}
-			bprint(2, "set proper trigger target!\n");
+			hldprint(2, "set proper trigger target!\n");
 			targ.target = targ.TriggerTarget;
 			return;
 		}
 		//self.use();
-		bprint(2,"trigger_relay: not targeted by anything\n");
+		hldprint(2,"trigger_relay: not targeted by anything\n");
 	}
 	else {
-		bprint(2, "Am targeted!\n");
+		hldprint(2, "Am targeted!\n");
 	}
 };
 #endif
@@ -470,6 +470,9 @@ local vector	org;
 				return;
 
 	if (has_master(self))
+		return;
+		
+	if (self.classname == "monster_nihilanth")
 		return;
 #endif
 		
