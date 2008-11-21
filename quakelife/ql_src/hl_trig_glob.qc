@@ -57,7 +57,7 @@ void () trigger_auto_think =
 	}
 
 	if (cvar(self.globalstate) == 1) {
-	 bprint(2,"WHEE AUTO ACTIVATED!\n");
+	 hldprint(2,"WHEE AUTO ACTIVATED!\n");
 		trigger_auto_go();
 	}
 	else {

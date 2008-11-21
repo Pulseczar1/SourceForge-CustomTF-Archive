@@ -187,9 +187,9 @@ void () HalfLife_SetupLandmark =
 	// setup train origin/continuation
 	ttrain = find(world, classname, "tracktrain");
 	while (ttrain) {
-	bprint(2,"found 1\n");
+	hldprint(2,"found 1\n");
 		if (ttrain.globalname != string_null) {
-		bprint(2,"using 1 again!\n");
+		hldprint(2,"using 1 again!\n");
 			//ttorg = ttrain.origin;
 			ttorg = ttrain.origin;
 			localcmd( "set " );

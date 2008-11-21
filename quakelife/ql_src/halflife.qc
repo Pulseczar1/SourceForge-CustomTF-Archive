@@ -368,14 +368,14 @@ void () Delayed_Use = {
 void () multi_spawn = {
 
 
-	local float args, i, d_time, stlen, redux;
+	local float args, i, d_time, stlen;
 	local string c_a, st, st2, c_a2;
 	local entity t, timer;
 	local string key;
 	local string value;
 	
-	//bprint(2,self.netname);
-	//bprint(2, " is my netname\n");
+	//hldprint(2,self.netname);
+	//hldprint(2, " is my netname\n");
 	
 	self.activated = #TRUE;
 	self.use = SUB_Null;
@@ -469,7 +469,7 @@ void () multi_spawn = {
 			//i = i + 2;//i++;i++;
 		}
 	}
-	else {
+	else {		// Note: this is almost NEVER used
 		  tokenize(self.netname);
 		  args = argc() - 2; 
 
@@ -557,7 +557,6 @@ void () multi_spawn = {
 //NOTE: c3a1 has a multi_manager that has a field value of "blocked" "0".. need to change that in the .ent or use FTE
 void () multi_manager = {
 	local float i;
-	local vector vct;
 
 	if (__fullspawndata != string_null) {
 		if (checkextension("FRIK_FILE"))
@@ -573,23 +572,8 @@ void () multi_manager = {
 		tokenize(__fullspawndata);
 		i = 1;
 		while (argv(i) != string_null && argv(i) != "}") {
-			//if (stov(argv(i)) == '0 0 0') {
 			self.netname = strcat(self.netname, argv(i));
 			self.netname = strcat(self.netname, " ");
-			/*}
-			else {
-				// The reason for re-encoding all this is because FTESV crashes when loading saved maps with strings that contain quotes
-				vct = stov(argv(i));
-				if (vct_x > 0)
-					self.netname = strcat(self.netname, ftos(vct_x));
-				else if (vct_y > 0)
-					self.netname = strcat(self.netname, ftos(vct_y));
-				else if (vct_z > 0)
-					self.netname = strcat(self.netname, ftos(vct_z));
-				else
-					self.netname = strcat(self.netname, "nilstring");
-				self.netname = strcat(self.netname, " ");
-			}*/
 			i++;
 		}
 		
@@ -860,6 +844,8 @@ void () HalfLife_DoRender =
 {
 	local vector osize, omins, omaxs, oabsmin, oabsmax;
 
+	if (self.rendercolor != '0 0 0') {}	// ADDME
+	
 	if (self.rendermode > 0)
 		if (self.renderamt > 0) {
 			self.alpha = self.renderamt/255;
