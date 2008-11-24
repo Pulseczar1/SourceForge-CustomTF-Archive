@@ -22,8 +22,6 @@ void () hl_rotating =
 		//bprint(2,"rotating object with no axis specified\n");
 		self.pos1_y += mvspd;
 	}
-
-	HalfLife_DoRender();
 	
 	// fixme: add adjustable speed
 	SUB_CalcAngleMove (self.pos1, realmvspd, hl_rotating);
@@ -56,6 +54,8 @@ void () func_rotating =
 	self.angles = '0 0 0';
 	self.movetype = 7;
 
+	HalfLife_DoRender();
+	
 	self.blocked = rot_crush;
 	if (self.spawnflags & 64)
 	{
