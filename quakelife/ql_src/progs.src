@@ -90,6 +90,7 @@
 #include "hl_tankmortar.qc"	// tanks and cotnrollable guns
 #include "hl_train.qc"		// func_tracktrain and related entities
 #include "hl_trig_glob.qc"	// handles global variables
+#include "hl_weapons.qc"	// Half-Life weapons/items (also look at replace.qc)
 #include "hl_pushable.qc"	// pushable brush models from nehahra
 #include "boss_killable.qc"	// killable chthon from beyond belief
 #endif

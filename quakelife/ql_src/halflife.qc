@@ -641,6 +641,7 @@ if (mapname == "openfire" || mapname == "tfc_openfire")
    else
 	self.touch = SplashTouch;
 
+	HalfLife_DoRender();
 };
 
 
@@ -670,6 +671,18 @@ void(string rubblename) hlThrowRubble =
 };
 
 void () Breakaway  = {
+	local entity itsp, oself;
+	
+	oself = self;
+	if (self.spawnobject > 0) {
+		itsp = spawn();
+		itsp.spawnobject = self.spawnobject;
+		setorigin(itsp, ((self.absmin+self.absmax)*.5));
+		self = itsp;
+		SetSpawnObject();
+		self = oself;
+		self.building = itsp;
+	}	
 	 
 	  hlThrowRubble( "progs/frubble1.mdl" );
 	  hlThrowRubble( "progs/frubble2.mdl" );
@@ -712,8 +725,19 @@ void () Breaktouch = {
  
 
 void () func_breakable = {
-
-
+	local entity itsp, oself;
+	
+	oself = self;
+	if (self.spawnobject > 0) {
+		// mainly to precache the item.. don't worry about it yet.
+		itsp = spawn();
+		itsp.spawnobject = self.spawnobject;
+		self = itsp;
+		SetSpawnObject();
+		self = oself;
+		dremove(itsp);
+	}
+	
 	self.solid = 4.000;
 	self.movetype = 7.000;
 
@@ -862,7 +886,10 @@ void () HalfLife_DoRender =
 				oabsmin = self.absmin;
 				oabsmax = self.absmax;
 				setmodel(self, string_null);
-				self.solid = SOLID_BBOX;
+				if (self.classname == "func_breakable")
+					self.solid = SOLID_NOT;
+				else
+					self.solid = SOLID_BBOX;
 				self.size = osize;
 				self.mins = omins;
 				self.maxs = omaxs;

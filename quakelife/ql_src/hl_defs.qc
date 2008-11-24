@@ -11,6 +11,8 @@
 .float rendermode;
 .float renderamt;
 void () HalfLife_DoRender;
+void () SetSpawnObject;
+.float spawnobject;			// spawn object on destruction
 
 // explosion properties
 .float iMagnitude;

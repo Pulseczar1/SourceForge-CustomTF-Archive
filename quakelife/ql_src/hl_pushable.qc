@@ -15,6 +15,7 @@ void () player_push2 =
 
 void () func_pushable_think =
 {
+
 	if (self.buoyancy) {
 		if (pointcontents((self.absmax+self.absmin)*.5) == CONTENT_WATER/* || pointcontents((self.absmax+self.absmin)*.5) == -1*/)
 		{
@@ -25,9 +26,40 @@ void () func_pushable_think =
 	self.nextthink = time + .1;
 };
 
+void () func_pushable_use_think =
+{
+	if (self.enemy != world) {
+		if (time > self.has_tesla) {
+			self.enemy = world;
+			self.touch = player_push2;
+		}
+		else {
+			walkmove (self.enemy.angles_y, -10);
+		}
+	}
+	self.nextthink = time;
+};
+
+void () func_pushable_hluse =
+{
+	if (time < self.has_tesla) {
+		self.has_tesla = 0;
+		return;
+	}
+	self.has_tesla = time + 2;
+	self.enemy = activator;
+	self.touch = SUB_Null;
+	self.think = func_pushable_use_think;
+	self.nextthink = time;
+};
+
 void () func_pushable =
 {
 	//precache_sound ("wall/push.wav");			// ADDME: New or dynamic push sound
+	if (self.spawnflags & 128) {	// breakable
+		func_breakable();
+	}
+	
 	self.mangle = self.angles;
 	self.angles = '0 0 0';
 	self.classname = "pushwall";
@@ -37,6 +69,8 @@ void () func_pushable =
 	setorigin (self, self.origin);
 	setsize (self, self.mins, self.maxs);
 
+
+	
 	// super: neherha intended for you to be able to push the barrels.
 	// the other push function was messed up (pushed parallel to your direction) 
 	self.touch = player_push2;
@@ -53,5 +87,7 @@ void () func_pushable =
 			self.think = func_pushable_think;
 			self.nextthink = time + .5;
 		}
-	}		
+	}
+
+	self.hl_use = func_pushable_hluse;
 };

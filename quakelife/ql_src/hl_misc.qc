@@ -155,6 +155,8 @@ void () world_items =
 	
 };
 
+
+
 // UNFINISHED/UNSTARTED ENTITIES:
 //(and I'm sure there's more than that, I just haven't gotten around to em yet)
 void () monster_scientist_dead =
@@ -192,4 +194,3 @@ void () env_sound =
 {
 	dremove(self);
 };
-
