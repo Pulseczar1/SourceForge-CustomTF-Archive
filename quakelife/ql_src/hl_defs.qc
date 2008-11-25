@@ -14,6 +14,9 @@ void () HalfLife_DoRender;
 void () SetSpawnObject;
 .float spawnobject;			// spawn object on destruction
 
+// breakables
+.float material;
+
 // explosion properties
 .float iMagnitude;
 

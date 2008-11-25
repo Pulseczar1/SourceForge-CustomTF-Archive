@@ -209,7 +209,6 @@ void () func_tracktrain_touch =
 
 void () func_tracktrain_damage =
 {
-bprint(2,"heyy\n");
 	//self.health = 1;
 	if (self.think != func_tracktrain_find)
 	{
