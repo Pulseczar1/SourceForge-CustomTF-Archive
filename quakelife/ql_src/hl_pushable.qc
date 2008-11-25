@@ -1,16 +1,58 @@
 // pushable stuff (code taken form nehahra+megatf coop
+
+float (entity Top, entity Bottom ) IsOnTopOf =
+{
+  if (Top.absmin_z < Bottom.absmax_z - 3) {
+    return 0;
+    }
+  if (Top.absmin_z > Bottom.absmax_z + 2) {
+    return 0;
+    }
+  if (Top.absmin_y > Bottom.absmax_y) {
+    return 0;
+    }
+  if (Top.absmax_y < Bottom.absmin_y) {
+    return 0;
+    }
+  if (Top.absmin_x > Bottom.absmax_x) {
+    return 0;
+    }
+  if (Top.absmax_x < Bottom.absmin_x) {
+    return 0;
+    }
+  return 1;
+}
+
 void () player_push2 =
 {
+	local float yaw;
+	local vector mvec;
+
 	if ((other.classname != "player"))
 	{
 		return;
 	}
 
+	if (IsOnTopOf(other, self))
+		return;
+	
+    if (self.flags & FL_ONGROUND) {
+      self.flags = self.flags - FL_ONGROUND;
+      }
+	
+	yaw = other.angles_y* 3.14159265358979323846 *2 / 360;
+		
+	mvec_x = cos(yaw)*80;
+	mvec_y = sin(yaw)*80;
+
+	self.velocity = mvec;
+	/*
 	if ((walkmove (other.angles_y, 2) == FALSE))
 	{
 		self.velocity_x = (other.velocity_x + (4 * random ()));
 		self.velocity_y = (other.velocity_y + (4 * random ()));
 	}
+	*/
 };
 
 void () func_pushable_think =
@@ -19,8 +61,11 @@ void () func_pushable_think =
 	if (self.buoyancy) {
 		if (pointcontents((self.absmax+self.absmin)*.5) == CONTENT_WATER/* || pointcontents((self.absmax+self.absmin)*.5) == -1*/)
 		{
+			self.movetype = MOVETYPE_BOUNCE;
 			self.velocity_z = 100;
 		}
+		else
+			self.movetype = MOVETYPE_STEP;
 		//bprint(2,"floatinnnggg\n");
 	}
 	self.nextthink = time + .1;
