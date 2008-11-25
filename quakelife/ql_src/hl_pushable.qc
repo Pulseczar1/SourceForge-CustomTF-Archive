@@ -1,4 +1,4 @@
-// pushable stuff (code taken form nehahra+megatf coop
+// pushable stuff (code taken from nehahra+megatf coop
 
 float (entity Top, entity Bottom ) IsOnTopOf =
 {
