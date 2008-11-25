@@ -288,7 +288,7 @@ void () hl_rotating_button_toggle =
 void () hl_rotating_button =
 {
 	local float mvspd, plyr_found, realmvspd, movedoor;
-	local entity oself, t_plyr;
+	local entity oself, t_plyr, targ;
 	plyr_found = 1;
 	oself = self;
 	
@@ -364,28 +364,32 @@ void () hl_rotating_button =
 	// move the door that we're connected to in conjunction with our position
 	if (self.spawnflags & #SF_MOMENTARY) {
 		if (self.enemy != world) {
-			self = self.enemy;
-			movedoor = (oself.armorvalue/oself.distance);
-			if (movedoor > 1) {
-				movedoor = 1;
-			}
-			//_bprint(ftos(movedoor)," is movedoor val\n");
-			if (self.state == STATE_TOP) {
-				SUB_CalcMove (self.pos1 + (self.pos2 * (1 - movedoor)), 999, SUB_Null);		// FIXME: goes instant instead of in tandem with rot_button
-				oself.owner.ideal_yaw = (vlen( self.origin - self.pos1 ) / vlen( self.pos2 - self.pos1 ));
-			}
-			else {
-				SUB_CalcMove (self.pos2 * movedoor, 999, SUB_Null);
-				oself.owner.ideal_yaw = 1 - (vlen( self.origin - self.pos2 ) / vlen( self.pos1 - self.pos2 ));
-			}
+			targ = find(world, targetname, oself.owner.target);
+			while (targ) {
+				self = targ;
+				movedoor = (oself.armorvalue/oself.distance);
+				if (movedoor > 1) {
+					movedoor = 1;
+				}
+				//_bprint(ftos(movedoor)," is movedoor val\n");
+				if (self.state == STATE_TOP) {
+					SUB_CalcMove (self.pos1 + (self.pos2 * (1 - movedoor)), 999, SUB_Null);		// FIXME: goes instant instead of in tandem with rot_button
+					oself.owner.ideal_yaw = (vlen( self.origin - self.pos1 ) / vlen( self.pos2 - self.pos1 ));
+				}
+				else {
+					SUB_CalcMove (self.pos2 * movedoor, 999, SUB_Null);
+					oself.owner.ideal_yaw = 1 - (vlen( self.origin - self.pos2 ) / vlen( self.pos1 - self.pos2 ));
+				}
+					
+				if (movedoor >= 1) {
+					if (self.state != STATE_TOP)
+						self.state = STATE_TOP;
+					else
+						self.state = STATE_BOTTOM;
+				}
 				
-			if (movedoor >= 1) {
-				if (self.state != STATE_TOP)
-					self.state = STATE_TOP;
-				else
-					self.state = STATE_BOTTOM;
+				targ = find(targ, targetname, oself.owner.target);
 			}
-			
 		}
 	}
 	
