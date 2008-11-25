@@ -73,6 +73,7 @@
 
 #ifdef HALFLIFE
 #include "halflife.qc"		// oztf half-life support: multi_manager, beams, breakables, etc.
+#include "hl_breakable.qc"
 #include "hl_conveyor.qc"
 #include "hl_doors.qc"		// rotating doors (though mostly handled in doors.qc)
 #include "hl_levels.qc"		// landmark/level transition handler (see client.qc too)

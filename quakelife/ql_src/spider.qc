@@ -572,7 +572,7 @@ void () monster_spider1 =
 	setmodel (self, "progs/spider.mdl");
 	setsize(self, VEC_HULL_MIN, '16 16 18');
 	//setsize (self, VEC_HULL2_MIN, '32 32 5');
-	self.health = 200;
+	self.health = 100;
 	self.th_stand = spid_stand;
 	self.th_walk = spid_walk1;
 	self.th_run = spid_run1;
