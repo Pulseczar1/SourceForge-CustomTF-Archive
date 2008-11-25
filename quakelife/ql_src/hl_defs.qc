@@ -156,6 +156,8 @@ void(vector v1, vector min, vector max, vector v2, float nomonsters, entity fore
 void(string s, string eh) changelevel_save = #70;
 string(string s) strtoupper = #481;			// DARKPLACES
 string(float ccase, float redalpha, float redchars, string str, ...) strconv = #224;		// FTE
+float (float n) sin = #60;
+float (float n) cos = #61;
 #define SOLID_LADDER			20
 
 // hacks
