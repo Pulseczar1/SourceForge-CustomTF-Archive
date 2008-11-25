@@ -151,6 +151,7 @@ void(string rubblename) hlThrowRubble =
 	
 	new = spawn();
 	new.origin = ((self.absmax+self.absmin)*.5);//self.origin;
+	new.alpha = self.alpha;
 	setmodel (new, rubblename );
 	setsize (new, '0 0 0', '0 0 0');
 	new.velocity_x = 70 * crandom();

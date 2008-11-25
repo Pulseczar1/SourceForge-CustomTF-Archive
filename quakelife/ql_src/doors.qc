@@ -384,6 +384,9 @@ void() door_touch =
 		return;
 
 // FIXME: blink key on player's status bar
+#ifdef HALFLIFE
+	if (!#HL_MAP)
+#endif
 	if ( (self.items & other.items) != self.items )
 	{
 		if (self.owner.items == IT_KEY1)
