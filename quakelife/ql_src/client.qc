@@ -802,6 +802,9 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 	self.suicide_time = time + 3;
 	self.weaponstate = WS_IDLE;
+#ifdef HALFLIFE
+	self.oldgravity = 1;
+#endif
 
 	DecodeLevelParms ();
 	
@@ -1075,6 +1078,26 @@ void() PlayerJump =
 	if (self.flags & FL_WATERJUMP)
 		return;
 	
+#ifdef HALFLIFE
+	local float lad;
+
+	// pOx - START - func_ladder support
+	if (self.laddertime > time && self.ladderjump < time) {
+		
+		// Allow jumping while on a ladder
+		if (!(self.flags & FL_ONGROUND)) self.flags = self.flags + FL_ONGROUND;
+		
+		// Time out a bit so the player doesn't just re-grab the dang thing
+		self.ladderjump = time+0.4;
+		
+		// Stop up move (avoid super-high jumps) but give'm a forward push
+		self.velocity_z = 0;
+		makevectors(self.angles);
+		self.velocity = self.velocity + (v_forward*100);
+		lad = 80;
+	}
+#endif	
+	
 	if (self.waterlevel >= 2)
 	{
 // play swiming sound
@@ -1106,7 +1129,8 @@ void() PlayerJump =
 	self.velocity_z = self.velocity_z + 270;
 #endif
 #ifdef HALFLIFE
-	self.velocity_z = self.velocity_z + 50;
+	self.velocity_z = self.velocity_z + (50-lad);
+	//self.velocity_z = self.velocity_z + 50;
 #endif
 };
 
@@ -1268,6 +1292,24 @@ void() PlayerPreThink =
 
 	makevectors (self.v_angle);             // is this still used
 
+#ifdef HALFLIFE
+	// pOx - START - func_water & func_ladder support
+	// Set cshift back to normal if eyes are out of func_water
+	if (self.fwatershifttime < time) {
+		if (self.fwatershift) {
+			stuffcmd(self, "v_cshift 130 80 50 0\n");
+			self.fwatershift = FALSE;
+		}
+	}
+	// Both func_water and func_ladder require zero G to work properly.
+	// Lucky for us, the Mission Pack build of Quake has a gravity modifier we can exploit.
+	if (self.zerogtime < time)
+		self.gravity = self.oldgravity;// reset normal gravity
+	else
+		self.gravity = 0.0001;// zero G (0 OR 1 is normal)
+	// pOx - END  - func_water & func_ladder support
+#endif
+	
 	CheckRules ();
 	WaterMove ();
 /*
