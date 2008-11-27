@@ -1096,7 +1096,30 @@ void() PlayerJump =
 		self.velocity = self.velocity + (v_forward*100);
 		lad = 80;
 	}
-#endif	
+	
+	if (self.waterlevel >= 2)
+	{
+		if (self.watertype == CONTENT_WATER)
+			self.velocity_z = 100;
+		else if (self.watertype == CONTENT_SLIME)
+			self.velocity_z = 80;
+		else
+			self.velocity_z = 50;
+		
+		/* pOx - commented out - Swimming sounds done in PreThink
+		// play swiming sound
+		if (self.swim_flag < time)
+		{
+			self.swim_flag = time + 1;
+			if (random() < 0.5)
+				sound (self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
+			else
+				sound (self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
+		}*/
+		
+		return;
+	}
+#else
 	
 	if (self.waterlevel >= 2)
 	{
@@ -1112,7 +1135,7 @@ void() PlayerJump =
 
 		return;
 	}
-
+#endif
 	if (!(self.flags & FL_ONGROUND))
 		return;
 
@@ -1141,6 +1164,131 @@ WaterMove
 
 ============
 */
+#ifdef HALFLIFE
+void() WaterMove =
+{
+//dprint (ftos(self.waterlevel));
+	if (self.movetype == MOVETYPE_NOCLIP)
+		return;
+	if (self.health < 0)
+		return;
+
+	if (self.waterlevel != 3)
+	{
+		if (self.air_finished < time)
+			sound (self, CHAN_VOICE, "player/gasp2.wav", 1, ATTN_NORM);
+		else if (self.air_finished < time + 9)
+			sound (self, CHAN_VOICE, "player/gasp1.wav", 1, ATTN_NORM);
+		self.air_finished = time + 12;
+		self.dmg = 2;
+	}
+	else if (self.air_finished < time)
+	{	// drown!
+		if (self.pain_finished < time)
+		{
+			self.dmg = self.dmg + 2;
+			if (self.dmg > 15)
+				self.dmg = 10;
+			T_Damage (self, world, world, self.waterdmg, MOD_DROWN);
+			self.pain_finished = time + 1;
+		}
+	}
+	
+	if (!self.waterlevel)
+	{
+		if (self.flags & FL_INWATER)
+		{	
+			// play leave water sound
+			sound (self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);
+			self.flags = self.flags - FL_INWATER;
+			
+			// pOx - START - Swimming sounds - make sure muffle stops
+			if (self.outwsound == 1)
+			{
+				sound (self, CHAN_BODY, "misc/owater2.wav", 1, ATTN_NORM);
+				self.outwsound = FALSE;
+				self.inwsound = TRUE;
+				self.uwmuffle = FALSE;
+			}
+			// pOx - END - Swimming sounds	
+		}
+		return;
+	}
+
+	if (self.watertype == CONTENT_LAVA)
+	{	// do damage
+		if (self.dmgtime < time)
+		{
+			if (self.radsuit_finished > time)
+				self.dmgtime = time + 1;
+			else
+				self.dmgtime = time + 0.2;
+
+			//T_Damage (self, world, world, 10*self.waterlevel);
+			T_Damage (self, world, world, 10*self.waterlevel, MOD_LAVA);
+		}
+	}
+	else if (self.watertype == CONTENT_SLIME)
+	{	// do damage
+		if (self.dmgtime < time && self.radsuit_finished < time)
+		{
+			self.dmgtime = time + 1;
+			//T_Damage (self, world, world, 4*self.waterlevel);
+			T_Damage (self, world, world, 4*self.waterlevel, MOD_SLIME);
+		}
+	}
+	
+	if ( !(self.flags & FL_INWATER) )
+	{	
+
+// player enter water sound
+
+		if (self.watertype == CONTENT_LAVA)
+			sound (self, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
+		if (self.watertype == CONTENT_WATER)
+			sound (self, CHAN_BODY, "player/inh2o.wav", 1, ATTN_NORM);
+		if (self.watertype == CONTENT_SLIME)
+			sound (self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
+
+		self.flags = self.flags + FL_INWATER;
+		self.dmgtime = 0;
+	}
+	
+	if (! (self.flags & FL_WATERJUMP) )
+		self.velocity = self.velocity - 0.8*self.waterlevel*frametime*self.velocity;
+	
+	// pOx - START - Swimming Sounds
+	if (self.waterlevel >= 3)
+	{
+		self.outwsound = TRUE;
+	
+		if (self.inwsound)
+		{
+			sound (self, CHAN_AUTO, "misc/inh2ob.wav", 1, ATTN_NORM);
+			self.inwsound = FALSE;
+		}
+		
+		// don't muffle in DM
+		if (!self.uwmuffle && !deathmatch && !coop)
+		{
+			sound (self, CHAN_BODY, "misc/uwater.wav", 1, ATTN_NORM);
+			self.uwmuffle = TRUE;
+		}
+	}
+	
+	if (self.waterlevel == 2)// head out, stop muffle
+	{	
+		if (self.outwsound)
+		{
+			sound (self, CHAN_BODY, "misc/owater2.wav", 1, ATTN_NORM);
+			self.outwsound = FALSE;
+			self.uwmuffle = FALSE;
+			self.inwsound = TRUE;
+		}
+	}
+	// pOx - END - Swimming Sounds
+};
+#else
 void() WaterMove =
 {
 //dprint (ftos(self.waterlevel));
@@ -1223,7 +1371,7 @@ void() WaterMove =
 	}
 
 };
-
+#endif
 void() CheckWaterJump =
 {
 	local vector start, end;

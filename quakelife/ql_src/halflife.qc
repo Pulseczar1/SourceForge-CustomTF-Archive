@@ -595,55 +595,6 @@ void () SplashTouch = {
 };
 
 void ()ladder_touch;
-void () func_water_use =
-{
-	if (self.has_tesla == 1) {
-		SUB_CalcMove(self.pos1, self.speed, SUB_Null);
-		self.has_tesla = 0;
-	}
-	else {
-		SUB_CalcMove(self.pos2, self.speed, SUB_Null);
-		self.has_tesla = 1;
-	}
-};
-
-void () func_water = {
-
-if (mapname == "openfire" || mapname == "tfc_openfire") 
-   dremove(self);
-   
-   self.solid = 1.000;
-   self.movetype = 0.000;
-   //setorigin (self,self.origin);
-   setmodel (self,self.model);
-  // setorigin (self,((self.absmax+self.absmin)*.5));
-  setorigin(self, self.origin);
-  
-	SetMovedir ();
-	if (!self.lip)
-		self.lip = 8;
-	if (!self.speed)
-		self.speed = 100;
-		
-	self.pos1 = self.origin;
-	self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
-	
-	if (self.spawnflags & 1) { // start moved
-		setorigin(self, self.pos2);
-		self.has_tesla = 1;
-	}
-	
-	self.use = func_water_use;
-	
-   if (#HL_MAP) {
-	self.touch = ladder_touch; // better swim function is required lol
-   }
-   else
-	self.touch = SplashTouch;
-
-	HalfLife_DoRender();
-};
-
 
 void () func_wall_toggle_use =
 {
