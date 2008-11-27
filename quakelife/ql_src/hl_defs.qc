@@ -111,6 +111,14 @@ void () ladder_touch;
 #define HL_MAP		cvar("halflifebsp") == 1
 					//cvar("sv_map_halflife") == 1
 
+// Ladder stuff (from extras quake mod)
+.float fwatershifttime;
+.float ladderjump;
+.float laddertime;
+.float zerogtime;
+.float fwatershift;	// more for water
+.float oldgravity;
+
 // monster spawner
 .void() monstertype;					
 .float monstercount;
