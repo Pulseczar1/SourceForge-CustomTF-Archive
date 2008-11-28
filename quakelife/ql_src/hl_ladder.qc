@@ -185,3 +185,23 @@ void() func_ladder =
 	}
 */
 };
+
+
+/*
+// GOLD: old ladder_touch:
+void () ladder_touch_old =
+{
+	local vector pvec;
+
+	if (other.classname != "player")
+		return;
+	
+	makevectors (other.v_angle);
+	pvec = v_forward;
+	pvec = (pvec * 250);
+	if (other.button2)		// jump off the ladder
+		other.velocity = pvec;
+	else
+		other.velocity_z = pvec_z;
+};
+*/

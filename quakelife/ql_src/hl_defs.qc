@@ -16,6 +16,7 @@ void () SetSpawnObject;
 
 // breakables
 .float material;
+.vector dest;
 
 // explosion properties
 .float iMagnitude;
