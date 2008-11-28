@@ -1,5 +1,8 @@
 // Half-Life 1 definitions and such
 
+// levels/transitions
+float next_transition_use;
+
 // General entity properties
 .string globalname;
 .string changetarget;

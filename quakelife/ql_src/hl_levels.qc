@@ -7,6 +7,8 @@ void () trigger_transition_touch =
 		return;
 	if (other.classname != "player")
 		return;
+	if (next_transition_use > time)
+		return;
 		
 	if (self.enemy != world) {
 		oself = self;
@@ -14,6 +16,7 @@ void () trigger_transition_touch =
 		changelevel_touch();
 		self = oself;
 		self.enemy = world;
+		next_transition_use = time + 5;
 	}
 };
 
@@ -69,6 +72,7 @@ void () info_landmark =
 	// keep doors and such open through level transitions
 	lmcht = infokey (world, "changetarget");
 	if (lmcht && landmarked != #TRUE) {
+		next_transition_use = time + 5;
 		newmis = spawn();
 		newmis.classname = "DelayedTimer";
 		newmis.target = lmcht;

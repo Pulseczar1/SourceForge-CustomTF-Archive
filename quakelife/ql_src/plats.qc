@@ -414,7 +414,7 @@ void() func_train =
 			self.spawnflags = 8;
 			self.solid = 1;
 			setorigin (self, self.origin);
-			self.touch = ladder_touch; // better swim function is required lol
+			self.touch = liquid_touch; // better swim function is required lol
 		}
 		else
 			self.spawnflags = 0;		// halflife trains only have "8" for spawn flags afaik

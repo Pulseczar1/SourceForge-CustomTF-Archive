@@ -20,7 +20,7 @@ float LADDEROFS = 0.36;// touchy...
 // This is tricky cause we can't just check key presses...
 void() ladder_touch =
 {
-	local vector vel;
+	local vector vel, pvec;
 	float fvel, spd;
 	
 	if (other.classname != "player") return;
@@ -30,6 +30,13 @@ void() ladder_touch =
 	// Don't stick underwater, or in the middle of a waterjump
 	if (other.waterlevel > 1 || other.fwatershifttime > time) return;
 	if (other.flags & FL_WATERJUMP) return;
+	
+	
+	makevectors (other.v_angle);
+	pvec = v_forward;
+	pvec = (pvec * 250);
+	if (other.button2)		// jump off the ladder
+		other.velocity = pvec;
 	
 	// Don't re-grab right away if jumping
 	if (other.ladderjump > time) return;
