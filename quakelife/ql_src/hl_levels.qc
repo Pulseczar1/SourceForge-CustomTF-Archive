@@ -42,11 +42,12 @@ void () Transition_Use =
 {
 	local entity targ;
 	targ = find(world, targetname, self.target);
-	if (targ.classname == "door" && (targ.spawnflags & 1 || targ.state == STATE_TOP)) {
-		strunzone(self.target);
-		dremove(self);
-		return;
-	}
+	if (targ.classname == "door")
+		if (targ.spawnflags & 1 || targ.state == STATE_TOP) {
+			strunzone(self.target);
+			dremove(self);
+			return;
+		}
 	SUB_UseTargets();
 	strunzone(self.target);
 	dremove(self);
@@ -72,7 +73,7 @@ void () info_landmark =
 		newmis.classname = "DelayedTimer";
 		newmis.target = lmcht;
 		newmis.target = strzone(newmis.target);
-		newmis.nextthink = time + 2;
+		newmis.nextthink = time + 1.5;
 		newmis.think = Transition_Use;
 		// don't remove the changetarget value, else the door won't stay open when you leave the next map!
 	}
