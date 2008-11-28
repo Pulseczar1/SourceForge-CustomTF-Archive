@@ -146,7 +146,9 @@ void () monster_scientist_dead =
 
 void () info_node =
 {
-	dremove(self);
+	self.solid = SOLID_TRIGGER;
+	setsize (self, '-32 -32 -4', '32 32 4');
+	self.targetname = vtos (self.origin);
 };
 
 
@@ -162,7 +164,7 @@ void () trigger_autosave =
 
 void () light_spot =
 {
-	dremove(self);
+	light ();
 };
 
 void () gibshooter =

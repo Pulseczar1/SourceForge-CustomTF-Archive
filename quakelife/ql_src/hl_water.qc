@@ -1,3 +1,17 @@
+//#define NEW_WATER
+void () func_water_use =
+{
+	if (self.has_tesla == 1) {
+		SUB_CalcMove(self.pos1, self.speed, SUB_Null);
+		self.has_tesla = 0;
+	}
+	else {
+		SUB_CalcMove(self.pos2, self.speed, SUB_Null);
+		self.has_tesla = 1;
+	}
+};
+
+#ifdef NEW_WATER
 void() liquid_touch =
 {
 	local float test;
@@ -96,18 +110,6 @@ void() liquid_touch =
 		other.velocity_z = pvec_z;
 };
 
-void () func_water_use =
-{
-	if (self.has_tesla == 1) {
-		SUB_CalcMove(self.pos1, self.speed, SUB_Null);
-		self.has_tesla = 0;
-	}
-	else {
-		SUB_CalcMove(self.pos2, self.speed, SUB_Null);
-		self.has_tesla = 1;
-	}
-};
-
 void () func_water = {
 
 if (mapname == "openfire" || mapname == "tfc_openfire") 
@@ -166,9 +168,23 @@ if (mapname == "openfire" || mapname == "tfc_openfire")
 	HalfLife_DoRender();
 };
 
+#else
+void () liquid_touch =
+{
+	local vector pvec;
 
+	if (other.classname != "player")
+		return;
+	
+	makevectors (other.v_angle);
+	pvec = v_forward;
+	pvec = (pvec * 250);
+	if (other.button2)		// jump off the ladder
+		other.velocity = pvec;
+	else
+		other.velocity_z = pvec_z;
+};
 
-/*
 void () func_water = {
 
 if (mapname == "openfire" || mapname == "tfc_openfire") 
@@ -198,11 +214,11 @@ if (mapname == "openfire" || mapname == "tfc_openfire")
 	self.use = func_water_use;
 	
    if (#HL_MAP) {
-	self.touch = ladder_touch; // better swim function is required lol
+	self.touch = liquid_touch; // better swim function is required lol
    }
    else
 	self.touch = SplashTouch;
 
 	HalfLife_DoRender();
 };
-*/
+#endif

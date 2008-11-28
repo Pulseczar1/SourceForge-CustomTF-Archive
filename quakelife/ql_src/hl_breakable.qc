@@ -13,6 +13,11 @@
 
 void () pSoundsWood  = 
 {
+	//precache_model ("progs/gibs/wood1.mdl");	// crashes clients
+	precache_model ("progs/gibs/wood2.mdl");
+	//precache_model ("progs/gibs/wood3.mdl");	// crashes clients
+	precache_model ("progs/gibs/wood4.mdl");
+
 	precache_sound( "debris/wood1.wav" );
 	precache_sound( "debris/wood2.wav" );
 	precache_sound( "debris/wood3.wav" );
@@ -20,6 +25,11 @@ void () pSoundsWood  =
 
 void () pSoundsFlesh  = 
 {
+	precache_model ("progs/gibs/flesh1.mdl");
+	precache_model ("progs/gibs/flesh2.mdl");
+	//precache_model ("progs/gibs/flesh3.mdl");		// crashes clients
+	precache_model ("progs/gibs/flesh4.mdl");
+
 	precache_sound( "debris/flesh1.wav" );
 	precache_sound( "debris/flesh2.wav" );
 	precache_sound( "debris/flesh3.wav" );
@@ -30,6 +40,14 @@ void () pSoundsFlesh  =
 
 void () pSoundsMetal  = 
 {
+	precache_model ("progs/gibs/vent1.mdl");
+	precache_model ("progs/gibs/vent2.mdl");
+	precache_model ("progs/gibs/vent3.mdl");
+	precache_model ("progs/gibs/vent4.mdl");
+	precache_model ("progs/gibs/vent5.mdl");
+	precache_model ("progs/gibs/vent6.mdl");
+	precache_model ("progs/gibs/vent7.mdl");
+
 	precache_sound( "debris/metal1.wav" );
 	precache_sound( "debris/metal2.wav" );
 	precache_sound( "debris/metal3.wav" );
@@ -37,6 +55,10 @@ void () pSoundsMetal  =
 
 void () pSoundsConcrete  = 
 {
+	precache_model ("progs/gibs/rockgib_big.mdl");
+	precache_model ("progs/gibs/rockgib_med.mdl");
+	precache_model ("progs/gibs/rockgib_small.mdl");
+
 	precache_sound( "debris/concrete1.wav" );
 	precache_sound( "debris/concrete2.wav" );
 	precache_sound( "debris/concrete3.wav" );
@@ -45,10 +67,47 @@ void () pSoundsConcrete  =
 
 void () pSoundsGlass  = 
 {
+	precache_model ("progs/gibs/glass1.mdl");
+	precache_model ("progs/gibs/glass2.mdl");
+	//precache_model ("progs/gibs/glass3.mdl");		// crashes clients
+	precache_model ("progs/gibs/glass4.mdl");
+	precache_model ("progs/gibs/glass5.mdl");
+	precache_model ("progs/gibs/glass6.mdl");
+	precache_model ("progs/gibs/glass7.mdl");
+	
 	precache_sound( "debris/glass1.wav" );
 	precache_sound( "debris/glass2.wav" );
 	precache_sound( "debris/glass3.wav" );
 };	
+
+
+
+void () vyrovnani =
+{
+	self.angles_x = 0;
+	self.angles_y = 0;
+	self.think = SUB_Remove;
+	self.nextthink = ((time + TE_LAVASPLASH) + (random () * TE_LAVASPLASH));
+};
+
+void (string gibname, float dm) ThrowGlass =
+{
+	local entity glass;
+
+	glass = spawn ();
+	glass.alpha = self.alpha;
+	self.dest = ((self.mins + self.maxs) * 0.5);
+	glass.origin = ((self.dest + (random () * '0 50 50')) - (random () * '0 50 50'));
+	setmodel (glass, gibname);
+	setsize (glass, VEC_ORIGIN, VEC_ORIGIN);
+	setorigin (glass, ((self.dest + (random () * '0 50 50')) - (random () * '0 50 50')));
+	glass.movetype = MOVETYPE_BOUNCE;
+	glass.solid = SOLID_NOT;
+	glass.velocity = VelocityForDamage (dm);
+	glass.avelocity = VelocityForDamage (dm);
+	glass.think = vyrovnani;
+	glass.nextthink = (time + 1.5);
+};
 
 void ( string bksnd ) set_break_sound =
 {
@@ -176,7 +235,7 @@ void () Breakaway  = {
 	local float usesnd;
 	
 	oself = self;
-	if (self.spawnobject > 0) {
+	if (self.spawnobject > 0) {		// spawn armor, health, or whatever this should give the player
 		itsp = spawn();
 		itsp.spawnobject = self.spawnobject;
 		setorigin(itsp, ((self.absmin+self.absmax)*.5));
@@ -186,7 +245,7 @@ void () Breakaway  = {
 		self.building = itsp;
 	}	
 	 
-	if (self.noise1 || self.noise2) {
+	if (self.noise1 || self.noise2) {			// play death noise and create specified rubble
 		if (self.noise2)
 			if (random() < .51)
 				usesnd = 2;
@@ -204,9 +263,71 @@ void () Breakaway  = {
 		self = oself;
 	}
 	 
+	// throw rubble
+	switch (self.material)
+	{
+		case matComputer:
+		case matGlass:
+			ThrowGlass ("progs/gibs/glass1.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass2.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass6.mdl", self.health);	// used to be glass3, but glass3 is teh CRASH
+			ThrowGlass ("progs/gibs/glass4.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass5.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass6.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass7.mdl", self.health);
+			break;
+		case matUnbreakableGlass:
+			ThrowGlass ("progs/gibs/glass1.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass2.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass3.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass4.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass5.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass6.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass7.mdl", self.health);
+			break;
+
+		case matWood:
+			ThrowGlass ("progs/gibs/wood2.mdl", self.health);
+			ThrowGlass ("progs/gibs/wood2.mdl", self.health);
+			ThrowGlass ("progs/gibs/wood4.mdl", self.health);
+			ThrowGlass ("progs/gibs/wood4.mdl", self.health);
+			break;
+
+		case matMetal:
+			ThrowGlass ("progs/gibs/vent1.mdl", self.health);
+			ThrowGlass ("progs/gibs/vent2.mdl", self.health);
+			ThrowGlass ("progs/gibs/vent3.mdl", self.health);
+			ThrowGlass ("progs/gibs/vent4.mdl", self.health);
+			ThrowGlass ("progs/gibs/vent5.mdl", self.health);
+			ThrowGlass ("progs/gibs/vent6.mdl", self.health);
+			ThrowGlass ("progs/gibs/vent7.mdl", self.health);
+			break;
+
+		case matFlesh:
+			ThrowGlass ("progs/gibs/flesh1.mdl", self.health);
+			ThrowGlass ("progs/gibs/flesh2.mdl", self.health);
+			ThrowGlass ("progs/gibs/flesh1.mdl", self.health);		// flesh3 crashes
+			ThrowGlass ("progs/gibs/flesh4.mdl", self.health);
+			break;
+
+		case matRocks:
+		case matCinderBlock:
+			ThrowGlass ("progs/gibs/rockgib_big.mdl", self.health);
+			ThrowGlass ("progs/gibs/rockgib_med.mdl", self.health);
+			ThrowGlass ("progs/gibs/rockgib_small.mdl", self.health);
+			break;
+
+		case matCeilingTile:
+			hlThrowRubble( "progs/frubble1.mdl" );
+			hlThrowRubble( "progs/frubble2.mdl" );
+			hlThrowRubble( "progs/frubble3.mdl" );
+			break;
+	}
+	 /*
 	  hlThrowRubble( "progs/frubble1.mdl" );
 	  hlThrowRubble( "progs/frubble2.mdl" );
 	  hlThrowRubble( "progs/frubble3.mdl" );
+	  */
       self.solid = SOLID_NOT;
       setmodel (self,string_null);
 	  SUB_UseTargets();
