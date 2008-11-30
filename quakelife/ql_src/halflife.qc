@@ -128,10 +128,13 @@ local entity lbeam;
 
 void () env_laser = {
 local entity lbeam;
-		lbeam = spawn();
-		lbeam.owner = self;
-		lbeam.think = lbeam_think;
-		lbeam.nextthink = time;
+
+	precache_model("progs/spark.spr");
+
+	lbeam = spawn();
+	lbeam.owner = self;
+	lbeam.think = lbeam_think;
+	lbeam.nextthink = time;
 //dremove(self);
    self.use = laser_use;
 
@@ -178,6 +181,26 @@ void () env_fade = {
 
 };
 
+void (vector org, vector dir) beam_spark =
+{
+	local entity spark;
+
+	spark = spawn ();
+	spark.owner = self;
+	spark.solid = SOLID_NOT;
+	spark.movetype = MOVETYPE_BOUNCE;
+	spark.classname = "beam_spark";
+	makevectors (dir);
+	spark.velocity = ((((v_forward * 60) + (v_up * 260)) + ((crandom () * v_right) * 200)) + ((crandom () * v_up) * 20));
+	spark.angles = vectoangles (spark.velocity);
+	spark.wait = -1;
+	spark.nextthink = (time + (random () * 1));
+	spark.think = SUB_Remove;
+	setmodel (spark, "progs/spark.spr");
+	setsize (spark, VEC_ORIGIN, VEC_ORIGIN);
+	setorigin (spark, org);
+};
+
 void () env_beam_think =
 {
 local entity lstart, lend;
@@ -200,6 +223,7 @@ local entity lstart, lend;
 
 void () lbeam_think =
 {
+	local vector dir;
 	local entity lstart, lend, oself;
 	oself = self;
 	
@@ -235,6 +259,16 @@ void () lbeam_think =
 		else {
 			// ADDME: create random beams
 		}
+	}
+	
+	dir = normalize (lstart.origin - lend.origin);
+	if ( self.spawnflags & 16 )			// Start Sparks
+	{
+		beam_spark (lstart.origin, (dir * 1));
+	}
+	if ( self.spawnflags & 32 )			// End Sparks
+	{
+		beam_spark (lend.origin, (dir * -1));
 	}
 	
 	self = oself;
@@ -306,6 +340,8 @@ local entity lbeam;
    self.solid = 1.000;
    self.movetype = 5.000;
 
+   
+   precache_model("progs/spark.spr");
    if ( self.mdl ) {
 
       precache_model (self.mdl);

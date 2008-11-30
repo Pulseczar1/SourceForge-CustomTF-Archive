@@ -148,6 +148,7 @@ void () func_breakable_pain =
 	switch (self.material)
 	{
 		case matComputer:
+			break;
 		case matGlass:
 		case matUnbreakableGlass:
 			random_pain_sound/*0*/ ( "debris/glass1.wav" );
@@ -181,6 +182,7 @@ void () func_breakable_pain =
 			break;
 
 		case matRocks:
+			break;
 		case matCinderBlock:
 			random_pain_sound/*0*/ ( "debris/concrete1.wav" );
 			random_pain_sound/*1*/ ( "debris/concrete2.wav" );
@@ -279,7 +281,7 @@ void () Breakaway  = {
 		case matUnbreakableGlass:
 			ThrowGlass ("progs/gibs/glass1.mdl", self.health);
 			ThrowGlass ("progs/gibs/glass2.mdl", self.health);
-			ThrowGlass ("progs/gibs/glass3.mdl", self.health);
+			ThrowGlass ("progs/gibs/glass6.mdl", self.health);	// used to be glass3, but glass3 is teh CRASH
 			ThrowGlass ("progs/gibs/glass4.mdl", self.health);
 			ThrowGlass ("progs/gibs/glass5.mdl", self.health);
 			ThrowGlass ("progs/gibs/glass6.mdl", self.health);
@@ -311,6 +313,10 @@ void () Breakaway  = {
 			break;
 
 		case matRocks:
+			ThrowGlass ("progs/gibs/rockgib_big.mdl", self.health);
+			ThrowGlass ("progs/gibs/rockgib_med.mdl", self.health);
+			ThrowGlass ("progs/gibs/rockgib_small.mdl", self.health);
+			break;
 		case matCinderBlock:
 			ThrowGlass ("progs/gibs/rockgib_big.mdl", self.health);
 			ThrowGlass ("progs/gibs/rockgib_med.mdl", self.health);
@@ -427,17 +433,22 @@ void () func_breakable = {
 	
 	self.th_pain = func_breakable_pain;
 	
-	if (self.material == 1)		// wood
+	
+
+	
+	if (self.material == matWood)		// wood
 		pSoundsWood();
-	else if (self.material == 2)	// metal
+	else if (self.material == matMetal)	// metal
 		pSoundsMetal();
-	else if (self.material == 3)	// flesh
+	else if (self.material == matFlesh)	// flesh
 		pSoundsFlesh();
-	else if (self.material == 4)	// cinder blocks
+	else if (self.material == matCinderBlock)	// cinder blocks
 		pSoundsConcrete();
-	else if (self.material == 5)	// ceiling tiles
+	else if (self.material == matCeilingTile)	// ceiling tiles
 		pSoundsConcrete();
-	else if (self.material == 6)	// computer
+	else if (self.material == matComputer)	// computer
+		pSoundsConcrete();	
+	else if (self.material == matRocks)	// computer
 		pSoundsConcrete();	
 	else 
 		pSoundsGlass();
@@ -459,6 +470,9 @@ void () func_breakable = {
 			set_break_sound("debris/bustmetal2.wav");
 			break;
 		case matUnbreakableGlass:
+			set_break_sound("debris/bustglass1.wav");
+			set_break_sound("debris/bustglass2.wav");
+			break;
 		case matGlass:
 			set_break_sound("debris/bustglass1.wav");
 			set_break_sound("debris/bustglass2.wav");
