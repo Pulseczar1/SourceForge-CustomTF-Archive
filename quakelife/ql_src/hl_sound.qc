@@ -135,7 +135,7 @@ void () ambient_generic =
 
 		
 	if (self.health == 0)	// final vol
-		self.health = 0.5;
+		self.health = 1;
 		
 	if (self.spawnflags & AMBIENT_SOUND_START_SILENT)
 		self.#silent = 1;
@@ -151,7 +151,7 @@ void () ambient_generic =
 // scripted sentences - things that scientists trigger to give you dialogue and such
 void () scripted_sentence_use =
 {
-	sound (self, CHAN_VOICE, self.sentence, .75, ATTN_NORM);
+	sound (self, CHAN_VOICE, self.sentence, 1, ATTN_NORM);
 	self.use = SUB_Null;
 	SUB_UseTargets();
 	dremove(self);
