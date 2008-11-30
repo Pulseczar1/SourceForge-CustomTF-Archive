@@ -152,10 +152,6 @@ void () info_node =
 };
 
 
-void () env_spark =
-{
-	dremove(self);
-};
 
 void () trigger_autosave =
 {

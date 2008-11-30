@@ -318,7 +318,7 @@ void(entity attacker)     killable_boss_pain =
 {
 	local float     r;
 
-	bprint(2,"I'm in pain!\n");
+	hldprint(2,"I'm in pain!\n");
 // don't make multiple pain sounds right after each other
 	if (self.pain_finished > time)
 		return;

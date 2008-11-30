@@ -369,7 +369,7 @@ void() changelevel_use =
 		return;
 	}
 #ifdef HALFLIFE
-bprint(2,"USED!\n");
+hldprint(2,"USED!\n");
 	local entity te;
 	local float transition;
 	if (self.classname/*self.spawnflags & 2*/) {	// look for a trigger_transition and let that handle the change of level..
