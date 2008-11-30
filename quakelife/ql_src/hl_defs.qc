@@ -17,6 +17,10 @@ void () HalfLife_DoRender;
 void () SetSpawnObject;
 .float spawnobject;			// spawn object on destruction
 
+// effects
+.float volume;
+#define START_ON		1
+
 // breakables
 .float material;
 .vector dest;

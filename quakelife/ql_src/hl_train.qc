@@ -166,9 +166,10 @@ void() func_tracktrain_find =
 	//setorigin(self, targ.origin - ((self.mins+self.maxs)*.5));
 	//self.origin_z += self.height;
 
-	if (targ) {
-		if (targ2)
+	if (targ.classname == "path_track") {
+		if (targ2.classname == "path_track") {
 			self.angles = vectoangles(targ2.origin - targ.origin);
+		}
 		else
 			self.angles_y += 45;
 	}

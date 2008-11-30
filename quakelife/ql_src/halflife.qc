@@ -181,24 +181,35 @@ void () env_fade = {
 
 };
 
+#define MAX_BEAM_SPARKS				12
+float total_beam_sparks;
+void () SUB_SparkRemove =
+{
+	total_beam_sparks -= 1;
+	SUB_Remove();
+};
+
 void (vector org, vector dir) beam_spark =
 {
 	local entity spark;
 
-	spark = spawn ();
-	spark.owner = self;
-	spark.solid = SOLID_NOT;
-	spark.movetype = MOVETYPE_BOUNCE;
-	spark.classname = "beam_spark";
-	makevectors (dir);
-	spark.velocity = ((((v_forward * 60) + (v_up * 260)) + ((crandom () * v_right) * 200)) + ((crandom () * v_up) * 20));
-	spark.angles = vectoangles (spark.velocity);
-	spark.wait = -1;
-	spark.nextthink = (time + (random () * 1));
-	spark.think = SUB_Remove;
-	setmodel (spark, "progs/spark.spr");
-	setsize (spark, VEC_ORIGIN, VEC_ORIGIN);
-	setorigin (spark, org);
+	if (total_beam_sparks <= #MAX_BEAM_SPARKS) {
+		spark = spawn ();
+		spark.owner = self;
+		spark.solid = SOLID_NOT;
+		spark.movetype = MOVETYPE_BOUNCE;
+		spark.classname = "beam_spark";
+		makevectors (dir);
+		spark.velocity = ((((v_forward * 60) + (v_up * 260)) + ((crandom () * v_right) * 200)) + ((crandom () * v_up) * 20));
+		spark.angles = vectoangles (spark.velocity);
+		spark.wait = -1;
+		spark.nextthink = (time + (random () * 1));
+		spark.think = SUB_SparkRemove;
+		setmodel (spark, "progs/spark.spr");
+		setsize (spark, VEC_ORIGIN, VEC_ORIGIN);
+		setorigin (spark, org);
+		total_beam_sparks++;
+	}
 };
 
 void () env_beam_think =
