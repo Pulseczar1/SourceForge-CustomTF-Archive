@@ -264,6 +264,10 @@ void() SUB_UseTargets =
 //
 // kill the killtagets
 //
+#ifdef HALFLIFE
+	if (self.killtarget == "trigger_for_retinal")		// c1a0c
+		self.killtarget = string_null;
+#endif
 	if (self.killtarget)
 	{
 		t = world;

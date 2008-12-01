@@ -695,6 +695,20 @@ void(float dist) ai_run =
 {
 	local float enemy_vis, enemy_yaw;
 	
+#ifdef HALFLIFE
+	if (self.enemy.classname == "script_corner") {
+		// move towards a scripted spot
+		self.angles = vectoangles(self.enemy.origin - self.origin);
+		self.angles_x = 0;
+		//movetogoal(dist);
+		if (walkmove (self.angles_y + (random()*17), dist) == #FALSE) {
+			if (FindTarget ())
+				self.enemy = world;
+		}
+		return;
+	}
+#endif
+	
 // see if the enemy is dead
 	if (self.enemy.health <= 0)
 	{
