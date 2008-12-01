@@ -1,16 +1,78 @@
-// Scripts handler (not finished yet.. maybe never lol)
-//scripted_sentence in hl_sound.qc
+// Scripts handler (unfinished.. read note 1)
+// Note 1: This is not meant to mimic half-life's scripted sequences system,
+// as scientists and barneys are monsters in Quake-Life. scripted sequences 
+// are only added here so players can make progress through maps.
+// Note 2: scripted_sentence arein hl_sound.qc
+
+void () script_path_remove =
+{
+	if (other != self.enemy)
+		return;
+		
+	if (other.enemy == self)
+		other.enemy = world;
+	dremove(self);
+};
+
+void () move_actor =
+{
+	local entity oself;
+	local vector look_to;
+	oself = self;
+	//droptofloor();
+	
+	if (!self.enemy) {
+		dremove(self);
+		return;
+	}
+	if (!self.enemy.th_run) {
+		// probably chthon or something
+		dremove(self);
+		return;
+	}
+	
+	self.health = 20;
+	self = self.enemy;
+	self.enemy = oself;
+	self.goalentity = self.enemy;
+	self.think = self.th_run;
+	self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
+	self.nextthink = time + 0.1;
+	self = oself;
+	
+	self.think = SUB_Remove;
+	self.nextthink = time + 20;
+	//SUB_CalcMoveEnt ( self.enemy, self.origin, 50, self.enemy.th_stand );
+};
+
 void () scripted_sequence_use =
 {
 //_bprint(ftos(self.spawnflags), " is me spawnflags and ", self.targetname, " is me targetname and ", self.target, " is me target\n");
-	local entity targ;
+	local entity targ, newmt;
 	targ = find(world, targetname, self.m_iszEntity);
 	
 	if (targ != world) {
-		if (self.m_fMoveTo > 0) {
-			setorigin(targ, self.origin + '0 0 30');
+		if (self.m_fMoveTo > 2 || targ.health <= 0) {
+			setorigin(targ, self.origin + '0 0 20');
 			targ.npc_originalloc = self.origin + '0 0 30';
 			targ.#npc_originalloc = self.origin + '0 0 30';
+		}
+		else {
+			// walk or run to the destination. 
+			hldprint(2,"walk or run here\n");
+			newmt = spawn();
+			newmt.origin = self.origin + '0 0 30';
+			newmt.classname = "script_corner";
+			newmt.netname = "script_path";
+			newmt.solid = SOLID_TRIGGER;
+			//setmodel(newmt, "progs/player.mdl");
+			setsize (newmt, VEC_HULL_MIN, VEC_HULL_MAX );//'-8 -8 -8', '8 8 8');
+			newmt.enemy = targ;
+			newmt.touch = script_path_remove;
+			newmt.think = move_actor;
+			newmt.nextthink = time;
+			//targ.movetarget = self;
+			//targ.target = newmt.netname;
 		}
 	}
 	self.use = SUB_Null;
@@ -50,7 +112,7 @@ void () scripted_sequence_findtrigger =
 
 void () scripted_sequence_fix =
 {
-bprint(2,"aint nothing triggers mehee2\n");
+	hldprint(2,"scripted_sequence_fix: nothing triggers me\n");
 	self.touch = scripted_sequence_touch;
 	self.think = scripted_sequence_findtrigger;
 	self.nextthink = time + 1;
@@ -82,8 +144,7 @@ void () FindMyTrigger_think =
 			while (argv(i) != string_null && argv(i) != "}") {
 				if (argv(i) == self.targetname)
 				{
-					//bprint(2,"FOUND THIS ONE\n");
-					// OK, we found  a multi_manager that trigers us. No need to run automaticall then..
+					// OK, we found  a multi_manager that trigers us. No need to run automatically then..
 					foundit=1;
 					break;
 				}
