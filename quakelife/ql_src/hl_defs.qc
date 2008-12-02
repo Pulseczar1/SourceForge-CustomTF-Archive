@@ -140,6 +140,7 @@ float EASEUNDERCURRENT = 16;
 .float m_imaxlivechildren;		// max spawned ents that can be alive.
 
 // misc monsters
+.void() th_sight;
 .vector orig_origin;			// monster's original origin (see nihilanth)
 .string reachtarget;
 					

@@ -731,6 +731,10 @@ void () HalfLife_DoRender =
 			if (self.alpha == 0)
 				self.alpha = .01;
 		}
+		else {
+			self.rendermode = 2;
+		}
+		
 		if (self.rendermode == 2) {
 			self.alpha = self.renderamt/255;
 			if (self.alpha == 0) {

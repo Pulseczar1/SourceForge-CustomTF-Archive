@@ -565,6 +565,11 @@ void () spider_poison =
 	poison_globaltime = poison_globaltime + MOVETYPE_FLY;
 };
 
+void () spider_sight =
+{
+	sound (self, CHAN_VOICE, "spider/ssight.wav", START_OFF, ATTN_NORM);
+};
+
 void () monster_spider1 =
 {
 	self.solid = MOVETYPE_WALK;
@@ -580,6 +585,7 @@ void () monster_spider1 =
 	self.th_pain = spider_pain;
 	self.th_missile = spider_attack;
 	self.th_melee = spid_melee1;
+	self.th_sight = spider_sight;
 	walkmonster_start ();
 };
 
@@ -614,4 +620,4 @@ void () monster_spider =
 	//COOP_SetLives ();
 
 	monster_spider1 ();
-}; 
+};

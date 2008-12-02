@@ -321,7 +321,12 @@ void() SightSound =
 		s = "soldier/sight1.wav";
 	}
 
-	sound (self, CHAN_VOICE, s, 1, ATTN_NORM);
+#ifdef HALFLIFE
+	if (self.th_sight)
+		self.th_sight();
+	else
+#endif
+		sound (self, CHAN_VOICE, s, 1, ATTN_NORM);
 };
 
 void() FoundTarget =

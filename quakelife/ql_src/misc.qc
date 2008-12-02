@@ -518,10 +518,7 @@ void() func_illusionary =
 	self.solid = SOLID_NOT;
 	setmodel (self, self.model);
 #ifdef HALFLIFE
-	if (self.rendermode == 2 || self.rendermode == 1) {		// eh, i think this doesn't really get rendered in HL.. just used for debugging or something
-		dremove(self);
-		return;
-	}
+	HalfLife_DoRender();
 #endif
 	makestatic (self);
 };
