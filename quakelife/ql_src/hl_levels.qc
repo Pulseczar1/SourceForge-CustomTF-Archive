@@ -192,9 +192,7 @@ void () HalfLife_SetupLandmark =
 	// setup train origin/continuation
 	ttrain = find(world, classname, "tracktrain");
 	while (ttrain) {
-	hldprint(2,"found 1\n");
 		if (ttrain.globalname != string_null) {
-		hldprint(2,"using 1 again!\n");
 			//ttorg = ttrain.origin;
 			ttorg = ttrain.origin;
 			localcmd( "set " );
@@ -206,6 +204,24 @@ void () HalfLife_SetupLandmark =
 			localcmd( " " );
 			localcmd( ftos(tlandmark.origin_z - ttorg_z) );
 			localcmd( "\"\n" );
+			
+			localcmd( "set " );
+			localcmd( ttrain.globalname );
+			localcmd( "_ang \"" );
+			localcmd( ftos(ttrain.angles_x) );
+			localcmd( " " );
+			localcmd( ftos(ttrain.angles_y) );
+			localcmd( " " );
+			localcmd( ftos(ttrain.angles_z) );
+			localcmd( "\"\n" );
+			
+			if (!ttrain.reachtarget)
+				localcmd( "set train_targ 0" );
+			else {
+				localcmd( "set train_targ " );
+				localcmd( ttrain.reachtarget );
+				localcmd( "\n" );
+			}
 		}
 		ttrain = find(ttrain, classname, "tracktrain");
 	}

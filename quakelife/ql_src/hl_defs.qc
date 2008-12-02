@@ -119,6 +119,12 @@ void () ladder_touch;
 #define HL_MAP		cvar("halflifebsp") == 1
 					//cvar("sv_map_halflife") == 1
 
+// func_friction
+.float friction;
+.float friction_time;
+.float friction_new;
+.float modifier;
+					
 // Ladder and water stuff (from extras quake mod)
 .float fwatershifttime;
 .float ladderjump;
