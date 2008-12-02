@@ -135,11 +135,56 @@ void () world_items =
 	
 };
 
-
+void () env_bubbles =
+{
+	air_bubbles();
+};
 
 // UNFINISHED/UNSTARTED ENTITIES:
 //(and I'm sure there's more than that, I just haven't gotten around to em yet)
+
+// env_render: change the rendering properties of target based on own properties.
+// I hope I got this right.
+void () env_render_use =
+{
+	local entity targ, oself;
+	oself = self;
+	
+	targ = find( world, targetname, self.target );
+	while (targ)
+	{
+		//_bprint( "Running render effects on ", targ.classname, " with targetname ", targ.targetname, "\n" );
+		targ.rendermode = self.rendermode;
+		targ.renderamt = self.renderamt;
+		targ.rendercolor = self.rendercolor;
+		self = targ;
+		HalfLife_DoRender();
+		self = oself;
+		targ = find( targ, targetname, self.target );
+	}
+};
+
+void () env_render =
+{
+	self.use = env_render_use;
+};
+
+void () func_friction =
+{
+	self.solid = SOLID_TRIGGER;
+	setmodel( self, self.model );
+	self.movetype = MOVETYPE_NONE;
+	// add friction touch
+	
+	HalfLife_DoRender();
+};
+
 void () monster_scientist_dead =
+{
+	dremove(self);
+}
+
+void () monster_barney_dead =
 {
 	dremove(self);
 }
@@ -168,7 +213,115 @@ void () gibshooter =
 	dremove(self);
 };
 
+// env_sound is a sound-shaper (IE adjusts sounds for hallways and such)
 void () env_sound =
 {
 	dremove(self);
 };
+
+// EXTRAS_R4 STUFF:
+//============================================================================
+float VIEWONLY = 1;
+
+void() shake_think =
+{
+	if (self.attack_finished < time) {// Done
+		
+		self.nextthink = -1;
+		
+		if (self.noise1)
+			sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+		
+		return;
+	}
+	
+	local	entity plyr;
+	
+	// Shake all players in the effect radius...
+	
+	plyr = findradius(self.origin, self.count);
+	
+	while(plyr)
+	{
+		if (plyr.classname == "player") {
+			
+			local float	d;
+			
+			// Scale effect by distance
+			d = vlen(self.origin - plyr.origin);
+			d = (self.count - d)/self.count;
+			
+			if (d > 0) {
+
+				// shake up the view
+				plyr.punchangle_x = -1 * (random() + (0.025*self.dmg*d));
+				
+				// push the player around
+				if (plyr.flags & FL_ONGROUND && !self.spawnflags & VIEWONLY) {
+					d = self.dmg*d;
+					plyr.velocity_x = plyr.velocity_x + (random()*d*2 - d);
+					plyr.velocity_y = plyr.velocity_y + (random()*d*2 - d);
+					plyr.velocity_z = plyr.velocity_z + (random()*d);// always push up
+				}	
+			}
+		}
+		
+		plyr = plyr.chain;
+	}
+	
+	// keep going
+	self.nextthink = time + 0.1;
+};
+
+void() shake_use =
+{
+	if (self.attack_finished > time) return;// already active
+
+	// Start...
+	
+	if (self.noise)
+		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	
+	self.attack_finished = time + self.wait;
+	self.nextthink = time + 0.01;
+};
+
+/*QUAKED trigger_shake (.5 .5 .5) ? VIEWONLY
+Earthquake trigger - shakes players in it's radius when active.
+Strength of tremor is greatest at the centre.
+
+"dmg"			Strength at center (default is 120)
+"wait"			Duration of shake (default is 1)
+"count"			Affect radius (defalt is 200)
+"noise"			Noise to play when starting to shake
+"noise1"		Noise to play when stopping
+"targetname"	Must be triggered
+
+Spawnflags:
+"VIEWONLY"		Shakes the view, but player movement is not affected
+
+*/
+void() trigger_shake =
+{	
+	if (!self.targetname) objerror("trigger_shake without name");
+
+	if (self.noise) precache_sound (self.noise);
+	if (self.noise1) precache_sound (self.noise1);
+	
+	if (!self.dmg) self.dmg = 120;
+	if (self.count <= 0) self.count = 200;
+	if (self.wait <= 0) self.wait = 1.0;
+	
+	setorigin(self, self.origin);
+	
+	self.nextthink = -1;
+	self.think = shake_think;
+	self.use = shake_use;
+};
+
+void () env_shake =
+{
+	trigger_shake();
+};
+
+//============================================================================

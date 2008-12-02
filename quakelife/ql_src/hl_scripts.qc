@@ -17,7 +17,7 @@ void () script_path_remove =
 void () move_actor =
 {
 	local entity oself;
-	local vector look_to;
+	//local vector look_to;
 	oself = self;
 	//droptofloor();
 	

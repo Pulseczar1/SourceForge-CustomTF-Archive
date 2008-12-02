@@ -23,6 +23,10 @@ void () ammo_mp5grenades =
 		weapon_grenadelauncher();
 };
 
+void () ammo_glockclip =
+{
+	item_shells();
+};
 
 void () item_ammo_pistol_large =
 {
