@@ -73,6 +73,8 @@ void() tracktrain_next =
 		self.think = func_tracktrain_find;
 		return;
 	}
+	else
+		self.reachtarget = targ.targetname;
 	if (!(targ.#track_activated))
 	{
 		bprint(2,"Can't move forward - next rail needs power!\n");
@@ -128,6 +130,14 @@ void() func_tracktrain_find =
 {
 	local entity targ, targ2;
 	local vector endpos;
+	
+	local vector orgsv;
+	local string orgs, otarg, realnewtarg;
+	local entity newtarg;
+	local float lastdist;
+	
+	otarg = self.target;
+	
 	targ = find(world, targetname, self.target);
 	targ2 = find(world, targetname, targ.target);
 	self.target = targ.target;
@@ -136,28 +146,74 @@ void() func_tracktrain_find =
 		SUB_CalcMoveAndRotateDone();
 		return;
 	}
-	/*
-	if (cvar_string(self.globalname) != "" && cvar_string(self.globalname) != "0") {
-		//FIXME: doesn't work, so disabled.
-		orgs = cvar_string(self.globalname);
-		orgsv = stov(orgs);
-		
-		self.origin_x = orgsv_x - cvar("landmark_x");
-		self.origin_y = orgsv_y - cvar("landmark_y");
-		self.origin_z = orgsv_z - cvar("landmark_z");
-		
-		newmis = spawn();
-		newmis.classname = "DelayedTimer";
-		newmis.target = self.targetname;
-		newmis.target = strzone(newmis.target);
-		newmis.nextthink = time + 2;
-		newmis.think = Transition_Use;
-
-		localcmd( "set " );
-		localcmd( self.globalname );
-		localcmd( " 0\n" );
+	
+	if (targ.classname == "path_track") {
+		if (targ2.classname == "path_track") {
+			self.angles = vectoangles(targ2.origin - targ.origin);
+		}
+		else
+			self.angles_y += 45;
 	}
-	else*/ {
+	
+	if (cvar_string(self.globalname) != "" && cvar_string(self.globalname) != "0") {
+		//FIXME: train needs to find next track properly
+		
+		// set origin
+		orgs = cvar_string(self.globalname);
+		tokenize(orgs);
+		
+		self.origin_x = landmark_ent.origin_x - stof(argv(0));
+		self.origin_y = landmark_ent.origin_y - stof(argv(1));
+		self.origin_z = landmark_ent.origin_z - stof(argv(2));
+		// end set origin
+		
+		// set angles
+		orgs = cvar_string(strcat(self.globalname,"_ang"));
+		if (orgs != "0") {
+			tokenize(orgs);
+			
+			self.angles_x = stof(argv(0));
+			self.angles_y = stof(argv(1));
+			self.angles_z = stof(argv(2));	
+		}
+		localcmd( "set " );
+		localcmd( strcat(self.globalname,"_ang") );
+		localcmd( "0\n" );
+		// end set angles
+	
+		if (!self.hl_use) {
+			newmis = spawn();
+			newmis.classname = "DelayedTimer";
+			newmis.target = self.targetname;
+			newmis.target = strzone(newmis.target);
+			newmis.nextthink = time + 2;
+			newmis.think = Transition_Use;
+		}
+			
+		if (cvar_string("train_targ") != "0") {
+			self.target = cvar_string("train_targ");
+		
+			// now make sure the target exists..
+			newtarg = find(world, targetname, self.target);
+			if (!newtarg) {
+				lastdist = 9999;		// look for anything closer than this
+				newtarg = find(world, classname, "path_track");
+				while (newtarg) {
+					if (vlen(self.origin - newtarg.origin) < lastdist) {
+						lastdist = vlen(self.origin - newtarg.origin);
+						realnewtarg = newtarg.targetname;
+					}
+					newtarg = find(newtarg, classname, "path_track");
+				}
+				self.target = realnewtarg;
+			}
+			
+		}
+		//localcmd( "set " );
+		//localcmd( self.globalname );
+		//localcmd( " 0\n" );
+	}
+	else {
 		endpos = targ.origin/* - ((self.mins+self.maxs)*.5)*/;
 		endpos_z += self.height;
 		setorigin(self, endpos);
@@ -166,13 +222,7 @@ void() func_tracktrain_find =
 	//setorigin(self, targ.origin - ((self.mins+self.maxs)*.5));
 	//self.origin_z += self.height;
 
-	if (targ.classname == "path_track") {
-		if (targ2.classname == "path_track") {
-			self.angles = vectoangles(targ2.origin - targ.origin);
-		}
-		else
-			self.angles_y += 45;
-	}
+
 
 	
 	if (!(self.targetname))
@@ -464,6 +514,8 @@ void(vector torg, vector tdest, float rtate, float tspeed, void() func) SUB_Calc
 void () tchanger_go_down;
 void() tchanger_hit = 
 {
+	local entity oself;
+	oself = self;
 	if (self.#track_activated == #FALSE) {
 		self.#track_activated = #TRUE;
 		if (self.enemy != world)
@@ -483,6 +535,13 @@ void() tchanger_hit =
 	}
 	
 	self.use = func_trackchange_use;
+	
+	if (self.classname == "func_trackautochange")
+	{
+		self = self.enemy;
+		self.use();
+		self = oself;
+	}
 	
 	eprint(self.enemy);
 };
@@ -711,4 +770,7 @@ void () func_platrot =
 
 	func_trackchange();
 };
-
+void () func_trackautochange =
+{
+	func_trackchange();
+};

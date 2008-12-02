@@ -1456,6 +1456,11 @@ void() PlayerPreThink =
 	else
 		self.gravity = 0.0001;// zero G (0 OR 1 is normal)
 	// pOx - END  - func_water & func_ladder support
+	
+	if (self.friction_time < time)
+		self.friction = 1;
+	else
+		self.friction = self.friction_new;
 #endif
 	
 	CheckRules ();

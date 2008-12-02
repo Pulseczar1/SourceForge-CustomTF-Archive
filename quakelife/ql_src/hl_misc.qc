@@ -169,12 +169,25 @@ void () env_render =
 	self.use = env_render_use;
 };
 
+// func_friction: changes player friction when touched
+// Note: .friction value does nothing yet
+void () func_friction_touch =
+{
+	if (other.classname != "player")
+		return;
+		
+	other.friction_time = time + .1;
+	other.friction_new = self.modifier*.01;	// .modifier value is between 0 and 100
+	
+	//_bprint("New friction: ", ftos(other.friction_new), "\n");
+};
+
 void () func_friction =
 {
 	self.solid = SOLID_TRIGGER;
 	setmodel( self, self.model );
 	self.movetype = MOVETYPE_NONE;
-	// add friction touch
+	self.touch = func_friction_touch;
 	
 	HalfLife_DoRender();
 };
