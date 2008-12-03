@@ -46,8 +46,8 @@ void () multisource_use =
 	hldprint(2,"I AM ACTIVATED TYPE 2\n");
 	hldprint(2,self.targetname);
 	hldprint(2," 222\n");
-	SUB_UseTargets();
 	self.activated = 1;
+	SUB_UseTargets();
 	dremove(self);	// look in subs.qc for why i do this
 };
 
@@ -68,7 +68,7 @@ float ( entity t_ent ) has_master =
 		return 0;
 	
 	t = find(world, targetname, t_ent.master);
-	if (!t || t == world)
+	if (!t || t == world || t.activated == 1)
 	{
 		hldprint(2,"NO MASTER\n");
 		return 0;

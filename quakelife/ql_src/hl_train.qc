@@ -2,6 +2,7 @@
 // by avirox
 #define track_activated		has_tesla
 #define xavior_hack1		mtf_items
+#define ttrain_firstactivated	barrel
 void() tracktrain_next;
 void () func_tracktrain_find;
 void() tracktrain_wait = 
@@ -9,6 +10,11 @@ void() tracktrain_wait =
 	//self.nextthink = self.ltime + 0.1;
 	//self.think = tracktrain_next;
 	
+	if (self.pausetime) {
+		self.nextthink = self.ltime + .1;
+		self.think = tracktrain_wait;
+		return;
+	}
 	// addme: a way to stop the train manually should go here
 	tracktrain_next();
 };
@@ -180,7 +186,10 @@ void() func_tracktrain_find =
 		}
 		localcmd( "set " );
 		localcmd( strcat(self.globalname,"_ang") );
-		localcmd( "0\n" );
+		localcmd( " 0\n" );
+		
+		if (mapname == "c0a0e")		// map specific hack :(
+			self.angles = '0 0 0';
 		// end set angles
 	
 		if (!self.hl_use) {
@@ -236,6 +245,26 @@ void() func_tracktrain_find =
 
 void() tracktrain_use = 
 {
+	if (self.spawnflags & 2) {
+		if (self.#ttrain_firstactivated) {
+			if (self.pausetime == 0) {
+				self.pausetime = 1;
+				self.velocity = '0 0 0';
+				self.think = SUB_Null;
+			}
+			else {
+				self.pausetime = 0;
+				self.think = tracktrain_next;
+				self.nextthink = self.ltime + .1;
+			}
+			return;
+		}
+
+		if (self.velocity == '0 0 0') {
+			self.#ttrain_firstactivated = #TRUE;
+		}
+	}
+
 	if (self.think != func_tracktrain_find)
 	{
 		return;

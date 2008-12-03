@@ -51,6 +51,11 @@ void () Transition_Use =
 			dremove(self);
 			return;
 		}
+	if (mapname == "c0a0c") {
+		strunzone(self.target);
+		dremove(self);
+		return;
+	}
 	SUB_UseTargets();
 	strunzone(self.target);
 	dremove(self);
