@@ -1174,6 +1174,16 @@ void (entity t_src, float prtype) FindUseEntity =
 		self.hl_use();
 		self = oldself;
 	}
+	if (prtype == 2)
+		if (trace_ent != world && trace_ent.use)
+		{
+			oldself = self;
+			self = trace_ent;
+			activator = oldself;
+			self.use();
+			self = oldself;
+		}	
+
 	//if (trace_ent != world)
 	//	eprint(trace_ent);
 	if (prtype)
@@ -1258,6 +1268,9 @@ void() ImpulseCommands =
 			}
 			test = find(test, classname, "trigger_once");
 		}
+		break;
+	case 120:
+		FindUseEntity(self, 2);
 		break;
 #endif
 	}

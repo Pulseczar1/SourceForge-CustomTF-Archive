@@ -247,7 +247,8 @@ void () lbeam_think =
 	   lstart = find(world, targetname, self.LightningStart);
 	   lend = find(world, targetname, self.LightningEnd);
 	   // xavior: quake lets us use lightning.. SO LET THERE BE LIGHT :)
-	   TE_lightning1(self, lstart.origin, lend.origin);
+	   if (lend != world && lstart != world)
+		TE_lightning1(self, lstart.origin, lend.origin);
 	   /*
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 		WriteByte (MSG_BROADCAST, TE_LIGHTNING3);
@@ -264,8 +265,10 @@ void () lbeam_think =
 		if (self.LaserTarget) {
 			lend = find(world, targetname, self.LaserTarget);
 			//traceline (self.origin, lend.origin, true, self);
-			LightningDamage (self.origin, lend.origin, self, self.damage*5, MOD_SHAFT);
-			TE_lightning3(self, self.origin, lend.origin);
+			if (lend != world) {
+				LightningDamage (self.origin, lend.origin, self, self.damage*5, MOD_SHAFT);
+				TE_lightning3(self, self.origin, lend.origin);
+			}
 		}
 		else {
 			// ADDME: create random beams
