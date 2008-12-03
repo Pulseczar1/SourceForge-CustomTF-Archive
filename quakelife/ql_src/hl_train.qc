@@ -81,7 +81,7 @@ void() tracktrain_next =
 		self.think = func_tracktrain_find;
 		return;
 	}
-	
+	//_bprint(targ.targetname, " is track im goin to\n");
 	self.target = targ.target;
 	if (targ.message)
 		self.message = targ.message;
@@ -108,7 +108,9 @@ void() tracktrain_next =
 	endpos = targ.origin;	// old (pre-fte): targ.origin - ((self.mins+self.maxs)*.5);
 	endpos_z += self.height;
 	
-	
+	if (targ.speed > 0)
+		if (targ.speed != self.speed)
+			self.speed = targ.speed;
 	SUB_CalcMove(endpos, self.speed, tracktrain_wait);
 	
 	targ2 = find(world, targetname, targ.target);
