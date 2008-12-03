@@ -747,11 +747,13 @@ void () HalfLife_DoRender =
 				omaxs = self.maxs;
 				oabsmin = self.absmin;
 				oabsmax = self.absmax;
-				setmodel(self, string_null);
+				
 				if (self.classname == "func_breakable")
 					self.solid = SOLID_NOT;
 				else
 					self.solid = SOLID_BBOX;
+					
+				setmodel(self, string_null);
 				self.size = osize;
 				self.mins = omins;
 				self.maxs = omaxs;
