@@ -1286,7 +1286,7 @@ vector( vector desired ) GruntyPickClosestVector = {
 ==============
 GruntyAutoObstacle
 
-This should only be called when the grunty
+Gizmo - This should only be called when the grunty
 is on the "auto" "on obstacle" mode.
 
 Returns 0 if the grunty should jump, returns 1
