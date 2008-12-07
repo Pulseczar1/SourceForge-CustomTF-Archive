@@ -32,6 +32,7 @@
 #ifdef COOP_MODE_ENHANCED
 #define VOTEMAP_TF		2	// only valid if the server has coop as default
 #define VOTEMAP_COOP		3	// only valid if the server has TF as default
+#define VOTEMAP_INSANECOOP	4	// only valid if the server has TF as default
 #endif
 
 // player voting status
@@ -162,6 +163,10 @@ void( string preString, float voteMapType, string postString ) PrintVoteMapType 
 	} else if ( voteMapType == #VOTEMAP_COOP ) {
 		bprint( #PRINT_HIGH, preString );
 		bprint( #PRINT_HIGH, "Ãןןנ" );
+		bprint( #PRINT_HIGH, postString );
+	} else if ( voteMapType == #VOTEMAP_INSANECOOP ) {
+		bprint( #PRINT_HIGH, preString );
+		bprint( #PRINT_HIGH, "Éמףבמו Ãןןנ" );
 		bprint( #PRINT_HIGH, postString );
 	}
 #endif
@@ -483,6 +488,8 @@ void() Menu_VoteMap =
 			st7 ="\n\n.. Íןהו: as next map \n              Ôובם Æןעפעוףף   \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
 		else if ( voteMapType == #VOTEMAP_COOP )
 			st7 ="\n\n.. Íןהו: as next map \n              Ãןןנ            \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
+		else if ( voteMapType == #VOTEMAP_INSANECOOP )
+			st7 ="\n\n.. Íןהו: as next map \n              Éמףבמו Ãןןנ     \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
 #endif
 		else
 			st7 ="\n\n.. Íןהו: as next map \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
@@ -494,6 +501,8 @@ void() Menu_VoteMap =
 			st7 ="\n\n.. Íןהו: play now¡   \n              Ôובם Æןעפעוףף   \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
 		else if ( voteMapType == #VOTEMAP_COOP )
 			st7 ="\n\n.. Íןהו: play now¡   \n              Ãןןנ            \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
+		else if ( voteMapType == #VOTEMAP_INSANECOOP )
+			st7 ="\n\n.. Íןהו: play now¡   \n              Éמףבמו Ãןןנ     \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
 #endif
 		else
 			st7 ="\n\n.. Íןהו: play now¡   \n\n.. Ðעוצ Ðבחו         \n.. Îורפ Ðבחו         \n\n®® Åריפ              \n";
@@ -537,6 +546,8 @@ void(float input) Menu_VoteMap_Input =
 			voteMapType = #VOTEMAP_TF;
 		else if ( voteMapType == #VOTEMAP_TF )
 			voteMapType = #VOTEMAP_COOP;
+		else if ( voteMapType == #VOTEMAP_COOP )
+			voteMapType = #VOTEMAP_INSANECOOP;
 #endif
 		else {
 			voteMapType = #VOTEMAP_DEFAULT;
@@ -1601,10 +1612,16 @@ float(float final) CheckVoting =
 					localcmd( "localinfo _voted_coop 0\n" );
 				if ( !deathmatch )
 					localcmd( "localinfo _voted_deathmatch 3\n" );
-			} else /*if ( current_voteent.group_no == #VOTEMAP_COOP )*/ {
+			} else if ( current_voteent.group_no == #VOTEMAP_COOP ) {
 				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
-				if ( !coop )
+				if ( !coop || coop == 3 )
 					localcmd( "localinfo _voted_coop 1\n" );
+				if ( deathmatch )
+					localcmd( "localinfo _voted_deathmatch 0\n" );
+			} else /*if ( current_voteent.group_no == #VOTEMAP_INSANECOOP )*/ {
+				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+				if ( coop != 3 )
+					localcmd( "localinfo _voted_coop 3\n" );
 				if ( deathmatch )
 					localcmd( "localinfo _voted_deathmatch 0\n" );
 			}
@@ -1660,10 +1677,16 @@ float(float final) CheckVoting =
 					localcmd( "localinfo _voted_coop 0\n" );
 				if ( !deathmatch )
 					localcmd( "localinfo _voted_deathmatch 3\n" );
-			} else /*if ( current_voteent.group_no == #VOTEMAP_COOP )*/ {
+			} else if ( current_voteent.group_no == #VOTEMAP_COOP ) {
 				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
-				if ( !coop )
+				if ( !coop || coop == 3 )
 					localcmd( "localinfo _voted_coop 1\n" );
+				if ( deathmatch )
+					localcmd( "localinfo _voted_deathmatch 0\n" );
+			} else /*if ( current_voteent.group_no == #VOTEMAP_INSANECOOP )*/ {
+				localcmd("localinfo agr \"\"\n"); // PZ - make sure AGR is going to be off
+				if ( coop != 3 )
+					localcmd( "localinfo _voted_coop 3\n" );
 				if ( deathmatch )
 					localcmd( "localinfo _voted_deathmatch 0\n" );
 			}

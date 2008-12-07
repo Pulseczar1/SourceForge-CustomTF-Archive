@@ -5,7 +5,7 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs version 1.0.6.0 Û11¯11¯2008Ý\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs version 1.0.7.0 Û12¯6¯2008Ý\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
@@ -13,9 +13,9 @@
 //WK #define MSG_CUTFVERSION   "ÐÒÏÚÁÃ CustomÔÆ ö•®”®OfN˜" //<-- 3.2.OfN6
 
 #ifdef COOP_MODE_ENHANCED
-#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ COOP VERSION 1.0.6.0 (11-11-08)"
+#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ COOP VERSION 1.0.7.0 (12-6-08)"
 #else
-#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ VERSION 1.0.6.0 (11-11-08)"
+#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ VERSION 1.0.7.0 (12-6-08)"
 #endif
 
 #define MSG_INTRO  "Welcome to ÐÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®telefragged®com¯shaka\nModified for COOP By Ôèå Çéúíï\n\nžžžžžžžžžžžžžžžžžžžžžžžžžžžžŸ\n\n"
@@ -61,4 +61,13 @@ void() PrintProzacIntro =
 
     //sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\nžžŸ ", #MSG_CUTFVERSION, " žžžŸ\n       Éîæïòíáôéïî èïíåðáçå:\n     www®telefragged®com¯shaka\nžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžŸ\n\n");
     sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\nžžŸ ", #MSG_CUTFVERSION, " žžžŸ\n       Éîæïòíáôéïî èïíåðáçå:\n  http:¯¯customtf®sf®net¯prozaccoop\nžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžžŸ\n\n");
+
+	// Gizmo
+	if ( coop == 3 && !deathmatch ) {
+		local string	str;
+
+		str = colstr( "œThis server is in Insane Coop modeœ\n", #COLSTR_RED );
+		sprint( self, #PRINT_HIGH, str );
+		sprint( self, #PRINT_HIGH, "\n" );
+	}
 };

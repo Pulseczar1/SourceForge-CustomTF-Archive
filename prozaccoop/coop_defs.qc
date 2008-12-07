@@ -76,4 +76,7 @@
 .float monsterweight;
 .float monsterflags;								// MFLAG_*** flags
 
+// coop only player fields
+#define is_dead_observer			monsterweight
+
 #endif

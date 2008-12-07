@@ -174,6 +174,52 @@ void() main =
 */
 };
 
+#ifdef COOP_MODE_ENHANCED
+/*
+=============
+InsaneCoop_CheckDeadPlayers
+=============
+*/
+void() InsaneCoop_CheckDeadPlayers = {
+	local entity	ent;
+	local string	str;
+
+	if ( coop != 3 || deathmatch || !num_players ) {
+		self.nextthink = time + 5;
+		return;
+	}
+
+	// check if there's any players alive
+	ent = find( world, classname, "player" );
+	while ( ent ) {
+		// we found a player that's alive, so stop here
+		if ( ent.health > 0 ) {
+			// if they're an observer then we need additional checks before we can stop
+			if ( ent.playerclass == #PC_UNDEFINED ) {
+				// ok he's not an observer from being dead
+				if ( !ent.#is_dead_observer ) {
+					self.nextthink = time + 5;
+					return;
+				}
+			} else {
+				self.nextthink = time + 5;
+				return;
+			}
+		}
+
+		ent = find( ent, classname, "player" );
+	}
+
+	// at this point there's either no one in the game or they're all dead
+	str = colstr( "Your team has been eliminated.\n", #COLSTR_RED );
+	bprint( #PRINT_HIGH, str );
+	BroadcastSound( "misc/runekey" );
+
+	// give them time to read defeat
+	self.think = execute_changelevel;
+	self.nextthink = time + 5;
+};
+#endif
 
 void() spawn_think = {
 	server_spawned = #TRUE;
@@ -265,6 +311,13 @@ void() worldspawn =
 	if ( !deathmatch ) {
 		if ( infokey( world, "g" ) == string_null )
 			localcmd( "localinfo g off\n" );
+	}
+
+	// Gizmo - check for insane coop mode
+	if ( coop == 3 && !deathmatch ) {
+		e = spawn();
+		e.think = InsaneCoop_CheckDeadPlayers;
+		e.nextthink = time + 10;
 	}
 #endif
 

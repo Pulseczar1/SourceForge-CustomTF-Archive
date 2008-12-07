@@ -6381,7 +6381,7 @@ void( entity e, float weaponNum ) W_SetCurrentWeapon = {
 ============
 W_Sprint
 
-Weapon self print function, used to create generic weapon code
+Weapon single print function, used to create generic weapon code
 that works on players and non-players without special checks.
 ============
 */

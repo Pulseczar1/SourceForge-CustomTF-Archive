@@ -100,10 +100,12 @@ vote
 	agr // PZ - Attackers Go Red mode
 	tf	// Gizmo - Team Fortress (non-coop) mode
 	coop	// Gizmo - Co-op mode
+	insane_coop	// Gizmo - Insane coop mode
   nextmap xxxx
 	agr // PZ
 	tf	// Gizmo - Team Fortress (non-coop) mode
 	coop	// Gizmo - Co-op mode
+	insane_coop	// Gizmo - Insane coop mode
   kick xxxxx
   curse xxxx
   ban xxxxx
@@ -323,9 +325,9 @@ void(float command) CmdHelp =
 	else if (command == #CMDHELP_VOTE)
 		CmdHelpParse("Vote","Commands for starting several kind of votes.\nAvaliable vote types are:\n",#CMDS_VOTE,"");
 	else if (command == #CMDHELP_MAP)
-		CmdHelpParse("Map","Starts voting for a switch to the specified map.\nSyntaxº cmd vote map (MapName) [agr|tf|coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
+		CmdHelpParse("Map","Starts voting for a switch to the specified map.\nSyntaxº cmd vote map (MapName) [agr|tf|coop|insane_coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
 	else if (command == #CMDHELP_NEXTMAP)
-		CmdHelpParse("NextMap","Suggests the specified map as next map.\nSyntaxº cmd vote nextmap (MapName) [agr|tf|coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
+		CmdHelpParse("NextMap","Suggests the specified map as next map.\nSyntaxº cmd vote nextmap (MapName) [agr|tf|coop|insane_coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
 	else if (command == #CMDHELP_KICK)
 		CmdHelpParse("Kick","Proposes to kick the specified user from server.\nSyntaxº cmd vote kick (user)\n","","");
 	else if (command == #CMDHELP_CURSE)
@@ -1786,6 +1788,8 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 								self.group_no = AssignByte2( self.group_no, #VOTEMAP_TF );
 							else if ( !strcasecmp( arg4, "coop" ) )
 								self.group_no = AssignByte2( self.group_no, #VOTEMAP_COOP );
+							else if ( !strcasecmp( arg4, "insane_coop" ) )
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_INSANECOOP );
 #endif
 							else
 							{
@@ -1847,6 +1851,8 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 								self.group_no = AssignByte2( self.group_no, #VOTEMAP_TF );
 							else if ( !strcasecmp( arg4, "coop" ) )
 								self.group_no = AssignByte2( self.group_no, #VOTEMAP_COOP );
+							else if ( !strcasecmp( arg4, "insane_coop" ) )
+								self.group_no = AssignByte2( self.group_no, #VOTEMAP_INSANECOOP );
 #endif
 							else
 							{
