@@ -63,6 +63,7 @@ void() PrintProzacIntro =
     sprint (self, #PRINT_HIGH, #MSG_INFO, "\n",#MSG_OFTEN_CUTFVERSION, "\n ", #MSG_CUTFVERSION, " \n       Ιξζοςνατιοξ θονεπαηε:\n  http:――customtf®sf®net―prozaccoop\n\n\n");
 
 	// Gizmo
+#ifdef COOP_MODE_ENHANCED
 	if ( coop == 3 && !deathmatch ) {
 		local string	str;
 
@@ -70,4 +71,5 @@ void() PrintProzacIntro =
 		sprint( self, #PRINT_HIGH, str );
 		sprint( self, #PRINT_HIGH, "\n" );
 	}
+#endif
 };
