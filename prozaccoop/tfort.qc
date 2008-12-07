@@ -158,10 +158,16 @@ void() TeamFortress_ChangeClass =
 	//local float tc;
 	local string st;
 	//local string scratch;
+	local float	destClass;
 
 	//WK - Handle Custom Class Restarting
 	if (self.playerclass == #PC_CUSTOM && self.done_custom & #CUSTOM_BUILDING) {
+		destClass = self.impulse - #TF_CHANGEPC;
 		DropToCustomClassGen(); //Comatose state
+
+		// Gizmo - if we typed a stock class then buy the items for that class
+		if ( destClass != #PC_CUSTOM )
+			BuyStockClassItems( destClass );
 		return;
 	}
 

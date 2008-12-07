@@ -13,6 +13,7 @@ void() DropFromCustomClassGen; //Called when finished class generation
 void() PrintMoney;
 void(float in) PrintRefund;
 void(float in) PrintNotEnoughMoney;
+void( float type ) BuyHealth;
 void(float cost, float type) BuyWeapon;
 void(float cost, float type) BuyCuTF;
 void(float cost, float type) BuyItem;
@@ -116,6 +117,33 @@ void (float foo)  DebugSprintFloat =
 	sprint(self,#PRINT_HIGH,"\n");
 };
 */
+
+/*
+==============
+BuyStockClassItems
+
+Used to buy all the items of a stock class, if we
+have enough money. This way we can start from an
+already built class and make a few changes.
+==============
+*/
+void( float stockClass ) BuyStockClassItems = {
+	if ( stockClass == #PC_SCOUT ) {
+		BuyHealth( 1 );
+		if ( self.custom_speed == #CUSTOM_SPEED7 && self.money >= #COST_SPEED1 ) {
+			self.money = self.money - #COST_SPEED1;
+			self.custom_speed = #CUSTOM_SPEED1; // Original 650
+			PrintMoney();
+		}
+		BuyWeapon( #COST_SHOTGUN, #WEAP_SHOTGUN );
+		BuyWeapon( #COST_NAILGUN, #WEAP_NAILGUN );
+		BuyWeapon( #COST_AIRF, #WEAP_AIRF );
+		BuyGren( #COST_GR_CALTROP, #GR_TYPE_CALTROP );
+		BuyGren( #COST_GR_CONCUSSION, #GR_TYPE_CONCUSSION );
+		BuyItem( #COST_SECURITYCAMERA, #NIT_SECURITY_CAMERA );
+		BuyJob( #COST_THIEF, #JOB_THIEF );
+	}
+};
 
 void() DropToCustomClassGen =
 {
@@ -576,6 +604,161 @@ float (float item) countcells =
 		if (item == #WEAP_SPANNER) return 150;
 	//}
 	return 0;
+};
+
+#ifdef NEVER_DEFINED
+float(float numitem) GetHPCost =
+{
+	if (numitem == 1)
+		return #COST_HP1;
+	else if (numitem == 2)
+		return #COST_HP2;
+	else if (numitem == 3)
+		return #COST_HP3;
+	else if (numitem == 4)
+		return #COST_HP4;
+	else if (numitem == 5)
+		return #COST_HP5;
+	else if (numitem == 6)
+		return #COST_HP6;
+	else if (numitem == 7)
+		return #COST_HP7;
+
+	return 0;
+};
+#endif
+
+/*
+==============
+BuyHealth
+
+Gizmo - so we don't have to duplicate code when buying
+health and armor.
+==============
+*/
+void( float type ) BuyHealth = {
+	local float	current;
+	local float	tosell, tobuy;
+
+	if ( !type )
+		return;
+
+	if (self.maxarmor == 50)
+	{
+		if (self.health == 75)
+			current = 1;
+		else
+			current = 2;		
+	}
+	else if (self.maxarmor == 100)
+		current = 3;
+	else if (self.maxarmor == 120)
+		current = 4;
+	else if (self.maxarmor == 150)
+		current = 5;
+	else if (self.maxarmor == 200)
+		current = 6;
+	else if (self.maxarmor == 300)
+		current = 7;
+	else
+		current = 0;	// Gizmo - only set to zero if all others fail
+
+	tosell = GetHPCost(current);
+	tobuy = GetHPCost(type);
+	if (self.money < tobuy - tosell)
+	{
+		PrintNotEnoughMoney(tobuy - tosell);
+		return;
+	}
+	
+	if ( current == type || current ) { // sell back?
+		self.max_health = 50;
+		self.health = self.max_health;
+		self.maxarmor = 0;
+		self.armorvalue = 0;
+		self.armortype = 0;
+		self.armor_allowed = 0;
+
+		PrintRefund(tosell);
+		UpdateArmorItem(self);
+
+		if (current == type)
+			return;
+	}
+
+	if (type == 1)
+	{
+		self.max_health = 75;
+		self.health = self.max_health;
+		self.maxarmor = 50;
+		self.armorvalue = self.maxarmor;
+		self.armortype = 0.3;	// Green
+		self.armor_allowed = 0.3; //Green max
+		UpdateArmorItem(self);
+	}
+	else if (type == 2)
+	{
+		self.max_health = 90;
+		self.health = self.max_health;
+		self.maxarmor = 50;
+		self.armorvalue = self.maxarmor;
+		self.armortype = 0.3;	// Green
+		self.armor_allowed = 0.3; //Green max
+		UpdateArmorItem(self);
+	}
+	else if (type == 3)
+	{
+		self.max_health = 80;
+		self.health = self.max_health;
+		self.maxarmor = 100;
+		self.armorvalue = self.maxarmor;
+		self.armortype = 0.6;
+		self.armor_allowed = 0.6;
+		UpdateArmorItem(self);
+	}
+	else if (type == 4)
+	{
+		self.max_health = 90;
+		self.health = self.max_health;
+		self.maxarmor = 120;
+		self.armorvalue = self.maxarmor;
+		self.armortype = 0.6;
+		self.armor_allowed = 0.6;
+		UpdateArmorItem(self);
+	}
+	else if (type == 5)
+	{
+		self.max_health = 100;
+		self.health = self.max_health;
+		self.maxarmor = 150;
+		self.armorvalue = self.maxarmor;
+		self.armortype = 0.6;	
+		self.armor_allowed = 0.6;
+		UpdateArmorItem(self);
+	}
+	else if (type == 6)
+	{
+		self.max_health = 100;
+		self.health = self.max_health;
+		self.maxarmor = 200;
+		self.armorvalue = self.maxarmor;
+		self.armortype = 0.8;	
+		self.armor_allowed = 0.8;
+		UpdateArmorItem(self);
+	}
+	else if (type == 7)
+	{
+		self.max_health = 100;
+		self.health = self.max_health;
+		self.maxarmor = 300;
+		self.armorvalue = self.maxarmor;
+		self.armortype = 0.8;	
+		self.armor_allowed = 0.8;
+		UpdateArmorItem(self);
+	}
+
+	self.money = self.money - tobuy;
+	PrintMoney();
 };
 
 void(float cost, float item) BuyWeapon =

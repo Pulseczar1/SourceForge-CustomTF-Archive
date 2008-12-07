@@ -1438,19 +1438,42 @@ void() respawn =
 
 	if (coop)
 	{
-		// make a copy of the dead body for appearances sake
-		CopyToBodyQue (self);
-		
-		self.velocity = '0 0 0'; // Thanks catscratch
-		self.button0 = #FALSE;
-		self.button1 = #FALSE;
-		self.button2 = #FALSE;
+		// Gizmo - if in coop 3, then do not allow respawning
+		if ( coop == 3 ) {
+#ifndef NO_REVIVE
+			if ( self.modelindex == modelindex_player ) {
+				if ( self.attack_finished < time ) {
+					if ( self.last_saveme_sound < time )
+						sprint( self, #PRINT_HIGH, "You must wait for a medic!\n" );
+					self.impulse = #TF_MEDIC_HELPME;
+					DeadImpulses();
+					self.attack_finished = time + 0.25;
+				}
+			} else {
+				sprint( self, #PRINT_HIGH, "You're dead for good!\n" );
+				PlayerObserverMode();
+				self.#is_dead_observer = #TRUE;
+			}
+#else
+			sprint( self, #PRINT_HIGH, "You're dead for good!\n" );
+			PlayerObserverMode();
+			self.#is_dead_observer = #TRUE;
+#endif
+			self.tfstate = self.tfstate - ( self.tfstate & #TFSTATE_RESPAWN_READY );
+		} else {
+			// make a copy of the dead body for appearances sake
+			CopyToBodyQue (self);
 
-		// get the spawn parms as they were at level start
-		setspawnparms (self);
-		// respawn		
-		PutClientInServer ();
-		
+			self.velocity = '0 0 0'; // Thanks catscratch
+			self.button0 = #FALSE;
+			self.button1 = #FALSE;
+			self.button2 = #FALSE;
+
+			// get the spawn parms as they were at level start
+			setspawnparms (self);
+			// respawn		
+			PutClientInServer ();
+		}
 	}
 	else if (deathmatch)
 	{
@@ -1929,13 +1952,6 @@ void() CleanUpEverything =
 	self.goal_activation = #FALSE;
 };
 
-/*
-===========
-PutClientInServer
-
-called each time a player is spawned
-============
-*/
 void() DecodeLevelParms;
 void() PlayerDie;
 void() TeamFortress_SetHealth;
@@ -1944,35 +1960,22 @@ void() player_touch;
 void(entity p) TeamFortress_SetSpeed;
 void(entity p) TeamFortress_SetSkin;
 
-void() PutClientInServer =
-{
-	//local string st;
-	local float iszoom, oldclass;
-	local entity spot, te;
-	
+/*
+===========
+SetClientAlive
+
+Sets a player so that he is alive.
+Their health and armor are set to the standard respawning amounts.
+Note that this sets the player's frame also.
+===========
+*/
+void() SetClientAlive = {
+	local entity	te;
+
+	self.th_pain = player_pain;
+	self.th_die = PlayerDie;
 	self.touch = player_touch;
 	self.classname = "player";
-	if (self.playerclass != #PC_CUSTOM)
-	{
-		self.max_health = 100;
-		self.health = 100;
-	}
-	
-	// OfN - FIx grenade on spawn
-	te = find(world,classname,"grenade_timer");
-	while (te)
-	{
-		if (te.owner == self)
-		{
-			te.nextthink = time + 0.1;
-			te.think = SUB_Remove;
-		}
-
-		te = find(te,classname,"grenade_timer");
-	}
-
-	self.flags = self.flags - (self.flags & #FL_FINDABLE_NONSOLID);
-
 	self.takedamage = #DAMAGE_AIM;
 	self.solid = #SOLID_SLIDEBOX;
 	self.movetype = #MOVETYPE_WALK;
@@ -1985,10 +1988,6 @@ void() PutClientInServer =
 	self.is_killed = #FALSE;
 
 	self.message = ""; // reset for gremlin and cool gibs (heads)
-
-	//////////////////
-/*	if (self.is_cameraviewing)
-		SwitchFromCamera();*/
 	self.FlashTime = 0;
 	self.flags = #FL_CLIENT;
 	self.aura = 0; //- OfN
@@ -2008,21 +2007,89 @@ void() PutClientInServer =
 	self.reload_rocket_launcher = 0;
 	self.reload_light_assault = 0;
 	self.reload_laser_cannon = 0;
-	
-	//self.is_undercover = 0;
-	//self.undercover_team = 0;
 	self.last_attacked_time = 0; //WK For chaplan healing purposes
 
-	makeImmune(self,time+5);
+	self.deadflag = #DEAD_NO;
+	// pausetime is set by teleporters to keep the player from moving a while
+	self.pausetime = 0;
+	self.view_ofs = '0 0 22';
 
 	// grapple stuff
 	self.on_hook = #FALSE;
 	self.hook_out = #FALSE;
 	self.fire_held_down = #FALSE;
 
+	// Reset all tfstate flags, except for RANDOMPC and ZOOMOFF
+	self.tfstate = self.tfstate & ( #TFSTATE_RANDOMPC | #TFSTATE_ZOOMOFF );
+
+	makeImmune( self, time + 5 );
+
+	if (self.playerclass != #PC_CUSTOM)
+	{
+		self.max_health = 100;
+		self.health = 100;
+	}
+	
+	// OfN - FIx grenade on spawn
+	te = find(world,classname,"grenade_timer");
+	while (te)
+	{
+		if (te.owner == self)
+		{
+			te.nextthink = time + 0.1;
+			te.think = SUB_Remove;
+		}
+
+		te = find(te,classname,"grenade_timer");
+	}
+
+	// Set the weapons and ammo for the player based on class
+	TeamFortress_SetEquipment();
+	// Set the health for the player based on class
+	TeamFortress_SetHealth();
+	// Set the speed for the player based on class
+	TeamFortress_SetSpeed(self);
+	// Set the skin for the player based on class
+	TeamFortress_SetSkin(self);
+	stuffcmd(self, "v_idlescale 0\n");
+	stuffcmd(self, "v_cshift 0 0 0 0\n");
+	//WK Clear Bastard Rotation
+	stuffcmd(self, "-left;-right;cl_yawspeed 140\n");
+
+#ifdef QUAKE_WORLD
+	setmodel (self, string_null);
+	modelindex_null = self.modelindex;
+#endif
+
+	setmodel (self, "progs/eyes.mdl");
+	modelindex_eyes = self.modelindex;
+
+	setmodel (self, "progs/player.mdl");
+	modelindex_player = self.modelindex;
+
+	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);
+};
+
+/*
+===========
+PutClientInServer
+
+called each time a player is spawned
+============
+*/
+void() PutClientInServer =
+{
+#ifdef MAP_DEBUG
+	local string st;
+#endif
+	local float iszoom, oldclass;
+	local entity spot, te;
+
 	DecodeLevelParms ();
 
-//#ifdef COOP_MODE
+/*	if (self.is_cameraviewing)
+		SwitchFromCamera();*/
+
 #ifdef COOP_MODE_ENHANCED
 	// Force all players to be on the same team in Coop mode
 	if ( coop ) {
@@ -2092,6 +2159,9 @@ void() PutClientInServer =
 	if (iszoom == 1)
 		self.tfstate = self.tfstate | #TFSTATE_ZOOMOFF;
 
+	// Gizmo - created SetClientAlive() so it can be used in other places as well
+	SetClientAlive();
+
 	// Display the Player's Class
 	if (!(self.done_custom == 0 || (self.done_custom & #CUSTOM_ON_SPAWN)))
 	{
@@ -2100,33 +2170,15 @@ void() PutClientInServer =
 		else 
 			TeamFortress_PrintJobName(self,self.job);
 	}
-	// Set the weapons and ammo for the player based on class
-	TeamFortress_SetEquipment();
-	// Set the health for the player based on class
-	TeamFortress_SetHealth();
-	// Set the speed for the player based on class
-	TeamFortress_SetSpeed(self);
-	// Set the skin for the player based on class
-	TeamFortress_SetSkin(self);
-	stuffcmd(self, "v_idlescale 0\n");
-	stuffcmd(self, "v_cshift 0 0 0 0\n");
-	//WK Clear Bastard Rotation
-	stuffcmd(self, "-left;-right;cl_yawspeed 140\n");
 
 	//WK Again, since they could lose their sentrygun in SetEquip...
 	DetonateAllGuns();
-
 
 #ifdef QUAKE_WORLD
 	SetTeamName(self);
 #endif
 
-	//W_SetCurrentAmmo (); OfN - Done in SetEquipment()?
-
 	self.attack_finished = time + 0.3;
-
-	self.th_pain = player_pain;
-	self.th_die = PlayerDie;
 
 	// make sure that autozoom is reset
 	if (self.height != 0)
@@ -2134,11 +2186,7 @@ void() PutClientInServer =
 		self.height = 0;
 		TF_zoom(90);
 	}
-		
-	self.deadflag = #DEAD_NO;
-	// pausetime is set by teleporters to keep the player from moving a while
-	self.pausetime = 0;
-	
+
 	spot = SelectSpawnPoint ();
 
 	self.observer_list = spot;
@@ -2200,17 +2248,6 @@ void() PutClientInServer =
 		}
 	}
 
-#ifdef QUAKE_WORLD
-	setmodel (self, string_null);
-	modelindex_null = self.modelindex;
-#endif
-
-	setmodel (self, "progs/eyes.mdl");
-	modelindex_eyes = self.modelindex;
-
-	setmodel (self, "progs/player.mdl");
-	modelindex_player = self.modelindex;
-
 	if (self.playerclass == #PC_UNDEFINED)
 	{
 #ifdef QUAKE_WORLD
@@ -2221,7 +2258,7 @@ void() PutClientInServer =
 		self.current_menu = 1;
 		self.gravity = 0;
 	}
-	
+
 	//WK DropIntoCustomClassGeneration
 	if (self.playerclass == #PC_CUSTOM)
 	{
@@ -2240,10 +2277,6 @@ void() PutClientInServer =
 	else {
 		self.done_custom = 0; //Unitialize this. Maybe set to ON_SPAWN...
 	}
-
-	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);
-	
-	self.view_ofs = '0 0 22';
 
 	player_stand1 ();
 

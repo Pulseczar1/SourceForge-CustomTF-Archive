@@ -443,6 +443,7 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 ClientRevived
 ================
 */
+#ifdef NEVER_DEFINED
 void() ClientRevived =
 {
 	local float iszoom, lastframe;
@@ -546,6 +547,7 @@ void() ClientRevived =
 	
 	self.view_ofs = '0 0 22';
 };
+#endif
 
 /*
 ================
@@ -566,8 +568,10 @@ need them to stay after this returns.
 */
 float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive = {
 	local entity	ent;
-	local vector	tmins, tmaxs, src;
-	local float		healam;
+	local vector	vec1, vec2;
+	local float		oldArmor, oldArmorType, oldArmorClass, oldShells, oldNails, oldRockets, oldCells,
+					oldGren1, oldGren2, oldDetpack, oldC4, oldMedikit;
+	local float		ftmp1, ftmp2;
 
 	// if deadPlayer is world then try to find one
 #ifdef NEVER_DEFINED
@@ -592,8 +596,8 @@ float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive = {
 	if ( !deadPlayer ) {
 		makevectors( medic.v_angle );
 
-		src = medic.origin + '0 0 16';
-		traceline( src, src + v_forward * 96, #TL_EVERYTHING, medic );
+		vec1 = medic.origin + '0 0 16';
+		traceline( vec1, vec1 + v_forward * 96, #TL_EVERYTHING, medic );
 
 		if ( trace_ent )
 		if ( trace_ent.classname == "player" )
@@ -617,14 +621,14 @@ float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive = {
 
 	// make sure there's room
 	if ( deadPlayer.classname == "player" ) {
-		tmins = deadPlayer.mins;
-		tmaxs = deadPlayer.maxs;
+		vec1 = deadPlayer.mins;
+		vec2 = deadPlayer.maxs;
 		setsize( deadPlayer, #VEC_HULL_MIN, #VEC_HULL_MAX );
 
 		if ( InSolid( deadPlayer ) ) {
 			if ( reviveFlags & #REVIVE_PRINTMSGS && medic.flags & #FL_CLIENT )
 				sprint( medic, #PRINT_HIGH, "You need a clear area around him to revive.\n" );
-			setsize( deadPlayer, tmins, tmaxs );
+			setsize( deadPlayer, vec1, vec2 );
 			return #FALSE;
 		}
 	}
@@ -647,13 +651,50 @@ float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive = {
 	if ( reviveFlags & #REVIVE_MEDIKITAMMO )
 		medic.ammo_medikit = medic.ammo_medikit - 10;
 
+	// save off his ammo because SetClientAlive() will set it to stock amounts
+	oldArmor		= deadPlayer.armorvalue;
+	oldArmorType	= deadPlayer.armortype;
+	oldArmorClass	= deadPlayer.armorclass;
+	oldShells		= deadPlayer.ammo_shells;
+	oldNails		= deadPlayer.ammo_nails;
+	oldRockets		= deadPlayer.ammo_rockets;
+	oldCells		= deadPlayer.ammo_cells;
+	oldGren1		= deadPlayer.no_grenades_1;
+	oldGren2		= deadPlayer.no_grenades_2;
+	oldDetpack		= deadPlayer.ammo_detpack;
+	oldC4			= deadPlayer.ammo_c4det;
+	oldMedikit		= deadPlayer.ammo_medikit;
+	ftmp1			= deadPlayer.current_weapon;
+
 	// revive the dead player
-	deadPlayer.health = deadPlayer.max_health;
+	ent = self;
+	self = deadPlayer;
+	ftmp2 = deadPlayer.frame;
+	SetClientAlive();
+	deadPlayer.frame = ftmp2;
+
+	// restore his old ammo
+	deadPlayer.armorvalue		= oldArmor;
+	deadPlayer.armortype		= oldArmorType;
+	deadPlayer.armorclass		= oldArmorClass;
+	deadPlayer.ammo_shells		= oldShells;
+	deadPlayer.ammo_nails		= oldNails;
+	deadPlayer.ammo_rockets		= oldRockets;
+	deadPlayer.ammo_cells		= oldCells;
+	deadPlayer.no_grenades_1	= oldGren1;
+	deadPlayer.no_grenades_2	= oldGren2;
+	deadPlayer.ammo_detpack		= oldDetpack;
+	deadPlayer.ammo_c4det		= oldC4;
+	deadPlayer.ammo_medikit		= oldMedikit;
+	deadPlayer.current_weapon	= ftmp1;
+
+	ftmp2 = deadPlayer.frame;
+	W_SetCurrentAmmo();
+	deadPlayer.frame = ftmp2;
+	self = ent;
 
 	// Gizmo - give them some temporary bonus health so they stand a chance
-	// Gizmo - note that we don't change their armor amount, so they keep whatever they had when they died
-	healam = rint( #WEAP_MEDIKIT_OVERHEAL * 0.5 );
-	T_Heal( deadPlayer, healam, 1 );
+	T_Heal( deadPlayer, #WEAP_MEDIKIT_OVERHEAL, 1 );
 
 	if ( !( deadPlayer.items & #IT_SUPERHEALTH ) ) {
 		deadPlayer.items = deadPlayer.items | #IT_SUPERHEALTH;
@@ -664,17 +705,23 @@ float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive = {
 		newmis.owner = deadPlayer;
 	}
 
-	// reset his stuff
-	ent = self;
-	self = deadPlayer;
-	ClientRevived();
-	self = ent;
-
 	deadPlayer.nextthink = time + 0.1;
 	deadPlayer.think = spy_upb1;
 	deadPlayer.attack_finished = time + 1.5;		// don't let them fire for a little bit
 
-	sound( deadPlayer, #CHAN_VOICE, "player/gasp2.wav", 1, #ATTN_NORM );
+	// make some noise to let others know we're alive
+	if ( deadPlayer.waterlevel == 3 )
+	{
+		if ( random() > 0.5 )
+			sound( deadPlayer, #CHAN_VOICE, "player/drown1.wav", 1, #ATTN_NORM );
+		else
+			sound( deadPlayer, #CHAN_VOICE, "player/drown2.wav", 1, #ATTN_NORM );
+	} else
+		sound( deadPlayer, #CHAN_VOICE, "player/gasp2.wav", 1, #ATTN_NORM );
+
+	// also print a team message
+	teamprefixsprintbi( deadPlayer.team_no, deadPlayer, medic );
+	teamsprintbi( deadPlayer, medic, deadPlayer.netname, " has been revived by ", medic.netname, "\n", "", "" );
 
 	return #TRUE;
 };

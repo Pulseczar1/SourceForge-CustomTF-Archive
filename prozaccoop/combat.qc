@@ -765,9 +765,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
         
 	if (targ.health <= 0) {
 		
-        // If we dont have to gib the target, just set its HP to -1
-        if (T_flags & #TF_TD_DONTGIB)
-            targ.health = -1;
+	// If we dont have to gib the target, just set its HP to -1
+	// Gizmo - if in coop 3 mode then don't gib
+	if ( T_flags & #TF_TD_DONTGIB || ( coop == 3 && !deathmatch && targ.classname == "player" ) )
+		targ.health = -1;
 
         if (inflictor.classname == "detpack" && inflictor.weaponmode == 1 && inflictor.enemy == targ)
 			deathmsg = #DMSG_DETPACK_DIS;

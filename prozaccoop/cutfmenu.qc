@@ -644,7 +644,7 @@ void(float inp) Menu_MiscWeapon_Input =
 		}
 		if (inp == 2) {
 
-			BuyWeapon(#COST_AIRF,#WEAP_AIRF);			 
+			BuyWeapon(#COST_AIRF,#WEAP_AIRF);
 			//sprint(self, #PRINT_HIGH, "Unfortunately all stocks of this item have been requisitioned to increase the glory of the Queen. God save the Queen!\n");
 			Menu_MiscWeapon();
 		}
@@ -1267,7 +1267,6 @@ void(float inp) Menu_Health_Input =
 
 	local float current;
 	local float tosell, tobuy;
-	current = 0;
 
 	if (self.maxarmor == 50)
 	{
@@ -1286,6 +1285,8 @@ void(float inp) Menu_Health_Input =
 		current = 6;
 	else if (self.maxarmor == 300)
 		current = 7;
+	else
+		current = 0;	// Gizmo - only set to zero if all others fail
 
 	tosell = GetHPCost(current);
 	tobuy = GetHPCost(inp);
