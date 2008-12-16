@@ -143,6 +143,36 @@ void () env_bubbles =
 // UNFINISHED/UNSTARTED ENTITIES:
 //(and I'm sure there's more than that, I just haven't gotten around to em yet)
 
+// env_sprite: Half-life sprites do not load properly or at all on most quake engines.
+void () env_sprite_use =
+{
+	if (self.has_tesla == 0) {
+		setmodel( self, self.model );
+		self.has_tesla = 1;
+	}
+	else {
+		setmodel( self, string_null );
+		self.has_tesla = 0;
+	}
+};
+
+void () env_sprite =
+{
+#ifdef ALLOW_HL_SPRITES
+	precache_model( self.model );
+	self.use = env_sprite_use;
+	
+	if (self.spawnflags & 1 || self.spawnflags & 2) {
+		setmodel( self, self.model );
+		self.has_tesla = 1;
+	}
+	else
+		setmodel( self, string_null );
+		
+	HalfLife_DoRender();
+#endif
+};
+
 // env_render: change the rendering properties of target based on own properties.
 // I hope I got this right.
 void () env_render_use =

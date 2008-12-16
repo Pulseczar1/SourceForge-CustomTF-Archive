@@ -52,7 +52,7 @@ void() rot_crush =
 void () func_rotating =
 {
 	self.angles = '0 0 0';
-	self.movetype = 7;
+	self.movetype = MOVETYPE_PUSH;
 
 	HalfLife_DoRender();
 	
@@ -104,6 +104,7 @@ void() Brush_Think =
 };
 void ( entity br_Owner, void() br_Think, float br_Ntime) Brush_Thinkme =
 {
+#ifdef yay
 	local entity brthinker;
 	//self.nextthink = br_Ntime;
 	//return;
@@ -112,6 +113,7 @@ void ( entity br_Owner, void() br_Think, float br_Ntime) Brush_Thinkme =
 	brthinker.think = Brush_Think;
 	brthinker.think1 = br_Think;
 	brthinker.nextthink = br_Ntime;
+#endif
 };
 
 void () pendulum_stop =

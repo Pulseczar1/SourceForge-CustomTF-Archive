@@ -1,5 +1,8 @@
 // Half-Life 1 definitions and such
 
+// sprites
+//#define ALLOW_HL_SPRITES		// ADDME: when engines besides FTE support HL1 sprites I will re-enable this.
+
 // levels/transitions
 float next_transition_use;
 

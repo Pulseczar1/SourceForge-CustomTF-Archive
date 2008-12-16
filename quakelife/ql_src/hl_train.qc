@@ -330,8 +330,8 @@ void () func_tracktrain =
 	}
 
 	//self.cnt = 1;
-	self.solid = 4;
-	self.movetype = 7;
+	self.solid = SOLID_BSP;
+	self.movetype = MOVETYPE_PUSH;
 	self.blocked = ttrain_blocked;
 	self.use = tracktrain_use;
 	self.classname = "tracktrain";
@@ -766,8 +766,8 @@ void () func_trackchange_touch =
 
 void () func_trackchange =
 {
-	self.solid = 4;
-	self.movetype = 7;
+	self.solid = SOLID_BSP;
+	self.movetype = MOVETYPE_PUSH;
 	self.use = func_trackchange_use;
 	//self.classname = "trackchange";
 	setmodel(self, self.model);
