@@ -162,6 +162,8 @@ void () env_sprite =
 	precache_model( self.model );
 	self.use = env_sprite_use;
 	
+	self.effects = self.effects & EF_ADDITIVE;		// so transparency works (val=32)
+	
 	if (self.spawnflags & 1 || self.spawnflags & 2) {
 		setmodel( self, self.model );
 		self.has_tesla = 1;
@@ -236,7 +238,7 @@ void () info_node =
 {
 	self.solid = SOLID_TRIGGER;
 	setsize (self, '-32 -32 -4', '32 32 4');
-	self.targetname = vtos (self.origin);
+	//self.targetname = vtos (self.origin);
 };
 
 

@@ -138,7 +138,7 @@ void (string str_a, string str_b) changelevel2 =
 		landmarked = 0;
 	}
 	else
-		changelevel(str_a);
+		changelevel2(str_a, str_b);
 };
 #endif
 
