@@ -49,9 +49,6 @@ string __fullspawndata;
 
 //string _delaydata;
 
-.string LightningEnd;
-.string LightningStart;
-
 .vector rendercolor;
 //.float renderamt;
 
