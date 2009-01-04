@@ -424,6 +424,9 @@ void() door_touch =
 		return;
 	}
 
+#ifdef HALFLIFE
+	if (!#HL_MAP)
+#endif
 	other.items = other.items - self.items;
 	self.touch = SUB_Null;
 	if (self.enemy)

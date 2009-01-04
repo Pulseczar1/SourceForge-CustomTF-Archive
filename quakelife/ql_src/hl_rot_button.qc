@@ -71,6 +71,10 @@ void () func_rotating =
 		if (self.speed == 35)
 			self.solid = 0;
 	
+	// HACK
+	if (mapname == "c1a1f" && self.classname == "func_rotating")
+		self.solid = SOLID_NOT;
+	
 	setmodel(self, self.model);
 	//SetMovedir();
 	//self.pos1 = self.origin;

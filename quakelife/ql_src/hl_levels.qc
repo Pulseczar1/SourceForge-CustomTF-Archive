@@ -65,6 +65,10 @@ void () Transition_Use =
 //(also handles doors and such with properties that carry over..)
 void () info_landmark =
 {
+#ifdef SVEN_COOP
+	// sven coop maps dont rely on landmarks to my knowledge. It's all executed in the mapname .cfg file.
+	//ADDME: make sure there IS another map we can go to? (see changelevel func in client.qc)
+#else
 	local entity ips, nips;
 	local string lmstats, lmcht;
 	
@@ -140,10 +144,14 @@ void () info_landmark =
 	landmarked = #TRUE;
 	landmark_ent = self;
 	bprint(2,"LANDMARK CREATED!\n");
+#endif
 };
 
 void () HalfLife_SetupLandmark =
 {
+#ifdef SVEN_COOP
+	// don't set up any landmark info on sven coop maps (not needed)
+#else
 	local entity tlandmark, ttrain;
 	local vector ttorg;
 	
@@ -230,6 +238,7 @@ void () HalfLife_SetupLandmark =
 		}
 		ttrain = find(ttrain, classname, "tracktrain");
 	}
+#endif
 }
 
 

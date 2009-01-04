@@ -337,6 +337,15 @@ void() worldspawn =
 
 	// 63 testing
 	lightstyle(63, "a");
+	
+#ifdef SVEN_COOP
+	cvar_set( "nextmap", "" );
+	cvar_set( "nomaptrans", "" );
+	
+	localcmd( "exec maps/" );
+	localcmd( mapname );
+	localcmd( ".cfg\n" );
+#endif
 };
 
 void() StartFrame =

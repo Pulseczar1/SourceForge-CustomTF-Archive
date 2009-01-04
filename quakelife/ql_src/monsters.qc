@@ -43,11 +43,27 @@ void() monster_death_use =
 	if (self.flags & FL_SWIM)
 		self.flags = self.flags - FL_SWIM;
 
+#ifdef HALFLIFE
+	if (!self.target && !self.TriggerTarget)
+		return;
+		
+	if (self.target) {
+		activator = self.enemy;
+		SUB_UseTargets ();
+	}
+	if (self.TriggerTarget)
+		if (self.TriggerTarget != self.target) {
+			self.target = self.TriggerTarget;
+			activator = self.enemy;
+			SUB_UseTargets ();
+		}
+#else
 	if (!self.target)
 		return;
 
 	activator = self.enemy;
 	SUB_UseTargets ();
+#endif
 };
 
 //============================================================================

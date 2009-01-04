@@ -213,6 +213,7 @@ void() SUB_UseTargets =
 	*/
 	if (has_master(self) == #TRUE)
 		return;
+	dprint("classname ", self.classname, " and targetname ", self.targetname, " and target ", self.target,  " is activating stuff\n");
 	if (self.target) {
 		otemp = self;
 		t = world;

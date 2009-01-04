@@ -252,6 +252,11 @@ void() train_wait =
 		self.has_tesla = 0;
 		return;
 	}
+	if (self.message) {
+	bprint(2,"GOT SOMETHING TO TELL YA\n");
+		Delayed_Timer
+		self.message = "";
+	}
 #endif
 	if (self.wait)
 	{
@@ -273,6 +278,11 @@ void() train_next =
 {
 	local entity	targ;
 
+	if (self.has_tesla == 1){
+		train_wait();
+		return;
+	}
+	
 	targ = find (world, targetname, self.target);
 	self.target = targ.target;
 	if (!self.target) {
@@ -303,6 +313,9 @@ void() train_next =
 		if (targ.spawnflags & 1) {
 			self.has_tesla = 1;		// wait till triggered again
 		}
+		if (targ.message)
+			self.message = targ.message;
+
 		if (targ.spawnflags & 2) {	// teleport there auto
 			setorigin(self, targ.origin - ((self.mins+self.maxs)*.5));
 			SUB_CalcMove(targ.origin - ((self.mins+self.maxs)*.5), 9999, train_wait);
