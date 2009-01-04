@@ -44,6 +44,22 @@ void () trigger_auto_go =
 	}
 };
 
+#ifdef SVEN_COOP
+void () trigger_auto_think =
+{
+	if (!self.globalstate || cvar(self.globalstate) == 1) {
+		trigger_auto_go();
+		if (self.spawnflags & 1)
+			dremove(self);
+	}
+};
+
+void () trigger_auto =
+{
+	self.think = trigger_auto_think;
+	self.nextthink = time + 1;
+};
+#else
 void () trigger_auto_think =
 {
 /*	if (num_players < 1) {
@@ -61,7 +77,8 @@ void () trigger_auto_think =
 		trigger_auto_go();
 	}
 	else {
-		self.nextthink = time + 1;
+		self.nextthink = time + 1;		// FIXME: this is improper usage of this entity. It needs to reactivate when a level is re-entered.
+										// sven coop method works well, but is not meant for singleplayer consistency.
 	}
 };
 
@@ -70,3 +87,4 @@ void () trigger_auto =
 	self.think = trigger_auto_think;
 	self.nextthink = time + 5;
 };
+#endif

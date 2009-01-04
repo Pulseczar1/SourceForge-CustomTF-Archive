@@ -138,7 +138,7 @@ void (string str_a, string str_b) changelevel2 =
 		landmarked = 0;
 	}
 	else
-		changelevel2(str_a, str_b);
+		changelevel(str_a);//changelevel2(str_a, str_b);		// save the level damnit! >:0
 };
 #endif
 
@@ -554,16 +554,59 @@ local entity ips, nips;
 };
 #endif
 
+#ifdef SVEN_COOP
+void () trigger_changelevel_parse;
+void () trigger_changelevel_activate =
+{
+	self.touch = changelevel_touch;
+	self.use = changelevel_use;
+	self.solid = SOLID_TRIGGER;
+};
+#endif
 
 /*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
 void() trigger_changelevel =
 {
+#ifndef SVEN_COOP
 	if (!self.map)
 		objerror ("chagnelevel trigger doesn't have map");
-	
+#endif
 	InitTrigger ();
+	
+#ifdef SVEN_COOP
+	self.think = trigger_changelevel_parse;
+	self.nextthink = time + .1;
+};
+
+void () trigger_changelevel_parse =
+{
+	if ( cvar_string( "nomaptrans" ) != "" ) {
+		if ( self.map == cvar_string( "nomaptrans" ) ) {
+			self.touch = SUB_Null;
+			self.use = SUB_Null;
+			self.solid = SOLID_BBOX;
+			self.renderamt = 0;
+			HalfLife_DoRender();
+			return;
+		}
+	}
+	if ( cvar_string( "nextmap" ) != "" ) {
+		if (!self.map) {
+			self.use = trigger_changelevel_activate;
+			self.map = cvar_string( "nextmap" );
+			return;
+		}
+		self.map = cvar_string( "nextmap" );
+		trigger_changelevel_activate();
+		return;
+	}
+	else
+		if (!self.map)
+			objerror ("chagnelevel trigger doesn't have map");
+#endif
+	
 #ifdef HALFLIFE
 	if (self.landmark) {
 		if (self.targetname == "changetoc1a1e") {
@@ -585,6 +628,7 @@ void() trigger_changelevel =
 	if ( self.targetname )
 		self.use = changelevel_use;
 #endif
+
 };
 
 
@@ -692,7 +736,11 @@ entity() SelectSpawnPoint =
 		if (!spotspawn)
 		{
 			spotspawn = 1;
+#ifdef SVEN_COOP
+			spot = find (world, classname, "info_player_coop");
+#else
 			spot = find (world, classname, "info_player_start");
+#endif
 			if (spot)
 				return spot;
 		}
@@ -925,9 +973,13 @@ The normal starting point for a level.
 */
 void() info_player_start =
 {
+#ifdef SVEN_COOP
+	self.classname = "info_intermission";
+#else
 #ifdef HALFLIFE
 	if (/*HalfLife_UseLandmark() == #TRUE || */landmarked == #TRUE )
 		dremove(self);
+#endif
 #endif
 };
 
@@ -939,11 +991,34 @@ void() info_player_start2 =
 {
 };
 
+#ifdef SVEN_COOP
+void () info_player_deathmatch_use =
+{
+	if (self.has_tesla == 1) {
+		self.has_tesla = 0;
+		self.classname = "info_player_coop";
+	}
+	else {
+		self.has_tesla = 1;
+		self.classname = "info_poop";
+	}
+};
+#endif
+
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for deathmatch games
 */
 void() info_player_deathmatch =
 {
+#ifdef SVEN_COOP
+	if (self.spawnflags & 2) {	// start disabled
+		self.has_tesla = 1;
+		self.classname = "info_poop";
+	}
+	else
+		self.classname = "info_player_coop";
+	self.use = info_player_deathmatch_use;
+#endif
 };
 
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)

@@ -1,5 +1,7 @@
 // Half-Life 1 definitions and such
 
+#define SVEN_COOP				// tells quakelife not to rely on landmarks and utilize sven coop map configs/spawn entities
+
 // sprites
 //#define ALLOW_HL_SPRITES		// ADDME: when engines besides FTE support HL1 sprites I will re-enable this.
 
