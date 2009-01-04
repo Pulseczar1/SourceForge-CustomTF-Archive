@@ -368,6 +368,7 @@ void() changelevel_use =
 		T_Damage (other, self, self, 50000, MOD_HLIFE);
 		return;
 	}
+#ifndef SVEN_COOP			// sven coop maps don't use transition entities
 #ifdef HALFLIFE
 hldprint(2,"USED!\n");
 	local entity te;
@@ -395,6 +396,7 @@ hldprint(2,"USED!\n");
 	if (self.landmark) {
 		HalfLife_SetupLandmark();
 	}
+#endif
 #endif
 	bprint (#PRINT_HIGH, other.netname);
 	if ( self.message ) {
@@ -439,6 +441,9 @@ void() changelevel_touch =
 	}
 
 #ifdef HALFLIFE
+	if (self.spawnflags & 2)		// no touch exit
+		return;
+
 	HalfLife_SetupLandmark();
 #endif
 	
@@ -594,17 +599,26 @@ void () trigger_changelevel_parse =
 	}
 	if ( cvar_string( "nextmap" ) != "" ) {
 		if (!self.map) {
-			self.use = trigger_changelevel_activate;
+			self.use = self.use = changelevel_use;//trigger_changelevel_activate;
 			self.map = cvar_string( "nextmap" );
 			return;
 		}
 		self.map = cvar_string( "nextmap" );
 		trigger_changelevel_activate();
+		// todo: maybe make exits solid until activated? Like so:
+		/*
+		self.solid = SOLID_BBOX;
+		self.renderamt = 0;
+		HalfLife_DoRender();
+		*/
 		return;
 	}
-	else
+	else {
 		if (!self.map)
 			objerror ("chagnelevel trigger doesn't have map");
+		if ( self.targetname )
+			self.use = changelevel_use;
+	}
 #endif
 	
 #ifdef HALFLIFE

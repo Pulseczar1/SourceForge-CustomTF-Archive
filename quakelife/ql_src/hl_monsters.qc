@@ -8,6 +8,45 @@ void () monster_human_grunt =
 	self.classname = "monster_enforcer";
 };
 
+void () monster_pitdrone =
+{
+	self.origin_z += 30;
+	self.classname = "monster_hell_knight";
+	monster_hell_knight();
+};
+
+void () monster_gonome =
+{
+	self.origin_z += 30;
+	self.classname = "monster_ogre";
+	monster_ogre();
+};
+
+void () monster_male_assassin =
+{
+	self.origin_z += 30;
+	self.classname = "monster_tarbaby";
+	monster_tarbaby();
+};
+
+void () monster_zombie_soldier =
+{
+	self.origin_z += 30;
+	self.classname = "monster_shambler";
+	monster_shambler();
+};
+
+void () monster_human_medic_ally =
+{
+	monster_human_grunt();
+};
+
+void () monster_human_grunt_ally =
+{
+	self.origin_z += 30;
+	monster_army();
+};
+
 // yeah, evil scientists..
 void () monster_scientist =
 {
