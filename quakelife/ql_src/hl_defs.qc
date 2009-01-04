@@ -22,6 +22,9 @@ void () HalfLife_DoRender;
 void () SetSpawnObject;
 .float spawnobject;			// spawn object on destruction
 
+// timers
+void ( string to_trigger, float trig_delay ) Delayed_Timer;
+
 // effects
 .float volume;
 #define START_ON		1

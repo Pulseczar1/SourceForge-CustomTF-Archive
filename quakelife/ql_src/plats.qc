@@ -253,8 +253,7 @@ void() train_wait =
 		return;
 	}
 	if (self.message) {
-	bprint(2,"GOT SOMETHING TO TELL YA\n");
-		Delayed_Timer
+		Delayed_Timer( self.message, 0 );
 		self.message = "";
 	}
 #endif
