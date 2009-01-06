@@ -8,6 +8,13 @@ void () monster_human_grunt =
 	self.classname = "monster_enforcer";
 };
 
+void () monster_robogrunt =
+{
+	self.origin_z += 30;
+	monster_demon1();
+	self.classname = "monster_demon1";
+};
+
 void () monster_pitdrone =
 {
 	self.origin_z += 30;
