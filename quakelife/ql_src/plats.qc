@@ -242,10 +242,6 @@ void() train_use =
 void() train_wait =
 {
 #ifdef HALFLIFE
-	if (self.style > 0) {
-		self.speed = self.style;
-		self.style = 0;
-	}
 	if (self.has_tesla == 1) {
 		self.use = train_use;
 		self.think = func_train_find;
@@ -301,6 +297,18 @@ void() train_next =
 		self.wait = 0;
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 #ifdef HALFLIFE
+	if (self.mtf_items > 0) {
+#ifdef SVEN_COOP
+
+/*
+		if (mapname == "c2a4c")
+			self.speed = self.mtf_items * .75;
+		else
+		*/
+#endif
+			self.speed = self.mtf_items;
+		self.mtf_items = 0;
+	}
 	if (#HL_MAP) {//self.globalname)
 	
 		/*if (self.has_tesla == 1) {
@@ -308,7 +316,7 @@ void() train_next =
 			return;
 		}*/
 		if (targ.speed > 0)			// change our speed to match the path_corner's
-			self.style = targ.speed;
+			self.mtf_items = targ.speed;
 		if (targ.spawnflags & 1) {
 			self.has_tesla = 1;		// wait till triggered again
 		}

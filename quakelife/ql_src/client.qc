@@ -932,7 +932,10 @@ void() PutClientInServer =
 	self.deadflag = DEAD_NO;
 	
 	spot = SelectSpawnPoint ();
-
+#ifdef SVEN_COOP
+	if (spot == world)	// hack :(
+		spot = SelectSpawnPoint ();
+#endif
 	self.origin = spot.origin + '0 0 1';
 	self.angles = spot.angles;
 	self.fixangle = TRUE;           // turn this way immediately
