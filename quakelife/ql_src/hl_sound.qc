@@ -57,6 +57,11 @@ void () ambient_use =
 		speaker_think();
 		return;
 	}
+	
+	// volume can only be between 0 - 1 in quake (maybe FTE supports higher.. not sure)
+	if (self.health > 1)
+		self.health = 1;
+	
 	if (self.#silent == #TRUE) {
 		if (self.spawnflags & AMBIENT_SOUND_NOT_LOOPING) {
 			sound (self, CHAN_VOICE, self.message, self.health, self.has_tesla /*ATTN_NORM*/);
@@ -91,7 +96,12 @@ void () ambient_generic =
 {
 	local string link;
 	local float i;
+
+#ifdef DARKPLACES
+	link = hl_script_str(strtoupper(self.message)/*self.message*/);
+#else
 	link = hl_script_str(strconv(2,0,0,self.message)/*self.message*/);
+#endif
 	
 	if (link == "NOLINK") {
 		if (substr(self.message , 0, 1) == "*")
@@ -165,7 +175,12 @@ void () scripted_sentence =
 	{
 		// same
 	}
+	
+#ifdef DARKPLACES
+	link = hl_script_str(strtoupper(self.sentence));
+#else
 	link = hl_script_str(strconv(2,0,0,self.sentence));
+#endif
 	link = strzone(link);
 	
 	if (link == "NOLINK")
