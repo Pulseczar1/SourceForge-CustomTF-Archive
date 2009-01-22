@@ -217,6 +217,9 @@ local entity lstart, lend;
 	
    lstart = find(world, targetname, self.LightningStart);
    lend = find(world, targetname, self.LightningEnd);
+   
+   if (lend == world || lstart == world)
+		return;
    // xavior: quake lets us use lightning.. SO LET THERE BE LIGHT :)
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_LIGHTNING1);
@@ -244,7 +247,7 @@ void () lbeam_think =
 	   lstart = find(world, targetname, self.LightningStart);
 	   lend = find(world, targetname, self.LightningEnd);
 	   // xavior: quake lets us use lightning.. SO LET THERE BE LIGHT :)
-	   if (lend != world && lstart != world)
+	   if (lend != world && lstart != world && lend.classname != "player")
 		TE_lightning1(self, lstart.origin, lend.origin);
 	   /*
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);

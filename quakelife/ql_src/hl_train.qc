@@ -556,7 +556,7 @@ void() tchanger_hit =
 		self.#track_activated = #FALSE;
 		if (self.enemy != world)
 			self.enemy.target = self.toptrack;
-		bprint(2,"TARGET BOTTOM\n");
+		hldprint(2,"TARGET BOTTOM\n");
 	}
 	if (self.enemy != world) {
 		self.enemy.netname = "neeh";

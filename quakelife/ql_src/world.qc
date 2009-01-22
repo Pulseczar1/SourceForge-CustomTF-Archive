@@ -339,8 +339,10 @@ void() worldspawn =
 	lightstyle(63, "a");
 	
 #ifdef SVEN_COOP
-	cvar_set( "nextmap", "" );
-	cvar_set( "nomaptrans", "" );
+	//cvar_set( "nextmap", "" );
+	//cvar_set( "nomaptrans", "" );
+	localcmd( "set nextmap \"\"\n" );
+	localcmd( "set nomaptrans \"\"\n" );
 	
 	localcmd( "exec maps/" );
 	localcmd( mapname );

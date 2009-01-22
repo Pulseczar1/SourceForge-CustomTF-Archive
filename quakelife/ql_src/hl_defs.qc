@@ -1,6 +1,7 @@
 // Half-Life 1 definitions and such
 
 #define SVEN_COOP				// tells quakelife not to rely on landmarks and utilize sven coop map configs/spawn entities
+#define DARKPLACES				// use darkplaces' string conversion
 
 // sprites
 //#define ALLOW_HL_SPRITES		// ADDME: when engines besides FTE support HL1 sprites I will re-enable this.
@@ -50,6 +51,7 @@ void ( string to_trigger, float trig_delay ) Delayed_Timer;
 // master stuff
 .string master;
 float ( entity t_ent ) has_master;
+float ( entity t_ent ) activate_master;
 
 // Landmarks
 entity landmark_ent;		// the landmark entity that players enter the game through

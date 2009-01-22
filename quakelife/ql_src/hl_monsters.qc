@@ -8,6 +8,11 @@ void () monster_human_grunt =
 	self.classname = "monster_enforcer";
 };
 
+void () monster_shocktrooper =
+{
+	monster_human_grunt();
+};
+
 void () monster_robogrunt =
 {
 	self.origin_z += 30;

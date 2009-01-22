@@ -85,3 +85,29 @@ float ( entity t_ent ) has_master =
 	
 	return 0;
 };
+
+// activate master (used on teleporters)
+float ( entity t_ent ) activate_master =
+{
+	local entity t, oself;
+	oself = self;
+	
+	if (!t_ent.master)
+		return 0;
+	
+	t = find(world, targetname, t_ent.master);
+	if (!t || t == world || t.activated == 1)
+	{
+		return 0;
+	}
+	if (t.classname == "multisource") {
+		if (t.use) {
+			self = t;
+			self.use();
+			self = oself;
+			return 1;
+		}
+	}
+	
+	return 0;
+};

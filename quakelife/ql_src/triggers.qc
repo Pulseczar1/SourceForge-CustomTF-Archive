@@ -469,8 +469,10 @@ local vector	org;
 			if (other.classname != "player")
 				return;
 
-	if (has_master(self))
-		return;
+	if (has_master(self)) {
+		//if (!activate_master(self))
+			return;
+	}
 		
 	if (self.classname == "monster_nihilanth")
 		return;
