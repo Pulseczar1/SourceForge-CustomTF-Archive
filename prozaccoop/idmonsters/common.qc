@@ -940,6 +940,11 @@ void( entity attacker ) COOP_PrePain = {
 	if ( random() < 0.45 ) {
 		currentPriority = COOP_GetTargetPriority( self, self.enemy );
 		attackerPriority = COOP_GetTargetPriority( self, attacker );
+
+		// don't switch targets too often when multiple monsters are attacking us
+		if ( IsMonster( self.enemy ) && IsMonster( attacker ) )
+			currentPriority = currentPriority + 0.5;
+
 		if ( attackerPriority > currentPriority ) {
 			if ( COOP_IsValidTarget( self, attacker ) )
 				COOP_AttackTarget( attacker, #FALSE );

@@ -767,7 +767,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 		
 	// If we dont have to gib the target, just set its HP to -1
 	// Gizmo - if in coop 3 mode then don't gib
+#ifdef COOP_MODE_ENHANCED
 	if ( T_flags & #TF_TD_DONTGIB || ( coop == 3 && !deathmatch && targ.classname == "player" ) )
+#else
+	if ( T_flags & #TF_TD_DONTGIB )
+#endif
 		targ.health = -1;
 
         if (inflictor.classname == "detpack" && inflictor.weaponmode == 1 && inflictor.enemy == targ)

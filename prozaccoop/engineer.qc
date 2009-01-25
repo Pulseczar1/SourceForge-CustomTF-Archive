@@ -795,8 +795,11 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 			dremove(newmis);
 			return;
 		}
-		tmp1 = '-16 -16 0';
-		tmp2 = '16 16 48';
+		// Gizmo - removed the dispenser jump crap
+		tmp1 = '-8 -8 0';
+		tmp2 = '8 8 24';
+//		tmp1 = '-16 -16 0';
+//		tmp2 = '16 16 48';
 
 		newmis.mdl = "progs/disp.mdl";		  
 		
@@ -1140,8 +1143,7 @@ void() TeamFortress_FinishedBuilding =
 
 		oldself.solid = #SOLID_BBOX;
 		setmodel(oldself, oldself.mdl);
-		setsize (oldself, '-8 -8 0', '8 8 24');
-		setorigin(oldself, oldself.origin + '0 0 16'); //CH disp does jump
+//		setsize (oldself, '-8 -8 0', '8 8 24');
 	}
 	else if (oldself.weapon == #BUILD_SENTRYGUN)
 	{
@@ -1376,8 +1378,7 @@ void() TeamFortress_FinishedBuilding =
 
 		oldself.solid = #SOLID_BBOX;
 		setmodel(oldself, oldself.mdl);
-		setsize (oldself, '-16 -16 0', '16 16 4');
-		setorigin(oldself, oldself.origin + '0 0 8'); //CH does jump
+//		setsize (oldself, '-16 -16 0', '16 16 4');
 
 		oldself.heat = 4; //dont come on for 4 seconds
 		oldself.think = Teleporter_heat_think;
@@ -1427,9 +1428,7 @@ void() TeamFortress_FinishedBuilding =
 		oldself.angles = '0 0 0';
 
 		setmodel(oldself, oldself.mdl);
-		setsize (oldself, '-6 -6 0', '6 6 54');
-		setorigin(oldself, oldself.origin + '0 0 8'); //CH does jump
-
+//		setsize (oldself, '-6 -6 0', '6 6 54');
 
 
 		//oldself.heat = 4; //dont come on for 4 seconds

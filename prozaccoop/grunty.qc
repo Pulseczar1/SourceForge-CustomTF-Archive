@@ -15,7 +15,7 @@
 
 */
 
-#define GRUNTY_PAINTIME 			8
+#define GRUNTY_PAINTIME 			2
 
 #define GRUNTY_MODE_FOLLOWOWNER		1
 #define GRUNTY_MODE_HOLDPOSITION		2
@@ -520,6 +520,7 @@ void() grunty_nail3 = [$nailatt2, grunty_nail4]
 		if (self.ammo_nails < 1) PrintFromSoldier(self,self.real_owner,"i've run out of nails!\n",#PRINT_LOW);
 	}
 };
+float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon;
 void() grunty_nail4 = [$nailatt2, grunty_nail1] 
 {
 	GruntyThink(); GRun(); self.effects = self.effects - (self.effects & #EF_DIMLIGHT);
@@ -529,7 +530,10 @@ void() grunty_nail4 = [$nailatt2, grunty_nail1]
 	vis = visible(self.enemy);
 	dist = vlen(self.origin - self.enemy.origin);
 
-	if (!vis || self.ammo_nails < 1 || self.enemy.health <= 0 || dist < 200 || random() < 0.025)
+	// Gizmo - removed "dist < 200" from this, and added GruntyPickBestWeapon() check
+	// Gizmo - grunty can be limited on his weapon's use (defaults to all weapons allowed)
+	if (!vis || self.ammo_nails < 1 || self.enemy.health <= 0 || random() < 0.025
+		|| GruntyPickBestWeapon( self, self.#allowed_weapons, dist ) != #WEAP_NAILGUN )
 	{
 		self.walkframe = 0;
 		grunty_run();
@@ -737,7 +741,7 @@ void() GruntyScanTargets =
 {
 	local entity	targ; // our hapless foe
 	local string	st;
-	
+
 	if (self.enemy != world)
 		if (self.enemy.health <= 0 || !self.enemy.is_connected)
 		{
@@ -791,7 +795,13 @@ void() GruntyScanTargets =
 				return;
 			}
 			// tactic
-			
+
+			// Gizmo - if we're seeking out an enemy, check if another one is visible so we don't get lamed
+			targ=GruntyPharse();
+			if ( targ != self )
+			if ( targ != world )
+				self.search_time = 0;	// Gizmo - hack to reuse the code below
+
 			if (self.demon_one == world) // if we don't have a enemy last seen marker
 			{
 				if (self.demon_one!=world)
@@ -869,30 +879,60 @@ void() GruntyScanTargets =
 
 // Gizmo
 float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon = {
+	local float enemySpeed;
+
+	// used for deciding which weapon to use
+	if ( bot.enemy.flags & #FL_ONGROUND && IsMonster( bot.enemy ) )
+		enemySpeed = 0;
+	else {
+		// Gizmo - this works, but I want the bot to ignore forward and backward enemy movement because only enemies strafing around the grunt matter
+		//enemySpeed = vlen( bot.enemy.velocity );
+		// Gizmo - NOTE: I don't think the previous v_* vectors need to be restored upon return
+		makevectors( bot.angles );
+		enemySpeed = bot.enemy.velocity * ( v_right + v_up );
+		enemySpeed = fabs( enemySpeed );
+	}
+
 	if ( dist < 64 ) {
+		// use the knife and super shotgun first
 		if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE && bot.cutf_items & #CUTF_KNIFE )
 			return #WEAP_AXE;
 		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
 			&& bot.ammo_shells > 1 )
 			return #WEAP_SUPER_SHOTGUN;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 150 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
 		if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE )
 			return #WEAP_AXE;
 		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
 			&& bot.ammo_shells > 0 )
 			return #WEAP_SHOTGUN;
-		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
-			&& bot.ammo_rockets > 0 )
-			return #WEAP_ROCKET_LAUNCHER;
 		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
 			&& bot.ammo_nails > 0 )
 			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
 
 		// at this range we try them all
 		return 0;
 	} else if ( dist < 200 ) {
+		// use the super shotgun first
 		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
 			&& bot.ammo_shells > 1 )
 			return #WEAP_SUPER_SHOTGUN;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 100 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
 		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
 			&& bot.ammo_shells > 0 )
 			return #WEAP_SHOTGUN;
@@ -903,9 +943,17 @@ float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon = {
 			&& bot.ammo_nails > 0 )
 			return #WEAP_NAILGUN;
 	} else if ( dist < 400 ) {
+		// use the rocket launcher first
 		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
 			&& bot.ammo_rockets > 0 )
 			return #WEAP_ROCKET_LAUNCHER;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 50 && enemySpeed < 100 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
 		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
 			&& bot.ammo_shells > 0 )
 			return #WEAP_SHOTGUN;
@@ -916,28 +964,49 @@ float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon = {
 			&& bot.ammo_nails > 0 )
 			return #WEAP_NAILGUN;
 	} else if ( dist < 1100 ) {
+		// use the rocket launcher first
 		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
 			&& bot.ammo_rockets > 0 )
 			return #WEAP_ROCKET_LAUNCHER;
+
+		// opportunistic weapon usage
 		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
-			&& bot.ammo_nails > 0 )
+			&& bot.ammo_nails > 0 && enemySpeed < 100 )
 			return #WEAP_NAILGUN;
+
+		// standard weapon priority
 		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
 			&& bot.ammo_shells > 0 )
 			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
 		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
 			&& bot.ammo_shells > 1 )
 			return #WEAP_SUPER_SHOTGUN;
 	} else if ( dist < 1400 ) {
+		// try the rocket launcher first
 		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
 			&& bot.ammo_rockets > 0 && random() > 0.75 )
 			return #WEAP_ROCKET_LAUNCHER;
+
+		// opportunistic weapon usage
 		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
-			&& bot.ammo_nails > 0 )
+			&& bot.ammo_nails > 0 && enemySpeed < 75 )
 			return #WEAP_NAILGUN;
+
+		// standard weapon priority
 		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
 			&& bot.ammo_shells > 0 )
 			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// this is probably out of the super shotgun range
 		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
 			&& bot.ammo_shells > 1 )
 			return #WEAP_SUPER_SHOTGUN;
@@ -945,9 +1014,16 @@ float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon = {
 		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
 			&& bot.ammo_rockets > 0 && random() > 0.98 )
 			return #WEAP_ROCKET_LAUNCHER;
+
+		// standard weapon priority
 		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
 			&& bot.ammo_nails > 0 )
 			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// these weapons won't do much if anything at this range
 		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
 			&& bot.ammo_shells > 0 )
 			return #WEAP_SHOTGUN;
@@ -955,27 +1031,29 @@ float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon = {
 			&& bot.ammo_shells > 1 )
 			return #WEAP_SUPER_SHOTGUN;
 	} else {
-		local float r;
-
-		// at this extreme range randomly switch between weapons
-		r = random();
-
+		// use the rocket launcher and nailgun randomly
 		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
-			&& bot.ammo_rockets > 0 && r < 0.33 )
+			&& bot.ammo_rockets > 0 && random() > 0.5 )
 			return #WEAP_ROCKET_LAUNCHER;
+
+		// standard weapon priority
 		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
-			&& bot.ammo_nails > 0 && r < 0.66 )
+			&& bot.ammo_nails > 0 )
 			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// these weapons won't do much if anything at this range
 		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
 			&& bot.ammo_shells > 0 )
 			return #WEAP_SHOTGUN;
-		// not going to be very effective (if at all), but use it as a last resort
 		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
 			&& bot.ammo_shells > 1 )
 			return #WEAP_SUPER_SHOTGUN;
 	}
 
-	// all we can use is an axe, oh well, it'll look funny
+	// all we can use is an axe, oh well, it'll look funny and it'll let the owner know he's out of ammo
 	if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE )
 		return #WEAP_AXE;
 	return 0;
@@ -1497,14 +1575,12 @@ void() GRun =
 	}
 	else if (self.has_teleporter == 0) // no evasive, standard move (forward)
 	{
-		//- OfN - force move to forward if we r going to a last seen enemy waypoint
-		if (self.goalentity == self.demon_one && self.demon_one!=world)
-		{
-			botmovedist(vectoyaw(v_forward), dist); // move
-			return;
-		}
-
 		botmovedist(vectoyaw(v_forward), dist); // move
+
+		//- OfN - force move to forward if we r going to a last seen enemy waypoint
+		// Gizmo - removed the duplicate botmovedist() call and moved this after the main botmovedist() call
+		if ( self.goalentity == self.demon_one && self.demon_one != world )
+			return;
 
 		// Gizmo - modified this for preferred range
 		if ( self.enemy != world ) {
@@ -1871,7 +1947,7 @@ void() ArmyDeathSound =
 
 // We'll include pain here
 
-void() grunty_pain1 = [$pain1, grunty_pain2] {PainSound();self.weaponframe=0;self.effects=0;};
+void() grunty_pain1 = [$pain1, grunty_pain2] {self.weaponframe=0;self.effects=0;};
 void() grunty_pain2 = [$pain2, grunty_pain3] {};
 void() grunty_pain3 = [$pain3, grunty_pain4] {};
 void() grunty_pain4 = [$pain4, grunty_pain5] {};
@@ -1879,10 +1955,9 @@ void() grunty_pain5 = [$pain5, grunty_pain6] {};
 void() grunty_pain6 = [$pain6, grunty_run] 
 {
 	self.walkframe = 0;
-	self.pain_finished = time + random()*1.5*(self.has_sensor/17) + #GRUNTY_PAINTIME;  
 };
 
-void() grunty_axepain1 =	[	$axpain1,	grunty_axepain2 ] {PainSound();self.weaponframe=0;self.effects=0;};
+void() grunty_axepain1 =	[	$axpain1,	grunty_axepain2 ] {self.weaponframe=0;self.effects=0;};
 void() grunty_axepain2 =	[	$axpain2,	grunty_axepain3 ] {};
 void() grunty_axepain3 =	[	$axpain3,	grunty_axepain4 ] {};
 void() grunty_axepain4 =	[	$axpain4,	grunty_axepain5 ] {};
@@ -1890,7 +1965,6 @@ void() grunty_axepain5 =	[	$axpain5,	grunty_axepain6 ] {};
 void() grunty_axepain6 =	[	$axpain6,	grunty_run		] 
 {
 	self.walkframe = 0; 									// - 1)/16);
-	self.pain_finished = time + random()*1.5*(self.has_sensor/17) + #GRUNTY_PAINTIME;	 
 };
 
 void(entity attacker, float damage) grunty_pain =
@@ -1904,10 +1978,20 @@ void(entity attacker, float damage) grunty_pain =
 
 	if (self.pain_finished > time)
 		return;
+
+	// Gizmo - always play pain sound if time; this used to be in pain1 and axpain1 frames
+	PainSound();
+	// Gizmo - this used to be at the end of each pain animation
+	self.pain_finished = time + random()*1.5*(self.has_sensor/17) + #GRUNTY_PAINTIME;
 	
 	//if (random()*40 > damage) // random()*40+40*((self.has_sensor-1)/16)
-	if (random()*50 + 60*((self.has_sensor - 1)/16) > damage)
-		return; 
+	// Gizmo - don't need this anymore
+//	if (random()*50 + 60*((self.has_sensor - 1)/16) > damage)
+//		return; 
+
+	// Gizmo - don't do pain frames if we're in mid battle or following something/someone
+	if ( self.enemy != world || self.goalentity != world )
+		return;
 
 	if (isMelee())
 		grunty_axepain1();

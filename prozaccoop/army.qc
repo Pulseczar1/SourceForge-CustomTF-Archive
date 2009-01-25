@@ -1107,7 +1107,7 @@ float(float slot) TeleSoldier =
 
 	newmis.movetype = #MOVETYPE_TOSS;
 	newmis.solid = #SOLID_SLIDEBOX;
-	newmis.takedamage = #DAMAGE_AIM;
+//	newmis.takedamage = #DAMAGE_AIM;	// Gizmo - this is done in walkmonster_start(), bad things could happen if this is set here
 	
 	newmis.health = #GRUNTY_HP;
 	newmis.has_tesla = 1; // SB level multiplier
