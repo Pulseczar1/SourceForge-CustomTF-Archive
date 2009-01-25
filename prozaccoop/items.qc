@@ -270,6 +270,8 @@ void() health_touch =
 					{
 						if (deathmatch)
 							self.nextthink = time + 20;
+						else if ( coop && coop != 1 )		// Gizmo - items don't respawn in coop 1
+							self.nextthink = time + 40;
 						self.think = SUB_regen;
 					}
 

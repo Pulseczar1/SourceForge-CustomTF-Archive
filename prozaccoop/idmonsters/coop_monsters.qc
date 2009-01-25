@@ -622,6 +622,12 @@ void() monster_spawner = {
 		return;
 	}
 
+	// this is needed because of collisions with the flags that specific if the item should exist
+	// if heat is set then set spawnflags to that value after CheckExistence() so that function will work and we can still reuse those bitflags for our own purposes
+	// if heat isn't set, then do nothing and this will act the same as 1.0.7.1 and older versions
+	if ( self.heat )
+		self.spawnflags = self.heat;
+
 	self.cnt = 0;
 	self.state = 0;
 
