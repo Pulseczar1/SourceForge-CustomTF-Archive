@@ -1095,7 +1095,7 @@ float(float slot) TeleSoldier =
 	teamsprint(self.team_no,self,newmis.netname);
 	teamsprint(self.team_no,self,"\n");
 
-	self.job_finished = time + 1;	//Don't let em kill demon for 15 secs.
+	self.job_finished = time + 2;	//Don't let em kill demon for 15 secs.
 									// SB 15 is tight; 10
 									// 10 is tight; 5
 									// OfN 5 is tight; 3 ;)
