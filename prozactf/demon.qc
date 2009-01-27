@@ -81,40 +81,40 @@ void()	demon1_stand13	=[	$stand13,	demon1_stand1	] {ai_stand();};
 //WK Speeds doubled
 #define DEMON_WALKFACTOR 1.25
 
-void()	demon1_walk1	=[	$walk1,		demon1_walk2	] {
+void()	demon1_walk1	=[	$walk1, 	demon1_walk2	] {
 Demon_Water_Jump();
 if (random() < 0.2)
-    sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
+	sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
 ai_walk(8*#DEMON_WALKFACTOR); //8
 };
-void()	demon1_walk2	=[	$walk2,		demon1_walk3	] {ai_walk(6*#DEMON_WALKFACTOR);}; //6
-void()	demon1_walk3	=[	$walk3,		demon1_walk4	] {ai_walk(6*#DEMON_WALKFACTOR);}; //6
-void()	demon1_walk4	=[	$walk4,		demon1_walk5	] {ai_walk(7*#DEMON_WALKFACTOR);}; //7
-void()	demon1_walk5	=[	$walk5,		demon1_walk6	] {ai_walk(4*#DEMON_WALKFACTOR);}; //4
-void()	demon1_walk6	=[	$walk6,		demon1_walk7	] {ai_walk(6*#DEMON_WALKFACTOR);}; //6
-void()	demon1_walk7	=[	$walk7,		demon1_walk8	] {ai_walk(10*#DEMON_WALKFACTOR);}; //10
-void()	demon1_walk8	=[	$walk8,		demon1_walk1	] {ai_walk(10*#DEMON_WALKFACTOR);}; //10
+void()	demon1_walk2	=[	$walk2, 	demon1_walk3	] {ai_walk(6*#DEMON_WALKFACTOR);}; //6
+void()	demon1_walk3	=[	$walk3, 	demon1_walk4	] {ai_walk(6*#DEMON_WALKFACTOR);}; //6
+void()	demon1_walk4	=[	$walk4, 	demon1_walk5	] {ai_walk(7*#DEMON_WALKFACTOR);}; //7
+void()	demon1_walk5	=[	$walk5, 	demon1_walk6	] {ai_walk(4*#DEMON_WALKFACTOR);}; //4
+void()	demon1_walk6	=[	$walk6, 	demon1_walk7	] {ai_walk(6*#DEMON_WALKFACTOR);}; //6
+void()	demon1_walk7	=[	$walk7, 	demon1_walk8	] {ai_walk(10*#DEMON_WALKFACTOR);}; //10
+void()	demon1_walk8	=[	$walk8, 	demon1_walk1	] {ai_walk(10*#DEMON_WALKFACTOR);}; //10
 
 //WK Speeds doubled
-void()	demon1_run1	=[	$run1,		demon1_run2	] {
+void()	demon1_run1 =[	$run1,		demon1_run2 ] {
 //Demon_Water_Jump();
 if (random() < 0.2)
-    sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
+	sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
 ai_run(20);};
-void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15);};
-void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_run(36);};
-void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_run(20);};
-void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15);};
-void()	demon1_run6	=[	$run6,		demon1_run1	] {ai_run(36);};
+void()	demon1_run2 =[	$run2,		demon1_run3 ] {ai_run(15);};
+void()	demon1_run3 =[	$run3,		demon1_run4 ] {ai_run(36);};
+void()	demon1_run4 =[	$run4,		demon1_run5 ] {ai_run(20);};
+void()	demon1_run5 =[	$run5,		demon1_run6 ] {ai_run(15);};
+void()	demon1_run6 =[	$run6,		demon1_run1 ] {ai_run(36);};
 
-void()	demon1_jump1	=[	$leap1,		demon1_jump2	] {ai_face();};
-void()	demon1_jump2	=[	$leap2,		demon1_jump3	] {ai_face();};
-void()	demon1_jump3	=[	$leap3,		demon1_jump4	] {ai_face();};
-void()	demon1_jump4	=[	$leap4,		demon1_jump5	]
+void()	demon1_jump1	=[	$leap1, 	demon1_jump2	] {ai_face();};
+void()	demon1_jump2	=[	$leap2, 	demon1_jump3	] {ai_face();};
+void()	demon1_jump3	=[	$leap3, 	demon1_jump4	] {ai_face();};
+void()	demon1_jump4	=[	$leap4, 	demon1_jump5	]
 {
 	ai_face();
 
-    MonsterAuraPower();
+	MonsterAuraPower();
 	
 	self.touch = Demon_JumpTouch;
 	makevectors (self.angles);
@@ -142,13 +142,13 @@ void()	demon1_jump4	=[	$leap4,		demon1_jump5	]
 	if (self.flags & #FL_ONGROUND)
 		self.flags = self.flags - #FL_ONGROUND;
 };
-void()	demon1_jump5	=[	$leap5,		demon1_jump6	] {};
-void()	demon1_jump6	=[	$leap6,		demon1_jump7	] {};
-void()	demon1_jump7	=[	$leap7,		demon1_jump8	] {};
-void()	demon1_jump8	=[ 	$leap8,		demon1_jump9	] {};
-void()	demon1_jump9	=[ 	$leap9,		demon1_jump10	] {self.has_teleporter = 0;};
-//CH rather then a 3 sec wait.  bust up into 5  better jello effect
-void()	demon1_jump10	=[ 	$leap10,	demon1_jump13	] {
+void()	demon1_jump5	=[	$leap5, 	demon1_jump6	] {};
+void()	demon1_jump6	=[	$leap6, 	demon1_jump7	] {};
+void()	demon1_jump7	=[	$leap7, 	demon1_jump8	] {};
+void()	demon1_jump8	=[	$leap8, 	demon1_jump9	] {};
+void()	demon1_jump9	=[	$leap9, 	demon1_jump10	] {self.has_teleporter = 0;};
+//CH rather then a 3 sec wait.	bust up into 5	better jello effect
+void()	demon1_jump10	=[	$leap10,	demon1_jump13	] {
 	Demon_Water_Jump();
 //CH just in case have a loop catcher
 	self.has_teleporter = self.has_teleporter + 1;
@@ -158,20 +158,20 @@ void()	demon1_jump10	=[ 	$leap10,	demon1_jump13	] {
 	}
 	self.nextthink = time + 0.1;
 };
-void()	demon1_jump13	=[ 	$leap10,	demon1_jump10	] {
+void()	demon1_jump13	=[	$leap10,	demon1_jump10	] {
 Demon_Water_Jump();
 self.nextthink = time + 0.02;
 };
 
 
-void()	demon1_jump11	=[ 	$leap11,	demon1_jump12	] {};
-void()	demon1_jump12	=[ 	$leap12,	demon1_run1	] {};
+void()	demon1_jump11	=[	$leap11,	demon1_jump12	] {};
+void()	demon1_jump12	=[	$leap12,	demon1_run1 ] {};
 
 //WK Speeds doubled
 void()	demon1_atta1	=[	$attacka1,		demon1_atta2	] {ai_charge(8);};
 void()	demon1_atta2	=[	$attacka2,		demon1_atta3	] {ai_charge(0);};
 void()	demon1_atta3	=[	$attacka3,		demon1_atta4	] {ai_charge(0);
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void()	demon1_atta4	=[	$attacka4,		demon1_atta5	] {ai_charge(2);};
 void()	demon1_atta5	=[	$attacka5,		demon1_atta6	] {ai_charge(4); Demon_Melee(200);};
@@ -179,21 +179,21 @@ void()	demon1_atta6	=[	$attacka6,		demon1_atta7	] {ai_charge(2);};
 void()	demon1_atta7	=[	$attacka7,		demon1_atta8	] {ai_charge(12);};
 void()	demon1_atta8	=[	$attacka8,		demon1_atta9	] {ai_charge(16);};
 void()	demon1_atta9	=[	$attacka9,		demon1_atta10] {ai_charge(8);};
-void()	demon1_atta10	=[	$attacka10,		demon1_atta11] {ai_charge(4);
-    MonsterAuraPower();
+void()	demon1_atta10	=[	$attacka10, 	demon1_atta11] {ai_charge(4);
+	MonsterAuraPower();
 };
-void()	demon1_atta11	=[	$attacka11,		demon1_atta12] {Demon_Melee(-200);};
-void()	demon1_atta12	=[	$attacka12,		demon1_atta13] {ai_charge(10);};
-void()	demon1_atta13	=[	$attacka13,		demon1_atta14] {ai_charge(16);};
-void()	demon1_atta14	=[	$attacka14,		demon1_atta15] {ai_charge(8);};
-void()	demon1_atta15	=[	$attacka15,		demon1_run1] {ai_charge(8);};
+void()	demon1_atta11	=[	$attacka11, 	demon1_atta12] {Demon_Melee(-200);};
+void()	demon1_atta12	=[	$attacka12, 	demon1_atta13] {ai_charge(10);};
+void()	demon1_atta13	=[	$attacka13, 	demon1_atta14] {ai_charge(16);};
+void()	demon1_atta14	=[	$attacka14, 	demon1_atta15] {ai_charge(8);};
+void()	demon1_atta15	=[	$attacka15, 	demon1_run1] {ai_charge(8);};
 
-void()	demon1_pain1	=[	$pain1,		demon1_pain2	] {};
-void()	demon1_pain2	=[	$pain2,		demon1_pain3	] {};
-void()	demon1_pain3	=[	$pain3,		demon1_pain4	] {};
-void()	demon1_pain4	=[	$pain4,		demon1_pain5	] {};
-void()	demon1_pain5	=[	$pain5,		demon1_pain6	] {};
-void()	demon1_pain6	=[	$pain6,		demon1_run1	] {}; // was 1
+void()	demon1_pain1	=[	$pain1, 	demon1_pain2	] {};
+void()	demon1_pain2	=[	$pain2, 	demon1_pain3	] {};
+void()	demon1_pain3	=[	$pain3, 	demon1_pain4	] {};
+void()	demon1_pain4	=[	$pain4, 	demon1_pain5	] {};
+void()	demon1_pain5	=[	$pain5, 	demon1_pain6	] {};
+void()	demon1_pain6	=[	$pain6, 	demon1_run1 ] {}; // was 1
 
 
 //CH animation frame for demon throwing fire balls
@@ -203,65 +203,65 @@ void()	demon1_fire1	=[	$attacka1,		demon1_fire2	] {ai_charge(16);};
 void()	demon1_fire2	=[	$attacka2,		demon1_fire3	] {ai_charge(8);};
 void()	demon1_fire3	=[	$attacka3,		demon1_fire4	] {ai_charge(2);};
 void()	demon1_fire4	=[	$attacka4,		demon1_fire5	] {ai_charge(4);
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void()	demon1_fire5	=[	$attacka5,		demon1_fire6	] {ai_charge(8);};
 void()	demon1_fire6	=[	$attacka6,		demon1_fire7	] {ai_charge(4); Demon_Shoot_Fire(-1);};
 void()	demon1_fire7	=[	$attacka7,		demon1_fire8	] {ai_charge(24);};
 void()	demon1_fire8	=[	$attacka8,		demon1_fire9	] {ai_charge(32);};
 void()	demon1_fire9	=[	$attacka9,		demon1_fire10	] {ai_charge(16);};
-void()	demon1_fire10	=[	$attacka10,		demon1_fire11	] {ai_charge(8);
-    MonsterAuraPower();
+void()	demon1_fire10	=[	$attacka10, 	demon1_fire11	] {ai_charge(8);
+	MonsterAuraPower();
 };
-void()	demon1_fire11	=[	$attacka11,		demon1_fire12	] {ai_charge(4); Demon_Shoot_Fire(1);};
-void()	demon1_fire12	=[	$attacka12,		demon1_fire13	] {ai_charge(20);};
-void()	demon1_fire13	=[	$attacka13,		demon1_fire14	] {ai_charge(32);};
-void()	demon1_fire14	=[	$attacka14,		demon1_fire15	] {ai_charge(16);};
-void()	demon1_fire15	=[	$attacka15,		demon1_run1		] {ai_charge(16);};
+void()	demon1_fire11	=[	$attacka11, 	demon1_fire12	] {ai_charge(4); Demon_Shoot_Fire(1);};
+void()	demon1_fire12	=[	$attacka12, 	demon1_fire13	] {ai_charge(20);};
+void()	demon1_fire13	=[	$attacka13, 	demon1_fire14	] {ai_charge(32);};
+void()	demon1_fire14	=[	$attacka14, 	demon1_fire15	] {ai_charge(16);};
+void()	demon1_fire15	=[	$attacka15, 	demon1_run1 	] {ai_charge(16);};
 
-void(entity attacker, float damage)	demon1_pain =
+void(entity attacker, float damage) demon1_pain =
 {
 
 	//self.real_owner.StatusRefreshTime = time + 0.2;
 	//self.real_owner.StatusBarScreen = 3;
-    
-    if (self.touch == Demon_JumpTouch)
+	
+	if (self.touch == Demon_JumpTouch)
 		return;
 
 	if (self.pain_finished > time)
 		return;
 
-    if (self.health <= 0)
-		return;        
+	if (self.health <= 0)
+		return; 	   
 
 	//CH because its on the sbar :)
 
 	if (random()*80 > damage)
-		return;		// didn't flinch
+		return; 	// didn't flinch
 
-    AI_CheckAttacker(attacker);
+	AI_CheckAttacker(attacker);
 
-    self.pain_finished = time + 0.8 + random() * 0.8;
-    sound (self, #CHAN_VOICE, "demon/dpain1.wav", 1, #ATTN_NORM);
+	self.pain_finished = time + 0.8 + random() * 0.8;
+	sound (self, #CHAN_VOICE, "demon/dpain1.wav", 1, #ATTN_NORM);
 		
 	demon1_pain1 ();
 };
 
-void()	demon1_die1		=[	$death1,		demon1_die2	] {
+void()	demon1_die1 	=[	$death1,		demon1_die2 ] {
 sound (self, #CHAN_VOICE, "demon/ddeath.wav", 1, #ATTN_MONSTERDIE);};
-void()	demon1_die2		=[	$death2,		demon1_die3	] {};
-void()	demon1_die3		=[	$death3,		demon1_die4	] {};
-void()	demon1_die4		=[	$death4,		demon1_die5	] {};
-void()	demon1_die5		=[	$death5,		demon1_die6	] {};
-void()	demon1_die6		=[	$death6,		demon1_die7	]
+void()	demon1_die2 	=[	$death2,		demon1_die3 ] {};
+void()	demon1_die3 	=[	$death3,		demon1_die4 ] {};
+void()	demon1_die4 	=[	$death4,		demon1_die5 ] {};
+void()	demon1_die5 	=[	$death5,		demon1_die6 ] {};
+void()	demon1_die6 	=[	$death6,		demon1_die7 ]
 {self.solid = #SOLID_NOT;};
-void()	demon1_die7		=[	$death7,		demon1_die8	] {};
-void()	demon1_die8		=[	$death8,		demon1_die9	] {};
-void()	demon1_die9		=[	$death9,		demon1_die9 ] 
+void()	demon1_die7 	=[	$death7,		demon1_die8 ] {};
+void()	demon1_die8 	=[	$death8,		demon1_die9 ] {};
+void()	demon1_die9 	=[	$death9,		demon1_die9 ] 
 {
-    //self.nextthink = time + 40 + 40*random();	
+	//self.nextthink = time + 40 + 40*random(); 
 	//self.think = SUB_Remove;
-    MonsterCorpse();
+	MonsterCorpse();
 };
 
 //void() monster_demon_respawn;
@@ -338,7 +338,7 @@ void() monster_demon1 =
 	self.th_run = demon1_run1;
 	self.th_die = demon_die;
 	self.th_melee = Demon_MeleeAttack;		// one of two attacks
-	self.th_missile = demon1_jump1;			// jump attack
+	self.th_missile = demon1_jump1; 		// jump attack
 	self.th_pain = demon1_pain;
 	self.th_fireball = demon1_fire1; //CH
 		
@@ -361,7 +361,7 @@ CheckDemonMelee
 Returns #TRUE if a melee attack would hit right now
 ==============
 */
-float()	CheckDemonMelee =
+float() CheckDemonMelee =
 {
 	local vector dist;
 	local float d;
@@ -426,7 +426,7 @@ float(float inp) CheckDemonFireBall =
 CheckDemonJump
 ==============
 */
-float()	CheckDemonJump =
+float() CheckDemonJump =
 {
 	local	vector	dist;
 	local	float	d;
@@ -456,7 +456,7 @@ float()	CheckDemonJump =
 	return #TRUE;
 };
 
-float()	DemonCheckAttack =
+float() DemonCheckAttack =
 {
 //	local	vector	vec;
 	
@@ -470,7 +470,7 @@ float()	DemonCheckAttack =
 	if (CheckDemonJump ())
 	{
 		self.attack_state = #AS_MISSILE;
-        sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
+		sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
 		return #TRUE;
 	}
 
@@ -517,7 +517,7 @@ void(float side)	Demon_Melee =
 		ldmg = ldmg * 0.8;
 	
 	//T_Damage (self.enemy, self, self, ldmg);
-    TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
+	TF_T_Damage(self.enemy, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -588,12 +588,6 @@ void() demon_fire_touch =
 
 	self.origin = self.origin - 8*normalize(self.velocity); //???
 
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
-
 	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
 	WriteCoord (#MSG_BROADCAST, self.origin_x);
@@ -614,7 +608,7 @@ void() Demon_Water_Jump =
 	{
 		ai_face();
 		//self.touch = SUB_Null;
-        self.touch = MonsterTouch; // OfN
+		self.touch = MonsterTouch; // OfN
 		self.think = demon1_jump4;
 		self.has_tesla = #TRUE; //Landed in water
 		self.nextthink = time + 0.1;
@@ -634,7 +628,7 @@ void()	Demon_JumpTouch =
 	if (trace_inwater == #TL_BSP_ONLY && jello)
 	{
 		//self.touch = SUB_Null;
-        self.touch = MonsterTouch; // OfN
+		self.touch = MonsterTouch; // OfN
 		self.think = demon1_jump1;
 		self.has_tesla = #TRUE; //Landed in water
 		self.nextthink = time + 0.1;
@@ -649,8 +643,8 @@ void()	Demon_JumpTouch =
 			ldmg = 120 + 30*random();
 			if (other.cutf_items & #CUTF_DEMONLORE)
 				ldmg = ldmg * 0.8;
-            
-            TF_T_Damage(other, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
+			
+			TF_T_Damage(other, self, self, ldmg,0,#TF_TD_MELEE); //WK 4/27/7
 			//T_Damage (other, self, self, ldmg);	
 			//WK Comment out this next line for demon-head hopping action!
 			if (self.think == SUB_Remove) return; //We can die when killing owner
@@ -666,7 +660,7 @@ void()	Demon_JumpTouch =
 			self.has_sentry = #TRUE; //CH Stuck Jump
 			//self.touch = SUB_Null;
 			self.touch = MonsterTouch; // OfN
-            self.think = demon1_jump1;
+			self.think = demon1_jump1;
 			self.nextthink = time + 0.1;
 
 			//self.velocity_x = (random() - 0.5) * 600;
@@ -674,12 +668,12 @@ void()	Demon_JumpTouch =
 			//self.velocity_z = 200;
 			//self.flags = self.flags - #FL_ONGROUND;
 		}
-		return;	// not on ground yet
+		return; // not on ground yet
 	}
 
 	self.has_sentry = 0; //Cancel if this far
 	//self.touch = SUB_Null;
-    self.touch = MonsterTouch; // OfN
+	self.touch = MonsterTouch; // OfN
 	self.think = demon1_jump11;
 	self.nextthink = time + 0.1;
 };
@@ -741,31 +735,31 @@ void () custom_demon_die =
 		sprint(self.real_owner,#PRINT_HIGH,self.netname);
 		sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
 		self.real_owner.job_finished = time + 5; //Can't summon streams of demons SB can so
-        ResetSlotPointer(self.real_owner, self.increase_team1);
+		ResetSlotPointer(self.real_owner, self.increase_team1);
 	}
-    
-    if (self.health < -40) 
-    {
-        sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
-	    ThrowMonsterHead ("progs/h_demon.mdl", self.health);
-	    ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, #FALSE);
-	    ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0, #GIB2_KGS, #FALSE);
-	    ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, 0.5);
-        SpawnBloodEx(self.origin,0.66,9);
+	
+	if (self.health < -40) 
+	{
+		sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
+		ThrowMonsterHead ("progs/h_demon.mdl", self.health);
+		ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, #FALSE);
+		ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0, #GIB2_KGS, #FALSE);
+		ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0, #GIB3_KGS, 0.5);
+		SpawnBloodEx(self.origin,0.66,9);
 		
-	    dremove(self);
-        return;
-    }
+		dremove(self);
+		return;
+	}
 
-    // Spawn bubbles if under water/slime
-    local float contres;
-    contres = pointcontents(self.origin);
-    if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
-        DeathBubbles(5);
+	// Spawn bubbles if under water/slime
+	local float contres;
+	contres = pointcontents(self.origin);
+	if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
+		DeathBubbles(5);
 
-    //self.classname = "monster_corpse";
-    MonsterDead();
-    self.think=SUB_Null;
-    demon1_die1 ();
+	//self.classname = "monster_corpse";
+	MonsterDead();
+	self.think=SUB_Null;
+	demon1_die1 ();
 };
 

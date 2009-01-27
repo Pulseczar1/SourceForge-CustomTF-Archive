@@ -12,6 +12,7 @@ skins.qc
 
 defs.qc
 agr_h.qc
+neo_h.qc
 qw.qc
 debug.qc
 
@@ -104,5 +105,6 @@ cmnd.qc
 runes.qc
 megatf.qc
 agr.qc
+neo.qc
 
 #endlist

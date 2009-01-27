@@ -392,12 +392,6 @@ if (total_exp > 0) {//CH Thanks Slice for the idea :)
 	sprint(self.owner,#PRINT_HIGH, " damage\n");
 }
 
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
-
 #ifdef QUAKE_WORLD
 	dremove(self);
 #else
@@ -415,9 +409,9 @@ float(float myteam) HasFlag =
 	if ( mapname != "steal4d" )
 		return #TRUE;
 	
-	if (myteam == team_with_flag){	
+	if (myteam == team_with_flag) { 
 		return #TRUE;
-		}
+	}
 	return #FALSE;	
 };
 
@@ -844,9 +838,13 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 
 	if (objtobuild==#BUILD_TESLA)
 	{
-		newmis.skin = self.team_no;
-		if (self.team_no==3) newmis.skin=0;
-		else if (self.team_no==4) newmis.skin=3;
+		if (neo) newmis.skin = 3; // for Neo mode
+		else
+		{
+			newmis.skin = self.team_no;
+			if (self.team_no==3) newmis.skin=0;
+			else if (self.team_no==4) newmis.skin=3;
+		}
 	}
 
 	newmis.flags = newmis.flags - (newmis.flags & #FL_ONGROUND);
@@ -919,6 +917,8 @@ void() TeamFortress_FinishedBuilding =
 	self.StatusRefreshTime = time + 0.1;
 
 	TeamFortress_SetSpeed(self);
+
+	oldself.flags = oldself.flags | #FL_MACHINE; // PZ
 
 	if (oldself.weapon == #BUILD_DISPENSER)
 	{
@@ -1010,6 +1010,7 @@ void() TeamFortress_FinishedBuilding =
 		newmis = spawn();
 		newmis.dont_do_triggerwork = oldself.dont_do_triggerwork;
 		newmis.classname = "building_sentrygun";
+		newmis.flags = newmis.flags | #FL_MACHINE; // PZ
 		newmis.health = #BUILD_HEALTH_SENTRYGUN;
 		newmis.max_health = newmis.health;
 		newmis.tf_items = #NIT_KEVLAR; //Start with kevlar armor
@@ -1031,7 +1032,8 @@ void() TeamFortress_FinishedBuilding =
 		oldself.colormap = self.colormap;	// Set the Base Color
 		newmis.colormap = self.colormap;	// Set the Color
 
-		newmis.skin = self.team_no - 1;
+		if (neo) newmis.skin = 3; // for Neo mode
+		else newmis.skin = self.team_no - 1;
 
 		newmis.takedamage = #DAMAGE_AIM;
 		newmis.velocity = '0 0 -8';
@@ -1599,7 +1601,8 @@ void(entity gun) Engineer_UseSentryGun =
 	//TODO: Add in pretty print of frag upgrades we have.
 
 	//WK 1/15/08 Auto-repair builds
-	if (Teammate(self.building.real_owner.team_no,self.team_no)) {
+	// Neo mode modication
+	if (Teammate(self.building.real_owner, self)) {
 		healed = Engineer_RearmSentryGun();
 		healed = healed + Engineer_RepairSentryGun();
 
@@ -1615,7 +1618,8 @@ void(entity gun) Engineer_UseSentryGun =
 	self.menu_count = #MENU_REFRESH_RATE;
 
 	//dodgy
-	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no,self.team_no)) {
+	// Neo mode modication
+	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_SentryGun_Input(5);
 		return;
 	}
@@ -1726,7 +1730,8 @@ void(entity gun) Engineer_UseTesla =
 	sprint(self, #PRINT_HIGH, "\n");
 
 	//WK 1/15/08 Auto-repair builds
-	if (Teammate(self.building.real_owner.team_no,self.team_no)) {
+	// Neo mode modication
+	if (Teammate(self.building.real_owner, self)) {
 		healed = Engineer_RepairTesla();
 
 		//Auto-repair and auto-recharge teslas, and make sound if successful
@@ -1741,7 +1746,8 @@ void(entity gun) Engineer_UseTesla =
 	self.menu_count = #MENU_REFRESH_RATE;
 
 	// dodgy
-	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no, self.team_no)) {
+	// Neo mode modication
+	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Tesla_Input(8);
 		return;
 	}
@@ -1783,7 +1789,8 @@ void(entity cam) Engineer_UseSensor =
 
 	self.building = cam;
 
-	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no, self.team_no)) {
+	// Neo mode modication
+	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Sensor_Input(3);
 		return;
 	}
@@ -1818,7 +1825,8 @@ void(entity cam) Engineer_UseCamera =
 
 	self.building = cam;
 
-	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no,self.team_no)) {
+	// Neo mode modication
+	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Camera_Input(3);
 		return;
 	}
@@ -1860,7 +1868,8 @@ void(entity tele) Engineer_UseTeleporter =
 
 	self.building = tele;
 
-	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no,self.team_no)) {
+	// Neo mode modication
+	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Teleporter_Input(4);
 		return;
 	}

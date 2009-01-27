@@ -135,11 +135,11 @@ void() PrimeC4Det =
 		sprint (self, #PRINT_HIGH, "You can't set a detpack while hacking.\n");
 		return;
 	}	
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You can't prime C4's while psionized!\n");
-        return;
-    }
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You can't prime C4's while psionized!\n");
+		return;
+	}
 
 	te = spawn();
 	te.owner = self;
@@ -163,12 +163,13 @@ void() TeamFortress_C4DetpackTouch =
 	//WK if (other.playerclass != #PC_SCOUT)
 	if (!(other.tf_items & #NIT_SCANNER))
 		return;
-    
+	
 	if (self.weaponmode == 1)
-	    return;
+		return;
 
-	if (Teammate(self.owner.team_no,other.team_no))
-	    return;
+	// Neo mode modication
+	if (Teammate(self.owner, other))
+		return;
 
 	makeImmune(other,time + 2);
 	//other.immune_to_check = time + 2;
@@ -232,8 +233,8 @@ void() ThrowC4Det =
 		{
 			newmis.velocity = v_forward*600 + v_up * 200 + random()*v_right*10 + random()*v_up*10;
 
-            if (user.tfstate & #TFSTATE_PSIONIZED) // Weak toss when psionized
-                newmis.velocity = newmis.velocity * 0.3;
+			if (user.tfstate & #TFSTATE_PSIONIZED) // Weak toss when psionized
+				newmis.velocity = newmis.velocity * 0.3;
 		}
 		else
 		{
@@ -241,8 +242,8 @@ void() ThrowC4Det =
 			newmis.velocity = newmis.velocity * 600;
 			newmis.velocity_z = 200;
 
-            if (user.tfstate & #TFSTATE_PSIONIZED) // Weak toss when psionized
-                newmis.velocity = newmis.velocity * 0.3;
+			if (user.tfstate & #TFSTATE_PSIONIZED) // Weak toss when psionized
+				newmis.velocity = newmis.velocity * 0.3;
 		}
 	}
 
@@ -261,20 +262,16 @@ void() ThrowC4Det =
 	oldself = self;
 	self = user;
 
-#ifdef DEMO_STUFF
-	if (live_camera)
-		CamProjectileLockOn();
-#endif
 	local entity countd;
 
-	newmis.weaponmode = 0;  // Detpack weaponmode = 1 when disarming
+	newmis.weaponmode = 0;	// Detpack weaponmode = 1 when disarming
 
 	sound (newmis, #CHAN_WEAPON, "doors/medtry.wav", 1, #ATTN_NORM);  //CH play set detpack sound
 	
 
 	// Create the CountDown entity
 	countd = spawn();
-	newmis.linked_list = countd;    // attach count to its detpack
+	newmis.linked_list = countd;	// attach count to its detpack
 	countd.think = TeamFortress_DetpackCountDown;
 	countd.health = 9;
 	countd.nextthink = time + 1;
@@ -287,8 +284,8 @@ void() ThrowC4Det =
 
 	sprint(self, #PRINT_HIGH, "Detpack armed!\n");
 
-    teamprefixsprint(self.team_no,self);
-    teamsprint6(self,self.netname," throws a C4!\n","","","","");
+	teamprefixsprint(self.team_no,self);
+	teamsprint6(self,self.netname," throws a C4!\n","","","","");
 	
 	self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_C4THROW);
 	TeamFortress_SetSpeed(self); // let's roll
@@ -298,41 +295,41 @@ void() ThrowC4Det =
 // Sits in shadows and lights up and makes noise when player goes near
 
 void() SBBuildSensor =
-{    
-    // Extra checks only required for cmnd "build" use
-    if (self.health <= 0 || self.done_custom & #CUSTOM_BUILDING)
-        return;    
-    if (!(self.cutf_items & #CUTF_SENSOR))
-    {
-        sprint(self,#PRINT_HIGH,"You can not build a motion sensor!\n");
-        return;
-    } 
+{	 
+	// Extra checks only required for cmnd "build" use
+	if (self.health <= 0 || self.done_custom & #CUSTOM_BUILDING)
+		return;    
+	if (!(self.cutf_items & #CUTF_SENSOR))
+	{
+		sprint(self,#PRINT_HIGH,"You can not build a motion sensor!\n");
+		return;
+	} 
 
-    // OfN - Psionized guys can't throw any sensors
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You can't deploy anything while psionized!\n");
-        return;
-    }       
-    
-    if (self.ammo_cells >= #BUILD_COST_SENSOR && self.has_sensor == 0)
+	// OfN - Psionized guys can't throw any sensors
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You can't deploy anything while psionized!\n");
+		return;
+	}		
+	
+	if (self.ammo_cells >= #BUILD_COST_SENSOR && self.has_sensor == 0)
 	{
 		self.ammo_cells = self.ammo_cells - #BUILD_COST_SENSOR;
 		MotionSensorSpawn();
 		self.has_sensor = 1;
 		sprint(self, #PRINT_HIGH, "You place the motion sensor.\n");
-        self.option = time + 2;
+		self.option = time + 2;
 	}
 	else if (self.ammo_cells < #BUILD_COST_SENSOR && self.has_sensor == 0)
 		sprint(self, #PRINT_HIGH, "You do not have enough metal to build a motion sensor.\n");
 	else
 	{
 		if (self.option < time) // avoids ppl overflowing by destroying/building it repeatedly
-        {
-            Find_And_Dmg("building_sensor", self, 1,0);
-		    sprint(self, #PRINT_HIGH, "You detonate your motion sensor.\n");
-		    self.has_sensor = 0;
-        }
+		{
+			Find_And_Dmg("building_sensor", self, 1,0);
+			sprint(self, #PRINT_HIGH, "You detonate your motion sensor.\n");
+			self.has_sensor = 0;
+		}
 	}
 };
 
@@ -365,8 +362,8 @@ void() MotionSensorTossTouch =
 		return;
 	}
 
-    teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
-    teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
+	teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
+	teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
 	teamsprint(self.real_owner.team_no, self.real_owner, " has built a Motion Sensor.\n");
 
 	self.movetype = #MOVETYPE_NONE;
@@ -390,7 +387,7 @@ void() MotionSensorIdle =
 float() MotionSensorFindTarget =
 {
 	local entity client;
-	local float	r, gotone, loopc;
+	local float r, gotone, loopc;
 
 	// Try a few checks to make it react faster
 	r = 0;
@@ -400,11 +397,11 @@ float() MotionSensorFindTarget =
 	if (self.is_malfunctioning & #SCREWUP_THREE)
 		return #FALSE;
 	
-    local float trange; //- OfN - Hack
-    trange=300; // was 250
+	local float trange; //- OfN - Hack
+	trange=300; // was 250
 
-    if (self.all_active & #IMPROVED_ONE)
-        trange=500; // was 400
+	if (self.all_active & #IMPROVED_ONE)
+		trange=500; // was 400
 
 	//CH Theortetically this will check every client on the server now
 	while (loopc < 32 && gotone == #FALSE)
@@ -426,14 +423,14 @@ float() MotionSensorFindTarget =
 	if (!gotone)
 	{
 		self.effects = 0;
-        self.skin=1;
+		self.skin=1;
 		return #FALSE;
 	}
 	
 	// Found a Target
 	self.enemy = client;
 	
-    /*if (self.enemy.classname != "player") // OfN - wtf does this?
+	/*if (self.enemy.classname != "player") // OfN - wtf does this?
 	{
 		self.enemy = self.enemy.enemy;
 		if (self.enemy.classname != "player")
@@ -443,32 +440,33 @@ float() MotionSensorFindTarget =
 		}
 	}*/ // OfN - wtf does this?
 
-    // SPIES, only returned by pharseclient if sensor is able to uncover them -changed
-    if (Teammate(self.enemy.undercover_team,self.team_no) && self.all_active & #IMPROVED_FOUR)
-    {
-        /*if (!(self.enemy.cutf_items & #CUTF_JAMMER)) // if they dont have a scanner jammer remove their disguise
-        {*/
-            Spy_RemoveDisguise(self.enemy);
-            sprint(self.real_owner, #PRINT_HIGH, "Your motion sensor detects a spy!\n");
-		    sprint(self.enemy, #PRINT_HIGH, "That motion sensor knows you are a spy!\n");
-        //}
-        //else 
-        //    return #FALSE; // removed cause sensors alarm is activated anyway, even if they will not uncover them
-    }
+	// SPIES, only returned by pharseclient if sensor is able to uncover them -changed
+	//WK Odd, this will only uncover spies disguised as your team...
+	if (UndercoverTeammate(self.enemy, self) && self.all_active & #IMPROVED_FOUR)
+	{
+		/*if (!(self.enemy.cutf_items & #CUTF_JAMMER)) // if they dont have a scanner jammer remove their disguise
+		{*/
+			Spy_RemoveDisguise(self.enemy);
+			sprint(self.real_owner, #PRINT_HIGH, "Your motion sensor detects a spy!\n");
+			sprint(self.enemy, #PRINT_HIGH, "That motion sensor knows you are a spy!\n");
+		//}
+		//else 
+		//	  return #FALSE; // removed cause sensors alarm is activated anyway, even if they will not uncover them
+	}
 
-    // THIEVES, ALWAYS DETECTED BUT SENSOR ONLY UNCOVERS THEM IF HACKED TO DO- changed
-    if (self.enemy.classname=="player")
-    {
-        if (self.enemy.job & #JOB_THIEF && (self.enemy.job & #JOB_ACTIVE || self.enemy.job & #JOB_FULL_HIDE))
-        {
-            if (self.all_active & #IMPROVED_SEVEN)
-            {
-                sprint(self.real_owner, #PRINT_HIGH, "Your motion sensor detects a thief!\n");
-                sprint(self.enemy, #PRINT_HIGH, "That motion sensor detected you!\n");
-                RevealThief(self.enemy,#TRUE);
-            }
-        }
-    }
+	// THIEVES, ALWAYS DETECTED BUT SENSOR ONLY UNCOVERS THEM IF HACKED TO DO- changed
+	if (self.enemy.classname=="player")
+	{
+		if (self.enemy.job & #JOB_THIEF && (self.enemy.job & #JOB_ACTIVE || self.enemy.job & #JOB_FULL_HIDE))
+		{
+			if (self.all_active & #IMPROVED_SEVEN)
+			{
+				sprint(self.real_owner, #PRINT_HIGH, "Your motion sensor detects a thief!\n");
+				sprint(self.enemy, #PRINT_HIGH, "That motion sensor detected you!\n");
+				RevealThief(self.enemy,#TRUE);
+			}
+		}
+	}
 	
 	if (!(self.is_malfunctioning & #SCREWUP_ONE))
 		sound(self, #CHAN_WEAPON, "misc/enemy.wav", 1, #ATTN_NORM);
@@ -477,7 +475,7 @@ float() MotionSensorFindTarget =
 	{	self.effects = #EF_BRIGHTLIGHT; self.skin=0;}
 
 
-    sprint(self.real_owner,#PRINT_HIGH,"Ωους νοτιοξ σεξσος ςεποςτσ εξενω πςεσεξγε!\n");
+	sprint(self.real_owner,#PRINT_HIGH,"Ωους νοτιοξ σεξσος ςεποςτσ εξενω πςεσεξγε!\n");
 
 	self.think = SensorBeAlarmed;
 	return #TRUE;
@@ -497,8 +495,8 @@ void() SensorBeAlarmed =
 		self.think = MotionSensorIdle;
 		self.effects = 0;
 		self.nextthink = 1;
-        ///
-        self.skin=1;
+		///
+		self.skin=1;
 	}
 };
 
@@ -513,6 +511,7 @@ void() MotionSensorSpawn =
 	newmis.takedamage = #DAMAGE_AIM;
 	newmis.classname = "building_sensor";
 	newmis.netname = "motion_sensor";
+	newmis.flags = newmis.flags | #FL_MACHINE;
 	setorigin (newmis, self.origin);
 	newmis.owner = world;
 	newmis.real_owner = self;
@@ -522,12 +521,12 @@ void() MotionSensorSpawn =
 	newmis.angles = '0 0 0';
 	newmis.angles_y = anglemod(self.angles_y + 180);
 //	newmis.skin = 1;
-	newmis.th_die = MotionSensorDie; 		// Death function
+	newmis.th_die = MotionSensorDie;		// Death function
 	newmis.th_pain = Security_Camera_Pain; // may as well use this eh
 	//newmis.mdl = "progs/s_light.spr"; //CH temp model
-    
-    newmis.mdl = "progs/sencer.mdl";
-    newmis.skin=1;
+	
+	newmis.mdl = "progs/sencer.mdl";
+	newmis.skin=1;
 
 	setmodel (newmis, newmis.mdl);
 	newmis.team_no = self.team_no;
@@ -537,7 +536,7 @@ void() MotionSensorSpawn =
 	newmis.health = newmis.max_health = #BUILD_HEALTH_SENSOR;
 	newmis.touch = MotionSensorTossTouch;
 
-    newmis.all_active=0; // OfN - reset HACKER improvements
+	newmis.all_active=0; // OfN - reset HACKER improvements
 
 	W_SetCurrentAmmo();
 };
@@ -574,12 +573,6 @@ void() AntiGravGrenadeExplode =
 {	
 	T_RadiusAntiGrav (self, self.owner, 100, world);
 
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
-
 	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
 	WriteCoord (#MSG_BROADCAST, self.origin_x);
@@ -597,10 +590,10 @@ void() AntiGravGrenadeExplode =
 
 void(entity inflictor, entity attacker, float bounce, entity ignore) T_RadiusAntiGrav =
 {
-	local	float 	points;
+	local	float	points;
 	local	entity	head, te;
 	local	vector	org;
-	//local	string	st;
+	//local string	st;
 	
 	head = findradius(inflictor.origin, bounce+40);
 	

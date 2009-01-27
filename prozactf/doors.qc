@@ -1,9 +1,9 @@
 
-#define DOOR_START_OPEN	1 
+#define DOOR_START_OPEN 1 
 #define DOOR_DONT_LINK	4 
 #define DOOR_GOLD_KEY	8 
-#define DOOR_SILVER_KEY	16 
-#define DOOR_TOGGLE	32 
+#define DOOR_SILVER_KEY 16 
+#define DOOR_TOGGLE 32 
 
 /*
 
@@ -11,7 +11,7 @@ Doors are similar to buttons, but can spawn a fat trigger field around them
 to open without a touch, and they link together to form simultanious
 double/quad doors.
  
-Door.owner is the master door.  If there is only one door, it points to itself.
+Door.owner is the master door.	If there is only one door, it points to itself.
 If multiple doors, all will point to a single one.
 
 Door.enemy chains from the master door through all doors linked in the chain.
@@ -50,7 +50,7 @@ void() door_hit_top =
 	sound (self, #CHAN_VOICE | #CHAN_NO_PHS_ADD, self.noise1, 1, #ATTN_NORM);
 	self.state = #STATE_TOP;
 	if (self.spawnflags & #DOOR_TOGGLE)
-		return;		// don't come down automatically
+		return; 	// don't come down automatically
 	self.think = door_go_down;
 	self.nextthink = self.ltime + self.wait;
 };
@@ -79,7 +79,7 @@ void() door_go_down =
 void() door_go_up =
 {
 	if (self.state == #STATE_UP)
-		return;		// allready going up
+		return; 	// allready going up
 
 	if (self.state == #STATE_TOP)
 	{	// reset top wait time
@@ -105,7 +105,7 @@ ACTIVATION FUNCTIONS
 
 void() door_fire =
 {
-	local entity 	oself;
+	local entity	oself;
 	local entity	starte;
 
 	if (self.owner != self)
@@ -116,7 +116,7 @@ void() door_fire =
 	if (self.items)
 		sound (self, #CHAN_VOICE | #CHAN_NO_PHS_ADD, self.noise4, 1, #ATTN_NORM);
 
-	self.message = string_null;		// no more message
+	self.message = string_null; 	// no more message
 	oself = self;
 
 	if (self.spawnflags & #DOOR_TOGGLE)
@@ -166,14 +166,14 @@ void() door_trigger_touch =
 	if (other.health <= 0)
 		return;
 
-    // OfN - Dont let doors go for invalid players
-    if (other.classname == "player")
-    {        
-        if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
-            return;
-        if (other.playerclass == #PC_UNDEFINED) // skip observers
-            return;
-    }
+	// OfN - Dont let doors go for invalid players
+	if (other.classname == "player")
+	{		 
+		if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
+			return;
+		if (other.playerclass == #PC_UNDEFINED) // skip observers
+			return;
+	}
 
 	if (!Activated(self,other))
 	{
@@ -230,11 +230,11 @@ void() door_touch =
 	if (self.owner.attack_finished > time)
 		return;
 
-    // OfN - Dont let doors go for invalid players
-    if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
-        return;
-    if (other.playerclass == #PC_UNDEFINED) // skip observers
-        return;
+	// OfN - Dont let doors go for invalid players
+	if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
+		return;
+	if (other.playerclass == #PC_UNDEFINED) // skip observers
+		return;
 
 	if (!Activated(self,other))
 	{
@@ -306,7 +306,7 @@ void() door_touch =
 	other.items = other.items - self.items;
 	other.tf_items = other.tf_items | self.items;
 
-	if (DoorShouldOpen())
+	if (neo || DoorShouldOpen()) // in Neo mode, doors always open for anyone
 	{
 		self.touch = SUB_Null;
 		if (self.enemy)
@@ -342,14 +342,14 @@ entity(vector fmins, vector fmaxs) spawn_field =
 	trigger.activate_goal_no = self.activate_goal_no;
 	trigger.inactivate_goal_no = self.inactivate_goal_no;
 	trigger.remove_goal_no = self.remove_goal_no;
-	trigger.restore_goal_no = self.restore_goal_no;		
-	trigger.activate_group_no =	self.activate_group_no;	
-	trigger.inactivate_group_no = self.inactivate_group_no;	
-	trigger.remove_group_no	= self.remove_group_no;	
+	trigger.restore_goal_no = self.restore_goal_no; 	
+	trigger.activate_group_no = self.activate_group_no; 
+	trigger.inactivate_group_no = self.inactivate_group_no; 
+	trigger.remove_group_no = self.remove_group_no; 
 	trigger.restore_group_no = self.restore_group_no;	
-	trigger.goal_activation = self.goal_activation;				
+	trigger.goal_activation = self.goal_activation; 			
 	trigger.goal_effects = self.goal_effects;	
-	trigger.goal_result = self.goal_result;		
+	trigger.goal_result = self.goal_result; 	
 	trigger.goal_group = self.goal_group;		
 
 	t1 = fmins;
@@ -390,11 +390,11 @@ void() LinkDoors =
 	local vector	cmins, cmaxs;
 
 	if (self.enemy)
-		return;		// already linked by another door
+		return; 	// already linked by another door
 	if (self.spawnflags & 4)
 	{
 		self.owner = self.enemy = self;
-		return;		// don't want to link this door
+		return; 	// don't want to link this door
 	}
 
 	cmins = self.mins;
@@ -472,10 +472,10 @@ START_OPEN causes the door to move to its destination when spawned, and operate 
 Key doors are allways wait -1.
 
 "message"	is printed when the door is touched if it is a trigger door and it hasn't been fired yet
-"angle"		determines the opening direction
+"angle" 	determines the opening direction
 "targetname" if set, no touch field will be spawned and a remote button or trigger field activates the door.
 "health"	if set, door must be shot open
-"speed"		movement speed (100 default)
+"speed" 	movement speed (100 default)
 "wait"		wait before returning (3 default, -1 = never return)
 "lip"		lip remaining at end of move (8 default)
 "dmg"		damage to inflict when blocked (2 default)
@@ -521,44 +521,44 @@ void() func_door =
 		RPrint ("no worldtype set!\n");
 	}*/
 	
-    //- OfN - Support for mega-tf door sounds //
-    if (self.armorclass == 1)
-    {
+	//- OfN - Support for mega-tf door sounds //
+	if (self.armorclass == 1)
+	{
 		precache_sound ("doors/creekdr2.wav");
 		precache_sound ("doors/creekdr1.wav");
 		self.noise1 = "doors/creekdr2.wav";
 		self.noise2 = "doors/creekdr1.wav";
-    }
-    else if (self.armorclass == 3)
-    {
+	}
+	else if (self.armorclass == 3)
+	{
 		precache_sound ("doors/electdr2.wav");
 		precache_sound ("doors/electdr1.wav");
 		self.noise1 = "doors/electdr2.wav";
 		self.noise2 = "doors/electdr1.wav";
-    }
-    else if (self.armorclass == 2)
-    {
+	}
+	else if (self.armorclass == 2)
+	{
 		precache_sound ("doors/metaldr2.wav");
 		precache_sound ("doors/metaldr1.wav");
 		self.noise1 = "doors/metaldr2.wav";
 		self.noise2 = "doors/metaldr1.wav";
-    }
-    else if (self.armorclass == 100) // OfN - Custom door sounds
-    {
-        if (self.noise1 == "" || self.noise2 == "")
-            RPrint("Map Bug: Missing filenames of custom sounds for door!\n");
+	}
+	else if (self.armorclass == 100) // OfN - Custom door sounds
+	{
+		if (self.noise1 == "" || self.noise2 == "")
+			RPrint("Map Bug: Missing filenames of custom sounds for door!\n");
 
-        precache_sound (self.noise1);
+		precache_sound (self.noise1);
 		precache_sound (self.noise2);		
-    }
-    else if (self.sounds == 0)
+	}
+	else if (self.sounds == 0)
 	{
 		precache_sound ("misc/null.wav");
 		precache_sound ("misc/null.wav");
 		self.noise1 = "misc/null.wav";
 		self.noise2 = "misc/null.wav";
 	} 
-    else if (self.sounds == 1)
+	else if (self.sounds == 1)
 	{
 		precache_sound ("doors/drclos4.wav");
 		precache_sound ("doors/doormv1.wav");
@@ -587,9 +587,9 @@ void() func_door =
 		self.noise2 = "doors/ddoor1.wav";
 	}
 
-    //- OfN - avoid doors having armor.. mega-tf bug?? =)
-    self.armorclass=0;
-    //--------------------------------------------------------//
+	//- OfN - avoid doors having armor.. mega-tf bug?? =)
+	self.armorclass=0;
+	//--------------------------------------------------------//
 
 	SetMovedir ();
 
@@ -664,11 +664,11 @@ void() fd_secret_move5;
 void() fd_secret_move6;
 void() fd_secret_done;
 
-#define SECRET_OPEN_ONCE	1 		// stays open
-#define SECRET_1ST_LEFT	2 		// 1st move is left of arrow
-#define SECRET_1ST_DOWN	4 		// 1st move is down from arrow
-#define SECRET_NO_SHOOT	8 		// only opened by trigger
-#define SECRET_YES_SHOOT	16 	// shootable even if targeted
+#define SECRET_OPEN_ONCE	1		// stays open
+#define SECRET_1ST_LEFT 2		// 1st move is left of arrow
+#define SECRET_1ST_DOWN 4		// 1st move is down from arrow
+#define SECRET_NO_SHOOT 8		// only opened by trigger
+#define SECRET_YES_SHOOT	16	// shootable even if targeted
 
 
 void () fd_secret_use =
@@ -684,7 +684,7 @@ void () fd_secret_use =
 	if (self.spawnflags & #DOOR_TOGGLE)
 		return;
 	
-	self.message = string_null;		// no more message
+	self.message = string_null; 	// no more message
 
 	SUB_UseTargets();				// fire all targets / killtargets
 	

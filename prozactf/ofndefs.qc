@@ -121,7 +121,7 @@
 #define HAX_UNSTABLEDIST      300 // distance at which enemy hacks take longer cause of "unstable connection"
 #define WAYPOINT_AI_LIFE       10 // life for grunty ai created waypoints - last seen enemy mark
 #define ATTN_MONSTERDIE         #ATTN_NONE // #ATTN_NORM
-#define MINE_SCANRATE           0.2 //WK 8/4/7 0.6 // mines look again for nearby enemy after this time - it was 1 which caused high ping players to not trigger mines sometimes walking around them fast
+#define MINE_SCANRATE           0.1 //WK 5-15-08 0.2 WK 8/4/7 0.6 // mines look again for nearby enemy after this time - it was 1 which caused high ping players to not trigger mines sometimes walking around them fast
 #define EXPBODY_DMG           160 // damage exp. body does /was 140
 
 #define BERSERKER_HP_COST      33 //WK 8/4/7 40 // was 30 (i think 50 originally)
@@ -254,19 +254,9 @@
 //#define OLD_HP_SYSTEM
 //#define OLD_FLASH // Warning: If this one is ever defined it should be in defs.qc or earlier, not here
 //#define OLD_CONCS
-//#define OLD_FLAME
 //#define OLD_NAILGREN
 //#define OLD_TEAM_ANNOUNCEMENTS
 //#define OLD_SBARLOOK
-
-// Napalm grens
-#define NAPALM_FIRSTDMG 40
-#define NAPALM_MINRATE 0.1
-#define NAPALM_MAXRATE 0.4
-#define NAPALM_BURNTIMES 8
-#define NAPALM_MINDMG 40 //WK 5-15-7 Damage reduced by -25%
-#define NAPALM_MAXDMG 80
-#define NAPALM_MAINDMG 100
 
 #define AIRFIST_CELLS_COST    5
 

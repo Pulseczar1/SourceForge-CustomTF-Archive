@@ -297,7 +297,7 @@ TESTING THING
 
 void() misc_explobox =
 {
-	local float	oldz;
+	local float oldz;
 	
 	if (CheckExistence() == #FALSE)
 	{
@@ -336,7 +336,7 @@ Smaller exploding box, REGISTERED ONLY
 
 void() misc_explobox2 =
 {
-	local float	oldz;
+	local float oldz;
 	
 	if (CheckExistence() == #FALSE)
 	{
@@ -379,7 +379,7 @@ void() Laser_Touch =
 	local vector org;
 	
 	if (other == self.owner)
-		return;		// don't explode on owner
+		return; 	// don't explode on owner
 
 	if (pointcontents(self.origin) == #CONTENT_SKY)
 	{
@@ -433,7 +433,7 @@ void(vector org, vector vec) LaunchLaser =
 	newmis.effects = #EF_DIMLIGHT;
 
 	setmodel (newmis, "progs/laser.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0'); 	
 
 	setorigin (newmis, org);
 
@@ -455,13 +455,13 @@ void(vector org, vector vec) TFFireRocket =
 	vec = normalize(vec);
 
 
-//?	KickPlayer(-2, self);
+//? KickPlayer(-2, self);
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_FLYMISSILE;
 	newmis.solid = #SOLID_BBOX;
 		
-	// set newmis speed	
+	// set newmis speed 
 	makevectors (self.v_angle);
 	newmis.velocity = vec * 900;
 	newmis.angles = vectoangles(newmis.velocity);
@@ -474,7 +474,7 @@ void(vector org, vector vec) TFFireRocket =
 
 	newmis.weapon = #DMSG_ROCKETL;
 	setmodel (newmis, "progs/missile.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0'); 	
 	setorigin (newmis, org);
 };
 
@@ -488,7 +488,7 @@ void(vector org, vector vec) TFFireGrenade =
 	local	vector	vec;
 	vec = normalize(vec);
 
-//?	KickPlayer(-2, self);
+//? KickPlayer(-2, self);
 	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = #MOVETYPE_BOUNCE;
@@ -501,7 +501,7 @@ void(vector org, vector vec) TFFireGrenade =
 		newmis.nextthink = time + 1.5; //CH 2.5 is too long for the gren
 	
 		
-	// set newmis speed	
+	// set newmis speed 
 	makevectors (self.v_angle);
 	if (self.v_angle_x)
 		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
@@ -516,7 +516,7 @@ void(vector org, vector vec) TFFireGrenade =
 
 	newmis.think = GrenadeExplode;
 	setmodel (newmis, "progs/grenade2.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0'); 	
 	setorigin (newmis, org);
 };
 
@@ -529,31 +529,31 @@ void(vector org, vector vec) TFFireFlame =
 	local	vector	vec;
 	vec = normalize(vec);
 
-    local   entity flame;
-//    local   float rn;
+	local	entity flame;
+//	  local   float rn;
 
-    flame = spawn ();
+	flame = spawn ();
 
-    flame.owner = self;
-    flame.movetype = #MOVETYPE_FLYMISSILE;
-    flame.solid = #SOLID_BBOX;
-    flame.classname = "flamerflame";
+	flame.owner = self;
+	flame.movetype = #MOVETYPE_FLYMISSILE;
+	flame.solid = #SOLID_BBOX;
+	flame.classname = "flamerflame";
 
 	makevectors (self.v_angle);
 
-    flame.velocity = aim(self, 10000);
-    flame.velocity = vec * 600;
+	flame.velocity = aim(self, 10000);
+	flame.velocity = vec * 600;
 
-    flame.angles = vectoangles(flame.velocity);
+	flame.angles = vectoangles(flame.velocity);
 
-    flame.touch = Flamer_stream_touch;
+	flame.touch = Flamer_stream_touch;
 
-    flame.think = s_explode1;
-    flame.nextthink = time + 0.15;
+	flame.think = s_explode1;
+	flame.nextthink = time + 0.15;
 
-    setmodel (flame, "progs/s_explod.spr");
-    setsize (flame, '0 0 0', '0 0 0');
-    setorigin (flame, org);
+	setmodel (flame, "progs/s_explod.spr");
+	setsize (flame, '0 0 0', '0 0 0');
+	setorigin (flame, org);
 };
 
 void() spikeshooter_use =
@@ -773,7 +773,7 @@ void() bubble_remove =
 
 void() bubble_bob =
 {
-local float		rnd1, rnd2, rnd3;
+local float 	rnd1, rnd2, rnd3;
 //local vector	vtmp1, modi;
 
 	self.cnt = self.cnt + 1;
@@ -857,7 +857,7 @@ void() func_wall =
 	}
 
 	self.angles = '0 0 0';
-	self.movetype = #MOVETYPE_PUSH;	// so it doesn't get pushed by anything
+	self.movetype = #MOVETYPE_PUSH; // so it doesn't get pushed by anything
 	self.solid = #SOLID_BSP;
 	self.use = func_wall_use;
 	setmodel (self, self.model);
@@ -894,10 +894,10 @@ void() func_episodegate =
 	}
 
 	if (!(serverflags & self.spawnflags))
-		return;			// can still enter episode
+		return; 		// can still enter episode
 
 	self.angles = '0 0 0';
-	self.movetype = #MOVETYPE_PUSH;	// so it doesn't get pushed by anything
+	self.movetype = #MOVETYPE_PUSH; // so it doesn't get pushed by anything
 	self.solid = #SOLID_BSP;
 	self.use = func_wall_use;
 	setmodel (self, self.model);
@@ -915,9 +915,9 @@ void() func_bossgate =
 	}
 
 	if ( (serverflags & 15) == 15)
-		return;		// all episodes completed
+		return; 	// all episodes completed
 	self.angles = '0 0 0';
-	self.movetype = #MOVETYPE_PUSH;	// so it doesn't get pushed by anything
+	self.movetype = #MOVETYPE_PUSH; // so it doesn't get pushed by anything
 	self.solid = #SOLID_BSP;
 	self.use = func_wall_use;
 	setmodel (self, self.model);

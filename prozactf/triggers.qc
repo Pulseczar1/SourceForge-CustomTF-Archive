@@ -12,7 +12,7 @@ void() trigger_reactivate =
 
 //=============================================================================
 
-#define SPAWNFLAG_NOMESSAGE	1 
+#define SPAWNFLAG_NOMESSAGE 1 
 #define SPAWNFLAG_NOTOUCH	1 
 
 // the wait time has passed, so set back up for another activation
@@ -34,7 +34,7 @@ void() multi_trigger =
 {
 	if (self.nextthink > time)
 	{
-		return;		// allready been triggered
+		return; 	// allready been triggered
 	}
 
 	if (self.classname == "trigger_secret")
@@ -85,17 +85,17 @@ void() multi_touch =
 {
 	local entity te;
 
-    if (other.classname != "player")
+	if (other.classname != "player")
 		return;
 
-    // OfN - Dont let triggers go for invalid players
-    if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
-        return;
-    if (other.playerclass == #PC_UNDEFINED) // skip observers
-        return;
-    if (other.health <= 0) // dead players out
-        return;
-    // Teamkillers
+	// OfN - Dont let triggers go for invalid players
+	if (other.done_custom & #CUSTOM_BUILDING) // skip ppl customizing
+		return;
+	if (other.playerclass == #PC_UNDEFINED) // skip observers
+		return;
+	if (other.health <= 0) // dead players out
+		return;
+	// Teamkillers
 	if (other.penance_time >= time)
 		return;
 
@@ -117,7 +117,7 @@ void() multi_touch =
 	{
 		makevectors (other.angles);
 		if (v_forward * self.movedir < 0)
-			return;		// not facing the right way
+			return; 	// not facing the right way
 	}
 	
 	self.enemy = other;
@@ -125,7 +125,7 @@ void() multi_touch =
 };
 
 /*QUAKED trigger_multiple (.5 .5 .5) ? notouch
-Variable sized repeatable trigger.  Must be targeted at one or more entities.  If "health" is set, the trigger must be killed to activate each time.
+Variable sized repeatable trigger.	Must be targeted at one or more entities.  If "health" is set, the trigger must be killed to activate each time.
 If "delay" is set, the trigger waits some time after activating before firing.
 "wait" : Seconds between triggerings. (.2 default)
 If notouch is set, the trigger is only fired by other entities, not by touching.
@@ -335,7 +335,7 @@ TELEPORT TRIGGERS
 ==============================================================================
 */
 
-#define PLAYER_ONLY	1 
+#define PLAYER_ONLY 1 
 #define SILENT	2 
 
 void() play_teleport =
@@ -383,43 +383,43 @@ void() tdeath_touch =
    local entity other2;
 
    if (other == self.owner)
-      return;
+	  return;
 
-    //- OfN Hack to avoid turretized teles to be telefragged when beeing used
-    if (other.classname == "building_teleporter" && other.tf_items & #NIT_TURRET)
-        return;
+	//- OfN Hack to avoid turretized teles to be telefragged when beeing used
+	if (other.classname == "building_teleporter" && other.tf_items & #NIT_TURRET)
+		return;
 
 // frag anyone who teleports in on top of an invincible player
    if (other.classname == "player")
    {
-      // Gizmo - enable double 666 telefrags
-      if (other.invincible_finished > time &&
-         self.owner.invincible_finished > time) {
-         self.classname = "teledeath3";
-         other.invincible_finished = 0;
-         self.owner.invincible_finished = 0;
-         T_Damage (other, self, self, 50000);
-         other2 = self.owner;
-         self.owner = other;
-         T_Damage (other2, self, self, 50000);
-      }
+	  // Gizmo - enable double 666 telefrags
+	  if (other.invincible_finished > time &&
+		 self.owner.invincible_finished > time) {
+		 self.classname = "teledeath3";
+		 other.invincible_finished = 0;
+		 self.owner.invincible_finished = 0;
+		 T_Damage (other, self, self, 50000);
+		 other2 = self.owner;
+		 self.owner = other;
+		 T_Damage (other2, self, self, 50000);
+	  }
 
-      if (other.invincible_finished > time) {
-         self.classname = "teledeath2";
-         T_Damage (self.owner, self, self, 50000);
-         return;
-      }
+	  if (other.invincible_finished > time) {
+		 self.classname = "teledeath2";
+		 T_Damage (self.owner, self, self, 50000);
+		 return;
+	  }
 
-      if (self.owner.classname != "player")
-      {   
-         T_Damage (self.owner, self, self, 5000);
-         return;
-      }
+	  if (self.owner.classname != "player")
+	  {   
+		 T_Damage (self.owner, self, self, 5000);
+		 return;
+	  }
    }
    
    if (other.health)
    {
-      T_Damage(other, self, self, 5000);
+	  T_Damage(other, self, self, 5000);
    }
 };
 
@@ -432,9 +432,9 @@ void() tdeath_touch =
 	if (other == self.owner)
 		return;
 
-    //- OfN Hack to avoid turretized teles to be telefragged when beeing used
-    if (other.classname == "building_teleporter" && other.tf_items & #NIT_TURRET)
-        return;
+	//- OfN Hack to avoid turretized teles to be telefragged when beeing used
+	if (other.classname == "building_teleporter" && other.tf_items & #NIT_TURRET)
+		return;
 
 // frag anyone who teleports in on top of an invincible player
 	if (other.classname == "player")
@@ -484,7 +484,7 @@ void() teleport_touch =
 	{
 		if (self.nextthink < time)
 		{
-			return;		// not fired yet
+			return; 	// not fired yet
 		}
 	}
 
@@ -553,7 +553,7 @@ void() teleport_touch =
 		//other.immune_to_check = time + 2; //WK Don't zap people for teleporting
 		makeImmune(other,time+2);
 
-		other.fixangle = 1;		// turn this way immediately
+		other.fixangle = 1; 	// turn this way immediately
 		other.teleport_time = time + 0.7;
 		if (other.flags & #FL_ONGROUND)
 			other.flags = other.flags - #FL_ONGROUND;

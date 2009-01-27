@@ -17,6 +17,7 @@ void() bprintVoteIssue;
 void(string thesound) BroadcastSound;
 void() ResetVoteEnt;
 float(float checkIP, float noIdlers) GetNoPlayers;
+float() NormalTF; //WK Returns true on a normal 2 team map
  
 #define MENU_DEFAULT				1
 #define MENU_TEAM					2
@@ -82,8 +83,9 @@ float(float checkIP, float noIdlers) GetNoPlayers;
 #define MENU_PROFESSION2			50
 #define MENU_PROFICIENCY			51
 #define MENU_OPTION 				52
+#define MENU_KNOCKTATION			53
 
-//If we extend this, search for "MENU_OPTION" below
+//If we extend this, search for "MENU_KNOCKTATION" below
 //WK ------------------------------------
 
 #define MENU_REFRESH_RATE			25
@@ -210,6 +212,8 @@ void() Menu_Proficiency;
 void(float inp) Menu_Proficiency_Input;
 void() Menu_Option;
 void(float inp) Menu_Option_Input;
+void() Menu_Knocktation;
+void(float inp) Menu_Knocktation_Input;
 
 //OFN
 void() Menu_Crusader;
@@ -339,7 +343,7 @@ void() Player_Menu =
 	}
 
 	//Don't flash status bars
-	if (self.current_menu >= #MENU_SNIPER_WEAPON && self.current_menu <= #MENU_OPTION)
+	if (self.current_menu >= #MENU_SNIPER_WEAPON && self.current_menu <= #MENU_KNOCKTATION)
 		self.StatusRefreshTime = time + 1.5;
 
 	if (self.current_menu == #MENU_INTRO)
@@ -392,6 +396,14 @@ void() Player_Menu =
 	else if (self.current_menu == #MENU_DROP)
 	{	
 		Menu_Drop();
+	}
+	else if (self.current_menu == #MENU_CLASS) //WK 5-15-08 Added in changeclass
+	{	
+		Menu_Class();
+	}
+	else if (self.current_menu == #MENU_TEAM) //WK 5-15-08 Added in changeteam
+	{	
+		Menu_Team();
 	}
 	else if (self.current_menu == #MENU_SPY)
 	{
@@ -560,6 +572,10 @@ void() Player_Menu =
 	{
 		Menu_Option();
 	}	 
+	else if (self.current_menu == #MENU_KNOCKTATION)
+	{
+		Menu_Knocktation();
+	}	 
 	
 	//WK ----------------
 	else if (self.team_no == 0 && teamplay && (self.lives != 0))
@@ -591,10 +607,51 @@ void(float inp) Menu_Team_Input;
 
 void() Menu_Team =
 {
-	if ((toggleflags & #TFLAG_AUTOTEAM) && teamplay)
+	local float should_autoteam,team1count,team2count, teamSet, changing_team;
+
+	if(self.team_no > 0) changing_team = 1;
+	else changing_team = 0;
+
+	should_autoteam = 0;
+	if (!NormalTF()) {	
+		should_autoteam = 0; //Don't autoteam on nonstandard maps
+	} else {
+		team1count = TeamFortress_TeamGetNoPlayers(1);
+		team2count = TeamFortress_TeamGetNoPlayers(2);
+
+		//If we're currently playing, only autoteam if we're on a team with +2 or more players than the smaller team
+		if (self.team_no) {
+			if (self.team_no == 1 && team1count > team2count + 1) should_autoteam = 1;
+			else if (self.team_no == 2 && team2count > team1count + 1) should_autoteam = 1;
+		}
+		//If we're a new player, then autoteam if the teams are uneven at all
+		else if (team1count != team2count) should_autoteam = 1;
+	}
+
+	if (time < 300) should_autoteam = 0; //Don't force autoteam in first 5 minutes
+
+	//Timeout autoteam (people idle 30s at login)
+	if ((toggleflags & #TFLAG_AUTOTEAM))
+		should_autoteam = 1;
+
+	//Autoteaming can be disabled entirely
+	//WK 1-19-09 Especially in Neo mode
+	if (infokey(world, "at") == "off" || infokey(world, "at") == "0" || neo)
+		should_autoteam = 0;
+
+	// Autoassign player a team
+	if (should_autoteam && teamplay)
 	{
-		// assign player a team
-		if (TeamFortress_TeamPutPlayerInTeam())
+		teamSet = TeamFortress_TeamPutPlayerInTeam();
+		if (changing_team && teamSet) {
+			ClientKill();
+		}
+		//WK 1-19-09 Fix the double-autoteam bug by advancing to the correct menu - it was autoteaming and leaving it on MENU_TEAM
+		if (!changing_team && teamSet) {
+			self.current_menu = #MENU_CLASS;
+			self.impulse = 0;
+		}
+		if (teamSet)
 			return;
 	}
 
@@ -658,12 +715,52 @@ void() Menu_Team =
 void(float inp) Menu_Team_Input =
 {
 	local float teamSet; // bool
+	local float changing_team; //WK 5-15-08 We allow people to reteam inside the game now, this holds if they are, indeed
+	local float team1count, team2count, fullteam;
+
+	//WK 5-15-08 Stop people from accidentally joining their own teams (would suicide them needlessly)
+	if (inp && inp == self.team_no) {
+		sprint(self,#PRINT_HIGH,"You're already on that team!\n");
+		CuTFMenuSound(#MENUSOUND_WRONG);
+		ResetMenu();		
+		self.impulse = 0;
+		return;
+	}
+
+	//WK 5-15-08 On a normal TF map, after 5 minutes we don't allow people to pick a team that will unbalance the sides
+	if (NormalTF() && time > 300) {
+		fullteam = 0;
+		team1count = TeamFortress_TeamGetNoPlayers(1);
+		if (self.team_no == 1) team1count = team1count - 1; //Don't count ourselves
+		team2count = TeamFortress_TeamGetNoPlayers(2);
+		if (self.team_no == 2) team2count = team2count - 1; //Don't count ourselves
+
+		if (inp == 1 && team1count > team2count) fullteam = 1;
+		if (inp == 2 && team2count > team1count) fullteam = 1;
+		if (fullteam) {
+			inp = 5; //Autoteam them instead
+			sprint(self,#PRINT_HIGH,"That team is full! Autoteaming instead.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+			ResetMenu();		
+			self.impulse = 0;
+			return;
+		}
+	}	
 
 	//WK Remove starting observer gravity. It might come right back.
 	self.gravity = 1;
 
-	if (inp == 5) // auto team
+	if(self.team_no > 0) changing_team = 1;
+	else changing_team = 0;
+
+	//WK 1-19-09 Disable autoteam in Neo mode
+	if (neo && inp == 5) inp = 0;
+
+	if (inp == 5) { // auto team
+		bprint(#PRINT_HIGH,self.netname);
+		bprint(#PRINT_HIGH," picks a random team!\n");
 		teamSet = TeamFortress_TeamPutPlayerInTeam();
+	}
 	else if (inp <= number_of_teams && inp > 0)
 		teamSet = TeamFortress_TeamSet(inp);		
 	else if (number_of_teams == 0 && inp <= #TM_MAX_NO)
@@ -675,48 +772,18 @@ void(float inp) Menu_Team_Input =
 		return;
 	}
 
-	// added teamSet for AGR code below -PZ
-	local entity ent;
-	local string temp;
-	if (teamSet) //Observers do not count against AGR limits
-	{
-		ent = find(world, classname, "voteent");
-		if (ent != world)
-		{
-			if (ent.group_no == 2 || ent.group_no == 3) // is current running vote for an AGR map?
-			{
-				// check that newly-added player to the game doesn't go over agr_vote_max
-				local float x;
-				x = GetNoPlayers(#TRUE, #TRUE);
-				if (agr_vote_max != 0 && x > agr_vote_max)
-				{
-					bprint(#PRINT_HIGH, "Voting Max number of players allowed for an ΑΗÒ vote is ");
-					temp = ftos(agr_vote_max); temp = colstr(temp, #COLSTR_NUMBER);
-					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, " players.\n");
-					bprint(#PRINT_HIGH, last_vote_starter); bprint(#PRINT_HIGH, " thanks ");
-					bprint(#PRINT_HIGH, self.netname); 
-					bprint(#PRINT_HIGH, " for putting the player-count above ");
-					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, ". :P\n");
-
-					bprint(#PRINT_HIGH,"Voting Map voting failed");
-					bprintVoteIssue();
-					bprint(#PRINT_HIGH,"\n");
-					
-					BroadcastSound("misc/runekey");
-					
-					ResetVoteEnt();
-				}
-			}
-		}	 
+	//WK 5-15-08 Suicide if they switch teams inside the game. Prevents abuses.
+	if (changing_team && teamSet) {
+		ClientKill();
 	}
-	// end AGR code
 
 	/*else if (inp == 7)
 		self.current_menu = #MENU_PICKBINDS;
 	else if (inp == 8)
 		PlayerObserverMode();*/
 
-	if (custom_mode!=2) sprint(self, #PRINT_MEDIUM, "Press ΆΆ for a custom player class\n");
+	//WK 1-19-09 We don't need this any more
+	//if (custom_mode!=2) sprint(self, #PRINT_MEDIUM, "Press ΆΆ for a custom player class\n");
 
 	ResetMenu();		
 	self.impulse = 0;
@@ -764,23 +831,37 @@ void() Menu_Class =
 		}
 	}
 
+	local float x;
 	if (custom_mode!=2)
 	{
 		if (TeamFortress_TeamIsCivilian(self.team_no))
 			CenterPrint(self, "Your team can only be Civilians.\n");
 		else if (spy_off == #TRUE)
-			CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hvwep   \n.. Pyro    \n.. Engineer\n\n.. Γυστον! \n");
-		else  
-			CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hvwep   \n.. Pyro    \n.. Spy     \n.. Engineer\n\n.. Γυστον! \n");
+			CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hwguy   \n.. Pyro    \n.. Engineer\n\n.. Γυστον! \n");
+		else
+		{
+			// begin Neo mod
+			if (neo)
+			{
+				x = floor(time);
+				if (x - (2 * floor(x / 2)) == 0) // x mod 2 == 0
+					CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hwguy   \n.. Pyro    \n.. Spy     \n.. Engineer\n\n.. Γυστον! \n\n\n\n Neo Mode - ΒΕΤΑ \n");
+				else
+					CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hwguy   \n.. Pyro    \n.. Spy     \n.. Engineer\n\n.. Γυστον! \n\n\n\n Neo Mode - BETA \n");
+			}
+			else
+				CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hwguy   \n.. Pyro    \n.. Spy     \n.. Engineer\n\n.. Γυστον! \n");
+			// end Neo mod
+		}
 	}
 	else
 	{
 		if (TeamFortress_TeamIsCivilian(self.team_no))
 			CenterPrint(self, "Your team can only be Civilians.\n");
 		else if (spy_off == #TRUE)
-			CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hvwep   \n.. Pyro    \n.. Engineer\n");
+			CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hwguy   \n.. Pyro    \n.. Engineer\n");
 		else  
-			CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hvwep   \n.. Pyro    \n.. Spy     \n.. Engineer\n");
+			CenterPrint(self, " Γθοοσε ωους γμασσ \n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hwguy   \n.. Pyro    \n.. Spy     \n.. Engineer\n");
 	}
 };
 
@@ -799,19 +880,12 @@ void(float inp) Menu_Class_Input =
 	if (inp == 10) //We picked custom, chnage it from random
 		self.impulse = #PC_CUSTOM + #TF_CHANGEPC;
 		
-//WK Default to Custom class. TODO: Make this a serverside option - OfN - done!
-//	self.impulse = #PC_CUSTOM + #TF_CHANGEPC;
-
 	TeamFortress_ChangeClass(); 		
 	ResetMenu();		
 
-	if ( #DISPLAY_CLASS_HELP ) 
-		self.current_menu = #MENU_CLASSHELP;
-	else
-		self.current_menu = #MENU_DEFAULT;
+	self.current_menu = #MENU_DEFAULT;
 
 	self.menu_displaytime = 0;
-
 	self.impulse = 0;
 };
 
@@ -907,7 +981,7 @@ void(float inp) Menu_DoBindings_Input =
 
 void(float inp) Menu_Input =
 {
-	if (self.current_menu >= #MENU_SNIPER_WEAPON && self.current_menu <= #MENU_OPTION)
+	if (self.current_menu >= #MENU_SNIPER_WEAPON && self.current_menu <= #MENU_KNOCKTATION)
 	if (inp >= 1 && inp <= 7)
 	{
 		if (!CanBuyItem(inp))
@@ -1014,7 +1088,9 @@ void(float inp) Menu_Input =
 	else if (self.current_menu == #MENU_PROFICIENCY)
 		Menu_Proficiency_Input(inp);
 	else if (self.current_menu == #MENU_OPTION)
-		Menu_Option_Input(inp); //WK --
+		Menu_Option_Input(inp); 
+	else if (self.current_menu == #MENU_KNOCKTATION)
+		Menu_Knocktation_Input(inp); //WK 1-19-09
 };
 
 void() Menu_Intro =
@@ -1261,7 +1337,7 @@ void(float inp) Menu_Spy_Input =
 
 void() Menu_Spy_Skin =
 {
-	CenterPrint(self, "Γθαξηε Σλιξ το:\n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hvwep   \n.. Pyro    \n.. Spy     \n.. Engineer\n\n");
+	CenterPrint(self, "Γθαξηε Σλιξ το:\n\n.. Scout   \n.. Sniper  \n.. Soldier \n.. Demoman \n.. Medic   \n.. Hwguy   \n.. Pyro    \n.. Spy     \n.. Engineer\n\n");
 };
 
 void(float inp) Menu_Spy_Skin_Input =
@@ -1923,7 +1999,8 @@ void(float inp) Menu_EngineerFix_Dispenser_Input =
 		self.ammo_cells = self.ammo_cells + (#BUILD_COST_DISPENSER / 2);
 ///////////////////////////
 #ifdef QUAKE_WORLD
-		if (Teammate(self.building.real_owner.team_no,self.team_no) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
+		// Neo mode modication
+		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "dispenser");
 		}
 #endif
@@ -2036,18 +2113,18 @@ void() Menu_EngineerFix_SentryGun =
 {
 	if (self.building.weapon < 4 && self.ammo_cells >= #BUILD_COST_SENTRYGUN) //WK 1/15/8 Was < 3
 	{
-        if (!(self.tf_items & #NIT_TURRET)) // TODO: Action --> OfteN's sentry gun
-            CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Upgrade Sentry Gun          \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n");
-        else
-            CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Upgrade Sentry Gun          \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n.. Create Turret               \n");
-    }
+		if (!(self.tf_items & #NIT_TURRET)) // TODO: Action --> OfteN's sentry gun
+			CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Upgrade Sentry Gun          \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n");
+		else
+			CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Upgrade Sentry Gun          \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n.. Create Turret               \n");
+	}
 	else
-    {
-        if (!(self.tf_items & #NIT_TURRET))
-            CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n");
-        else
-            CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n.. Create Turret               \n");
-    }
+	{
+		if (!(self.tf_items & #NIT_TURRET))
+			CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n");
+		else
+			CenterPrint(self, "Αγτιοξ:                            \n\n.. Put Ammo into Sentry Gun    \n.. Repair Sentry Gun           \n\n.. Ξοτθιξη                     \n\n.. Dismantle Sentry Gun        \n.. Rotate Clockwise            \n.. Rotate Counter-Clockwise    \n.. Create Turret               \n");
+	}
 };
 
 //WK 1/15/8 Rearm and Repair in Engineer.qc now
@@ -2138,7 +2215,8 @@ void(float inp) Menu_EngineerFix_SentryGun_Input =
 		self.ammo_cells = self.ammo_cells + (#BUILD_COST_SENTRYGUN / 2) + (self.building.weapon * 25);
 
 #ifdef QUAKE_WORLD
-		if (Teammate(self.building.real_owner.team_no,self.team_no) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
+		// Neo mode modication
+		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "sentry gun");
 		}
 #endif
@@ -2285,7 +2363,8 @@ void(float inp) Menu_EngineerFix_Sensor_Input =
 		self.building.real_owner.has_sensor = #FALSE;
 
 #ifdef QUAKE_WORLD
-		if (Teammate(self.building.real_owner.team_no,self.team_no) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
+		// Neo mode modication
+		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "motion sensor");
 		}
 #endif
@@ -2344,7 +2423,8 @@ void(float inp) Menu_EngineerFix_Camera_Input =
 		self.building.real_owner.has_camera = #FALSE;
 
 #ifdef QUAKE_WORLD
-		if (Teammate(self.building.real_owner.team_no,self.team_no) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
+		// Neo mode modication
+		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "security camera");
 		}
 #endif
@@ -2421,7 +2501,8 @@ void(float inp) Menu_EngineerFix_Teleporter_Input =
 		self.building.real_owner.has_teleporter = (self.building.real_owner.has_teleporter - 1);
 
 #ifdef QUAKE_WORLD
-		if (Teammate(self.building.real_owner.team_no,self.team_no) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
+		// Neo mode modication
+		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "teleporter");
 		}
 #endif
@@ -2531,7 +2612,8 @@ void(float inp) Menu_EngineerFix_FieldGen_Input =
 		self.building.real_owner.has_fieldgen = (self.building.real_owner.has_fieldgen - 1);
 
 #ifdef QUAKE_WORLD
-		if (Teammate(self.building.real_owner.team_no,self.team_no) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
+		// Neo mode modication
+		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "field generator");
 		}
 #endif
@@ -2780,7 +2862,8 @@ void() Menu_EngineerDismantle_Tesla =
 	self.building.real_owner.has_tesla = self.building.real_owner.has_tesla - (self.building.real_owner.has_tesla & self.building.dont_do_triggerwork);
 
 #ifdef QUAKE_WORLD
-		if (Teammate(self.building.real_owner.team_no,self.team_no) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
+		// Neo mode modication
+		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "tesla");
 		}
 #endif

@@ -1,4 +1,4 @@
-// AGR.QC                                               July 8, 2006
+// AGR.QC										  ver. March 11, 2008
 // Author: Pulseczar
 //
 // Implementation of OneManClan's infamous Attackers Go Red CTF mode
@@ -14,22 +14,22 @@
 // cvars - requires 'localinfo' to set these
 float agr; // globar cvar, just on or off (requires 'localinfo agr 1' to be on)
 float agr_frags; // frags blue gets for successfully defending for agr_minutes minutes
-float agr_minutes; // number of minutes blue has to successfully defend in order to be 
-			       // rewarded frags
-float agr_vote_max; // overrides default maximum number of players allowed to vote for AGR
+float agr_minutes; // number of minutes blue has to defend in order to be rewarded frags
+float agr_teamfrags; // overrides the serverinfo 'teamfrags' (or 't') var when AGR is active,
+					 // which controls whether or not each players' frags are equal to their
+					 // team's score (has to be set to '1' to be on)
 // globals
 float timeToRewardBlue; // don't try to set it (it's set by functions)
 float agrTimerRunning; // boolean
 float agrTimeOfLastSound; // in seconds, what the timer was on last timer sound
 // define vars
 #define AGR_ROTATION_OFF #TRUE // on a map triggered by map rotation, AGR is never on
-#define AGR_VOTE_MAX 6 // default maximum number of players allowed for an AGR vote (0 means no max)
-//#define AGR_WHEN_BLUE_SCORES_RETURN_FLAG
+// #define AGR_WHEN_BLUE_SCORES_RETURN_FLAG
 
 #endif
 
 //=================================================================
-// called every 10(?) frames in StartFrame(); maintains flag 
+// called every frame in StartFrame(); maintains flag 
 // capture timer; awards blue team points for successfully 
 // defending for required time; stops the AGR timer if red or blue
 // have 0 players
@@ -38,6 +38,10 @@ void() AGR_think =
 {
 	local string temp;
 	local entity bluePlayer;
+	local float timeLeft; // time left on the map
+	local float timeAccumulated; // amount of time blue has defended this 'clock cycle'
+	local float amtBlueCanScore; // max amount blue can score with time left
+	local float timesBlueCanScore; // max number of times blue can score with time left
 
 	if (agr)
 	{
@@ -75,14 +79,39 @@ void() AGR_think =
 					AGR_resetTimer();
 				}
 				AGR_playTimerSounds();
+
+				// check to see if the game should end because blue 
+				// doesn't have enough time to catch up to red in score
+				timeLeft = (timelimit - time) / 60;
+				timeAccumulated = (agr_minutes*60 - (timeToRewardBlue - time)) / 60;
+				timesBlueCanScore = (timeLeft + timeAccumulated) / agr_minutes;
+				timesBlueCanScore = floor(timesBlueCanScore);
+				amtBlueCanScore = timesBlueCanScore * agr_frags;
+
+				if (team1score + amtBlueCanScore < team2score)
+				{
+					local float integer, fraction;
+					bprint(#PRINT_HIGH, "\n Red Wins The Game! \n");
+					bprint(#PRINT_HIGH, "Blue can't catch up to Red's score in the ");
+					integer = floor(timeLeft); fraction = timeLeft - integer;
+					fraction = fraction * 10; fraction = floor(fraction);
+					temp = ftos(integer); temp = colstr(temp, #COLSTR_NUMBER);
+					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, ".");
+					temp = ftos(fraction); temp = colstr(temp, #COLSTR_NUMBER);
+					bprint(#PRINT_HIGH, temp);
+					bprint(#PRINT_HIGH, "\nminutes remaining. Blue can only score ");
+					temp = ftos(amtBlueCanScore); temp = colstr(temp, #COLSTR_NUMBER);
+					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, " points.\n");
+					bprint(#PRINT_HIGH, "\n");
+					BroadcastSound("boss2/pop2.wav");
+					NextLevel(); // end the map
+				}
 			}
-			else
-				if (prematch < time)
-					AGR_startTimer();
+			else if (prematch < time)
+				AGR_startTimer();
 		}
-		else
-			if (agrTimerRunning)
-				AGR_stopTimer();
+		else if (agrTimerRunning)
+			AGR_stopTimer();
 	}
 };
 //=================================================================
@@ -91,26 +120,35 @@ void() AGR_think =
 void() AGR_initialize =
 {
 	local string st;
+	local float force_agr;
 
 	st = infokey(world, "agr"); // ARE YOU HAPPY, OMC?? :P
-    if (st == string_null) st = "0"; // sets default
-    agr = stof(st);
-    if (agr != 1) agr = 0; // has to be set to 1 to engage AGR
+	if (st == string_null) st = "0"; // sets default
+	agr = stof(st);
+	if (agr != 1) agr = 0; // has to be set to 1 to engage AGR
 
-	st = infokey(world, "agr_frags");
-    if (st == string_null) st = "10"; // sets default
-    agr_frags = stof(st);
-    if (agr_frags < 0) agr_frags = 0; // the allowed minimum 
+	st = infokey(world, "force_agr"); //WK 5-15-08 Added command to force on AGR regardless of vote setting, for Phrosty
+	if (st == string_null) st = "0"; // sets default
+	force_agr = stof(st);
+	if (force_agr == 1) agr = 1; // Override AGR setting if 1
 
-	st = infokey(world, "agr_minutes");
-    if (st == string_null) st = "5"; // sets default
-    agr_minutes = stof(st);
-    if (agr_minutes < 0) agr_minutes = 0; // the allowed minimum
+	if (agr)
+	{
+		st = infokey(world, "agr_frags");
+		if (st == string_null) st = "10"; // sets default
+		agr_frags = stof(st);
+		if (agr_frags < 0) agr_frags = 0; // the allowed minimum 
 
-	st = infokey(world, "agr_vote_max");
-    if (st == string_null) st = "#AGR_VOTE_MAX"; // sets default
-    agr_vote_max = stof(st);
-    if (agr_vote_max < 0) agr_vote_max = 0; // the allowed minimum
+		st = infokey(world, "agr_minutes");
+		if (st == string_null) st = "5"; // sets default
+		agr_minutes = stof(st);
+		if (agr_minutes < 0) agr_minutes = 0; // the allowed minimum
+
+		st = infokey(world, "agr_teamfrags");
+		if (st == string_null) st = "1"; //WK 5-15-08 Teamfrags on by default now in AGR mode
+		agr_teamfrags = stof(st);
+		if (agr_teamfrags != 1) agr_teamfrags = 0;
+	}
 };
 //=================================================================
 // starts the flag capture timer
@@ -180,12 +218,11 @@ void() AGR_stopTimer =
 };
 //=================================================================
 // used when teams score; resets the timer for which blue has to
-// successfully defend; returns blue flag to its base
+// successfully defend; (may return blue flag to its base)
 //=================================================================
 void() AGR_resetTimer =
 {	
 	local string temp;
-	// local entity blueFlag;
 
 	timeToRewardBlue = time + agr_minutes*60;
 	bprint(#PRINT_HIGH, "\n ÁÇÒ Timer Reset \n");
@@ -194,7 +231,8 @@ void() AGR_resetTimer =
 	bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, " minutes to capture Blue's flag.\n");
 	bprint(#PRINT_HIGH, "\n");
 	BroadcastSound("doors/runeuse.wav");
-#ifdef AGR_WHEN_BLUE_SCORES_RETURN_FLAG
+  #ifdef AGR_WHEN_BLUE_SCORES_RETURN_FLAG
+	local entity blueFlag;
 	// return blue flag to its base
 	blueFlag = find(world, classname, "item_tfgoal");
 	while (blueFlag)
@@ -211,7 +249,7 @@ void() AGR_resetTimer =
 		}
 		blueFlag = find(blueFlag, classname, "item_tfgoal");
 	}
-#endif
+  #endif
 };
 //=================================================================
 // checks to see if it's time to play a timer sound, and if so, 
@@ -230,7 +268,7 @@ void() AGR_playTimerSounds =
 	seconds = totalSeconds - (60 * floor(totalSeconds / 60)); // sec = totalSec mod 60
 	seconds = floor(seconds);
 
-	if      (minutes == 3 && seconds == 0)
+	if		(minutes == 3 && seconds == 0)
 				{BroadcastSound("agr/cd3min.wav"); agrTimeOfLastSound = totalSeconds;}
 	else if (minutes == 1 && seconds == 0)
 				{BroadcastSound("agr/cd1min.wav"); agrTimeOfLastSound = totalSeconds;}
@@ -242,19 +280,19 @@ void() AGR_playTimerSounds =
 				{BroadcastSound("agr/cd9.wav"); agrTimeOfLastSound = totalSeconds;}
 	else if (minutes == 0 && seconds == 8)
 				{BroadcastSound("agr/cd8.wav"); agrTimeOfLastSound = totalSeconds;}
-	else if (minutes == 0 && seconds == 7)  
+	else if (minutes == 0 && seconds == 7)	
 				{BroadcastSound("agr/cd7.wav"); agrTimeOfLastSound = totalSeconds;}
-	else if (minutes == 0 && seconds == 6)  
+	else if (minutes == 0 && seconds == 6)	
 				{BroadcastSound("agr/cd6.wav"); agrTimeOfLastSound = totalSeconds;}
-	else if (minutes == 0 && seconds == 5)  
+	else if (minutes == 0 && seconds == 5)	
 				{BroadcastSound("agr/cd5.wav"); agrTimeOfLastSound = totalSeconds;}
-	else if (minutes == 0 && seconds == 4)  
+	else if (minutes == 0 && seconds == 4)	
 				{BroadcastSound("agr/cd4.wav"); agrTimeOfLastSound = totalSeconds;}
-	else if (minutes == 0 && seconds == 3)  
+	else if (minutes == 0 && seconds == 3)	
 				{BroadcastSound("agr/cd3.wav"); agrTimeOfLastSound = totalSeconds;}
-	else if (minutes == 0 && seconds == 2)  
+	else if (minutes == 0 && seconds == 2)	
 				{BroadcastSound("agr/cd2.wav"); agrTimeOfLastSound = totalSeconds;}
-	else if (minutes == 0 && seconds == 1)  
+	else if (minutes == 0 && seconds == 1)	
 				{BroadcastSound("agr/cd1.wav"); agrTimeOfLastSound = totalSeconds;}
 };
 //=================================================================
@@ -262,7 +300,7 @@ void() AGR_playTimerSounds =
 //=================================================================
 void() AGR_introducePlayer =
 {
-	sprint(self, #PRINT_HIGH, "\n Áôôáãëåòó Çï Òåä enabled \n");
+	sprint(self, #PRINT_HIGH, " Áôôáãëåòó Çï Òåä enabled \n");
 	sprint(self, #PRINT_HIGH, "To be an attacker, go Red, else go Blue and defend.\n");
 	if (!agrTimerRunning)
 		sprint(self, #PRINT_HIGH, "The timer for flag capture has not started yet.\n");

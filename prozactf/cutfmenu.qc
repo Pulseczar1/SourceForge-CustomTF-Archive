@@ -39,9 +39,9 @@ void(float cost, float type) BuyCuTF2;
 #define COST_SNIPERRIFLE	4500 //WK 1/7/7 Was 5000 // 4000
 #define COST_SHINIGAMI		2250
 #define COST_OTR			1850
-#define COST_CRIPPLER		1350
-#define COST_OVERCHARGE 	2700
-#define COST_CHARGER		1800
+#define COST_CRIPPLER		1550
+#define COST_OVERCHARGE 	2400
+#define COST_CHARGER		1700
 #define COST_INITIALIZER	1100
 
 // PAGE 2 - Rocket Weapons
@@ -61,7 +61,7 @@ void(float cost, float type) BuyCuTF2;
 #define COST_RLASERGUIDED2		1000
 #define COST_CLUSTER			3275
 #define COST_FASTER_ROX 		1650
-#define COST_HEAT_SEEKING	  	4725
+#define COST_HEAT_SEEKING		4225
 
 // PAGE 3 - Shotgun Weapons
 #define STR_ASSAULTCANNON	   "Assault Cannon  "	
@@ -70,46 +70,44 @@ void(float cost, float type) BuyCuTF2;
 #define STR_SHOTGUN 		   "Single Barrel   "
 #define STR_LONG_BARREL 	   "´Long Barrel    "
 #define STR_EXPLOSIVE_SHOT	   "´Explosive Shots"
-#define STR_ARMOR_PIERCING	   "´Armor Piercing "
 
 #define COST_ASSAULTCANNON		3000   
 #define COST_LIGHTASSAULT		1800
 #define COST_SUPERSHOTGUN		 575
 #define COST_SHOTGUN			  50
-#define COST_LONG_BARREL		 500
+#define COST_LONG_BARREL		 975
 #define COST_EXPLOSIVE_SHOT 		1925
-#define COST_ARMOR_PIERCING 		3000
 
 //Page 4 - Other Weapons
-#define STR_GRENADELAUNCHER    	"Grenade Set     "
-#define STR_LIGHTNING		   	"Thunderbolt     "
-#define STR_LASERCANNON 	   	"Laser Cannon    "
+#define STR_GRENADELAUNCHER 	"Grenade Set     "
+#define STR_LIGHTNING			"Thunderbolt     "
+#define STR_LASERCANNON 		"Laser Cannon    "
 #define STR_MAUSER			"Mauser          "
-#define STR_SNG 			   	"Super Nailgun   "
-#define STR_RAILGUN 		   	"Rail Gun        "
-#define STR_NAILGUN 		   	"Nail Gun        "
+#define STR_SNG 				"Super Nailgun   "
+#define STR_RAILGUN 			"Rail Gun        "
+#define STR_NAILGUN 			"Nail Gun        "
 
 #define COST_GRENADELAUNCHER		2200
 #define COST_LIGHTNING			2200
 #define COST_LASERCANNON		1100
 #define COST_MAUSER 			2400
-#define COST_SNG				 800
+#define COST_SNG				 600
 #define COST_RAILGUN			 500
-#define COST_NAILGUN			 400
+#define COST_NAILGUN			 225
 
 //Page 5 - Tools
-#define STR_SPANNER 		   "Spanner         "
+#define STR_TRANQ			   "Tranquilizer    "
 #define STR_MEDIKIT 		   "Medikit         "
 #define STR_KNIFE			   "Knife           "
-#define STR_TRANQ			   "Tranquilizer    "
+#define STR_SCUBA			   "Scuba Gear      "
 #define STR_AIRF			   "Air-Fist        "
 #define STR_AIRFISTUPGRADE	   "´Airfist Upgrade"
 #define STR_HOOK			   "Grappling Hook  "
 
-#define COST_SPANNER			1200
+#define COST_TRANQ			 350
 #define COST_MEDIKIT			1550
 #define COST_KNIFE			 650
-#define COST_TRANQ			 300
+#define COST_SCUBA			1000
 #define COST_AIRF				2500 //WK 2/26/7 Was 2000
 #define COST_AIRFISTUPGRADE 		1250 //WK 8/4/7 Was 2500 //WK 2/26/7 Was 1850
 #define COST_HOOK				3000
@@ -123,8 +121,8 @@ void(float cost, float type) BuyCuTF2;
 #define STR_SPEED6			   "Black Mamba     "
 #define STR_SPEED7			   "Imperial Penguin"
 
-#define COST_SPEED1 			7800 //WK 6/1/7 9000
-#define COST_SPEED2 			5500 //WK 6/1/7 6000
+#define COST_SPEED1 			7200 //WK 6/1/7 9000
+#define COST_SPEED2 			4900 //WK 6/1/7 6000
 #define COST_SPEED3 			3250
 #define COST_SPEED4 			2500
 #define COST_SPEED5 			1250
@@ -139,13 +137,13 @@ void(float cost, float type) BuyCuTF2;
 #define STR_HP6 			   "200Ø100 Red     "
 #define STR_HP7 			   "300Ø100 Red     "
 
-#define COST_HP1				 150
-#define COST_HP2				 400 //WK 6/1/7 450
-#define COST_HP3				 700
-#define COST_HP4				1200
+#define COST_HP1				 125
+#define COST_HP2				 325 
+#define COST_HP3				 650
+#define COST_HP4				1100
 #define COST_HP5				1800
-#define COST_HP6				2700
-#define COST_HP7				4100
+#define COST_HP6				3000
+#define COST_HP7				4500
 
 // PAGE 8 - Special Armors & Ammo
 #define STR_CERAMIC 		   "Ceramic Armor   "
@@ -153,36 +151,34 @@ void(float cost, float type) BuyCuTF2;
 #define STR_ASBESTOS		   "Asbestos Armor  "
 #define STR_KEVLAR		   "Kevlar Armor    "
 #define STR_BLAST			   "Blast Armor     "
-#define STR_AMMOBACKPACK	   "Ammo Backpack   "
-#define STR_AMMOBANDOLIER	   "Ammo Bandolier  "
+#define STR_FULLARMOUR		   "Full Armour     "
+#define STR_ARMOR_PIERCING	   "´Armor Piercing "
 
-#define COST_CERAMIC			 575
-#define COST_GEL				 625 //WK 4-8-7 It's "GEL", not GET. =)
+#define COST_CERAMIC			 975
+#define COST_GEL			 625 //WK 4-8-7 It's "GEL", not GET. =)
 #define COST_ASBESTOS			 750
 #define COST_KEVLAR 			1200
 #define COST_BLAST			1500
-#define COST_AMMOBACKPACK		 300
-#define COST_AMMOBANDOLIER		 200
+#define COST_FULLARMOUR 		 250
+#define COST_ARMOR_PIERCING 		2000
 
 // PAGE 9 - Special Items
 #define STR_DETPACK 		   "Detpack         "
 #define STR_TOSSABLEDET 	   "C4 Tossable Det "
-#define STR_HOLO			   "Holo Device     "
+#define STR_HOLO			"Holo Device     "
 #define STR_CYBERAUG		   "CyberAug Unit   "
 #define STR_SPYKIT		   "Spy Kit         "
-#define STR_SCUBA			   "Scuba Gear      "
 #define STR_CLIPEXTEND		   "Clip Extender   "
 
 #define COST_DETPACK			 800
 #define COST_TOSSABLEDET		1200
-#define COST_HOLO				600 //WK 6/1/7 1200
-#define COST_CYBERAUG			 800
+#define COST_HOLO				500 //WK 6/1/7 1200
+#define COST_CYBERAUG			 500
 #define COST_SPYKIT 			2000
-#define COST_SCUBA			1000
 #define COST_CLIPEXTEND 		 600
 
 // PAGE 10 - Engineering
-#define STR_DISPENSER		   "Dispenser       "
+#define STR_SPANNER 		   "Spanner         "
 #define STR_SENTRYGUN		   "Sentry Gun      "
 #define STR_SENTRYUPGRADE	   "´Sentry Upgrade "
 #define STR_TESLACOIL		   "Tesla Coil      "
@@ -190,26 +186,26 @@ void(float cost, float type) BuyCuTF2;
 #define STR_SENSOR		   "Motion Sensor   "
 #define STR_TELEPORTER		   "Teleporter Pads "
 
-#define COST_DISPENSER			 600
+#define COST_SPANNER			1200
 #define COST_SENTRYGUN			1500
 #define COST_SENTRYUPGRADE		 700
 #define COST_TESLACOIL			1350
 #define COST_TESLAUPGRADE		1650
-#define COST_SENSOR 			 450
+#define COST_SENSOR 			 750
 #define COST_TELEPORTER 		1100
 
 // PAGE 11 - Engineering 2
 #define STR_SCANNER 		   "Scanner         "
 #define STR_AUTOSCANNER 	   "´Auto-Scanner   "
 #define STR_JAMMER		   "Scanner Jammer  "
-#define STR_FULLARMOUR		   "Full Armour     "
+#define STR_DISPENSER		   "Dispenser       "
 #define STR_SECURITYCAMERA	   "Security Camera "
 #define STR_FIELDGEN		   "Field Generator "
 
 #define COST_SCANNER			 650
 #define COST_AUTOSCANNER		 250
 #define COST_JAMMER 			1000
-#define COST_FULLARMOUR 		 250
+#define COST_DISPENSER			 600
 #define COST_SECURITYCAMERA 		 350
 #define COST_FIELDGEN			1400
 
@@ -222,11 +218,11 @@ void(float cost, float type) BuyCuTF2;
 #define STR_GR_NAIL 		   "Nail            "
 #define STR_GR_MIRV 		   "MIRV            "
 
-#define COST_GR_NORMAL			 500
+#define COST_GR_NORMAL			 750
 #define COST_GR_NAPALM			1000
 #define COST_GR_GAS 			1600
 #define COST_GR_EMP 			1200
-#define COST_GR_FRAG			1600
+#define COST_GR_FRAG			1850
 #define COST_GR_NAIL			1600
 #define COST_GR_MIRV			1600
 
@@ -245,16 +241,16 @@ void(float cost, float type) BuyCuTF2;
 #define COST_GR_PSIONIC 		1200
 #define COST_GR_ANTIGRAV		700
 #define COST_GR_BIOLOGICAL		1100
-#define COST_GR_KRAC			1300
+#define COST_GR_KRAC			1450
 
 // PAGE 14 - Professions
 #define STR_THIEF			   "Thief     ®Hide©"
-  #define STR_THIEF_EXTRA1       "´Shadowstep    "
-  #define STR_THIEF_EXTRA2       "´Shadowsprint  "
+  #define STR_THIEF_EXTRA1		 "´Shadowstep    "
+  #define STR_THIEF_EXTRA2		 "´Shadowsprint  "
 #define STR_RUNNER		   "Runner  ®Sprint©"
 #define STR_WARLOCK 		   "Warlock ®Summon©"
-  #define STR_WARLOCK_EXTRA1     "2nd Extra Soul  "
-  #define STR_WARLOCK_EXTRA2     "3rd Extra Soul  "
+  #define STR_WARLOCK_EXTRA1	 "2nd Extra Soul  "
+  #define STR_WARLOCK_EXTRA2	 "3rd Extra Soul  "
 #define STR_CHAPLAN 		   "Chaplan®Inspire©"
 #define STR_BERSERKER		   "Berserker ®Fury©"
 #define STR_GUERILLA		   "Guerilla ®Mines©"
@@ -263,17 +259,17 @@ void(float cost, float type) BuyCuTF2;
 #define STR_JUDOKA		   "Judoka  ®Disarm©"
 
 #define COST_THIEF			 800
-  #define COST_THIEF_EXTRA1	     	 700
-  #define COST_THIEF_EXTRA2	 	 500
+  #define COST_THIEF_EXTRA1 		 700
+  #define COST_THIEF_EXTRA2 	 500
 #define COST_RUNNER 			 400
 #define COST_WARLOCK			1150
-  #define COST_WARLOCK_EXTRA1	 	 700
-  #define COST_WARLOCK_EXTRA2	 	 950
+  #define COST_WARLOCK_EXTRA1		 750
+  #define COST_WARLOCK_EXTRA2		 650
 #define COST_CHAPLAN			1200
 #define COST_BERSERKER			1200
-#define COST_GUERILLA			1600
-  #define COST_GUERILLA_EXTRA1	 700
-  #define COST_GUERILLA_EXTRA2	 950
+#define COST_GUERILLA			1500
+  #define COST_GUERILLA_EXTRA1	 750
+  #define COST_GUERILLA_EXTRA2	 750
 #define COST_JUDOKA 			1250
 
 // PAGE 15 - More Professions
@@ -292,51 +288,64 @@ void(float cost, float type) BuyCuTF2;
   #define COST_ARMY_EXTRA1		 700
   #define COST_ARMY_EXTRA2		 950
 #define COST_HACKER 			1200
-#define COST_MARTYR 			1000
+#define COST_MARTYR 			1100 
 #define COST_CRUSADER			1600
 #define COST_TKD				1250
-#define COST_PSION			800
-  #define COST_PSION_EXTRA1		1200
-  #define COST_PSION_EXTRA2		2000
+#define COST_PSION		1050
+  #define COST_PSION_EXTRA1 	 750
+  #define COST_PSION_EXTRA2 	1500
 
 // PAGE 16 - Proficiencies
 #define STR_STEALTH 		   "Stealth         "
 #define STR_HIGHJUMP		   "Highjump        "
-#define STR_HWGUY			   "Aspect of HWGuy "
 #define STR_EXPBODY 		   "Exp. Body       "
-#define STR_GYMNAST 		   "Gymnast         "
 #define STR_DEMONLORE		   "Demon Lore      "
 #define STR_CLOSECOMBAT 	   "Close Combat    "
+#define STR_CANNIBAL		   "Cannibal        "
 
 #define COST_STEALTH			400
-#define COST_HIGHJUMP			500 // Original was 200
-#define COST_HWGUY			450
+#define COST_HIGHJUMP			500 
 #define COST_EXPBODY			1200
-#define COST_GYMNAST			450
 #define COST_DEMONLORE			300
-#define COST_CLOSECOMBAT		600
+#define COST_CLOSECOMBAT		650
+#define COST_CANNIBAL			 500
 
 // PAGE 17 - Optional Equipment
 #define STR_AUTOID		   "Auto-ID         "
 #define STR_RESPAWNGUARD	   "Respawn Guard   "
 #define STR_HOVERBOOTS		   "Hover Boots     "
 #define STR_BOOTUPGRADE 	   "´Boot Upgrade   "
-#define STR_RECOILLESS		   "´Recoilless     "
-#define STR_CANNIBAL		   "Cannibal        "
+#define STR_AMMOBACKPACK	   "Ammo Backpack   "
+#define STR_AMMOBANDOLIER	   "Ammo Bandolier  "
 
 #define COST_AUTOID 			  25
 #define COST_RESPAWNGUARD		  25
 #define COST_HOVERBOOTS 		 850
 #define COST_BOOTUPGRADE		 350
-#define COST_RECOILLESS			 600
-#define COST_CANNIBAL			 500
+#define COST_AMMOBACKPACK		 300
+#define COST_AMMOBANDOLIER		 200
+
+//PAGE 18 - Knocktation Menu
+#define STR_HWGUY			"Aspect of HWGuy "
+#define STR_GYMNAST 			"Gymnast         "
+#define STR_VOID_BODY			"Void Body       "
+#define STR_RECOILLESS		   	"Recoilless Shots"
+#define STR_MASSIVE_ATTACK	 	"Massive Attacks "
+#define STR_BLACK_HOLE_GUN	 	"Black Hole Guns "
+
+#define COST_HWGUY			450
+#define COST_GYMNAST			750
+#define COST_VOID_BODY			500
+#define COST_RECOILLESS 		650
+#define COST_MASSIVE_ATTACK		750
+#define COST_BLACK_HOLE_GUN		1750
 
 #define STR_SELLEXTRAS		   "Sell stuff back "
 
 
 // Leg settings (Speeds)
-#define CUSTOM_SPEED1	470 //WK 6/1/7 410 // Cheetah (shaka original = 650)
-#define CUSTOM_SPEED2	400 //WK 6/1/7 370 // Cougar (shaka original = 420)
+#define CUSTOM_SPEED1	430 //WK 6/1/7 410 // Cheetah (shaka original = 650)
+#define CUSTOM_SPEED2	380 //WK 6/1/7 370 // Cougar (shaka original = 420)
 #define CUSTOM_SPEED3	330 // White Rhino
 #define CUSTOM_SPEED4	310 // Scrub Jay
 #define CUSTOM_SPEED5	290 // KGB Officer
@@ -705,7 +714,7 @@ void() Menu_ShotgunWeapon =
 	str = ConstructMenuItemStr(6,#STR_EXPLOSIVE_SHOT,#COST_EXPLOSIVE_SHOT,self.cutf2_items,#CUTF2_EXPLOSIVE_SHOT);
 	l3 = strcat(l3,str);
 
-	l4 = ConstructMenuItemStr(7,#STR_ARMOR_PIERCING,#COST_ARMOR_PIERCING,self.cutf2_items,#CUTF2_ARMOR_PIERCING);
+	l4 = "\n";
 	l4 = strcat(l4,".. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n");
 
 	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãúê  Shotgun Weapons   úã\n\n",l1,l2,l3,l4,temp," dollars left\n");
@@ -746,11 +755,6 @@ void(float inp) Menu_ShotgunWeapon_Input =
 		if (inp == 6) {
 			BuyCuTF2(#COST_EXPLOSIVE_SHOT,#CUTF2_EXPLOSIVE_SHOT);
 			HelpString("Your shotgun shots explode on impact, dealing an extra ´#CUTF2_EXPLOSIVE_SHOT_FACTOR of your total attack's damage in radius fire damage.");
-			Menu_ShotgunWeapon();
-		}
-		if (inp == 7) {
-			BuyCuTF2(#COST_ARMOR_PIERCING,#CUTF2_ARMOR_PIERCING);
-			HelpString("Armor Piercing shots work with all weapons, not just shotgun weapons. It reduces the protection of special armors (like Kevlar) from 50% protection to 25% protection.");
 			Menu_ShotgunWeapon();
 		}
 		if (inp == 8) {
@@ -872,7 +876,6 @@ void(float inp) Menu_OtherWeapon_Input =
   }
 };
 
-//xxxx
 // ====================================================================
 //	Prints Menu of Tools
 // ====================================================================
@@ -888,12 +891,12 @@ void() Menu_Tools =
 
 	MenuResetCount();
 
-	l1 = ConstructMenuItemStr(1,#STR_SPANNER,#COST_SPANNER,self.weapons_carried,#WEAP_SPANNER);
+	l1 = ConstructMenuItemStr(1,#STR_TRANQ,#COST_TRANQ,self.weapons_carried,#WEAP_TRANQ);
 	str = ConstructMenuItemStr(2,#STR_MEDIKIT,#COST_MEDIKIT,self.weapons_carried,#WEAP_MEDIKIT);
 	l1 = strcat(l1,str);
 
 	l2 = ConstructMenuItemStr(3,#STR_KNIFE,#COST_KNIFE,self.cutf_items,#CUTF_KNIFE);
-	str = ConstructMenuItemStr(4,#STR_TRANQ,#COST_TRANQ,self.weapons_carried,#WEAP_TRANQ);
+	str = ConstructMenuItemStr(4,#STR_SCUBA,#COST_SCUBA,self.tf_items,#NIT_SCUBA);
 	l2 = strcat(l2,str);
 
 	l3 = ConstructMenuItemStr(5,#STR_AIRF,#COST_AIRF,self.weapons_carried,#WEAP_AIRF);
@@ -912,8 +915,8 @@ void(float inp) Menu_Tools_Input =
 	{
 
 		if (inp == 1) {
-			BuyWeapon(#COST_SPANNER,#WEAP_SPANNER);
-			HelpString("The spanner lets you repair and upgrade friendly buildings, dismantle enemy buildings, and heal the armor of teammates at the cost of cells. If you don't have one, all build times are 50% slower.");
+			BuyWeapon(#COST_TRANQ,#WEAP_TRANQ);
+			HelpString("The tranquilizer fires darts that are faster than in normal TF. They do a small amount of damage that ignore armor, cause the target to stop breathing, and slow the target.");
 			UpdateWeaponItems();
 			Menu_Tools();
 		}
@@ -960,11 +963,9 @@ void(float inp) Menu_Tools_Input =
 			Menu_Tools();
 		}
 		if (inp == 4) {
-			BuyWeapon(#COST_TRANQ,#WEAP_TRANQ);
-			HelpString("The tranquilizer fires darts that are faster than in normal TF. They do a small amount of damage that ignore armor, cause the target to stop breathing, and slow the target.");
-			UpdateWeaponItems();
+			BuyItem(#COST_SCUBA,#NIT_SCUBA);
+			HelpString("This Self-Contained Underwater Breathing Apparatus allows you to breathe indefinitely under water, makes you immune to tranquilizer shots, slows down your land walking speed slightly, greatly improves your underwater speed, and lets you shoot the sniper rifle and assault cannon in water.");
 			Menu_Tools();
-
 		}
 		if (inp == 5) {
 			BuyWeapon(#COST_AIRF,#WEAP_AIRF);  
@@ -1683,13 +1684,13 @@ void() Menu_Armor  =
 	l2 = strcat(l2,str);
 
 	l3 = ConstructMenuItemStr(5,#STR_BLAST,#COST_BLAST,self.tf_items,#NIT_BLAST);
-	str = ConstructMenuItemStr(6,#STR_AMMOBACKPACK,#COST_AMMOBACKPACK,self.tf_items,#NIT_AMMO_BACKPACK);
+	str = ConstructMenuItemStr(6,#STR_FULLARMOUR,#COST_FULLARMOUR,self.cutf_items,#CUTF_FULLARMOUR);
 	l3 = strcat(l3,str);
 
-	l4 = ConstructMenuItemStr(7,#STR_AMMOBANDOLIER,#COST_AMMOBANDOLIER,self.tf_items,#NIT_AMMO_BANDOLIER);
+	l4 = ConstructMenuItemStr(7,#STR_ARMOR_PIERCING,#COST_ARMOR_PIERCING,self.cutf2_items,#CUTF2_ARMOR_PIERCING);
 	l4 = strcat(l4,".. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n");
 
-	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãú Special ArmorØAmmo úã\n\n", l1,l2,l3,l4, temp," dollars left\n");
+	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãú Special Armor Menu úã\n\n", l1,l2,l3,l4, temp," dollars left\n");
 };
 
 void(float inp) Menu_Armor_Input =
@@ -1728,13 +1729,13 @@ void(float inp) Menu_Armor_Input =
 		Menu_Armor();
 	}
 	if (inp == 6) {
-		BuyItem(#COST_AMMOBACKPACK,#NIT_AMMO_BACKPACK);
-		HelpString("Greatly increases your ammo carrying capacity. If you buy both the backpack and bandolier, you get an extra detpack of each type you own.");
+		BuyCuTF(#COST_FULLARMOUR,#CUTF_FULLARMOUR);
+		HelpString("You spawn with full armor. Useful on maps without armor resupplies.");
 		Menu_Armor();
 	}
 	if (inp == 7) {
-		BuyItem(#COST_AMMOBANDOLIER,#NIT_AMMO_BANDOLIER);
-		HelpString("Slightly increass your ammo carrying capacity, but greatly increases your starting ammo. Also gives you one extra grenade of each type you carry.");
+		BuyCuTF2(#COST_ARMOR_PIERCING,#CUTF2_ARMOR_PIERCING);
+		HelpString("Armor Piercing shots reduce the protection of special armors (like Kevlar) on enemies from 50% protection to 25% protection.");
 		Menu_Armor();
 	}
 	if (inp == 8)
@@ -1776,10 +1777,10 @@ void() Menu_Special =
 	l2 = strcat(l2,str);
 
 	l3 = ConstructMenuItemStr(5,#STR_SPYKIT,#COST_SPYKIT,self.cutf_items,#CUTF_SPY_KIT);
-	str = ConstructMenuItemStr(6,#STR_SCUBA,#COST_SCUBA,self.tf_items,#NIT_SCUBA);
+	str = ConstructMenuItemStr(6,#STR_CLIPEXTEND,#COST_CLIPEXTEND,self.cutf_items,#CUTF_CLIPEXTEND);
 	l3 = strcat(l3,str);
 
-	l4 = ConstructMenuItemStr(7,#STR_CLIPEXTEND,#COST_CLIPEXTEND,self.cutf_items,#CUTF_CLIPEXTEND);
+	l4 = "\n";
 	l4 = strcat(l4,".. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n");
 
 	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãú Special Items      úã\n\n",l1,l2,l3,l4, temp," dollars left\n");
@@ -1841,13 +1842,7 @@ void(float inp) Menu_Special_Input =
 		HelpString("The Spy Kit allows you to change your skin and color, using the 'ƒÈÛÁıÈÛÂ' command. You can also '∆ÂÈÁÓ' or '”∆ÂÈÁÓ' (silent feign) to play dead.");
 		Menu_Special();
 	}
-	//Self-Contained Underwater Breathing Apparatus
 	if (inp == 6) {
-		BuyItem(#COST_SCUBA,#NIT_SCUBA);
-		HelpString("This Self-Contained Underwater Breathing Apparatus allows you to breathe indefinitely under water, makes you immune to tranquilizer shots, slows down your land walking speed slightly, greatly improves your underwater speed, and lets you shoot the sniper rifle and assault cannon in water.");
-		Menu_Special();
-	}
-	if (inp == 7) {
 		BuyCuTF(#COST_CLIPEXTEND,#CUTF_CLIPEXTEND);
 		HelpString("The clip extender increases the clip size on all clipped weapons (such as shotguns, the rocket launcher, the light assault cannon, etc.) between ´20% and ´50%, depending on the weapon. Reload time is increased as well.");
 		Menu_Special();
@@ -1881,7 +1876,7 @@ void() Menu_Engineering =
 
 	MenuResetCount();
 
-	l1 = ConstructMenuItemStr(1,#STR_DISPENSER,#COST_DISPENSER,self.cutf_items,#CUTF_DISPENSER);
+	l1 = ConstructMenuItemStr(1,#STR_SPANNER,#COST_SPANNER,self.weapons_carried,#WEAP_SPANNER);
 	str = ConstructMenuSentryStr(2,#STR_SENTRYGUN,#COST_SENTRYGUN);
 	l1 = strcat(l1,str);
 
@@ -1901,8 +1896,9 @@ void() Menu_Engineering =
 void(float inp) Menu_Engineering_Input =
 {
 	if (inp == 1) {
-		BuyCuTF(#COST_DISPENSER,#CUTF_DISPENSER);
-		HelpString("The dispenser is a vending machine for ammo and armor, which it generates on its own. When destroyed, it explodes with the force of all the ammo inside. You can issue the 'ƒÂÙ‰ÈÛÂÓÛÂÚ' command to do this manually. It can be hacked to vend health as well.");
+		BuyWeapon(#COST_SPANNER,#WEAP_SPANNER);
+		HelpString("The spanner lets you repair and upgrade friendly buildings, dismantle enemy buildings, and heal the armor of teammates at the cost of cells. If you don't have one, all build times are 50% slower.");
+		UpdateWeaponItems();
 		Menu_Engineering();
 	}
 	if (inp == 2) {
@@ -2027,16 +2023,13 @@ void() Menu_Special2 =
 	l1 = strcat(l1,str);
 
 	l2 = ConstructMenuItemStr(3,#STR_JAMMER,#COST_JAMMER,self.cutf_items,#CUTF_JAMMER);
-	str = ConstructMenuItemStr(4,#STR_FULLARMOUR,#COST_FULLARMOUR,self.cutf_items,#CUTF_FULLARMOUR);
+	str = ConstructMenuItemStr(4,#STR_DISPENSER,#COST_DISPENSER,self.cutf_items,#CUTF_DISPENSER);
 	l2 = strcat(l2,str);
 
 	l3 = ConstructMenuItemStr(5,#STR_SECURITYCAMERA,#COST_SECURITYCAMERA,self.tf_items,#NIT_SECURITY_CAMERA);
 	str = ConstructMenuItemStr(6,#STR_FIELDGEN,#COST_FIELDGEN,self.cutf_items,#CUTF_FIELDGEN);
 	l3 = strcat(l3,str);
-/* Ran out of options -- add autoeng into here?
-	l4 = ConstructMenuItemStr(7,#STR_DISPENSER,#COST_DISPENSER,self.cutf_items,#CUTF_DISPENSER);
-	l4 = strcat(l4,".. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n");
-*/
+
 	l4 = "\n.. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n";
 
 	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãú Engineering Items2 úã\n\n",l1,l2,l3,l4, temp," dollars left\n");
@@ -2082,9 +2075,10 @@ void(float inp) Menu_Special2_Input =
 	}
 	else if (inp == 4)
 	{
-		BuyCuTF(#COST_FULLARMOUR,#CUTF_FULLARMOUR);
-		HelpString("You spawn with full armor. Useful on maps without armor resupplies.");
+		BuyCuTF(#COST_DISPENSER,#CUTF_DISPENSER);
+		HelpString("The dispenser is a vending machine for ammo and armor, which it generates on its own. When destroyed, it explodes with the force of all the ammo inside. You can issue the 'ƒÂÙ‰ÈÛÂÓÛÂÚ' command to do this manually. It can be hacked to vend health as well.");
 		Menu_Special2();
+
 	}
 	else if (inp == 5)
 	{
@@ -2461,7 +2455,7 @@ void(float inp) Menu_Profession_Input =
 		Menu_Profession();
 	}
 	if (inp == 7) {
-		BuyJob(#COST_JUDOKA,#JOB_JUDOKA); // Original = 700
+		BuyJob(#COST_JUDOKA,#JOB_JUDOKA); 
 		HelpString("When you activate this ability, you disarm an opponent in front of you, taking his weapon as your own for #DISARM_TIME seconds. You also inflict damage to the target, and leave him unable to attack for #CANT_ATTACK_TIME seconds.");
 		Menu_Profession();
 	}
@@ -2600,15 +2594,15 @@ void() Menu_Proficiency =
 	str = ConstructMenuItemStr(2,#STR_HIGHJUMP,#COST_HIGHJUMP,self.cutf_items,#CUTF_HIGHJUMP);
 	l1 = strcat(l1,str);
 
-	l2 = ConstructMenuItemStr(3,#STR_HWGUY,#COST_HWGUY,self.cutf_items,#CUTF_HWGUY);
+	l2 = ConstructMenuItemStr(3,#STR_CANNIBAL,#COST_CANNIBAL,self.cutf2_items,#CUTF2_CANNIBAL);
 	str = ConstructMenuItemStr(4,#STR_EXPBODY,#COST_EXPBODY,self.cutf_items,#CUTF_EXPBODY);
 	l2 = strcat(l2,str);
 
-	l3 = ConstructMenuItemStr(5,#STR_GYMNAST,#COST_GYMNAST,self.cutf_items,#CUTF_GYMNAST);
+	l3 = ConstructMenuItemStr(5,#STR_CLOSECOMBAT,#COST_CLOSECOMBAT,self.cutf_items,#CUTF_CLOSECOMBAT);
 	str = ConstructMenuItemStr(6,#STR_DEMONLORE,#COST_DEMONLORE,self.cutf_items,#CUTF_DEMONLORE);
 	l3 = strcat(l3,str);
 
-	l4 = ConstructMenuItemStr(7,#STR_CLOSECOMBAT,#COST_CLOSECOMBAT,self.cutf_items,#CUTF_CLOSECOMBAT);
+	l4 = "\n";
 	l4 = strcat(l4,".. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n");
 
 	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãú Proficiencies      úã\n\n", l1,l2,l3,l4, temp," dollars left\n");
@@ -2627,44 +2621,23 @@ void(float inp) Menu_Proficiency_Input =
 		Menu_Proficiency();
 	}
 	if (inp == 3) {
-		if (self.cutf_items & #CUTF_GYMNAST)
-		{
-			sprint(self, #PRINT_HIGH, "Having Gymnast and Aspect of HWGuy proficiencies is illogical.\n");
-			CuTFMenuSound(#MENUSOUND_WRONG);
-		}
-		else
-		{
-			BuyCuTF(#COST_HWGUY,#CUTF_HWGUY);
-			HelpString("With this proficiency, you are not knocked around by attacks.");
-			Menu_Proficiency();
-		}
+		BuyCuTF2(#COST_CANNIBAL,#CUTF2_CANNIBAL);
+		HelpString("As a cannibal, you can eat gibs in order to heal yourself (up to 25 points above your maximum) and even repair your armor.");
+		Menu_Proficiency();
 	}
 	if (inp == 4) {
 		BuyCuTF(#COST_EXPBODY,#CUTF_EXPBODY);
-		HelpString("With this proficiency, when you die you explode like a grenade for #EXPBODY_DMG damage.");
+		HelpString("When you die you explode like a grenade for #EXPBODY_DMG damage.");
 		Menu_Proficiency();
 	}
 	if (inp == 5) {
-		if (self.cutf_items & #CUTF_HWGUY)
-		{
-			sprint(self, #PRINT_HIGH, "Trust me, you don't want Aspect of HWGuy AND Gymnast.\n");
-			CuTFMenuSound(#MENUSOUND_WRONG);
-		}
-		else
-		{
-			BuyCuTF(#COST_GYMNAST,#CUTF_GYMNAST);
-			HelpString("With this proficiency, you get knocked around four times as much by attacks. This makes things like rocket jumping easier, and helps you leave the area of hostile attacks.");
-			Menu_Proficiency();
-		}
+		BuyCuTF(#COST_CLOSECOMBAT,#CUTF_CLOSECOMBAT);
+		HelpString("Your melee attacks have 50% more reach, and you deal +50% more damage and take -20% less damage from melee attacks. You also leap 20% faster with TKD.");
+		Menu_Proficiency();
 	}
 	if (inp == 6) {
 		BuyCuTF(#COST_DEMONLORE,#CUTF_DEMONLORE);
-		HelpString("With this proficiency, you take between 50% and 80% of damage from demons, depending on the attack. Additionally, you can '…ƒ' demons and summoned Army grunts to see their health.");
-		Menu_Proficiency();
-	}
-	if (inp == 7) {
-		BuyCuTF(#COST_CLOSECOMBAT,#CUTF_CLOSECOMBAT);
-		HelpString("With this proficiency, your melee attacks have 50% more reach, and you deal double damage with melee weapons.");
+		HelpString("You take between 50% and 80% of damage from demons, depending on the attack. Additionally, you can '…ƒ' demons and summoned Army grunts to see their health.");
 		Menu_Proficiency();
 	}
 	if (inp == 8) {
@@ -2713,13 +2686,12 @@ void() Menu_Option =
 	str = ConstructMenuItemStr(4,#STR_BOOTUPGRADE,#COST_BOOTUPGRADE,self.tf_items,#NIT_HOVER_BOOTS_UPGRADE);
 	l2 = strcat(l2,str);
 
-	l3 = ConstructMenuItemStr(5,#STR_RECOILLESS,#COST_RECOILLESS,self.cutf2_items,#CUTF2_RECOILLESS_RIFLE);
-	str = ConstructMenuItemStr(6,#STR_CANNIBAL,#COST_CANNIBAL,self.cutf2_items,#CUTF2_CANNIBAL);
+	l3 = ConstructMenuItemStr(5,#STR_AMMOBACKPACK,#COST_AMMOBACKPACK,self.tf_items,#NIT_AMMO_BACKPACK);
+	str = ConstructMenuItemStr(6,#STR_AMMOBANDOLIER,#COST_AMMOBANDOLIER,self.tf_items,#NIT_AMMO_BANDOLIER);
 	l3 = strcat(l3,str);
 
-	//l4 = ConstructMenuItemStr(7,#STR_CLUSTER,#COST_CLUSTER,self.tf_items,#NIT_CLUSTER_ROCKETS);
-	l4 = "";
-	l4 = strcat(l4,".. –ÚÂˆ    \n..         \n.. ƒÔÓÂ!   \n");
+	l4 = "\n";
+	l4 = strcat(l4,".. –ÚÂˆ    \n.. ŒÂ¯Ù    \n.. ƒÔÓÂ!   \n");
 
 	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãú Optional Equipment úã\n\n", l1,l2,l3,l4, temp," dollars left\n");
 };
@@ -2746,22 +2718,158 @@ void(float inp) Menu_Option_Input =
 		Menu_Option();
 	}
 	if (inp == 5) {
-		BuyCuTF2(#COST_RECOILLESS,#CUTF2_RECOILLESS_RIFLE);
-		HelpString("The Recoilless Rifle augment makes all of your weapon attacks not knock back the enemy.");
+		BuyItem(#COST_AMMOBACKPACK,#NIT_AMMO_BACKPACK);
+		HelpString("Greatly increases your ammo carrying capacity. If you buy both the backpack and bandolier, you get an extra detpack of each type you own.");
 		Menu_Option();
 	}
 	if (inp == 6) {
-		BuyCuTF2(#COST_CANNIBAL,#CUTF2_CANNIBAL);
-		HelpString("As a cannibal, you can eat gibs in order to heal yourself (up to 25 points above your maximum) and even repair your armor.");
+		BuyItem(#COST_AMMOBANDOLIER,#NIT_AMMO_BANDOLIER);
+		HelpString("Slightly increass your ammo carrying capacity, but greatly increases your starting ammo. Also gives you one extra grenade of each type you carry.");
 		Menu_Option();
 	}
-/*	if (inp == 7) {
-	}
-*/
 	if (inp == 8) {
 		CuTFMenuSound(#MENUSOUND_BROWSE);
 		self.current_menu = #MENU_PROFICIENCY;
 		Menu_Proficiency(); 	   
+	}
+	if (inp == 9) {
+		CuTFMenuSound(#MENUSOUND_BROWSE);
+		self.current_menu = #MENU_KNOCKTATION;
+		Menu_Knocktation();		  
+	}
+	if (inp == 10) {
+		DropFromCustomClassGen();
+	}
+
+	self.impulse = 0;
+};
+
+// ====================================
+//	Prints Menu of Knocktation Here
+// ====================================
+void() Menu_Knocktation =
+{
+	local string temp;
+	temp = ftos(self.money);
+	if (self.tfstate & #TFSTATE_NOTENOUGHMONEY)
+		temp = colstr(temp,#COLSTR_RED);
+	local string l1,l2,l3,l4,str;
+
+	MenuResetCount();
+
+	l1 = ConstructMenuItemStr(1,#STR_HWGUY,#COST_HWGUY,self.cutf_items,#CUTF_HWGUY);
+	str = ConstructMenuItemStr(2,#STR_GYMNAST,#COST_GYMNAST,self.cutf_items,#CUTF_GYMNAST);
+	l1 = strcat(l1,str);
+
+
+	l2 = ConstructMenuItemStr(3,#STR_VOID_BODY,#COST_VOID_BODY,self.cutf2_items,#CUTF2_VOID_BODY);
+	str = ConstructMenuItemStr(4,#STR_RECOILLESS,#COST_RECOILLESS,self.cutf2_items,#CUTF2_RECOILLESS_RIFLE);
+	l2 = strcat(l2,str);
+
+	l3 = ConstructMenuItemStr(5,#STR_MASSIVE_ATTACK,#COST_MASSIVE_ATTACK,self.cutf2_items,#CUTF2_MASSIVE_ATTACK);
+	str = ConstructMenuItemStr(6,#STR_BLACK_HOLE_GUN,#COST_BLACK_HOLE_GUN,self.cutf2_items,#CUTF2_BLACK_HOLE_GUN);
+	l3 = strcat(l3,str);
+
+
+	l4 = "\n";
+	l4 = strcat(l4,".. –ÚÂˆ    \n..         \n.. ƒÔÓÂ!   \n");
+
+	centerprint(self, "úãê CısÙoÌi˙e ŸÔıÚÛÂÏÊ ãú\nãú Knocktation Optionsúã\n\n", l1,l2,l3,l4, temp," dollars left\n");
+};
+void(float inp) Menu_Knocktation_Input =
+{
+	if (inp == 1) {
+		if (self.cutf_items & #CUTF_GYMNAST)
+		{
+			sprint(self, #PRINT_HIGH, "Having Gymnast and Aspect of HWGuy is illogical.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else if (self.cutf2_items & #CUTF2_VOID_BODY)
+		{
+			sprint(self, #PRINT_HIGH, "Having Void Body and Aspect of HWGuy is not only illogical, it's stupid as well...\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else
+		{
+			BuyCuTF(#COST_HWGUY,#CUTF_HWGUY);
+			HelpString("With this proficiency, you are not knocked around by attacks.");
+			Menu_Knocktation();
+		}
+	}
+	if (inp == 2) {
+		if (self.cutf_items & #CUTF_HWGUY)
+		{
+			sprint(self, #PRINT_HIGH, "Trust me, you don't want Aspect of HWGuy AND Gymnast.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else
+		{
+			BuyCuTF(#COST_GYMNAST,#CUTF_GYMNAST);
+			HelpString("You get knocked around twice as much by attacks. This makes things like rocket jumping easier, and helps you leave the area of hostile attacks.");
+			Menu_Knocktation();
+		}
+	}
+	if (inp == 3) {
+		if (self.cutf_items & #CUTF_HWGUY)
+		{
+			sprint(self, #PRINT_HIGH, "Having Aspect and Void Body together would violate the space-time continuum.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else
+		{
+			BuyCuTF2(#COST_VOID_BODY,#CUTF2_VOID_BODY);
+			HelpString("You give your body negative mass, which makes you recoil *towards* attacks, instead of away from them.");
+			Menu_Knocktation();
+		}
+	}
+	if (inp == 4) {
+		if (self.cutf2_items & #CUTF2_MASSIVE_ATTACK)
+		{
+			sprint(self, #PRINT_HIGH, "You can't both eliminate all knockback, and double it. Well, you could, but that would be rather pointless.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else if (self.cutf2_items & #CUTF2_BLACK_HOLE_GUN)
+		{
+			sprint(self, #PRINT_HIGH, "We will not allow you to both eliminate your recoil, and reverse it. Sorry, but that's just stupid.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else
+		{
+			BuyCuTF2(#COST_RECOILLESS,#CUTF2_RECOILLESS_RIFLE);
+			HelpString("The Recoilless augment makes all of your weapon attacks not knock back the enemy in the slightest.");
+			Menu_Knocktation();
+		}
+	}
+	if (inp == 5) {
+		if (self.cutf2_items & #CUTF2_RECOILLESS_RIFLE)
+		{
+			sprint(self, #PRINT_HIGH, "Trying to double your knockback and set it to zero, is really just like setting it to zero, so try again.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else
+		{
+			BuyCuTF2(#COST_MASSIVE_ATTACK,#CUTF2_MASSIVE_ATTACK);
+			HelpString("The Massive Attacks upgrade doubles the knockback of all of your weapons.");
+			Menu_Knocktation();
+		}
+	}
+	if (inp == 6) {
+		if (self.cutf2_items & #CUTF2_RECOILLESS_RIFLE)
+		{
+			sprint(self, #PRINT_HIGH, "Black hole guns reverse knockback and recoilless eliminates knockback. Pick which one you actually want.\n");
+			CuTFMenuSound(#MENUSOUND_WRONG);
+		}
+		else
+		{
+			BuyCuTF2(#COST_BLACK_HOLE_GUN,#CUTF2_BLACK_HOLE_GUN);
+			HelpString("The Black Hole Gun upgrade makes your weapons suck people in to you with knockback, instead of pushing them away.");
+			Menu_Knocktation();
+		}
+	}
+	if (inp == 8) {
+		CuTFMenuSound(#MENUSOUND_BROWSE);
+		self.current_menu = #MENU_OPTION;
+		Menu_Option(); 	   
 	}
 	if (inp == 10) {
 		DropFromCustomClassGen();
@@ -2773,7 +2881,6 @@ void(float inp) Menu_Option_Input =
 //___________________________________________________________________________________
 //===================================================================================
 // Item string constructors for menu displayers  
-
 string(float itemnum, string itemdesc,float cost,float field, float bit) ConstructMenuItemStr =
 {
 	local string result;

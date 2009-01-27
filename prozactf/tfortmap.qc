@@ -1,7 +1,7 @@
 /*======================================================
-	TFORTMAP.QC			Custom TeamFortress v3.1	
+	TFORTMAP.QC 		Custom TeamFortress v3.1	
 
-	(c) TeamFortress Software Pty Ltd 	29/2/97
+	(c) TeamFortress Software Pty Ltd	29/2/97
 	(c) William Kerney			2/23/00
 	(c) Craig Hauser				2/23/00
 ========================================================
@@ -144,11 +144,11 @@ void() TF_PlaceItem =
 	local vector temp1;
 	local vector temp2;
 	
-    #ifdef IDABLE_TFITEMS
+	#ifdef IDABLE_TFITEMS
 	self.flags = #FL_ITEM | (self.flags & #FL_FINDABLE_NONSOLID);				// make extra wide
-    #else
-    self.flags = #FL_ITEM;
-    #endif
+	#else
+	self.flags = #FL_ITEM;
+	#endif
 
 	self.touch = item_tfgoal_touch;
 	setorigin(self, self.origin);
@@ -164,7 +164,7 @@ void() TF_PlaceItem =
 		self.velocity_x = 0; //-50 + (random() * 100);
 		self.velocity_y = 0; //-50 + (random() * 100);
 		
-		self.nextthink = time + 5.0; 	    // give it 5 seconds
+		self.nextthink = time + 5.0;		// give it 5 seconds
 		self.think = tfgoalitem_dropthink2;  // and then find where it ended up
 	}
 	else
@@ -196,37 +196,37 @@ void() TF_PlaceItem =
 
 //On tfgoalitem_dropthink2
 //	self.velocity = '0 0 0';
-//	self.oldorigin = self.origin; 		// So we can return it later
+//	self.oldorigin = self.origin;		// So we can return it later
 
- 	if (self.goal_activation & #TFGI_ITEMGLOWS)
+	if (self.goal_activation & #TFGI_ITEMGLOWS)
 		self.effects = self.effects | #EF_DIMLIGHT;
 
-    #ifdef TEAMITEMS_COLORGLOW
-    // Make it glow with an appropiate color!
-    if (number_of_teams == 2)
-    if (self.team_no)
-    {
-        #ifdef TEAMITEMS_FORCEDGLOW
-        if (self.team_no == 1 || self.team_no == 2)
-            self.effects = self.effects | #EF_DIMLIGHT;
-        #endif
-        
-        if (self.goal_activation & #TFGI_REVERSE_AP) // Reversed criteria
-        {
-            if (self.team_no == 1) // Blue team
-                self.effects = self.effects | #EF_BLUE;
-            else if (self.team_no == 2)
-                self.effects = self.effects | #EF_RED;
-        }
-        else // Normal criteria
-        {
-            if (self.team_no == 1) // Blue team
-                self.effects = self.effects | #EF_RED;
-            else if (self.team_no == 2)
-                self.effects = self.effects | #EF_BLUE;
-        }
-    }
-    #endif
+	#ifdef TEAMITEMS_COLORGLOW
+	// Make it glow with an appropiate color!
+	if (number_of_teams == 2)
+	if (self.team_no)
+	{
+		#ifdef TEAMITEMS_FORCEDGLOW
+		if (self.team_no == 1 || self.team_no == 2)
+			self.effects = self.effects | #EF_DIMLIGHT;
+		#endif
+		
+		if (self.goal_activation & #TFGI_REVERSE_AP) // Reversed criteria
+		{
+			if (self.team_no == 1) // Blue team
+				self.effects = self.effects | #EF_BLUE;
+			else if (self.team_no == 2)
+				self.effects = self.effects | #EF_RED;
+		}
+		else // Normal criteria
+		{
+			if (self.team_no == 1) // Blue team
+				self.effects = self.effects | #EF_RED;
+			else if (self.team_no == 2)
+				self.effects = self.effects | #EF_BLUE;
+		}
+	}
+	#endif
 
 	// Setup the item_list mask
 	if (item_list_bit == 0)
@@ -271,9 +271,9 @@ void() TF_PlaceGoal =
 	}
 
 	self.flags = #FL_ITEM;				// make extra wide
-	self.movetype = #MOVETYPE_NONE;	
+	self.movetype = #MOVETYPE_NONE; 
 	self.velocity = '0 0 0';
-	self.oldorigin = self.origin; 		// So we can return it later
+	self.oldorigin = self.origin;		// So we can return it later
 };
 
 //=========================================================================
@@ -360,6 +360,12 @@ void() info_player_teamspawn =
 		self.team_str_home = "ts3";
 	else if (self.team_no == 4)
 		self.team_str_home = "ts4";
+
+	if (neo) // for Neo mode (makes all spawns red spawns)
+	{
+		self.team_no = 2;
+		self.team_str_home = "ts2";
+	}
 };
 
 void() i_p_t =
@@ -495,6 +501,9 @@ void() item_tfgoal =
 	local vector temp1;
 	local vector temp2;
 	
+	// Neo mode: probably don't need any item_tfgoals in Neo mode (we'll see)
+	if (neo) return;
+
 	// Attackers Go Red mode -PZ
 	// don't spawn Red's flag in AGR
 	if (agr) if (self.team_no == 1) return; // team_no indicates which team can use the item
@@ -545,11 +554,11 @@ void() item_tfgoal =
 
 	/*if (!(self.netname))
 		self.netname = "goalitem";*/
-        // OfN
-    #ifdef IDABLE_TFITEMS
-    if (self.netname)
-        self.flags = #FL_FINDABLE_NONSOLID;
-    #endif
+		// OfN
+	#ifdef IDABLE_TFITEMS
+	if (self.netname)
+		self.flags = #FL_FINDABLE_NONSOLID;
+	#endif
 
 	if (self.pausetime <= 0)
 		self.pausetime = 60;
@@ -570,11 +579,11 @@ void() item_tfgoal =
 
 	setsize (self, temp1, temp2); //CH sets box size from above
 
-    // OfN - Applies default to dropable-item if we should do
-    if (drop_items)
-    if (!(self.goal_activation & #TFGR_DROPITEMS))
-        self.goal_activation = self.goal_activation + #TFGR_DROPITEMS;
-    // OfN - END
+	// OfN - Applies default to dropable-item if we should do
+	if (drop_items)
+	if (!(self.goal_activation & #TFGR_DROPITEMS))
+		self.goal_activation = self.goal_activation + #TFGR_DROPITEMS;
+	// OfN - END
 
 	TF_StartItem ();
 };
@@ -595,7 +604,7 @@ void(entity AD) ParseTFDetect =
 			RPrint("This map was designed to be run on ");
 			RPrint(AD.broadcast);
 			RPrint("\nYou are using TeamFortress v2.5\n");
-	 		RPrint("You can get the latest version of this patch at: ");
+			RPrint("You can get the latest version of this patch at: ");
 			RPrint("http://www.planetquake.com/teamfortress/\n");
 		}
 	}
@@ -635,10 +644,10 @@ void(entity AD) ParseTFDetect =
 		allow_hook = #FALSE;
 
 	// Set player number limits for each team
-	team1maxplayers	= AD.ammo_medikit;
-	team2maxplayers	= AD.ammo_detpack;
-	team3maxplayers	= AD.maxammo_medikit;
-	team4maxplayers	= AD.maxammo_detpack;
+	team1maxplayers = AD.ammo_medikit;
+	team2maxplayers = AD.ammo_detpack;
+	team3maxplayers = AD.maxammo_medikit;
+	team4maxplayers = AD.maxammo_detpack;
 	if (team1maxplayers == 0)
 		team1maxplayers = 100;
 	if (team2maxplayers == 0)
@@ -1015,9 +1024,9 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 				Player.armortype = Goal.armortype;
 			Player.armorvalue = Player.armorvalue + Goal.armorvalue;
 
-            // OfN - Fixed ancient bug
-            if (Player.armorvalue > 0)
-                UpdateArmorItem(Player);
+			// OfN - Fixed ancient bug
+			if (Player.armorvalue > 0)
+				UpdateArmorItem(Player);
 
 			if (Goal.armorclass)
 			{ //WK Modify to | it with bought armor
@@ -1048,13 +1057,13 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 			if (Player.tp_grenades_2 != 0) //WK Stop Bug grenades
 				Player.no_grenades_2 = Player.no_grenades_2 + Goal.no_grenades_2;
 			
-            if (Player.no_grenades_1 > GetMaxGrens(Player,1))
+			if (Player.no_grenades_1 > GetMaxGrens(Player,1))
 				Player.no_grenades_1 = GetMaxGrens(Player,1);
 
-            if (Player.no_grenades_2 > GetMaxGrens(Player,2))
+			if (Player.no_grenades_2 > GetMaxGrens(Player,2))
 				Player.no_grenades_2 = GetMaxGrens(Player,2);
 
-            /*if (Player.no_grenades_1 > 4)
+			/*if (Player.no_grenades_1 > 4)
 				if (Player.tf_items & #NIT_AMMO_BANDOLIER)
 					Player.no_grenades_1 = 5;
 				else
@@ -1071,7 +1080,7 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 			if (Goal.invincible_finished > 0)
 			{
 				Player.items = Player.items | #IT_INVULNERABILITY;
-			 	Player.invincible_time = 1;
+				Player.invincible_time = 1;
 				Player.invincible_finished = time + Goal.invincible_finished;
 				// if its a GoalItem, powerup is permanent, so we use TFSTATE flags
 				if (Goal.classname == "item_tfgoal")
@@ -1083,7 +1092,7 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 			if (Goal.invisible_finished > 0)
 			{
 				Player.items = Player.items | #IT_INVISIBILITY;
-			 	Player.invisible_time = 1;
+				Player.invisible_time = 1;
 				Player.invisible_finished = time + Goal.invisible_finished;
 				// if its a GoalItem, powerup is permanent, so we use TFSTATE flags
 				if (Goal.classname == "item_tfgoal")
@@ -1097,7 +1106,7 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 				//WK Remove Inspiration when we get the real thing
 				Player.tfstate = Player.tfstate - (Player.tfstate & #TFSTATE_INSPIRED);
 				Player.items = Player.items | #IT_QUAD;
-			 	Player.super_time = 1;
+				Player.super_time = 1;
 				Player.super_damage_finished = time + Goal.super_damage_finished;
 				// if its a GoalItem, powerup is permanent, so we use TFSTATE flags
 				if (Goal.classname == "item_tfgoal")
@@ -1109,7 +1118,7 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 			if (Goal.radsuit_finished > 0)
 			{
 				Player.items = Player.items | #IT_SUIT;
-			 	Player.rad_time = 1;
+				Player.rad_time = 1;
 				Player.radsuit_finished = time + Goal.radsuit_finished;
 				// if its a GoalItem, powerup is permanent, so we use TFSTATE flags
 				if (Goal.classname == "item_tfgoal")
@@ -1127,7 +1136,7 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 		Player.lives = Player.lives + Goal.lives;
 		
 		Player.real_frags = Player.real_frags + Goal.frags;
- 		if (!(toggleflags & #TFLAG_TEAMFRAGS))
+		if (!(toggleflags & #TFLAG_TEAMFRAGS))
 			Player.frags = Player.real_frags;
 		
 		// Now apply the Playerclass limitations & Redisplay Ammo counts
@@ -1198,7 +1207,7 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 	// if this goal removes a group of items from the player, remove them
 	if (Goal.remove_item_group != 0)
 	{
-	 	// Find all goals
+		// Find all goals
 		te = find (world, classname, "item_tfgoal");
 		while (te)
 		{
@@ -1286,7 +1295,7 @@ void (entity Goal, entity Player) RemoveResults =
 	Player.armorclass = Player.armorclass - (Player.armorclass & Goal.armorclass);
 	
 	Player.real_frags = Player.real_frags - Goal.frags;
- 	if (!(toggleflags & #TFLAG_TEAMFRAGS))
+	if (!(toggleflags & #TFLAG_TEAMFRAGS))
 		Player.frags = Player.real_frags;
 
 	Player.ammo_shells = Player.ammo_shells - Goal.ammo_shells;
@@ -1327,7 +1336,7 @@ void (entity Goal, entity Player) RemoveResults =
 		// if its a GoalItem, powerup was permanent, so we remove TFSTATE flag
 		Player.tfstate = Player.tfstate - (Player.tfstate & #TFSTATE_INVINCIBLE);
 		Player.items = Player.items | #IT_INVULNERABILITY;
-	 	Player.invincible_time = 1;
+		Player.invincible_time = 1;
 		Player.invincible_finished = time + Goal.invincible_finished;
 	}
 	if ((Goal.invisible_finished > 0) && (!puinvis))
@@ -1335,7 +1344,7 @@ void (entity Goal, entity Player) RemoveResults =
 		// if its a GoalItem, powerup was permanent, so we remove TFSTATE flag
 		Player.tfstate = Player.tfstate - (Player.tfstate & #TFSTATE_INVISIBLE);
 		Player.items = Player.items | #IT_INVISIBILITY;
-	 	Player.invisible_time = 1;
+		Player.invisible_time = 1;
 		Player.invisible_finished = time + Goal.invisible_finished;
 	}
 	if ((Goal.super_damage_finished > 0) && (!puquad))
@@ -1343,7 +1352,7 @@ void (entity Goal, entity Player) RemoveResults =
 		// if its a GoalItem, powerup was permanent, so we remove TFSTATE flag
 		Player.tfstate = Player.tfstate - (Player.tfstate & #TFSTATE_QUAD);
 		Player.items = Player.items | #IT_QUAD;
-	 	Player.super_time = 1;
+		Player.super_time = 1;
 		Player.super_damage_finished = time + Goal.super_damage_finished;
 	}
 	//WK Don't remove the scuba gear
@@ -1352,7 +1361,7 @@ void (entity Goal, entity Player) RemoveResults =
 		// if its a GoalItem, powerup was permanent, so we remove TFSTATE flag
 		Player.tfstate = Player.tfstate - (Player.tfstate & #TFSTATE_RADSUIT);
 		Player.items = Player.items | #IT_SUIT;
-	 	Player.rad_time = 1;
+		Player.rad_time = 1;
 		Player.radsuit_finished = time + Goal.radsuit_finished;
 	}
 
@@ -1399,7 +1408,7 @@ float(entity Goal, entity AP) APMeetsCriteria =
 		// If a player of a specific team can only activate this
 		if (Goal.team_no)
 		{
-			if (Goal.team_no != AP.team_no)
+			if (!neo && Goal.team_no != AP.team_no) // Neo mode: allow anyone to activate anything
 				return #FALSE;
 		}
 
@@ -1629,9 +1638,9 @@ void(entity Goal) SetupRespawn =
 	// Respawn Activation, set up respawn
 	if (Goal.wait > 0)
 	{
-  		Goal.nextthink = time + Goal.wait;
+		Goal.nextthink = time + Goal.wait;
 		Goal.think = DoRespawn;
-		if (Goal.mdl != string_null)       //CH if it has mdl, remove it so
+		if (Goal.mdl != string_null)	   //CH if it has mdl, remove it so
 			setmodel(Goal, string_null); //that people dont think it works
 		return;
 	}
@@ -2207,7 +2216,7 @@ void() DelayedResult =
 // Do the results for the Timer/Goal/Item
 void(entity Goal, entity AP, float addb) DoResults =
 {
-    local entity te;//, oldself;
+	local entity te;//, oldself;
 //	local string st;
 	local float winners;
 
@@ -2268,12 +2277,12 @@ void(entity Goal, entity AP, float addb) DoResults =
 	#endif
 #endif
 
-    //- OfN if Goal.option is 1 then no sound attenuation (ATTN_NONE)
-    local float attn_value;
-    attn_value=#ATTN_NORM;
+	//- OfN if Goal.option is 1 then no sound attenuation (ATTN_NONE)
+	local float attn_value;
+	attn_value=#ATTN_NORM;
 
-    if (Goal.option == 1)
-        attn_value=#ATTN_NONE;
+	if (Goal.option == 1)
+		attn_value=#ATTN_NONE;
 
 	// Make the sound
 	if (Goal.noise)
@@ -2308,20 +2317,20 @@ void(entity Goal, entity AP, float addb) DoResults =
 
 		//if (chris)
 		//	RoundStop(2);
-        if (winners)
-            winners = 100;
-        else
-        	winners = 2;
+		if (winners)
+			winners = 100;
+		else
+			winners = 2;
 	}
 	if (Goal.increase_team3 != 0)
 	{
 		TeamFortress_TeamIncreaseScore(3, Goal.increase_team3);
 		//if (chris)
 		//	RoundStop(3);
-        if (winners)
-            winners = 100;
-        else
-            winners = 3;
+		if (winners)
+			winners = 100;
+		else
+			winners = 3;
 	}
 	if (Goal.increase_team4 != 0)
 	{
@@ -2330,25 +2339,25 @@ void(entity Goal, entity AP, float addb) DoResults =
 		//	RoundStop(4);
 		//winners = #TRUE;
 
-        if (winners)
-            winners = 100;
-        else
-            winners = 4;
+		if (winners)
+			winners = 100;
+		else
+			winners = 4;
 	}
 	// Display short team scores only if scores changed
 	if (winners)
-    {
-        if (winners == 1)
-            TeamFortress_TeamShowScores(2,1,Goal.increase_team1);
-        else if (winners == 2)
-            TeamFortress_TeamShowScores(2,2,Goal.increase_team2);
-        else if (winners == 3)
-            TeamFortress_TeamShowScores(2,3,Goal.increase_team3);
-        else if (winners == 4)
-            TeamFortress_TeamShowScores(2,4,Goal.increase_team4);
-        else
-            TeamFortress_TeamShowScores(2,0,0);
-    }
+	{
+		if (winners == 1)
+			TeamFortress_TeamShowScores(2,1,Goal.increase_team1);
+		else if (winners == 2)
+			TeamFortress_TeamShowScores(2,2,Goal.increase_team2);
+		else if (winners == 3)
+			TeamFortress_TeamShowScores(2,3,Goal.increase_team3);
+		else if (winners == 4)
+			TeamFortress_TeamShowScores(2,4,Goal.increase_team4);
+		else
+			TeamFortress_TeamShowScores(2,0,0);
+	}
 
 	// CTF Map support
 	if (CTF_Map == #TRUE)
@@ -2381,7 +2390,7 @@ void(entity Goal, entity AP, float addb) DoResults =
 								CenterPrint2(te, "\n\n\n", #MSG_CTF_FLAG_GRAB_TEAM7);
 						}
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your team гот the енемы flag!!");
+							CenterPrint2(te, "\n\n\n", "Your team гот the енемы flag!!");
 					}
 					else
 						CenterPrint2(te, "\n\n\n", "Your flag has been такен!!");
@@ -2419,7 +2428,7 @@ void(entity Goal, entity AP, float addb) DoResults =
 								CenterPrint2(te, "\n\n\n", #MSG_CTF_FLAG_GRAB_TEAM7);
 						}
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your team гот the енемы flag!!");
+							CenterPrint2(te, "\n\n\n", "Your team гот the енемы flag!!");
 					}
 					else
 						CenterPrint2(te, "\n\n\n", "Your flag has been такен!!");
@@ -2440,7 +2449,7 @@ void(entity Goal, entity AP, float addb) DoResults =
 						if (te == AP)
 							CenterPrint2(te, "\n\n\n", "You цаптуред the flag!!");
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your flag was цаптуред!!");
+							CenterPrint2(te, "\n\n\n", "Your flag was цаптуред!!");
 					}
 					else
 						CenterPrint2(te, "\n\n\n", "Your team цаптуред the flag!!");
@@ -2462,7 +2471,7 @@ void(entity Goal, entity AP, float addb) DoResults =
 						if (te == AP)
 							CenterPrint2(te, "\n\n\n", "You цаптуред the flag!!");
 						else
-					 		CenterPrint2(te, "\n\n\n", "Your flag was цаптуред!!");
+							CenterPrint2(te, "\n\n\n", "Your flag was цаптуред!!");
 					}
 					else
 						CenterPrint2(te, "\n\n\n", "Your team цаптуред the flag!!");
@@ -2652,8 +2661,8 @@ void() tfgoal_touch =
 	if (prematch >= time)
 		return;
 
-    if (other.health <= 0) // dead players out
-        return;
+	if (other.health <= 0) // dead players out
+		return;
 		
 	if (other.penance_time >= time)
 		return;
@@ -2739,19 +2748,19 @@ void() tfgoal_timer_tick =
 void() item_tfgoal_touch =
 {
 	#ifdef QUAKE_WORLD
-    /*if (infokey(world,"ceasefire")=="on") //OfN
-	    return;*/
+	/*if (infokey(world,"ceasefire")=="on") //OfN
+		return;*/
 
-    if (ceasefire)
-        return;
-    #endif
+	if (ceasefire)
+		return;
+	#endif
 
 	// Attackers Go Red mode -PZ
 	// don't let Red have flag if Blue has no players
 	if (agr) if (self.team_no == 2) if(!agrTimerRunning)
 		return;
 
-    //local string st;
+	//local string st;
 	local entity te;
 
 	if (other.classname != "player")
@@ -2768,10 +2777,10 @@ void() item_tfgoal_touch =
 	if (other.penance_time >= time)
 		return;
 
-    // OfN - Dont let them pick it up repeatedly
-    if (self.demon_one == other)
-    if (self.has_holo > time)
-        return;
+	// OfN - Dont let them pick it up repeatedly
+	if (self.demon_one == other)
+	if (self.has_holo > time)
+		return;
 	
 	// CTF Hack to return your key.
 	// Temporary hack :)
@@ -2793,7 +2802,7 @@ void() item_tfgoal_touch =
 						if (te.team_no == 1)
 							CenterPrint2(te, "\n\n\n", "Your flag was ретурнед!!");
 						else
-					 		CenterPrint2(te, "\n\n\n", "The енемы flag was ретурнед!!");
+							CenterPrint2(te, "\n\n\n", "The енемы flag was ретурнед!!");
 
 						te = find(te, classname, "player");
 					}
@@ -2830,7 +2839,7 @@ void() item_tfgoal_touch =
 						if (te.team_no == 2)
 							CenterPrint(te, "\n\n\n Your flag was ретурнед!!");
 						else
-					 		CenterPrint(te, "\n\n\n The енемы flag was ретурнед!!");
+							CenterPrint(te, "\n\n\n The енемы flag was ретурнед!!");
 
 						te = find(te, classname, "player");
 					}
@@ -2904,40 +2913,40 @@ void(entity Item, entity AP, entity Goal) tfgoalitem_GiveToPlayer =
 	if (Item.goal_activation & #TFGI_SLOW)
 		TeamFortress_SetSpeed(AP);
 
-    #ifdef TEAMITEMS_COLORGLOW
-    // Make player glow with an appropiate color!
-    if (Item.goal_activation & #TFGI_GLOW) // Only if supposed to give glow to players
-    if (number_of_teams == 2) // Only if blue and red teams on map
-    if (Item.team_no) // Is this item for a team?
-    {
-        local float glowcolor;
-        glowcolor = 0;
-        
-        if (Item.goal_activation & #TFGI_REVERSE_AP) // Reversed criteria
-        {
-            if (Item.team_no == 1) // Blue team
-                glowcolor = #EF_BLUE;                
-            else if (Item.team_no == 2) // Red team
-                glowcolor = #EF_RED;                
-        }
-        else // Normal criteria
-        {
-            if (Item.team_no == 1) // Blue team
-                glowcolor = #EF_RED;
-            else if (Item.team_no == 2) // Red team
-                glowcolor = #EF_BLUE;                
-        }
-        
-        // Set color to player
-        // TODO/FIXME: This doesn't take into account multiple items that would cause the color
-        #ifdef TEAMITEMS_PLAYERCOLOR
-        AP.effects = AP.effects | glowcolor;
-        #endif
-    }
-    #endif
+	#ifdef TEAMITEMS_COLORGLOW
+	// Make player glow with an appropiate color!
+	if (Item.goal_activation & #TFGI_GLOW) // Only if supposed to give glow to players
+	if (number_of_teams == 2) // Only if blue and red teams on map
+	if (Item.team_no) // Is this item for a team?
+	{
+		local float glowcolor;
+		glowcolor = 0;
+		
+		if (Item.goal_activation & #TFGI_REVERSE_AP) // Reversed criteria
+		{
+			if (Item.team_no == 1) // Blue team
+				glowcolor = #EF_BLUE;				 
+			else if (Item.team_no == 2) // Red team
+				glowcolor = #EF_RED;				
+		}
+		else // Normal criteria
+		{
+			if (Item.team_no == 1) // Blue team
+				glowcolor = #EF_RED;
+			else if (Item.team_no == 2) // Red team
+				glowcolor = #EF_BLUE;				 
+		}
+		
+		// Set color to player
+		// TODO/FIXME: This doesn't take into account multiple items that would cause the color
+		#ifdef TEAMITEMS_PLAYERCOLOR
+		AP.effects = AP.effects | glowcolor;
+		#endif
+	}
+	#endif
 
- 	if (Item.goal_activation & #TFGI_ITEMGLOWS)
- 		Item.effects = Item.effects - (Item.effects | #EF_DIMLIGHT);
+	if (Item.goal_activation & #TFGI_ITEMGLOWS)
+		Item.effects = Item.effects - (Item.effects | #EF_DIMLIGHT);
 
 	// Light up console icons
 	if (Item.items & #IT_KEY1)
@@ -3119,46 +3128,46 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer =
 	if (!lighton)
 		AP.effects = AP.effects - (AP.effects & #EF_DIMLIGHT);
 
- 	if (Item.goal_activation & #TFGI_ITEMGLOWS)
+	if (Item.goal_activation & #TFGI_ITEMGLOWS)
 		Item.effects = Item.effects | #EF_DIMLIGHT;
-    
-    #ifdef TEAMITEMS_COLORGLOW
-    // Make it glow with an appropiate color!
-    if (number_of_teams == 2) // Only if blue and red teams on map
-    if (Item.team_no) // Is this item for a team?
-    {
-        local float glowcolor;
-        glowcolor = 0;
+	
+	#ifdef TEAMITEMS_COLORGLOW
+	// Make it glow with an appropiate color!
+	if (number_of_teams == 2) // Only if blue and red teams on map
+	if (Item.team_no) // Is this item for a team?
+	{
+		local float glowcolor;
+		glowcolor = 0;
 
-        #ifdef TEAMITEMS_FORCEDGLOW
-        if (Item.team_no == 1 || Item.team_no == 2)
-            Item.effects = Item.effects | #EF_DIMLIGHT;
-        #endif
-        
-        if (Item.goal_activation & #TFGI_REVERSE_AP) // Reversed criteria
-        {
-            if (Item.team_no == 1) // Blue team
-                glowcolor = #EF_BLUE;                
-            else if (Item.team_no == 2) // Red team
-                glowcolor = #EF_RED;                
-        }
-        else // Normal criteria
-        {
-            if (Item.team_no == 1) // Blue team
-                glowcolor = #EF_RED;
-            else if (Item.team_no == 2) // Red team
-                glowcolor = #EF_BLUE;                
-        }
+		#ifdef TEAMITEMS_FORCEDGLOW
+		if (Item.team_no == 1 || Item.team_no == 2)
+			Item.effects = Item.effects | #EF_DIMLIGHT;
+		#endif
+		
+		if (Item.goal_activation & #TFGI_REVERSE_AP) // Reversed criteria
+		{
+			if (Item.team_no == 1) // Blue team
+				glowcolor = #EF_BLUE;				 
+			else if (Item.team_no == 2) // Red team
+				glowcolor = #EF_RED;				
+		}
+		else // Normal criteria
+		{
+			if (Item.team_no == 1) // Blue team
+				glowcolor = #EF_RED;
+			else if (Item.team_no == 2) // Red team
+				glowcolor = #EF_BLUE;				 
+		}
 
-        Item.effects = Item.effects | glowcolor;
+		Item.effects = Item.effects | glowcolor;
 
-        // Remove color from player
-        // TODO/FIXME: This doesn't take into account multiple items that would cause the color
-        #ifdef TEAMITEMS_PLAYERCOLOR
-        AP.effects = AP.effects - (AP.effects & glowcolor);
-        #endif
-    }
-    #endif    
+		// Remove color from player
+		// TODO/FIXME: This doesn't take into account multiple items that would cause the color
+		#ifdef TEAMITEMS_PLAYERCOLOR
+		AP.effects = AP.effects - (AP.effects & glowcolor);
+		#endif
+	}
+	#endif	  
 
 	// Remove the Spy prevention
 	if (!spyoff)
@@ -3191,7 +3200,7 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer =
 */
 
 	// Return it to the starting point if the flag is set
-	if (method == 0 || method == 2)		// Dropped by a dying player
+	if (method == 0 || method == 2) 	// Dropped by a dying player
 	{
 		// Do messages
 		te = find(world, classname, "player");
@@ -3203,7 +3212,7 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer =
 					CenterPrint2(te, "\n\n\n", Item.team_drop);
 				if (Item.netname_team_drop != string_null)
 				{
-				    sprint(te, #PRINT_HIGH, AP.netname);
+					sprint(te, #PRINT_HIGH, AP.netname);
 					sprint(te, #PRINT_HIGH, Item.netname_team_drop);
 				}
 			}
@@ -3240,9 +3249,9 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer =
 		else if (Item.goal_activation & #TFGI_DROP)
 		{
 			if (method == 2)
-                tfgoalitem_drop(Item, #TRUE);
-            else
-                tfgoalitem_drop(Item, #FALSE);
+				tfgoalitem_drop(Item, #TRUE);
+			else
+				tfgoalitem_drop(Item, #FALSE);
 		}
 		else
 		{
@@ -3330,7 +3339,7 @@ void() tfgoalitem_dropthink =
 		else if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) // oh shit!
 			self.nextthink = time + 2;
 		else
-			self.nextthink = time + self.pausetime;	
+			self.nextthink = time + self.pausetime; 
 		
 		self.think = tfgoalitem_remove;
 	}
@@ -3361,7 +3370,7 @@ void() tfgoalitem_dropthink2 =
 		else if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) // oh shit!
 			self.nextthink = time + 2;	
 		else
-			self.nextthink = time + self.pausetime;	
+			self.nextthink = time + self.pausetime; 
 		
 		self.think = tfgoalitem_remove;
 
@@ -3394,24 +3403,24 @@ void(entity Item, float tossed) tfgoalitem_drop =
 {
 	local vector temp1;
 	local vector temp2;
-    
-    //Item.origin = Item.owner.origin - '0 0 8'; // OfN - why this? it causes them to go trhu walls an fall off of map sometimes..
-    Item.origin = Item.owner.origin;
-            
-    if (tossed)
-    {        
-        makevectors(Item.owner.v_angle);
-        Item.velocity = Item.owner.velocity + v_forward * 256 + '0 0 340';
+	
+	//Item.origin = Item.owner.origin - '0 0 8'; // OfN - why this? it causes them to go trhu walls an fall off of map sometimes..
+	Item.origin = Item.owner.origin;
+			
+	if (tossed)
+	{		 
+		makevectors(Item.owner.v_angle);
+		Item.velocity = Item.owner.velocity + v_forward * 256 + '0 0 340';
 
-        // OfN - Set stuff to avoid picking this item repeatedly
-        Item.demon_one = Item.owner;
-        Item.has_holo = time + #TFITEM_SAFEDROP_TIME;
-    }
-    else
-    {        
-	    Item.velocity_z = 400;
-        Item.velocity_x = -50 + (random() * 100);
-	    Item.velocity_y = -50 + (random() * 100);
+		// OfN - Set stuff to avoid picking this item repeatedly
+		Item.demon_one = Item.owner;
+		Item.has_holo = time + #TFITEM_SAFEDROP_TIME;
+	}
+	else
+	{		 
+		Item.velocity_z = 400;
+		Item.velocity_x = -50 + (random() * 100);
+		Item.velocity_y = -50 + (random() * 100);
 	}
 
 	Item.movetype = #MOVETYPE_TOSS;
@@ -3443,8 +3452,8 @@ void(entity Item, float tossed) tfgoalitem_drop =
 	}
 	else
 	{
-		Item.nextthink = time + 5.0; 	    // give it five seconds
-		Item.think = tfgoalitem_dropthink;  // and then find where it ended up
+		Item.nextthink = time + 5.0;		// give it five seconds
+		Item.think = tfgoalitem_dropthink;	// and then find where it ended up
 
 		Item.goal_state = #TFGS_INACTIVE;
 		Item.touch = item_tfgoal_touch;
@@ -3454,8 +3463,8 @@ void(entity Item, float tossed) tfgoalitem_drop =
 //CH brings the item online after 1 sec
 void() tfgoalitem_settouchandthink =
 {
-	self.nextthink = time + 4.0; 	    // give it five seconds
-	self.think = tfgoalitem_dropthink;  // and then find where it ended up
+	self.nextthink = time + 4.0;		// give it five seconds
+	self.think = tfgoalitem_dropthink;	// and then find where it ended up
 
 	self.goal_state = #TFGS_INACTIVE;
 	self.touch = item_tfgoal_touch;
@@ -3485,11 +3494,11 @@ void() tfgoalitem_remove =
 		RPrint("Returned.\n");
 	#endif
 
-        //CH set solid state
-        if (self.goal_activation & #TFGI_GOAL_IS_SOLID)
-            self.solid = #SOLID_BBOX;
-        else
-            self.solid = #SOLID_TRIGGER;
+		//CH set solid state
+		if (self.goal_activation & #TFGI_GOAL_IS_SOLID)
+			self.solid = #SOLID_BBOX;
+		else
+			self.solid = #SOLID_TRIGGER;
 
 		self.movetype = #MOVETYPE_NONE;
 		self.touch = item_tfgoal_touch;
@@ -3504,7 +3513,7 @@ void() tfgoalitem_remove =
 		// Restore a goal if needed
 		tfgoalitem_checkgoalreturn(self);
 
-		//CH could it check origin again??  nah...
+		//CH could it check origin again??	nah...
 		//CH a better question would be why does it need this to work right???
 		self.think = tfgoalitem_checkoriginagain;
 		self.nextthink = time + 1;

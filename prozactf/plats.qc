@@ -30,14 +30,14 @@ void() plat_spawn_inside_trigger =
 	trigger.activate_goal_no = self.activate_goal_no;
 	trigger.inactivate_goal_no = self.inactivate_goal_no;
 	trigger.remove_goal_no = self.remove_goal_no;
-	trigger.restore_goal_no = self.restore_goal_no;		
-	trigger.activate_group_no =	self.activate_group_no;	
-	trigger.inactivate_group_no = self.inactivate_group_no;	
-	trigger.remove_group_no	= self.remove_group_no;	
+	trigger.restore_goal_no = self.restore_goal_no; 	
+	trigger.activate_group_no = self.activate_group_no; 
+	trigger.inactivate_group_no = self.inactivate_group_no; 
+	trigger.remove_group_no = self.remove_group_no; 
 	trigger.restore_group_no = self.restore_group_no;	
-	trigger.goal_activation = self.goal_activation;				
+	trigger.goal_activation = self.goal_activation; 			
 	trigger.goal_effects = self.goal_effects;	
-	trigger.goal_result = self.goal_result;		
+	trigger.goal_result = self.goal_result; 	
 	trigger.goal_group = self.goal_group;		
 
 	tmin = self.mins + '25 25 0';
@@ -150,7 +150,7 @@ void() plat_outside_touch =
 void() plat_trigger_use =
 {
 	if (self.think)
-		return;		// allready activated
+		return; 	// allready activated
 	plat_go_down();
 };
 
@@ -166,7 +166,7 @@ void() plat_crush =
 	}
 	if (other.classname == "detpack") {
 		dremove(other.oldenemy);	// remove count down
-		dremove(other);        	// remove detpack
+		dremove(other); 		// remove detpack
 	}
 	if (self.state == #STATE_UP)
 		plat_go_down ();
@@ -289,7 +289,7 @@ void() train_blocked =
 void() train_use =
 {
 	if (self.think != func_train_find)
-		return;		// already activated
+		return; 	// already activated
 	train_next();
 };
 
@@ -342,7 +342,7 @@ The targets origin specifies the min point of the train at each corner.
 The train spawns at the first target it is pointing at.
 If the train is the target of a button or trigger, it will not begin moving until activated.
 speed	default 100
-dmg		default	2
+dmg 	default 2
 sounds
 1) ratchet metal
 

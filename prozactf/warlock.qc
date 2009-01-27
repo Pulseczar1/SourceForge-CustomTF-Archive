@@ -1,5 +1,5 @@
 /*=======================================================//
-// Warlock.QC - CustomTF 3.2.OfN6          - 30/1/2001 - //
+// Warlock.QC - CustomTF 3.2.OfN6		   - 30/1/2001 - //
 =========================================================//
  Warlock stuff - Revamped on 04/04/2004 by OfteN [cp]
 ---------------------------------------------------------//
@@ -9,69 +9,69 @@
 =========================================================*/
 
 // Warlock settings
-#define WARLOCK_BONUS1   28 // Number of hearts to get 1st bonus
-#define WARLOCK_BONUS2   42 // Number of hearts to get 2nd bonus
+#define WARLOCK_BONUS1	 28 // Number of hearts to get 1st bonus
+#define WARLOCK_BONUS2	 42 // Number of hearts to get 2nd bonus
 
 // Monster types
-#define MONSTER_SCRAG    1
-#define MONSTER_FISH     2
-#define MONSTER_DEMON    3
+#define MONSTER_SCRAG	 1
+#define MONSTER_FISH	 2
+#define MONSTER_DEMON	 3
 #define MONSTER_GREMLIN  4
 #define MONSTER_SHAMBLER 5
-#define MONSTER_ARMY     6
+#define MONSTER_ARMY	 6
 
 // Monster health settings
-#define SHAMBLER_MAX_HP          4000
-#define GREMLIN_MAX_HP           3200
-#define DEMON_MAX_HP             3000
-#define SCRAG_MAX_HP             2000
-#define FISH_MAX_HP              2000
+#define SHAMBLER_MAX_HP 		 4000
+#define GREMLIN_MAX_HP			 3200
+#define DEMON_MAX_HP			 3000
+#define SCRAG_MAX_HP			 2000
+#define FISH_MAX_HP 			 2000
 
-#define SHAMBLER_MIN_HP          1200
-#define GREMLIN_MIN_HP           900
-#define DEMON_MIN_HP             800
-#define SCRAG_MIN_HP             500
-#define FISH_MIN_HP              500
+#define SHAMBLER_MIN_HP 		 1200
+#define GREMLIN_MIN_HP			 900
+#define DEMON_MIN_HP			 800
+#define SCRAG_MIN_HP			 500
+#define FISH_MIN_HP 			 500
 
 // Meat/heads settings
-#define SHAMBLER_MAX_HEADS       40
-#define GREMLIN_MAX_HEADS        35
-#define DEMON_MAX_HEADS          30
-#define SCRAG_MAX_HEADS          20
-#define FISH_MAX_HEADS           20
+#define SHAMBLER_MAX_HEADS		 40
+#define GREMLIN_MAX_HEADS		 35
+#define DEMON_MAX_HEADS 		 30
+#define SCRAG_MAX_HEADS 		 20
+#define FISH_MAX_HEADS			 20
 
-#define SHAMBLER_MAX_MEAT        240 
-#define GREMLIN_MAX_MEAT         200
-#define DEMON_MAX_MEAT           160
-#define SCRAG_MAX_MEAT           120
-#define FISH_MAX_MEAT            120
+#define SHAMBLER_MAX_MEAT		 240 
+#define GREMLIN_MAX_MEAT		 200
+#define DEMON_MAX_MEAT			 160
+#define SCRAG_MAX_MEAT			 120
+#define FISH_MAX_MEAT			 120
 
 // monster HP regeneration
-#define SCRAG_MAXREGEN      3
-#define SCRAG_REGENRATE     1.5
+#define SCRAG_MAXREGEN		3
+#define SCRAG_REGENRATE 	1.5
 
-#define FISH_MAXREGEN       4
-#define FISH_REGENRATE      1
+#define FISH_MAXREGEN		4
+#define FISH_REGENRATE		1
 
-#define FIEND_MAXREGEN      3
-#define FIEND_REGENRATE     1.5
+#define FIEND_MAXREGEN		3
+#define FIEND_REGENRATE 	1.5
 
-#define GREMLIN_MAXREGEN    3.5
-#define GREMLIN_REGENRATE   1.5
+#define GREMLIN_MAXREGEN	3.5
+#define GREMLIN_REGENRATE	1.5
 
-#define SHAMBLER_MAXREGEN   4
-#define SHAMBLER_REGENRATE  1.4
+#define SHAMBLER_MAXREGEN	4
+#define SHAMBLER_REGENRATE	1.4
 
-#define AURA_ARMY_REGEN       3
+#define AURA_ARMY_REGEN 	  3
 #define AURA_ARMY_REGENRATE   1.5
 
-//#define AURA_REGEN_MINHEAL    3
+//#define AURA_REGEN_MINHEAL	3
 
 // Monster feature settings
 #ifdef XMAS_STUFF
 #define SHAMBLER_XMAS_RANGE   5000 // too much?
-#define SHAMBLER_XMAS_DMG      400
-#define SHAMBLER_XMAS_MAXHITS    4
+#define SHAMBLER_XMAS_DMG	   400
+#define SHAMBLER_XMAS_MAXHITS	 4
 #endif
 
 /*================================================================================
@@ -90,8 +90,8 @@ Entity fields used for summons:
 Entity fields used for player:
 ------------------------------
 
-.demon_blood         - Contains number of hearts, heads and meat the player has
-.g_e                 - Contains current selected soul number, and usage settings
+.demon_blood		 - Contains number of hearts, heads and meat the player has
+.g_e				 - Contains current selected soul number, and usage settings
 .dont_do_triggerwork - Overall quantity of hearts the player has collected
 
 =================================================================================*/
@@ -173,7 +173,7 @@ void(entity wyp, entity soldier) RemoveWaypoint;
 void(entity player, float slot) ResetSlotPointer;
 entity(entity sold, entity viewpoint) ReturnEasyWaypoint;
 
-float()	WizardCheckAttack;
+float() WizardCheckAttack;
 float()  GremlinCheckAttack;
 float(entity thing) IsMonsterNonArmy;
 void(entity themonster) MonsterDie;
@@ -205,257 +205,257 @@ void() Menu_Demon =
 {
 	local string st,st3,st2,st4,st5,st6,st7;
 	
-    local float knifekills;
-    knifekills = GetHearts(self);
+	local float knifekills;
+	knifekills = GetHearts(self);
 
-    local float currentsoul;
-    currentsoul = GetCurrentSoul(self);
+	local float currentsoul;
+	currentsoul = GetCurrentSoul(self);
 
-    local entity soul;
-    soul = GetSummon(self,currentsoul);
+	local entity soul;
+	soul = GetSummon(self,currentsoul);
 
-    local float extras;
-    extras = GetJobExtras(self);
-    
-    if (extras == 0)
-    {
-        st3 = "¡„ÙÈÔÓ";
-    }
-    else
-    {
-        if (currentsoul == 0)
-            st3 = "”ÔıÏ £±";
-        else if (currentsoul == 1)
-            st3 = "”ÔıÏ £≤";
-        else
-            st3 = "”ÔıÏ £≥";
-    }
+	local float extras;
+	extras = GetJobExtras(self);
+	
+	if (extras == 0)
+	{
+		st3 = "¡„ÙÈÔÓ";
+	}
+	else
+	{
+		if (currentsoul == 0)
+			st3 = "”ÔıÏ £±";
+		else if (currentsoul == 1)
+			st3 = "”ÔıÏ £≤";
+		else
+			st3 = "”ÔıÏ £≥";
+	}
 
 	if (soul!=world)
-    {    
-        st=GetMonsterName(soul);
+	{	 
+		st=GetMonsterName(soul);
 
-        st3 = strcat("\n\n",st3);
+		st3 = strcat("\n\n",st3);
 
-        if (soul.penance_time == 0)
-        {
-            st2 = strcat(st3,":                  \n\n.. Come here, damn beast°   \nî.. Patrol the zone°         ");
-            
-            if (extras == 0)
-                st4 = "\n* .. Stop there°                \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ                  \n\n";
-            else
-                st4 = "\n* .. Stop there°                \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ     .. ŒÂ¯Ù ”ÔıÏ\n\n";
-        }
-        else if (soul.penance_time == 1)
-        {
-            st2 = strcat(st3,":                  \n\n* .. Come here, damn beast°     \n.. Patrol the zone°         ");
-            
-            if (extras == 0)
-                st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ                  \n\n";
-            else
-                st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ     .. ŒÂ¯Ù ”ÔıÏ\n\n";
-        }
-        else if (soul.penance_time == 2)
-        {
-            st2 = strcat(st3,":                  \n\n.. Come here, damn beast°   \n* .. Patrol the zone°           ");
+		if (soul.penance_time == 0)
+		{
+			st2 = strcat(st3,":                  \n\n.. Come here, damn beast°   \nî.. Patrol the zone°         ");
+			
+			if (extras == 0)
+				st4 = "\n* .. Stop there°                \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ                  \n\n";
+			else
+				st4 = "\n* .. Stop there°                \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ     .. ŒÂ¯Ù ”ÔıÏ\n\n";
+		}
+		else if (soul.penance_time == 1)
+		{
+			st2 = strcat(st3,":                  \n\n* .. Come here, damn beast°     \n.. Patrol the zone°         ");
+			
+			if (extras == 0)
+				st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ                  \n\n";
+			else
+				st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ     .. ŒÂ¯Ù ”ÔıÏ\n\n";
+		}
+		else if (soul.penance_time == 2)
+		{
+			st2 = strcat(st3,":                  \n\n.. Come here, damn beast°   \n* .. Patrol the zone°           ");
 
-            if (extras == 0)
-                st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ                  \n\n";
-            else
-                st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ     .. ŒÂ¯Ù ”ÔıÏ\n\n";
-        }
-        
-        st6 = ftos(GetMeat(self));
+			if (extras == 0)
+				st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ                  \n\n";
+			else
+				st4 = "\n.. Stop there°              \n\nÆÆ Unsummon                 \n\n.. ŒÔÙËÈÓÁ     .. ŒÂ¯Ù ”ÔıÏ\n\n";
+		}
+		
+		st6 = ftos(GetMeat(self));
 
-        st5 = ftos(knifekills);
-        if (strlen(st5)==1)
-            st5 = strcat(" ",st5);
-        st5 = strcat("ËÂ·ÚÙÛ: ",st5);
-        st5 = padstr(st5,21);
+		st5 = ftos(knifekills);
+		if (strlen(st5)==1)
+			st5 = strcat(" ",st5);
+		st5 = strcat("ËÂ·ÚÙÛ: ",st5);
+		st5 = padstr(st5,21);
 
-        
-        st5 = strcat(st5,"\n");
+		
+		st5 = strcat(st5,"\n");
 
-        if (strlen(st6)==1)
-            st6 = strcat("  ",st6);
-        else if (strlen(st6)==2)
-            st6 = strcat(" ",st6);
+		if (strlen(st6)==1)
+			st6 = strcat("  ",st6);
+		else if (strlen(st6)==2)
+			st6 = strcat(" ",st6);
 
-        st7 = strcat("ÌÂ·Ù:  ",st6);
-        st7 = strcat(st7," ÎÁÛ");
-        st7 = padstr(st7,21);
-
-
-        st5 = strcat(st5,st7);
-
-        
-        st5 = strcat(st5,"\n");
-        
-        st6 = ftos(GetHeads(self));
-        if (strlen(st6)==1)
-            st6 = strcat("  ",st6);
-        else if (strlen(st6)==2)
-            st6 = strcat(" ",st6);
-        st7 = strcat("ËÂ·‰Û: ",st6);
-        st7 = padstr(st7,21);
-
-        
-        st5 = strcat(st5,st7);
-
-        CenterPrint7(self, soul.netname," º",st,"æ", st2,st4, st5);
-    }
-    else
-    {        
-        local float numsummons;
-        numsummons = GetNumSummons(self);
-
-        local float meatusage;
-        local float headsusage;
-
-        meatusage = GetMeatUsage(self);
-        headsusage = GetHeadsUsage(self);
-
-        if (numsummons == 0)
-        {
-            if (self.job & #JOB_BLOODY_KNIFE)
-                st=strcat(st3,":                  \n\n.. Summon Scrag        (‚ÏÔÔ‰)\n.. Summon Piranha      (‚ÏÔÔ‰)");
-            else
-                st=strcat(st3,":                  \n\n.. Summon Scrag        (blood)\n.. Summon Piranha      (blood)");
-
-            if (knifekills>1)
-               st2="\n.. Summon Fiend     ( ËÂ·ÚÙÛ)";
-            else     
-               st2="\n.. Summon Fiend     (2 hearts)";
-
-            if (knifekills>2)
-               st3="\n.. Summon Gremlin   ( ËÂ·ÚÙÛ)";
-            else
-               st3="\n.. Summon Gremlin   (3 hearts)";
-
-            if (knifekills>4)
-               st4="\n.. Summon Shambler  ( ËÂ·ÚÙÛ)";
-            else
-               st4="\n.. Summon Shambler  (5 hearts)";
-        }
-        else if (numsummons == 1)
-        {
-            if (knifekills > 0)
-                st=strcat(st3,":                  \n\n.. Summon Scrag      ( ËÂ·ÚÙ)\n.. Summon Piranha    ( ËÂ·ÚÙ)");
-            else
-                st=strcat(st3,":                  \n\n.. Summon Scrag      (1 heart)\n.. Summon Piranha    (1 heart)");
-            
-            if (knifekills>3)
-               st2="\n.. Summon Fiend     ( ËÂ·ÚÙÛ)";
-            else     
-               st2="\n.. Summon Fiend     (4 hearts)";
-
-            if (knifekills>5)
-               st3="\n.. Summon Gremlin   ( ËÂ·ÚÙÛ)";
-            else
-               st3="\n.. Summon Gremlin   (6 hearts)";
-
-            if (knifekills>9)
-               st4="\n.. Summon Shambler ( ËÂ·ÚÙÛ)";
-            else
-               st4="\n.. Summon Shambler (10 hearts)";
-        }
-        else 
-        {
-            if (knifekills > 1)
-                st=strcat(st3,":                  \n\n.. Summon Scrag     ( ËÂ·ÚÙÛ)\n.. Summon Piranha   ( ËÂ·ÚÙÛ)");
-            else
-                st=strcat(st3,":                  \n\n.. Summon Scrag     (2 hearts)\n.. Summon Piranha   (2 hearts)");
-
-            if (knifekills>5)
-               st2="\n.. Summon Fiend     ( ËÂ·ÚÙÛ)";
-            else     
-               st2="\n.. Summon Fiend     (6 hearts)";
-
-            if (knifekills>8)
-               st3="\n.. Summon Gremlin   ( ËÂ·ÚÙÛ)";
-            else
-               st3="\n.. Summon Gremlin   (9 hearts)";
-
-            if (knifekills>14)
-               st4="\n.. Summon Shambler ( ËÂ·ÚÙÛ)";
-            else
-               st4="\n.. Summon Shambler (15 hearts)";
-        }
-
-        
-        st6 = ftos(GetMeat(self));
-
-        st5 = ftos(knifekills);
-        if (strlen(st5)==1)
-            st5= strcat(" ",st5);
-        st5 = strcat("ËÂ·ÚÙÛ: ",st5);
-        st5 = padstr(st5,31);
-
-        
-        st5 = strcat(st5,"\n");
-
-        
-        if (strlen(st6)==1)
-            st6 = strcat("  ",st6);
-        else if (strlen(st6)==2)
-            st6 = strcat(" ",st6);
-        st7 = strcat("ÌÂ·Ù:  ",st6);
-        st7 = strcat(st7," ÎÁÛ");
-        st7 = padstr(st7,15);
-
-        if (meatusage == 0)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ   0•\n");
-        else if (meatusage == 1)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ  25•\n");
-        else if (meatusage == 2)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ  50•\n");
-        else if (meatusage == 3)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ  75•\n");
-        else if (meatusage == 4)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ 100•\n");
-        
-        st5 = strcat(st5,st7);
-
-      
-        st6 = ftos(GetHeads(self));
-        if (strlen(st6)==1)
-            st6 = strcat("  ",st6);
-        else if (strlen(st6)==2)
-            st6 = strcat(" ",st6);
-        st7 = strcat("ËÂ·‰Û: ",st6);
-        st7 = padstr(st7,15);
-
-        if (headsusage == 0)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ   0•");
-        else if (headsusage == 1)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ  25•");
-        else if (headsusage == 2)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ  50•");
-        else if (headsusage == 3)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ  75•");
-        else if (headsusage == 4)
-            st7 = strcat(st7,"  .. ıÛ·ÁÂ 100•");
-
-        st5 = strcat(st5,st7);
-        
-
-        if (extras == 0)
-            CenterPrint6(self, st,st2,st3,st4,"\n\n.. ŒÔÙËÈÓÁ                    \n\n",st5);
-        else
-            CenterPrint6(self, st,st2,st3,st4,"\n\n.. ŒÔÙËÈÓÁ      .. ŒÂ¯Ù ”ÔıÏ \n\n",st5);
-
-    }
-
-    // Ignore enemy!
-    // Engage enemy!
+		st7 = strcat("ÌÂ·Ù:  ",st6);
+		st7 = strcat(st7," ÎÁÛ");
+		st7 = padstr(st7,21);
 
 
-    //menu 2
-    //health
-    //frags
-    //status
-    //enemy
-            
+		st5 = strcat(st5,st7);
+
+		
+		st5 = strcat(st5,"\n");
+		
+		st6 = ftos(GetHeads(self));
+		if (strlen(st6)==1)
+			st6 = strcat("  ",st6);
+		else if (strlen(st6)==2)
+			st6 = strcat(" ",st6);
+		st7 = strcat("ËÂ·‰Û: ",st6);
+		st7 = padstr(st7,21);
+
+		
+		st5 = strcat(st5,st7);
+
+		CenterPrint7(self, soul.netname," º",st,"æ", st2,st4, st5);
+	}
+	else
+	{		 
+		local float numsummons;
+		numsummons = GetNumSummons(self);
+
+		local float meatusage;
+		local float headsusage;
+
+		meatusage = GetMeatUsage(self);
+		headsusage = GetHeadsUsage(self);
+
+		if (numsummons == 0)
+		{
+			if (self.job & #JOB_BLOODY_KNIFE)
+				st=strcat(st3,":                  \n\n.. Summon Scrag        (‚ÏÔÔ‰)\n.. Summon Piranha      (‚ÏÔÔ‰)");
+			else
+				st=strcat(st3,":                  \n\n.. Summon Scrag        (blood)\n.. Summon Piranha      (blood)");
+
+			if (knifekills>1)
+			   st2="\n.. Summon Fiend     ( ËÂ·ÚÙÛ)";
+			else	 
+			   st2="\n.. Summon Fiend     (2 hearts)";
+
+			if (knifekills>2)
+			   st3="\n.. Summon Gremlin   ( ËÂ·ÚÙÛ)";
+			else
+			   st3="\n.. Summon Gremlin   (3 hearts)";
+
+			if (knifekills>4)
+			   st4="\n.. Summon Shambler  ( ËÂ·ÚÙÛ)";
+			else
+			   st4="\n.. Summon Shambler  (5 hearts)";
+		}
+		else if (numsummons == 1)
+		{
+			if (knifekills > 0)
+				st=strcat(st3,":                  \n\n.. Summon Scrag      ( ËÂ·ÚÙ)\n.. Summon Piranha    ( ËÂ·ÚÙ)");
+			else
+				st=strcat(st3,":                  \n\n.. Summon Scrag      (1 heart)\n.. Summon Piranha    (1 heart)");
+			
+			if (knifekills>3)
+			   st2="\n.. Summon Fiend     ( ËÂ·ÚÙÛ)";
+			else	 
+			   st2="\n.. Summon Fiend     (4 hearts)";
+
+			if (knifekills>5)
+			   st3="\n.. Summon Gremlin   ( ËÂ·ÚÙÛ)";
+			else
+			   st3="\n.. Summon Gremlin   (6 hearts)";
+
+			if (knifekills>9)
+			   st4="\n.. Summon Shambler ( ËÂ·ÚÙÛ)";
+			else
+			   st4="\n.. Summon Shambler (10 hearts)";
+		}
+		else 
+		{
+			if (knifekills > 1)
+				st=strcat(st3,":                  \n\n.. Summon Scrag     ( ËÂ·ÚÙÛ)\n.. Summon Piranha   ( ËÂ·ÚÙÛ)");
+			else
+				st=strcat(st3,":                  \n\n.. Summon Scrag     (2 hearts)\n.. Summon Piranha   (2 hearts)");
+
+			if (knifekills>5)
+			   st2="\n.. Summon Fiend     ( ËÂ·ÚÙÛ)";
+			else	 
+			   st2="\n.. Summon Fiend     (6 hearts)";
+
+			if (knifekills>8)
+			   st3="\n.. Summon Gremlin   ( ËÂ·ÚÙÛ)";
+			else
+			   st3="\n.. Summon Gremlin   (9 hearts)";
+
+			if (knifekills>14)
+			   st4="\n.. Summon Shambler ( ËÂ·ÚÙÛ)";
+			else
+			   st4="\n.. Summon Shambler (15 hearts)";
+		}
+
+		
+		st6 = ftos(GetMeat(self));
+
+		st5 = ftos(knifekills);
+		if (strlen(st5)==1)
+			st5= strcat(" ",st5);
+		st5 = strcat("ËÂ·ÚÙÛ: ",st5);
+		st5 = padstr(st5,31);
+
+		
+		st5 = strcat(st5,"\n");
+
+		
+		if (strlen(st6)==1)
+			st6 = strcat("  ",st6);
+		else if (strlen(st6)==2)
+			st6 = strcat(" ",st6);
+		st7 = strcat("ÌÂ·Ù:  ",st6);
+		st7 = strcat(st7," ÎÁÛ");
+		st7 = padstr(st7,15);
+
+		if (meatusage == 0)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ   0•\n");
+		else if (meatusage == 1)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ  25•\n");
+		else if (meatusage == 2)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ  50•\n");
+		else if (meatusage == 3)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ  75•\n");
+		else if (meatusage == 4)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ 100•\n");
+		
+		st5 = strcat(st5,st7);
+
+	  
+		st6 = ftos(GetHeads(self));
+		if (strlen(st6)==1)
+			st6 = strcat("  ",st6);
+		else if (strlen(st6)==2)
+			st6 = strcat(" ",st6);
+		st7 = strcat("ËÂ·‰Û: ",st6);
+		st7 = padstr(st7,15);
+
+		if (headsusage == 0)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ   0•");
+		else if (headsusage == 1)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ  25•");
+		else if (headsusage == 2)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ  50•");
+		else if (headsusage == 3)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ  75•");
+		else if (headsusage == 4)
+			st7 = strcat(st7,"  .. ıÛ·ÁÂ 100•");
+
+		st5 = strcat(st5,st7);
+		
+
+		if (extras == 0)
+			CenterPrint6(self, st,st2,st3,st4,"\n\n.. ŒÔÙËÈÓÁ                    \n\n",st5);
+		else
+			CenterPrint6(self, st,st2,st3,st4,"\n\n.. ŒÔÙËÈÓÁ      .. ŒÂ¯Ù ”ÔıÏ \n\n",st5);
+
+	}
+
+	// Ignore enemy!
+	// Engage enemy!
+
+
+	//menu 2
+	//health
+	//frags
+	//status
+	//enemy
+			
 };
 
 /*
@@ -475,9 +475,9 @@ void() SummonThink =
 	oself = self;
 	self = self.owner;
 	custom_demon_create(oself.has_tesla,oself.has_fieldgen);
-    //spawnFOG(oself.origin); MOVED
+	//spawnFOG(oself.origin); MOVED
 
-    self = oself;
+	self = oself;
 	dremove(self);
 };
 
@@ -487,315 +487,315 @@ void(float inp) Menu_Demon_Input =
 
 	local float points;
 
-    local float knifekills;
-    local float neededhearts;
-    knifekills = GetHearts(self);
+	local float knifekills;
+	local float neededhearts;
+	knifekills = GetHearts(self);
 
-    local float currentsoul;
-    local entity soul;
-    currentsoul = GetCurrentSoul(self);
-    soul = GetSummon(self,currentsoul);
+	local float currentsoul;
+	local entity soul;
+	currentsoul = GetCurrentSoul(self);
+	soul = GetSummon(self,currentsoul);
 
-    local float extras;
-    extras = GetJobExtras(self);
+	local float extras;
+	extras = GetJobExtras(self);
 	
-    if (inp == 10) // nothing
+	if (inp == 10) // nothing
 	{	
 		ResetMenu();
 		self.impulse = 0;
-        return;
+		return;
 	}
-    if (inp == 1 && soul != world) // Come here!
-    {	        
-        if (!IsMonster(soul)) return;
+	if (inp == 1 && soul != world) // Come here!
+	{			
+		if (!IsMonster(soul)) return;
 
-        soul.penance_time = 1;
+		soul.penance_time = 1;
 
 		local string st;
-        st=GetMonsterName(soul);
-        
-        if (soul.enemy != world)
-        {
-            if (visible2(soul,soul.enemy))
-            {
-                sprint(self,#PRINT_HIGH,"Your ");
-                sprint(self,#PRINT_HIGH,st);
-                sprint(self,#PRINT_HIGH," is busy trying to kill!\n");
-                self.impulse=0;
-                return;
-            }
-        }
+		st=GetMonsterName(soul);
+		
+		if (soul.enemy != world)
+		{
+			if (visible2(soul,soul.enemy))
+			{
+				sprint(self,#PRINT_HIGH,"Your ");
+				sprint(self,#PRINT_HIGH,st);
+				sprint(self,#PRINT_HIGH," is busy trying to kill!\n");
+				self.impulse=0;
+				return;
+			}
+		}
 
-        if (soul.goalentity == self) 
-        {
-            sprint(self,#PRINT_HIGH,"Your ");
-            sprint(self,#PRINT_HIGH,st);
-            sprint(self,#PRINT_HIGH," is already trying to reach your position!\n");
-            self.impulse=0;
-            return;
-        }
-        
-        MonsterIdle(soul);
-        //CuTFMenuSound(#MENUSOUND_BUY);
+		if (soul.goalentity == self) 
+		{
+			sprint(self,#PRINT_HIGH,"Your ");
+			sprint(self,#PRINT_HIGH,st);
+			sprint(self,#PRINT_HIGH," is already trying to reach your position!\n");
+			self.impulse=0;
+			return;
+		}
+		
+		MonsterIdle(soul);
+		//CuTFMenuSound(#MENUSOUND_BUY);
 
-        sprint(self,#PRINT_HIGH,"You call your ");
-        sprint(self,#PRINT_HIGH,st);
-        sprint(self,#PRINT_HIGH,".\n");
-        ResetMenu();
-        self.impulse=0;
-        return;
+		sprint(self,#PRINT_HIGH,"You call your ");
+		sprint(self,#PRINT_HIGH,st);
+		sprint(self,#PRINT_HIGH,".\n");
+		ResetMenu();
+		self.impulse=0;
+		return;
 	}
-    else if (inp == 2 && soul != world) // patrol!
+	else if (inp == 2 && soul != world) // patrol!
 	{	
 		if (!IsMonster(soul)) return;
 
 		soul.penance_time = 2;
-        
-        local string st;
-        st=GetMonsterName(soul);
-        
-        if (soul.enemy != world)
-        {
-            if (visible2(soul,soul.enemy))
-            {
-                sprint(self,#PRINT_HIGH,"Your ");
-                sprint(self,#PRINT_HIGH,st);
-                sprint(self,#PRINT_HIGH," is busy trying to kill!\n");
-                self.impulse=0;
-                return;
-            }
-        }
+		
+		local string st;
+		st=GetMonsterName(soul);
+		
+		if (soul.enemy != world)
+		{
+			if (visible2(soul,soul.enemy))
+			{
+				sprint(self,#PRINT_HIGH,"Your ");
+				sprint(self,#PRINT_HIGH,st);
+				sprint(self,#PRINT_HIGH," is busy trying to kill!\n");
+				self.impulse=0;
+				return;
+			}
+		}
 
-        if (soul.goalentity == soul) 
-        {
-            sprint(self,#PRINT_HIGH,"Your ");
-            sprint(self,#PRINT_HIGH,st);
-            sprint(self,#PRINT_HIGH," is already patroling!\n");
-            self.impulse=0;
-            return;
-        }
+		if (soul.goalentity == soul) 
+		{
+			sprint(self,#PRINT_HIGH,"Your ");
+			sprint(self,#PRINT_HIGH,st);
+			sprint(self,#PRINT_HIGH," is already patroling!\n");
+			self.impulse=0;
+			return;
+		}
 
-        MonsterIdle(soul);
-        //CuTFMenuSound(#MENUSOUND_BUY);
+		MonsterIdle(soul);
+		//CuTFMenuSound(#MENUSOUND_BUY);
 
-        sprint(self,#PRINT_HIGH,"Your ");
-        sprint(self,#PRINT_HIGH,st);
-        sprint(self,#PRINT_HIGH," will patrol the zone now...\n");
+		sprint(self,#PRINT_HIGH,"Your ");
+		sprint(self,#PRINT_HIGH,st);
+		sprint(self,#PRINT_HIGH," will patrol the zone now...\n");
 
-        ResetMenu();
-        self.impulse=0;
-        return;
+		ResetMenu();
+		self.impulse=0;
+		return;
 	}
-    else if (inp == 3 && soul != world) // stop there!
+	else if (inp == 3 && soul != world) // stop there!
 	{	
 		if (!IsMonster(soul)) return;
 
-        soul.penance_time = 0;
+		soul.penance_time = 0;
 
 		local string st;
-        st=GetMonsterName(soul);
-        
-        if (soul.enemy != world)
-        {
-            if (visible2(soul,soul.enemy))
-            {
-                sprint(self,#PRINT_HIGH,"Your ");
-                sprint(self,#PRINT_HIGH,st);
-                sprint(self,#PRINT_HIGH," is busy trying to kill!\n");
-                self.impulse=0;
-                return;
-            }
-        }
+		st=GetMonsterName(soul);
+		
+		if (soul.enemy != world)
+		{
+			if (visible2(soul,soul.enemy))
+			{
+				sprint(self,#PRINT_HIGH,"Your ");
+				sprint(self,#PRINT_HIGH,st);
+				sprint(self,#PRINT_HIGH," is busy trying to kill!\n");
+				self.impulse=0;
+				return;
+			}
+		}
 
-        MonsterIdle(soul);
-        //CuTFMenuSound(#MENUSOUND_BUY);
-        
-        ResetMenu();
-        self.impulse=0;
-        return;
+		MonsterIdle(soul);
+		//CuTFMenuSound(#MENUSOUND_BUY);
+		
+		ResetMenu();
+		self.impulse=0;
+		return;
 	}
-    else if (inp == 8) // unsummon or meat usage
+	else if (inp == 8) // unsummon or meat usage
 	{
 		if (soul != world)
-        {
-            if (soul.health < #MINHP_TOKILL_MONSTERS)
-            {
-                sprint(self,#PRINT_HIGH,"The mystic link between you and ");
-                sprint(self,#PRINT_HIGH,soul.netname);
-                sprint(self,#PRINT_HIGH," is too weak to unsummon!\n");
-            }
-            else
-            {
-                local string MName;
-                MName=GetMonsterName(soul);    
+		{
+			if (soul.health < #MINHP_TOKILL_MONSTERS)
+			{
+				sprint(self,#PRINT_HIGH,"The mystic link between you and ");
+				sprint(self,#PRINT_HIGH,soul.netname);
+				sprint(self,#PRINT_HIGH," is too weak to unsummon!\n");
+			}
+			else
+			{
+				local string MName;
+				MName=GetMonsterName(soul);    
 
-                teamprefixsprint(self.team_no, self);
+				teamprefixsprint(self.team_no, self);
 
-                teamsprint6(self,self.netname, " unsummons his ",MName, " ",soul.netname,"\n");
+				teamsprint6(self,self.netname, " unsummons his ",MName, " ",soul.netname,"\n");
 
-                KillSoul(self,soul.increase_team1);
-            }
-        }
-        else // meat usage
-        {
-            local float meatusage;
-            meatusage = GetMeatUsage(self);
-            meatusage = meatusage - 1;
-            if (meatusage < 0)
-                meatusage = 4;
+				KillSoul(self,soul.increase_team1);
+			}
+		}
+		else // meat usage
+		{
+			local float meatusage;
+			meatusage = GetMeatUsage(self);
+			meatusage = meatusage - 1;
+			if (meatusage < 0)
+				meatusage = 4;
 
-            SetMeatUsage(self,meatusage);
+			SetMeatUsage(self,meatusage);
 
-            Menu_Demon();
-            CuTFMenuSound(#MENUSOUND_BROWSE);
+			Menu_Demon();
+			CuTFMenuSound(#MENUSOUND_BROWSE);
 
-            self.impulse = 0;
-            return;
-        }
+			self.impulse = 0;
+			return;
+		}
 
-        ResetMenu();
+		ResetMenu();
 		self.impulse = 0;
 		return;
 	}
-    else if (inp == 9 && soul == world)
-    {
-        local float headsusage;
-        headsusage = GetHeadsUsage(self);
-        headsusage = headsusage - 1;
-        if (headsusage < 0)
-            headsusage = 4;
+	else if (inp == 9 && soul == world)
+	{
+		local float headsusage;
+		headsusage = GetHeadsUsage(self);
+		headsusage = headsusage - 1;
+		if (headsusage < 0)
+			headsusage = 4;
 
-        SetHeadsUsage(self,headsusage);
+		SetHeadsUsage(self,headsusage);
 
-        Menu_Demon();
-        CuTFMenuSound(#MENUSOUND_BROWSE);
+		Menu_Demon();
+		CuTFMenuSound(#MENUSOUND_BROWSE);
 
-        self.impulse = 0;
-        return;
-    }
-    else if (inp == 7 && extras != 0)
-    {
-        currentsoul = currentsoul + 1;
-        if (currentsoul > extras)
-            currentsoul = 0;
-        
-        SetCurrentSoul(self,currentsoul);
+		self.impulse = 0;
+		return;
+	}
+	else if (inp == 7 && extras != 0)
+	{
+		currentsoul = currentsoul + 1;
+		if (currentsoul > extras)
+			currentsoul = 0;
+		
+		SetCurrentSoul(self,currentsoul);
 
-        CuTFMenuSound(#MENUSOUND_BROWSE);
+		CuTFMenuSound(#MENUSOUND_BROWSE);
 
-        Menu_Demon();
+		Menu_Demon();
 
-        self.impulse = 0;
-        return;
-    }
-    else if (inp >=1 && inp <=5)
-    {
-        SUB_Null();
-    }    
-    else
-        return;
+		self.impulse = 0;
+		return;
+	}
+	else if (inp >=1 && inp <=5)
+	{
+		SUB_Null();
+	}	 
+	else
+		return;
 	
-    if (soul != world)
-    {
-        self.impulse = 0;
-        return;
-    }
-    
-    if (inp < 1 || inp > 5)
-    {
-        self.impulse = 0;
-        return;
-    }
+	if (soul != world)
+	{
+		self.impulse = 0;
+		return;
+	}
+	
+	if (inp < 1 || inp > 5)
+	{
+		self.impulse = 0;
+		return;
+	}
 
-    neededhearts = GetNeededHearts(self,inp);
+	neededhearts = GetNeededHearts(self,inp);
 
-    if (neededhearts > knifekills)
-    {
-        sprint(self,#PRINT_HIGH,"You need more bloody hearts!\n");
-        ResetMenu();
-        self.impulse = 0;
-        return;
-    }
+	if (neededhearts > knifekills)
+	{
+		sprint(self,#PRINT_HIGH,"You need more bloody hearts!\n");
+		ResetMenu();
+		self.impulse = 0;
+		return;
+	}
 
 #ifndef WARLOCK_TEST
 
-    if (neededhearts == 0)
-    {
-        if (!(self.job & #JOB_BLOODY_KNIFE))
-        {
-            if (inp == 1)
-                sprint(self,#PRINT_HIGH,"You have to get blood from an enemy to summon a scrag!\n");
-            else if (inp == 2)
-                sprint(self,#PRINT_HIGH,"You have to get blood from an enemy to summon a piranha!\n");
+	if (neededhearts == 0)
+	{
+		if (!(self.job & #JOB_BLOODY_KNIFE))
+		{
+			if (inp == 1)
+				sprint(self,#PRINT_HIGH,"You have to get blood from an enemy to summon a scrag!\n");
+			else if (inp == 2)
+				sprint(self,#PRINT_HIGH,"You have to get blood from an enemy to summon a piranha!\n");
 
-            ResetMenu();
-            self.impulse = 0;
-            return;
-        }
-    }
+			ResetMenu();
+			self.impulse = 0;
+			return;
+		}
+	}
 
-#endif    
+#endif	  
 
 #ifdef GREMLIN_NOTDONE
 
-    if (inp == 4)
-    {
-        sprint(self,#PRINT_HIGH,"Gremlin still not implemented properly, sorry!\n");
-        return;
-    }
+	if (inp == 4)
+	{
+		sprint(self,#PRINT_HIGH,"Gremlin still not implemented properly, sorry!\n");
+		return;
+	}
 
 #endif
 
 #ifdef FISH_NOTDONE
 
-    if (inp == 2)
-    {
-        sprint(self,#PRINT_HIGH,"Piranha still not implemented properly, sorry!\n");
-        return;
-    }
+	if (inp == 2)
+	{
+		sprint(self,#PRINT_HIGH,"Piranha still not implemented properly, sorry!\n");
+		return;
+	}
 #endif
 
-    
-    self.impulse = 0;
-    ResetMenu();
-    
-    // TEMP
-    points = 5;
-    
-    SetHearts(self,knifekills - neededhearts);
-    
-    if (!neededhearts)
-    {
-        if (self.job & #JOB_BLOODY_KNIFE && (inp == 1 || inp == 2))
-            self.job = self.job - #JOB_BLOODY_KNIFE; //- OfN - caused bug
-        
-        if (self.current_weapon == #WEAP_AXE && (inp == 1 || inp == 2))
-        {
-            self.weaponmode = 0; // Remove blood on the knife
-            self.weaponmodel = "progs/v_knife.mdl";
-        }
-    }
+	
+	self.impulse = 0;
+	ResetMenu();
+	
+	// TEMP
+	points = 5;
+	
+	SetHearts(self,knifekills - neededhearts);
+	
+	if (!neededhearts)
+	{
+		if (self.job & #JOB_BLOODY_KNIFE && (inp == 1 || inp == 2))
+			self.job = self.job - #JOB_BLOODY_KNIFE; //- OfN - caused bug
+		
+		if (self.current_weapon == #WEAP_AXE && (inp == 1 || inp == 2))
+		{
+			self.weaponmode = 0; // Remove blood on the knife
+			self.weaponmodel = "progs/v_knife.mdl";
+		}
+	}
 
-    stuffcmd(self,"v_idlescale 100000\n");
+	stuffcmd(self,"v_idlescale 100000\n");
 
-    //r = random(); //Random summon sounds. :)
-    //if (r < 0.33) 
-        sound (self, #CHAN_WEAPON, "boss2/sight.wav", 1, #ATTN_NORM);
-    //else if (r < 0.66)
-    //	sound (self, #CHAN_WEAPON, "wizard/widle2.wav", 1, #ATTN_NORM);
-    //else
-    //	sound (self, #CHAN_WEAPON, "shambler/sdeath.wav", 1, #ATTN_NORM);
+	//r = random(); //Random summon sounds. :)
+	//if (r < 0.33) 
+		sound (self, #CHAN_WEAPON, "boss2/sight.wav", 1, #ATTN_NORM);
+	//else if (r < 0.66)
+	//	sound (self, #CHAN_WEAPON, "wizard/widle2.wav", 1, #ATTN_NORM);
+	//else
+	//	sound (self, #CHAN_WEAPON, "shambler/sdeath.wav", 1, #ATTN_NORM);
 
-    SummonTimer = spawn ();
-    SummonTimer.classname = "timer";
-    SummonTimer.owner = self;
-    SummonTimer.nextthink = time + 1.5; //Small delays are cool
-    SummonTimer.think = SummonThink;
-    SummonTimer.has_tesla = points;
-    SummonTimer.heat = 0;
-    SummonTimer.has_fieldgen = inp;
-    self.job_finished = time + 5; //Delay if summon goes bad SB reduced to 5
-    self.attack_finished = time + 2.1;
+	SummonTimer = spawn ();
+	SummonTimer.classname = "timer";
+	SummonTimer.owner = self;
+	SummonTimer.nextthink = time + 1.5; //Small delays are cool
+	SummonTimer.think = SummonThink;
+	SummonTimer.has_tesla = points;
+	SummonTimer.heat = 0;
+	SummonTimer.has_fieldgen = inp;
+	self.job_finished = time + 5; //Delay if summon goes bad SB reduced to 5
+	self.attack_finished = time + 2.1;
 };
 
 //================================================================
@@ -803,19 +803,19 @@ void(float inp) Menu_Demon_Input =
 
 void(entity player, float nametype) IsNameTypeFree =
 {
-    if (player.demon_one)
-        if (player.demon_one.increase_team2 == nametype)
-            return #FALSE;
-    
-    if (player.demon_two)
-        if (player.demon_two.increase_team2 == nametype)
-            return #FALSE;
+	if (player.demon_one)
+		if (player.demon_one.increase_team2 == nametype)
+			return #FALSE;
+	
+	if (player.demon_two)
+		if (player.demon_two.increase_team2 == nametype)
+			return #FALSE;
 
-    if (player.demon_three)
-        if (player.demon_three.increase_team2 == nametype)
-            return #FALSE;
-    
-    return #TRUE;
+	if (player.demon_three)
+		if (player.demon_three.increase_team2 == nametype)
+			return #FALSE;
+	
+	return #TRUE;
 };
 
 //============================================================
@@ -823,47 +823,47 @@ void(entity player, float nametype) IsNameTypeFree =
 
 float(entity player, float slot, float forced) GetNameType =
 {
-    if (!forced) // If we aren't forcing check for custom names
-    {
-        if (slot == 0)
-        {
-            if (player.#sname1 != "")
-                return 0;
-        }
-        else if (slot == 1)
-        {
-            if (player.#sname2 != "")
-                return 0;
-        }
-        else if (slot == 2)
-        {
-            if (player.#sname3 != "")
-                return 0;
-        }
-    }
-        
-    local float rnum;
-    rnum = random()*2;
-    rnum = rint(rnum);
-    rnum = rnum +1;
+	if (!forced) // If we aren't forcing check for custom names
+	{
+		if (slot == 0)
+		{
+			if (player.#sname1 != "")
+				return 0;
+		}
+		else if (slot == 1)
+		{
+			if (player.#sname2 != "")
+				return 0;
+		}
+		else if (slot == 2)
+		{
+			if (player.#sname3 != "")
+				return 0;
+		}
+	}
+		
+	local float rnum;
+	rnum = random()*2;
+	rnum = rint(rnum);
+	rnum = rnum +1;
 
-    if (IsNameTypeFree(player,rnum))
-        return rnum; //name type
-    
-    rnum = rnum + 1;
+	if (IsNameTypeFree(player,rnum))
+		return rnum; //name type
+	
+	rnum = rnum + 1;
 
-    if (rnum == 4)
-        rnum = 1;
+	if (rnum == 4)
+		rnum = 1;
 
-    if (IsNameTypeFree(player,rnum))
-        return rnum; //name type
+	if (IsNameTypeFree(player,rnum))
+		return rnum; //name type
 
-    rnum = rnum + 1;
+	rnum = rnum + 1;
 
-    if (rnum == 4)
-        rnum = 1;
+	if (rnum == 4)
+		rnum = 1;
 
-    return rnum;               
+	return rnum;			   
 };
 
 //==============================================================
@@ -871,466 +871,466 @@ float(entity player, float slot, float forced) GetNameType =
 
 void(entity monster) MakeMonsterName =
 {
-    local string happy;
-    local float r;
+	local string happy;
+	local float r;
 
-    if (monster.increase_team2 == 0)
-    {
-        if (monster.increase_team1 == 0) // 1st monster slot, ".demon_one"
-            happy = monster.real_owner.#sname1;
-        else if (monster.increase_team1 == 1)
-            happy = monster.real_owner.#sname2;
-        else if (monster.increase_team1 == 2)
-            happy = monster.real_owner.#sname3;        
-    }
-    
-    if (happy == "") // should we use a default name?
-    {
-        r = random();
+	if (monster.increase_team2 == 0)
+	{
+		if (monster.increase_team1 == 0) // 1st monster slot, ".demon_one"
+			happy = monster.real_owner.#sname1;
+		else if (monster.increase_team1 == 1)
+			happy = monster.real_owner.#sname2;
+		else if (monster.increase_team1 == 2)
+			happy = monster.real_owner.#sname3; 	   
+	}
+	
+	if (happy == "") // should we use a default name?
+	{
+		r = random();
 
-        if (monster.increase_team2 == 1) // TYPE 1
-        {
-            if (monster.classname == "monster_demon1")
-            {
-                //Make random name
-                if (r < 0.1)
-                    happy = "The Fiend Lazarat";
-                else if (r < 0.2)
-                    happy = "Lysanter of Blood";
-                else if (r < 0.3)
-                    happy = "Childers Nightmare";
-                else if (r < 0.4)
-                    happy = "Minion of Lesric";
-                else if (r < 0.5)
-                    happy = "Archdemon Boris";
-                else if (r < 0.6)
-                    happy = "Talon";
-                else if (r < 0.7)
-                    happy = "Oathrender";
-                else if (r < 0.8)
-                    happy = "The Fiend Roeder";
-                else if (r < 0.9)
-                    happy = "The Fiend Warrek";
-                else
-                    happy = "Mourning Breath";
-            }
-            else if (monster.classname == "monster_army")
-            {
-                if ( r < 0.1 )
-                    happy = "F.Lee";
-                else if ( r < 0.2 )
-                    happy = "A.Hoffman";
-                else if ( r < 0.3 )
-                    happy = "J.Garcia";
-                else if ( r < 0.4 )
-                    happy = "H.Dail";
-                else if ( r < 0.5 )
-                    happy = "R.Gustafson";
-                else if ( r < 0.6 )
-                    happy = "F.Gump";
-                else if ( r < 0.7 )
-                    happy = "A.McNab";
-                else if ( r < 0.8 )
-                    happy = "C.Ryan";
-                else if ( r < 0.9 )
-                    happy = "K.Johnson";
-                else
-                    happy = "W.Kerney";
-            }
-            else if (monster.classname == "monster_shambler")
-            {
-                if (r < 0.1)
-                    happy = "Necrotopos";
-                else if (r < 0.2)
-                    happy = "Gorgon";
-                else if (r < 0.3)
-                    happy = "Ogroth";
-                else if (r < 0.4)
-                    happy = "Krogoth";
-                else if (r < 0.5)
-                    happy = "Karnom";
-                else if (r < 0.6)
-                    happy = "Rudrigan";
-                else if (r < 0.7)
-                    happy = "Heggor";
-                else if (r < 0.8)
-                    happy = "Jollgahn";
-                else if (r < 0.9)
-                    happy = "Ormandre";
-                else
-                    happy = "Llama Crusher";
-            }
-            else if (monster.classname == "monster_wizard") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Dark Spawn";
-                else if (r < 0.2)
-                    happy = "White Poison";
-                else if (r < 0.3)
-                    happy = "Lorgrath";
-                else if (r < 0.4)
-                    happy = "White Poison";
-                else if (r < 0.5)
-                    happy = "Polkram";
-                else if (r < 0.6)
-                    happy = "Yumnian";
-                else if (r < 0.7)
-                    happy = "Guellish";
-                else if (r < 0.8)
-                    happy = "Ceingum";
-                else if (r < 0.9)
-                    happy = "Trajeor";
-                else 
-                    happy = "Phitermos";
-            }
-            else if (monster.classname == "monster_fish") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Prekor";
-                else if (r <0.2)
-                    happy = "Grinte";
-                else if (r <0.3)
-                    happy = "Hubellish";
-                else if (r <0.4)
-                    happy = "Lergome";
-                else if (r <0.5)
-                    happy = "Hydrossei";
-                else if (r <0.6)
-                    happy = "Lordena";
-                else if (r <0.7)
-                    happy = "Castride";
-                else if (r <0.8)
-                    happy = "Fraff";
-                else if (r <0.9)
-                    happy = "Bolmdema";
-                else 
-                    happy = "Nardam";
-            }
-            else if (monster.classname == "monster_gremlin") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Oishonko";
-                else if (r <0.2)
-                    happy = "Prishonko";
-                else if (r <0.3)
-                    happy = "Druishonko";
-                else if (r <0.4)
-                    happy = "Melrshonko";
-                else if (r <0.5)
-                    happy = "Guishonko";
-                else if (r <0.6)
-                    happy = "Jelprime";
-                else if (r <0.7)
-                    happy = "Banshoi";
-                else if (r <0.8)
-                    happy = "Yulgrok";
-                else if (r <0.9)
-                    happy = "Amnide";
-                else 
-                    happy = "Tylogh";
-            }
-        }
-        else if (monster.increase_team2 == 2) // TYPE 2
-        {
-            if (monster.classname == "monster_demon1")
-            {
-                //Make random name
-                if (r < 0.1)
-                    happy = "The Fiend Randolf";
-                else if (r < 0.2)
-                    happy = "Gelloshram";
-                else if (r < 0.3)
-                    happy = "Bloodest Roam";
-                else if (r < 0.4)
-                    happy = "Minion of Renime";
-                else if (r < 0.5)
-                    happy = "Archdemon Kessara";
-                else if (r < 0.6)
-                    happy = "Krasse";
-                else if (r < 0.7)
-                    happy = "Yoffre";
-                else if (r < 0.8)
-                    happy = "The Fiend Gashir";
-                else if (r < 0.9)
-                    happy = "The Fiend Nurigg";
-                else
-                    happy = "Frimego";
-            }
-            else if (monster.classname == "monster_army")
-            {
-                if ( r < 0.1 )
-                    happy = "S.Howards";
-                else if ( r < 0.2 )
-                    happy = "A.Roberts";
-                else if ( r < 0.3 )
-                    happy = "J.Dell";
-                else if ( r < 0.4 )
-                    happy = "K.Smith";
-                else if ( r < 0.5 )
-                    happy = "H.Jackson";
-                else if ( r < 0.6 )
-                    happy = "L.Gaussen";
-                else if ( r < 0.7 )
-                    happy = "A.Petterson";
-                else if ( r < 0.8 )
-                    happy = "J.Phoenix";
-                else if ( r < 0.9 )
-                    happy = "P.Thomson";
-                else
-                    happy = "W.Collins";
-            }
-            else if (monster.classname == "monster_shambler")
-            {
-                if (r < 0.1)
-                    happy = "Frandamo";
-                else if (r < 0.2)
-                    happy = "Kreigger";
-                else if (r < 0.3)
-                    happy = "Ontromader";
-                else if (r < 0.4)
-                    happy = "Squisher";
-                else if (r < 0.5)
-                    happy = "Gorgor";
-                else if (r < 0.6)
-                    happy = "Rimander";
-                else if (r < 0.7)
-                    happy = "Dellarmo";
-                else if (r < 0.8)
-                    happy = "Dantrapos";
-                else if (r < 0.9)
-                    happy = "Hellgor";
-                else
-                    happy = "Denoyall";
-            }
-            else if (monster.classname == "monster_wizard") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Danburn";
-                else if (r < 0.2)
-                    happy = "Cokrime";
-                else if (r < 0.3)
-                    happy = "Sinerdam";
-                else if (r < 0.4)
-                    happy = "Traedder";
-                else if (r < 0.5)
-                    happy = "Jeggish";
-                else if (r < 0.6)
-                    happy = "Haders";
-                else if (r < 0.7)
-                    happy = "Blind Light";
-                else if (r < 0.8)
-                    happy = "Ionizer";
-                else if (r < 0.9)
-                    happy = "Onergam";
-                else 
-                    happy = "Urapt";
-            }
-            else if (monster.classname == "monster_fish") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Shraedder";
-                else if (r <0.2)
-                    happy = "Troheer";
-                else if (r <0.3)
-                    happy = "Hugham";
-                else if (r <0.4)
-                    happy = "Keckarm";
-                else if (r <0.5)
-                    happy = "Greydom";
-                else if (r <0.6)
-                    happy = "Gallopos";
-                else if (r <0.7)
-                    happy = "Celish";
-                else if (r <0.8)
-                    happy = "Skummy";
-                else if (r <0.9)
-                    happy = "Antema";
-                else 
-                    happy = "Frindem";
-            }
-            else if (monster.classname == "monster_gremlin") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Kokrantim";//"Oishonko";
-                else if (r <0.2)
-                    happy = "Yolio";//"Prishonko";
-                else if (r <0.3)
-                    happy = "Sondramt";//"Druishonko";
-                else if (r <0.4)
-                    happy = "Hafnide";//"Melrshonko";
-                else if (r <0.5)
-                    happy = "Trontome";//"Guishonko";
-                else if (r <0.6)
-                    happy = "Valemntro";//"Jelprime";
-                else if (r <0.7)
-                    happy = "Lusant";//"Banshoi";
-                else if (r <0.8)
-                    happy = "Firsthell";//"Yulgrok";
-                else if (r <0.9)
-                    happy = "Lasthell";//"Amnide";
-                else 
-                    happy = "Hell Spawn";//"Tylogh";
-            }
-        }
-        else // TYPE 3
-        {
-            if (monster.classname == "monster_demon1")
-            {
-                //Make random name
-                if (r < 0.1)
-                    happy = "The Fiend Gustave";
-                else if (r < 0.2)
-                    happy = "Tandam";
-                else if (r < 0.3)
-                    happy = "Bloodest Shink";
-                else if (r < 0.4)
-                    happy = "Minion of Lindos";
-                else if (r < 0.5)
-                    happy = "Archdemon Nempshi";
-                else if (r < 0.6)
-                    happy = "Kroarh";
-                else if (r < 0.7)
-                    happy = "Weldor";
-                else if (r < 0.8)
-                    happy = "The Fiend Wiskor";
-                else if (r < 0.9)
-                    happy = "The Fiend Poltrem";
-                else
-                    happy = "Donnish";
-            }
-            else if (monster.classname == "monster_army")
-            {
-                if ( r < 0.1 )
-                    happy = "J.Fernandez";
-                else if ( r < 0.2 )
-                    happy = "C.Gordon";
-                else if ( r < 0.3 )
-                    happy = "A.Williams";
-                else if ( r < 0.4 )
-                    happy = "G.Kaine";
-                else if ( r < 0.5 )
-                    happy = "I.Montrov";
-                else if ( r < 0.6 )
-                    happy = "J.Ming";
-                else if ( r < 0.7 )
-                    happy = "C.Edwards";
-                else if ( r < 0.8 )
-                    happy = "P.Craig";
-                else if ( r < 0.9 )
-                    happy = "A.Harrison";
-                else
-                    happy = "B.Thomas";
-            }
-            else if (monster.classname == "monster_shambler")
-            {
-                if (r < 0.1)
-                    happy = "Memkro";
-                else if (r < 0.2)
-                    happy = "Polledag";
-                else if (r < 0.3)
-                    happy = "Rofreg";
-                else if (r < 0.4)
-                    happy = "Ortrepos";
-                else if (r < 0.5)
-                    happy = "Northspell";
-                else if (r < 0.6)
-                    happy = "Saargh";
-                else if (r < 0.7)
-                    happy = "Lintirm";
-                else if (r < 0.8)
-                    happy = "Jolghor";
-                else if (r < 0.9)
-                    happy = "Harmiter";
-                else
-                    happy = "Housher";
-            }
-            else if (monster.classname == "monster_wizard") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Ranierd";
-                else if (r < 0.2)
-                    happy = "Flusher";
-                else if (r < 0.3)
-                    happy = "Bodder";
-                else if (r < 0.4)
-                    happy = "Moemna";
-                else if (r < 0.5)
-                    happy = "Ezdream";
-                else if (r < 0.6)
-                    happy = "Scamnar";
-                else if (r < 0.7)
-                    happy = "Scaler";
-                else if (r < 0.8)
-                    happy = "Skyflomer";
-                else if (r < 0.9)
-                    happy = "Xerxo";
-                else 
-                    happy = "Jellabe";
-            }
-            else if (monster.classname == "monster_fish") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Runidram";
-                else if (r <0.2)
-                    happy = "Hydrodeaz";
-                else if (r <0.3)
-                    happy = "Glublish";
-                else if (r <0.4)
-                    happy = "Ornemok";
-                else if (r <0.5)
-                    happy = "Idrethor";
-                else if (r <0.6)
-                    happy = "Vollem";
-                else if (r <0.7)
-                    happy = "Carlgeh";
-                else if (r <0.8)
-                    happy = "Glubber";
-                else if (r <0.9)
-                    happy = "Donelam";
-                else 
-                    happy = "Frindo";
-            }
-            else if (monster.classname == "monster_gremlin") //- OfN -
-            {
-                if (r < 0.1)
-                    happy = "Vonatrim";//"Kokrantim";//"Oishonko";
-                else if (r <0.2)
-                    happy = "Ruidatrim";//"Yolio";//"Prishonko";
-                else if (r <0.3)
-                    happy = "Merlstrim";//"Sondramt";//"Druishonko";
-                else if (r <0.4)
-                    happy = "Oishtrim";//"Hafnide";//"Melrshonko";
-                else if (r <0.5)
-                    happy = "Qoada";//"Trontome";//"Guishonko";
-                else if (r <0.6)
-                    happy = "Qoatropos";//"Valemntro";//"Jelprime";
-                else if (r <0.7)
-                    happy = "Qoasant";//"Lusant";//"Banshoi";
-                else if (r <0.8)
-                    happy = "Qoashonko";//"Firsthell";//"Yulgrok";
-                else if (r <0.9)
-                    happy = "Qoadrine";//"Lasthell";//"Amnide";
-                else 
-                    happy = "Wallim";//"Hell Spawn";//"Tylogh";
-            }
-        }
-    }
+		if (monster.increase_team2 == 1) // TYPE 1
+		{
+			if (monster.classname == "monster_demon1")
+			{
+				//Make random name
+				if (r < 0.1)
+					happy = "The Fiend Lazarat";
+				else if (r < 0.2)
+					happy = "Lysanter of Blood";
+				else if (r < 0.3)
+					happy = "Childers Nightmare";
+				else if (r < 0.4)
+					happy = "Minion of Lesric";
+				else if (r < 0.5)
+					happy = "Archdemon Boris";
+				else if (r < 0.6)
+					happy = "Talon";
+				else if (r < 0.7)
+					happy = "Oathrender";
+				else if (r < 0.8)
+					happy = "The Fiend Roeder";
+				else if (r < 0.9)
+					happy = "The Fiend Warrek";
+				else
+					happy = "Mourning Breath";
+			}
+			else if (monster.classname == "monster_army")
+			{
+				if ( r < 0.1 )
+					happy = "F.Lee";
+				else if ( r < 0.2 )
+					happy = "A.Hoffman";
+				else if ( r < 0.3 )
+					happy = "J.Garcia";
+				else if ( r < 0.4 )
+					happy = "H.Dail";
+				else if ( r < 0.5 )
+					happy = "R.Gustafson";
+				else if ( r < 0.6 )
+					happy = "F.Gump";
+				else if ( r < 0.7 )
+					happy = "A.McNab";
+				else if ( r < 0.8 )
+					happy = "C.Ryan";
+				else if ( r < 0.9 )
+					happy = "K.Johnson";
+				else
+					happy = "W.Kerney";
+			}
+			else if (monster.classname == "monster_shambler")
+			{
+				if (r < 0.1)
+					happy = "Necrotopos";
+				else if (r < 0.2)
+					happy = "Gorgon";
+				else if (r < 0.3)
+					happy = "Ogroth";
+				else if (r < 0.4)
+					happy = "Krogoth";
+				else if (r < 0.5)
+					happy = "Karnom";
+				else if (r < 0.6)
+					happy = "Rudrigan";
+				else if (r < 0.7)
+					happy = "Heggor";
+				else if (r < 0.8)
+					happy = "Jollgahn";
+				else if (r < 0.9)
+					happy = "Ormandre";
+				else
+					happy = "Llama Crusher";
+			}
+			else if (monster.classname == "monster_wizard") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Dark Spawn";
+				else if (r < 0.2)
+					happy = "White Poison";
+				else if (r < 0.3)
+					happy = "Lorgrath";
+				else if (r < 0.4)
+					happy = "White Poison";
+				else if (r < 0.5)
+					happy = "Polkram";
+				else if (r < 0.6)
+					happy = "Yumnian";
+				else if (r < 0.7)
+					happy = "Guellish";
+				else if (r < 0.8)
+					happy = "Ceingum";
+				else if (r < 0.9)
+					happy = "Trajeor";
+				else 
+					happy = "Phitermos";
+			}
+			else if (monster.classname == "monster_fish") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Prekor";
+				else if (r <0.2)
+					happy = "Grinte";
+				else if (r <0.3)
+					happy = "Hubellish";
+				else if (r <0.4)
+					happy = "Lergome";
+				else if (r <0.5)
+					happy = "Hydrossei";
+				else if (r <0.6)
+					happy = "Lordena";
+				else if (r <0.7)
+					happy = "Castride";
+				else if (r <0.8)
+					happy = "Fraff";
+				else if (r <0.9)
+					happy = "Bolmdema";
+				else 
+					happy = "Nardam";
+			}
+			else if (monster.classname == "monster_gremlin") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Oishonko";
+				else if (r <0.2)
+					happy = "Prishonko";
+				else if (r <0.3)
+					happy = "Druishonko";
+				else if (r <0.4)
+					happy = "Melrshonko";
+				else if (r <0.5)
+					happy = "Guishonko";
+				else if (r <0.6)
+					happy = "Jelprime";
+				else if (r <0.7)
+					happy = "Banshoi";
+				else if (r <0.8)
+					happy = "Yulgrok";
+				else if (r <0.9)
+					happy = "Amnide";
+				else 
+					happy = "Tylogh";
+			}
+		}
+		else if (monster.increase_team2 == 2) // TYPE 2
+		{
+			if (monster.classname == "monster_demon1")
+			{
+				//Make random name
+				if (r < 0.1)
+					happy = "The Fiend Randolf";
+				else if (r < 0.2)
+					happy = "Gelloshram";
+				else if (r < 0.3)
+					happy = "Bloodest Roam";
+				else if (r < 0.4)
+					happy = "Minion of Renime";
+				else if (r < 0.5)
+					happy = "Archdemon Kessara";
+				else if (r < 0.6)
+					happy = "Krasse";
+				else if (r < 0.7)
+					happy = "Yoffre";
+				else if (r < 0.8)
+					happy = "The Fiend Gashir";
+				else if (r < 0.9)
+					happy = "The Fiend Nurigg";
+				else
+					happy = "Frimego";
+			}
+			else if (monster.classname == "monster_army")
+			{
+				if ( r < 0.1 )
+					happy = "S.Howards";
+				else if ( r < 0.2 )
+					happy = "A.Roberts";
+				else if ( r < 0.3 )
+					happy = "J.Dell";
+				else if ( r < 0.4 )
+					happy = "K.Smith";
+				else if ( r < 0.5 )
+					happy = "H.Jackson";
+				else if ( r < 0.6 )
+					happy = "L.Gaussen";
+				else if ( r < 0.7 )
+					happy = "A.Petterson";
+				else if ( r < 0.8 )
+					happy = "J.Phoenix";
+				else if ( r < 0.9 )
+					happy = "P.Thomson";
+				else
+					happy = "W.Collins";
+			}
+			else if (monster.classname == "monster_shambler")
+			{
+				if (r < 0.1)
+					happy = "Frandamo";
+				else if (r < 0.2)
+					happy = "Kreigger";
+				else if (r < 0.3)
+					happy = "Ontromader";
+				else if (r < 0.4)
+					happy = "Squisher";
+				else if (r < 0.5)
+					happy = "Gorgor";
+				else if (r < 0.6)
+					happy = "Rimander";
+				else if (r < 0.7)
+					happy = "Dellarmo";
+				else if (r < 0.8)
+					happy = "Dantrapos";
+				else if (r < 0.9)
+					happy = "Hellgor";
+				else
+					happy = "Denoyall";
+			}
+			else if (monster.classname == "monster_wizard") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Danburn";
+				else if (r < 0.2)
+					happy = "Cokrime";
+				else if (r < 0.3)
+					happy = "Sinerdam";
+				else if (r < 0.4)
+					happy = "Traedder";
+				else if (r < 0.5)
+					happy = "Jeggish";
+				else if (r < 0.6)
+					happy = "Haders";
+				else if (r < 0.7)
+					happy = "Blind Light";
+				else if (r < 0.8)
+					happy = "Ionizer";
+				else if (r < 0.9)
+					happy = "Onergam";
+				else 
+					happy = "Urapt";
+			}
+			else if (monster.classname == "monster_fish") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Shraedder";
+				else if (r <0.2)
+					happy = "Troheer";
+				else if (r <0.3)
+					happy = "Hugham";
+				else if (r <0.4)
+					happy = "Keckarm";
+				else if (r <0.5)
+					happy = "Greydom";
+				else if (r <0.6)
+					happy = "Gallopos";
+				else if (r <0.7)
+					happy = "Celish";
+				else if (r <0.8)
+					happy = "Skummy";
+				else if (r <0.9)
+					happy = "Antema";
+				else 
+					happy = "Frindem";
+			}
+			else if (monster.classname == "monster_gremlin") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Kokrantim";//"Oishonko";
+				else if (r <0.2)
+					happy = "Yolio";//"Prishonko";
+				else if (r <0.3)
+					happy = "Sondramt";//"Druishonko";
+				else if (r <0.4)
+					happy = "Hafnide";//"Melrshonko";
+				else if (r <0.5)
+					happy = "Trontome";//"Guishonko";
+				else if (r <0.6)
+					happy = "Valemntro";//"Jelprime";
+				else if (r <0.7)
+					happy = "Lusant";//"Banshoi";
+				else if (r <0.8)
+					happy = "Firsthell";//"Yulgrok";
+				else if (r <0.9)
+					happy = "Lasthell";//"Amnide";
+				else 
+					happy = "Hell Spawn";//"Tylogh";
+			}
+		}
+		else // TYPE 3
+		{
+			if (monster.classname == "monster_demon1")
+			{
+				//Make random name
+				if (r < 0.1)
+					happy = "The Fiend Gustave";
+				else if (r < 0.2)
+					happy = "Tandam";
+				else if (r < 0.3)
+					happy = "Bloodest Shink";
+				else if (r < 0.4)
+					happy = "Minion of Lindos";
+				else if (r < 0.5)
+					happy = "Archdemon Nempshi";
+				else if (r < 0.6)
+					happy = "Kroarh";
+				else if (r < 0.7)
+					happy = "Weldor";
+				else if (r < 0.8)
+					happy = "The Fiend Wiskor";
+				else if (r < 0.9)
+					happy = "The Fiend Poltrem";
+				else
+					happy = "Donnish";
+			}
+			else if (monster.classname == "monster_army")
+			{
+				if ( r < 0.1 )
+					happy = "J.Fernandez";
+				else if ( r < 0.2 )
+					happy = "C.Gordon";
+				else if ( r < 0.3 )
+					happy = "A.Williams";
+				else if ( r < 0.4 )
+					happy = "G.Kaine";
+				else if ( r < 0.5 )
+					happy = "I.Montrov";
+				else if ( r < 0.6 )
+					happy = "J.Ming";
+				else if ( r < 0.7 )
+					happy = "C.Edwards";
+				else if ( r < 0.8 )
+					happy = "P.Craig";
+				else if ( r < 0.9 )
+					happy = "A.Harrison";
+				else
+					happy = "B.Thomas";
+			}
+			else if (monster.classname == "monster_shambler")
+			{
+				if (r < 0.1)
+					happy = "Memkro";
+				else if (r < 0.2)
+					happy = "Polledag";
+				else if (r < 0.3)
+					happy = "Rofreg";
+				else if (r < 0.4)
+					happy = "Ortrepos";
+				else if (r < 0.5)
+					happy = "Northspell";
+				else if (r < 0.6)
+					happy = "Saargh";
+				else if (r < 0.7)
+					happy = "Lintirm";
+				else if (r < 0.8)
+					happy = "Jolghor";
+				else if (r < 0.9)
+					happy = "Harmiter";
+				else
+					happy = "Housher";
+			}
+			else if (monster.classname == "monster_wizard") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Ranierd";
+				else if (r < 0.2)
+					happy = "Flusher";
+				else if (r < 0.3)
+					happy = "Bodder";
+				else if (r < 0.4)
+					happy = "Moemna";
+				else if (r < 0.5)
+					happy = "Ezdream";
+				else if (r < 0.6)
+					happy = "Scamnar";
+				else if (r < 0.7)
+					happy = "Scaler";
+				else if (r < 0.8)
+					happy = "Skyflomer";
+				else if (r < 0.9)
+					happy = "Xerxo";
+				else 
+					happy = "Jellabe";
+			}
+			else if (monster.classname == "monster_fish") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Runidram";
+				else if (r <0.2)
+					happy = "Hydrodeaz";
+				else if (r <0.3)
+					happy = "Glublish";
+				else if (r <0.4)
+					happy = "Ornemok";
+				else if (r <0.5)
+					happy = "Idrethor";
+				else if (r <0.6)
+					happy = "Vollem";
+				else if (r <0.7)
+					happy = "Carlgeh";
+				else if (r <0.8)
+					happy = "Glubber";
+				else if (r <0.9)
+					happy = "Donelam";
+				else 
+					happy = "Frindo";
+			}
+			else if (monster.classname == "monster_gremlin") //- OfN -
+			{
+				if (r < 0.1)
+					happy = "Vonatrim";//"Kokrantim";//"Oishonko";
+				else if (r <0.2)
+					happy = "Ruidatrim";//"Yolio";//"Prishonko";
+				else if (r <0.3)
+					happy = "Merlstrim";//"Sondramt";//"Druishonko";
+				else if (r <0.4)
+					happy = "Oishtrim";//"Hafnide";//"Melrshonko";
+				else if (r <0.5)
+					happy = "Qoada";//"Trontome";//"Guishonko";
+				else if (r <0.6)
+					happy = "Qoatropos";//"Valemntro";//"Jelprime";
+				else if (r <0.7)
+					happy = "Qoasant";//"Lusant";//"Banshoi";
+				else if (r <0.8)
+					happy = "Qoashonko";//"Firsthell";//"Yulgrok";
+				else if (r <0.9)
+					happy = "Qoadrine";//"Lasthell";//"Amnide";
+				else 
+					happy = "Wallim";//"Hell Spawn";//"Tylogh";
+			}
+		}
+	}
 
-    monster.netname = happy;
+	monster.netname = happy;
 };
 
 
 void (float points, float type) custom_demon_create = 
 {
 	local float slotnum;
-    slotnum = GetCurrentSoul(self);
+	slotnum = GetCurrentSoul(self);
 
 	//Play random summoning sound here
 	//r = random();
 	//if (r < 0.33)
-	    sound (self, #CHAN_VOICE, "ambience/thunder1.wav", 1, #ATTN_NORM);
+		sound (self, #CHAN_VOICE, "ambience/thunder1.wav", 1, #ATTN_NORM);
 	//else if (r < 0.66)
-	//    sound (self, #CHAN_WEAPON, "boss1/sight1.wav", 1, #ATTN_NORM);
+	//	  sound (self, #CHAN_WEAPON, "boss1/sight1.wav", 1, #ATTN_NORM);
 	//else
 	  //  sound (self, #CHAN_WEAPON, "boss1/out1.wav", 1, #ATTN_NORM);
 
@@ -1345,123 +1345,123 @@ void (float points, float type) custom_demon_create =
 	if (type == 1)
 	{
 		newmis.classname = "monster_wizard";
-        newmis.mdl = "progs/wizard.mdl";
+		newmis.mdl = "progs/wizard.mdl";
 	}
 	else if (type == 2)
 	{
 		newmis.classname = "monster_fish";
-        newmis.mdl = "progs/fish.mdl";        
+		newmis.mdl = "progs/fish.mdl";		  
 	}
 	else if (type == 3)
 	{
-        newmis.classname = "monster_demon1";
-        newmis.mdl = "progs/demon.mdl";
+		newmis.classname = "monster_demon1";
+		newmis.mdl = "progs/demon.mdl";
 	}
-    else if (type == 4)
+	else if (type == 4)
 	{
 		newmis.classname = "monster_gremlin";
-        newmis.mdl = "progs/grem.mdl";
+		newmis.mdl = "progs/grem.mdl";
 	}
-    else if (type == 5)
+	else if (type == 5)
 	{
 		newmis.classname = "monster_shambler";
-        newmis.mdl = "progs/shambler.mdl";
+		newmis.mdl = "progs/shambler.mdl";
 	}
 	
-    newmis.team_no = self.team_no; //Go team red! ;)
+	newmis.team_no = self.team_no; //Go team red! ;)
 
-    newmis.origin = self.origin + v_forward;
+	newmis.origin = self.origin + v_forward;
 	newmis.has_camera = 4;
 	
-    newmis.increase_team1 = slotnum; //slot
-    newmis.increase_team2 = GetNameType(self,newmis.increase_team1,#FALSE);
-    newmis.#monster_type = type; // kind of monster
+	newmis.increase_team1 = slotnum; //slot
+	newmis.increase_team2 = GetNameType(self,newmis.increase_team1,#FALSE);
+	newmis.#monster_type = type; // kind of monster
 
-    newmis.increase_team4 = GetMonsterLevel(newmis);
-    newmis.health = GetHPforMeat(newmis);
+	newmis.increase_team4 = GetMonsterLevel(newmis);
+	newmis.health = GetHPforMeat(newmis);
 
-    MakeMonsterName(newmis);
-    
-    if (!CheckArea(newmis,self)) { //No room for el diablo
+	MakeMonsterName(newmis);
+	
+	if (!CheckArea(newmis,self)) { //No room for el diablo
 		sprint(self,#PRINT_HIGH,"Not enough room to summon creature!\n");
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 0.1;
-    	return;
+		return;
 	}
 
-    setmodel (newmis, newmis.mdl);
+	setmodel (newmis, newmis.mdl);
 
-    if ( type == 1 )
+	if ( type == 1 )
 	{
-        //setmodel (newmis, "progs/wizard.mdl");
-        setsize (newmis, '-16 -16 -24', '16 16 40');
-        setorigin (newmis, newmis.origin + '0 0 30');
+		//setmodel (newmis, "progs/wizard.mdl");
+		setsize (newmis, '-16 -16 -24', '16 16 40');
+		setorigin (newmis, newmis.origin + '0 0 30');
 	}
-    else if ( type == 2 )
+	else if ( type == 2 )
 	{
-        //setmodel (newmis, "progs/fish.mdl");
-        setsize (newmis, '-16 -16 -24', '16 16 24');
+		//setmodel (newmis, "progs/fish.mdl");
+		setsize (newmis, '-16 -16 -24', '16 16 24');
 		setorigin (newmis, newmis.origin + '0 0 20');
 	}
 	else if ( type == 3 )
 	{
-        //setmodel (newmis, "progs/demon.mdl");        
-        setsize (newmis, #VEC_HULL2_MIN, #VEC_HULL2_MAX);	
+		//setmodel (newmis, "progs/demon.mdl"); 	   
+		setsize (newmis, #VEC_HULL2_MIN, #VEC_HULL2_MAX);	
 		setorigin (newmis, newmis.origin + '0 0 30');
-    }
-    else if ( type == 4 )
-    {
-        //setmodel (newmis, "progs/grem.mdl");
+	}
+	else if ( type == 4 )
+	{
+		//setmodel (newmis, "progs/grem.mdl");
 		setsize (newmis, #VEC_HULL_MIN, #VEC_HULL_MAX);
 		setorigin (newmis, newmis.origin + '0 0 30');
-    }
-    else if ( type == 5 )
-    {
-        //setmodel (newmis, "progs/shambler.mdl");
+	}
+	else if ( type == 5 )
+	{
+		//setmodel (newmis, "progs/shambler.mdl");
 		setsize (newmis, #VEC_HULL2_MIN, #VEC_HULL2_MAX);
 		setorigin (newmis, newmis.origin + '0 0 30');
-    }
+	}
 	
 	//Test successful, so go ahead and finish summon
 
-    newmis.skin=0;      
-    
-    newmis.ltime=time;
-    
-    local string MName;
-    MName=GetMonsterName(newmis);    
+	newmis.skin=0;		
+	
+	newmis.ltime=time;
+	
+	local string MName;
+	MName=GetMonsterName(newmis);	 
 
-    teamprefixsprint(self.team_no,self);
-    teamsprint6(self,self.netname," has summoned the ", MName, " ", newmis.netname,"\n");
+	teamprefixsprint(self.team_no,self);
+	teamsprint6(self,self.netname," has summoned the ", MName, " ", newmis.netname,"\n");
 
 	//self.job = self.job | #JOB_DEMON_OUT; 
 	self.job_finished = time + 3;	//Don't let em kill demon for 15 secs.
 									// SB 15 is tight; 10
 									// 10 is tight; 5
-                                    // OfN 5 is tight; 3 ;)
-    if (type==3) 
-        sound (self, #CHAN_BODY, "demon/sight2.wav", 1, #ATTN_NORM);    
+									// OfN 5 is tight; 3 ;)
+	if (type==3) 
+		sound (self, #CHAN_BODY, "demon/sight2.wav", 1, #ATTN_NORM);	
 
 	newmis.velocity = v_forward * 10;// + '0 0 250';
-    newmis.angles = vectoangles(newmis.velocity);
+	newmis.angles = vectoangles(newmis.velocity);
 
 	if (newmis.flags & #FL_ONGROUND)
 		newmis.flags = newmis.flags - #FL_ONGROUND;
-    
-    newmis.velocity = v_forward * 10;
-    
-    newmis.movetype = #MOVETYPE_TOSS;
-    newmis.solid = #SOLID_SLIDEBOX;
+	
+	newmis.velocity = v_forward * 10;
+	
+	newmis.movetype = #MOVETYPE_TOSS;
+	newmis.solid = #SOLID_SLIDEBOX;
 	newmis.takedamage = #DAMAGE_AIM;
 
-    if (type==1) // scrags start specially
-    {
-        newmis.velocity='0 0 0';
-        newmis.movetype = #MOVETYPE_STEP;
-    }
-    	    
-    //if ( newmis.classname == "monster_demon1" )
-    if (type == 3)
+	if (type==1) // scrags start specially
+	{
+		newmis.velocity='0 0 0';
+		newmis.movetype = #MOVETYPE_STEP;
+	}
+			
+	//if ( newmis.classname == "monster_demon1" )
+	if (type == 3)
 	{
 		//newmis.health = #DEMON_HP; //WK 300
 		newmis.armorclass = #AT_SAVEFIRE; //#AT_SAVESHOT | #AT_SAVEFIRE;
@@ -1480,12 +1480,12 @@ void (float points, float type) custom_demon_create =
 		newmis.nextthink = time + 1;
 		//newmis.touch = Demon_JumpTouch;
 		
-        //newmis.touch = SUB_Null;
+		//newmis.touch = SUB_Null;
 
-   		sprint(self, #PRINT_HIGH, "You summon a fiend.\n");
+		sprint(self, #PRINT_HIGH, "You summon a fiend.\n");
 	}
 	//else if ( newmis.classname == "monster_shambler" )
-    else if (type == 5)
+	else if (type == 5)
 	{
 		//newmis.health = #SHAMBLER_HP;//750 + points * 350; //WK 300
 		newmis.armorclass = 0;// ofn- #AT_SAVEEXPLOSION | #AT_SAVEMELEE;
@@ -1505,109 +1505,109 @@ void (float points, float type) custom_demon_create =
 		//newmis.touch = Demon_JumpTouch;
 		//newmis.touch = SUB_Null;
 		////newmis.real_owner.demon_blood = 0; marduk bug
-        //newmis.th_missile = sham_xmas1; // OfN
-        newmis.demon_three = world;
+		//newmis.th_missile = sham_xmas1; // OfN
+		newmis.demon_three = world;
 		sprint(self, #PRINT_HIGH, "You summon a shambler.\n");
 	}
 	//else if (newmis.classname == "monster_fish")
-    else if (type == 2)
-    {
-        //newmis.health = #FISH_HP;
+	else if (type == 2)
+	{
+		//newmis.health = #FISH_HP;
 	
-	    newmis.th_stand = fish_stand1;
-    	newmis.th_walk = fish_walk1;
-    	newmis.th_run = fish_run1;
-    	newmis.th_die = fish_death;
-    	newmis.th_pain = fish_pain;
-    	newmis.th_melee = fish_attack1;
-    	newmis.nextthink = time + 0.05;
-    	newmis.think = fish_toss1;
-    	
-        newmis.dmgtime = time + 5;
+		newmis.th_stand = fish_stand1;
+		newmis.th_walk = fish_walk1;
+		newmis.th_run = fish_run1;
+		newmis.th_die = fish_death;
+		newmis.th_pain = fish_pain;
+		newmis.th_melee = fish_attack1;
+		newmis.nextthink = time + 0.05;
+		newmis.think = fish_toss1;
+		
+		newmis.dmgtime = time + 5;
 
-        sprint(self, #PRINT_HIGH, "You summon a piranha.\n");
-        //total_monsters = total_monsters + 1;
-	    //set_monster_health();
-    }
-    //else if (newmis.classname == "monster_wizard")
-    else if (type == 1)
-	{        
-        //newmis.health = #SCRAG_HP;
+		sprint(self, #PRINT_HIGH, "You summon a piranha.\n");
+		//total_monsters = total_monsters + 1;
+		//set_monster_health();
+	}
+	//else if (newmis.classname == "monster_wizard")
+	else if (type == 1)
+	{		 
+		//newmis.health = #SCRAG_HP;
 		newmis.think =flymonster_start_go;// walkmonster_start;
-        newmis.th_stand = wiz_stand1;
-	    newmis.th_walk = wiz_walk1;
-	    newmis.th_run = wiz_run1;
-	    newmis.th_missile = Wiz_Missile;
-    	newmis.th_pain = Wiz_Pain;
-	    newmis.th_die = wiz_die;
+		newmis.th_stand = wiz_stand1;
+		newmis.th_walk = wiz_walk1;
+		newmis.th_run = wiz_run1;
+		newmis.th_missile = Wiz_Missile;
+		newmis.th_pain = Wiz_Pain;
+		newmis.th_die = wiz_die;
 
-        newmis.nextthink = time + 0.05;
+		newmis.nextthink = time + 0.05;
 		//newmis.armorclass = 0; //- OfN - none #AT_SAVESHOT; // kevlar
 		newmis.last_saveme_sound = 0; // ? oh that
 		//newmis.touch = SUB_Null;
 
-        newmis.yaw_speed = 20;
+		newmis.yaw_speed = 20;
 
 		sprint(self, #PRINT_HIGH, "You summon a scrag.\n");
-    }
-    else if (type == 4)
-    {
-        newmis.th_stand = gremlin_main_stand;
-        newmis.th_walk = gremlin_main_walk;
-        newmis.th_run = gremlin_run1;
-        newmis.th_die = gremlin_die;
-        newmis.th_melee = Gremlin_MeleeAttack;     // one of two attacks
-        newmis.th_missile = Gremlin_MissileAttack; // check for random jump or firing of weapon
-        newmis.th_pain = gremlin_pain;
+	}
+	else if (type == 4)
+	{
+		newmis.th_stand = gremlin_main_stand;
+		newmis.th_walk = gremlin_main_walk;
+		newmis.th_run = gremlin_run1;
+		newmis.th_die = gremlin_die;
+		newmis.th_melee = Gremlin_MeleeAttack;	   // one of two attacks
+		newmis.th_missile = Gremlin_MissileAttack; // check for random jump or firing of weapon
+		newmis.th_pain = gremlin_pain;
 
-        newmis.think = walkmonster_start;
+		newmis.think = walkmonster_start;
 		newmis.nextthink = time + 1;
 
-        sprint(self,#PRINT_HIGH,"You summon a gremlin.\n");
+		sprint(self,#PRINT_HIGH,"You summon a gremlin.\n");
 
-        //newmis.health = #GREMLIN_HP;
-        newmis.yaw_speed = 35; // Original 40
-    }
+		//newmis.health = #GREMLIN_HP;
+		newmis.yaw_speed = 35; // Original 40
+	}
 
-    newmis.touch = MonsterTouch;
+	newmis.touch = MonsterTouch;
 
-    newmis.#monsterflag = #STRFLAG_MONSTER; // flag to identify monsters/army for sentry targetting
+	newmis.#monsterflag = #STRFLAG_MONSTER; // flag to identify monsters/army for sentry targetting
 
-    if (slotnum == 0)
-    	newmis.real_owner.demon_one = newmis;
-    else if (slotnum == 1)
-        newmis.real_owner.demon_two = newmis;
-    else
-        newmis.real_owner.demon_three = newmis;
+	if (slotnum == 0)
+		newmis.real_owner.demon_one = newmis;
+	else if (slotnum == 1)
+		newmis.real_owner.demon_two = newmis;
+	else
+		newmis.real_owner.demon_three = newmis;
 
 	newmis.max_health = newmis.health;
 
-    newmis.penance_time = 0; // Start in standing mode
+	newmis.penance_time = 0; // Start in standing mode
 
-    #ifdef MONSTERS_AURA
-    newmis.aura = #MONSTERS_AURA;
-    #else
-    newmis.aura = 0;
-    #endif
+	#ifdef MONSTERS_AURA
+	newmis.aura = #MONSTERS_AURA;
+	#else
+	newmis.aura = 0;
+	#endif
 
-    spawnFOG(newmis.origin);
-    
-    newmis.enemy = world;
-    newmis.oldenemy = world;
+	spawnFOG(newmis.origin);
+	
+	newmis.enemy = world;
+	newmis.oldenemy = world;
 
-    #ifdef #MONSTERS_STATE
-    newmis.tfstate = #MONSTERS_STATE; //#TFSTATE_INFECTED;
-    #else
-    newmis.tfstate = 0;
-    #endif
+	#ifdef #MONSTERS_STATE
+	newmis.tfstate = #MONSTERS_STATE; //#TFSTATE_INFECTED;
+	#else
+	newmis.tfstate = 0;
+	#endif
 
-    newmis.is_connected = #TRUE;
-    newmis.flags = newmis.flags | #FL_MONSTER;
+	newmis.is_connected = #TRUE;
+	newmis.flags = newmis.flags | #FL_MONSTER;
 };
 
 void () custom_demon_precache =
 {
-    precache_model ("progs/demon.mdl");
+	precache_model ("progs/demon.mdl");
 
 	precache_model ("progs/h_demon.mdl");
 
@@ -1631,7 +1631,7 @@ void () custom_demon_precache =
 	precache_sound ("soldier/sattck1.wav");
 	precache_sound ("soldier/sight1.wav");*/ // OfN Unused
 	
-    precache_model ("progs/shambler.mdl");
+	precache_model ("progs/shambler.mdl");
 
 	precache_model ("progs/s_light.mdl");
 	precache_model ("progs/h_shams.mdl");
@@ -1647,9 +1647,9 @@ void () custom_demon_precache =
 	precache_sound ("shambler/melee2.wav");
 	precache_sound ("shambler/smack.wav");
 
-    #ifdef XMAS_STUFF
-    precache_sound ("misc/shamxmas.wav");
-    #endif
+	#ifdef XMAS_STUFF
+	precache_sound ("misc/shamxmas.wav");
+	#endif
 
 	//Also use ambience/thunder1 for out of knife
 	//precache_sound ("boss1/sight1.wav"); //Out of knife - OfN unused
@@ -1658,7 +1658,7 @@ void () custom_demon_precache =
 //	precache_sound ("wizard/widle2.wav"); //Summon - OfN cacheed on wizard.qc
 	//precache_sound ("shambler/sdeath.wav"); //Summon
 
-    //------------------------------------//
+	//------------------------------------//
    /* precache_model ("progs/knight.mdl");
 	precache_model ("progs/h_knight.mdl");
 
@@ -1668,10 +1668,10 @@ void () custom_demon_precache =
 	precache_sound ("knight/sword1.wav");
 	precache_sound ("knight/sword2.wav");
 	precache_sound ("knight/idle.wav");
-    //----------------------------------//
+	//----------------------------------//
 
 
-    precache_model2 ("progs/hknight.mdl");
+	precache_model2 ("progs/hknight.mdl");
 	precache_model2 ("progs/k_spike.mdl");
 	precache_model2 ("progs/h_hellkn.mdl");
 
@@ -1680,7 +1680,7 @@ void () custom_demon_precache =
 	precache_sound2 ("hknight/death1.wav");
 	precache_sound2 ("hknight/pain1.wav");
 	precache_sound2 ("hknight/sight1.wav");
-	precache_sound ("hknight/hit.wav");		// used by C code, so don't sound2
+	precache_sound ("hknight/hit.wav"); 	// used by C code, so don't sound2
 	precache_sound2 ("hknight/slash1.wav");
 	precache_sound2 ("hknight/idle.wav");
 	precache_sound2 ("hknight/grunt.wav");
@@ -1719,12 +1719,12 @@ void () kill_my_demons =
 			oself = self;
 			self = te;
 			
-            //Must get... blood....
+			//Must get... blood....
 			ThrowMonsterHead ("progs/h_demon.mdl", -90);
 			ThrowGib ("progs/gib1.mdl", -10);
-            ThrowGib ("progs/gib2.mdl", -70);
-            ThrowGib ("progs/gib3.mdl", -80);
-            
+			ThrowGib ("progs/gib2.mdl", -70);
+			ThrowGib ("progs/gib3.mdl", -80);
+			
 			sound (self, #CHAN_VOICE, "demon/ddeath.wav", 1, #ATTN_NORM);
 			self = oself;
 			te.think = SUB_Remove;
@@ -1732,8 +1732,8 @@ void () kill_my_demons =
 			te.nextthink = time + 0.1;
 
 			sprint(self, #PRINT_HIGH, "Your fiend ");
-            sprint (self, #PRINT_HIGH, te.netname);
-            sprint (self, #PRINT_HIGH, " is dead.\n");
+			sprint (self, #PRINT_HIGH, te.netname);
+			sprint (self, #PRINT_HIGH, " is dead.\n");
 			self.job = self.job - (self.job & #JOB_DEMON_OUT);
 		}
 
@@ -1753,50 +1753,50 @@ void () kill_my_demons =
 			ThrowMonsterHead ("progs/h_guard.mdl", -90);
 			ThrowGib ("progs/gib1.mdl", -10);
 			ThrowGib ("progs/gib2.mdl", -70);
-            ThrowGib ("progs/gib3.mdl", -70);
-            ThrowGib ("progs/gib2.mdl", -70);
+			ThrowGib ("progs/gib3.mdl", -70);
+			ThrowGib ("progs/gib2.mdl", -70);
 			sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NORM);
 //			custom_grunt_die;
 			te.think = SUB_Remove;
 			te.touch = SUB_Null;
 			te.nextthink = time + 0.1;
 
-            // Remove any waypoints
-            if (self.martyr_enemy != world)
-            #ifdef ARMY_DEBUG
-            RemoveWaypoint(self.martyr_enemy, "KillMyDemon() martyr", self);
-            #else
-            RemoveWaypoint(self.martyr_enemy, self);
-            #endif
-            
-            if (self.demon_one != world)
-            #ifdef ARMY_DEBUG
-            RemoveWaypoint(self.demon_one, "KillMyDemon() demon_one", self);
-            #else
-            RemoveWaypoint(self.demon_one, self);
-            #endif
-            
-            if (self.demon_two != world)            
-            #ifdef ARMY_DEBUG
-            RemoveWaypoint(self.demon_two, "KillMyDemon() demon_two", self);
-            #else
-            RemoveWaypoint(self.demon_two, self);
-            #endif
+			// Remove any waypoints
+			if (self.martyr_enemy != world)
+			#ifdef ARMY_DEBUG
+			RemoveWaypoint(self.martyr_enemy, "KillMyDemon() martyr", self);
+			#else
+			RemoveWaypoint(self.martyr_enemy, self);
+			#endif
+			
+			if (self.demon_one != world)
+			#ifdef ARMY_DEBUG
+			RemoveWaypoint(self.demon_one, "KillMyDemon() demon_one", self);
+			#else
+			RemoveWaypoint(self.demon_one, self);
+			#endif
+			
+			if (self.demon_two != world)			
+			#ifdef ARMY_DEBUG
+			RemoveWaypoint(self.demon_two, "KillMyDemon() demon_two", self);
+			#else
+			RemoveWaypoint(self.demon_two, self);
+			#endif
 
 			self = oself;
-            
-            sprint (self, #PRINT_HIGH, "Your soldier ");
-            sprint (self, #PRINT_HIGH, te.netname);
-            sprint (self, #PRINT_HIGH, " is dead.\n");
 			
-            //SetArmyTimer(warlock);
+			sprint (self, #PRINT_HIGH, "Your soldier ");
+			sprint (self, #PRINT_HIGH, te.netname);
+			sprint (self, #PRINT_HIGH, " is dead.\n");
+			
+			//SetArmyTimer(warlock);
 		}
 
 		te = find(te, classname, "monster_army");
 	}
-    
-    
-    te = find(world, classname, "monster_shambler");
+	
+	
+	te = find(world, classname, "monster_shambler");
 	
 	while (te)
 	{
@@ -1815,14 +1815,14 @@ void () kill_my_demons =
 			self = oself;
 
 			sprint (self, #PRINT_HIGH, "Your shambler ");
-            sprint (self, #PRINT_HIGH, te.netname);
-            sprint (self, #PRINT_HIGH, " is dead.\n");
+			sprint (self, #PRINT_HIGH, te.netname);
+			sprint (self, #PRINT_HIGH, " is dead.\n");
 		}
 		te = find(te, classname, "monster_shambler");
 	}
 
-    
-    te = find(world, classname, "monster_wizard");
+	
+	te = find(world, classname, "monster_wizard");
 	
 	while (te)
 	{
@@ -1841,13 +1841,13 @@ void () kill_my_demons =
 			self = oself;
 
 			sprint (self, #PRINT_HIGH, "Your scrag ");
-            sprint (self, #PRINT_HIGH, te.netname);
-            sprint (self, #PRINT_HIGH, " is dead.\n");
+			sprint (self, #PRINT_HIGH, te.netname);
+			sprint (self, #PRINT_HIGH, " is dead.\n");
 		}
 		te = find(te, classname, "monster_wizard");
-	}   
+	}	
 
-    te = find(world, classname, "monster_fish");
+	te = find(world, classname, "monster_fish");
 	
 	while (te)
 	{
@@ -1865,13 +1865,13 @@ void () kill_my_demons =
 			self = oself;
 
 			sprint (self, #PRINT_HIGH, "Your piranha ");
-   			sprint (self, #PRINT_HIGH, te.netname);
-            sprint (self, #PRINT_HIGH, " is dead.\n");
+			sprint (self, #PRINT_HIGH, te.netname);
+			sprint (self, #PRINT_HIGH, " is dead.\n");
 		}
 		te = find(te, classname, "monster_fish");
-	}   
+	}	
 
-    te = find(world, classname, "monster_gremlin");
+	te = find(world, classname, "monster_gremlin");
 	
 	while (te)
 	{
@@ -1879,7 +1879,7 @@ void () kill_my_demons =
 		{
 			oself = self;
 			self = te;
-            ThrowMonsterHead ("progs/h_grem.mdl", -80);
+			ThrowMonsterHead ("progs/h_grem.mdl", -80);
 			ThrowGib ("progs/gib1.mdl", -30);
 			ThrowGib ("progs/gib2.mdl", -35);
 			ThrowGib ("progs/gib3.mdl", -40);
@@ -1891,19 +1891,19 @@ void () kill_my_demons =
 
 			sprint (self, #PRINT_HIGH, "Your gremlin ");
 			sprint (self, #PRINT_HIGH, te.netname);
-            sprint (self, #PRINT_HIGH, " is dead.\n");
+			sprint (self, #PRINT_HIGH, " is dead.\n");
 		}
 		te = find(te, classname, "monster_gremlin");
-	}   
+	}	
 
-    self.job = self.job - (self.job & #JOB_DEMON_OUT);
-    self.demon_one = world;
-    self.demon_two = world;
-    self.demon_three = world;*/
+	self.job = self.job - (self.job & #JOB_DEMON_OUT);
+	self.demon_one = world;
+	self.demon_two = world;
+	self.demon_three = world;*/
 
-    KillSoul(self,0);
-    KillSoul(self,1);
-    KillSoul(self,2);
+	KillSoul(self,0);
+	KillSoul(self,1);
+	KillSoul(self,2);
 };
 
 //=================================================================
@@ -1911,15 +1911,16 @@ void () kill_my_demons =
 
 void() MonsterTouch =
 {
-    if (self.health <= 0) // If we r dead, go away
-        return;
+	if (self.health <= 0) // If we r dead, go away
+		return;
 
-    local entity Bio;
+	local entity Bio;
 
-    if (self.tfstate & #TFSTATE_INFECTED)
-    {
-	if (other.job & #JOB_TKD) { 
-		if (!Teammate(self.real_owner.team_no, other.team_no) && other.last_boot_to_the_head < time)
+	if (self.tfstate & #TFSTATE_INFECTED)
+	{
+	if (other.job & #JOB_TKD) {
+		// Neo mode modication
+		if (!Teammate(self.real_owner, other) && other.last_boot_to_the_head < time)
 		{
 			sprint(other,#PRINT_HIGH,"You kick the demon in a vital point!\n");
 			TF_T_Damage (self, other, other, 300, #TF_TD_NOTTEAM, #TF_TD_MELEE);
@@ -1929,73 +1930,73 @@ void() MonsterTouch =
 		return;
 	}
 
-        if (other.classname == "player")
-        {
-            if (!(other.invincible_finished > time)) // Dont infect if we r invincible
-            if (!(other.weapons_carried & #WEAP_MEDIKIT)) // neither if we got medikit
-            if (!(other.tfstate & #TFSTATE_INFECTED)) // Dont if we r already infected
-            if (other.is_connected)
-            if (other.health > 0) // alive?
-            if (!(other.done_custom & #CUSTOM_BUILDING)) // ppl customizing
-            if (other.playerclass != #PC_UNDEFINED) // observers
-            {
-                // infect 'em
-                Bio = spawn ();
-                Bio.nextthink = time + 2;
-                Bio.think = BioInfection_Decay;
-                Bio.enemy = self; //Person causing infection
-                Bio.owner = other; //Person getting hurt
-                Bio.classname = "timer";
-                Bio.netname = "biotimer";
-                
-                other.tfstate = other.tfstate | #TFSTATE_INFECTED;
-                other.infection_team_no = self.infection_team_no;
-                
-                local string tmps;
-                tmps = GetMonsterName(self);
+		if (other.classname == "player")
+		{
+			if (!(other.invincible_finished > time)) // Dont infect if we r invincible
+			if (!(other.weapons_carried & #WEAP_MEDIKIT)) // neither if we got medikit
+			if (!(other.tfstate & #TFSTATE_INFECTED)) // Dont if we r already infected
+			if (other.is_connected)
+			if (other.health > 0) // alive?
+			if (!(other.done_custom & #CUSTOM_BUILDING)) // ppl customizing
+			if (other.playerclass != #PC_UNDEFINED) // observers
+			{
+				// infect 'em
+				Bio = spawn ();
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_Decay;
+				Bio.enemy = self; //Person causing infection
+				Bio.owner = other; //Person getting hurt
+				Bio.classname = "timer";
+				Bio.netname = "biotimer";
+				
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+				other.infection_team_no = self.infection_team_no;
+				
+				local string tmps;
+				tmps = GetMonsterName(self);
 
-                sprint(other, #PRINT_MEDIUM, "You have been infected by the ");
-                sprint(other, #PRINT_MEDIUM, tmps);
-                sprint(other, #PRINT_MEDIUM, " ");
-                sprint(other, #PRINT_MEDIUM, self.netname);
-                sprint(other, #PRINT_MEDIUM, "!\n");
+				sprint(other, #PRINT_MEDIUM, "You have been infected by the ");
+				sprint(other, #PRINT_MEDIUM, tmps);
+				sprint(other, #PRINT_MEDIUM, " ");
+				sprint(other, #PRINT_MEDIUM, self.netname);
+				sprint(other, #PRINT_MEDIUM, "!\n");
 
-                teamprefixsprint(other.team_no,other);
-                teamsprint(other.team_no,other, other.netname);
-                teamsprint(other.team_no,other, " has been infected!\n");
-            }            
-        }
-        else if (IsMonster(other))
-        {
-            if (!(other.tfstate & #TFSTATE_INFECTED))
-            {
-                // Report to owner
-                local string tmps;
-                tmps = GetMonsterName(other);
-                sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
+				teamprefixsprint(other.team_no,other);
+				teamsprint(other.team_no,other, other.netname);
+				teamsprint(other.team_no,other, " has been infected!\n");
+			}			 
+		}
+		else if (IsMonster(other))
+		{
+			if (!(other.tfstate & #TFSTATE_INFECTED))
+			{
+				// Report to owner
+				local string tmps;
+				tmps = GetMonsterName(other);
+				sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
 
-                // Report to teammates of owner
-                local string tmps;
-                tmps = GetMonsterName(other);
-                teamprefixsprint(other.real_owner.team_no,other.real_owner);
-                teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
+				// Report to teammates of owner
+				local string tmps;
+				tmps = GetMonsterName(other);
+				teamprefixsprint(other.real_owner.team_no,other.real_owner);
+				teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
 
-                // Update infection flag
-                other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+				// Update infection flag
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
 
-                // Infect it!
-                Bio = spawn ();
-                Bio.classname = "timer";
-                Bio.classname = "biotimer";
-                Bio.nextthink = time + 2;
-                Bio.think = BioInfection_MonsterDecay;
-                Bio.owner = self;
-                Bio.enemy = other;
+				// Infect it!
+				Bio = spawn ();
+				Bio.classname = "timer";
+				Bio.classname = "biotimer";
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_MonsterDecay;
+				Bio.owner = self;
+				Bio.enemy = other;
 
-                other.infection_team_no = self.infection_team_no;
-            }
-        }
-    }
+				other.infection_team_no = self.infection_team_no;
+			}
+		}
+	}
 };
 
 //=========================================================================
@@ -2003,30 +2004,30 @@ void() MonsterTouch =
 
 void (entity themonster) PutMonsterStand =
 {
-    if (themonster.classname=="monster_shambler")
-        themonster.think=sham_stand1;
-    else if (themonster.classname=="monster_demon1")
-        themonster.think=demon1_stand1;
-    else if (themonster.classname=="monster_wizard")
-        themonster.think=wiz_stand1;     
-    else if (themonster.classname=="monster_fish")
-        themonster.think=fish_stand1;     
-    else if (themonster.classname=="monster_gremlin")
-        themonster.think=gremlin_main_stand;
+	if (themonster.classname=="monster_shambler")
+		themonster.think=sham_stand1;
+	else if (themonster.classname=="monster_demon1")
+		themonster.think=demon1_stand1;
+	else if (themonster.classname=="monster_wizard")
+		themonster.think=wiz_stand1;	 
+	else if (themonster.classname=="monster_fish")
+		themonster.think=fish_stand1;	  
+	else if (themonster.classname=="monster_gremlin")
+		themonster.think=gremlin_main_stand;
 };
 
 void (entity themonster) PutMonsterWalk =
 {
-    if (themonster.classname=="monster_shambler")
-        themonster.think=sham_walk1;
-    else if (themonster.classname=="monster_demon1")
-        themonster.think=demon1_walk1;
-    else if (themonster.classname=="monster_wizard")
-        themonster.think=wiz_walk1;  
-    else if (themonster.classname=="monster_fish")
-        themonster.think=fish_walk1;  
-    else if (themonster.classname=="monster_gremlin")
-        themonster.think=gremlin_main_walk;
+	if (themonster.classname=="monster_shambler")
+		themonster.think=sham_walk1;
+	else if (themonster.classname=="monster_demon1")
+		themonster.think=demon1_walk1;
+	else if (themonster.classname=="monster_wizard")
+		themonster.think=wiz_walk1;  
+	else if (themonster.classname=="monster_fish")
+		themonster.think=fish_walk1;  
+	else if (themonster.classname=="monster_gremlin")
+		themonster.think=gremlin_main_walk;
 };
 
 //=====================================================
@@ -2034,35 +2035,35 @@ void (entity themonster) PutMonsterWalk =
 
 void (entity themonster) MonsterIdle =
 {
-    if (themonster.health <= 0) return;
+	if (themonster.health <= 0) return;
 
-    if (themonster.penance_time == 0) // Stand
-    {
-        themonster.enemy=world;
-        themonster.oldenemy=world;
-        themonster.goalentity=world;
-        themonster.nextthink=time+0.1;
-        
-        PutMonsterStand(themonster);
-    }
-    else if (themonster.penance_time == 1) // Follow owner
-    {
-        themonster.enemy=world;
-        themonster.oldenemy=world;
-        themonster.goalentity=themonster.real_owner;
-        themonster.nextthink=time+0.1;
+	if (themonster.penance_time == 0) // Stand
+	{
+		themonster.enemy=world;
+		themonster.oldenemy=world;
+		themonster.goalentity=world;
+		themonster.nextthink=time+0.1;
+		
+		PutMonsterStand(themonster);
+	}
+	else if (themonster.penance_time == 1) // Follow owner
+	{
+		themonster.enemy=world;
+		themonster.oldenemy=world;
+		themonster.goalentity=themonster.real_owner;
+		themonster.nextthink=time+0.1;
 
-        PutMonsterWalk(themonster);
-    }
-    else if (themonster.penance_time == 2) // Patrol
-    {
-        themonster.enemy=world;
-        themonster.oldenemy=world;
-        themonster.goalentity=themonster;
-        themonster.nextthink=time+0.1;
-        
-        PutMonsterWalk(themonster);
-    }
+		PutMonsterWalk(themonster);
+	}
+	else if (themonster.penance_time == 2) // Patrol
+	{
+		themonster.enemy=world;
+		themonster.oldenemy=world;
+		themonster.goalentity=themonster;
+		themonster.nextthink=time+0.1;
+		
+		PutMonsterWalk(themonster);
+	}
 };
 
 //==============================================
@@ -2070,38 +2071,38 @@ void (entity themonster) MonsterIdle =
 
 void(entity player, float knifekills) SetHearts =
 {
-    if (knifekills > 60) // upto 63 (6 bits value) WARNING: we pad this value string to 2 chars
-        knifekills = 60;
-    player.demon_blood = AssignWarlock1(player.demon_blood,knifekills);
+	if (knifekills > 60) // upto 63 (6 bits value) WARNING: we pad this value string to 2 chars
+		knifekills = 60;
+	player.demon_blood = AssignWarlock1(player.demon_blood,knifekills);
 };
 
 void(entity player, float numgibs) SetMeat =
 {
-    if (numgibs > 950) // 10 bits value so we can set this upto 1023 WARNING: we pad this value string to 3 chars (so should be 999 max)
-        numgibs = 950;
-    player.demon_blood = AssignWarlock2(player.demon_blood,numgibs);
+	if (numgibs > 950) // 10 bits value so we can set this upto 1023 WARNING: we pad this value string to 3 chars (so should be 999 max)
+		numgibs = 950;
+	player.demon_blood = AssignWarlock2(player.demon_blood,numgibs);
 };
 
 void(entity player, float numheads) SetHeads =
 {
-    if (numheads > 250) // 8 bits (upto 255)
-        numheads = 250;
-    player.demon_blood = AssignByte3(player.demon_blood,numheads);
+	if (numheads > 250) // 8 bits (upto 255)
+		numheads = 250;
+	player.demon_blood = AssignByte3(player.demon_blood,numheads);
 };
 
 void(entity player, float soul) SetCurrentSoul =
 {
-    player.g_e = AssignByte1(player.g_e,soul);
+	player.g_e = AssignByte1(player.g_e,soul);
 };
 
 void(entity player, float usage) SetMeatUsage =
 {
-    player.g_e = AssignByte2(player.g_e,usage);
+	player.g_e = AssignByte2(player.g_e,usage);
 };
 
 void(entity player, float usage) SetHeadsUsage =
 {
-    player.g_e = AssignByte3(player.g_e,usage);
+	player.g_e = AssignByte3(player.g_e,usage);
 };
 
 //====================================================
@@ -2109,32 +2110,32 @@ void(entity player, float usage) SetHeadsUsage =
 
 float(entity player) GetHearts =
 {
-    return GetWarlock1(player.demon_blood);
+	return GetWarlock1(player.demon_blood);
 };
 
 float(entity player) GetMeat =
 {
-    return GetWarlock2(player.demon_blood);
+	return GetWarlock2(player.demon_blood);
 };
 
 float(entity player) GetHeads =
 {
-    return GetByte3(player.demon_blood);
+	return GetByte3(player.demon_blood);
 };
 
 float(entity player) GetCurrentSoul =
 {
-    return GetByte1(player.g_e);
+	return GetByte1(player.g_e);
 };
 
 float(entity player) GetMeatUsage =
 {
-    return GetByte2(player.g_e);
+	return GetByte2(player.g_e);
 };
 
 float(entity player) GetHeadsUsage =
 {
-    return GetByte3(player.g_e);
+	return GetByte3(player.g_e);
 };
 
 //===============================================
@@ -2142,19 +2143,19 @@ float(entity player) GetHeadsUsage =
 
 float(entity warlock) GetNumSummons =
 {
-    local float res;
-    res = 0;
+	local float res;
+	res = 0;
 
-    if (warlock.demon_one)
-        res = 1;
+	if (warlock.demon_one)
+		res = 1;
 
-    if (warlock.demon_two)
-        res = res + 1;
-    
-    if (warlock.demon_three)
-        res = res + 1;
-    
-    return res;
+	if (warlock.demon_two)
+		res = res + 1;
+	
+	if (warlock.demon_three)
+		res = res + 1;
+	
+	return res;
 };
 
 //=============================================
@@ -2162,14 +2163,14 @@ float(entity warlock) GetNumSummons =
 
 entity(entity warlock, float numsummon) GetSummon =
 {
-    if (numsummon == 0)
-        return warlock.demon_one;
-    if (numsummon == 1)
-        return warlock.demon_two;
-    if (numsummon == 2)
-        return warlock.demon_three;
+	if (numsummon == 0)
+		return warlock.demon_one;
+	if (numsummon == 1)
+		return warlock.demon_two;
+	if (numsummon == 2)
+		return warlock.demon_three;
 
-    return world;
+	return world;
 };
 
 //=====================================================
@@ -2177,22 +2178,22 @@ entity(entity warlock, float numsummon) GetSummon =
 
 float(entity player, float type) GetNumTypeMonster =
 {
-    local float res;
-    res = 0;
+	local float res;
+	res = 0;
 
-    if (player.demon_one)
-    if (player.demon_one.#monster_type == type)
-        res = 1;
+	if (player.demon_one)
+	if (player.demon_one.#monster_type == type)
+		res = 1;
 
-    if (player.demon_two)
-    if (player.demon_two.#monster_type == type)
-        res = res +1;
+	if (player.demon_two)
+	if (player.demon_two.#monster_type == type)
+		res = res +1;
 
-    if (player.demon_three)
-    if (player.demon_three.#monster_type == type)
-        res = res +1;
-    
-    return res;
+	if (player.demon_three)
+	if (player.demon_three.#monster_type == type)
+		res = res +1;
+	
+	return res;
 };
 
 //===============================================
@@ -2200,7 +2201,7 @@ float(entity player, float type) GetNumTypeMonster =
 
 void(entity warlock) GibPickSound =
 {
-    sound(warlock,#CHAN_AUTO,"gibs/gibpick.wav",1,#ATTN_IDLE);
+	sound(warlock,#CHAN_AUTO,"gibs/gibpick.wav",1,#ATTN_IDLE);
 };
 
 //=====================================================================
@@ -2208,64 +2209,64 @@ void(entity warlock) GibPickSound =
 
 void (entity attacker) WarlockKnifeKill =
 {
-    if (attacker.job & #JOB_WARLOCK)
-    {
-        local float numhearts;
-        numhearts = GetHearts(attacker);
-        SetHearts(attacker,numhearts +1);
+	if (attacker.job & #JOB_WARLOCK)
+	{
+		local float numhearts;
+		numhearts = GetHearts(attacker);
+		SetHearts(attacker,numhearts +1);
 
-        sprint(attacker,#PRINT_HIGH,"You get a fresh living heart!\n");
+		sprint(attacker,#PRINT_HIGH,"You get a fresh living heart!\n");
 
-        if (extras_mode == 2)
-            return;
+		if (extras_mode == 2)
+			return;
 
-        attacker.dont_do_triggerwork = attacker.dont_do_triggerwork + 1;
-        numhearts = attacker.dont_do_triggerwork;
+		attacker.dont_do_triggerwork = attacker.dont_do_triggerwork + 1;
+		numhearts = attacker.dont_do_triggerwork;
 
-        if (numhearts == #WARLOCK_BONUS1)
-        {
-            bprint(#PRINT_HIGH,attacker.netname);
-            bprint(#PRINT_HIGH," has collected #WARLOCK_BONUS1 hearts!\n");
+		if (numhearts == #WARLOCK_BONUS1)
+		{
+			bprint(#PRINT_HIGH,attacker.netname);
+			bprint(#PRINT_HIGH," has collected #WARLOCK_BONUS1 hearts!\n");
 
-            local float extras;
-            extras = GetJobExtras(attacker);
+			local float extras;
+			extras = GetJobExtras(attacker);
 
-            if (extras == 0)
-            {
-                sprint(attacker, #PRINT_HIGH, "Your warlock skills have been improved!\n");
-                SetJobExtras(attacker,1);
-                return;
-            }
-            else if (extras == 1)
-            {
-                sprint(attacker, #PRINT_HIGH, "Your warlock skills have been maxed out!\n");
-                SetJobExtras(attacker,2);
-                return;
-            }
-        }
+			if (extras == 0)
+			{
+				sprint(attacker, #PRINT_HIGH, "Your warlock skills have been improved!\n");
+				SetJobExtras(attacker,1);
+				return;
+			}
+			else if (extras == 1)
+			{
+				sprint(attacker, #PRINT_HIGH, "Your warlock skills have been maxed out!\n");
+				SetJobExtras(attacker,2);
+				return;
+			}
+		}
 
-        if (numhearts == #WARLOCK_BONUS2)
-        {
-            bprint(#PRINT_HIGH,attacker.netname);
-            bprint(#PRINT_HIGH," has collected #WARLOCK_BONUS2 hearts!!\n");
+		if (numhearts == #WARLOCK_BONUS2)
+		{
+			bprint(#PRINT_HIGH,attacker.netname);
+			bprint(#PRINT_HIGH," has collected #WARLOCK_BONUS2 hearts!!\n");
 
-            local float extras;
-            extras = GetJobExtras(attacker);
+			local float extras;
+			extras = GetJobExtras(attacker);
 
-            if (extras == 0) // this only would happen by toggling extras_mode but..
-            {
-                sprint(attacker, #PRINT_HIGH, "Your warlock skills have been improved!\n");
-                SetJobExtras(attacker,1);
-                return;
-            }
-            else if (extras == 1)
-            {
-                sprint(attacker, #PRINT_HIGH, "Your warlock skills have been maxed out!\n");
-                SetJobExtras(attacker,2);
-                return;
-            }
-        }
-    }
+			if (extras == 0) // this only would happen by toggling extras_mode but..
+			{
+				sprint(attacker, #PRINT_HIGH, "Your warlock skills have been improved!\n");
+				SetJobExtras(attacker,1);
+				return;
+			}
+			else if (extras == 1)
+			{
+				sprint(attacker, #PRINT_HIGH, "Your warlock skills have been maxed out!\n");
+				SetJobExtras(attacker,2);
+				return;
+			}
+		}
+	}
 };
 
 //================================================================
@@ -2273,72 +2274,72 @@ void (entity attacker) WarlockKnifeKill =
 
 float(entity monster) GetMonsterLevel =
 {
-    local float level, type, heads, headsusage, headsused;
-    
-    type = monster.#monster_type;
-    heads = GetHeads(monster.real_owner);
-    headsusage = GetHeadsUsage(monster.real_owner);
+	local float level, type, heads, headsusage, headsused;
+	
+	type = monster.#monster_type;
+	heads = GetHeads(monster.real_owner);
+	headsusage = GetHeadsUsage(monster.real_owner);
 
-    // Apply usage setting
-    headsused = rint((heads/100)*(headsusage*25));
+	// Apply usage setting
+	headsused = rint((heads/100)*(headsusage*25));
 
-    level = 0;
-    
-    if (type == #MONSTER_SHAMBLER)
-    {
-        if (headsused > #SHAMBLER_MAX_HEADS)
-        {
-            headsused = #SHAMBLER_MAX_HEADS;
-            level = 1;
-        }
-        else
-            level = headsused/#SHAMBLER_MAX_HEADS;
-    }
-    else if (type == #MONSTER_GREMLIN)
-    {
-        if (headsused > #GREMLIN_MAX_HEADS)
-        {
-            headsused = #GREMLIN_MAX_HEADS;
-            level = 1;
-        }
-        else
-            level = headsused/#GREMLIN_MAX_HEADS;
-    }
-    else if (type == #MONSTER_DEMON)
-    {
-        if (headsused > #DEMON_MAX_HEADS)
-        {
-            headsused = #DEMON_MAX_HEADS;
-            level = 1;
-        }
-        else
-            level = headsused/#DEMON_MAX_HEADS;
-    }
-    else if (type == #MONSTER_SCRAG)
-    {
-        if (headsused > #SCRAG_MAX_HEADS)
-        {
-            headsused = #SCRAG_MAX_HEADS;
-            level = 1;
-        }
-        else
-            level = headsused/#SCRAG_MAX_HEADS;
-    }
-    else if (type == #MONSTER_FISH)
-    {
-        if (headsused > #FISH_MAX_HEADS)
-        {
-            headsused = #FISH_MAX_HEADS;
-            level = 1;
-        }
-        else
-            level = headsused/#FISH_MAX_HEADS;
-    }
+	level = 0;
+	
+	if (type == #MONSTER_SHAMBLER)
+	{
+		if (headsused > #SHAMBLER_MAX_HEADS)
+		{
+			headsused = #SHAMBLER_MAX_HEADS;
+			level = 1;
+		}
+		else
+			level = headsused/#SHAMBLER_MAX_HEADS;
+	}
+	else if (type == #MONSTER_GREMLIN)
+	{
+		if (headsused > #GREMLIN_MAX_HEADS)
+		{
+			headsused = #GREMLIN_MAX_HEADS;
+			level = 1;
+		}
+		else
+			level = headsused/#GREMLIN_MAX_HEADS;
+	}
+	else if (type == #MONSTER_DEMON)
+	{
+		if (headsused > #DEMON_MAX_HEADS)
+		{
+			headsused = #DEMON_MAX_HEADS;
+			level = 1;
+		}
+		else
+			level = headsused/#DEMON_MAX_HEADS;
+	}
+	else if (type == #MONSTER_SCRAG)
+	{
+		if (headsused > #SCRAG_MAX_HEADS)
+		{
+			headsused = #SCRAG_MAX_HEADS;
+			level = 1;
+		}
+		else
+			level = headsused/#SCRAG_MAX_HEADS;
+	}
+	else if (type == #MONSTER_FISH)
+	{
+		if (headsused > #FISH_MAX_HEADS)
+		{
+			headsused = #FISH_MAX_HEADS;
+			level = 1;
+		}
+		else
+			level = headsused/#FISH_MAX_HEADS;
+	}
 
-    // Decrease our used heads ammount
-    SetHeads(monster.real_owner,heads - headsused);
+	// Decrease our used heads ammount
+	SetHeads(monster.real_owner,heads - headsused);
 
-    return level;
+	return level;
 };
 
 //================================================================
@@ -2346,70 +2347,70 @@ float(entity monster) GetMonsterLevel =
 
 float(entity monster) GetHPforMeat =
 {
-    local float hp, type, meatkgs, meatusage, meatused;
-    
-    type = monster.#monster_type;
-    meatkgs = GetMeat(monster.real_owner);
-    meatusage = GetMeatUsage(monster.real_owner);
-    
-    // Apply usage setting
-    meatused = rint((meatkgs/100)*(meatusage*25));
+	local float hp, type, meatkgs, meatusage, meatused;
+	
+	type = monster.#monster_type;
+	meatkgs = GetMeat(monster.real_owner);
+	meatusage = GetMeatUsage(monster.real_owner);
+	
+	// Apply usage setting
+	meatused = rint((meatkgs/100)*(meatusage*25));
 
-    if (type == #MONSTER_SHAMBLER)
-    {
-        if (meatused > #SHAMBLER_MAX_MEAT)
-        {
-            hp = #SHAMBLER_MAX_HP;
-            meatused = #SHAMBLER_MAX_MEAT;
-        }
-        else
-            hp = rint(#SHAMBLER_MIN_HP + ((#SHAMBLER_MAX_HP - #SHAMBLER_MIN_HP)*(meatused/#SHAMBLER_MAX_MEAT)));
-    }
-    else if (type == #MONSTER_GREMLIN)
-    {
-        if (meatused > #GREMLIN_MAX_MEAT)
-        {
-            hp = #GREMLIN_MAX_HP;
-            meatused = #GREMLIN_MAX_MEAT;
-        }
-        else
-            hp = rint(#GREMLIN_MIN_HP + ((#GREMLIN_MAX_HP - #GREMLIN_MIN_HP)*(meatused/#GREMLIN_MAX_MEAT)));
-    }
-    else if (type == #MONSTER_DEMON)
-    {
-        if (meatused > #DEMON_MAX_MEAT)
-        {
-            hp = #DEMON_MAX_HP;
-            meatused = #DEMON_MAX_MEAT;
-        }
-        else
-            hp = rint(#DEMON_MIN_HP + ((#DEMON_MAX_HP - #DEMON_MIN_HP)*(meatused/#DEMON_MAX_MEAT)));
-    }
-    else if (type == #MONSTER_SCRAG)
-    {
-        if (meatused > #SCRAG_MAX_MEAT)
-        {
-            hp = #SCRAG_MAX_HP;
-            meatused = #SCRAG_MAX_MEAT;
-        }
-        else
-            hp = rint(#SCRAG_MIN_HP + ((#SCRAG_MAX_HP - #SCRAG_MIN_HP)*(meatused/#SCRAG_MAX_MEAT)));
-    }
-    else if (type == #MONSTER_FISH)
-    {
-        if (meatused > #FISH_MAX_MEAT)
-        {
-            hp = #FISH_MAX_HP;
-            meatused = #FISH_MAX_MEAT;
-        }
-        else
-            hp = rint(#FISH_MIN_HP + ((#FISH_MAX_HP - #FISH_MIN_HP)*(meatused/#FISH_MAX_MEAT)));
-    }   
+	if (type == #MONSTER_SHAMBLER)
+	{
+		if (meatused > #SHAMBLER_MAX_MEAT)
+		{
+			hp = #SHAMBLER_MAX_HP;
+			meatused = #SHAMBLER_MAX_MEAT;
+		}
+		else
+			hp = rint(#SHAMBLER_MIN_HP + ((#SHAMBLER_MAX_HP - #SHAMBLER_MIN_HP)*(meatused/#SHAMBLER_MAX_MEAT)));
+	}
+	else if (type == #MONSTER_GREMLIN)
+	{
+		if (meatused > #GREMLIN_MAX_MEAT)
+		{
+			hp = #GREMLIN_MAX_HP;
+			meatused = #GREMLIN_MAX_MEAT;
+		}
+		else
+			hp = rint(#GREMLIN_MIN_HP + ((#GREMLIN_MAX_HP - #GREMLIN_MIN_HP)*(meatused/#GREMLIN_MAX_MEAT)));
+	}
+	else if (type == #MONSTER_DEMON)
+	{
+		if (meatused > #DEMON_MAX_MEAT)
+		{
+			hp = #DEMON_MAX_HP;
+			meatused = #DEMON_MAX_MEAT;
+		}
+		else
+			hp = rint(#DEMON_MIN_HP + ((#DEMON_MAX_HP - #DEMON_MIN_HP)*(meatused/#DEMON_MAX_MEAT)));
+	}
+	else if (type == #MONSTER_SCRAG)
+	{
+		if (meatused > #SCRAG_MAX_MEAT)
+		{
+			hp = #SCRAG_MAX_HP;
+			meatused = #SCRAG_MAX_MEAT;
+		}
+		else
+			hp = rint(#SCRAG_MIN_HP + ((#SCRAG_MAX_HP - #SCRAG_MIN_HP)*(meatused/#SCRAG_MAX_MEAT)));
+	}
+	else if (type == #MONSTER_FISH)
+	{
+		if (meatused > #FISH_MAX_MEAT)
+		{
+			hp = #FISH_MAX_HP;
+			meatused = #FISH_MAX_MEAT;
+		}
+		else
+			hp = rint(#FISH_MIN_HP + ((#FISH_MAX_HP - #FISH_MIN_HP)*(meatused/#FISH_MAX_MEAT)));
+	}	
 
-    // Decrease our used meat ammount
-    SetMeat(monster.real_owner,meatkgs - meatused);
+	// Decrease our used meat ammount
+	SetMeat(monster.real_owner,meatkgs - meatused);
 
-    return hp;
+	return hp;
 };
 
 //=================================================================
@@ -2417,92 +2418,93 @@ float(entity monster) GetHPforMeat =
 
 void() monster_head_touch =
 {
-    if (self.velocity == '0 0 0') // stoped?
-    {
-        self.avelocity = '0 0 0';
-        #ifdef KICKABLE_HEADS
-        self.t_width = #TRUE;
-        #endif
-    }
-    
-    if (other.classname == "player")
-    {
-        if (other.health <= 0)
-            return;
+	if (self.velocity == '0 0 0') // stoped?
+	{
+		self.avelocity = '0 0 0';
+		#ifdef KICKABLE_HEADS
+		self.t_width = #TRUE;
+		#endif
+	}
+	
+	if (other.classname == "player")
+	{
+		if (other.health <= 0)
+			return;
 
-        if (other.playerclass == #PC_UNDEFINED) // Skip Observers
-            return;
+		if (other.playerclass == #PC_UNDEFINED) // Skip Observers
+			return;
 
-        if (other.done_custom & #CUSTOM_BUILDING) // ppl customizing
-            return;
+		if (other.done_custom & #CUSTOM_BUILDING) // ppl customizing
+			return;
 
-        if (other.job & #JOB_WARLOCK) // Warlock collects this head
-        #ifndef WARLOCK_TEST
-        if (!Teammate(other.team_no,self.team_no)) // Only enemy heads can be picked up
-        #endif    
-        {
-            self.modelindex = modelindex_null;
-            self.touch = SUB_Null;
-            self.solid = #SOLID_NOT;
+		if (other.job & #JOB_WARLOCK) // Warlock collects this head
+		#ifndef WARLOCK_TEST
+		// Neo mode modication
+		if (!Teammate(other, self)) // Only enemy heads can be picked up
+		#endif	  
+		{
+			self.modelindex = modelindex_null;
+			self.touch = SUB_Null;
+			self.solid = #SOLID_NOT;
 
-            sprint(other,#PRINT_HIGH,"You pick up a");
+			sprint(other,#PRINT_HIGH,"You pick up a");
 
-            if (self.increase_team1 == #MONSTER_SHAMBLER)
-                sprint(other,#PRINT_HIGH," shambler");
-            else if (self.increase_team1 == #MONSTER_GREMLIN)
-                sprint(other,#PRINT_HIGH," gremlin");
-            else if (self.increase_team1 == #MONSTER_DEMON)
-                sprint(other,#PRINT_HIGH," fiend");
-            else if (self.increase_team1 == #MONSTER_SCRAG)
-                sprint(other,#PRINT_HIGH," scrag");
-            else if (self.increase_team1 == #MONSTER_FISH)
-                sprint(other,#PRINT_HIGH," piranha");
-            else if (self.increase_team1 == #MONSTER_ARMY)            
-                sprint(other,#PRINT_HIGH,"n army soldier");
-            else sprint(other,#PRINT_HIGH," monster"); // default, shouldnt be used anyway
+			if (self.increase_team1 == #MONSTER_SHAMBLER)
+				sprint(other,#PRINT_HIGH," shambler");
+			else if (self.increase_team1 == #MONSTER_GREMLIN)
+				sprint(other,#PRINT_HIGH," gremlin");
+			else if (self.increase_team1 == #MONSTER_DEMON)
+				sprint(other,#PRINT_HIGH," fiend");
+			else if (self.increase_team1 == #MONSTER_SCRAG)
+				sprint(other,#PRINT_HIGH," scrag");
+			else if (self.increase_team1 == #MONSTER_FISH)
+				sprint(other,#PRINT_HIGH," piranha");
+			else if (self.increase_team1 == #MONSTER_ARMY)			  
+				sprint(other,#PRINT_HIGH,"n army soldier");
+			else sprint(other,#PRINT_HIGH," monster"); // default, shouldnt be used anyway
 
-            sprint(other,#PRINT_HIGH," head\n");
-            
-            GibPickSound(other);
-            stuffcmd(other,"bf\n");
+			sprint(other,#PRINT_HIGH," head\n");
+			
+			GibPickSound(other);
+			stuffcmd(other,"bf\n");
 
-            local float numheads;
-            numheads = GetHeads(other);
-            SetHeads(other,numheads+1);
+			local float numheads;
+			numheads = GetHeads(other);
+			SetHeads(other,numheads+1);
 
-            dremove(self);
-            return;
-        }
+			dremove(self);
+			return;
+		}
 
-        #ifdef KICKABLE_HEADS
-        if (!kickable_heads)
-            return;
+		#ifdef KICKABLE_HEADS
+		if (!kickable_heads)
+			return;
 
-        if (!self.t_width)
-            return;
-        
-        if (self.oldenemy == other) // we are the last person that kicked this head
-            if (self.t_length + #KICKHEAD_RATE_PERUSER > time) // too early for him?
-                return;
-        
-        if (self.t_length + #KICKHEAD_RATE > time) // too early?
-            return; // ok, do nothing, dont bounce or anything
+		if (!self.t_width)
+			return;
+		
+		if (self.oldenemy == other) // we are the last person that kicked this head
+			if (self.t_length + #KICKHEAD_RATE_PERUSER > time) // too early for him?
+				return;
+		
+		if (self.t_length + #KICKHEAD_RATE > time) // too early?
+			return; // ok, do nothing, dont bounce or anything
 
-        if (other.velocity == '0 0 0') // Dont kick if the player is not moving
-            return;
+		if (other.velocity == '0 0 0') // Dont kick if the player is not moving
+			return;
 
-        //ok, kick it out
-        self.oldenemy = other;
-        self.t_length = time;
-        makevectors (other.v_angle);
-        self.velocity = other.velocity * 1.5 + v_forward * 128 + '0 0 260' + '0 0 300'*random();  
-        self.flags = self.flags - (self.flags & #FL_ONGROUND);
-    	
-        self.avelocity = crandom() * '0 600 0';
+		//ok, kick it out
+		self.oldenemy = other;
+		self.t_length = time;
+		makevectors (other.v_angle);
+		self.velocity = other.velocity * 1.5 + v_forward * 128 + '0 0 260' + '0 0 300'*random();  
+		self.flags = self.flags - (self.flags & #FL_ONGROUND);
+		
+		self.avelocity = crandom() * '0 600 0';
 
-        sound(self,#CHAN_BODY,"zombie/z_miss.wav",0.5, #ATTN_IDLE);
-        #endif
-    }
+		sound(self,#CHAN_BODY,"zombie/z_miss.wav",0.5, #ATTN_IDLE);
+		#endif
+	}
 };
 
 //================================================================
@@ -2510,7 +2512,7 @@ void() monster_head_touch =
 
 void(string gibname, float dm) ThrowMonsterHead =
 {
-    newmis = spawn();
+	newmis = spawn();
 	newmis.origin = self.origin;
 	setmodel (newmis, gibname);
 	setsize (newmis, '-4 -4 0', '4 4 8');
@@ -2518,28 +2520,28 @@ void(string gibname, float dm) ThrowMonsterHead =
 	newmis.velocity = VelocityForDamage (dm);
 	newmis.movetype = #MOVETYPE_BOUNCE;
 	newmis.solid = #SOLID_TRIGGER;
-    newmis.avelocity = crandom() * '0 600 0';
+	newmis.avelocity = crandom() * '0 600 0';
 	newmis.think = SUB_Remove;
 	newmis.ltime = time;
 	newmis.nextthink = time + #MIN_HEAD_TIME + (#MAX_HEAD_TIME - #MIN_HEAD_TIME)*random();
 	newmis.frame = 0;
 	newmis.flags = 0;
 
-    newmis.touch = monster_head_touch;
-    
-    newmis.team_no = self.team_no;
-    newmis.increase_team1 = self.#monster_type; // to determine picking up text
+	newmis.touch = monster_head_touch;
+	
+	newmis.team_no = self.team_no;
+	newmis.increase_team1 = self.#monster_type; // to determine picking up text
 
-    #ifdef COOL_GIBS
-    newmis.classname = "monster_head";
-    newmis.#coolflag = #STRFLAG_COOL;
-    #endif
+	#ifdef COOL_GIBS
+	newmis.classname = "monster_head";
+	newmis.#coolflag = #STRFLAG_COOL;
+	#endif
 
-    #ifdef KICKABLE_HEADS
-    newmis.t_width = #FALSE;
-    newmis.oldenemy = world;
-    newmis.t_length = time;
-    #endif
+	#ifdef KICKABLE_HEADS
+	newmis.t_width = #FALSE;
+	newmis.oldenemy = world;
+	newmis.t_length = time;
+	#endif
 };
 
 //====================================================
@@ -2547,48 +2549,48 @@ void(string gibname, float dm) ThrowMonsterHead =
 
 float(entity warlock, float input) GetNeededHearts =
 {
-    #ifdef WARLOCK_TEST
-    return 0;
-    #endif
+	#ifdef WARLOCK_TEST
+	return 0;
+	#endif
 
-    local float numsummons;
-    numsummons = GetNumSummons(warlock);
+	local float numsummons;
+	numsummons = GetNumSummons(warlock);
 
-    if (numsummons == 0)
-    {
-        if (input == 3) // fiend
-            return 2;
-        if (input == 4) // gremlin
-            return 3;
-        if (input == 5) // shambler
-            return 5;
-        
-        return 0; // scrag and piranha (no needed hearts)
-    }
-    else if (numsummons == 1)
-    {
-        if (input == 1 || input == 2) // scrag and piranha
-            return 1;
-        if (input == 3) // fiend
-            return 4;
-        if (input == 4) // gremlin
-            return 6;
-        if (input == 5) // shambler
-            return 10;
-    }
-    else 
-    {
-        if (input == 1 || input == 2) // scrag and piranha
-            return 2;
-        if (input == 3) // fiend
-            return 6;
-        if (input == 4) // gremlin
-            return 9;
-        if (input == 5) // shambler
-            return 15;
-    }
+	if (numsummons == 0)
+	{
+		if (input == 3) // fiend
+			return 2;
+		if (input == 4) // gremlin
+			return 3;
+		if (input == 5) // shambler
+			return 5;
+		
+		return 0; // scrag and piranha (no needed hearts)
+	}
+	else if (numsummons == 1)
+	{
+		if (input == 1 || input == 2) // scrag and piranha
+			return 1;
+		if (input == 3) // fiend
+			return 4;
+		if (input == 4) // gremlin
+			return 6;
+		if (input == 5) // shambler
+			return 10;
+	}
+	else 
+	{
+		if (input == 1 || input == 2) // scrag and piranha
+			return 2;
+		if (input == 3) // fiend
+			return 6;
+		if (input == 4) // gremlin
+			return 9;
+		if (input == 5) // shambler
+			return 15;
+	}
 
-    return 255; // Punishment for bug generator :)
+	return 255; // Punishment for bug generator :)
 };
 
 //=====================================================
@@ -2596,178 +2598,178 @@ float(entity warlock, float input) GetNeededHearts =
 
 void(entity warlock, float soulnum) KillSoul =
 {
-    local float doclean;
-    local entity soul, oself;
-    soul = GetSummon(warlock, soulnum);
+	local float doclean;
+	local entity soul, oself;
+	soul = GetSummon(warlock, soulnum);
 
-    doclean = #FALSE;
+	doclean = #FALSE;
 
-    if (soul) // existing thing
-    if (soul.real_owner == warlock) // and its ours
-    {
-        oself = self;
-        self = soul;            
+	if (soul) // existing thing
+	if (soul.real_owner == warlock) // and its ours
+	{
+		oself = self;
+		self = soul;			
 
-        if (soul.classname == "monster_demon1")
-        {
+		if (soul.classname == "monster_demon1")
+		{
 			soul.health = -100;
 
-            ThrowMonsterHead ("progs/h_demon.mdl", -90);
+			ThrowMonsterHead ("progs/h_demon.mdl", -90);
 			ThrowGib ("progs/gib1.mdl", -10,#TRUE,0,#GIB1_KGS, #FALSE);
-            ThrowGib ("progs/gib2.mdl", -70,#TRUE,0,#GIB2_KGS, #FALSE);
-            ThrowGib ("progs/gib3.mdl", -80,#TRUE,0,#GIB3_KGS, 0.2);
-            SpawnBloodEx(self.origin,0.66,9);
-            
+			ThrowGib ("progs/gib2.mdl", -70,#TRUE,0,#GIB2_KGS, #FALSE);
+			ThrowGib ("progs/gib3.mdl", -80,#TRUE,0,#GIB3_KGS, 0.2);
+			SpawnBloodEx(self.origin,0.66,9);
+			
 			sound (soul, #CHAN_VOICE, "demon/ddeath.wav", 1, #ATTN_NORM);
 
-            soul.think = SUB_Remove;
+			soul.think = SUB_Remove;
 			soul.touch = SUB_Null;
 			soul.nextthink = time + 0.05;
 
 			sprint(warlock, #PRINT_HIGH, "Your fiend ");
-            sprint (warlock, #PRINT_HIGH, soul.netname);
-            sprint (warlock, #PRINT_HIGH, " is dead.\n");
+			sprint (warlock, #PRINT_HIGH, soul.netname);
+			sprint (warlock, #PRINT_HIGH, " is dead.\n");
 
-            doclean = #TRUE;
-        }
-        else if (soul.classname == "monster_shambler")
-        {
-            soul.health = -100;
+			doclean = #TRUE;
+		}
+		else if (soul.classname == "monster_shambler")
+		{
+			soul.health = -100;
 
-            ThrowMonsterHead ("progs/h_shams.mdl", -90);
-            ThrowGib ("progs/gib1.mdl", -10,#TRUE,0,#GIB1_KGS, #FALSE);
-            ThrowGib ("progs/gib3.mdl", -30,#TRUE,0,#GIB3_KGS, 0.33);
-            ThrowGib ("progs/gib2.mdl", -40,#TRUE,0,#GIB2_KGS, #FALSE);
-            ThrowGib ("progs/gib3.mdl", -70,#TRUE,0,#GIB3_KGS, 0.66);
-            SpawnBloodEx(self.origin,0.66,9);
-            
-            sound (soul, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NORM);
+			ThrowMonsterHead ("progs/h_shams.mdl", -90);
+			ThrowGib ("progs/gib1.mdl", -10,#TRUE,0,#GIB1_KGS, #FALSE);
+			ThrowGib ("progs/gib3.mdl", -30,#TRUE,0,#GIB3_KGS, 0.33);
+			ThrowGib ("progs/gib2.mdl", -40,#TRUE,0,#GIB2_KGS, #FALSE);
+			ThrowGib ("progs/gib3.mdl", -70,#TRUE,0,#GIB3_KGS, 0.66);
+			SpawnBloodEx(self.origin,0.66,9);
+			
+			sound (soul, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NORM);
 
-            if (soul.demon_three != world)
-                dremove(soul.demon_three);
-            
-            soul.demon_three = world;
-            
-            soul.think = SUB_Remove;
-            soul.touch = SUB_Null;
-            soul.nextthink = time + 0.05;
-            
-            sprint (warlock, #PRINT_HIGH, "Your shambler ");
-            sprint (warlock, #PRINT_HIGH, soul.netname);
-            sprint (warlock, #PRINT_HIGH, " is dead.\n");
+			if (soul.demon_three != world)
+				dremove(soul.demon_three);
+			
+			soul.demon_three = world;
+			
+			soul.think = SUB_Remove;
+			soul.touch = SUB_Null;
+			soul.nextthink = time + 0.05;
+			
+			sprint (warlock, #PRINT_HIGH, "Your shambler ");
+			sprint (warlock, #PRINT_HIGH, soul.netname);
+			sprint (warlock, #PRINT_HIGH, " is dead.\n");
 
-            doclean = #TRUE;
-        }
-        else if (soul.classname == "monster_wizard")
-        {
-            soul.health = -100;
-            
-            ThrowMonsterHead ("progs/h_wizard.mdl", -90);
+			doclean = #TRUE;
+		}
+		else if (soul.classname == "monster_wizard")
+		{
+			soul.health = -100;
+			
+			ThrowMonsterHead ("progs/h_wizard.mdl", -90);
 			ThrowGib ("progs/gib2.mdl", -10,#TRUE,0,#GIB2_KGS, #FALSE);
 			ThrowGib ("progs/gib3.mdl", -30,#TRUE,0,#GIB3_KGS, #FALSE);
 			ThrowGib ("progs/gib3.mdl", -70,#TRUE,0,#GIB3_KGS, 0.25);
-            SpawnBloodEx(self.origin,0.66,9);
+			SpawnBloodEx(self.origin,0.66,9);
 			
-            sound (soul, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NORM);
+			sound (soul, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NORM);
 			
-            soul.think = SUB_Remove;
+			soul.think = SUB_Remove;
 			soul.touch = SUB_Null;
 			soul.nextthink = time + 0.05;			
 
 			sprint (warlock, #PRINT_HIGH, "Your scrag ");
-            sprint (warlock, #PRINT_HIGH, soul.netname);
-            sprint (warlock, #PRINT_HIGH, " is dead.\n");
+			sprint (warlock, #PRINT_HIGH, soul.netname);
+			sprint (warlock, #PRINT_HIGH, " is dead.\n");
 
-            doclean = #TRUE;
-        }
-        else if (soul.classname == "monster_army")
-        {
-            soul.health = -100;
-            
-            ThrowMonsterHead ("progs/h_player.mdl", -90);
+			doclean = #TRUE;
+		}
+		else if (soul.classname == "monster_army")
+		{
+			soul.health = -100;
+			
+			ThrowMonsterHead ("progs/h_player.mdl", -90);
 			ThrowGib ("progs/gib1.mdl", -10,#TRUE,0,#GIB1_KGS, #FALSE);
 			ThrowGib ("progs/gib2.mdl", -30,#TRUE,0,#GIB2_KGS, #FALSE);
-            ThrowGib ("progs/gib3.mdl", -40,#TRUE,0,#GIB3_KGS, 0.33);
-            ThrowGib ("progs/gib3.mdl", -50,#TRUE,0,#GIB3_KGS, 0.66);
-            SpawnBloodEx(self.origin,0.66,9);
+			ThrowGib ("progs/gib3.mdl", -40,#TRUE,0,#GIB3_KGS, 0.33);
+			ThrowGib ("progs/gib3.mdl", -50,#TRUE,0,#GIB3_KGS, 0.66);
+			SpawnBloodEx(self.origin,0.66,9);
 			sound (soul, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NORM);
 
-            soul.think = SUB_Remove;
+			soul.think = SUB_Remove;
 			soul.touch = SUB_Null;
 			soul.nextthink = time + 0.05;
 
-            // Remove any waypoints
-            if (soul.martyr_enemy != world)
-                RemoveWaypoint(soul.martyr_enemy, soul);
-            
-            if (soul.demon_one != world)
-                RemoveWaypoint(soul.demon_one, soul);
-            
-            if (soul.demon_two != world)            
-                RemoveWaypoint(soul.demon_two, soul);
-            
-            sprint (warlock, #PRINT_HIGH, "Your soldier ");
-            sprint (warlock, #PRINT_HIGH, soul.netname);
-            sprint (warlock, #PRINT_HIGH, " is dead.\n");
+			// Remove any waypoints
+			if (soul.martyr_enemy != world)
+				RemoveWaypoint(soul.martyr_enemy, soul);
 			
-            // We need to reset the pointer on player before calling UpdateReserves()
-            ResetSlotPointer(warlock,soul.increase_team1);
+			if (soul.demon_one != world)
+				RemoveWaypoint(soul.demon_one, soul);
+			
+			if (soul.demon_two != world)			
+				RemoveWaypoint(soul.demon_two, soul);
+			
+			sprint (warlock, #PRINT_HIGH, "Your soldier ");
+			sprint (warlock, #PRINT_HIGH, soul.netname);
+			sprint (warlock, #PRINT_HIGH, " is dead.\n");
+			
+			// We need to reset the pointer on player before calling UpdateReserves()
+			ResetSlotPointer(warlock,soul.increase_team1);
 
-            UpdateReserves(warlock);
-            SetArmyTimer(warlock, #FALSE);
+			UpdateReserves(warlock);
+			SetArmyTimer(warlock, #FALSE);
 
-            // No clean-up of pointer (already done ^ on ResetSlotPointer() so doclean = #FALSE)
-            doclean = #FALSE;
-        }
-        else if (soul.classname == "monster_fish")
-        {
-            soul.health = -100;
-            
-            ThrowGib ("progs/gib2.mdl", -20,#TRUE,0,#GIB2_KGS, #FALSE);
+			// No clean-up of pointer (already done ^ on ResetSlotPointer() so doclean = #FALSE)
+			doclean = #FALSE;
+		}
+		else if (soul.classname == "monster_fish")
+		{
+			soul.health = -100;
+			
+			ThrowGib ("progs/gib2.mdl", -20,#TRUE,0,#GIB2_KGS, #FALSE);
 			ThrowGib ("progs/gib3.mdl", -40,#TRUE,0,#GIB3_KGS, #FALSE);
-            SpawnBloodEx(self.origin,0.66,9);
+			SpawnBloodEx(self.origin,0.66,9);
 			
-            sound (soul, #CHAN_VOICE, "fish/death.wav", 1, #ATTN_NORM);
+			sound (soul, #CHAN_VOICE, "fish/death.wav", 1, #ATTN_NORM);
 			
-            soul.think = SUB_Remove;
+			soul.think = SUB_Remove;
 			soul.touch = SUB_Null;
 			soul.nextthink = time + 0.05;
 
 			sprint (warlock, #PRINT_HIGH, "Your piranha ");
-   			sprint (warlock, #PRINT_HIGH, soul.netname);
-            sprint (warlock, #PRINT_HIGH, " is dead.\n");
+			sprint (warlock, #PRINT_HIGH, soul.netname);
+			sprint (warlock, #PRINT_HIGH, " is dead.\n");
 
-            doclean = #TRUE;
-        }
-        else if (soul.classname == "monster_gremlin")
-        {
-            soul.health = -100;
-            
-            ThrowMonsterHead ("progs/h_grem.mdl", -80);
+			doclean = #TRUE;
+		}
+		else if (soul.classname == "monster_gremlin")
+		{
+			soul.health = -100;
+			
+			ThrowMonsterHead ("progs/h_grem.mdl", -80);
 			ThrowGib ("progs/gib1.mdl", -30,#TRUE,0,#GIB1_KGS, #FALSE);
 			ThrowGib ("progs/gib2.mdl", -35,#TRUE,0,#GIB2_KGS, #FALSE);
 			ThrowGib ("progs/gib3.mdl", -40,#TRUE,0,#GIB3_KGS, 0.5);
-            SpawnBloodEx(self.origin,0.66,9);
+			SpawnBloodEx(self.origin,0.66,9);
 			
-            sound (soul, #CHAN_VOICE, "grem/death.wav", 1, #ATTN_NORM);
+			sound (soul, #CHAN_VOICE, "grem/death.wav", 1, #ATTN_NORM);
 			
-            soul.think = SUB_Remove;
+			soul.think = SUB_Remove;
 			soul.touch = SUB_Null;
 			soul.nextthink = time + 0.05;
 
 			sprint (warlock, #PRINT_HIGH, "Your gremlin ");
 			sprint (warlock, #PRINT_HIGH, soul.netname);
-            sprint (warlock, #PRINT_HIGH, " is dead.\n");
+			sprint (warlock, #PRINT_HIGH, " is dead.\n");
 
-            doclean = #TRUE;
-        }
+			doclean = #TRUE;
+		}
 
-        self = oself;
+		self = oself;
 
-        // Cleaning up of the appropiate pointer (only if needed)
-        if (doclean)
-            ResetSlotPointer(warlock,soul.increase_team1);
-    }
+		// Cleaning up of the appropiate pointer (only if needed)
+		if (doclean)
+			ResetSlotPointer(warlock,soul.increase_team1);
+	}
 };
 
 //==========================================================================
@@ -2775,12 +2777,12 @@ void(entity warlock, float soulnum) KillSoul =
 
 void(entity player, float slot) ResetSlotPointer =
 {
-    if (slot == 0)
-        player.demon_one = world;
-    else if (slot == 1)
-        player.demon_two = world;
-    else if (slot == 2)
-        player.demon_three = world;
+	if (slot == 0)
+		player.demon_one = world;
+	else if (slot == 1)
+		player.demon_two = world;
+	else if (slot == 2)
+		player.demon_three = world;
 };
 
 //============================================================================
@@ -2788,48 +2790,48 @@ void(entity player, float slot) ResetSlotPointer =
 
 float(entity ai_entity) AI_Regenerate =
 {
-    local float heal, rate;
-    heal = 3;
-    rate = 1.5;
+	local float heal, rate;
+	heal = 3;
+	rate = 1.5;
 
-    if (ai_entity.#monster_type == #MONSTER_SHAMBLER)
-    {
-        heal = #SHAMBLER_MAXREGEN * ai_entity.#monster_level;
-        rate = #SHAMBLER_REGENRATE;
-    }
-    else if (ai_entity.#monster_type == #MONSTER_SCRAG)
-    {
-        heal = #SCRAG_MAXREGEN * ai_entity.#monster_level;
-        rate = #SCRAG_REGENRATE;
-    }
-    else if (ai_entity.#monster_type == #MONSTER_DEMON)
-    {
-        heal = #FIEND_MAXREGEN * ai_entity.#monster_level;
-        rate = #FIEND_REGENRATE;
-    }
-    else if (ai_entity.#monster_type == #MONSTER_FISH)
-    {
-        heal = #FISH_MAXREGEN * ai_entity.#monster_level;
-        rate = #FISH_REGENRATE;
-    }
-    else if (ai_entity.#monster_type == #MONSTER_GREMLIN)
-    {
-        heal = #GREMLIN_MAXREGEN * ai_entity.#monster_level;
-        rate = #GREMLIN_REGENRATE;
-    }
-    else if (ai_entity.#monster_type == #MONSTER_ARMY)
-    {    
-        heal = #AURA_ARMY_REGEN;
-        rate = #AURA_ARMY_REGENRATE;
-    }
+	if (ai_entity.#monster_type == #MONSTER_SHAMBLER)
+	{
+		heal = #SHAMBLER_MAXREGEN * ai_entity.#monster_level;
+		rate = #SHAMBLER_REGENRATE;
+	}
+	else if (ai_entity.#monster_type == #MONSTER_SCRAG)
+	{
+		heal = #SCRAG_MAXREGEN * ai_entity.#monster_level;
+		rate = #SCRAG_REGENRATE;
+	}
+	else if (ai_entity.#monster_type == #MONSTER_DEMON)
+	{
+		heal = #FIEND_MAXREGEN * ai_entity.#monster_level;
+		rate = #FIEND_REGENRATE;
+	}
+	else if (ai_entity.#monster_type == #MONSTER_FISH)
+	{
+		heal = #FISH_MAXREGEN * ai_entity.#monster_level;
+		rate = #FISH_REGENRATE;
+	}
+	else if (ai_entity.#monster_type == #MONSTER_GREMLIN)
+	{
+		heal = #GREMLIN_MAXREGEN * ai_entity.#monster_level;
+		rate = #GREMLIN_REGENRATE;
+	}
+	else if (ai_entity.#monster_type == #MONSTER_ARMY)
+	{	 
+		heal = #AURA_ARMY_REGEN;
+		rate = #AURA_ARMY_REGENRATE;
+	}
 
-    if (ai_entity.aura == #AURA_REGEN && ai_entity.#monster_type != #MONSTER_ARMY)
-        heal = heal * #AURA_MONSTER_REGEN_FACTOR;
+	if (ai_entity.aura == #AURA_REGEN && ai_entity.#monster_type != #MONSTER_ARMY)
+		heal = heal * #AURA_MONSTER_REGEN_FACTOR;
 
-    ai_entity.dmgtime = time + rate;
-    ai_entity.health = ai_entity.health + heal;
-    
-    if (ai_entity.health > ai_entity.max_health)
-        ai_entity.health = ai_entity.max_health;
+	ai_entity.dmgtime = time + rate;
+	ai_entity.health = ai_entity.health + heal;
+	
+	if (ai_entity.health > ai_entity.max_health)
+		ai_entity.health = ai_entity.max_health;
 };
 

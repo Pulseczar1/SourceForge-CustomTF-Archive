@@ -3,7 +3,7 @@
 
 	TeamFortress v2.5	 29/2/97
 ========================================================
-Functions for the SOLDIER class and associated weaponry                          
+Functions for the SOLDIER class and associated weaponry 						 
 ========================================================*/
 // Functions outside this file
 
@@ -19,7 +19,7 @@ void() NailGrenadeLaunchNail;
 void() NailGrenadeTouch =
 {
 	if (other == self.owner)
-		return;		// don't explode on owner
+		return; 	// don't explode on owner
 
 	// If the Nail Grenade hits a player, it just bounces off
 
@@ -75,16 +75,16 @@ void() NailGrenadeLaunchNail =
 		self.angles_z = 0;
 		makevectors(self.angles);
 	
-        #ifdef OLD_NAILGREN
-        deathmsg = #DMSG_GREN_NAIL;
+		#ifdef OLD_NAILGREN
+		deathmsg = #DMSG_GREN_NAIL;
 		launch_spike(self.origin, v_forward);
 		newmis.touch = spike_touch;
 		newmis.weapon = #DMSG_GREN_NAIL;
-        #else
-        if (random() < 0.33)
-            MuzzleFlash(self);
-        launch_directspike(self.origin, v_forward);
-        #endif
+		#else
+		if (random() < 0.33)
+			MuzzleFlash(self);
+		launch_directspike(self.origin, v_forward);
+		#endif
 
 		i = i + 1;
 	}

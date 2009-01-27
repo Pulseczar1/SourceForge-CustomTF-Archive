@@ -3,7 +3,7 @@
 
 	SB-1 Tech			15/12/2000
 ========================================================
-Functions for the MEDIC class and associated weaponry                          
+Functions for the MEDIC class and associated weaponry						   
 ========================================================*/
 
 // Functions within this file:
@@ -31,11 +31,12 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 	// Only allow one infection at once.
 	if (targ.tfstate & #TFSTATE_INFECTED)
 		return #FALSE;
-    
-    if (targ.#runes & #RUNE_RESIS)
-        return #FALSE;
 	
-	if (Teammate(targ.team_no, attacker.team_no) && targ != attacker)
+	if (targ.#runes & #RUNE_RESIS)
+		return #FALSE;
+	
+	// Neo mode modication
+	if (Teammate(targ, attacker) && targ != attacker)
 		return #FALSE;
 	
 	if (targ.invincible_finished > time)
@@ -50,73 +51,73 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 	if (targ.tf_items & #NIT_GEL && r < 0.75)
 		return #FALSE;
 
-    local string desc;
-    if (inflictor.netname == "special_mine")
-        desc = "mine";
-    else
-        desc = "grenade";
+	local string desc;
+	if (inflictor.netname == "special_mine")
+		desc = "mine";
+	else
+		desc = "grenade";
 
-    if (attacker == targ) // we infected ourselves! lol
-    {
-        sprint(attacker,#PRINT_HIGH,"You infect yourself!\n");
-        
-        teamprefixsprint(attacker.team_no,attacker);
-        teamsprint6(attacker,attacker.netname,"infects himself!\n","","","","");
-    }
-    else
-    {
-        if (IsMonster(targ))
-        {
-            local string tmps;
-            tmps = GetMonsterName(targ);
-            sprint(attacker,#PRINT_HIGH,"Your ",desc," infects the ",tmps," ",targ.netname);
-            sprint(attacker,#PRINT_HIGH,"!\n");
-            
-            // Inform owner
-            sprint(targ.real_owner,#PRINT_HIGH,"Your ",tmps," ",targ.netname," has been infected!\n");
+	if (attacker == targ) // we infected ourselves! lol
+	{
+		sprint(attacker,#PRINT_HIGH,"You infect yourself!\n");
+		
+		teamprefixsprint(attacker.team_no,attacker);
+		teamsprint6(attacker,attacker.netname,"infects himself!\n","","","","");
+	}
+	else
+	{
+		if (IsMonster(targ))
+		{
+			local string tmps;
+			tmps = GetMonsterName(targ);
+			sprint(attacker,#PRINT_HIGH,"Your ",desc," infects the ",tmps," ",targ.netname);
+			sprint(attacker,#PRINT_HIGH,"!\n");
+			
+			// Inform owner
+			sprint(targ.real_owner,#PRINT_HIGH,"Your ",tmps," ",targ.netname," has been infected!\n");
 
-            teamprefixsprint(targ.real_owner.team_no,targ.real_owner);
-            teamsprint6(targ.real_owner,"The ",tmps," ",targ.netname," has been infected!\n","");
-        }
-        else
-        {
-            sprint(attacker,#PRINT_HIGH,"Your ",desc," infects ",targ.netname,"!\n");
+			teamprefixsprint(targ.real_owner.team_no,targ.real_owner);
+			teamsprint6(targ.real_owner,"The ",tmps," ",targ.netname," has been infected!\n","");
+		}
+		else
+		{
+			sprint(attacker,#PRINT_HIGH,"Your ",desc," infects ",targ.netname,"!\n");
 
-            sprint(targ,#PRINT_HIGH,"You have been infected by a biological ",desc,"!\n");
+			sprint(targ,#PRINT_HIGH,"You have been infected by a biological ",desc,"!\n");
 
-            teamprefixsprint(targ.team_no,targ);
-            teamsprint6(targ,targ.netname," has been infected!\n","","","","");
-        }
-    }
+			teamprefixsprint(targ.team_no,targ);
+			teamsprint6(targ,targ.netname," has been infected!\n","","","","");
+		}
+	}
 
-    if (IsMonster(targ))
-    {
-    	targ.tfstate = targ.tfstate | #TFSTATE_INFECTED;
+	if (IsMonster(targ))
+	{
+		targ.tfstate = targ.tfstate | #TFSTATE_INFECTED;
 	
-	    BioInfection = spawn ();
-	    BioInfection.classname = "timer";
-	    BioInfection.netname = "biotimer";
-	    BioInfection.owner = attacker;
-	    BioInfection.nextthink = time + 2;
-	    BioInfection.think = BioInfection_MonsterDecay;
-	    BioInfection.enemy = targ;
+		BioInfection = spawn ();
+		BioInfection.classname = "timer";
+		BioInfection.netname = "biotimer";
+		BioInfection.owner = attacker;
+		BioInfection.nextthink = time + 2;
+		BioInfection.think = BioInfection_MonsterDecay;
+		BioInfection.enemy = targ;
 	
-	    targ.infection_team_no = attacker.team_no;
-    }
-    else
-    {
-    	targ.tfstate = targ.tfstate | #TFSTATE_INFECTED;
+		targ.infection_team_no = attacker.team_no;
+	}
+	else
+	{
+		targ.tfstate = targ.tfstate | #TFSTATE_INFECTED;
 	
-	    BioInfection = spawn ();
-	    BioInfection.classname = "timer";
-	    BioInfection.netname = "biotimer";
-	    BioInfection.owner = targ;
-	    BioInfection.nextthink = time + 2;
-	    BioInfection.think = BioInfection_Decay;
-	    BioInfection.enemy = attacker;
+		BioInfection = spawn ();
+		BioInfection.classname = "timer";
+		BioInfection.netname = "biotimer";
+		BioInfection.owner = targ;
+		BioInfection.nextthink = time + 2;
+		BioInfection.think = BioInfection_Decay;
+		BioInfection.enemy = attacker;
 	
-	    targ.infection_team_no = attacker.team_no;
-    }
+		targ.infection_team_no = attacker.team_no;
+	}
 	
 	return #TRUE;
 };
@@ -128,12 +129,12 @@ void() BioGrenadeTouch =
 {
 	if (self.velocity == '0 0 0')
 		self.avelocity = '0 0 0';
-    
-    if (other == self.owner)
-		return;		// don't explode on owner
+	
+	if (other == self.owner)
+		return; 	// don't explode on owner
 
 	// Thrown grenades don't detonate when hitting an enemy
-	sound (self, #CHAN_WEAPON, "weapons/bounce.wav", 1, #ATTN_NORM);	// bounce sound	
+	sound (self, #CHAN_WEAPON, "weapons/bounce.wav", 1, #ATTN_NORM);	// bounce sound 
 };
 
 //=========================================================================
@@ -142,29 +143,26 @@ void() BioGrenadeTouch =
 void() BioGrenadeExplode =
 {
 	// Toxic fluids do some damage on explosion
-    deathmsg = #DMSG_BIOEXPLOSION;
-    T_BeamDamage(self,self.owner,60);
+	deathmsg = #DMSG_BIOEXPLOSION;
+	T_BeamDamage(self,self.owner,60);
 
-    local entity dier; // He's the dier and he's dying
+	local entity dier; // He's the dier and he's dying
 	
 	dier = findradius(self.origin, #BIO_GREN_RADIUS);
 	while (dier)
 	{
-		if (dier.classname == "player" && dier.health > 0)
-		{
-			if (CanDamage(dier,self))
-				if (dier.takedamage)
-				{
+		if (dier.classname == "player" && dier.health > 0) {
+			if (CanDamage(dier,self)) {
+				if (dier.takedamage) {
 					BioInfect(dier, self.owner, 1, self); // was 0.7
-                		}
-        	}
-		else
-		{
-			if (IsMonster(dier))
-		            if (CanDamage(dier,self))
-            		    BioInfect(dier, self.owner, 1, self);
+				}
+			}
 		}
-
+		else {
+			if (IsMonster(dier))
+					if (CanDamage(dier,self))
+						BioInfect(dier, self.owner, 1, self);
+		}
 		dier = dier.chain;
 	}
 	
@@ -182,7 +180,7 @@ void() BioGrenadeExplode =
 	dremove(self);
 #else
 	BecomeExplosion ();
-#endif        
+#endif		  
 };
 
 float(entity doc, entity patient, vector org) CureAdverseEffects =
@@ -209,15 +207,15 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 			sprint(doc, #PRINT_HIGH, "You heal ", patient.netname, "'s concussion\n");
 		}
 		// Give the medic a frag for doing it, only if it was caused by an enemy
-		if (!Teammate(doc.team_no,te.team_no))
+		// Neo mode modication
+		if (!Teammate(doc, te))
 		{
 			doc.real_frags = doc.real_frags + 1;
- 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+			if (!(toggleflags & #TFLAG_TEAMFRAGS))
 				doc.frags = doc.real_frags;
 		}
 		TeamFortress_SetSpeed(patient);
 		dremove(te);
-		//OfN - return #TRUE;
 	}
 
 	// remove hallucination from player
@@ -242,15 +240,15 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 				sprint(doc, #PRINT_HIGH, "You halt ", patient.netname, "'s hallucinations\n");
 			}
 			// Give the medic a frag for doing it, only if it was caused by an enemy
-			if (!Teammate(doc.team_no,te.team_no))
+			// Neo mode modication
+			if (!Teammate(doc, te))
 			{
 				doc.real_frags = doc.real_frags + 1;
-	 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+				if (!(toggleflags & #TFLAG_TEAMFRAGS))
 					doc.frags = doc.real_frags;
 			}
 
 			dremove(te);
-			//OfN - return #TRUE;
 		}
 		else
 		{
@@ -258,22 +256,22 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 		}
 	}
 
-    #ifndef OLD_FLASH
-    if (patient.tfstate & #TFSTATE_PSIONIZED)
-    {
-        patient.tfstate = patient.tfstate - #TFSTATE_PSIONIZED;
+	#ifndef OLD_FLASH
+	if (patient.tfstate & #TFSTATE_PSIONIZED)
+	{
+		patient.tfstate = patient.tfstate - #TFSTATE_PSIONIZED;
 
-        TeamFortress_SetSpeed(patient);
+		TeamFortress_SetSpeed(patient);
 
-        te = find(world, netname, "psionictimer");
-        while ((te.owner != patient || te.classname != "timer") && (te != world))
-            te = find(te, netname, "psionictimer");
+		te = find(world, netname, "psionictimer");
+		while ((te.owner != patient || te.classname != "timer") && (te != world))
+			te = find(te, netname, "psionictimer");
 
-        if (te != world)
-        {
-            SpawnBlood(org, 20);
-            
-            if (doc == patient)
+		if (te != world)
+		{
+			SpawnBlood(org, 20);
+			
+			if (doc == patient)
 				sprint(doc, #PRINT_HIGH, "The psionic influence has stopped.\n");
 			else
 			{
@@ -281,19 +279,19 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 				sprint(doc, #PRINT_HIGH, "You restore ", patient.netname, "'s psionic normality\n");
 			}
 
-            // Give the medic a frag for doing it, only if it was caused by an enemy
-            if (!Teammate(doc.team_no,te.team_no))
-            {
-                doc.real_frags = doc.real_frags + 1;
-                if (!(toggleflags & #TFLAG_TEAMFRAGS))
-                    doc.frags = doc.real_frags;
-            }
+			// Give the medic a frag for doing it, only if it was caused by an enemy
+			// Neo mode modication
+			if (!Teammate(doc, te))
+			{
+				doc.real_frags = doc.real_frags + 1;
+				if (!(toggleflags & #TFLAG_TEAMFRAGS))
+					doc.frags = doc.real_frags;
+			}
 
-            dremove(te);
-            //OfN - return #TRUE;
-        }
-    }
-    #endif // PSIONIC
+			dremove(te);
+		}
+	}
+	#endif // PSIONIC
 
 	// remove tranquilisation from player
 	// Try to find a tranquilisation timer entity for this player
@@ -318,15 +316,14 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 				sprint(doc, #PRINT_HIGH, "You heal ", patient.netname, "'s tranquilisation\n");
 			}
 			// Give the medic a frag for doing it, only if it was caused by an enemy
-			if (!Teammate(doc.team_no,te.team_no))
+			if (!Teammate(doc, te))
 			{
 				doc.real_frags = doc.real_frags + 1;
-	 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+				if (!(toggleflags & #TFLAG_TEAMFRAGS))
 					doc.frags = doc.real_frags;
 			}
 
 			dremove(te);
-			//OfN - return #TRUE;
 		}
 		else
 		{
@@ -346,7 +343,6 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 			sprint(patient, #PRINT_HIGH, doc.netname, " removes the effect of stasis on you!\n");
 			sprint(doc, #PRINT_HIGH, "You halt the effects of stasis on ", patient.netname, "!\n");
 		}
-//		patient.movetype = patient.stasismovetype;
 		patient.gravity = patient.stasisGravity;
 		patient.effects = patient.effects - (patient.effects & #EF_BRIGHTFIELD);
 		return 1;
@@ -390,20 +386,18 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 				sprint(doc, #PRINT_HIGH, patient.netname);
 				sprint(doc, #PRINT_HIGH, " of the infection.\n");	
 
-                teamprefixsprintbi(doc.team_no,doc,patient);
-                teamsprintbi(doc,patient,doc.netname," cures ",patient.netname,"'s infection\n","","");
+				teamprefixsprintbi(doc.team_no,doc,patient);
+				teamsprintbi(doc,patient,doc.netname," cures ",patient.netname,"'s infection\n","","");
 
 				// Give the medic a frag for doing it, only if it was caused by an enemy
-				if (!Teammate(patient.infection_team_no, doc.team_no))
+				if (!Teammate2(doc,patient.infection_team_no))
 				{
 					doc.real_frags = doc.real_frags + 1;
-		 			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+					if (!(toggleflags & #TFLAG_TEAMFRAGS))
 						doc.frags = doc.real_frags;
 				}
 			}
 		}
-
-		//OfN - return #TRUE;
 	}
 
 	// put out the fire if they are burning
@@ -424,8 +418,6 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 				sprint(doc, #PRINT_MEDIUM, "'s fire.\n");	
 			}
 		}
-				
-		//OfN - return #TRUE;
 	}
 };
 

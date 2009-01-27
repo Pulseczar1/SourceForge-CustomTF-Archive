@@ -46,7 +46,8 @@ float (entity thing) canairpush =
 	if (thing.classname == "player")
 	{
 		#ifdef AIRFIST_DONT_PUSH_TEAMMATES
-			if (!Teammate(self.team_no,thing.team_no)) //WARNING: using self
+			// Neo mode modication
+			if (!Teammate(self, thing)) //WARNING: using self
 		#endif
 			return #TRUE;
 	}
@@ -407,7 +408,8 @@ void() launch_horn =
 		#ifdef AIRFIST_DONT_HURT_TEAMMATES
 		if (e.classname == "player")
 		{
-			if (!Teammate(self.team_no,e.team_no))
+			// Neo mode modication
+			if (!Teammate(self, e))
 			{
 				T_Damage(e, self, self, ldmg);
 

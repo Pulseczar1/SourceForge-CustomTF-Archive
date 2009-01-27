@@ -3,7 +3,7 @@
 
 	TeamFortress v2.5	 29/2/97
 ========================================================
-Functions for the SNIPER class and associated weaponry                          
+Functions for the SNIPER class and associated weaponry							
 ========================================================*/
 // Functions outside this file
 
@@ -20,12 +20,12 @@ void(entity targ, float pain) RevealThief;
 // Sniper/Auto Rifle selection function
 void() TeamFortress_SniperWeapon =
 {
-	//local	float	it;
+	//local float	it;
 	
 	self.impulse = 0;
 
-    if (self.tfstate & #TFSTATE_RELOADING)
-   		return;
+	if (self.tfstate & #TFSTATE_RELOADING)
+		return;
 
 	if (!((self.weapons_carried & #WEAP_SNIPER_RIFLE) && (self.weapons_carried & #WEAP_AUTO_RIFLE)))
 		return;
@@ -96,7 +96,7 @@ void() SniperSight_Update =
 
 	if (trace_fraction == 1.0)
 	{
-       	setorigin(self, self.owner.origin );
+		setorigin(self, self.owner.origin );
 		return;
 	}
 
@@ -143,7 +143,7 @@ void() SniperSight_Update2 =
 
 	if (trace_fraction == 1.0)
 	{
-       	setorigin(self, self.owner.origin );
+		setorigin(self, self.owner.origin );
 		return;
 	}
 
@@ -169,16 +169,16 @@ void(float type) SniperSight_Create =
 	sight.movetype = #MOVETYPE_NOCLIP;
 	sight.solid = #SOLID_NOT;
 
-    if (megatf & #MEGATF_SIGHTS)
-    {
-        setmodel (sight, "progs/colsight.spr");
-        sight.frame = self.team_no - 1;
-    }
-    else
-    	setmodel (sight, "progs/sight.spr");
+	if (megatf & #MEGATF_SIGHTS)
+	{
+		setmodel (sight, "progs/colsight.spr");
+		sight.frame = self.team_no - 1;
+	}
+	else
+		setmodel (sight, "progs/sight.spr");
 
 	sight.classname = "timer";
-    sight.netname = "sniperdot"; // OfN
+	sight.netname = "sniperdot"; // OfN
 
 	setorigin(sight, self.origin);
 	if (type == 1)

@@ -1,7 +1,7 @@
 /*======================================================
-	TFORTHLP.QC			CustomTeamFortress v3.1	
+	TFORTHLP.QC 		CustomTeamFortress v3.1 
 
-	(c) TeamFortress Software Pty Ltd 	29/2/97
+	(c) TeamFortress Software Pty Ltd	29/2/97
 	(c) William Kerney			5/22/00
 	parts (c) Craig Hauser
 ========================================================
@@ -26,6 +26,10 @@ void() TeamFortress_MOTD =
 	local string st;
 	local entity atimer;
 
+	// Neo mode
+	// for forcing the new player to team 2 (Smiths)
+	if (neo && self.team_no == 0) Menu_Team_Input(2);
+
 	// check if player already has aliases
 	if (self.motd == 4) {
 		stuffcmd(self,"prozac2\n");
@@ -36,8 +40,8 @@ void() TeamFortress_MOTD =
 	{
 		if (self.show_hostile < time) {
 			//CenterPrint3(self,#MSG_INTRO,#MSG_INTRO2,#MSG_INTRO3);//,CP_MOTD);
-            PrintProzacMOTD();
-			self.show_hostile = time + #MOTD_REFRESHRATE; //was 1 //.5?             
+			PrintProzacMOTD();
+			self.show_hostile = time + #MOTD_REFRESHRATE; //was 1 //.5? 			
 		}
 		self.menu_count = #MENU_REFRESH_RATE;
 		self.current_menu = #MENU_DEFAULT;
@@ -75,9 +79,9 @@ void() TeamFortress_MOTD =
 			sprint(self, #PRINT_HIGH, "\n\n\n");*/
 
 //CH prints customTF version.  Edit in messages.qc
-        PrintProzacIntro();
+		PrintProzacIntro();
 
-        self.current_menu = #MENU_INTRO;
+		self.current_menu = #MENU_INTRO;
 		self.menu_count = #MENU_REFRESH_RATE;
    
 		self.motd = #MOTD_FINISHED;
@@ -87,19 +91,19 @@ void() TeamFortress_MOTD =
 		TeamFortress_Alias("upgrade", (#TF_SELL), 0);
 		TeamFortress_Alias("skill", (#TF_SKILL), 0);
 		TeamFortress_Alias("throwdet", (#IMPULSE_THROWDETPACK), 0);
-        TeamFortress_Alias("holo", (#IMPULSE_HOLO), 0);
-        TeamFortress_Alias("range", #IMPULSE_TESTRANGE, 0);
-        //TeamFortress_Alias("debug", (#IMPULSE_DEBUG), 0); 193
+		TeamFortress_Alias("holo", (#IMPULSE_HOLO), 0);
+		TeamFortress_Alias("range", #IMPULSE_TESTRANGE, 0);
+		//TeamFortress_Alias("debug", (#IMPULSE_DEBUG), 0); 193
 		
 		// check if player already has aliases
-	   	if (self.got_aliases == #TRUE)
+		if (self.got_aliases == #TRUE)
 			return;
 
 		//WK If not, spawn off a timer to slowly send the aliases to
 		//prevent overflow
 		atimer = spawn ();
 		atimer.classname = "timer";
-        atimer.netname = "alias"; // OfN - For not removing on removetimers func
+		atimer.netname = "alias"; // OfN - For not removing on removetimers func
 		atimer.owner = self;
 		atimer.nextthink = time + 0.5;
 		atimer.heat = 0;
@@ -111,16 +115,16 @@ void() TeamFortress_MOTD =
 // Help displayed when someone types the alias "maphelp"
 void() TeamFortress_HelpMap =
 {
-    // Anti-abuse code
-    if (self.option2 > time)
-        return;
+	// Anti-abuse code
+	if (self.option2 > time)
+		return;
 
-    self.option2 = time + 1.25;
-    
-    // OfN - Display settings
-    PrintGameSettings(#FALSE);
+	self.option2 = time + 1.25;
+	
+	// OfN - Display settings
+	PrintGameSettings(#FALSE);
 
-    sprint(self,#PRINT_HIGH,"Íáð Èåìð:\n");
+	sprint(self,#PRINT_HIGH,"Íáð Èåìð:\n");
 
 	local entity te;
 
@@ -133,20 +137,20 @@ void() TeamFortress_HelpMap =
 			return;
 		}
 	}
-    
-    // sprint (self, #PRINT_HIGH, "There is no help for you.\n");
-    sprint (self, #PRINT_HIGH, "There is no map-specific help.\n");
+	
+	// sprint (self, #PRINT_HIGH, "There is no help for you.\n");
+	sprint (self, #PRINT_HIGH, "There is no map-specific help.\n");
 };
 
 void() AliasTimer = {
 	
-    if (!self.owner.is_connected)
-    {
-        dremove(self);
-        return;
-    }
-    
-    local entity oself;
+	if (!self.owner.is_connected)
+	{
+		dremove(self);
+		return;
+	}
+	
+	local entity oself;
 	local float myheat;
 	myheat = self.heat = self.heat + 1;
 	if (self.heat > 5) {
@@ -173,17 +177,17 @@ void() AliasTimer = {
 		// Pipebombs
 		TeamFortress_Alias("detpipe", #TF_PB_DETONATE, 0);
 		TeamFortress_Alias("uncustom", #TF_UNCUSTOM, 0);
-        
+		
 
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Finished alias pack number 1\n");
-        #endif
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Finished alias pack number 1\n");
+		#endif
 	}
 	else if (myheat == 2) {
 
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Starting alias pack number 2\n");
-        #endif
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Starting alias pack number 2\n");
+		#endif
 
 		// Reloading
 		TeamFortress_Alias("reload", #TF_RELOAD, 0);
@@ -200,25 +204,26 @@ void() AliasTimer = {
 		TeamFortress_Alias("feign", #TF_SPY_DIE, 0);
 		TeamFortress_Alias("sfeign", #TF_SPY_DIE2, 0);
 		TeamFortress_Alias("build", #TF_ENGINEER_BUILD, 0);
-		TeamFortress_Alias("detdispenser", (#TF_ENGINEER_BUILD), 7);
+		TeamFortress_Alias("detdispenser", (#TF_ENGINEER_BUILD), 1); //WK 5-15-08 Fixed detdispenser
 
 		// General
 		TeamFortress_Alias("dropammo", #TF_DROP_AMMO, 0);
 		TeamFortress_Alias("flaginfo", #FLAG_INFO, 0);
 		TeamFortress_Alias("autozoom", #TF_AUTOZOOM, 0);
 		//TeamFortress_Alias("showloc", #TF_DISPLAYLOCATION, 0);
-		//TeamFortress_Alias("changeclass",#TF_CHANGECLASS, 0);
-                                    //- OfN - it was(#TF_CHANGEPC + #PC_CUSTOM)
+		TeamFortress_Alias("changeclass",#TF_CHANGECLASS, 0); //WK 5-15-08 Added changeclass back in
+		TeamFortress_Alias("changeteam",#TF_CHANGETEAM, 0); //WK 5-15-08 Added changeteam in
+									//- OfN - it was(#TF_CHANGEPC + #PC_CUSTOM)
 
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Finished alias pack number 2\n");
-        #endif
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Finished alias pack number 2\n");
+		#endif
 	}
 	else if (myheat == 3) {
 
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Starting alias pack number 3\n");
-        #endif        
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Starting alias pack number 3\n");
+		#endif		  
 
 		//Taunts
 		TeamFortress_Alias("taunt1", #TF_TAUNT, 0);
@@ -240,21 +245,21 @@ void() AliasTimer = {
 		TeamFortress_Alias("randompc",(#TF_CHANGEPC + #PC_RANDOM), 0);
 
 		TeamFortress_Alias("showtf",#TF_SHOWTF, 0);
-		TeamFortress_Alias("maphelp", #TF_HELP_MAP, 0);	
-        #ifdef COOP_MODE
-        if (coop)
-            TeamFortress_Alias("dropkey", #TF_DROPKEY, 0);
-        #endif
+		TeamFortress_Alias("maphelp", #TF_HELP_MAP, 0); 
+		#ifdef COOP_MODE
+		if (coop)
+			TeamFortress_Alias("dropkey", #TF_DROPKEY, 0);
+		#endif
 
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Finished alias pack number 3\n");
-        #endif
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Finished alias pack number 3\n");
+		#endif
 	}
 	else if (myheat == 4) {
 
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Starting alias pack number 4\n");
-        #endif
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Starting alias pack number 4\n");
+		#endif
 
 		// Sample aliases for the Scanner
 		TeamFortress_Alias("scan10", #TF_SCAN_10, 0);
@@ -279,32 +284,32 @@ void() AliasTimer = {
 		TeamFortress_Alias("+det50", #TF_DETPACK_50, 0);
 		TeamFortress_Alias("-det50", #TF_DETPACK_STOP, 0);
 
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Finished alias pack number 4\n");
-        #endif
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Finished alias pack number 4\n");
+		#endif
 	}
 	else if (myheat == 5) {
 		
-        #ifdef ALIASES_TEST
-        sprint(self,#PRINT_HIGH,"Starting alias pack number 5\n");
-        #endif
+		#ifdef ALIASES_TEST
+		sprint(self,#PRINT_HIGH,"Starting alias pack number 5\n");
+		#endif
 
-        //Get rid of silly MegaTF 10 year olds
+		//Get rid of silly MegaTF 10 year olds
 		TeamFortress_Alias("lay", #TF_LAY, 0);
 		//CH allow dropitems
 		TeamFortress_Alias("dropitems", #TF_DROPITEMS, 0);
-        
-        //TeamFortress_Alias("get", #TF_ADMIN_KICK_CYCLE, 0);
+		
+		//TeamFortress_Alias("get", #TF_ADMIN_KICK_CYCLE, 0);
 		//TeamFortress_Alias("kick", #TF_ADMIN_KICK_PERSON, 0);
 		//TeamFortress_Alias("ban", #TF_ADMIN_BAN_PERSON, 0);
 		//TeamFortress_Alias("ceasefire", #TF_ADMIN_CEASEFIRE, 0);
-        //TeamFortress_Alias("cmnd", #IMPULSE_STUFFCMD, 0);
+		//TeamFortress_Alias("cmnd", #IMPULSE_STUFFCMD, 0);
 
-        //- OfN
-        TeamFortress_Alias("punish", #IMPULSE_PUNISH, 0);
-        TeamFortress_Alias("votemap", #IMPULSE_VOTEMAP, 0);
-        TeamFortress_Alias("voteyes", #IMPULSE_VOTEYES, 0);
-        TeamFortress_Alias("voteno", #IMPULSE_VOTENO, 0);
+		//- OfN
+		TeamFortress_Alias("punish", #IMPULSE_PUNISH, 0);
+		TeamFortress_Alias("votemap", #IMPULSE_VOTEMAP, 0);
+		TeamFortress_Alias("voteyes", #IMPULSE_VOTEYES, 0);
+		TeamFortress_Alias("voteno", #IMPULSE_VOTENO, 0);
 
 
 #ifdef STATUSBAR
@@ -329,19 +334,19 @@ void() AliasTimer = {
 
 		//WK INTRO THUNDER
 		// OfN - now we have four :P
-        
-        myheat = rint(random()*3);
+		
+		myheat = rint(random()*3);
 
-        if (myheat == 0)
-            stuffcmd(self, "play ambience/thunder1\n");
-        else if (myheat == 1)
-            stuffcmd(self, "play environ/thunder2\n");
-        else if (myheat == 2)
-            stuffcmd(self, "play environ/thunder3\n");
-        else
-            stuffcmd(self, "play environ/thunder4\n");
+		if (myheat == 0)
+			stuffcmd(self, "play ambience/thunder1\n");
+		else if (myheat == 1)
+			stuffcmd(self, "play environ/thunder2\n");
+		else if (myheat == 2)
+			stuffcmd(self, "play environ/thunder3\n");
+		else
+			stuffcmd(self, "play environ/thunder4\n");
 
-        sprint(self,#PRINT_HIGH,"The aliases have been set. Welcome!\n");
+		sprint(self,#PRINT_HIGH,"The aliases have been set. Welcome!\n");
 	}
 
 	self = oself;

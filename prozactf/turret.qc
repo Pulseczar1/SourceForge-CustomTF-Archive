@@ -6,7 +6,7 @@ to handle turrets. Some changes may have
 to be made in ClientObituary().
 =============================*/
 
-float TURRET_INSTANT_FIRE 	= 1;
+float TURRET_INSTANT_FIRE	= 1;
 float TURRET_EXPLOSIVE_FIRE = 2;
 
 void() turret_scanthink;

@@ -10,7 +10,7 @@
 void() Kick_My_Owner =
 {
 	local string ip;
-      local string oldname,nospeed;
+	  local string oldname,nospeed;
 	local float banned,off;
 	banned = #FALSE;
 
@@ -52,11 +52,11 @@ void() Kick_My_Owner =
 
 #define MAXPERCENT 35 //WK this looks good for wall strafing
 //reasons for not checking
-#define IMMUNE 	1
-#define GRAPPLE	2
-#define FLYING 	4
+#define IMMUNE	1
+#define GRAPPLE 2
+#define FLYING	4
 #define NOCLASS 	16
-#define BUILDING 	32
+#define BUILDING	32
 #define DEAD	64
 
 void () TeamFortress_CheckForSpeed =
@@ -138,7 +138,7 @@ else
 		bprint(#PRINT_HIGH, " may be cheating. (Current:");
 		bprint(#PRINT_HIGH, ftos(dist));
 		bprint(#PRINT_HIGH, "/Max:");
-            bprint(#PRINT_HIGH, ftos(max));
+			bprint(#PRINT_HIGH, ftos(max));
 		bprint(#PRINT_HIGH, ")\n");
 		self.has_sentry = 10;
 	} else {

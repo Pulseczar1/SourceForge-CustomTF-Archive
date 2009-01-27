@@ -3,7 +3,7 @@
 
 	TeamFortress v2.5	 29/2/97
 ========================================================
-Functions for the DEMOMAN class and associated weaponry                          
+Functions for the DEMOMAN class and associated weaponry 						 
 ========================================================*/
 // Functions outside this file
 void() NormalGrenadeTouch;
@@ -36,7 +36,7 @@ void() TeamFortress_DetonatePipebombs =
 	e = find(world, classname, "pipebomb");
 	while (e != world)
 	{
-    	if(e.owner == self)
+		if(e.owner == self)
 			e.nextthink = time;
 		
 		e = find(e, classname, "pipebomb");
@@ -84,10 +84,10 @@ void() MirvGrenadeExplode =
 	self.solid = #SOLID_NOT;
 
 	// Launch mirvs
-    if (self.netname != "special_mine")
-        nummirvs = #GR_TYPE_MIRV_NO;
-    else
-        nummirvs = #MINE_MIRV_NUM;
+	if (self.netname != "special_mine")
+		nummirvs = #GR_TYPE_MIRV_NO;
+	else
+		nummirvs = #MINE_MIRV_NUM;
 
 	i = 0;
 	while (i < nummirvs)
@@ -95,12 +95,6 @@ void() MirvGrenadeExplode =
 		MirvGrenadeLaunch (self.origin + '0 0 -1',self.owner,self.velocity); //WK 1/15/07 Added Gizmo's MIRV velocity idea
 		i = i + 1;
 	}
-
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
 
 	BecomeExplosion();
 };
@@ -270,7 +264,7 @@ void() TeamFortress_DetpackSet =
 
 	self.is_detpacking = 0;
 	self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_CANT_MOVE);
-    self.owner.is_detpacking = 0;
+	self.owner.is_detpacking = 0;
 
 #ifdef QUAKE_WORLD
 	TeamFortress_SetSpeed(self.owner);
@@ -289,7 +283,7 @@ void() TeamFortress_DetpackSet =
 
 	newmis = spawn ();
 	newmis.owner = newmis.real_owner = self.owner;
-    	newmis.origin = self.owner.origin - '0 0 23';
+		newmis.origin = self.owner.origin - '0 0 23';
 	newmis.movetype = #MOVETYPE_BOUNCE;
 #ifdef QUAKE_WORLD
 	newmis.solid = #SOLID_BBOX;
@@ -297,15 +291,15 @@ void() TeamFortress_DetpackSet =
 	newmis.solid = #SOLID_TRIGGER;
 #endif
 	newmis.classname = "detpack";
-    	newmis.flags = #FL_ITEM;
+		newmis.flags = #FL_ITEM;
 		
 	newmis.angles = '90 0 0';
 	newmis.angles_y = self.owner.angles_y;
 	newmis.velocity = '0 0 0';
 	newmis.avelocity = '0 0 0';
 
-	newmis.weaponmode = 0;  // Detpack weaponmode = 1 when disarming
-   	newmis.touch = TeamFortress_DetpackTouch;
+	newmis.weaponmode = 0;	// Detpack weaponmode = 1 when disarming
+	newmis.touch = TeamFortress_DetpackTouch;
 
 	setmodel (newmis, "progs/detpack.mdl");
 	setsize (newmis, '-16 -16 0', '16 16 8');
@@ -316,7 +310,7 @@ void() TeamFortress_DetpackSet =
 
 	// Create the CountDown entity
 	countd = spawn();
-	newmis.linked_list = countd;    // attach count to its detpack
+	newmis.linked_list = countd;	// attach count to its detpack
 	countd.think = TeamFortress_DetpackCountDown;
 	countd.health = self.health - 1;
 	countd.owner = self.owner;
@@ -337,8 +331,8 @@ void() TeamFortress_DetpackSet =
 
 	sprint(self.owner, #PRINT_HIGH, "Detpack set!\n");
 
-    teamprefixsprint(self.owner.team_no,self.owner);
-    teamsprint6(self.owner,self.owner.netname," sets a detpack!\n","","","","");
+	teamprefixsprint(self.owner.team_no,self.owner);
+	teamsprint6(self.owner,self.owner.netname," sets a detpack!\n","","","","");
 
 	dremove(self);
 };
@@ -362,7 +356,7 @@ void() TeamFortress_DetpackExplode =
 		deathmsg = #DMSG_DETPACK;
 		T_RadiusDamage (self, self.owner, #WEAP_DETPACK_SIZE, world);
 
-        sound(self, #CHAN_MISC, "weapons/detpack.wav", 1, #ATTN_NONE);
+		sound(self, #CHAN_MISC, "weapons/detpack.wav", 1, #ATTN_NONE);
 
 		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
@@ -373,7 +367,7 @@ void() TeamFortress_DetpackExplode =
 		multicast (self.origin, #MULTICAST_PHS);
 	#endif
 
-        WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 		WriteByte (#MSG_BROADCAST, #TE_LAVASPLASH);
 		WriteCoord (#MSG_BROADCAST, self.origin_x);
 		WriteCoord (#MSG_BROADCAST, self.origin_y);
@@ -382,62 +376,62 @@ void() TeamFortress_DetpackExplode =
 		multicast (self.origin, #MULTICAST_PHS);
 	#endif
 
-    //- OfN - Should a detpack make the same explosion a gren does? dont think so...
-    #ifdef EXTRA_DETPACK_EXPLOSIONS
-        
-        local float loopc;
-        local vector rexp;
+	//- OfN - Should a detpack make the same explosion a gren does? dont think so...
+	#ifdef EXTRA_DETPACK_EXPLOSIONS
+		
+		local float loopc;
+		local vector rexp;
 
-        loopc = 0;
+		loopc = 0;
 
-        while (loopc < #EXTRA_DETEXPLOSIONS)
-        {
-            rexp_x = self.origin_x + random()*400 - 200;
-            rexp_y = self.origin_y + random()*400 - 200;
-            rexp_z = self.origin_z + random()*100;
+		while (loopc < #EXTRA_DETEXPLOSIONS)
+		{
+			rexp_x = self.origin_x + random()*400 - 200;
+			rexp_y = self.origin_y + random()*400 - 200;
+			rexp_z = self.origin_z + random()*100;
 
-            if (vis2orig(self.origin,rexp))
-            {
-                WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-                WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
-                WriteCoord (#MSG_BROADCAST, rexp_x);
-                WriteCoord (#MSG_BROADCAST, rexp_y);
-                WriteCoord (#MSG_BROADCAST, rexp_z);
-            #ifdef QUAKE_WORLD
-                multicast (rexp, #MULTICAST_PHS);
-            #endif
-            }
-            loopc = loopc + 1;
-        }
-    #endif
+			if (vis2orig(self.origin,rexp))
+			{
+				WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+				WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
+				WriteCoord (#MSG_BROADCAST, rexp_x);
+				WriteCoord (#MSG_BROADCAST, rexp_y);
+				WriteCoord (#MSG_BROADCAST, rexp_z);
+			#ifdef QUAKE_WORLD
+				multicast (rexp, #MULTICAST_PHS);
+			#endif
+			}
+			loopc = loopc + 1;
+		}
+	#endif
 
-    //- OfN - Moves a bit the players that are near the exploding detpack
-    #ifdef DETPACK_EARTHQUAKE
-        
-        local entity head;
+	//- OfN - Moves a bit the players that are near the exploding detpack
+	#ifdef DETPACK_EARTHQUAKE
+		
+		local entity head;
 
-        local vector v;
-	    
-        head = findradius(self.origin, #DETPACK_EARTHQUAKE_RANGE);
+		local vector v;
+		
+		head = findradius(self.origin, #DETPACK_EARTHQUAKE_RANGE);
 
-        while (head)
-        {
-            if (head.classname == "player")
-            if (head.health > 0)
-            if (head.is_connected)
-            if (head.playerclass != #PC_UNDEFINED)
-            if (head.flags & #FL_ONGROUND || head.waterlevel)
-            {
-                v_x = 100 * crandom();
-            	v_y = 100 * crandom();
-        	    v_z = 150 + 200 * random();
-                head.velocity = head.velocity + v;
-            }
-            
-            head = head.chain;
-        }
+		while (head)
+		{
+			if (head.classname == "player")
+			if (head.health > 0)
+			if (head.is_connected)
+			if (head.playerclass != #PC_UNDEFINED)
+			if (head.flags & #FL_ONGROUND || head.waterlevel)
+			{
+				v_x = 100 * crandom();
+				v_y = 100 * crandom();
+				v_z = 150 + 200 * random();
+				head.velocity = head.velocity + v;
+			}
+			
+			head = head.chain;
+		}
 
-    #endif
+	#endif
 
 
 	}
@@ -448,16 +442,16 @@ void() TeamFortress_DetpackExplode =
 	}
 
 	// This code handles a disarming scout with protection
-	if (self.weaponmode == 1)     	  // Detpack was being disarmed
-	{   
+	if (self.weaponmode == 1)		  // Detpack was being disarmed
+	{	
 #ifdef QUAKE_WORLD
 		TeamFortress_SetSpeed(self.enemy);
 #else
 		self.enemy.pausetime = time;		
 #endif
 
-		dremove(self.oldenemy);  	 // CountDown
-		dremove(self.observer_list); //	Disarm timer
+		dremove(self.oldenemy); 	 // CountDown
+		dremove(self.observer_list); // Disarm timer
 	}
 
 	BecomeExplosion ();
@@ -475,12 +469,13 @@ void() TeamFortress_DetpackTouch =
 	//WK if (other.playerclass != #PC_SCOUT)
 	if (!(other.tf_items & #NIT_SCANNER))
 		return;
-    
+	
 	if (self.weaponmode == 1)
-	    return;
+		return;
 
-	if (Teammate(self.owner.team_no,other.team_no))
-	    return;
+	// Neo mode modication
+	if (Teammate(self.owner, other))
+		return;
 
 	makeImmune(other,time + 2);
 	//other.immune_to_check = time + 2;
@@ -523,26 +518,26 @@ void() TeamFortress_DetpackDisarm =
 	bprint (#PRINT_MEDIUM, self.owner.netname);
 	bprint (#PRINT_MEDIUM, "\n");
 
-    // Give disarmer a frag for doing the job - OfN
-    self.owner.real_frags = self.owner.real_frags + 1;
-    if (!(toggleflags & #TFLAG_TEAMFRAGS))
-        self.owner.frags = self.owner.real_frags;
+	// Give disarmer a frag for doing the job - OfN
+	self.owner.real_frags = self.owner.real_frags + 1;
+	if (!(toggleflags & #TFLAG_TEAMFRAGS))
+		self.owner.frags = self.owner.real_frags;
 	
-    //if (!(self.owner.is_feigning))
+	//if (!(self.owner.is_feigning))
 	//- OfN already checked on TeamFortress_SetSpeed()
-    //{
-        self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_CANT_MOVE);
+	//{
+		self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_CANT_MOVE);
 
 	// Reset speeds of scout
 #ifdef QUAKE_WORLD
-    	TeamFortress_SetSpeed(self.owner);
+		TeamFortress_SetSpeed(self.owner);
 #else
-    	self.owner.pausetime = time;		
+		self.owner.pausetime = time;		
 #endif
 	//}
 
 	dremove(self.enemy.oldenemy);	// remove count down
-	dremove(self.enemy);        	// remove detpack
+	dremove(self.enemy);			// remove detpack
 	dremove(self);					// remove this timer
 };
 

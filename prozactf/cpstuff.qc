@@ -175,6 +175,9 @@ void (float startup) UpdateInfos =
 	// Attackers Go Red mode -PZ
 	AGR_initialize();
 
+	// Neo mode
+	Neo_initialize();
+
 	st = infokey(world, "army_delay"); //
 	if (st==string_null) st="3"; //WK 6/1/7 5 //was 5 ,sets default
 	army_delay = stof(st);
@@ -250,9 +253,11 @@ void(float tno, entity ignore) teamprefixsprint =
 		return;
 
 	te = find(world, classname, "player");
+	temp_e.team_no = tno; // for Neo mode (modified Teammate())
 	while (te)
 	{
-		if (Teammate(te.team_no,tno) && te != ignore)
+		// Neo mode modication
+		if (Teammate(te, temp_e) && te != ignore)
 			sprint(te, #PRINT_HIGH, "Team ");
 
 		te = find(te, classname, "player");
@@ -274,9 +279,11 @@ void(float tno, entity ignore, entity ignore2) teamprefixsprintbi =
 		return;
 
 	te = find(world, classname, "player");
+	temp_e.team_no = tno; // for Neo mode (modified Teammate())
 	while (te)
 	{
-		if (Teammate(te.team_no,tno) && te != ignore && te != ignore2)
+		// Neo mode modication
+		if (Teammate(te, temp_e) && te != ignore && te != ignore2)
 		{
 			sprint(te, #PRINT_HIGH, "Team ");
 		}
@@ -293,7 +300,8 @@ void(entity ignore, string st, string st2, string st3, string st4, string st5, s
 	te = find(world, classname, "player");
 	while (te)
 	{
-		if (Teammate(te.team_no,ignore.team_no) && te != ignore)
+		// Neo mode modication
+		if (Teammate(te, ignore) && te != ignore)
 		{
 			sprint(te, #PRINT_HIGH, st);
 			sprint(te, #PRINT_HIGH, st2);
@@ -317,7 +325,8 @@ void(entity ignore, entity ignore2, string st, string st2, string st3, string st
 	te = find(world, classname, "player");
 	while (te)
 	{
-		if (Teammate(te.team_no,ignore.team_no) && te != ignore && te != ignore2)
+		// Neo mode modication
+		if (Teammate(te, ignore) && te != ignore && te != ignore2)
 		{
 			sprint(te, #PRINT_HIGH, st);
 			sprint(te, #PRINT_HIGH, st2);
@@ -360,6 +369,9 @@ float (string skin_str) Is_TF_Skin =
 
 string (float tno) TeamGetNiceColor =
 {
+	// Neo mode
+	if (neo) return "";
+
 	if (tno == 1)
 		return "2 13";
 	if (tno == 2)
@@ -374,6 +386,9 @@ string (float tno) TeamGetNiceColor =
 
 float (float tno, float theColor ) IsValidTopColor =
 {
+	// Neo mode
+	if (neo) return #TRUE;
+
 	theColor = floor(theColor);
 	
 	// if relax_cheatcheck is "on" return its a valid color value
@@ -848,7 +863,8 @@ void(vector where) spawnFOG =
 
 float() CheckEnemyDismantle =
 {
-	if (Teammate(self.building.real_owner.team_no,self.team_no)) return #TRUE;
+	// Neo mode modication
+	if (Teammate(self.building.real_owner, self)) return #TRUE;
 
 	local string st;
 	st=GetBuildingName(self.building); 
@@ -1721,28 +1737,39 @@ void(float broadcastmsg) PrintGameSettings =
 //==========================================================================
 // Used on TF_T_Damage, returns the outgoing damage multiplier for entity
 
-float(entity thing) GetDamageOutFactor =
+float(entity attacker, entity targ) GetDamageOutFactor =
 {
 	local float factor;
 	factor = 1;
 	
 	//WK 8/4/7 Changed the code so that only the best damage multiplier works now.
-	if (thing.super_damage_finished > time) {
-		if (thing.job & #JOB_BERSERKER && thing.job & #JOB_ACTIVE)
+	if (attacker.super_damage_finished > time) {
+		if (attacker.job & #JOB_BERSERKER && attacker.job & #JOB_ACTIVE)
 			factor = #BERSERKER_DMGFACTOR;
-		if (thing.tfstate & #TFSTATE_INSPIRED)
+		if (attacker.tfstate & #TFSTATE_INSPIRED)
 			if (factor < #CHAPLAN_DMGFACTOR) factor = #CHAPLAN_DMGFACTOR;
+		if (attacker.job & #JOB_TKD && attacker.martyr_enemy != targ)
+			if (factor < 1.5) factor = 1.15; //WK 5-15-08 We do only a little more when quadded in TKD to people not our enemy
 		if (factor == 1) factor = 4; // Else, we have quad
 	}
-
-	if (thing.#runes & #RUNE_TRIAD)
-		if (factor < 3) factor = 3;
-
-	if (thing.aura == #AURA_POWER)
+	// modded for Neo mode
+	if (attacker.aura == #AURA_POWER)
 		if (factor < #POWERAURA_DMGFACTOR) factor = #POWERAURA_DMGFACTOR;
 
-	if (factor > #MAX_OUT_DMGFACTOR) //Not really needed now that they don't stack, but leave in for sanity
-		factor = #MAX_OUT_DMGFACTOR;
+	if (!neo)
+	{
+		if (attacker.#runes & #RUNE_TRIAD)
+			if (factor < 3) factor = 3;
+	  
+		if (factor > #MAX_OUT_DMGFACTOR) //Not really needed now that they don't stack, but leave in for sanity
+			factor = #MAX_OUT_DMGFACTOR;
+	}
+	else if (neoLives == attacker)
+	{
+		local float playerCount; playerCount = GetNoPlayers(#TRUE, #TRUE);
+		factor = factor * ((playerCount * neo_dmg_factor) + neo_base_dmg);
+	}
+	// end Neo mod
 
 	return factor;
 };
@@ -1758,14 +1785,33 @@ float(entity thing) GetDamageInFactor =
 	if (thing.aura == #AURA_RESIS)
 		factor = factor * #RESISAURA_DMGFACTOR;
 
-	if (thing.#runes & #RUNE_RESIS)
-		factor = factor * #RESISRUNE_DMGFACTOR;
-
 	if (thing.tfstate & #TFSTATE_INSPIRED) //Chaplan defense
 		factor = factor * #CHAPLAN_DEFENSE_DMGFACTOR;
 
-	if (factor < #MIN_IN_DMGFACTOR)
-		factor = #MIN_IN_DMGFACTOR;
+	// modded for Neo mode
+	if (!neo)
+	{
+		if (thing.#runes & #RUNE_RESIS)
+			factor = factor * #RESISRUNE_DMGFACTOR;
+	   
+		if (factor < #MIN_IN_DMGFACTOR)
+			factor = #MIN_IN_DMGFACTOR;
+	}
+	else if (neoLives == thing)
+	{
+		local float temp, playerCount;
+		playerCount = GetNoPlayers(#TRUE, #TRUE);
+		temp = playerCount * (neo_res_factor * 1000);
+		temp = (neo_base_res * 1000) - temp; 
+		factor = factor * temp; factor = factor / 1000;
+		// doing all the multiplying and dividing by 1000 because the server will
+		// round the float values when the subtraction is done
+		if (factor < 0.05)
+			factor = 0.05;
+	}
+
+	if (factor > 1) bprint(#PRINT_HIGH, "Error: GetDamageInFactor() result greater than 1\n");
+	// end Neo mod
 
 	return factor;
 };
@@ -1844,7 +1890,7 @@ void(entity player, string st, float action, float predefined) PlayerFinal =
 	if (self.modelindex == modelindex_player)	// are we visible and on a player model? (not a head)
 		GibPlayerOut(); // ok, gib him
 
-	CleanUpEverything();
+	CleanUpEverything(#TRUE);
 
 	// Drop any runes he would carry
 	PlayerDropRunes(self);

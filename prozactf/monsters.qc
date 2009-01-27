@@ -1,6 +1,6 @@
 /* ALL MONSTERS SHOULD BE 1 0 0 IN COLOR */
 
-// name =[framenum,	nexttime, nextthink] {code}
+// name =[framenum, nexttime, nextthink] {code}
 // expands to:
 // name ()
 // {
@@ -64,15 +64,15 @@ float (entity targ, entity check) visible2x =
 	spot1 = check.origin + check.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	
-    if (check.classname == "building_sentrygun")
-    {
-        if (check.tf_items & #NIT_TURRET)
-            spot1 = check.origin + check.view_ofs - '0 0 20';
-        else
-            spot1 = check.origin + check.view_ofs + '0 0 20';
-    }
+	if (check.classname == "building_sentrygun")
+	{
+		if (check.tf_items & #NIT_TURRET)
+			spot1 = check.origin + check.view_ofs - '0 0 20';
+		else
+			spot1 = check.origin + check.view_ofs + '0 0 20';
+	}
 
-    traceline (spot1, spot2, #TL_BSP_ONLY, check);	// see through other monsters
+	traceline (spot1, spot2, #TL_BSP_ONLY, check);	// see through other monsters
 	
 	if (trace_inopen && trace_inwater)
 		return #FALSE;			// sight line crossed contents
@@ -227,7 +227,7 @@ void() t_movetarget =
 		return;
 	
 	if (other.enemy)
-		return;		// fighting, not following a path
+		return; 	// fighting, not following a path
 
 	temp = self;
 	self = other;
@@ -261,7 +261,7 @@ float(float v) anglemod =
 float(entity targ) range =
 {
 	local vector	spot1, spot2;
-	local float		r;	
+	local float 	r;	
 
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
@@ -288,7 +288,7 @@ returns 1 if the entity is in front (in sight) of self
 float(entity targ) infront =
 {
 	local vector	vec;
-	local float		dot;
+	local float 	dot;
 	
 	makevectors (self.angles);
 	vec = normalize (targ.origin - self.origin);
@@ -311,7 +311,7 @@ void() HuntTarget =
 	self.think = self.th_run;
 	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.nextthink = time + 0.1;
-	SUB_AttackFinished (1);	// wait a while before first attack
+	SUB_AttackFinished (1); // wait a while before first attack
 };
 
 
@@ -364,7 +364,7 @@ float() FindTarget =
 */
 /*
 	local entity client;
-	local float	r, gotone, loopc;
+	local float r, gotone, loopc;
 
 	//WK Hack to get floating sentry working
 	if (self.tf_items & #NIT_FLOATING_SENTRY) {
@@ -534,7 +534,7 @@ enemy as activator.
 //WK This is doubly declared in combat.qc
 void() monster_death_use =
 {
-	local entity 	ent, otemp;
+	local entity	ent, otemp;
 
 // fall to ground
 	if (self.flags & #FL_FLY)
@@ -555,7 +555,7 @@ void() monster_death_use =
 void() walkmonster_start_go =
 {
 //	local entity	etemp;
-//	local float		failure;
+//	local float 	failure;
 //	local vector	test;
 
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
@@ -598,40 +598,40 @@ void() walkmonster_start_go =
 		RPrint ("\n"); */
 		
 		//- OfN - if (self.classname == "monster_demon1" || self.classname == "monster_army" || self.classname == "monster_shambler")
-        if (IsMonster(self))
+		if (IsMonster(self))
 			if (self.real_owner.classname == "player")
 			{
 				//self.real_owner.job = self.real_owner.job - (self.real_owner.job & #JOB_DEMON_OUT);
 				local string MName;
-                MName=GetMonsterName(self);
-                sprint(self.real_owner,#PRINT_HIGH,"Your ");
-                sprint(self.real_owner,#PRINT_HIGH,MName);
-                sprint(self.real_owner,#PRINT_HIGH," was beamed into a wall and died.\n");
+				MName=GetMonsterName(self);
+				sprint(self.real_owner,#PRINT_HIGH,"Your ");
+				sprint(self.real_owner,#PRINT_HIGH,MName);
+				sprint(self.real_owner,#PRINT_HIGH," was beamed into a wall and died.\n");
 
 				/* TODO:
-                if (self.classname == "monster_shambler") //- ofn
+				if (self.classname == "monster_shambler") //- ofn
 				{
 					self.real_owner.demon_blood = self.real_owner.demon_blood + 4;
 					if (self.real_owner.demon_blood > #MAX_KNIFE_BLOOD)
 						self.real_owner.demon_blood = #MAX_KNIFE_BLOOD;
 				}
-                else if (self.classname == "monster_demon1") //- ofn
+				else if (self.classname == "monster_demon1") //- ofn
 				{
 					self.real_owner.demon_blood = self.real_owner.demon_blood + 2;
 					if (self.real_owner.demon_blood > #MAX_KNIFE_BLOOD)
 						self.real_owner.demon_blood = #MAX_KNIFE_BLOOD;
 				}*/
-                
-                /*else if (self.classname == "monster_wizard") //- ofn
+				
+				/*else if (self.classname == "monster_wizard") //- ofn
 				{
 					self.real_owner.demon_blood = self.real_owner.demon_blood + ? ;
 					if (self.real_owner.demon_blood > #MAX_KNIFE_BLOOD)
 						self.real_owner.demon_blood = #MAX_KNIFE_BLOOD;
 				}*/
 
-                //kill_his_demons(self.real_owner);
-                KillSoul(self.real_owner,self.increase_team1);
-                return;
+				//kill_his_demons(self.real_owner);
+				KillSoul(self.real_owner,self.increase_team1);
+				return;
 			}
 		dremove(self);
 		return;
@@ -673,13 +673,13 @@ void() walkmonster_start_go =
 	
 	if (self.classname == "monster_army")
 	{
-        self.martyr_enemy = CreateWaypoint(self.origin,#WAYPOINT_LIFE,#WAYPOINT_TYPE_PRIMARY, self);
+		self.martyr_enemy = CreateWaypoint(self.origin,#WAYPOINT_LIFE,#WAYPOINT_TYPE_PRIMARY, self);
 		self.martyr_enemy.goalentity = world;
 
-        // OFTEN
-        self.demon_two=world;
-        self.demon_one=world;
-        // OFTEN
+		// OFTEN
+		self.demon_two=world;
+		self.demon_one=world;
+		// OFTEN
 
 		self.goalentity = world;
 	}
@@ -749,7 +749,7 @@ void() flymonster_start =
 {
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
-        
+		
 	self.think = flymonster_start_go;
 	total_monsters = total_monsters + 1;
 	set_monster_health();
@@ -814,9 +814,9 @@ void() swimmonster_start =
 
 void() MonsterDead =
 {
-    self.th_die = SUB_Null;
-    self.classname = "monster_corpse";
-    SpawnBloodEx(self.origin,0.75,9);
+	self.th_die = SUB_Null;
+	self.classname = "monster_corpse";
+	SpawnBloodEx(self.origin,0.75,9);
 };
 
 //============================================================================
@@ -824,25 +824,25 @@ void() MonsterDead =
 
 void() MonsterCorpse =
 {
-    self.nextthink = time + #MIN_CORPSE_TIME + (#MAX_CORPSE_TIME - #MIN_CORPSE_TIME)*random();	
+	self.nextthink = time + #MIN_CORPSE_TIME + (#MAX_CORPSE_TIME - #MIN_CORPSE_TIME)*random();	
 	self.think = SUB_Remove;
-    
-    #ifdef GIBABLE_CORPSES
-    if (self.#monster_type == #MONSTER_SCRAG)
-        MakeCorpse(self,#CORPSE_HP_SCRAG);
-    else if (self.#monster_type == #MONSTER_FISH)
-        MakeCorpse(self,#CORPSE_HP_FISH);
-    else if (self.#monster_type == #MONSTER_DEMON)
-        MakeCorpse(self,#CORPSE_HP_DEMON);
-    else if (self.#monster_type == #MONSTER_GREMLIN)
-        MakeCorpse(self,#CORPSE_HP_GREMLIN);
-    else if (self.#monster_type == #MONSTER_SHAMBLER)
-        MakeCorpse(self,#CORPSE_HP_SHAMBLER);
-    else if (self.#monster_type == #MONSTER_ARMY)
-        MakeCorpse(self,#CORPSE_HP_ARMY);
-    else 
-        MakeCorpse(self,200); // Shouldnt happen, if it does, bug
-    #endif
+	
+	#ifdef GIBABLE_CORPSES
+	if (self.#monster_type == #MONSTER_SCRAG)
+		MakeCorpse(self,#CORPSE_HP_SCRAG);
+	else if (self.#monster_type == #MONSTER_FISH)
+		MakeCorpse(self,#CORPSE_HP_FISH);
+	else if (self.#monster_type == #MONSTER_DEMON)
+		MakeCorpse(self,#CORPSE_HP_DEMON);
+	else if (self.#monster_type == #MONSTER_GREMLIN)
+		MakeCorpse(self,#CORPSE_HP_GREMLIN);
+	else if (self.#monster_type == #MONSTER_SHAMBLER)
+		MakeCorpse(self,#CORPSE_HP_SHAMBLER);
+	else if (self.#monster_type == #MONSTER_ARMY)
+		MakeCorpse(self,#CORPSE_HP_ARMY);
+	else 
+		MakeCorpse(self,200); // Shouldnt happen, if it does, bug
+	#endif
 };
 
 //=======================================================================
@@ -850,9 +850,9 @@ void() MonsterCorpse =
 
 void() MonsterAuraPower =
 {
-    if (self.aura == #AURA_POWER && self.super_sound < time)
-    {
-        sound (self, #CHAN_BODY, "auras/aura2b.wav", 1, #ATTN_NORM);
-        self.super_sound = time + 1;
-    }
+	if (self.aura == #AURA_POWER && self.super_sound < time)
+	{
+		sound (self, #CHAN_BODY, "auras/aura2b.wav", 1, #ATTN_NORM);
+		self.super_sound = time + 1;
+	}
 };
