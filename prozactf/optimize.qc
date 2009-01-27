@@ -1,15 +1,73 @@
 /*======================================================
-	OPTIMIZE.QC			Custom TeamFortress v2.1	
+	OPTIMIZE.QC 		Custom TeamFortress v2.1	
 	(c) Craig Hauser				10/4/00
 ========================================================
 This has the optimizations that I have done, basically if
 I saw something similar being run in multi places I made
 a function and put it here.
 ======================================================*/
-float (float t1, float t2) Teammate;
 float (entity targ, entity check) visible2;
 float (entity targ, entity check) visible2x;
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage;
+
+// WK: These probably belong in Optimize.qc anyway -- and I cleaned them up a bit
+// KK: are team_no's current teammates
+// PZ: modified for Neo mode
+float(entity targ, entity attacker) Teammate =
+{
+	// Neo mode
+		if (neo) return Neo_teammate(targ, attacker);
+
+	local float teammask;
+
+	if ( !targ.team_no ) return #FALSE;
+	if ( targ.team_no == attacker.team_no ) return #TRUE;
+	if ( number_of_teams < 3 ) return #FALSE;
+
+	if		( targ.team_no == 1 ) teammask = 1;
+	else if ( targ.team_no == 2 ) teammask = 2;
+	else if ( targ.team_no == 3 ) teammask = 4;
+	else if ( targ.team_no == 4 ) teammask = 8;
+
+	if		( attacker.team_no == 1 && (friends1_mask & teammask)) return #TRUE;
+	else if ( attacker.team_no == 2 && (friends2_mask & teammask)) return #TRUE;
+	else if ( attacker.team_no == 3 && (friends3_mask & teammask)) return #TRUE;
+	else if ( attacker.team_no == 4 && (friends4_mask & teammask)) return #TRUE;
+
+	return #FALSE;
+};
+
+//WK 5-15-08 Cleans up a lot of the teammate code introduced with Neo mode
+//It looks to see if the targ's .team_no matches the number (float) in att_team_no
+float(entity targ, float att_team_no) Teammate2 =
+{
+	local float result;
+	temp_e.team_no = att_team_no;
+	result = Teammate(targ, temp_e);
+	return result;
+};
+
+//WK 5-15-08 Put all spy team check code under one roof
+//Targ is the possible spy we're checking if it matches attacker
+//TODO: Should we make it check all four combinations of .team_no and .undercover_team? Unclear.
+float(entity targ, entity attacker) UndercoverTeammate =
+{
+	local float result;
+	temp_e.team_no = targ.undercover_team;
+	result = Teammate(temp_e,attacker);
+	return result;
+};
+
+//WK 5-15-08 Returns true if we're playing a normal 2 team map of TF, such as Well6 or Rock2
+// Returns false if we're on a specialty map like hunted or a 4 team map like 4square or whatever
+// Some of my code only works in normal TF maps
+float () NormalTF =
+{
+	if (neo || number_of_teams != 2 || (team1maxplayers > 0 && team1maxplayers < 32) || (team2maxplayers > 0 && team2maxplayers < 32)) 
+		return #FALSE;
+	return #TRUE;
+};
+
 //checks client passed into and returns true if valid used for sents etc
 //entity looking at, entity thats looking, (0-1) checks visible, (0-range) checks range, (0-1) do special tesla checks, (0-1) should check for ceasefire
 float(entity targ, entity checker, float chkvis, float chkrng, float istesla, float chkcease) Pharse_Client =
@@ -20,8 +78,8 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 		if (chkcease)
 			/*if (infokey(world,"ceasefire")=="on")
 				return #FALSE;*/
-            if (ceasefire)
-                return #FALSE;
+			if (ceasefire)
+				return #FALSE;
 #endif
 		if (targ.playerclass == #PC_UNDEFINED)
 			return #FALSE;
@@ -31,36 +89,34 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 			return #FALSE;
 		if (!targ.is_connected)
 			return #FALSE;
-		if (teamplay)
-		{
-			if (Teammate(targ.team_no, checker.team_no))
-				{
-					if (istesla)
-					{
-						if (!(checker.tf_items & #NIT_SECURITY_CAMERA)) //CH Cyto's idea
-							return #FALSE;
-					} else
-					{
-						return #FALSE;
-					}
-				}
-			if (Teammate(targ.undercover_team,checker.team_no))
-				{
-					if (istesla)
-					{
-						//- OfN jammer only for scanner -// nope
-                        if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
-                        //if (!(checker.tf_items & #NIT_AUTOID))
-							return #FALSE;
-					}
-					else
-					{						
-                        if (! (checker.classname == "building_sensor" && checker.all_active & #IMPROVED_FOUR)) 
-                            return #FALSE;
 
-                        // - OfN return #FALSE;
-					}
+		if (teamplay) {
+				// Neo mode modication
+			if (Teammate(targ, checker)) {
+				if (istesla) {
+					if (!(checker.tf_items & #NIT_SECURITY_CAMERA)) //CH Cyto's idea
+						return #FALSE;
+				} else {
+					return #FALSE;
 				}
+			}
+			if (UndercoverTeammate(targ,checker))
+			{
+				if (istesla)
+				{
+					//- OfN jammer only for scanner -// nope
+					if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
+					//if (!(checker.tf_items & #NIT_AUTOID))
+						return #FALSE;
+				}
+				else
+				{						
+					if (! (checker.classname == "building_sensor" && checker.all_active & #IMPROVED_FOUR)) 
+						return #FALSE;
+
+					// - OfN return #FALSE;
+				}
+			}
 		}
 		if (targ == checker.real_owner)
 		{
@@ -94,8 +150,8 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 			if (istesla)
 			{
 				//- OfN jammer only for scanner -// nope
-                if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
-                //if (!(checker.tf_items & #NIT_AUTOID))
+				if (!(checker.tf_items & #NIT_AUTOID) || targ.cutf_items & #CUTF_JAMMER)
+				//if (!(checker.tf_items & #NIT_AUTOID))
 					return #FALSE;
 			}
 			else if (checker.classname != "building_sensor")// && checker.classname != "monster_army" && checker.classname != "monster_demon1")
@@ -103,12 +159,12 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 		}
 		if (chkvis && checker.classname == "building_sentrygun" && !(checker.tf_items & #NIT_TURRET)) // - OfN - hackish fix for sentry gun targetting
 		{
-            if (!visible2x(targ,checker)) // - OfN - hackish fix for sentry gun targetting
- 				return #FALSE;
-        }
-        else if (chkvis)
+			if (!visible2x(targ,checker)) // - OfN - hackish fix for sentry gun targetting
+				return #FALSE;
+		}
+		else if (chkvis)
 			if (!visible2(targ,checker))
- 				return #FALSE;
+				return #FALSE;
 		if (chkrng)
 		{
 			local float r;
@@ -189,8 +245,8 @@ bprint(#PRINT_HIGH, "\n");
 	
 		if (chkreal)
 		{
-		 	if (!(toggleflags & #TFLAG_TEAMFRAGS))
-		 	{
+			if (!(toggleflags & #TFLAG_TEAMFRAGS))
+			{
 				atk.frags = atk.real_frags;
 			}
 		}
@@ -202,29 +258,29 @@ void(string search, entity person, float chkown, float type) Find_And_Dmg =
 {
 	local entity te;
 	
-    te = find(world, classname, search);
+	te = find(world, classname, search);
 	
-    if (type)
-    {
-        while (te)
-        {
-            if (chkown)
-            {
-                if (te.real_owner == person && type & te.dont_do_triggerwork)
-                    TF_T_Damage(te, world, world, te.health+100, 0, 0);
-            }
-            else
-            {
-                if (type & te.dont_do_triggerwork)
-                    TF_T_Damage(te, world, world, te.health+100, 0, 0);
-            }
-            te = find(te, classname, search);
-        }
-        
-        return;
-    }
+	if (type)
+	{
+		while (te)
+		{
+			if (chkown)
+			{
+				if (te.real_owner == person && type & te.dont_do_triggerwork)
+					TF_T_Damage(te, world, world, te.health+100, 0, 0);
+			}
+			else
+			{
+				if (type & te.dont_do_triggerwork)
+					TF_T_Damage(te, world, world, te.health+100, 0, 0);
+			}
+			te = find(te, classname, search);
+		}
+		
+		return;
+	}
 
-    while (te)
+	while (te)
 	{
 		if (chkown)
 		{
@@ -294,27 +350,27 @@ Functions to handle multiple integers (byte wide) on a single float:
 
 float (float value) GetByte1 =
 {
-    return value & 255;
+	return value & 255;
 };
 
 float (float value) GetByte2 =
 {
-    local float res;
+	local float res;
 
-    res = value & 65280;
-    res = res / 256;
-    
-    return res;
+	res = value & 65280;
+	res = res / 256;
+	
+	return res;
 };
 
 float (float value) GetByte3 =
 {
-    local float res;
+	local float res;
 
-    res = value & 16711680;
-    res = res / 65536;
-    
-    return res;
+	res = value & 16711680;
+	res = res / 65536;
+	
+	return res;
 };
 
 //=======================================
@@ -322,22 +378,22 @@ float (float value) GetByte3 =
 
 float (float value) MakeByte2 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 255)
-        value = 255;
-    return value * 256;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 255)
+		value = 255;
+	return value * 256;
 };
 
 float (float value) MakeByte3 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 255)
-        value = 255;
-    return value * 65536;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 255)
+		value = 255;
+	return value * 65536;
 };
 
 //=====================================
@@ -345,31 +401,31 @@ float (float value) MakeByte3 =
 
 float (float targetval, float value) AssignByte1 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 255)
-        value = 255;
-    targetval = targetval - (targetval & 255);
-    targetval = targetval + value;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 255)
+		value = 255;
+	targetval = targetval - (targetval & 255);
+	targetval = targetval + value;
 
-    return targetval;
+	return targetval;
 };
 
 float (float targetval, float value) AssignByte2 =
 {
-    targetval = targetval - (targetval & 65280);
-    targetval = targetval + MakeByte2(value);
+	targetval = targetval - (targetval & 65280);
+	targetval = targetval + MakeByte2(value);
 
-    return targetval;
+	return targetval;
 };
 
 float (float targetval, float value) AssignByte3 =
 {
-    targetval = targetval - (targetval & 16711680);
-    targetval = targetval + MakeByte3(value);
+	targetval = targetval - (targetval & 16711680);
+	targetval = targetval + MakeByte3(value);
 
-    return targetval;
+	return targetval;
 };
 
 //===============================================================================
@@ -379,49 +435,49 @@ float (float targetval, float value) AssignByte3 =
 
 float(float value) GetWarlock1 =
 {
-    return value & 63;
+	return value & 63;
 };
 
 float(float value) GetWarlock2 =
 {
-    local float res;
+	local float res;
 
-    res = value & 65472;
-    res = res / 64;
-    
-    return res;    
+	res = value & 65472;
+	res = res / 64;
+	
+	return res;    
 };
 
 float (float value) MakeWarlock2 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 1023)
-        value = 1023;
-    return value * 64;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 1023)
+		value = 1023;
+	return value * 64;
 };
 
 float(float targetval, float value) AssignWarlock1 =
 {
-    value = floor(value);
-    if (value < 0)
-        value = 0;
-    if (value > 63)
-        value = 63;
+	value = floor(value);
+	if (value < 0)
+		value = 0;
+	if (value > 63)
+		value = 63;
 
-    targetval = targetval - (targetval & 63);
-    targetval = targetval + value;
+	targetval = targetval - (targetval & 63);
+	targetval = targetval + value;
 
-    return targetval;
+	return targetval;
 };
 
 float(float targetval, float value) AssignWarlock2 =
 {
-    targetval = targetval - (targetval & 65472);
-    targetval = targetval + MakeWarlock2(value);
+	targetval = targetval - (targetval & 65472);
+	targetval = targetval + MakeWarlock2(value);
 
-    return targetval;
+	return targetval;
 };
 
 //==============================================================
@@ -429,30 +485,30 @@ float(float targetval, float value) AssignWarlock2 =
 
 float(float input) itob =
 {
-    if (input == 1) return 1;
-    if (input == 2) return 2;
-    if (input == 3) return 4;
-    if (input == 4) return 8;
-    if (input == 5) return 16;
-    if (input == 6) return 32;
-    if (input == 7) return 64;
-    if (input == 8) return 128;
-    if (input == 9) return 256;
-    if (input == 10) return 512;
-    if (input == 11) return 1024;
-    if (input == 12) return 2048;
-    if (input == 13) return 4096;
-    if (input == 14) return 8192;
-    if (input == 15) return 16384;
-    if (input == 16) return 32768;
-    if (input == 17) return 65536;
-    if (input == 18) return 131072;
-    if (input == 19) return 262144;
-    if (input == 20) return 524288;
-    if (input == 21) return 1048576;
-    if (input == 22) return 2097152;
-    if (input == 23) return 4194304;
-    if (input == 24) return 8388608;
+	if (input == 1) return 1;
+	if (input == 2) return 2;
+	if (input == 3) return 4;
+	if (input == 4) return 8;
+	if (input == 5) return 16;
+	if (input == 6) return 32;
+	if (input == 7) return 64;
+	if (input == 8) return 128;
+	if (input == 9) return 256;
+	if (input == 10) return 512;
+	if (input == 11) return 1024;
+	if (input == 12) return 2048;
+	if (input == 13) return 4096;
+	if (input == 14) return 8192;
+	if (input == 15) return 16384;
+	if (input == 16) return 32768;
+	if (input == 17) return 65536;
+	if (input == 18) return 131072;
+	if (input == 19) return 262144;
+	if (input == 20) return 524288;
+	if (input == 21) return 1048576;
+	if (input == 22) return 2097152;
+	if (input == 23) return 4194304;
+	if (input == 24) return 8388608;
 
-    return 0;
+	return 0;
 };

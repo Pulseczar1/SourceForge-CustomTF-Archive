@@ -23,7 +23,7 @@ void(entity te) dremove =
 		return;
 	}
 
-    if (te.classname == "player") //- OfN -
+	if (te.classname == "player") //- OfN -
 	{
 		RPrint("***BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG***\n");
 		RPrint("Player entity was going to be removed. Don't worry!\n");
@@ -64,12 +64,12 @@ void() display_location =
 // all the dprints in the code were replaced with RPrints
 void (string msg) RPrint =
 {
-    dprint(msg);
-    
-    if (debug_target==world)
-        return;
+	dprint(msg);
+	
+	if (debug_target==world)
+		return;
 
-    sprint(debug_target,#PRINT_HIGH,msg);
+	sprint(debug_target,#PRINT_HIGH,msg);
 };
 
 //float(entity person) Is_Admin;
@@ -79,31 +79,31 @@ void (string msg) RPrint =
 // called when an impulse 195
 void(entity who) MakeMeDebug =
 {
-    if (debug_target==who)
-    {
-        sprint(debug_target,#PRINT_HIGH,"You are already the remote debugger!\n");    
-        return;
-    }
-    
-    if (!who.admin_flag)
-    {
-        RPrint(who.netname);
-        RPrint(" requests remote debugging without beeing admin!\n");
-        return;
-    }
+	if (debug_target==who)
+	{
+		sprint(debug_target,#PRINT_HIGH,"You are already the remote debugger!\n");	  
+		return;
+	}
+	
+	if (!who.admin_flag)
+	{
+		RPrint(who.netname);
+		RPrint(" requests remote debugging without beeing admin!\n");
+		return;
+	}
 
-    RPrint("Debug: ");
-    RPrint(who.netname);
-    RPrint(" requests remote debugging. Debug (dprints) messages will be sent to him/her too.\n");
+	RPrint("Debug: ");
+	RPrint(who.netname);
+	RPrint(" requests remote debugging. Debug (dprints) messages will be sent to him/her too.\n");
 
-    if (debug_target!=world)
-    {
-        sprint(debug_target,#PRINT_HIGH,"Debug: You are not the remote debugger anymore.\n");
-        sprint(debug_target,#PRINT_HIGH," New remote debugger is: '");
-        sprint(debug_target,who.netname);
-        sprint(debug_target,#PRINT_HIGH,"'\n");
-    }
-    
-    debug_target=who;
-    sprint(debug_target,#PRINT_HIGH,"Debug: Server debug messages (dprints) will be sent to you.\n");
+	if (debug_target!=world)
+	{
+		sprint(debug_target,#PRINT_HIGH,"Debug: You are not the remote debugger anymore.\n");
+		sprint(debug_target,#PRINT_HIGH," New remote debugger is: '");
+		sprint(debug_target,who.netname);
+		sprint(debug_target,#PRINT_HIGH,"'\n");
+	}
+	
+	debug_target=who;
+	sprint(debug_target,#PRINT_HIGH,"Debug: Server debug messages (dprints) will be sent to you.\n");
 };

@@ -46,12 +46,12 @@ plants the object on the floor
 */
 void() PlaceItem =
 {
-	local float	oldz;
+	local float oldz;
 
 	self.mdl = self.model;		// so it can be restored on respawn
 	self.flags = #FL_ITEM;		// make extra wide
 	self.solid = #SOLID_TRIGGER;
-	self.movetype = #MOVETYPE_TOSS;	
+	self.movetype = #MOVETYPE_TOSS; 
 	self.velocity = '0 0 0';
 	self.origin_z = self.origin_z + 6;
 	oldz = self.origin_z;
@@ -107,7 +107,7 @@ float (entity e, float healamount, float ignore) T_Heal =
 	if (e.leg_damage)
 	{
 		HealLegs(e);
-        	//e.leg_damage = 0;
+			//e.leg_damage = 0;
 		//TeamFortress_SetSpeed(e);
 	}
 
@@ -186,18 +186,19 @@ void() health_touch =
 		return;
 	if (other.tfstate & #TFSTATE_CANT_MOVE)
 		return;
-    
-    //- OfN team_no is now used for items!
-    if (self.team_no>0)
-    {
-        if (!Teammate(other.team_no,self.team_no))
-            return;
-    }
-    //-----------------------------------//
+	
+	//- OfN team_no is now used for items!
+	if (self.team_no>0)
+	{
+		// Neo mode modication
+		if (!Teammate(other, self))
+			return;
+	}
+	//-----------------------------------//
 
 	medi = 0;
 	
-	if (self.healtype == 2) // Megahealth?  Ignore max_health...
+	if (self.healtype == 2) // Megahealth?	Ignore max_health...
 	{
 		// only heal the player if they are not infected
 		if (!(other.tfstate & #TFSTATE_INFECTED))
@@ -253,7 +254,7 @@ void() health_touch =
 	{
 		sprint(other, #PRINT_MEDIUM, "You have been healed of your infection!");
 
-        other.tfstate = other.tfstate - (other.tfstate & #TFSTATE_INFECTED);
+		other.tfstate = other.tfstate - (other.tfstate & #TFSTATE_INFECTED);
 	}
 	else
 	{
@@ -332,7 +333,7 @@ ARMOR
 
 void() armor_touch =
 {
-	local float	type, value, bit;
+	local float type, value, bit;
 	local string s;
 	local entity oldself;
 	
@@ -348,13 +349,14 @@ void() armor_touch =
 	if (other.tfstate & #TFSTATE_CANT_MOVE)
 		return;
 
-    //- OfN team_no is now used for items!
-    if (self.team_no>0)
-    {
-        if (!Teammate(other.team_no,self.team_no))
-            return;
-    }
-    //-----------------------------------//
+	//- OfN team_no is now used for items!
+	if (self.team_no>0)
+	{
+		// Neo mode modication
+		if (!Teammate(other,self))
+			return;
+	}
+	//-----------------------------------//
 
 	if (self.classname == "item_armor1")
 	{
@@ -450,7 +452,7 @@ void() armor_touch =
 		//WK, block above used to be here
 		value = other.maxarmor;
 	}
-      
+	  
 	if (other.armortype * other.armorvalue < type*value)
 	{
 		other.armortype = type;
@@ -556,13 +558,13 @@ void(entity p) bound_other_ammo =
 		p.ammo_medikit = p.maxammo_medikit;
 	if (p.armorvalue > p.maxarmor)
 		p.armorvalue = p.maxarmor;	
-    
-    if (p.no_grenades_1 > GetMaxGrens(p,1))
-        p.no_grenades_1 = GetMaxGrens(p,1);
-    if (p.no_grenades_2 > GetMaxGrens(p,2))
-        p.no_grenades_2 = GetMaxGrens(p,2);
-    
-    /*if (p.tf_items & #NIT_AMMO_BANDOLIER) {
+	
+	if (p.no_grenades_1 > GetMaxGrens(p,1))
+		p.no_grenades_1 = GetMaxGrens(p,1);
+	if (p.no_grenades_2 > GetMaxGrens(p,2))
+		p.no_grenades_2 = GetMaxGrens(p,2);
+	
+	/*if (p.tf_items & #NIT_AMMO_BANDOLIER) {
 		if (p.no_grenades_1 > 5)
 			p.no_grenades_1 = 5;
 		if (p.tp_grenades_1 == #GR_TYPE_NAIL && p.no_grenades_1 > 3)
@@ -695,7 +697,7 @@ void() weapon_touch =
 			return;
 		if (!TeamFortress_CanGetWeapon(other,#WEAP_NAILGUN))
 			return;
-		hadammo = other.ammo_nails;			
+		hadammo = other.ammo_nails; 		
 		new = #WEAP_NAILGUN;
 		other.ammo_nails = other.ammo_nails + 30;
 	}
@@ -933,25 +935,25 @@ void(entity pl, float typ) PrintGrenadeType =
 		st = "Gas";
 	else if (typ == #GR_TYPE_EMP)
 		st = "EMP";
-    #ifdef OLD_FLASH
+	#ifdef OLD_FLASH
 	else if (typ == #GR_TYPE_FLASH)
-    	st = "Flash";
-    #else
-    else if (typ == #GR_TYPE_PSIONIC)
-    	st = "Psionic";
-    #endif
+		st = "Flash";
+	#else
+	else if (typ == #GR_TYPE_PSIONIC)
+		st = "Psionic";
+	#endif
 	else if (typ == #GR_TYPE_FRAG)
 		st = "Fragmentation";
 	else if (typ == #GR_TYPE_KRAC)
 		st = "KRAC";
-  	else if (typ == #GR_TYPE_CALTROP)
+	else if (typ == #GR_TYPE_CALTROP)
 		st = "Caltrop";
 	else if (typ == #GR_TYPE_BIO)
 		st = "Biological";
 	else if (typ == #GR_TYPE_ANTIGRAV)
 		st = "Antigrav";
 	else st = "(BUG)";
-    
+	
 
 	sprint(pl, #PRINT_HIGH, st);
 };
@@ -965,20 +967,20 @@ float() GetGrenadePossibility =
 	// determine grenade type to get
 	// FIXME: need maximum number of grenades for each player
 	// current default is 4
-	if (random() < 0.5)  	// get normal grenade (type 1)
+	if (random() < 0.5) 	// get normal grenade (type 1)
 	{
 		if (GetMaxGrens(other,1) > floor(other.no_grenades_1)) //- OfN FIXME: use floor()?
 		{			
 			other.no_grenades_1 = other.no_grenades_1 + 1;
 
-            sprint(other, #PRINT_HIGH, "You found a ");
-            PrintGrenadeType(other, other.tp_grenades_1);
-            sprint(other, #PRINT_HIGH, " grenade\n");
+			sprint(other, #PRINT_HIGH, "You found a ");
+			PrintGrenadeType(other, other.tp_grenades_1);
+			sprint(other, #PRINT_HIGH, " grenade\n");
 
-            return #TRUE;
+			return #TRUE;
 		}
-        
-        /*if ((other.tp_grenades_1 != 0) && (other.no_grenades_1 < 5))
+		
+		/*if ((other.tp_grenades_1 != 0) && (other.no_grenades_1 < 5))
 		{
 			//WK Bandolier gives an extra grenade
 			if (other.no_grenades_1 < 4 || other.tf_items & #NIT_AMMO_BANDOLIER)
@@ -997,14 +999,14 @@ float() GetGrenadePossibility =
 	{
 		if (GetMaxGrens(other,2) > floor(other.no_grenades_2)) //- OfN FIXME: use floor()?
 		{			
-            other.no_grenades_2 = other.no_grenades_2 + 1;
+			other.no_grenades_2 = other.no_grenades_2 + 1;
 
-            sprint(other, #PRINT_HIGH, "You found a ");
-            PrintGrenadeType(other, other.tp_grenades_2);
-            sprint(other, #PRINT_HIGH, " grenade\n");
-            return #TRUE;
+			sprint(other, #PRINT_HIGH, "You found a ");
+			PrintGrenadeType(other, other.tp_grenades_2);
+			sprint(other, #PRINT_HIGH, " grenade\n");
+			return #TRUE;
 		}
-        /*if ((other.tp_grenades_2 != 0) && (other.no_grenades_2 < 5))
+		/*if ((other.tp_grenades_2 != 0) && (other.no_grenades_2 < 5))
 		{
 			if (other.no_grenades_2 < 4 || other.tf_items & #NIT_AMMO_BANDOLIER)
 			if (!(other.tp_grenades_2 == #GR_TYPE_NAIL && other.no_grenades_2 >= 2)) {
@@ -1024,9 +1026,9 @@ float() GetGrenadePossibility =
 void() ammo_touch =
 {
 	local entity	stemp;
-	local float		best;
+	local float 	best;
 	local float 	gotgren;
-	local float		gotbox;
+	local float 	gotbox;
 
 	gotgren = #FALSE;
 	gotbox = #FALSE;
@@ -1043,13 +1045,14 @@ void() ammo_touch =
 	if (other.tfstate & #TFSTATE_CANT_MOVE)
 		return;
 
-    //- OfN team_no is now used for items!
-    if (self.team_no>0)
-    {
-        if (!Teammate(other.team_no,self.team_no))
-            return;
-    }
-    //-----------------------------------//
+	//- OfN team_no is now used for items!
+	if (self.team_no>0)
+	{
+		// Neo mode modication
+		if (!Teammate(other, self))
+			return;
+	}
+	//-----------------------------------//
 
 // if the player was using his best weapon, change up to the new one if better		
 	stemp = self;
@@ -1141,7 +1144,7 @@ void() ammo_touch =
 
 
 
-#define WEAPON_BIG2	1 
+#define WEAPON_BIG2 1 
 
 /*QUAKED item_shells (0 .5 .8) (0 0 0) (32 32 32) big
 */
@@ -1357,7 +1360,7 @@ KEYS
 void() key_touch =
 {
 	/*local entity	stemp;
-	local float		best;*/
+	local float 	best;*/
 
 	if (other.classname != "player")
 		return;
@@ -1511,7 +1514,7 @@ END OF LEVEL RUNES
 void() sigil_touch =
 {
 /*local entity	stemp;
-local float		best;*/
+local float 	best;*/
 
 	if (other.classname != "player")
 		return;
@@ -1595,7 +1598,7 @@ void() powerup_touch;
 void() powerup_touch =
 {
 /*local entity	stemp;
-local float		best;*/
+local float 	best;*/
 
 	if (other.classname != "player")
 		return;
@@ -1604,13 +1607,14 @@ local float		best;*/
 	if (prematch >= time)
 		return;
 
-    //- OfN team_no is now used for items!
-    if (self.team_no>0)
-    {
-        if (!Teammate(other.team_no,self.team_no))
-            return;
-    }
-    //-----------------------------------//
+	//- OfN team_no is now used for items!
+	if (self.team_no>0)
+	{
+		// Neo mode modication
+		if (!Teammate(other, self))
+			return;
+	}
+	//-----------------------------------//
 
 	sprint (other, #PRINT_LOW, "You got the ");
 	sprint (other, #PRINT_LOW, self.netname);
@@ -1798,26 +1802,26 @@ void() BackpackTouch =
 	if (other.health <= 0)
 		return;
 
-    if (other.classname != "player")
+	if (other.classname != "player")
 	{
-        if (other.classname != "monster_army") 
-            return;
+		if (other.classname != "monster_army") 
+			return;
 
-        other.ammo_shells = other.ammo_shells + self.ammo_shells;
-    	other.ammo_nails = other.ammo_nails + self.ammo_nails;
-    	other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
-    	other.ammo_cells = other.ammo_cells + self.ammo_cells;
+		other.ammo_shells = other.ammo_shells + self.ammo_shells;
+		other.ammo_nails = other.ammo_nails + self.ammo_nails;
+		other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
+		other.ammo_cells = other.ammo_cells + self.ammo_cells;
 
-        grunty_boundammo(other);
-        
-        PrintFromSoldier(other,other.real_owner,"i picked up some ammo.\n",#PRINT_MEDIUM);
+		grunty_boundammo(other);
+		
+		PrintFromSoldier(other,other.real_owner,"i picked up some ammo.\n",#PRINT_MEDIUM);
 
-        sound (other, #CHAN_ITEM, "weapons/lock4.wav", 1, #ATTN_NORM);
-      
-        dremove(self);
-	    self = other;
-        return;
-    }
+		sound (other, #CHAN_ITEM, "weapons/lock4.wav", 1, #ATTN_NORM);
+	  
+		dremove(self);
+		self = other;
+		return;
+	}
 
 	// You can't pick up Backpacks while firing.
 	if (other.button0)
@@ -1901,7 +1905,7 @@ DropBackpack
 void() DropBackpack =
 {
 	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells))
-		return;	// nothing in it
+		return; // nothing in it
 
 	newmis = spawn();
 	newmis.origin = self.origin - '0 0 24';

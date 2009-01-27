@@ -143,7 +143,7 @@ void() boss_shocka6 =[	$shocka6, boss_shocka7 ] {};
 void() boss_shocka7 =[	$shocka7, boss_shocka8 ] {};
 void() boss_shocka8 =[	$shocka8, boss_shocka9 ] {};
 void() boss_shocka9 =[	$shocka9, boss_shocka10 ] {};
-void() boss_shocka10 =[	$shocka10, boss_missile1 ] {};
+void() boss_shocka10 =[ $shocka10, boss_missile1 ] {};
 
 void() boss_shockb1 =[	$shockb1, boss_shockb2 ] {};
 void() boss_shockb2 =[	$shockb2, boss_shockb3 ] {};
@@ -154,7 +154,7 @@ void() boss_shockb6 =[	$shockb6, boss_shockb7 ] {};
 void() boss_shockb7 =[	$shockb1, boss_shockb8 ] {};
 void() boss_shockb8 =[	$shockb2, boss_shockb9 ] {};
 void() boss_shockb9 =[	$shockb3, boss_shockb10 ] {};
-void() boss_shockb10 =[	$shockb4, boss_missile1 ] {};
+void() boss_shockb10 =[ $shockb4, boss_missile1 ] {};
 
 void() boss_shockc1 =[	$shockc1, boss_shockc2 ] {};
 void() boss_shockc2 =[	$shockc2, boss_shockc3 ] {};
@@ -165,7 +165,7 @@ void() boss_shockc6 =[	$shockc6, boss_shockc7 ] {};
 void() boss_shockc7 =[	$shockc7, boss_shockc8 ] {};
 void() boss_shockc8 =[	$shockc8, boss_shockc9 ] {};
 void() boss_shockc9 =[	$shockc9, boss_shockc10 ] {};
-void() boss_shockc10 =[	$shockc10, boss_death1 ] {};
+void() boss_shockc10 =[ $shockc10, boss_death1 ] {};
 
 void() boss_death1 = [$death1, boss_death2] {
 sound (self, #CHAN_VOICE, "boss1/death.wav", 1, #ATTN_NORM);
@@ -201,7 +201,7 @@ void(vector p) boss_missile =
 	local	vector	org, vec, d;
 	local	float	t;
 
-	offang = vectoangles (self.enemy.origin - self.origin);	
+	offang = vectoangles (self.enemy.origin - self.origin); 
 	makevectors (offang);
 
 	org = self.origin + p_x*v_forward + p_y*v_right + p_z*'0 0 1';
@@ -224,7 +224,7 @@ void(vector p) boss_missile =
 	launch_spike (org, vec);
 	setmodel (newmis, "progs/lavaball.mdl");
 	newmis.avelocity = '200 100 300';
-	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+	setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN); 	
 	newmis.velocity = vec*300;
 	newmis.touch = T_MissileTouch; // rocket explosion
 	sound (self, #CHAN_WEAPON, "boss1/throw.wav", 1, #ATTN_NORM);

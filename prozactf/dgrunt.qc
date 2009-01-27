@@ -45,14 +45,14 @@ $frame prowl_17 prowl_18 prowl_19 prowl_20 prowl_21 prowl_22 prowl_23 prowl_24
 //============================================================================
 void() army_fire;
 
-void()	army_stand1	=[	$stand1,	army_stand2	] {ai_stand();Grunty_Check_Frags();};
-void()	army_stand2	=[	$stand2,	army_stand3	] {ai_stand();};
-void()	army_stand3	=[	$stand3,	army_stand4	] {ai_stand();};
-void()	army_stand4	=[	$stand4,	army_stand5	] {ai_stand();};
-void()	army_stand5	=[	$stand5,	army_stand6	] {ai_stand();};
-void()	army_stand6	=[	$stand6,	army_stand7	] {ai_stand();};
-void()	army_stand7	=[	$stand7,	army_stand8	] {ai_stand();};
-void()	army_stand8	=[	$stand8,	army_stand1	] {ai_stand();};
+void()	army_stand1 =[	$stand1,	army_stand2 ] {ai_stand();Grunty_Check_Frags();};
+void()	army_stand2 =[	$stand2,	army_stand3 ] {ai_stand();};
+void()	army_stand3 =[	$stand3,	army_stand4 ] {ai_stand();};
+void()	army_stand4 =[	$stand4,	army_stand5 ] {ai_stand();};
+void()	army_stand5 =[	$stand5,	army_stand6 ] {ai_stand();};
+void()	army_stand6 =[	$stand6,	army_stand7 ] {ai_stand();};
+void()	army_stand7 =[	$stand7,	army_stand8 ] {ai_stand();};
+void()	army_stand8 =[	$stand8,	army_stand1 ] {ai_stand();};
 
 void()	army_walk1	=[	$prowl_1,	army_walk2	] {
 if (random() < 0.2)
@@ -65,22 +65,22 @@ void()	army_walk5	=[	$prowl_5,	army_walk6	] {ai_walk(2);};
 void()	army_walk6	=[	$prowl_6,	army_walk7	] {ai_walk(3);};
 void()	army_walk7	=[	$prowl_7,	army_walk8	] {ai_walk(4);};
 void()	army_walk8	=[	$prowl_8,	army_walk9	] {ai_walk(4);};
-void()	army_walk9	=[	$prowl_9,	army_walk10	] {ai_walk(2);};
-void()	army_walk10	=[	$prowl_10,	army_walk11	] {ai_walk(2);};
-void()	army_walk11	=[	$prowl_11,	army_walk12	] {ai_walk(2);};
-void()	army_walk12	=[	$prowl_12,	army_walk13	] {ai_walk(1);};
-void()	army_walk13	=[	$prowl_13,	army_walk14	] {ai_walk(0);};
-void()	army_walk14	=[	$prowl_14,	army_walk15	] {ai_walk(1);};
-void()	army_walk15	=[	$prowl_15,	army_walk16	] {ai_walk(1);};
-void()	army_walk16	=[	$prowl_16,	army_walk17	] {ai_walk(1);};
-void()	army_walk17	=[	$prowl_17,	army_walk18	] {ai_walk(3);};
-void()	army_walk18	=[	$prowl_18,	army_walk19	] {ai_walk(3);};
-void()	army_walk19	=[	$prowl_19,	army_walk20	] {ai_walk(3);};
-void()	army_walk20	=[	$prowl_20,	army_walk21	] {ai_walk(3);};
-void()	army_walk21	=[	$prowl_21,	army_walk22	] {ai_walk(2);};
-void()	army_walk22	=[	$prowl_22,	army_walk23	] {ai_walk(1);};
-void()	army_walk23	=[	$prowl_23,	army_walk24	] {ai_walk(1);};
-void()	army_walk24	=[	$prowl_24,	army_walk1	] {ai_walk(1);};
+void()	army_walk9	=[	$prowl_9,	army_walk10 ] {ai_walk(2);};
+void()	army_walk10 =[	$prowl_10,	army_walk11 ] {ai_walk(2);};
+void()	army_walk11 =[	$prowl_11,	army_walk12 ] {ai_walk(2);};
+void()	army_walk12 =[	$prowl_12,	army_walk13 ] {ai_walk(1);};
+void()	army_walk13 =[	$prowl_13,	army_walk14 ] {ai_walk(0);};
+void()	army_walk14 =[	$prowl_14,	army_walk15 ] {ai_walk(1);};
+void()	army_walk15 =[	$prowl_15,	army_walk16 ] {ai_walk(1);};
+void()	army_walk16 =[	$prowl_16,	army_walk17 ] {ai_walk(1);};
+void()	army_walk17 =[	$prowl_17,	army_walk18 ] {ai_walk(3);};
+void()	army_walk18 =[	$prowl_18,	army_walk19 ] {ai_walk(3);};
+void()	army_walk19 =[	$prowl_19,	army_walk20 ] {ai_walk(3);};
+void()	army_walk20 =[	$prowl_20,	army_walk21 ] {ai_walk(3);};
+void()	army_walk21 =[	$prowl_21,	army_walk22 ] {ai_walk(2);};
+void()	army_walk22 =[	$prowl_22,	army_walk23 ] {ai_walk(1);};
+void()	army_walk23 =[	$prowl_23,	army_walk24 ] {ai_walk(1);};
+void()	army_walk24 =[	$prowl_24,	army_walk1	] {ai_walk(1);};
 
 void()	army_run1	=[	$run1,		army_run2	] {
 if (random() < 0.2)
@@ -105,43 +105,43 @@ void()	army_atk7	=[	$shoot7,	army_atk8	] {ai_face();SUB_CheckRefire (army_atk1);
 void()	army_atk8	=[	$shoot8,	army_atk9	] {ai_face();};
 void()	army_atk9	=[	$shoot9,	army_run1	] {ai_face();};
 
-void()	army_pain1	=[	$pain1,		army_pain2	] {};
-void()	army_pain2	=[	$pain2,		army_pain3	] {};
-void()	army_pain3	=[	$pain3,		army_pain4	] {};
-void()	army_pain4	=[	$pain4,		army_pain5	] {};
-void()	army_pain5	=[	$pain5,		army_pain6	] {};
-void()	army_pain6	=[	$pain6,		army_run1	] {ai_pain(1);};
+void()	army_pain1	=[	$pain1, 	army_pain2	] {};
+void()	army_pain2	=[	$pain2, 	army_pain3	] {};
+void()	army_pain3	=[	$pain3, 	army_pain4	] {};
+void()	army_pain4	=[	$pain4, 	army_pain5	] {};
+void()	army_pain5	=[	$pain5, 	army_pain6	] {};
+void()	army_pain6	=[	$pain6, 	army_run1	] {ai_pain(1);};
 
-void()	army_painb1	=[	$painb1,	army_painb2	] {};
-void()	army_painb2	=[	$painb2,	army_painb3	] {ai_painforward(13);};
-void()	army_painb3	=[	$painb3,	army_painb4	] {ai_painforward(9);};
-void()	army_painb4	=[	$painb4,	army_painb5	] {};
-void()	army_painb5	=[	$painb5,	army_painb6	] {};
-void()	army_painb6	=[	$painb6,	army_painb7	] {};
-void()	army_painb7	=[	$painb7,	army_painb8	] {};
-void()	army_painb8	=[	$painb8,	army_painb9	] {};
-void()	army_painb9	=[	$painb9,	army_painb10] {};
+void()	army_painb1 =[	$painb1,	army_painb2 ] {};
+void()	army_painb2 =[	$painb2,	army_painb3 ] {ai_painforward(13);};
+void()	army_painb3 =[	$painb3,	army_painb4 ] {ai_painforward(9);};
+void()	army_painb4 =[	$painb4,	army_painb5 ] {};
+void()	army_painb5 =[	$painb5,	army_painb6 ] {};
+void()	army_painb6 =[	$painb6,	army_painb7 ] {};
+void()	army_painb7 =[	$painb7,	army_painb8 ] {};
+void()	army_painb8 =[	$painb8,	army_painb9 ] {};
+void()	army_painb9 =[	$painb9,	army_painb10] {};
 void()	army_painb10=[	$painb10,	army_painb11] {};
 void()	army_painb11=[	$painb11,	army_painb12] {};
 void()	army_painb12=[	$painb12,	army_painb13] {ai_pain(2);};
 void()	army_painb13=[	$painb13,	army_painb14] {};
 void()	army_painb14=[	$painb14,	army_run1	] {};
 
-void()	army_painc1	=[	$painc1,	army_painc2	] {};
-void()	army_painc2	=[	$painc2,	army_painc3	] {ai_pain(1);};
-void()	army_painc3	=[	$painc3,	army_painc4	] {};
-void()	army_painc4	=[	$painc4,	army_painc5	] {};
-void()	army_painc5	=[	$painc5,	army_painc6	] {ai_painforward(1);};
-void()	army_painc6	=[	$painc6,	army_painc7	] {ai_painforward(1);};
-void()	army_painc7	=[	$painc7,	army_painc8	] {};
-void()	army_painc8	=[	$painc8,	army_painc9	] {ai_pain(1);};
-void()	army_painc9	=[	$painc9,	army_painc10] {ai_painforward(4);};
+void()	army_painc1 =[	$painc1,	army_painc2 ] {};
+void()	army_painc2 =[	$painc2,	army_painc3 ] {ai_pain(1);};
+void()	army_painc3 =[	$painc3,	army_painc4 ] {};
+void()	army_painc4 =[	$painc4,	army_painc5 ] {};
+void()	army_painc5 =[	$painc5,	army_painc6 ] {ai_painforward(1);};
+void()	army_painc6 =[	$painc6,	army_painc7 ] {ai_painforward(1);};
+void()	army_painc7 =[	$painc7,	army_painc8 ] {};
+void()	army_painc8 =[	$painc8,	army_painc9 ] {ai_pain(1);};
+void()	army_painc9 =[	$painc9,	army_painc10] {ai_painforward(4);};
 void()	army_painc10=[	$painc10,	army_painc11] {ai_painforward(3);};
 void()	army_painc11=[	$painc11,	army_painc12] {ai_painforward(6);};
 void()	army_painc12=[	$painc12,	army_painc13] {ai_painforward(8);};
 void()	army_painc13=[	$painc13,	army_run1] {};
 
-void(entity attacker, float damage)	army_pain =
+void(entity attacker, float damage) army_pain =
 {
 	local float r;
 	

@@ -1,5 +1,5 @@
 /*======================================================
-	JOBS.QC			Custom TeamFortress v3.2SB1	
+	JOBS.QC 		Custom TeamFortress v3.2SB1 
 
 	(c) William Kerney			2/9/00
 	(c) SB-1 Tech				25/10/00
@@ -67,47 +67,47 @@ void(entity player) ArmyInit;
 
 float(entity player) GetJobExtras =
 {
-    if (player.job & #JOB_EXTRA1)
-    {
-        if (player.job & #JOB_EXTRA2)
-            return 3; // For future extra item
-        
-        return 1;
-    }
+	if (player.job & #JOB_EXTRA1)
+	{
+		if (player.job & #JOB_EXTRA2)
+			return 3; // For future extra item
+		
+		return 1;
+	}
 
-    if (player.job & #JOB_EXTRA2)
-        return 2;
+	if (player.job & #JOB_EXTRA2)
+		return 2;
 
-    return 0;
+	return 0;
 };
 
 void(entity player, float extras) SetJobExtras =
 {
-    if (!extras)
-    {
-        player.job = player.job - (player.job & (#JOB_EXTRA1 | #JOB_EXTRA2));
-        return;
-    }
+	if (!extras)
+	{
+		player.job = player.job - (player.job & (#JOB_EXTRA1 | #JOB_EXTRA2));
+		return;
+	}
 
-    if (extras == 1)
-    {
-        player.job = player.job - (player.job & #JOB_EXTRA2);
-        player.job = player.job | #JOB_EXTRA1;
-        return;
-    }
+	if (extras == 1)
+	{
+		player.job = player.job - (player.job & #JOB_EXTRA2);
+		player.job = player.job | #JOB_EXTRA1;
+		return;
+	}
 
-    if (extras == 2)
-    {
-        player.job = player.job - (player.job & #JOB_EXTRA1);
-        player.job = player.job | #JOB_EXTRA2;
-        return;    
-    }
+	if (extras == 2)
+	{
+		player.job = player.job - (player.job & #JOB_EXTRA1);
+		player.job = player.job | #JOB_EXTRA2;
+		return;    
+	}
 
-    if (extras == 3) // Unused by now
-    {
-        player.job = player.job | #JOB_EXTRA2 | #JOB_EXTRA1;
-        return;    
-    }
+	if (extras == 3) // Unused by now
+	{
+		player.job = player.job | #JOB_EXTRA2 | #JOB_EXTRA1;
+		return;    
+	}
 };
 
 //
@@ -127,6 +127,7 @@ void() JobThief =
 	//local string st;
 
 	//PZ don't hide if we are looking down our scope.
+	// (lol.. I'm pretty sure I didn't make this comment. -PZ)
 	local entity sniperdot;
 	sniperdot = find(world, classname, "timer");
 
@@ -137,6 +138,13 @@ void() JobThief =
 		}
 
 		sniperdot = find(sniperdot, classname, "timer");
+	}
+
+	// Neo mode: don't allow Neo to use thief skill
+	if (neo && self == neoLives)
+	{
+		sprint(self, #PRINT_HIGH, "Neo can't hide! You...you homosapien!\n");
+		return;
 	}
 
 	if (self.job & #JOB_ACTIVE) { //We are hiding
@@ -253,11 +261,11 @@ void() JobWarlock =
 		return;
 	}
 	
-    if (self.current_menu == #MENU_DEMON)
-    {
-        Menu_Demon_Input(7);
-        return;
-    }
+	if (self.current_menu == #MENU_DEMON)
+	{
+		Menu_Demon_Input(7);
+		return;
+	}
 
 	self.current_menu = #MENU_DEMON;
 	self.menu_count = #MENU_REFRESH_RATE;
@@ -286,15 +294,16 @@ void() ChaplanInspire = {
 	{
 		//Dispel enemy demons
 		//- OfN - if (head.classname == "monster_demon1" || head.classname == "monster_shambler")
-        if (IsMonsterNonArmy(head))
+		if (IsMonsterNonArmy(head))
 		{ //No short circuit evaluation, so...
-		      if (!Teammate(head.real_owner.team_no,self.team_no))
-		      { //...to avoid a crash from deref
+			  // Neo mode modication
+			  if (!Teammate(head.real_owner, self))
+			  { //...to avoid a crash from deref
 				/*
 				if ((head.health <= 200 && head.classname == "monster_demon1") || head.health < 500 && head.classname == "monster_shambler") {
 					sprint(self,#PRINT_HIGH,"You dispel a demon\n");
 					self.real_frags = self.real_frags + 1;
-	 				if (!(toggleflags & #TFLAG_TEAMFRAGS))
+					if (!(toggleflags & #TFLAG_TEAMFRAGS))
 						self.frags = self.real_frags;
 				}
 				if (head.classname == "monster_shambler")
@@ -302,16 +311,17 @@ void() ChaplanInspire = {
 				else if (head.classname == "monster_demon1")
 					TF_T_Damage(head, self, self, 200, 0, 0);
 				*/
-                		TF_T_Damage(head, self, self, 220, 0, 0); // OfN
+						TF_T_Damage(head, self, self, 220, 0, 0); // OfN
 			}
 		}
 		else if (head.classname == "player" &&	//Person who is...
-               head.health > 0 && // OfN Alive
-			   Teammate(head.team_no,self.team_no) && //Same Team
+			   head.health > 0 && // OfN Alive
+			   // Neo mode modication
+			   Teammate(head, self) && //Same Team
 			   head != self &&			//Not me
 			   !(head.is_undercover)  &&		//Not a spy
 			   !(head.job & #JOB_CHAPLAN)  &&	//Not a chaplan
-			   head.playerclass != #PC_CIVILIAN &&  //KK
+			   head.playerclass != #PC_CIVILIAN &&	//KK
 			   //... and not Quadded
 			   !(head.items & #IT_QUAD && !(head.tfstate & #TFSTATE_INSPIRED))
 			)
@@ -385,7 +395,7 @@ void() ChaplanThink = {
 			//sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
 			//WK 1/7/7 Better music stopping
 			sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, 0);
-            self.effects = self.effects - (self.effects & #EF_BRIGHTLIGHT);
+			self.effects = self.effects - (self.effects & #EF_BRIGHTLIGHT);
 			//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_RELOADING);
 			self.current_weapon = self.weapon;
 			W_SetCurrentAmmo();
@@ -444,7 +454,6 @@ void() JobChaplan =
 ** Martyr Proficiency -
 ** Becomes invincible, but dies after a few seconds
 */
-#define MARTYR_TIME 3.5
 void() MartyrThink =
 {
 	//Self.owner is the guy who became a martyr
@@ -457,11 +466,7 @@ void() MartyrThink =
 	self.owner.invincible_finished = 0;
 	self.owner.effects = self.owner.effects - (self.owner.effects & #EF_DIMLIGHT);
 
-	//if (self.owner.martyr_enemy == self.owner)
-		deathmsg = #DMSG_MARTYR;
-	//else
-	//	deathmsg = self.owner.stored_deathmsg;
-	                                                                                          //- OfN was 20
+	deathmsg = #DMSG_MARTYR;
 	TF_T_Damage(self.owner, self.owner.martyr_enemy, self.owner.martyr_enemy, self.owner.health + 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 
 	self.think = SUB_Remove;
@@ -469,6 +474,8 @@ void() MartyrThink =
 };
 
 // SB I'll leave this here since it's still close to a job
+// WK Of course it's a job...
+#define MARTYR_TIME 3.5
 void() JobMartyr =
 {
 	local entity tWeapon;
@@ -477,14 +484,28 @@ void() JobMartyr =
 	if (self.is_abouttodie)
 		return;
 	
-	martyr_time = #MARTYR_TIME; // don't need FORCED stuff since it's always automatic
-	
+	martyr_time = #MARTYR_TIME;
+	//WK 5-15-08 Adjust martyr time based on amount of life left
+	if (self.health < 10) {
+		martyr_time = martyr_time - 1.5; //2s
+	} else if (self.health < 33) {
+		martyr_time = martyr_time - 1; //2.5s
+	} else if (self.health < 50) {
+		martyr_time = martyr_time - 0.5; //2s
+	} else if (self.health > 140) {
+		martyr_time = martyr_time + 1; //4.5s
+	} else if (self.health > 100) {
+		martyr_time = martyr_time + 0.5; //4s
+	}
+
 	sprint(self,#PRINT_HIGH,"Beginning your suicide run...\n");
 	self.items = self.items | #IT_INVULNERABILITY;
 	self.invincible_time = 1;
 	self.invincible_finished = time + martyr_time + 1; //Overlap so we can't die till end
-	//self.job = self.job | #JOB_ACTIVE;
-	//self.job_finished = time + martyr_time + 1;
+	sound (self, #CHAN_VOICE, "shaka/martyr.wav", 1, #ATTN_NORM); //WK 5-15-08 Ieeeee!
+
+	self.job = self.job | #JOB_ACTIVE;
+	self.job_finished = time + martyr_time + 10; //Once it's triggered, that's it
 	
 	tWeapon = spawn();
 	tWeapon.owner = self;
@@ -515,8 +536,8 @@ void() BerserkerKillTimer =
 	}
 
 
-    self.job = self.job - (self.job & #JOB_ACTIVE); //- OfN
-    self.owner.is_abouttodie = #FALSE;
+	self.job = self.job - (self.job & #JOB_ACTIVE); //- OfN
+	self.owner.is_abouttodie = #FALSE;
 	dremove(self);
 };
 
@@ -544,7 +565,7 @@ void() JobBerserker =
 	self.super_damage_finished = time + #BERSERK_TIME + 1;
 	self.items = self.items | #IT_QUAD;
 	self.is_abouttodie = #TRUE;
-    self.job = self.job | #JOB_ACTIVE; //- OfN
+	self.job = self.job | #JOB_ACTIVE; //- OfN
 	self.job_finished = time + #BERSERK_TIME * 3;
 	
 	stuffcmd(self, "v_idlescale 20\n"); //WK 30
@@ -561,7 +582,7 @@ void() JobBerserker =
 // when you remove them. Need special cases to handle their theft
 //WK 6/1/7 CANT_ATTACK_TIME lowered from 5s, since it was kind of lame, since you have no weapon anyway.
 #define DISARM_TIME 10
-#define CANT_ATTACK_TIME 3
+#define CANT_ATTACK_TIME 2
 #define HIT_DELAY 8
 #define MISS_DELAY 1
 void() JudokaRearm =
@@ -590,7 +611,7 @@ void() JudokaRearm =
 		}
 		////Fix double weapons
 		if (self.current_weapon == #WEAP_SNIPER_RIFLE) {
-			self.owner.weapons_carried = self.owner.weapons_carried | #WEAP_AUTO_RIFLE;				
+			self.owner.weapons_carried = self.owner.weapons_carried | #WEAP_AUTO_RIFLE; 			
 			self.enemy.weapons_carried = self.enemy.weapons_carried - (self.enemy.weapons_carried & #WEAP_AUTO_RIFLE);
 		}
 		////Fix weird weapons
@@ -619,11 +640,11 @@ void() JudokaRearm =
 
 		sprint(self.owner,#PRINT_HIGH,"You get your weapon back\n");
 		self.owner.weapons_carried = self.owner.weapons_carried | self.current_weapon;
-		TeamFortress_SetSpeed(self.owner);  //WK 3/2/7 Judo Speed fix
+		TeamFortress_SetSpeed(self.owner);	//WK 3/2/7 Judo Speed fix
 
 		sprint(self.enemy,#PRINT_HIGH,"You lose your stolen weapon\n");
 		self.enemy.weapons_carried = self.enemy.weapons_carried - (self.enemy.weapons_carried & self.current_weapon);
-		TeamFortress_SetSpeed(self.enemy);  //WK 3/2/7 Judo Speed fix
+		TeamFortress_SetSpeed(self.enemy);	//WK 3/2/7 Judo Speed fix
 
 		//Fix for a bug that would let someone keep their weapon if they switched to autorifle before
 		//the weapon returned.
@@ -653,22 +674,31 @@ void() JobJudoka =
 	
 	makevectors(self.v_angle);
 	source = self.origin + '0 0 16';
-	traceline (source, source + v_forward*96, #TL_ANY_SOLID, self);
+	if (!self.cutf_items & #CUTF_CLOSECOMBAT) 
+		traceline (source, source + v_forward*63, #TL_ANY_SOLID, self);
+	else
+		traceline (source, source + v_forward*96, #TL_ANY_SOLID, self);
 	if (trace_fraction == 1.0) {
 		sprint (self, #PRINT_HIGH, "You miss.\n");
 		return;
 	}
 
-    
-    if (trace_ent)
-    if (trace_ent.classname == "player")
-    if (trace_ent.#runes & #RUNE_RESIS)
-    {
-        sprint (self, #PRINT_HIGH, "He is protected by a mysterious power!\n"); //WK Typo
-        return;
-    }
+	
+	if (trace_ent)
+	if (trace_ent.classname == "player") {
+		if (trace_ent.#runes & #RUNE_RESIS)
+		{
+			sprint (self, #PRINT_HIGH, "He is protected by a mysterious power!\n"); //WK Typo
+			return;
+		}
+		//WK 5-15-08 Don't judo people who are reloading and thus don't have a weapon out
+		if (trace_ent.tfstate & #TFSTATE_RELOADING) {
+			sprint (self, #PRINT_HIGH, "He is reloading, and doesn't have a weapon to take!\n"); 
+			return;
+		}
+	}
 
-	if (trace_ent.classname == "player" && !Teammate(trace_ent.team_no, self.team_no) && trace_ent.playerclass != #PC_UNDEFINED)
+	if (trace_ent.classname == "player" && !Teammate(trace_ent, self) && trace_ent.playerclass != #PC_UNDEFINED)
 	{
 		if (trace_ent.current_weapon == #WEAP_SNIPER_RIFLE && trace_ent.cutf2_items & #CUTF2_SHINIGAMI) {
 			sprint(self,#PRINT_HIGH,"He is wielding the Shinigami, and cannot be disarmed!\n");
@@ -695,6 +725,8 @@ void() JobJudoka =
 		if (trace_ent.current_weapon == #WEAP_AUTO_RIFLE)
 			trace_ent.current_weapon = #WEAP_SNIPER_RIFLE;
 
+		//WK 5-15-08 We should not reach this code since we block disarming people who are TFSTATE_RELOADING above, but doesn't hurt to double check
+		// to remove a reload timer if TFSTATE_RELOADING wasn't properly set.
 		//If already reloading, remove that timer
 		te = find(world, netname, "reloadtimer");
 		while (te != world)
@@ -728,7 +760,6 @@ void() JobJudoka =
 		TeamFortress_SetSpeed(self);  //WK 3/2/7 Judo Speed fix
 		TeamFortress_SetSpeed(trace_ent); //WK 3/2/7 Judo Speed fix
 
-
 		if ((trace_ent.job & #JOB_JUDOKA && trace_ent.job_finished > time) || trace_ent.current_weapon == 0) {
 			//Hit fellow judoka or chaplan
 			sprint (self, #PRINT_HIGH, "You throw him with a mighty Seoi Otoshi\n");
@@ -749,7 +780,7 @@ void() JobJudoka =
 
 			//Fix double weapons
 			if (trace_ent.current_weapon == #WEAP_SNIPER_RIFLE) {
-				self.weapons_carried = self.weapons_carried | #WEAP_AUTO_RIFLE;				
+				self.weapons_carried = self.weapons_carried | #WEAP_AUTO_RIFLE; 			
 				trace_ent.weapons_carried = trace_ent.weapons_carried - (trace_ent.weapons_carried & #WEAP_AUTO_RIFLE);
 			}
 			if (trace_ent.current_weapon == #WEAP_MEDIKIT) {
@@ -783,6 +814,13 @@ void() JobJudoka =
 
 			trace_ent.weapons_carried = trace_ent.weapons_carried - (trace_ent.weapons_carried & trace_ent.current_weapon);
 			trace_ent.current_weapon = 0;
+
+			//WK 5-15-08 Switch them to their best remaining weapon
+			oself = self;
+			self = trace_ent;
+			self.current_weapon = W_BestWeapon ();
+			W_SetCurrentAmmo ();
+			self = oself;
 
 			deathmsg = #DMSG_JUDOKA;
 			TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_MELEE); //WK 65
@@ -831,7 +869,7 @@ void () JobTKDThink =
 #define TKDHIGHJUMPTIME 0.6
 #define TKDHIGHJUMPRESET 0.5
 #define TKDLONGJUMPTIME 1.33
-#define TKDLONGJUMPRESET 5
+#define TKDLONGJUMPRESET 4.5 //WK 1-19-09 Was 5
 void() JobTKD =
 {
 	local float playerspeed;
@@ -849,7 +887,10 @@ void() JobTKD =
 	TKD_Brake.think = JobTKDThink;
 
 	//Kiai!
-	sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
+	if (self.cutf_items & #CUTF_STEALTH) //WK 1-19-09 Kiai Quietly with Stealth
+		sound (self, #CHAN_VOICE, "demon/djump.wav", 0.2, #ATTN_NORM);
+	else
+		sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
 
 	temp_velocity = self.velocity;
 	temp_velocity_z = 0;
@@ -868,26 +909,23 @@ void() JobTKD =
 		}
 
 		self.gravity = 0.5;
-
-		if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT)
-			self.velocity_z = self.velocity_z + 400; //Anti-speedcap
-		else
-			self.velocity_z = self.velocity_z + 600;
+		self.velocity_z = self.velocity_z + 600;
 
 	} else { //Long jump
 		self.gravity = 0.5;
 		makevectors(self.angles);
-		if (self.effects & #EF_DIMLIGHT || self.effects & #EF_BRIGHTLIGHT) {
-			self.velocity = self.velocity + playerspeed*v_forward*0.5;
-			self.velocity_z = 200; //We don't allow big jump + TKD moves while glowing
-		}
-		else {
-			self.velocity = self.velocity + playerspeed*v_forward;
-			if (self.velocity_z < 20)
-				self.velocity_z = 200;
-			else
-				self.velocity_z = self.velocity_z + 180;
-		}
+		//WK 5-15-08 Allow people to TKD Backwards and normalize TKD Boost at +320
+		//	Before, it was doubling the forward speed of the player which looked funny at low speeds
+		if (v_forward * self.velocity > 0) playerspeed = 320; //Running forward
+		else playerspeed = -320;
+		//WK 1-19-09 20% faster jumps with Closecombat
+		if (self.cutf_items & #CUTF_CLOSECOMBAT) playerspeed = playerspeed * 1.2;
+
+		self.velocity = self.velocity + playerspeed*v_forward;
+		if (self.velocity_z < 20)
+			self.velocity_z = 200;
+		else
+			self.velocity_z = self.velocity_z + 180;
 
 		TKD_Brake.nextthink = time + #TKDLONGJUMPTIME;
 		self.job_finished = time + #TKDLONGJUMPRESET; //Long jumps are tiring
@@ -910,7 +948,7 @@ void() JobTKD =
 The Psion job has three levels, of increasing power.
 
 Level 1:
-Passive Ability: Mind Probe. Psions automatically uncover all enemy spies and thieves within 15 feet. Passive Ability: Mind Shield. Spy/Psions, on the other hand, are immune to being automatically uncovered, even by motion sensors. Active ability: Mind Blast. Once per 10 seconds you can mind blast an opponent ahead of you, psionizing them for 1 second (+.5s per  additional level of the job), making them unable to attack or perform any  actions.
+Passive Ability: Mind Probe. Psions automatically uncover all enemy spies and thieves within 15 feet. Passive Ability: Mind Shield. Spy/Psions, on the other hand, are immune to being automatically uncovered, even by motion sensors. Active ability: Mind Blast. Once per 10 seconds you can mind blast an opponent ahead of you, psionizing them for 1 second (+.5s per  additional level of the job), making them unable to attack or perform any	actions.
 
 Level 2: Passive Ability: Uncovering radius increases to 30 feet. Active Ability: Telekinetic Wave. When you hit skill, on top of the mind blast, you emit a telekinetic explosion, flinging away all objects near you (similar to using the airfist). If you face a rocket or similar projectile head-on, it will be reflected perfectly back at its owner. Active Ability: Telekinesis (triggers at the same time as the Telekinetic Wave). If you target a detpack, you can pick it up and move slowly with it. You take double damage while using telekinesis, and if you die while carrying it, the detpack explodes harmlessly. Both picking up and dropping a detpack damage its sensitive circuits, increasing the time before detonation.
 
@@ -922,7 +960,7 @@ Level 3: Passive Ability: Uncovering radius increases to 45 feet. Active Ability
 //.owner = self
 //.oldenemy = hauling target
 //BUG: This isn't working perfectly for sentryguns right now, especially when you manually det a sentrygun
-//   the psion doesn't die from it.
+//	 the psion doesn't die from it.
 //The code which handles people dying and destroying the other pair is buggy, but the psion is functional.
 //It works except in weird dying situations like suicide or detdispenser
 #define HAULING_THINK_RATE 0.01
@@ -1003,7 +1041,8 @@ void() HaulingTimer =
 				if (IsBuilding(self.oldenemy)) //Blow up only friendly buildings we're carrying
 				{
 					//bprint(#PRINT_HIGH,"Blow the build!\n");
-					if (self.oldenemy.health > 0 && self.oldenemy.takedamage && Teammate(self.oldenemy.real_owner.team_no,self.owner.team_no))
+					// Neo mode modication
+					if (self.oldenemy.health > 0 && self.oldenemy.takedamage && Teammate(self.oldenemy.real_owner, self.owner))
 							TF_T_Damage(self.oldenemy, self.oldenemy, self.oldenemy, self.oldenemy.health + 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 				}
 				else if (self.oldenemy.classname == "detpack") {
@@ -1017,11 +1056,11 @@ void() HaulingTimer =
 						#else
 							self.oldenemy.enemy.pausetime = time;		
 						#endif	
-						dremove(self.oldenemy.oldenemy);  	 // CountDown
+						dremove(self.oldenemy.oldenemy);	 // CountDown
 						dremove(self.oldenemy.observer_list); //	Disarm timer
 					}
 					else { //Not being disarmed
-						dremove(self.oldenemy.oldenemy);  	 // CountDown
+						dremove(self.oldenemy.oldenemy);	 // CountDown
 					}
 					self.oldenemy.think = BecomeExplosion;
 					self.oldenemy.nextthink = time + 0.1;
@@ -1079,7 +1118,7 @@ void() HaulingTimer =
 			}
 		}
 		//WK 10/10/7 TKII has been weak, and hauling dets doesn't work right since they tend to blow while moving them
-		//  so now TK will place detpacks into statis while moving them
+		//	so now TK will place detpacks into statis while moving them
 		if (self.oldenemy.classname == "detpack") {
 			self.oldenemy.nextthink = self.oldenemy.nextthink + #HAULING_THINK_RATE; //No time progresses while carried
 			self.oldenemy.oldenemy.nextthink = time + 1 + #HAULING_THINK_RATE; //No countdown
@@ -1108,7 +1147,8 @@ void() JobPsion =
 		dist = vlen(self.origin-head.origin);
 		traceline (self.origin, head.origin, #TL_BSP_ONLY, self);
 		if (trace_fraction == 1.0) { //Need full line of sight to target
-			if (head.classname != "player" || (!Teammate(self.team_no,head.team_no) && head.takedamage && head.health > 0 && head.playerclass != #PC_UNDEFINED))
+			// Neo mode modication
+			if (head.classname != "player" || (!Teammate(self, head) && head.takedamage && head.health > 0 && head.playerclass != #PC_UNDEFINED))
 			{
 				makevectors(self.v_angle);
 				dir = normalize(v_forward);
@@ -1159,7 +1199,7 @@ void() JobPsion =
 								self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 								self.weaponframe = 0;
 								self.count = 1;
-								player_assaultcannondown1();                        
+								player_assaultcannondown1();						
 							}
 							else
 								player_run();
@@ -1175,7 +1215,8 @@ void() JobPsion =
 						haul_target = head;
 						local float allowed;
 						allowed = 0;
-						if (!Teammate(head.real_owner.team_no,self.team_no)) allowed = 1; //Moving enemy builds ok
+						// Neo mode modication
+						if (!Teammate(head.real_owner, self)) allowed = 1; //Moving enemy builds ok
 						if (infokey(head.real_owner,"psi") == "on") allowed = 1; //Moving allowed builds ok
 						if (self == head.real_owner) allowed = 1; //We can always move our own builds
 
@@ -1306,7 +1347,7 @@ void() UseJobSkill =
 		if (HasFlag(self.team_no) == #FALSE)
 		{
 			CenterPrint(self, "No demons until your team has the flag!\n");
-			return;		
+			return; 	
 		}
 		JobWarlock();
 	}
@@ -1318,17 +1359,17 @@ void() UseJobSkill =
 		JobGuerilla();
 	else if (myjob & #JOB_JUDOKA)
 		JobJudoka();
-   	else if (myjob & #JOB_HACKER)
+	else if (myjob & #JOB_HACKER)
 		JobHacker();
-    else if (myjob & #JOB_MARTYR)
+	else if (myjob & #JOB_MARTYR)
 		JobMartyr();
-    else if (myjob & #JOB_ARMY)
+	else if (myjob & #JOB_ARMY)
 		JobArmy();
-    else if (myjob & #JOB_CRUSADER)
+	else if (myjob & #JOB_CRUSADER)
 		JobCrusader();
-    else if (myjob & #JOB_TKD)
+	else if (myjob & #JOB_TKD)
 		JobTKD();
-    else if (myjob & #JOB_PSION)
+	else if (myjob & #JOB_PSION)
 		JobPsion();
 	else {
 		sprint(self,#PRINT_HIGH,"You don't have a job. Go get employed.\n");
@@ -1336,9 +1377,9 @@ void() UseJobSkill =
 	}
 };
 
-#define NOHIDE_TIME 8
-#define EXPOSURE_NOHIDE_TIME 20
-#define EXPOSURE_NORELOAD_TIME 7
+#define NOHIDE_TIME 6
+#define EXPOSURE_NOHIDE_TIME 10
+#define EXPOSURE_NORELOAD_TIME 3.5
 #define FULLH_NORELOAD_TIME 1.5
 void (entity targ, float pain) RevealThief =
 {
@@ -1383,8 +1424,8 @@ void() InitJobStuff =
 	}
 	else
 		return; // If nothing done just return
-    
-    // Set our "initialization done" flag to true
-    self.goal_activation = #TRUE;
+	
+	// Set our "initialization done" flag to true
+	self.goal_activation = #TRUE;
 };
 

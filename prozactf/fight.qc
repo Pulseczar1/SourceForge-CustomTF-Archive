@@ -22,7 +22,7 @@ void() sham_swingr1;
 void() sham_swingl1;
 #endif
 
-float()	DemonCheckAttack;
+float() DemonCheckAttack;
 void(float side)	Demon_Melee;
 
 void(vector dest) ChooseTurn;
@@ -34,7 +34,7 @@ void() ai_face;
 #ifdef COOP_MODE
 void() knight_attack =
 {
-	local float		len;
+	local float 	len;
 	
 // decide if now is a good swing time
 	len = vlen(self.enemy.origin+self.enemy.view_ofs - (self.origin+self.view_ofs));
@@ -60,7 +60,7 @@ float() CheckAttack =
 {
 	local vector	spot1, spot2;	
 	local entity	targ;
-	local float		chance;
+	local float 	chance;
 
 	targ = self.enemy;
 	
@@ -126,7 +126,7 @@ float() CheckAttack =
 	{
 		self.th_missile ();
 		//SUB_AttackFinished (2*random());
-        Attack_Finished(2*random());
+		Attack_Finished(2*random());
 		return #TRUE;
 	}
 
@@ -151,21 +151,21 @@ void() ai_face =
 //WK Ai face for everyone
 void() ai_face =
 {
-    // OfN - Fixes 'yaw to world origin' bug when holos r targetted by a sentry and disappear
-    if (self.classname=="building_sentrygun" && self.enemy.classname == "holo" && self.enemy.has_holo == 0)
-        return;
-    
-    
-    self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
+	// OfN - Fixes 'yaw to world origin' bug when holos r targetted by a sentry and disappear
+	if (self.classname=="building_sentrygun" && self.enemy.classname == "holo" && self.enemy.has_holo == 0)
+		return;
+	
+	
+	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = anglemod(self.ideal_yaw);
 
 	//WK Turrets swivel instanter
 	/* if (self.tf_items & #NIT_TURRET) { //Auto-swivel
 		self.angles_y = self.ideal_yaw;
 	} */
-	//WK Fix a sentry stuck bug?               
+	//WK Fix a sentry stuck bug?			   
 	if (self.classname == "building_sentrygun") { //Auto-swivel
-         self.angles_y = self.ideal_yaw;
+		 self.angles_y = self.ideal_yaw;
 	}
 	else
 		ChangeYaw ();
@@ -184,8 +184,8 @@ float(entity targ) range;
 
 void(float d) ai_charge =
 {
-	ai_face ();	
-	movetogoal (d);		// done in C code...
+	ai_face (); 
+	movetogoal (d); 	// done in C code...
 };
 
 void() ai_charge_side =
@@ -218,7 +218,7 @@ void() ai_melee =
 	local float 	ldmg;
 
 	if (!self.enemy)
-		return;		// removed before stroke
+		return; 	// removed before stroke
 		
 	delta = self.enemy.origin - self.origin;
 
@@ -236,7 +236,7 @@ void() ai_melee_side =
 	local float 	ldmg;
 
 	if (!self.enemy)
-		return;		// removed before stroke
+		return; 	// removed before stroke
 		
 	ai_charge_side();
 	
@@ -268,7 +268,7 @@ float() SoldierCheckAttack =
 {
 	local vector	spot1, spot2;	
 	local entity	targ;
-	local float		chance;
+	local float 	chance;
 
 	targ = self.enemy;
 	
@@ -330,8 +330,8 @@ float() ShamCheckAttack =
 {
 	local vector	spot1, spot2;	
 	local entity	targ;
-	local float		chance;
-	local float		enemy_yaw;
+	local float 	chance;
+	local float 	enemy_yaw;
 
 	if (enemy_range == #RANGE_MELEE)
 	{
@@ -393,7 +393,7 @@ float() OgreCheckAttack =
 {
 	local vector	spot1, spot2;	
 	local entity	targ;
-	local float		chance;
+	local float 	chance;
 
 	if (enemy_range == #RANGE_MELEE)
 	{

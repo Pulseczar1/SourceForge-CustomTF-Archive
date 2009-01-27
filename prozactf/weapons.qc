@@ -85,25 +85,6 @@ float(float tno) TeamFortress_TeamSet;
 void(float all, float teamscored, float scorepoints) TeamFortress_TeamShowScores;
 void(entity Player) TeamFortress_TeamShowMemberClasses;
 
-#ifdef DEMO_STUFF
-// Camera Functions
-void() CamLock;
-void() CamDistLock;
-void() CamVecLock; 
-void() CamAngleLock;
-void() CamRevAngleLock;
-void() CamProjectileLock;
-void() CamProjectileZoom;
-void() CamProjectileLockOn;
-void() CamProjectileLockOff;
-void() CamOffset;
-void() CamDrop;
-void() fadetoblack;
-void() fadefromblack;
-void() fadetowhite;
-void() fadefromwhite;
-#endif
-
 // Engineer Functions
 void(entity disp) Engineer_UseDispenser;
 void(entity cam) Engineer_UseSensor;
@@ -241,10 +222,20 @@ void() W_Precache =
 	precache_model ("progs/tesgib3.mdl");		  // Tesla Gib
 	precache_sound ("doors/medtry.wav");		  //CH Dropping detpack sound
 	precache_sound ("doors/baseuse.wav");		  //CH Detpack warning sound
-	precache_sound ("enforcer/sight1.wav");   // WK Taunt
-	precache_sound ("enforcer/sight2.wav");   // WK Taunt
-	precache_sound ("enforcer/sight3.wav");   // WK Taunt
-	precache_sound ("enforcer/sight4.wav");   // WK Taunt
+	precache_sound ("enforcer/sight1.wav"); 	// WK Taunt
+	precache_sound ("enforcer/sight2.wav"); 	// WK Taunt
+	precache_sound ("enforcer/sight3.wav"); 	// WK Taunt
+	precache_sound ("enforcer/sight4.wav"); 	// WK Taunt
+	precache_sound ("shaka/voting_agr.wav");	// WK 5-15-08 Voting Speech
+	precache_sound ("shaka/voting_neo.wav");	// WK 5-15-08 Voting Speech
+	precache_sound ("shaka/voting_new.wav");	// WK 5-15-08 Voting Speech
+	precache_sound ("shaka/voting_new2.wav");	// WK 5-15-08 Voting Speech
+	precache_sound ("shaka/voting_new3.wav");	// WK 5-15-08 Voting Speech
+	precache_sound ("shaka/voting_new4.wav");	// WK 5-15-08 Voting Speech
+//	precache_sound ("shaka/berserk.wav");	  // WK 5-15-08 Berserk Sound
+//	precache_sound ("shaka/berserkkill.wav");	// WK 5-15-08 Berserk Sound
+//	precache_sound ("shaka/blackhole.wav");   // WK 5-15-08 Black Hole Gun Sound
+	precache_sound ("shaka/martyr.wav");	  // WK 5-15-08 Martyr Sound
 
 	custom_demon_precache();
 };
@@ -347,15 +338,12 @@ void() W_FireAxe =
 		if (!(self.cutf_items & #CUTF_KNIFE) || trace_ent.classname != "player")
 		{
 			deathmsg = #DMSG_AXE;
-			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-				TF_T_Damage (trace_ent, self, self, 30, #TF_TD_NOTTEAM, #TF_TD_MELEE);
-			else
-				TF_T_Damage (trace_ent, self, self, 60, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+			TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_MELEE); //WK 1-19-09 Was 30
 		}
 		else	// spy can try for the backstab!
 		{
 			//WK Only give blood if you hit an enemy when being a warlock
-			if ((!Teammate(trace_ent.team_no, self.team_no) || !(self.job & #JOB_WARLOCK)) && prematch < time)
+			if ((!Teammate(trace_ent, self) || !(self.job & #JOB_WARLOCK)) && prematch < time)
 			{
 				self.job = self.job | #JOB_BLOODY_KNIFE;
 				self.weaponmode = 1; // Put blood on the knife
@@ -387,19 +375,13 @@ void() W_FireAxe =
 				//ThrowGib ("progs/gib2.mdl", 25); //-added
 
 //WK 120 & no IGNOREARMOR
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_MELEE);
-				else
-					TF_T_Damage (trace_ent, self, self, 200, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_MELEE);
+				TF_T_Damage (trace_ent, self, self, 100, #TF_TD_IGNOREARMOUR | #TF_TD_NOTTEAM, #TF_TD_MELEE);
 			}
 			else
 			{
 				deathmsg = #DMSG_AXE;
 //WK 40
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					TF_T_Damage (trace_ent, self, self, 50, #TF_TD_NOTTEAM, #TF_TD_MELEE);
-				else
-					TF_T_Damage (trace_ent, self, self, 100, #TF_TD_NOTTEAM, #TF_TD_MELEE); 			
+				TF_T_Damage (trace_ent, self, self, 60, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 			}
 		}
 	}
@@ -553,7 +535,8 @@ void() W_FireSpanner =
 		{
 			if (trace_ent.classname == "player")
 			{
-				if (Teammate(trace_ent.team_no, self.team_no) && (teamplay) || (coop))
+				// Neo mode modication
+				if (Teammate(trace_ent, self) && (teamplay) || (coop))
 				{
 					healam = #WEAP_SPANNER_REPAIR;
 					if (self.ammo_cells < healam)
@@ -603,11 +586,8 @@ void() W_FireSpanner =
 			SpawnBlood (org, 20);
 
 			deathmsg = #DMSG_SPANNER;
-//WK 20
-			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-				TF_T_Damage (trace_ent, self, self, 20, #TF_TD_NOTTEAM, #TF_TD_MELEE);
-			else
-				TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+			//WK 1-19-09 Was 20. Makes spanner not a downgrade on melee damage
+			TF_T_Damage (trace_ent, self, self, 40, #TF_TD_NOTTEAM, #TF_TD_MELEE);
 		}
 	}
 	else // hit wall
@@ -640,8 +620,8 @@ void(float inAuto) W_FireMedikit =
 {
 	local	vector	source;
 	local	vector	org;
-	local	float healam;	
-	local	entity te, BioInfection;
+	local	float	healam; 
+	local	entity	te, BioInfection;
 
 	source = self.origin + '0 0 16';
 	if (self.cutf_items & #CUTF_CLOSECOMBAT)
@@ -661,7 +641,8 @@ void(float inAuto) W_FireMedikit =
 	{
 		if (trace_ent.classname == "player")
 		{
-			if (Teammate(trace_ent.team_no, self.team_no) || (coop))
+			// Neo mode modication
+			if (Teammate(trace_ent, self) || coop)
 			{
 				healam = #WEAP_MEDIKIT_HEAL;
 
@@ -681,7 +662,8 @@ void(float inAuto) W_FireMedikit =
 					trace_ent.tfstate = trace_ent.tfstate - (trace_ent.tfstate & #TFSTATE_CONCUSSIONED); //WK 8/4/7 Flag fix
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
-					if (!Teammate(self.team_no,te.team_no))
+					// Neo mode modication
+					if (!Teammate(self, te))
 					{
 						self.real_frags = self.real_frags + 1;
 						if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -709,7 +691,8 @@ void(float inAuto) W_FireMedikit =
 						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your hallucinations\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						if (!Teammate(self.team_no,te.team_no))
+						// Neo mode modication
+						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
 							if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -743,7 +726,8 @@ void(float inAuto) W_FireMedikit =
 						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your tranquilisation\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						if (!Teammate(self.team_no,te.team_no))
+						// Neo mode modication
+						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
 							if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -775,7 +759,8 @@ void(float inAuto) W_FireMedikit =
 						stuffcmd(trace_ent, "v_cshift 0\n"); //WK -- /CH te -> trace_ent
 						stuffcmd(trace_ent, "r_norefresh 0;wait;echo;wait;echo;wait;echo;wait;echo\n"); //WK -- /CH te -> trace_ent
 
-						if (!Teammate(self.team_no,te.team_no))
+						// Neo mode modication
+						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
 							if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -811,7 +796,8 @@ void(float inAuto) W_FireMedikit =
 						sprint(self, #PRINT_HIGH, "You restore ", trace_ent.netname, "'s psionic normality\n");
 						
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						if (!Teammate(self.team_no,te.team_no))
+						// Neo mode modication
+						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
 							if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -851,7 +837,9 @@ void(float inAuto) W_FireMedikit =
 						teamsprintbi(self,trace_ent,trace_ent.netname," infection has been cured by ",self.netname,"\n","","");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						if (!Teammate(trace_ent.infection_team_no, self.team_no))
+						temp_e.team_no = trace_ent.infection_team_no; // for Neo mode (modified Teammate())
+						// Neo mode modication
+						if (!Teammate(temp_e, self))
 						{
 							self.real_frags = self.real_frags + 1;
 							if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -922,10 +910,8 @@ void(float inAuto) W_FireMedikit =
 				SpawnBlood (org, 20);
 
 				deathmsg = #DMSG_BIOWEAPON_ATT;
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					T_Damage (trace_ent, self, self, 10);
-				else
-					T_Damage (trace_ent, self, self, 20);
+				//WK 1-19-09 Was 10
+				T_Damage (trace_ent, self, self, 20);
 					
 				if (trace_ent.weapons_carried & #WEAP_MEDIKIT) //WK
 					return;
@@ -971,7 +957,8 @@ void(float inAuto) W_FireMedikit =
 		}
 		else if (IsMonster(trace_ent))//- OfN - Monsters 
 		{
-			if (Teammate(trace_ent.real_owner.team_no, self.team_no))
+			// Neo mode modication
+			if (Teammate(trace_ent.real_owner, self))
 			{
 				if (trace_ent.health < trace_ent.max_health)
 				{
@@ -1025,7 +1012,9 @@ void(float inAuto) W_FireMedikit =
 					teamsprintbi(trace_ent.real_owner,self,self.netname, " cures the ",tmps," ",trace_ent.netname,"\n");
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
-					if (!Teammate(trace_ent.infection_team_no, self.team_no))
+					temp_e.team_no = trace_ent.infection_team_no; // for Neo mode (modified Teammate())
+					// Neo mode modication
+					if (!Teammate(temp_e, self))
 					{
 						self.real_frags = self.real_frags + 1;
 						if (!(toggleflags & #TFLAG_TEAMFRAGS))
@@ -1037,10 +1026,8 @@ void(float inAuto) W_FireMedikit =
 			{
 				trace_ent.axhitme = 1;
 				SpawnBlood(org, 20);
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					T_Damage (trace_ent, self, self, 10);
-				else
-					T_Damage (trace_ent, self, self, 20);
+				//WK 1-19-09 Was 10
+				T_Damage (trace_ent, self, self, 20);
 
 				// Report to owner, only if first infection
 				if (!(trace_ent.tfstate & #TFSTATE_INFECTED))
@@ -1118,7 +1105,10 @@ void() W_FireBioweapon =
 	local	entity BioInfection;
 
 	source = self.origin + '0 0 16';
-	traceline (source, source + v_forward*64, #TL_ANY_SOLID, self);
+	if (self.cutf_items & #CUTF_CLOSECOMBAT)
+		traceline (source, source + v_forward*96, #TL_ANY_SOLID, self);
+	else
+		traceline (source, source + v_forward*64, #TL_ANY_SOLID, self);
 	if (trace_fraction == 1.0)
 		return;
 	
@@ -1128,16 +1118,14 @@ void() W_FireBioweapon =
 	{
 		if (trace_ent.classname == "player")
 		{
-			if ((!Teammate(trace_ent.team_no, self.team_no) && teamplay) || teamplay == 0)
+			if ((!Teammate(trace_ent, self) && teamplay) || teamplay == 0)
 			{
 				trace_ent.axhitme = 1;
 				SpawnBlood (org, 20);
 		
 				deathmsg = #DMSG_BIOWEAPON_ATT;
-				if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-					T_Damage (trace_ent, self, self, 10);
-				else
-					T_Damage (trace_ent, self, self, 20);
+				//WK 1-19-09 Was 10
+				T_Damage (trace_ent, self, self, 20);
 
 				if (trace_ent.weapons_carried & #WEAP_MEDIKIT) //WK
 					return;
@@ -1165,10 +1153,8 @@ void() W_FireBioweapon =
 
 			trace_ent.axhitme = 1;
 			SpawnBlood(org, 20);
-			if (!self.cutf_items & #CUTF_CLOSECOMBAT)
-				T_Damage (trace_ent, self, self, 10);
-			else
-				T_Damage (trace_ent, self, self, 20);
+			//WK 1-19-09 Was 10
+			T_Damage (trace_ent, self, self, 20);
 
 			BioInfection = spawn ();
 			BioInfection.classname = "timer";
@@ -1560,7 +1546,7 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 
 #ifdef QUAKE_WORLD
 	//WK 6/1/7 Made this block show an accurate spread of puffs on the LAC. It was appearing waaay too accurate.
- 	if (self.current_weapon & #WEAP_ASSAULT_CANNON || self.current_weapon & #WEAP_LIGHT_ASSAULT)
+	if (self.current_weapon & #WEAP_ASSAULT_CANNON || self.current_weapon & #WEAP_LIGHT_ASSAULT)
 	{
 		//WK 6/1/7 Show actual spread numbers instead
 		//direction = dir + crandom()*0.2*v_right + crandom()*0.1*v_up;
@@ -1656,7 +1642,7 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 		// (you may think this could be optimized by pushing the stuff in the loop above
 		// and its true, but doing the scan again lets the gibs/heads that just appeared to be
 		// pushed by its first explosion and thats cool) 
-		#ifdef COOL_GIBS    
+		#ifdef COOL_GIBS	
 		CoolExplosion(self, damage,20);
 		#endif
 /* Turn off the beautiful spam. =(
@@ -1895,13 +1881,6 @@ void() W_FireSniperRifle =
 		newmis.velocity = dir * 4000;
 		return;
 	}
-
-#ifdef DEMO_STUFF
-	// Have we got a live camera in projectile mode?
-	if (live_camera)
-		CamProjectileLockOn();
-#endif
-
 
 	if (trace_ent)
 	{
@@ -2213,12 +2192,6 @@ void() T_MissileTouch =
 
 	self.origin = self.origin - 8*normalize(self.velocity);
 
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
-
 	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
 	WriteCoord (#MSG_BROADCAST, self.origin_x);
@@ -2378,7 +2351,8 @@ void() Rocket_Track_Dot =
 							min_distance = -1; //Nothing can be closer than the flare
 						}
 					}
-					else if ((head.takedamage && !Teammate(self.owner.team_no,head.team_no) && head.health > 0 && !head.is_undercover && !head.is_feigning))
+					// Neo mode modication
+					else if ((head.takedamage && !Teammate(self.owner, head) && head.health > 0 && !head.is_undercover && !head.is_feigning))
 					{
 						/* Rules for heat seeking:
 						 * 1) We wish to target things ahead of us, as much as possible.
@@ -2389,13 +2363,13 @@ void() Rocket_Track_Dot =
 						 * Solution: (1-dotproduct) * distance is this formula.
 						 *
 						 * We add +0.5 so this effect isn't as harsh, and so we can still
-						 *    target things off to the side if they're much closer
+						 *	  target things off to the side if they're much closer
 						 * (Increase to +1 to make it even more willing to turn)
 						 * For example, 1000' straight ahead (dotprod = 1) is treated as 500' 
-						 *  which is the same as 500' 60 degrees to the side (dp = .5).
-						 *  750' 30 degrees to the side (dp = .86) = 480'.
-						 *  Therefore, the rocket will prefer a target at 750ft but
-						 *  30 degrees to the side over a target 1000ft away but straight ahead.
+						 *	which is the same as 500' 60 degrees to the side (dp = .5).
+						 *	750' 30 degrees to the side (dp = .86) = 480'.
+						 *	Therefore, the rocket will prefer a target at 750ft but
+						 *	30 degrees to the side over a target 1000ft away but straight ahead.
 						 *
 						 * Key:
 						 * 1000' away = (781' @ 30deg) = (500' @ 60deg) = (333' @ 90deg)
@@ -2494,7 +2468,7 @@ MakeRocket
 //All we need to handle is the code for depleting ammo outside this code.
 //Type is one of:
 //#WEAP_ROCKET_LAUNCHER 	Base Speed 900
-//#WEAP_DAEDALUS 			Base Speed 500
+//#WEAP_DAEDALUS			Base Speed 500
 //#WEAP_INCENDIARY		Base Speed 650
 //Loops is the rocket count, anything over 1 is the number of bonus cluster shots to fire
 void(float type, float loops) MakeRocket =
@@ -2605,12 +2579,6 @@ void(float type, float loops) MakeRocket =
 		}
 		loops = loops - 1;
 	} //End while loops
-
-#ifdef DEMO_STUFF
-	// Have we got a live camera in projectile mode?
-	if (live_camera)
-		CamProjectileLockOn();
-#endif
 };
 
 /*
@@ -2940,12 +2908,6 @@ void() GrenadeExplode =
 	deathmsg = self.weapon;
 	T_RadiusDamage (self, self.owner, 120, world);
 
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
-
 	WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 	WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
 	WriteCoord (#MSG_BROADCAST, self.origin_x);
@@ -3041,12 +3003,6 @@ void() W_FireGrenade =
 	setmodel (newmis, "progs/grenade2.mdl");
 	setsize (newmis, '0 0 0', '0 0 0'); 	
 	setorigin (newmis, self.origin);
-
-#ifdef DEMO_STUFF
-	// Have we got a live camera in projectile mode?
-	if (live_camera)
-		CamProjectileLockOn();
-#endif
 };
 
 //=============================================================================
@@ -3077,12 +3033,6 @@ void(vector org, vector dir) launch_spike =
 	setorigin (newmis, org);
 
 	newmis.velocity = dir * 2000; // WK was 1000
-
-#ifdef DEMO_STUFF
-	// Have we got a live camera in projectile mode?
-	if (live_camera)
-		CamProjectileLockOn();
-#endif
 };
 
 // OfN - For nail grens, invisible direct impact nail (no entity)
@@ -3307,13 +3257,6 @@ void() spike_touch =
 		#endif
 		}
 	}
-
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
-
 	dremove(self);
 };
 
@@ -5364,7 +5307,6 @@ float(float inp) BuildingImpulses =
 {
 	if (inp < 10) return #TRUE;
 	if (inp > #TF_CHANGEPC && inp <= #TF_CHANGEPC + #PC_LASTCLASS) return #TRUE;
-	if (inp == #TF_CHANGECLASS) return #TRUE;
 	if (inp == #TF_HELP_MAP) return #TRUE;
 	if (inp == #TF_SHOWTF) return #TRUE;
 	if (inp == #TF_TEAM_CLASSES) return #TRUE;
@@ -5383,7 +5325,7 @@ float(float inp) BuildingImpulses =
 
 
 //WK 10/10/7 This function now holds all the impulses that can be done during
-//   an attack_finished global cooldown. Fixed sticky grens, sticky jobs, etc.
+//	 an attack_finished global cooldown. Fixed sticky grens, sticky jobs, etc.
 // RETURNS: 1 if the function handled the command, 0 if it didn't
 float() NoCooldownImpulseCommands =
 {
@@ -5525,7 +5467,7 @@ void() ImpulseCommands =
 	if (self.impulse == #TF_SPECIAL_SKILL)
 		UseSpecialSkill();
 
-	// No weapon related impulses can be done when setting detpacks or building WK or chaplaning
+	// No weapon related impulses can be done when setting detpacks or building //WK or chaplaning
 	if (!self.is_building && !self.is_detpacking && !self.is_feigning && !(self.job & #JOB_CHAPLAN && self.job & #JOB_ACTIVE))
 	{
 		if ((self.impulse >= 1 && self.impulse < 9) || (self.impulse == #TF_MEDIKIT))
@@ -5623,37 +5565,6 @@ void() ImpulseCommands =
 	}
 	else if (self.impulse == #TF_DISPLAYLOCATION)
 		display_location();
-		
-#ifdef DEMO_STUFF
-	// Camera Impulses
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_TARGET)
-		CamLock();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_ZOOM)
-		CamDistLock();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_VEC)
-		CamVecLock();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_ANGLE)
-		CamAngleLock();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_REVANGLE)
-		CamRevAngleLock();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_PROJECTILE)
-		CamProjectileLock();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_PROJECTILE_Z)
-		CamProjectileZoom();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_OFFSET)
-		CamOffset();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_DROP)
-		CamDrop();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_FADETOBLACK)
-		fadetoblack();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_FADEFROMBLACK)
-		fadefromblack();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_FADETOWHITE)
-		fadetowhite();
-	else if (self.playerclass == #PC_UNDEFINED && self.impulse == #TF_CAM_FADEFROMWHITE)
-		fadefromwhite();
-#endif
-
 	else
 		DeadImpulses();
 
@@ -5704,8 +5615,14 @@ void() DeadImpulses =
 //</CH>
 	//WK - Add in TF2.6 support for changeclass
 	if (self.impulse == #TF_CHANGECLASS) {
-		self.current_menu = #MENU_CLASS;
-		Menu_Class();
+			self.current_menu = #MENU_CLASS;
+			self.menu_count = #MENU_REFRESH_RATE - 5;
+	}
+	//WK 5-15-08 - Add in TF2.6 support for changeteam
+	//WK 12-4-08 - Not in neo mode
+	if (self.impulse == #TF_CHANGETEAM && !neo) {
+			self.current_menu = #MENU_TEAM;
+			self.menu_count = #MENU_REFRESH_RATE - 5;
 	}
 
 	//WK Have a normal "custom" command reset the "sell" flag
@@ -5962,7 +5879,7 @@ void() W_WeaponFrame =
 
 			if (self.impulse != 0)
 			{
-				if (self.team_no == 0 && teamplay && (self.lives != 0))
+				if (self.team_no == 0 && teamplay && (self.lives != 0) && (time < 300 || TeamFortress_TeamGetNoPlayers(1) == TeamFortress_TeamGetNoPlayers(2))) //WK 5-15-08 Don't allow this to bypass team menu autoteaming 
 				{
 					Menu_Team_Input(self.impulse);
 				}
@@ -6154,7 +6071,7 @@ void() T_DaedalusTouch =
 		}
 		if (head.takedamage)
 		{
-			//Krac on buildings, but fire damage
+			//Krac effect on buildings, but fire damage
 			if (IsBuilding(head))
 				TF_T_Damage (head, self, self.owner, 100, #TF_TD_NOTTEAM, #TF_TD_FIRE);
 

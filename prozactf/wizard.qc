@@ -77,7 +77,7 @@ void(entity missile, float mspeed, float accuracy) LaunchMissile =
 
 // set missile duration
 	missile.nextthink = time + 10; //- OfN - was 5
-	missile.think = SUB_Remove;	
+	missile.think = SUB_Remove; 
 };*/
 
 
@@ -91,11 +91,11 @@ void(entity ent) MuzzleFlash;
 WizardCheckAttack
 =================
 */
-float()	WizardCheckAttack =
+float() WizardCheckAttack =
 {
 	local vector	spot1, spot2;	
 	local entity	targ;
-	local float		chance;
+	local float 	chance;
 
 	if (time < self.attack_finished)
 		return #FALSE;
@@ -170,7 +170,7 @@ float()	WizardCheckAttack =
 WizardAttackFinished
 =================
 */
-float()	WizardAttackFinished =
+float() WizardAttackFinished =
 {
 	if (enemy_range >= #RANGE_MID || !enemy_vis)
 	{
@@ -200,7 +200,7 @@ void() Wiz_FastFire =
 	if (self.owner.health > 0)
 	{
 		//self.owner.effects = self.owner.effects | #EF_MUZZLEFLASH;
-        MuzzleFlash(self.owner);
+		MuzzleFlash(self.owner);
 
 		makevectors (self.enemy.angles);	
 		dst = self.enemy.origin - 13*self.movedir;
@@ -212,7 +212,7 @@ void() Wiz_FastFire =
 		newmis.owner = self.owner;
 		newmis.classname = "wizspike";
 		setmodel (newmis, "progs/w_spike.mdl");
-		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN); 	
 	}
 
 	remove (self);
@@ -237,8 +237,8 @@ void() Wiz_StartFast =
 	missile.think = Wiz_FastFire;
 	missile.movedir = v_right;
 
-    //- OfN - Now it fires 3 times
-    missile = spawn ();
+	//- OfN - Now it fires 3 times
+	missile = spawn ();
 	missile.owner = self;
 	missile.nextthink = time + 0.8;
 	setsize (missile, '0 0 0', '0 0 0');		
@@ -268,11 +268,11 @@ local float wr;
 
 	if (self.waitmin < time)
 	{
-	 	self.waitmin = time + 2;
-	 	if (wr > 4.5) 
-	 		sound (self, #CHAN_VOICE, "wizard/widle1.wav", 1,  #ATTN_IDLE);
-	 	if (wr < 1.5)
-	 		sound (self, #CHAN_VOICE, "wizard/widle2.wav", 1, #ATTN_IDLE);
+		self.waitmin = time + 2;
+		if (wr > 4.5) 
+			sound (self, #CHAN_VOICE, "wizard/widle1.wav", 1,  #ATTN_IDLE);
+		if (wr < 1.5)
+			sound (self, #CHAN_VOICE, "wizard/widle2.wav", 1, #ATTN_IDLE);
 	}
 	return;
 };
@@ -317,15 +317,15 @@ void()	wiz_run6	=[	$fly6,		wiz_run7	] {ai_run(16);};
 void()	wiz_run7	=[	$fly7,		wiz_run8	] {ai_run(16);};
 void()	wiz_run8	=[	$fly8,		wiz_run9	] {ai_run(16);};
 void()	wiz_run9	=[	$fly9,		wiz_run10	] {ai_run(16);};
-void()	wiz_run10	=[	$fly10,		wiz_run11	] {ai_run(16);};
-void()	wiz_run11	=[	$fly11,		wiz_run12	] {ai_run(16);};
-void()	wiz_run12	=[	$fly12,		wiz_run13	] {ai_run(16);};
-void()	wiz_run13	=[	$fly13,		wiz_run14	] {ai_run(16);};
-void()	wiz_run14	=[	$fly14,		wiz_run1	] {ai_run(16);};
+void()	wiz_run10	=[	$fly10, 	wiz_run11	] {ai_run(16);};
+void()	wiz_run11	=[	$fly11, 	wiz_run12	] {ai_run(16);};
+void()	wiz_run12	=[	$fly12, 	wiz_run13	] {ai_run(16);};
+void()	wiz_run13	=[	$fly13, 	wiz_run14	] {ai_run(16);};
+void()	wiz_run14	=[	$fly14, 	wiz_run1	] {ai_run(16);};
 
 void()	wiz_fast1	=[	$magatt1,		wiz_fast2	] {ai_face();Wiz_StartFast();};
 void()	wiz_fast2	=[	$magatt2,		wiz_fast3	] {ai_face();
-    MonsterAuraPower();
+	MonsterAuraPower();
 };
 void()	wiz_fast3	=[	$magatt3,		wiz_fast4	] {ai_face();};
 void()	wiz_fast4	=[	$magatt4,		wiz_fast5	] {ai_face();};
@@ -336,10 +336,10 @@ void()	wiz_fast8	=[	$magatt4,		wiz_fast9	] {ai_face();};
 void()	wiz_fast9	=[	$magatt3,		wiz_fast10	] {ai_face();};
 void()	wiz_fast10	=[	$magatt2,		wiz_run1	] {ai_face();Attack_Finished(2);WizardAttackFinished ();};
 
-void()	wiz_pain1	=[	$pain1,		wiz_pain2	] {};
-void()	wiz_pain2	=[	$pain2,		wiz_pain3	] {};
-void()	wiz_pain3	=[	$pain3,		wiz_pain4	] {};
-void()	wiz_pain4	=[	$pain4,		wiz_run1	] {};
+void()	wiz_pain1	=[	$pain1, 	wiz_pain2	] {};
+void()	wiz_pain2	=[	$pain2, 	wiz_pain3	] {};
+void()	wiz_pain3	=[	$pain3, 	wiz_pain4	] {};
+void()	wiz_pain4	=[	$pain4, 	wiz_run1	] {};
 
 void()	wiz_death1	=[	$death1,		wiz_death2	] {
 
@@ -357,65 +357,65 @@ void()	wiz_death6	=[	$death6,		wiz_death7	] {};
 void()	wiz_death7	=[	$death7,		wiz_death8	] {};
 void()	wiz_death8	=[	$death8,		wiz_death8	] 
 {
-    //self.nextthink = time + 40 + 40*random();	
+	//self.nextthink = time + 40 + 40*random(); 
 	//self.think = SUB_Remove;
-    MonsterCorpse();
+	MonsterCorpse();
 };
 
 void() wiz_die =
 {
-    if (self.real_owner.classname == "player")
-    {
-	    sprint(self.real_owner,#PRINT_HIGH,"Your scrag ");
+	if (self.real_owner.classname == "player")
+	{
+		sprint(self.real_owner,#PRINT_HIGH,"Your scrag ");
 		sprint(self.real_owner,#PRINT_HIGH,self.netname);
 		sprint(self.real_owner,#PRINT_HIGH," is dead.\n");
-	    self.real_owner.job_finished = time + 5; //Can't summon streams of demons SB can so
-        ResetSlotPointer(self.real_owner, self.increase_team1);
-    }   
+		self.real_owner.job_finished = time + 5; //Can't summon streams of demons SB can so
+		ResetSlotPointer(self.real_owner, self.increase_team1);
+	}	
 
 // check for gib
-    if (self.health < -30)
+	if (self.health < -30)
 	{
 		sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_MONSTERDIE);
 		ThrowMonsterHead ("progs/h_wizard.mdl", self.health); // was throwhead
 		ThrowGib ("progs/gib2.mdl", self.health,#TRUE,0,#GIB2_KGS, #FALSE);
 		ThrowGib ("progs/gib3.mdl", self.health,#TRUE,0,#GIB3_KGS, #FALSE);
 		ThrowGib ("progs/gib3.mdl", self.health,#TRUE,0,#GIB3_KGS, 0.25);
-        SpawnBloodEx(self.origin,0.66,9);
+		SpawnBloodEx(self.origin,0.66,9);
 
-        dremove(self);        
-        return;
+		dremove(self);		  
+		return;
 	}
 
-    // Spawn bubbles if under water/slime
-    local float contres;
-    contres = pointcontents(self.origin);
-    if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
-        DeathBubbles(4);
-    
-    //self.classname = "monster_corpse";
-    MonsterDead();
-    self.think=SUB_Null;
-    wiz_death1();
+	// Spawn bubbles if under water/slime
+	local float contres;
+	contres = pointcontents(self.origin);
+	if (contres == #CONTENT_WATER || contres == #CONTENT_SLIME)
+		DeathBubbles(4);
+	
+	//self.classname = "monster_corpse";
+	MonsterDead();
+	self.think=SUB_Null;
+	wiz_death1();
 };
 
 
 void(entity attacker, float damage) Wiz_Pain =
 {
 	/*if (!(self.pain_finished > time))
-    {
-       sound (self, #CHAN_VOICE, "wizard/wpain.wav", 1, #ATTN_NORM);
-       self.pain_finished = time + 1.7*random();
-    } //only used for sound*/
-    if (self.health <= 0)
-        return;
+	{
+	   sound (self, #CHAN_VOICE, "wizard/wpain.wav", 1, #ATTN_NORM);
+	   self.pain_finished = time + 1.7*random();
+	} //only used for sound*/
+	if (self.health <= 0)
+		return;
 
-    if (random()*80 > damage) // was 60
-		return;		// didn't flinch
+	if (random()*80 > damage) // was 60
+		return; 	// didn't flinch
 
-    AI_CheckAttacker(attacker);
+	AI_CheckAttacker(attacker);
 
-    sound (self, #CHAN_VOICE, "wizard/wpain.wav", 1, #ATTN_NORM);
+	sound (self, #CHAN_VOICE, "wizard/wpain.wav", 1, #ATTN_NORM);
 
 	wiz_pain1 ();
 };
@@ -432,8 +432,8 @@ void() Wiz_Missile =
 
 void() Wiz_Precache =
 {
-    precache_model ("progs/wizard.mdl");
-    //precache_model ("progs/tf_wiz.mdl");
+	precache_model ("progs/wizard.mdl");
+	//precache_model ("progs/tf_wiz.mdl");
 
 	precache_model ("progs/h_wizard.mdl");
 	precache_model ("progs/w_spike.mdl");
@@ -446,8 +446,8 @@ void() Wiz_Precache =
 	precache_sound ("wizard/wpain.wav");
 	precache_sound ("wizard/wsight.wav");
 
-    // wizard spike sound, used on weapons.qc spiketouch();
-    precache_sound ("effects/crunch.wav"); //OfN - Dunno where i got this sound from, probably mega-tf 
+	// wizard spike sound, used on weapons.qc spiketouch();
+	precache_sound ("effects/crunch.wav"); //OfN - Dunno where i got this sound from, probably mega-tf 
 };
 
 

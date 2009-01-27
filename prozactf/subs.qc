@@ -65,7 +65,7 @@ local entity	stemp;
 void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 {
 local vector	vdestdelta;
-local float		len, traveltime;
+local float 	len, traveltime;
 
 	if (!tspeed)
 		objerror("No speed is defined!");
@@ -106,7 +106,7 @@ local float		len, traveltime;
 	self.nextthink = self.ltime + traveltime;
 
 // scale the destdelta vector by the time spent traveling to get velocity
-	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float	
+	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float 
 };
 
 /*
@@ -114,7 +114,7 @@ local float		len, traveltime;
 After moving, set origin to exact final destination
 ============
 */
-void()  SUB_CalcMoveDone =
+void()	SUB_CalcMoveDone =
 {
 	setorigin(self, self.finaldest);
 	self.velocity = '0 0 0';
@@ -146,7 +146,7 @@ local entity		stemp;
 void(vector destangle, float tspeed, void() func) SUB_CalcAngleMove =
 {
 local vector	destdelta;
-local float		len, traveltime;
+local float 	len, traveltime;
 
 	if (!tspeed)
 		objerror("No speed is defined!");

@@ -93,7 +93,7 @@ void() DropKey =
 This function is only for key doors in
 coop mode 2.
 
-It returns true	if all players have keyed
+It returns true if all players have keyed
 the door.
 ==================================*/
 

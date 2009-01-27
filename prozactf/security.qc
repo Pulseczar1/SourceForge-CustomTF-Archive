@@ -1,5 +1,5 @@
 /*======================================================
-	SECURITY.QC			Custom TeamFortress v3.1
+	SECURITY.QC 		Custom TeamFortress v3.1
 
 	(c) Craig Hauser			26/3/00
 ========================================================
@@ -32,7 +32,7 @@ void() Security_Camera_Idle =
 float() Security_Camera_FindTarget =
 {
 	local entity client;
-	local float	r, gotone, loopc;
+	local float r, gotone, loopc;
 
 	if (self.is_malfunctioning & #SCREWUP_TWO) // SB how tragic, camera can't see
 		return #FALSE;
@@ -50,11 +50,11 @@ float() Security_Camera_FindTarget =
 	loopc = 0;
 	gotone = #FALSE;
 
-    local float trange; //- OfN - Hack
-    trange=1000;
+	local float trange; //- OfN - Hack
+	trange=1000;
 
-    if (self.all_active & #IMPROVED_ONE)
-        trange=1250;
+	if (self.all_active & #IMPROVED_ONE)
+		trange=1250;
 
 	//CH Theortetically this will check every client on the server now
 	while (loopc < 32 && gotone == #FALSE)
@@ -103,7 +103,7 @@ float() Security_Camera_FindTarget =
 float() Security_Camera_FindFakeTarget =
 {
 	local entity client;
-	local float	r, gotone, loopc;
+	local float r, gotone, loopc;
 
 	if (self.is_malfunctioning & #SCREWUP_THREE) // SB how tragic, camera can't see
 		return #FALSE;
@@ -190,11 +190,11 @@ void() Security_Camera_Die =
 	WriteCoord (#MSG_BROADCAST, self.origin_z);
 #ifdef QUAKE_WORLD
 	multicast (self.origin, #MULTICAST_PHS);
-    dremove(self);
+	dremove(self);
 #else
-    BecomeExplosion ();
+	BecomeExplosion ();
 #endif
-    //SwitchFromCamera();
+	//SwitchFromCamera();
 };
 //==========
 //Prints the person to owner/team
@@ -236,6 +236,7 @@ void() Security_Camera_Spawn =
 	newmis.takedamage = #DAMAGE_AIM;
 	newmis.classname = "building_camera";
 	newmis.netname = "security_camera";
+	newmis.flags = newmis.flags | #FL_MACHINE;
 	setorigin (newmis, self.origin);
 	newmis.owner = world;
 	newmis.real_owner = self;
@@ -245,7 +246,7 @@ void() Security_Camera_Spawn =
 	newmis.angles = '0 0 0';
 	newmis.angles_y = anglemod(self.angles_y + 180);
 //	newmis.skin = 1;
-	newmis.th_die = Security_Camera_Die; 		// Death function
+	newmis.th_die = Security_Camera_Die;		// Death function
 	newmis.th_pain = Security_Camera_Pain;
 	newmis.mdl = "progs/camera.mdl"; //CH temp model
 	setmodel (newmis, newmis.mdl);
@@ -256,7 +257,7 @@ void() Security_Camera_Spawn =
 	newmis.health = newmis.max_health = #BUILD_HEALTH_CAMERA;
 	newmis.touch = SecurityCameraTossTouch;
 
-    newmis.all_active=0; // OfN - reset HACKER improvements
+	newmis.all_active=0; // OfN - reset HACKER improvements
 
 	W_SetCurrentAmmo();
 	}
@@ -292,11 +293,11 @@ void() SecurityCameraTossTouch =
 	}
 	sprint (self.real_owner, #PRINT_HIGH, "You finish building the Security Camera.\n");
 
-    teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
-    teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
+	teamprefixsprint(self.real_owner.team_no,self.real_owner); //- OfN
+	teamsprint(self.real_owner.team_no, self.real_owner, self.real_owner.netname);
 	teamsprint(self.real_owner.team_no, self.real_owner, " has built a Security Camera.\n");
 
-    self.real_owner.option = time + 2; // so ppl cant destroy it for 2 seconds
+	self.real_owner.option = time + 2; // so ppl cant destroy it for 2 seconds
 
 	self.movetype = #MOVETYPE_NONE;
 	setsize (self, '-16 -16 -6', '16 16 10');

@@ -3,7 +3,7 @@
 
 TeamFortress v2.5	 29/2/97
 ========================================================
-Functions for the SPY class and associated weaponry                          
+Functions for the SPY class and associated weaponry 						 
 ========================================================*/
 void() TeamFortress_SpyGoUndercover;
 void(float type) TeamFortress_SpyFeignDeath;
@@ -66,7 +66,7 @@ void()	spy_diea7	=	[	$deatha7,	spy_diea8	] {};
 void()	spy_diea8	=	[	$deatha8,	spy_diea9	] {};
 void()	spy_diea9	=	[	$deatha9,	spy_diea10	] {};
 void()	spy_diea10	=	[	$deatha10,	spy_diea11	] {};
-void()	spy_diea11	=	[	$deatha11,	spy_diea11  ] {};
+void()	spy_diea11	=	[	$deatha11,	spy_diea11	] {};
 
 void()	spy_dieb1	=	[	$deathb1,	spy_dieb2	] {};
 void()	spy_dieb2	=	[	$deathb2,	spy_dieb3	] {};
@@ -92,7 +92,7 @@ void()	spy_diec11	=	[	$deathc11,	spy_diec12	] {};
 void()	spy_diec12	=	[	$deathc12,	spy_diec13	] {};
 void()	spy_diec13	=	[	$deathc13,	spy_diec14	] {};
 void()	spy_diec14	=	[	$deathc14,	spy_diec15	] {};
-void()	spy_diec15	=	[	$deathc15,	spy_diec15  ] {};
+void()	spy_diec15	=	[	$deathc15,	spy_diec15	] {};
 
 void()	spy_died1	=	[	$deathd1,	spy_died2	] {};
 void()	spy_died2	=	[	$deathd2,	spy_died3	] {};
@@ -114,15 +114,15 @@ void()	spy_diee7	=	[	$deathe7,	spy_diee8	] {};
 void()	spy_diee8	=	[	$deathe8,	spy_diee9	] {};
 void()	spy_diee9	=	[	$deathe9,	spy_diee9	] {};
 
-void()	spy_die_ax1	=	[	$axdeth1,	spy_die_ax2	] {};
-void()	spy_die_ax2	=	[	$axdeth2,	spy_die_ax3	] {};
-void()	spy_die_ax3	=	[	$axdeth3,	spy_die_ax4	] {};
-void()	spy_die_ax4	=	[	$axdeth4,	spy_die_ax5	] {};
-void()	spy_die_ax5	=	[	$axdeth5,	spy_die_ax6	] {};
-void()	spy_die_ax6	=	[	$axdeth6,	spy_die_ax7	] {};
-void()	spy_die_ax7	=	[	$axdeth7,	spy_die_ax8	] {};
-void()	spy_die_ax8	=	[	$axdeth8,	spy_die_ax9	] {};
-void()	spy_die_ax9	=	[	$axdeth9,	spy_die_ax9	] {};
+void()	spy_die_ax1 =	[	$axdeth1,	spy_die_ax2 ] {};
+void()	spy_die_ax2 =	[	$axdeth2,	spy_die_ax3 ] {};
+void()	spy_die_ax3 =	[	$axdeth3,	spy_die_ax4 ] {};
+void()	spy_die_ax4 =	[	$axdeth4,	spy_die_ax5 ] {};
+void()	spy_die_ax5 =	[	$axdeth5,	spy_die_ax6 ] {};
+void()	spy_die_ax6 =	[	$axdeth6,	spy_die_ax7 ] {};
+void()	spy_die_ax7 =	[	$axdeth7,	spy_die_ax8 ] {};
+void()	spy_die_ax8 =	[	$axdeth8,	spy_die_ax9 ] {};
+void()	spy_die_ax9 =	[	$axdeth9,	spy_die_ax9 ] {};
 
 // Spy Feign Death... getting up Frames
 void()	spy_upb1	=	[	$deathb9,	spy_upb2	] {};
@@ -183,15 +183,15 @@ void()	spy_upe9	=	[	$deathe9,	spy_upe1	]
 	player_stand1();
 };
 
-void()  spy_upaxe1    = [   $axdeth9,   spy_upaxe2    ] {};
-void()  spy_upaxe2    = [   $axdeth8,   spy_upaxe3    ] {};
-void()  spy_upaxe3    = [   $axdeth7,   spy_upaxe4    ] {};
-void()  spy_upaxe4    = [   $axdeth6,   spy_upaxe5    ] {};
-void()  spy_upaxe5    = [   $axdeth5,   spy_upaxe6    ] {};
-void()  spy_upaxe6    = [   $axdeth4,   spy_upaxe7    ] {};
-void()  spy_upaxe7    = [   $axdeth3,   spy_upaxe8    ] {};
-void()  spy_upaxe8    = [   $axdeth2,   spy_upaxe9    ] {};
-void()  spy_upaxe9    = [   $axdeth1,   spy_upaxe9    ] 
+void()	spy_upaxe1	  = [	$axdeth9,	spy_upaxe2	  ] {};
+void()	spy_upaxe2	  = [	$axdeth8,	spy_upaxe3	  ] {};
+void()	spy_upaxe3	  = [	$axdeth7,	spy_upaxe4	  ] {};
+void()	spy_upaxe4	  = [	$axdeth6,	spy_upaxe5	  ] {};
+void()	spy_upaxe5	  = [	$axdeth5,	spy_upaxe6	  ] {};
+void()	spy_upaxe6	  = [	$axdeth4,	spy_upaxe7	  ] {};
+void()	spy_upaxe7	  = [	$axdeth3,	spy_upaxe8	  ] {};
+void()	spy_upaxe8	  = [	$axdeth2,	spy_upaxe9	  ] {};
+void()	spy_upaxe9	  = [	$axdeth1,	spy_upaxe9	  ] 
 {
 	player_stand1();
 };
@@ -339,13 +339,13 @@ void(float type) TeamFortress_SpyFeignDeath =
 		self.is_feigning = #TRUE;
 		Attack_Finished(0.8);
 
-	    // make dead guy release hook (wedge)
-	    if (self.hook_out)
-	    {
-		    Reset_Grapple (self.hook);
-	    	Attack_Finished(0.75);
-		    self.hook_out = #TRUE;	// PutClientInServer will reset this
-	    }
+		// make dead guy release hook (wedge)
+		if (self.hook_out)
+		{
+			Reset_Grapple (self.hook);
+			Attack_Finished(0.75);
+			self.hook_out = #TRUE;	// PutClientInServer will reset this
+		}
 
 		if (self.undercover_team == 0 && self.undercover_skin == 0)
 			self.items = self.items - (self.items & #IT_INVISIBILITY);
@@ -364,7 +364,7 @@ void(float type) TeamFortress_SpyFeignDeath =
 		// to lower the camera angle, and even has a letter from Carmack
 		// testifying to that fact...
 		// Here's how you do it, moron:
- 		// setsize (self, '0 0 -10', '0 0 0');
+		// setsize (self, '0 0 -10', '0 0 0');
 		setsize (self, '-16 -16 -24', '16 16 4');
 		self.view_ofs = '0 0 4';
 		self.movetype = #MOVETYPE_TOSS;
@@ -552,8 +552,8 @@ void() TeamFortress_SpyUndercoverThink =
 				tc = TeamFortress_TeamGetColor(self.team) - 1;
 				
 				st = ftos(tc);
-                 //- OfN - Nice colors                       //? team_no
-                if (nicecolors==1) st =TeamGetNiceColor(self.team);
+				 //- OfN - Nice colors						 //? team_no
+				if (nicecolors==1) st =TeamGetNiceColor(self.team);
 
 				stuffcmd(self.owner, st);
 				stuffcmd(self.owner, "\n");
@@ -581,12 +581,12 @@ void(float class) TeamFortress_SpyChangeSkin =
 {
 	local entity te;
 
-    // OfN - Psionized guys can't do it
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You hardly can do anything right now!\n");
-        return;
-    }
+	// OfN - Psionized guys can't do it
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You hardly can do anything right now!\n");
+		return;
+	}
 
 	// If they're returning their skin to their Spy, just reset it
 	if (class == #PC_SPY && self.playerclass == #PC_SPY) //WK
@@ -625,12 +625,12 @@ void(float teamno) TeamFortress_SpyChangeColor =
 	local string st;
 	local float tc;
 
-    // OfN - Psionized guys can't do it
-    if (self.tfstate & #TFSTATE_PSIONIZED)
-    {
-        sprint(self,#PRINT_HIGH,"You hardly can do anything right now!\n");
-        return;
-    }
+	// OfN - Psionized guys can't do it
+	if (self.tfstate & #TFSTATE_PSIONIZED)
+	{
+		sprint(self,#PRINT_HIGH,"You hardly can do anything right now!\n");
+		return;
+	}
 
 	// If they're returning their color to their own team, just reset it
 	if (teamno == self.team_no)
@@ -643,9 +643,9 @@ void(float teamno) TeamFortress_SpyChangeColor =
 		stuffcmd(self, "color ");
 		tc = TeamFortress_TeamGetColor(self.team_no) - 1;
 		st = ftos(tc);
-        
-        //- OfN - Nice colors
-        if (nicecolors==1) st =TeamGetNiceColor(self.team_no);
+		
+		//- OfN - Nice colors
+		if (nicecolors==1) st =TeamGetNiceColor(self.team_no);
 
 		stuffcmd(self, st);
 		stuffcmd(self, "\n");
@@ -689,7 +689,7 @@ void() GasGrenadeExplode =
 	local entity te;
 	local float pos;
 
-    sound(self,#CHAN_WEAPON,"misc/vapeur2.wav",1,#ATTN_NORM);
+	sound(self,#CHAN_WEAPON,"misc/vapeur2.wav",1,#ATTN_NORM);
 
 	// Check the pointcontents to prevent detpack outside the world
 	pos = pointcontents(self.origin); 
@@ -727,12 +727,6 @@ void() GasGrenadeExplode =
 			pos = pos + 1;
 		}
 	}
-
-#ifdef DEMO_STUFF
-	// Remove any camera's locks on this missile
-	if (self.enemy)
-		CamProjectileLockOff();
-#endif
 
 #ifndef QUAKE_WORLD
 	BecomeExplosion ();
@@ -949,7 +943,7 @@ void() W_FireTranq =
 	newmis.nextthink = time + 6;
 
 	setmodel (newmis, "progs/spike.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
+	setsize (newmis, '0 0 0', '0 0 0'); 	
 	setorigin (newmis, self.origin + v_forward*8 + '0 0 16');
 };
 
@@ -961,7 +955,7 @@ void() T_TranqDartTouch =
 	local float tranq_damage;
 
 	if (other.solid == #SOLID_TRIGGER)
-		return;	// trigger field, do nothing
+		return; // trigger field, do nothing
 
 	if (pointcontents(self.origin) == #CONTENT_SKY)
 	{
@@ -988,13 +982,13 @@ void() T_TranqDartTouch =
 		tranq_damage = 8+floor(4*random()); //WK 1/7/7 Note: if you put this formula in the function call, it crashes the server!
 		TF_T_Damage (other, self, self.owner, tranq_damage, #TF_TD_NOTTEAM | #TF_TD_IGNOREARMOUR, #TF_TD_NAIL);
 		
-        if (other.classname == "player")
-        if (other.#runes & #RUNE_RESIS)
-            return;
+		if (other.classname == "player")
+		if (other.#runes & #RUNE_RESIS)
+			return;
 
-        // If its a player or demon, tranquilise them
+		// If its a player or demon, tranquilise them
 		//- OfN if (other.classname == "monster_demon1" && !(Teammate(other.real_owner.team_no,self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
-        if (IsMonster(other))// && !(Teammate(other.real_owner.team_no,self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
+		if (IsMonster(other))// && !(Teammate(other.real_owner.team_no,self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
 		{
 			//bprint(#PRINT_HIGH, "demon tranq!\n");
 			// If they're already tranquilised, just make it last longer
@@ -1021,8 +1015,9 @@ void() T_TranqDartTouch =
 				timer.owner = other;
 				timer.team_no = self.owner.team_no;
 			}
-		}		
-		if (other.classname == "player" && !(Teammate(other.team_no, self.owner.team_no) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
+		}
+		// Neo mode modication
+		if (other.classname == "player" && !(Teammate(other, self.owner) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
 		{
 			// If they're already tranquilised, just make it last longer
 			if (other.tfstate & #TFSTATE_TRANQUILISED)
@@ -1057,19 +1052,19 @@ void() T_TranqDartTouch =
 	}
 	else
 	{
-       if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
-            FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
-        else
-        {
-            WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-            WriteByte (#MSG_BROADCAST, #TE_SPIKE);
-            WriteCoord (#MSG_BROADCAST, self.origin_x);
-            WriteCoord (#MSG_BROADCAST, self.origin_y);
-            WriteCoord (#MSG_BROADCAST, self.origin_z);
-        #ifdef QUAKE_WORLD
-            multicast (self.origin, #MULTICAST_PVS);
-        #endif
-        }
+	   if (other.classname == "force_field") //- OfN - Makes field explosion b4 removing it
+			FieldEvent(other,self.origin,self);//FieldExplosion(other,self.origin,self);
+		else
+		{
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_SPIKE);
+			WriteCoord (#MSG_BROADCAST, self.origin_x);
+			WriteCoord (#MSG_BROADCAST, self.origin_y);
+			WriteCoord (#MSG_BROADCAST, self.origin_z);
+		#ifdef QUAKE_WORLD
+			multicast (self.origin, #MULTICAST_PVS);
+		#endif
+		}
 	}
 
 	dremove(self);
@@ -1131,8 +1126,8 @@ void(entity spy) Spy_RemoveDisguise =
 				
 				st = ftos(tc);
 
-                //- OfN - Nice colors
-                if (nicecolors==1) st =TeamGetNiceColor(spy.team_no);
+				//- OfN - Nice colors
+				if (nicecolors==1) st =TeamGetNiceColor(spy.team_no);
 
 				stuffcmd(spy, st);
 				stuffcmd(spy, "\n");
@@ -1150,7 +1145,7 @@ void(entity spy) Spy_RemoveDisguise =
 		{
 			// remove the invisibility	
 			spy.is_undercover = 0;
-			spy.modelindex = modelindex_player;	// return to normal
+			spy.modelindex = modelindex_player; // return to normal
 			
 //WK			if (spy.items & #IT_INVISIBILITY)
 //WK				spy.items = spy.items - #IT_INVISIBILITY;

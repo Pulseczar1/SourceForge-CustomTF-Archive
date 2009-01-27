@@ -522,7 +522,8 @@ void() GuerillaExplode =
 					if (CanDamage (te, self))
 					if (te.health > 0)
 					if (te.playerclass != #PC_UNDEFINED)
-					if (!Teammate(te.team_no,self.owner.team_no) || te == self.owner)
+					// Neo mode modication
+					if (!Teammate(te, self.owner) || te == self.owner)
 					if (!(te.invincible_finished > time))
 					if (te.is_connected)
 					if (!(te.armorclass & #AT_SAVEEXPLOSION) || random() < 0.25) // blast armor avoids our legs to be hurt most of the time
@@ -792,23 +793,35 @@ void() GuerillaThink = //Every second see if we have enemy nearby
 			{
 				//Mines detonate on either enemies or yourself
 				if (CanDamage(head,self)) {
-				   if (!Teammate(head.team_no,self.owner.team_no) && head.undercover_team != self.owner.team_no)
-				   {		//Uncovered ENEMY
-						if (hasextras)
-							sprint(self.owner,#PRINT_HIGH,"your ",desc,conv," mine explodes on ");
-						else
-							sprint(self.owner,#PRINT_HIGH,"your mine explodes on ");
+				   if (!Teammate(head, self.owner) && head.undercover_team != self.owner.team_no)
+				   {
+						//WK 5-15-08 Blow up only if they are running away, stopped, or we are MIRV/NAPALM mines
+						local vector vect_to_target;
+						local float dotpro, boom;
+						boom = 0;
+						vect_to_target = head.origin - self.origin;
+						dotpro = vect_to_target * head.velocity;
+						if (dotpro > 0) boom = 1;
+						if (vlen(head.velocity) < 120) boom = 1;
+						if (self.has_sentry == #MINE_NAPALM || self.has_sentry == #MINE_MIRV) boom = 1;
+						if (boom) {
+							//Uncovered ENEMY
+							if (hasextras)
+								sprint(self.owner,#PRINT_HIGH,"your ",desc,conv," mine explodes on ");
+							else
+								sprint(self.owner,#PRINT_HIGH,"your mine explodes on ");
 
-						sprint(self.owner,#PRINT_HIGH,head.netname);
+							sprint(self.owner,#PRINT_HIGH,head.netname);
 						
-						if (head.origin_z > self.origin_z)
-							sprint(self.owner,#PRINT_HIGH,"'s ass!\n");
-						else
-							sprint(self.owner,#PRINT_HIGH,"'s face!\n");
+							if (head.origin_z > self.origin_z)
+								sprint(self.owner,#PRINT_HIGH,"'s ass!\n");
+							else
+								sprint(self.owner,#PRINT_HIGH,"'s face!\n");
 
-						self.has_tesla = 1; //- display no message on GuerillaExplode
-						GuerillaExplode();
-						finished = 1;
+							self.has_tesla = 1; //- display no message on GuerillaExplode
+							GuerillaExplode();
+							finished = 1;
+						}
 				   } else if (head == self.owner) { // ourselves
 							
 					   self.has_tesla = 1; //- display no message on GuerillaExplode
@@ -818,7 +831,7 @@ void() GuerillaThink = //Every second see if we have enemy nearby
 				}
 			}
 		}
-		else if (IsMonster(head) && !Teammate(head.real_owner.team_no,self.owner.team_no)) { //- OfN - monsters and grunt are affected
+		else if (IsMonster(head) && !Teammate(head.real_owner, self.owner)) { //- OfN - monsters and grunt are affected
 			T_Damage(head,self,self.owner,#MINE_DMG); //Demons are vulnerable
 			self.has_tesla = 1; //- display no message on GuerillaExplode
 			GuerillaExplode();
@@ -844,7 +857,8 @@ void() GuerillaTouch =
 	#ifdef MINES_IGNORE_TEAMMATETOUCH
 	if (other != self.owner)
 	if (other.classname == "player" || IsMonster(other))
-	if (Teammate(self.owner.team_no,other.team_no))
+	// Neo mode modication
+	if (Teammate(self.owner, other))
 	if (other.health > 0)
 		return;
 	#endif
@@ -1017,7 +1031,6 @@ void(entity player) MineKill =
 	{
 		//RPrint("BUG: Non-guerilla was in MineKill()!\n");
 			// ^_^ not a bug, may happen on cleanup
-
 		return;
 	}
 	

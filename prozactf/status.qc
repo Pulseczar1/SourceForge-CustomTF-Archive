@@ -2,7 +2,7 @@
 /*======================================================
 	STATUS.QC			TeamFortress v2.5	
 
-	(c) TeamFortress Software Pty Ltd 	13/5/97
+	(c) TeamFortress Software Pty Ltd	13/5/97
 	(c) Craig Hauser			26/3/00
 ========================================================
 TF status bar functions
@@ -11,8 +11,8 @@ TF status bar functions
 float(float tno) TeamFortress_TeamGetScore;
 
 ////////////////////////////////////////////////////
-//  NumberToStringxxx functions
-//  take an integer, return a constant string.
+//	NumberToStringxxx functions
+//	take an integer, return a constant string.
 #ifdef STATUSBAR
 
 void(entity pl, float fTime, string s1) StatusPrint;
@@ -129,67 +129,67 @@ void(entity pl) RefreshStatusBar =
 			s5 = "0";
 	}*/
 
-    s2 = "Blue: ";
+	s2 = "Blue: ";
 
-    s3 = (ftos(ceil(team1score)));
+	s3 = (ftos(ceil(team1score)));
 
-    if (ceil(team1score) < 10)
-        s3 = strcat("  ",s3);
-    else if (ceil(team1score < 100))
-        s3 = strcat(" ",s3);
-    
-    //s2 = "Âלץו: ";
-    //s3 = (ftos(ceil(team1score)));
-    //s4 = " Òוה: "
-    //s5 = (ftos(ceil(team2score)));
+	if (ceil(team1score) < 10)
+		s3 = strcat("  ",s3);
+	else if (ceil(team1score < 100))
+		s3 = strcat(" ",s3);
+	
+	//s2 = "Âלץו: ";
+	//s3 = (ftos(ceil(team1score)));
+	//s4 = " Òוה: "
+	//s5 = (ftos(ceil(team2score)));
 
 	s4 = (ftos(ceil(team2score)));
 
-    if (ceil(team2score) < 10)
-        s4 = strcat("  ",s4);
-    else if (ceil(team2score < 100))
-        s4 = strcat(" ",s4);
-    
-    s4 = strcat("  Red : ",s4);
+	if (ceil(team2score) < 10)
+		s4 = strcat("  ",s4);
+	else if (ceil(team2score < 100))
+		s4 = strcat(" ",s4);
+	
+	s4 = strcat("  Red : ",s4);
 
-    s5 = ClipSizeToString100(pl);
-    s6 = "";
-    s7 = "";
+	s5 = ClipSizeToString100(pl);
+	s6 = "";
+	s7 = "";
 
-    if (number_of_teams == 3)
-    {
-        s6 = (ftos(ceil(team3score)));
+	if (number_of_teams == 3)
+	{
+		s6 = (ftos(ceil(team3score)));
 
-        if (ceil(team3score) < 10)
-            s6 = strcat("  ",s6);
-        else if (ceil(team3score < 100))
-            s6 = strcat(" ",s6);
-    
-        s6 = strcat("\nYellow: ",s6);
-    }
+		if (ceil(team3score) < 10)
+			s6 = strcat("  ",s6);
+		else if (ceil(team3score < 100))
+			s6 = strcat(" ",s6);
+	
+		s6 = strcat("\nYellow: ",s6);
+	}
 
-    if (number_of_teams == 4)
-    {
-        s6 = (ftos(ceil(team3score)));
+	if (number_of_teams == 4)
+	{
+		s6 = (ftos(ceil(team3score)));
 
-        if (ceil(team3score) < 10)
-            s6 = strcat("  ",s6);
-        else if (ceil(team3score < 100))
-            s6 = strcat(" ",s6);
-    
-        s6 = strcat("\nYell: ",s6);
+		if (ceil(team3score) < 10)
+			s6 = strcat("  ",s6);
+		else if (ceil(team3score < 100))
+			s6 = strcat(" ",s6);
+	
+		s6 = strcat("\nYell: ",s6);
 
-        s7 = (ftos(ceil(team4score)));
+		s7 = (ftos(ceil(team4score)));
 
-        if (ceil(team4score) < 10)
-            s7 = strcat("  ",s7);
-        else if (ceil(team4score < 100))
-            s7 = strcat(" ",s7);
+		if (ceil(team4score) < 10)
+			s7 = strcat("  ",s7);
+		else if (ceil(team4score < 100))
+			s7 = strcat(" ",s7);
 
-        s7 = padstr(s7,12);
-        
-        s7 = strcat("  Teal: ",s7);
-    }
+		s7 = padstr(s7,12);
+		
+		s7 = strcat("  Teal: ",s7);
+	}
 		
 	//s7 = ClipSizeToString100(pl);
 	centerprint(pl, s1, s2, s3, s4, s5, s6,s7);
@@ -231,23 +231,23 @@ void(entity pl) RefreshStatusBar1 =
 
 	s1 = GetStatusSize(pl);
 
-    if (self.tf_items & #NIT_DOUBLETESLA)
-    {
-        te = find(world, classname, "building_tesla");
-        while (te)
-        {
-            if (te.real_owner == self)
-            if (te.dont_do_triggerwork & 1)
-            {
-                sent = te;
-            }
-            te = find(te, classname, "building_tesla");
-        }
+	if (self.tf_items & #NIT_DOUBLETESLA)
+	{
+		te = find(world, classname, "building_tesla");
+		while (te)
+		{
+			if (te.real_owner == self)
+			if (te.dont_do_triggerwork & 1)
+			{
+				sent = te;
+			}
+			te = find(te, classname, "building_tesla");
+		}
 		//- OfN - if (sent.enemy.classname == "monster_demon1" || sent.enemy.classname == "monster_army" || sent.enemy.classname == "monster_shambler" )
-        /*if (IsMonster(sent.enemy))
+		/*if (IsMonster(sent.enemy))
 			custom_demon_name(sent.enemy); //CH*/
 		
-        s2 = TeslaDetailsToString(sent,1);
+		s2 = TeslaDetailsToString(sent,1);
 		s3 = ftos(floor((sent.health / sent.max_health) * 100));
 		s4 = "¥ health  ";
 		if (sent.oldenemy != world)
@@ -260,27 +260,27 @@ void(entity pl) RefreshStatusBar1 =
 			s5 = "Idle";
 			s6 = " ";
 		}
-    }
-    else
-    {
-        te = find(world, classname, "building_sentrygun");
-        while (te)
-        {
-            if (te.real_owner == self)
-            if (te.dont_do_triggerwork & 1)
-            {
-                
-                sent = te;
-            }
-            te = find(te, classname, "building_sentrygun");
-        }
+	}
+	else
+	{
+		te = find(world, classname, "building_sentrygun");
+		while (te)
+		{
+			if (te.real_owner == self)
+			if (te.dont_do_triggerwork & 1)
+			{
+				
+				sent = te;
+			}
+			te = find(te, classname, "building_sentrygun");
+		}
 
-        if (self.cutf_items & #CUTF_DOUBLESENTRY)
-            s2 = SentryDetailsToString(sent,1);
-        else
-            s2 = SentryDetailsToString(sent,0);
+		if (self.cutf_items & #CUTF_DOUBLESENTRY)
+			s2 = SentryDetailsToString(sent,1);
+		else
+			s2 = SentryDetailsToString(sent,0);
 		
-        s3 = ftos(floor((sent.health / sent.max_health) * 100));
+		s3 = ftos(floor((sent.health / sent.max_health) * 100));
 		s4 = "¥ health  ";
 
 		if (sent.enemy != world)
@@ -293,18 +293,18 @@ void(entity pl) RefreshStatusBar1 =
 			s5 = "Idle";
 			s6 = " ";
 		}
-    }
+	}
 		
-    if (self.is_building)
-    {
-        s7 = "\n  building...     \n";
-    }
-    else
-    {
-        s7 = ClipSizeToString100(pl);
-    }
+	if (self.is_building)
+	{
+		s7 = "\n  building...     \n";
+	}
+	else
+	{
+		s7 = ClipSizeToString100(pl);
+	}
 
-    centerprint(pl, s1, s2, s3, s4, s5, s6,s7);
+	centerprint(pl, s1, s2, s3, s4, s5, s6,s7);
 
 //CH determines which screen to show next (its at the end of all RefreshStatusBars)
 	if ((self.has_tesla && !(self.tf_items & #NIT_DOUBLETESLA)) || (self.has_sentry & 2) || (self.has_tesla & 2))
@@ -341,20 +341,20 @@ void(entity pl) RefreshStatusBar4 =
 
 	s1 = GetStatusSize(pl);
 
-    if (self.cutf_items & #CUTF_DOUBLESENTRY)
-    {
-        te = find(world, classname, "building_sentrygun");
-        while (te)
-        {
-            if (te.real_owner == self)
-            if (te.dont_do_triggerwork & 2)
-            {
-                sent = te;
-            }
-            te = find(te, classname, "building_sentrygun");
-        }
+	if (self.cutf_items & #CUTF_DOUBLESENTRY)
+	{
+		te = find(world, classname, "building_sentrygun");
+		while (te)
+		{
+			if (te.real_owner == self)
+			if (te.dont_do_triggerwork & 2)
+			{
+				sent = te;
+			}
+			te = find(te, classname, "building_sentrygun");
+		}
 
-        s2 = SentryDetailsToString(sent,2);
+		s2 = SentryDetailsToString(sent,2);
 		s3 = ftos(floor((sent.health / sent.max_health) * 100));
 		s4 = "¥ health  ";
 
@@ -368,29 +368,29 @@ void(entity pl) RefreshStatusBar4 =
 			s5 = "Idle";
 			s6 = " ";
 		}
-    }
-    else
-    {
-        te = find(world, classname, "building_tesla");
-        while (te)
-        {
-            if (te.real_owner == self)
-            if (!(self.tf_items & #NIT_DOUBLETESLA) || te.dont_do_triggerwork & 2)
-            {
-                sent = te;
-            }
-            te = find(te, classname, "building_tesla");
-        }
-        //- OfN - if (sent.enemy.classname == "monster_demon1" || sent.enemy.classname == "monster_army" || sent.enemy.classname == "monster_shambler" )
-        /*if (IsMonster(sent.enemy))
+	}
+	else
+	{
+		te = find(world, classname, "building_tesla");
+		while (te)
+		{
+			if (te.real_owner == self)
+			if (!(self.tf_items & #NIT_DOUBLETESLA) || te.dont_do_triggerwork & 2)
+			{
+				sent = te;
+			}
+			te = find(te, classname, "building_tesla");
+		}
+		//- OfN - if (sent.enemy.classname == "monster_demon1" || sent.enemy.classname == "monster_army" || sent.enemy.classname == "monster_shambler" )
+		/*if (IsMonster(sent.enemy))
 			custom_demon_name(sent.enemy); //CH*/
 		
-        if (self.tf_items & #NIT_DOUBLETESLA)
-            s2 = TeslaDetailsToString(sent,2);
-        else
-            s2 = TeslaDetailsToString(sent,0);
+		if (self.tf_items & #NIT_DOUBLETESLA)
+			s2 = TeslaDetailsToString(sent,2);
+		else
+			s2 = TeslaDetailsToString(sent,0);
 		
-        s3 = ftos(floor((sent.health / sent.max_health) * 100));
+		s3 = ftos(floor((sent.health / sent.max_health) * 100));
 		s4 = "¥ health  ";
 		if (sent.oldenemy != world)
 		{
@@ -402,18 +402,18 @@ void(entity pl) RefreshStatusBar4 =
 			s5 = "Idle";
 			s6 = " ";
 		}
-    }
+	}
 
-    if (self.is_building)
-    {
-        s7 = "\n  building...     \n";
-    }
-    else
-    {
-        s7 = ClipSizeToString100(pl);
-    }
+	if (self.is_building)
+	{
+		s7 = "\n  building...     \n";
+	}
+	else
+	{
+		s7 = ClipSizeToString100(pl);
+	}
 
-    centerprint(pl, s1, s2, s3, s4, s5, s6,s7);
+	centerprint(pl, s1, s2, s3, s4, s5, s6,s7);
 
 //CH determines which screen to show next (its at the end of all RefreshStatusBars)
 	if (self.scaned != self)
@@ -459,10 +459,10 @@ void(entity pl) RefreshStatusBar5 =
 		centerprint(pl, s1, s2, s3, s4, s5, s6,s7);
 	}
 	//else if ((self.scaned.classname == "building_sentrygun" || self.scaned.classname == "building_tesla" || self.scaned.classname == "building_teleporter" || self.scaned.classname == "monster_demon1") && self.scaned.health > 0)
-    else if ((self.scaned.classname == "building_sentrygun" || self.scaned.classname == "building_tesla" || self.scaned.classname == "building_teleporter" || IsMonster(self.scaned)) && self.scaned.health > 0)
+	else if ((self.scaned.classname == "building_sentrygun" || self.scaned.classname == "building_tesla" || self.scaned.classname == "building_teleporter" || IsMonster(self.scaned)) && self.scaned.health > 0)
 	{
 		//- OfN - if (self.scaned.classname == "monster_demon1" || self.scaned.classname == "monster_army" || self.scaned.classname == "monster_shambler")
-        if (IsMonster(self.scaned))
+		if (IsMonster(self.scaned))
 		{
 			//custom_demon_name(self.scaned); //CH
 			s2 = GetTrueTeamName(self.scaned.real_owner.team_no); //demons are special
@@ -485,9 +485,9 @@ void(entity pl) RefreshStatusBar5 =
 			s3 = ": Scrag (";
 		else if (self.scaned.classname == "monster_fish")
 			s3 = ": Piranha (";
-        else if (self.scaned.classname == "monster_gremlin")
+		else if (self.scaned.classname == "monster_gremlin")
 			s3 = ": Gremlin (";
-        else 
+		else 
 			s3 = "!!!ERROR!!!";
 		s4 = self.scaned.real_owner.netname;
 		s5 = ")\nRange: ";
@@ -575,7 +575,7 @@ void(entity pl) RefreshStatusBar2 =
 	centerprint(pl, s1, s2, s3, s4, s5);
 
 //CH determines which screen to show next (its at the end of all RefreshStatusBars)
-                            //(self.job & #JOB_WARLOCK && self.job & #JOB_DEMON_OUT)||(self.job & #JOB_ARMY && self.job & #JOB_DEMON_OUT)
+							//(self.job & #JOB_WARLOCK && self.job & #JOB_DEMON_OUT)||(self.job & #JOB_ARMY && self.job & #JOB_DEMON_OUT)
 	if (self.is_detpacking || HasMonster(self) || (self.is_haxxxoring && self.job & #JOB_HACKER))
 		self.StatusBarScreen = 3;
 	else
@@ -600,132 +600,132 @@ void(entity pl) RefreshStatusBar3 =
 	if (pl.playerclass == #PC_UNDEFINED)
 		return;
 
-    s4 = "";
-    s5 = "";
+	s4 = "";
+	s5 = "";
 
-    s1 = GetStatusSize(pl);
+	s1 = GetStatusSize(pl);
 
-       //(self.job & #JOB_WARLOCK && self.job & #JOB_DEMON_OUT)||(self.job & #JOB_ARMY && self.job & #JOB_DEMON_OUT)
+	   //(self.job & #JOB_WARLOCK && self.job & #JOB_DEMON_OUT)||(self.job & #JOB_ARMY && self.job & #JOB_DEMON_OUT)
 	if (self.is_haxxxoring && self.job & #JOB_HACKER)
-    {
-    	if (self.demon_two.has_camera == -2) // we r aborting hack...
-        {
-            s2 = "\nÈבדכ: Aborting...";
-            s3 = "";
-            s4 = "";
-        }
-        else
-        {
-            s2 = "\nÈבדכ: ";
-            s3 = ftos(100 - floor((self.demon_two.heat/self.demon_two.ltime) * 100));
-            s4 = "¥ completed";
-        }
-    }    
-    else if (HasMonster(pl))
 	{
-        local entity targ;
-        local float targnum;
-        
-        if (self.increase_team4 > 2) // because guerilla may set this field
-            self.increase_team4 = 0;
+		if (self.demon_two.has_camera == -2) // we r aborting hack...
+		{
+			s2 = "\nÈבדכ: Aborting...";
+			s3 = "";
+			s4 = "";
+		}
+		else
+		{
+			s2 = "\nÈבדכ: ";
+			s3 = ftos(100 - floor((self.demon_two.heat/self.demon_two.ltime) * 100));
+			s4 = "¥ completed";
+		}
+	}	 
+	else if (HasMonster(pl))
+	{
+		local entity targ;
+		local float targnum;
+		
+		if (self.increase_team4 > 2) // because guerilla may set this field
+			self.increase_team4 = 0;
 
-        targ = GetSummon(self,self.increase_team4);
+		targ = GetSummon(self,self.increase_team4);
 
-        targnum = self.increase_team4;
+		targnum = self.increase_team4;
 
-        if (!targ)
-        {
-            targnum = targnum +1;
-            if (targnum > 2)
-                targnum = 0;
+		if (!targ)
+		{
+			targnum = targnum +1;
+			if (targnum > 2)
+				targnum = 0;
 
-            targ = GetSummon(self,targnum);
+			targ = GetSummon(self,targnum);
 
-            if (!targ)
-            {
-                targnum = targnum +1;
-                if (targnum > 2)
-                    targnum = 0;
+			if (!targ)
+			{
+				targnum = targnum +1;
+				if (targnum > 2)
+					targnum = 0;
 
-                targ = GetSummon(self,targnum);
+				targ = GetSummon(self,targnum);
 
-                if (!targ)
-                {
-                    targnum = targnum +1;
-                    if (targnum > 2)
-                        targnum = 0;
+				if (!targ)
+				{
+					targnum = targnum +1;
+					if (targnum > 2)
+						targnum = 0;
 
-                    targ = GetSummon(self,targnum);
-                }
-            }
-        }
+					targ = GetSummon(self,targnum);
+				}
+			}
+		}
 
-        self.increase_team4 = targnum;
+		self.increase_team4 = targnum;
 
-        if (!targ)
-        {
-            centerprint(self,"\n\n\n\n\n\nERROR in monsters status bar!\n\nTell to OfteN[cp], please!");
-            return;
-        }
-                
+		if (!targ)
+		{
+			centerprint(self,"\n\n\n\n\n\nERROR in monsters status bar!\n\nTell to OfteN[cp], please!");
+			return;
+		}
+				
 		if (targ.classname == "monster_army")
 			s2 = "\nÓןלהיוע";
 		else if (targ.classname == "monster_shambler")
 			s2 = "\nÓטבםגלוע";
-        else if (targ.classname == "monster_wizard")
-        	s2 = "\nÓדעבח";
-        else if (targ.classname == "monster_demon1")
-        	s2 = "\nÆיומה";
-        else if (targ.classname == "monster_fish")
-        	s2 = "\nÐיעבמטב";
-        else if (targ.classname == "monster_gremlin")
-        	s2 = "\nÇעוםלימ";
+		else if (targ.classname == "monster_wizard")
+			s2 = "\nÓדעבח";
+		else if (targ.classname == "monster_demon1")
+			s2 = "\nÆיומה";
+		else if (targ.classname == "monster_fish")
+			s2 = "\nÐיעבמטב";
+		else if (targ.classname == "monster_gremlin")
+			s2 = "\nÇעוםלימ";
 
-        if (self.job & #JOB_WARLOCK)
-        {
-            // Get number of monsters of this kind the player has
-            local float thiskind;
-            thiskind = GetNumTypeMonster(self,targ.#monster_type);
-            
-            if (thiskind > 1) // More than one?
-            {
-                // Ok then, show number of soul also
-                local string tmp;
-                tmp = ftos(targnum+1);
-                tmp = colstr(tmp,#COLSTR_NUMBER);
+		if (self.job & #JOB_WARLOCK)
+		{
+			// Get number of monsters of this kind the player has
+			local float thiskind;
+			thiskind = GetNumTypeMonster(self,targ.#monster_type);
+			
+			if (thiskind > 1) // More than one?
+			{
+				// Ok then, show number of soul also
+				local string tmp;
+				tmp = ftos(targnum+1);
+				tmp = colstr(tmp,#COLSTR_NUMBER);
 
-                if (self.job & #JOB_WARLOCK)
-                {
-                    s2 = strcat(s2," ¨soul ");
-                    s2 = strcat(s2,tmp);
-                    s2 = strcat(s2,"©: ");
-                }
-            }
-            else // no need to display number of soul
-                s2 = strcat(s2,": ");
-        }
-        else // army 
-        {
-            if (GetJobExtras(self) == 0)
-                s2 = strcat(s2,": ");
-            else
-            {
-                local string tmp;
-                tmp = ftos(targnum+1);
-                tmp = colstr(tmp,#COLSTR_NUMBER);
+				if (self.job & #JOB_WARLOCK)
+				{
+					s2 = strcat(s2," ¨soul ");
+					s2 = strcat(s2,tmp);
+					s2 = strcat(s2,"©: ");
+				}
+			}
+			else // no need to display number of soul
+				s2 = strcat(s2,": ");
+		}
+		else // army 
+		{
+			if (GetJobExtras(self) == 0)
+				s2 = strcat(s2,": ");
+			else
+			{
+				local string tmp;
+				tmp = ftos(targnum+1);
+				tmp = colstr(tmp,#COLSTR_NUMBER);
 
-                s2 = strcat(s2," ");
-                s2 = strcat(s2,tmp);
-                s2 = strcat(s2,": ");
-            }
-        }
-            
-        s3 = ftos(floor((targ.health / targ.max_health) * 100));
-        s4 = "¥ health";
+				s2 = strcat(s2," ");
+				s2 = strcat(s2,tmp);
+				s2 = strcat(s2,": ");
+			}
+		}
+			
+		s3 = ftos(floor((targ.health / targ.max_health) * 100));
+		s4 = "¥ health";
 
-        self.increase_team4 = self.increase_team4 +1;
-        if (self.increase_team4 > 2)
-            self.increase_team4 = 0;
+		self.increase_team4 = self.increase_team4 +1;
+		if (self.increase_team4 > 2)
+			self.increase_team4 = 0;
 	}
 	else
 	{
@@ -733,13 +733,13 @@ void(entity pl) RefreshStatusBar3 =
 		s3 = "";
 	}
 	
-    if (self.is_detpacking)
+	if (self.is_detpacking)
 	{
-        //s4 = "\n\n "; //- OfN \n\n
-        s5 = "\n Setting Detpack... ";
-    }
+		//s4 = "\n\n "; //- OfN \n\n
+		s5 = "\n Setting Detpack... ";
+	}
 	
-    //else
+	//else
 		
 	s6 = ClipSizeToString100(pl);
 	centerprint(pl, s1, s2, s3, s4, s5, s6);
@@ -825,120 +825,120 @@ void(float res) StatusRes =
 string(entity pl) ClipSizeToString100 =
 //CH edited b/c nothing has over 20
 {
-    //---------------- CLIP EXTENDER (same as below but with _EX values -------------//
-    if (pl.cutf_items & #CUTF_CLIPEXTEND)
-    {
-        //---//
-        local float num;
+	//---------------- CLIP EXTENDER (same as below but with _EX values -------------//
+	if (pl.cutf_items & #CUTF_CLIPEXTEND)
+	{
+		//---//
+		local float num;
 
-        if (pl.current_weapon == #WEAP_SHOTGUN)
-        {
-            if (#RE_SHOTGUN_EX - pl.reload_shotgun > pl.ammo_shells)
-                pl.reload_shotgun = #RE_SHOTGUN_EX - pl.ammo_shells;
-            num = #RE_SHOTGUN_EX - pl.reload_shotgun;
-        }
-        else if (pl.current_weapon == #WEAP_SUPER_SHOTGUN)
-        {
-            if (#RE_SUPER_SHOTGUN_EX - pl.reload_super_shotgun > pl.ammo_shells)
-                pl.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX - pl.ammo_shells;
-            num = #RE_SUPER_SHOTGUN_EX - pl.reload_super_shotgun;
-        }
-        else if (pl.current_weapon == #WEAP_GRENADE_LAUNCHER)
-        {
-            if (#RE_GRENADE_LAUNCHER_EX - pl.reload_grenade_launcher > pl.ammo_rockets)
-                pl.reload_grenade_launcher = #RE_GRENADE_LAUNCHER_EX - pl.ammo_rockets;
-            num = #RE_GRENADE_LAUNCHER_EX - pl.reload_grenade_launcher;
-        }
-        else if (pl.current_weapon == #WEAP_ROCKET_LAUNCHER)
-        {
-            if (#RE_ROCKET_LAUNCHER_EX - pl.reload_rocket_launcher > pl.ammo_rockets)
-                pl.reload_rocket_launcher = #RE_ROCKET_LAUNCHER_EX - pl.ammo_rockets;
-            num = #RE_ROCKET_LAUNCHER_EX - pl.reload_rocket_launcher;
-        }
-        else if (pl.current_weapon == #WEAP_LIGHT_ASSAULT)
-        {
-            if (#RE_LIGHT_ASSAULT_EX - pl.reload_light_assault > pl.ammo_nails)
-                pl.reload_light_assault = #RE_LIGHT_ASSAULT_EX - pl.ammo_nails;
-            num = #RE_LIGHT_ASSAULT_EX - pl.reload_light_assault;
-        }
-        else if (pl.current_weapon == #WEAP_LASERCANNON)
-        {
-            if (#RE_LASER_CANNON_EX - pl.reload_laser_cannon > pl.ammo_cells)
-                pl.reload_laser_cannon = #RE_LASER_CANNON_EX - pl.ammo_cells;
-            num = #RE_LASER_CANNON_EX - pl.reload_laser_cannon;
-        }
-        else
-        {
-            return "         ";
-        }   
-    
-    }   //---// CLIP EXTENDER
-    else
-    {
-        local float num;
+		if (pl.current_weapon == #WEAP_SHOTGUN)
+		{
+			if (#RE_SHOTGUN_EX - pl.reload_shotgun > pl.ammo_shells)
+				pl.reload_shotgun = #RE_SHOTGUN_EX - pl.ammo_shells;
+			num = #RE_SHOTGUN_EX - pl.reload_shotgun;
+		}
+		else if (pl.current_weapon == #WEAP_SUPER_SHOTGUN)
+		{
+			if (#RE_SUPER_SHOTGUN_EX - pl.reload_super_shotgun > pl.ammo_shells)
+				pl.reload_super_shotgun = #RE_SUPER_SHOTGUN_EX - pl.ammo_shells;
+			num = #RE_SUPER_SHOTGUN_EX - pl.reload_super_shotgun;
+		}
+		else if (pl.current_weapon == #WEAP_GRENADE_LAUNCHER)
+		{
+			if (#RE_GRENADE_LAUNCHER_EX - pl.reload_grenade_launcher > pl.ammo_rockets)
+				pl.reload_grenade_launcher = #RE_GRENADE_LAUNCHER_EX - pl.ammo_rockets;
+			num = #RE_GRENADE_LAUNCHER_EX - pl.reload_grenade_launcher;
+		}
+		else if (pl.current_weapon == #WEAP_ROCKET_LAUNCHER)
+		{
+			if (#RE_ROCKET_LAUNCHER_EX - pl.reload_rocket_launcher > pl.ammo_rockets)
+				pl.reload_rocket_launcher = #RE_ROCKET_LAUNCHER_EX - pl.ammo_rockets;
+			num = #RE_ROCKET_LAUNCHER_EX - pl.reload_rocket_launcher;
+		}
+		else if (pl.current_weapon == #WEAP_LIGHT_ASSAULT)
+		{
+			if (#RE_LIGHT_ASSAULT_EX - pl.reload_light_assault > pl.ammo_nails)
+				pl.reload_light_assault = #RE_LIGHT_ASSAULT_EX - pl.ammo_nails;
+			num = #RE_LIGHT_ASSAULT_EX - pl.reload_light_assault;
+		}
+		else if (pl.current_weapon == #WEAP_LASERCANNON)
+		{
+			if (#RE_LASER_CANNON_EX - pl.reload_laser_cannon > pl.ammo_cells)
+				pl.reload_laser_cannon = #RE_LASER_CANNON_EX - pl.ammo_cells;
+			num = #RE_LASER_CANNON_EX - pl.reload_laser_cannon;
+		}
+		else
+		{
+			return "         ";
+		}	
+	
+	}	//---// CLIP EXTENDER
+	else
+	{
+		local float num;
 
-        if (pl.current_weapon == #WEAP_SHOTGUN)
-        {
-            if (#RE_SHOTGUN - pl.reload_shotgun > pl.ammo_shells)
-                pl.reload_shotgun = #RE_SHOTGUN - pl.ammo_shells;
-            num = #RE_SHOTGUN - pl.reload_shotgun;
-        }
-        else if (pl.current_weapon == #WEAP_SUPER_SHOTGUN)
-        {
-            if (#RE_SUPER_SHOTGUN - pl.reload_super_shotgun > pl.ammo_shells)
-                pl.reload_super_shotgun = #RE_SUPER_SHOTGUN - pl.ammo_shells;
-            num = #RE_SUPER_SHOTGUN - pl.reload_super_shotgun;
-        }
-        else if (pl.current_weapon == #WEAP_GRENADE_LAUNCHER)
-        {
-            if (#RE_GRENADE_LAUNCHER - pl.reload_grenade_launcher > pl.ammo_rockets)
-                pl.reload_grenade_launcher = #RE_GRENADE_LAUNCHER - pl.ammo_rockets;
-            num = #RE_GRENADE_LAUNCHER - pl.reload_grenade_launcher;
-        }
-        else if (pl.current_weapon == #WEAP_ROCKET_LAUNCHER)
-        {
-            if (#RE_ROCKET_LAUNCHER - pl.reload_rocket_launcher > pl.ammo_rockets)
-                pl.reload_rocket_launcher = #RE_ROCKET_LAUNCHER - pl.ammo_rockets;
-            num = #RE_ROCKET_LAUNCHER - pl.reload_rocket_launcher;
-        }
-        else if (pl.current_weapon == #WEAP_LIGHT_ASSAULT)
-        {
-            if (#RE_LIGHT_ASSAULT - pl.reload_light_assault > pl.ammo_nails)
-                pl.reload_light_assault = #RE_LIGHT_ASSAULT - pl.ammo_nails;
-            num = #RE_LIGHT_ASSAULT - pl.reload_light_assault;
-        }
-        else if (pl.current_weapon == #WEAP_LASERCANNON)
-        {
-            if (#RE_LASER_CANNON - pl.reload_laser_cannon > pl.ammo_cells)
-                pl.reload_laser_cannon = #RE_LASER_CANNON - pl.ammo_cells;
-            num = #RE_LASER_CANNON - pl.reload_laser_cannon;
-        }
-        else
-        {
-            return "         ";
-        }
-    
-    } // END ELSE CLIP EXTENDER
+		if (pl.current_weapon == #WEAP_SHOTGUN)
+		{
+			if (#RE_SHOTGUN - pl.reload_shotgun > pl.ammo_shells)
+				pl.reload_shotgun = #RE_SHOTGUN - pl.ammo_shells;
+			num = #RE_SHOTGUN - pl.reload_shotgun;
+		}
+		else if (pl.current_weapon == #WEAP_SUPER_SHOTGUN)
+		{
+			if (#RE_SUPER_SHOTGUN - pl.reload_super_shotgun > pl.ammo_shells)
+				pl.reload_super_shotgun = #RE_SUPER_SHOTGUN - pl.ammo_shells;
+			num = #RE_SUPER_SHOTGUN - pl.reload_super_shotgun;
+		}
+		else if (pl.current_weapon == #WEAP_GRENADE_LAUNCHER)
+		{
+			if (#RE_GRENADE_LAUNCHER - pl.reload_grenade_launcher > pl.ammo_rockets)
+				pl.reload_grenade_launcher = #RE_GRENADE_LAUNCHER - pl.ammo_rockets;
+			num = #RE_GRENADE_LAUNCHER - pl.reload_grenade_launcher;
+		}
+		else if (pl.current_weapon == #WEAP_ROCKET_LAUNCHER)
+		{
+			if (#RE_ROCKET_LAUNCHER - pl.reload_rocket_launcher > pl.ammo_rockets)
+				pl.reload_rocket_launcher = #RE_ROCKET_LAUNCHER - pl.ammo_rockets;
+			num = #RE_ROCKET_LAUNCHER - pl.reload_rocket_launcher;
+		}
+		else if (pl.current_weapon == #WEAP_LIGHT_ASSAULT)
+		{
+			if (#RE_LIGHT_ASSAULT - pl.reload_light_assault > pl.ammo_nails)
+				pl.reload_light_assault = #RE_LIGHT_ASSAULT - pl.ammo_nails;
+			num = #RE_LIGHT_ASSAULT - pl.reload_light_assault;
+		}
+		else if (pl.current_weapon == #WEAP_LASERCANNON)
+		{
+			if (#RE_LASER_CANNON - pl.reload_laser_cannon > pl.ammo_cells)
+				pl.reload_laser_cannon = #RE_LASER_CANNON - pl.ammo_cells;
+			num = #RE_LASER_CANNON - pl.reload_laser_cannon;
+		}
+		else
+		{
+			return "         ";
+		}
+	
+	} // END ELSE CLIP EXTENDER
 
-    local string tmps,tmps2,tmps3;
-    
-    tmps = ftos(num);
-    
-    if (pl.tfstate & #TFSTATE_RELOADING)
-        tmps2 = "";
-    else
-        tmps2 = colstr(tmps,#COLSTR_NUMBER);
+	local string tmps,tmps2,tmps3;
+	
+	tmps = ftos(num);
+	
+	if (pl.tfstate & #TFSTATE_RELOADING)
+		tmps2 = "";
+	else
+		tmps2 = colstr(tmps,#COLSTR_NUMBER);
 
-    #ifdef OLD_SBARLOOK
-    tmps3 = strcat("דלינ: ",tmps2);
-    #else
-    if (num < 10 || pl.tfstate & #TFSTATE_RELOADING)
-        tmps3 = strcat("  דלינ: ",tmps2);
-    else    
-        tmps3 = strcat("  דלינ:",tmps2);
-    #endif
+	#ifdef OLD_SBARLOOK
+	tmps3 = strcat("דלינ: ",tmps2);
+	#else
+	if (num < 10 || pl.tfstate & #TFSTATE_RELOADING)
+		tmps3 = strcat("  דלינ: ",tmps2);
+	else	
+		tmps3 = strcat("  דלינ:",tmps2);
+	#endif
 
-    return tmps3;
+	return tmps3;
 
 	/*if (num < 10)
 	{
@@ -1055,8 +1055,8 @@ string(entity pl) ClipSizeToString100 =
 			if (num == 39)
 				return "\nדלינ:39";
 		}
-    }
-    else if (num < 50)
+	}
+	else if (num < 50)
 	{
 		if (num < 45)
 		{
@@ -1084,69 +1084,69 @@ string(entity pl) ClipSizeToString100 =
 			if (num == 49)
 				return "\nדלינ:49";
 		}
-    }
+	}
 	else if (num >= 50)
 		return "\nדלינ:50";
 */
-    //return num;
+	//return num;
 };
 //==========
 string(entity te, float devicenum) SentryDetailsToString =
 {
 	if (!devicenum)
-    {
-        if (te.ammo_shells == 0)
-        {
-            if (te.ammo_rockets == 0 && te.weapon == 3)
-                return "Óומפעש: no ammo   \n        ";
-            else	   
-                return "Óומפעש: no shells \n        ";
-        }
-        else if (te.ammo_rockets == 0 && te.weapon == 3)
-        {
-            return "Óומפעש: no rockets\n        ";
-        }		   
-        else
-        {		   
-            return "                  \nÓומפעש: ";
-        }
-    }
-    else if (devicenum == 1)
-    {
-        if (te.ammo_shells == 0)
-        {
-            if (te.ammo_rockets == 0 && te.weapon == 3)
-                return "Óומפעש £: no ammo   \n           ";
-            else	   
-                return "Óומפעש £: no shells \n           ";
-        }
-        else if (te.ammo_rockets == 0 && te.weapon == 3)
-        {
-            return "Óומפעש £: no rockets\n           ";
-        }		   
-        else
-        {		   
-            return "                  \nÓומפעש £: ";
-        }    
-    }
-    else if (devicenum == 2)
-    {
-        if (te.ammo_shells == 0)
-        {
-            if (te.ammo_rockets == 0 && te.weapon == 3)
-                return "Óומפעש £: no ammo   \n           ";
-            else	   
-                return "Óומפעש £: no shells \n           ";
-        }
-        else if (te.ammo_rockets == 0 && te.weapon == 3)
-        {
-            return "Óומפעש £: no rockets\n           ";
-        }		   
-        else
-        {		   
-            return "                  \nÓומפעש £: ";
-        }    
-    }
+	{
+		if (te.ammo_shells == 0)
+		{
+			if (te.ammo_rockets == 0 && te.weapon == 3)
+				return "Óומפעש: no ammo   \n        ";
+			else	   
+				return "Óומפעש: no shells \n        ";
+		}
+		else if (te.ammo_rockets == 0 && te.weapon == 3)
+		{
+			return "Óומפעש: no rockets\n        ";
+		}		   
+		else
+		{		   
+			return "                  \nÓומפעש: ";
+		}
+	}
+	else if (devicenum == 1)
+	{
+		if (te.ammo_shells == 0)
+		{
+			if (te.ammo_rockets == 0 && te.weapon == 3)
+				return "Óומפעש £: no ammo   \n           ";
+			else	   
+				return "Óומפעש £: no shells \n           ";
+		}
+		else if (te.ammo_rockets == 0 && te.weapon == 3)
+		{
+			return "Óומפעש £: no rockets\n           ";
+		}		   
+		else
+		{		   
+			return "                  \nÓומפעש £: ";
+		}	 
+	}
+	else if (devicenum == 2)
+	{
+		if (te.ammo_shells == 0)
+		{
+			if (te.ammo_rockets == 0 && te.weapon == 3)
+				return "Óומפעש £: no ammo   \n           ";
+			else	   
+				return "Óומפעש £: no shells \n           ";
+		}
+		else if (te.ammo_rockets == 0 && te.weapon == 3)
+		{
+			return "Óומפעש £: no rockets\n           ";
+		}		   
+		else
+		{		   
+			return "                  \nÓומפעש £: ";
+		}	 
+	}
 
 	return "                           \n"; // should never happen
 };
@@ -1154,50 +1154,50 @@ string(entity te, float devicenum) SentryDetailsToString =
 string(entity te, float devicenum) TeslaDetailsToString =
 {
 	if (!devicenum)
-    {
-        if (te.ammo_cells == 0)
-        {
-            return "Ôוףלב:     No cells\n       ";
-        }
-        else if (te.ammo_cells <= 30)
-        {
-            return "Ôוףלב: Low on cells\n       ";
-        }
-        else
-        {		   
-            return "                   \nÔוףלב: ";
-        }
-    }
-    else if (devicenum == 1)
-    {
-        if (te.ammo_cells == 0)
-        {
-            return "Ôוףלב £:     No cells\n          ";
-        }
-        else if (te.ammo_cells <= 30)
-        {
-            return "Ôוףלב £: Low on cells\n        : ";
-        }
-        else
-        {		   
-            return "                   \nÔוףלב £: ";
-        }
-    }
-    else if (devicenum == 2)
-    {
-        if (te.ammo_cells == 0)
-        {
-            return "Ôוףלב £:     No cells\n          ";
-        }
-        else if (te.ammo_cells <= 30)
-        {
-            return "Ôוףלב £: Low on cells\n          ";
-        }
-        else
-        {		   
-            return "                   \nÔוףלב £: ";
-        }
-    }
+	{
+		if (te.ammo_cells == 0)
+		{
+			return "Ôוףלב:     No cells\n       ";
+		}
+		else if (te.ammo_cells <= 30)
+		{
+			return "Ôוףלב: Low on cells\n       ";
+		}
+		else
+		{		   
+			return "                   \nÔוףלב: ";
+		}
+	}
+	else if (devicenum == 1)
+	{
+		if (te.ammo_cells == 0)
+		{
+			return "Ôוףלב £:     No cells\n          ";
+		}
+		else if (te.ammo_cells <= 30)
+		{
+			return "Ôוףלב £: Low on cells\n        : ";
+		}
+		else
+		{		   
+			return "                   \nÔוףלב £: ";
+		}
+	}
+	else if (devicenum == 2)
+	{
+		if (te.ammo_cells == 0)
+		{
+			return "Ôוףלב £:     No cells\n          ";
+		}
+		else if (te.ammo_cells <= 30)
+		{
+			return "Ôוףלב £: Low on cells\n          ";
+		}
+		else
+		{		   
+			return "                   \nÔוףלב £: ";
+		}
+	}
 
 	return "                           \n"; // should never happen
 };

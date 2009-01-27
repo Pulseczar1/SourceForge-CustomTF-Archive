@@ -1,7 +1,7 @@
 /*======================================================
 	PLAYER.QC			Custom TeamFortress v3.1
 
-	(c) TeamFortress Software Pty Ltd 	29/2/97
+	(c) TeamFortress Software Pty Ltd	29/2/97
 	(c) William Kerney			5/21/00
 	(c) Craig Hauser				19/3/00
 ========================================================
@@ -127,7 +127,7 @@ void() player_touch =
 		{
 			if (self.undercover_team != 0 || self.undercover_skin != 0)
 			{
-				if ((other.cutf_items & #CUTF_SPY_KIT || other.tf_items & #NIT_SCANNER) && !Teammate(self.team_no,other.team_no))
+				if ((other.cutf_items & #CUTF_SPY_KIT || other.tf_items & #NIT_SCANNER) && !Teammate(self, other))
 				{
 					sprint(other, #PRINT_HIGH, "Wait a minute... he's a Spy!\n");
 					sprint(self, #PRINT_HIGH, "The enemy sees through your disguise!\n");
@@ -136,7 +136,7 @@ void() player_touch =
 			}
 			if (other.undercover_team != 0 || other.undercover_skin != 0)
 			{
-				if ((self.cutf_items & #CUTF_SPY_KIT || self.tf_items & #NIT_SCANNER) && !Teammate(other.team_no,self.team_no))
+				if ((self.cutf_items & #CUTF_SPY_KIT || self.tf_items & #NIT_SCANNER) && !Teammate(other, self))
 				{
 					sprint(self, #PRINT_HIGH, "Wait a minute... he's a Spy!\n");
 					sprint(other, #PRINT_HIGH, "The enemy sees through your disguise!\n");
@@ -150,14 +150,30 @@ void() player_touch =
 	//Tae Kwon Do! Tae Kwon Do!
 	//This looks a bit odd since the stationary person being run INTO is Self, so the TKD person is Other.
 	if (other.job & #JOB_TKD && self.takedamage && self.health > 0 && other.health > 0) {
-		local float playerspeed;
-		if (!Teammate(self.team_no,other.team_no)) {
-			//TODO Check to make sure the person is in front of us.
-
+		local float playerspeed,player2speed;
+		playerspeed = vlen(other.last_frame_velocity); //Kicker speed
+		player2speed = vlen(self.last_frame_velocity); //Kickee speed
+		deathmsg = #DMSG_TKD; //WK 8-15-08 Fix deathmsg bug with TKD
+		if (!Teammate(self, other) && !UndercoverTeammate(self,other)) {
+			//TODO Check to make sure the person is in front of us. Dotproduct origin and velocity vectors
 			if (self.job & #JOB_TKD) { //TWO TKD GUYS!
+				//The faster guy punches the slower (with a faster cooldown)
+				if (playerspeed > player2speed && other.last_boot_to_the_head < time) { //Other is faster
+					TF_T_Damage (self, other, other, playerspeed / 12, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+					other.last_boot_to_the_head = time + 2;
+					sprint (other, #PRINT_HIGH, "You punch him in the face!\n");
+					sprint (self, #PRINT_HIGH, "You get punched in the face!\n");
+				} else if (player2speed > playerspeed && self.last_boot_to_the_head < time) { //Self is faster
+					TF_T_Damage (other, self, self, player2speed / 12, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+					self.last_boot_to_the_head = time + 2;
+					sprint (self, #PRINT_HIGH, "You hit him with a devestating spear hand punch!\n");
+					sprint (other, #PRINT_HIGH, "He hits you with a devestating kwan soo kong kyuck!\n");
+				}
+
 				//Issue TKD Challenge (if neither side is juiced already)
 				local float score;
-				score = 4;
+				//WK 1-19-09 Reduced duel duration by a significant amount
+				score = 2; //Seconds for duel to last
 				if (!(self.items & #IT_QUAD) && !(other.items & #IT_QUAD)) {
 					if (random() < 0.4) {
 						bprint(#PRINT_HIGH,other.netname);
@@ -171,36 +187,37 @@ void() player_touch =
 						bprint(#PRINT_HIGH,self.netname);
 						bprint(#PRINT_HIGH," yells TAE KWON DO!\n");
 						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
-						score = 6;
+						score = 3;
 					} else if (random() < 0.5) {
 						bprint(#PRINT_HIGH,other.netname);
 						bprint(#PRINT_HIGH," and ");
 						bprint(#PRINT_HIGH,self.netname);
-						bprint(#PRINT_HIGH," begin the Duel of the Iron Mic! (10s)\n");
+						bprint(#PRINT_HIGH," begin the Duel of the Iron Mic! (8s)\n");
 						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
-						score = 10;
+						score = 8;
 					} else if (random() < 0.66) {
 						bprint(#PRINT_HIGH,other.netname);
 						bprint(#PRINT_HIGH," and ");
 						bprint(#PRINT_HIGH,self.netname);
-						bprint(#PRINT_HIGH," begin their samurai showdown! (15s)\n");
+						bprint(#PRINT_HIGH," begin their samurai showdown! (12s)\n");
 						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
-						score = 15;
+						score = 12;
 					} else {
 						bprint(#PRINT_HIGH,other.netname);
 						bprint(#PRINT_HIGH," and ");
 						bprint(#PRINT_HIGH,self.netname);
-						bprint(#PRINT_HIGH," begin a duel without honor or humanity! (30s)\n");
+						bprint(#PRINT_HIGH," begin a duel without honor or humanity! (20s)\n");
 						sound (other, #CHAN_WEAPON, "shambler/melee1.wav", 1, #ATTN_NORM);
-						score = 30;
+						score = 20;
 					}
 
 					//Juiced
+					//WK 1-19-09 Halved delay before duel begins
 					self.items = self.items | #IT_QUAD;
 					self.super_damage_finished = time + score;
 					self.super_time = 1;
 					if (self.attack_finished < time)
-						self.attack_finished = time + 1.5;
+						self.attack_finished = time + 0.75;
 					if (self.job_finished < time)
 						self.job_finished = time + 1.5;
 
@@ -209,9 +226,13 @@ void() player_touch =
 					other.super_damage_finished = time + score;
 					other.super_time = 1;
 					if (self.attack_finished < time)
-						self.attack_finished = time + 1.5;
+						self.attack_finished = time + 0.75;
 					if (self.job_finished < time)
 						self.job_finished = time + 1.5;
+
+					//WK 5-15-8 Make them each other's enemies so that we restrict their quad damage just to each other.
+					self.martyr_enemy = other;
+					other.martyr_enemy = self;
 
 					//WK 5-15-7 Remove all primed grenades so they don't blow up on them accidentally
 					local entity te;
@@ -232,19 +253,25 @@ void() player_touch =
 				}			
 				if (other.last_push < time) {
 					//Push each self away, and up.
-					self.velocity_x = other.last_frame_velocity_x;
-					self.velocity_y = other.last_frame_velocity_y;
+					//5-15-08 TKDist bounce better now
+					self.velocity_x = 1.2 * other.last_frame_velocity_x;
+					self.velocity_y = 1.2 * other.last_frame_velocity_y;
 					self.velocity_z = other.last_frame_velocity_z + 200;
-					other.velocity_x = self.last_frame_velocity_x;
-					other.velocity_y = self.last_frame_velocity_y;
-					other.velocity_z = self.last_frame_velocity_z;
+					other.velocity_x = -1.2 * other.last_frame_velocity_x;
+					other.velocity_y = -1.2 * other.last_frame_velocity_y;
+					other.velocity_z = other.last_frame_velocity_z;
 					other.last_push = time + 0.5;
 				}
 			} else {
-				playerspeed = vlen(other.last_frame_velocity);
 				if (other.last_boot_to_the_head < time && playerspeed > 225) {
 					//Damage depends on how fast we are 
 					//We save the last_frame_velocity because the collision kills the speed before we get here.
+
+					//5-15-08 Now that we know we're at least moving a little, we want to really just look at the difference in vectors
+					local vector temp_vector;
+					temp_vector = other.velocity - self.velocity;
+					playerspeed = vlen(temp_vector);
+
 					/* Debug Information */
 					local string temp_foo;
 					temp_foo = ftos(playerspeed);
@@ -325,7 +352,7 @@ void() player_touch =
 	{
 		local entity Bio;
 	
-        //WK Melee armor stops infections from spreading
+		//WK Melee armor stops infections from spreading
 		if (other.classname == "player" && !(other.invincible_finished) && !(other.armorclass & #AT_SAVEMELEE))
 		{
 			// may sure other player is not already infected
@@ -364,54 +391,55 @@ void() player_touch =
 					sprint(self, #PRINT_MEDIUM, "You have infected ");
 					sprint(self, #PRINT_MEDIUM, other.netname);
 					sprint(self, #PRINT_MEDIUM, "!\n");
-                    //-OfN
+					//-OfN
 					teamprefixsprintbi(other.team_no,other,self);
 					teamsprintbi(other,self, other.netname," has been infected!\n","","","","");
 				}				
 			}
 		}
-        else if (IsMonster(other))
-        {
-            if (!(other.tfstate & #TFSTATE_INFECTED))
-            {
-                // Report to owner
-                local string tmps;
-                tmps = GetMonsterName(other);
-                sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
+		else if (IsMonster(other))
+		{
+			if (!(other.tfstate & #TFSTATE_INFECTED))
+			{
+				// Report to owner
+				local string tmps;
+				tmps = GetMonsterName(other);
+				sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
 
-                // Report infecter
-                sprint(self,#PRINT_HIGH,"You have infected the ",tmps," ",other.netname,"!\n");
+				// Report infecter
+				sprint(self,#PRINT_HIGH,"You have infected the ",tmps," ",other.netname,"!\n");
 
-                // Report to teammates of owner
-                local string tmps;
-                tmps = GetMonsterName(other);
-                teamprefixsprint(other.real_owner.team_no,other.real_owner);
-                teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
+				// Report to teammates of owner
+				local string tmps;
+				tmps = GetMonsterName(other);
+				teamprefixsprint(other.real_owner.team_no,other.real_owner);
+				teamsprint6(other.real_owner,"The ",tmps," ", other.netname," has been infected!\n","");
 
-                // Update infection flag
-                other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+				// Update infection flag
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
 
-                // Infect it!
-                Bio = spawn ();
-                Bio.classname = "timer";
-                Bio.classname = "biotimer";
-                Bio.nextthink = time + 2;
-                Bio.think = BioInfection_MonsterDecay;
-                Bio.owner = self;
-                Bio.enemy = other;
+				// Infect it!
+				Bio = spawn ();
+				Bio.classname = "timer";
+				Bio.classname = "biotimer";
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_MonsterDecay;
+				Bio.owner = self;
+				Bio.enemy = other;
 
-                other.infection_team_no = self.infection_team_no;
-            }
-        }
+				other.infection_team_no = self.infection_team_no;
+			}
+		}
 	}
 /* WK 4/27/7 Turned this off. If you actually want to do it right, use last_frame_velocity.
 #ifdef PLAYER_PUSHING
 
-    local float v1, v2;
+	local float v1, v2;
 
-    if (other.classname == "player")
+	if (other.classname == "player")
 	{
-		if (Teammate(self.team_no, other.team_no))
+		// Neo mode modication
+		if (Teammate(self, other))
 		{
 			v1 = vlen(other.velocity);
 			if (v1 < 50)
@@ -498,9 +526,9 @@ void()	player_shot4 =	[$shotatt4, player_shot5	] {self.weaponframe=4;};
 void()	player_shot5 =	[$shotatt5, player_shot6	] {self.weaponframe=5;};
 void()	player_shot6 =	[$shotatt6, player_run	] {self.weaponframe=6;};
 
-void()	player_autorifle1 =	[$shotatt1, player_autorifle2	] {self.weaponframe=1; muzzleflash(); };
-void()	player_autorifle2 =	[$shotatt2, player_autorifle3	] {self.weaponframe=2;};
-void()	player_autorifle3 =	[$shotatt6, player_run	] {self.weaponframe=6;};
+void()	player_autorifle1 = [$shotatt1, player_autorifle2	] {self.weaponframe=1; muzzleflash(); };
+void()	player_autorifle2 = [$shotatt2, player_autorifle3	] {self.weaponframe=2;};
+void()	player_autorifle3 = [$shotatt6, player_run	] {self.weaponframe=6;};
 
 void()	player_axe1 =	[$axatt1, player_axe2	] {self.weaponframe=1;};
 void()	player_axe2 =	[$axatt2, player_axe3	] {self.weaponframe=2;};
@@ -514,9 +542,9 @@ void()	player_axe3 =	[$axatt3, player_axe4	]
 };
 void()	player_axe4 =	[$axatt4, player_run	] {self.weaponframe=4;};
 
-void()	player_axeb1 =	[$axattb1, player_axeb2	] {self.weaponframe=5;};
-void()	player_axeb2 =	[$axattb2, player_axeb3	] {self.weaponframe=6;};
-void()	player_axeb3 =	[$axattb3, player_axeb4	] 
+void()	player_axeb1 =	[$axattb1, player_axeb2 ] {self.weaponframe=5;};
+void()	player_axeb2 =	[$axattb2, player_axeb3 ] {self.weaponframe=6;};
+void()	player_axeb3 =	[$axattb3, player_axeb4 ] 
 {
 	self.weaponframe=7;
 	if (self.current_weapon == #WEAP_AXE)
@@ -526,9 +554,9 @@ void()	player_axeb3 =	[$axattb3, player_axeb4	]
 };
 void()	player_axeb4 =	[$axattb4, player_run	] {self.weaponframe=8;};
 
-void()	player_axec1 =	[$axattc1, player_axec2	] {self.weaponframe=1;};
-void()	player_axec2 =	[$axattc2, player_axec3	] {self.weaponframe=2;};
-void()	player_axec3 =	[$axattc3, player_axec4	] 
+void()	player_axec1 =	[$axattc1, player_axec2 ] {self.weaponframe=1;};
+void()	player_axec2 =	[$axattc2, player_axec3 ] {self.weaponframe=2;};
+void()	player_axec3 =	[$axattc3, player_axec4 ] 
 {
 	self.weaponframe=3;
 	if (self.current_weapon == #WEAP_AXE)
@@ -538,9 +566,9 @@ void()	player_axec3 =	[$axattc3, player_axec4	]
 };
 void()	player_axec4 =	[$axattc4, player_run	] {self.weaponframe=4;};
 
-void()	player_axed1 =	[$axattd1, player_axed2	] {self.weaponframe=5;};
-void()	player_axed2 =	[$axattd2, player_axed3	] {self.weaponframe=6;};
-void()	player_axed3 =	[$axattd3, player_axed4	] 
+void()	player_axed1 =	[$axattd1, player_axed2 ] {self.weaponframe=5;};
+void()	player_axed2 =	[$axattd2, player_axed3 ] {self.weaponframe=6;};
+void()	player_axed3 =	[$axattd3, player_axed4 ] 
 {
 	self.weaponframe=7;
 	if (self.current_weapon == #WEAP_AXE)
@@ -552,41 +580,41 @@ void()	player_axed4 =	[$axattd4, player_run	] {self.weaponframe=8;};
 
 //=========================
 // QW Grappling hook frames
-void()  player_chain1=  [$axattd1, player_chain1a] {self.weaponframe=1;Throw_Grapple();};
-void()  player_chain1a= [$axattd1, player_chain2 ] {self.weaponframe=2;};
-void()  player_chain2=  [$axattd2, player_chain2a] {self.weaponframe=3;};
-void()  player_chain2a= [$axattd2, player_chain3 ] {self.weaponframe=4;};
-void()  player_chain3=  [$axattd3, player_chain3 ]
+void()	player_chain1=	[$axattd1, player_chain1a] {self.weaponframe=1;Throw_Grapple();};
+void()	player_chain1a= [$axattd1, player_chain2 ] {self.weaponframe=2;};
+void()	player_chain2=	[$axattd2, player_chain2a] {self.weaponframe=3;};
+void()	player_chain2a= [$axattd2, player_chain3 ] {self.weaponframe=4;};
+void()	player_chain3=	[$axattd3, player_chain3 ]
 {
-        self.weaponframe=6;
-        if (!self.hook_out)
-        {
-                player_chain5();
-                return;
-        }
-        if (vlen(self.velocity) >= 750)
-        {
-                player_chain4();
-                return;
-        }
+		self.weaponframe=6;
+		if (!self.hook_out)
+		{
+				player_chain5();
+				return;
+		}
+		if (vlen(self.velocity) >= 750)
+		{
+				player_chain4();
+				return;
+		}
 };
 
 void() player_chain4=  [$deathc4, player_chain4 ]
 {
-        self.weaponframe=6;
-        if (!self.hook_out)
-        {
-                player_chain5();
-                return;
-        }
-        if (vlen(self.velocity) < 750)
-        {
-                player_chain3();
-                return;
-        }
+		self.weaponframe=6;
+		if (!self.hook_out)
+		{
+				player_chain5();
+				return;
+		}
+		if (vlen(self.velocity) < 750)
+		{
+				player_chain3();
+				return;
+		}
 };
 
-void()  player_chain5=  [$axattd4, player_run    ] {self.weaponframe=0;};
+void()	player_chain5=	[$axattd4, player_run	 ] {self.weaponframe=0;};
 
 // newstuff
 
@@ -595,25 +623,25 @@ void()	player_medikit2 =	[$axatt2, player_medikit3	] {self.weaponframe=2;};
 void()	player_medikit3 =	[$axatt3, player_medikit4	] {self.weaponframe=3;W_FireMedikit(#FALSE);};
 void()	player_medikit4 =	[$axatt4, player_run		] {self.weaponframe=4;};
 
-void()	player_medikitb1 =	[$axattb1, player_medikitb2	] {self.weaponframe=5;};
-void()	player_medikitb2 =	[$axattb2, player_medikitb3	] {self.weaponframe=6;};
-void()	player_medikitb3 =	[$axattb3, player_medikitb4	] {self.weaponframe=7;W_FireMedikit(#FALSE);};
+void()	player_medikitb1 =	[$axattb1, player_medikitb2 ] {self.weaponframe=5;};
+void()	player_medikitb2 =	[$axattb2, player_medikitb3 ] {self.weaponframe=6;};
+void()	player_medikitb3 =	[$axattb3, player_medikitb4 ] {self.weaponframe=7;W_FireMedikit(#FALSE);};
 void()	player_medikitb4 =	[$axattb4, player_run		] {self.weaponframe=8;};
 
-void()	player_medikitc1 =	[$axattc1, player_medikitc2	] {self.weaponframe=1;};
-void()	player_medikitc2 =	[$axattc2, player_medikitc3	] {self.weaponframe=2;};
-void()	player_medikitc3 =	[$axattc3, player_medikitc4	] {self.weaponframe=3;W_FireMedikit(#FALSE);};
+void()	player_medikitc1 =	[$axattc1, player_medikitc2 ] {self.weaponframe=1;};
+void()	player_medikitc2 =	[$axattc2, player_medikitc3 ] {self.weaponframe=2;};
+void()	player_medikitc3 =	[$axattc3, player_medikitc4 ] {self.weaponframe=3;W_FireMedikit(#FALSE);};
 void()	player_medikitc4 =	[$axattc4, player_run		] {self.weaponframe=4;};
 
-void()	player_medikitd1 =	[$axattd1, player_medikitd2	] {self.weaponframe=5;};
-void()	player_medikitd2 =	[$axattd2, player_medikitd3	] {self.weaponframe=6;};
-void()	player_medikitd3 =	[$axattd3, player_medikitd4	] {self.weaponframe=7;W_FireMedikit(#FALSE);};
+void()	player_medikitd1 =	[$axattd1, player_medikitd2 ] {self.weaponframe=5;};
+void()	player_medikitd2 =	[$axattd2, player_medikitd3 ] {self.weaponframe=6;};
+void()	player_medikitd3 =	[$axattd3, player_medikitd4 ] {self.weaponframe=7;W_FireMedikit(#FALSE);};
 void()	player_medikitd4 =	[$axattd4, player_run		] {self.weaponframe=8;};
 
-void()	player_bioweapon1 =	[$axatt1, player_bioweapon2	] {self.weaponframe=1;};
-void()	player_bioweapon2 =	[$axatt2, player_bioweapon3	] {self.weaponframe=2;};
-void()	player_bioweapon3 =	[$axatt3, player_bioweapon4	] {self.weaponframe=3;W_FireBioweapon();};
-void()	player_bioweapon4 =	[$axatt4, player_run		] {self.weaponframe=4;};
+void()	player_bioweapon1 = [$axatt1, player_bioweapon2 ] {self.weaponframe=1;};
+void()	player_bioweapon2 = [$axatt2, player_bioweapon3 ] {self.weaponframe=2;};
+void()	player_bioweapon3 = [$axatt3, player_bioweapon4 ] {self.weaponframe=3;W_FireBioweapon();};
+void()	player_bioweapon4 = [$axatt4, player_run		] {self.weaponframe=4;};
 
 void()	player_bioweaponb1 =	[$axattb1, player_bioweaponb2	] {self.weaponframe=5;};
 void()	player_bioweaponb2 =	[$axattb2, player_bioweaponb3	] {self.weaponframe=6;};
@@ -632,7 +660,7 @@ void()	player_bioweapond4 =	[$axattd4, player_run	] {self.weaponframe=8;};
  
 //============================================================================
 
-void() player_snail1   =[ $nailatt1, player_snail2  ] 
+void() player_snail1   =[ $nailatt1, player_snail2	] 
 {
 
 	if (!self.button0 || intermission_running)
@@ -642,7 +670,7 @@ void() player_snail1   =[ $nailatt1, player_snail2  ]
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
 
-    if (self.attack_finished > time)
+	if (self.attack_finished > time)
 		return;
 	muzzleflash();
 
@@ -653,11 +681,11 @@ void() player_snail1   =[ $nailatt1, player_snail2  ]
 	SuperDamageSound();
 	W_FireSpikes (4);
 	//Attack_Finished(0.1);
-  	Attack_Finished(0.2);
+	Attack_Finished(0.2);
 };
 //- OfN -
 
-void() player_snail2   =[ $nailatt2, player_snail1  ]
+void() player_snail2   =[ $nailatt2, player_snail1	]
 {
 	/*if (!self.button0 || intermission_running)
 		{player_run ();return;}*/
@@ -665,8 +693,8 @@ void() player_snail2   =[ $nailatt2, player_snail1  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    /*if (self.attack_finished > time)
+	
+	/*if (self.attack_finished > time)
 		return;*/
 
 	/*self.weaponframe = self.weaponframe + 1;
@@ -676,7 +704,7 @@ void() player_snail2   =[ $nailatt2, player_snail1  ]
 	//SuperDamageSound();
 //	if (random() < 0.5) W_FireSpikes (4);
 	//Attack_Finished(0.2);
-    //Attack_Finished(0.1);
+	//Attack_Finished(0.1);
 };
 
 void() player_nail1   =[ $nailatt1, player_nail2  ] 
@@ -689,7 +717,7 @@ void() player_nail1   =[ $nailatt1, player_nail2  ]
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
 
-    if (self.attack_finished > time)
+	if (self.attack_finished > time)
 		return;
 	muzzleflash();
 
@@ -700,7 +728,7 @@ void() player_nail1   =[ $nailatt1, player_nail2  ]
 	SuperDamageSound();
 	W_FireSpikes (4);
 	//Attack_Finished(0.1);
-  	Attack_Finished(0.2);
+	Attack_Finished(0.2);
 };
 //- OfN -
 
@@ -712,8 +740,8 @@ void() player_nail2   =[ $nailatt2, player_nail3  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    /*if (self.attack_finished > time)
+	
+	/*if (self.attack_finished > time)
 		return;*/
 
 	/*self.weaponframe = self.weaponframe + 1;
@@ -723,7 +751,7 @@ void() player_nail2   =[ $nailatt2, player_nail3  ]
 	//SuperDamageSound();
 //	if (random() < 0.5) W_FireSpikes (4);
 	//Attack_Finished(0.2);
-    //Attack_Finished(0.1);
+	//Attack_Finished(0.1);
 };
 
 
@@ -735,19 +763,19 @@ void() player_nail3   =[ $nailatt1, player_nail4  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    if (self.attack_finished > time)
+	
+	if (self.attack_finished > time)
 		return;
 
 	/*self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;*/
 
-   	muzzleflash();
+	muzzleflash();
 	SuperDamageSound();
 	W_FireSpikes (-4);
 	//Attack_Finished(0.2);
-    Attack_Finished(0.2);
+	Attack_Finished(0.2);
 };
 
 
@@ -759,8 +787,8 @@ void() player_nail4   =[ $nailatt2, player_nail1  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 9)
 		self.weaponframe = 1;
-    
-    /*if (self.attack_finished > time)
+	
+	/*if (self.attack_finished > time)
 		return;*/
 
 	/*self.weaponframe = self.weaponframe + 1;
@@ -770,14 +798,14 @@ void() player_nail4   =[ $nailatt2, player_nail1  ]
 	//SuperDamageSound();
 //	if (random() < 0.5) W_FireSpikes (-4);
 	//Attack_Finished(0.2);
-    //Attack_Finished(0.1);
+	//Attack_Finished(0.1);
 };
 
 
 //============================================================================
 // ASSAULT CANNON FRAMES
 // Cannon powering up
-void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ] 
+void() player_assaultcannonup1	 =[$nailatt1, player_assaultcannonup2  ] 
 {
 	if ((!self.button0) || (self.ammo_shells < 1) || intermission_running)
 	{
@@ -785,7 +813,7 @@ void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ]
 		//WK 2/8/7 Ass cannons can walk now
 		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 		TeamFortress_SetSpeed(self);
-        
+		
 		self.count = 1;
 		self.heat = 0;
 		player_assaultcannondown1();
@@ -817,13 +845,13 @@ void() player_assaultcannonup1   =[$nailatt1, player_assaultcannonup2  ]
 };
 
 // Cannon powering up 2
-void() player_assaultcannonup2   =[$nailatt1, player_assaultcannonup1  ] 
+void() player_assaultcannonup2	 =[$nailatt1, player_assaultcannonup1  ] 
 {
 	if ((!self.button0) || (self.ammo_shells < 1) || intermission_running)
 	{
 		//WK 2/8/7 Ass cannons can walk now
-            //self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-		    TeamFortress_SetSpeed(self);
+			//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+			TeamFortress_SetSpeed(self);
 		self.count = 1;
 		self.heat = 0;
 		player_assaultcannondown1();
@@ -871,7 +899,7 @@ void() player_assaultcannon1   =[$nailatt1, player_assaultcannon2  ]
 		//WK 2/8/7 Ass cannnons can walk now
 		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 		TeamFortress_SetSpeed(self);
-    
+	
 		self.weaponframe = 0;
 		self.count = 1;
 		player_assaultcannondown1();
@@ -908,7 +936,7 @@ void() player_assaultcannon2   =[$nailatt2, player_assaultcannon1  ]
 		//WK 2/8/7 Ass cannons can walk again
 		//self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
 		TeamFortress_SetSpeed(self);
-    
+	
 		self.weaponframe = 0;
 		self.count = 1;
 		player_assaultcannondown1();
@@ -942,12 +970,12 @@ void() player_assaultcannondown1   =[$nailatt1, player_assaultcannondown1  ]
 	if (self.count >= 15)
 	{
 		self.heat = 0;
-	    self.fire_held_down = #FALSE;
+		self.fire_held_down = #FALSE;
 
 		// Let him/her walk again
-	    //WK self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
-	    TeamFortress_SetSpeed(self);
-     
+		//WK self.tfstate = self.tfstate - (self.tfstate & #TFSTATE_CANT_MOVE);
+		TeamFortress_SetSpeed(self);
+	 
 		if (self.ammo_shells < 1 || self.ammo_cells < 6)
 		{
 			self.current_weapon = W_BestWeapon();
@@ -1007,12 +1035,12 @@ void() player_light_assault1   =[$light1, player_light_assault2  ]
 {
 	//muzzleflash();
 
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    muzzleflash(); //- oFn moved
-    
-    self.weaponframe = self.weaponframe + 1;
+	muzzleflash(); //- oFn moved
+	
+	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
 	SuperDamageSound();
@@ -1036,17 +1064,17 @@ void() player_light_assault2   =[$light2, player_light_assault1  ]
 //============================================================================
 
 
-void() player_rocket1   =[$rockatt1, player_rocket2  ] {self.weaponframe=1;	muzzleflash();};
-void() player_rocket2   =[$rockatt2, player_rocket3  ] {self.weaponframe=2;};
-void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.weaponframe=3;};
-void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.weaponframe=4;};
-void() player_rocket5   =[$rockatt5, player_rocket6  ] {self.weaponframe=5;};
-void() player_rocket6   =[$rockatt6, player_run  ] {self.weaponframe=6;};
+void() player_rocket1	=[$rockatt1, player_rocket2  ] {self.weaponframe=1; muzzleflash();};
+void() player_rocket2	=[$rockatt2, player_rocket3  ] {self.weaponframe=2;};
+void() player_rocket3	=[$rockatt3, player_rocket4  ] {self.weaponframe=3;};
+void() player_rocket4	=[$rockatt4, player_rocket5  ] {self.weaponframe=4;};
+void() player_rocket5	=[$rockatt5, player_rocket6  ] {self.weaponframe=5;};
+void() player_rocket6	=[$rockatt6, player_run  ] {self.weaponframe=6;};
 void(float num_bubbles) DeathBubbles;
 
 void() PainSound =
 {
-local float		rs;
+local float 	rs;
 
 	if (self.health < 0)
 		return;
@@ -1125,12 +1153,12 @@ local float		rs;
 	return;
 };
 
-void()	player_pain1 =	[	$pain1,	player_pain2	] {PainSound();self.weaponframe=0;};
-void()	player_pain2 =	[	$pain2,	player_pain3	] {};
-void()	player_pain3 =	[	$pain3,	player_pain4	] {};
-void()	player_pain4 =	[	$pain4,	player_pain5	] {};
-void()	player_pain5 =	[	$pain5,	player_pain6	] {};
-void()	player_pain6 =	[	$pain6,	player_run		] {};
+void()	player_pain1 =	[	$pain1, player_pain2	] {PainSound();self.weaponframe=0;};
+void()	player_pain2 =	[	$pain2, player_pain3	] {};
+void()	player_pain3 =	[	$pain3, player_pain4	] {};
+void()	player_pain4 =	[	$pain4, player_pain5	] {};
+void()	player_pain5 =	[	$pain5, player_pain6	] {};
+void()	player_pain6 =	[	$pain6, player_run		] {};
 
 void()	player_axpain1 =	[	$axpain1,	player_axpain2	] {PainSound();self.weaponframe=0;};
 void()	player_axpain2 =	[	$axpain2,	player_axpain3	] {};
@@ -1146,7 +1174,7 @@ void() player_pain =
 
 	// eyes don't have pain frames
 	if (self.invisible_finished > time)
-		return;		
+		return; 	
 
 	// feigning players don't have pain frames
 	if (self.is_feigning)
@@ -1175,10 +1203,10 @@ void() player_die_ax1;
 void() DeathBubblesSpawn =
 {
 	if (self.owner.waterlevel != 3 && self.has_holo == 0)
-    {
-        dremove(self);
+	{
+		dremove(self);
 		return;
-    }
+	}
 
 	newmis = spawn();
 	setmodel (newmis, "progs/s_bubble.spr");
@@ -1213,11 +1241,11 @@ local entity	bubble_spawner;
 	bubble_spawner.air_finished = 0;
 	bubble_spawner.owner = self;
 	bubble_spawner.bubble_count = num_bubbles;
-    
-    if (IsMonster(self))
-        bubble_spawner.has_holo = 1; // forced mode
-    else
-        bubble_spawner.has_holo = 0; // normal mode
+	
+	if (IsMonster(self))
+		bubble_spawner.has_holo = 1; // forced mode
+	else
+		bubble_spawner.has_holo = 0; // normal mode
 
 	return;
 };
@@ -1258,14 +1286,14 @@ local entity	bubble_spawner;
 	bubble_spawner.air_finished = 0;
 	bubble_spawner.owner = world;
 	bubble_spawner.bubble_count = num_bubbles;
-    
+	
 	return;
 };
 
 
 void() DeathSound =
 {
-	local float		rs;
+	local float 	rs;
 
 	// water death sounds
 	if (self.waterlevel == 3)
@@ -1301,33 +1329,37 @@ void() PlayerCorpse =
 	// allow respawn after a certain time
 	self.deadflag = #DEAD_DEAD;
 
-    #ifdef GIBABLE_CORPSES
-    MakeCorpse(self,#CORPSE_HP_PLAYER);
-    #endif
+	#ifdef GIBABLE_CORPSES
+	MakeCorpse(self,#CORPSE_HP_PLAYER);
+	#endif
 };
 
 vector(float dm) VelocityForDamage =
 {
 	local vector v;
 
-    v_x = 100 * crandom();
+	v_x = 100 * crandom();
 	v_y = 100 * crandom();
 	v_z = 150 + 100 * random();//v_z = 200 + 100 * random(); // <-- ORiginal code
-    
-    // TODO: Make the calculation acceptable and more realistic/accurate
-    
-	if (dm > -50)
+	
+	// TODO: Make the calculation acceptable and more realistic/accurate
+	if (!neo) // Neo mode
 	{
-//		RPrint ("level 1\n");
-		v = v * 0.7;
-	}
-	else if (dm > -200)
-	{
-//		RPrint ("level 3\n");
-		v = v * 2;
+		if (dm > -50)
+		{
+			//RPrint ("level 1\n");
+			v = v * 0.7;
+		}
+		else if (dm > -200)
+		{
+			//RPrint ("level 3\n");
+			v = v * 2;
+		}
+		else
+			v = v * 10;
 	}
 	else
-		v = v * 10;
+		v = v * (dm * -1 / 30); // end of Neo mod
 
 	return v;
 };
@@ -1338,7 +1370,7 @@ Entity fields used on gibs:
 ---------------------------
 
 .has_fieldgen - Kgs value for the gib
-.message      - When "cool" is assigned to it, it will be pushed by explosions and trace attacks (if enabled)
+.message	  - When "cool" is assigned to it, it will be pushed by explosions and trace attacks (if enabled)
 
 */
 
@@ -1396,7 +1428,8 @@ void() gib_touch =
 	//WK 6/27/7 We allow both cannibal and warlock on same gibs
 	if (other.classname == "player")
 	#ifndef WARLOCK_TEST
-		if (!Teammate(other.team_no,self.team_no)) // Only enemy gibs can be picked up
+		// Neo mode modication
+		if (!Teammate(other, self)) // Only enemy gibs can be picked up
 	#endif
 	if (other.job & #JOB_WARLOCK)
 	if (other.playerclass != #PC_UNDEFINED) // Skip Observers
@@ -1405,7 +1438,7 @@ void() gib_touch =
 	{
 		local string kgs;
 		kgs = ftos(self.has_fieldgen);
-    
+	
 		local float meat;
 		meat = GetMeat(other);
 		SetMeat(other,meat+self.has_fieldgen);
@@ -1428,14 +1461,14 @@ void() gib_touch =
 void(string gibname, float dm, float makecool, float gibskin, float gibkgs, float randorg) ThrowGib =
 {
 	newmis = spawn();
-    if (!randorg)
-	    newmis.origin = self.origin;
-    else
-    {
-        newmis.origin_x = self.origin_x + (random()* (self.maxs_x + self.mins_x)) * randorg;
-        newmis.origin_y = self.origin_y + (random()* (self.maxs_y + self.mins_y)) * randorg;
-        newmis.origin_z = self.origin_z + (random()* (self.maxs_z + self.mins_z)) * randorg;        
-    }
+	if (!randorg)
+		newmis.origin = self.origin;
+	else
+	{
+		newmis.origin_x = self.origin_x + (random()* (self.maxs_x + self.mins_x)) * randorg;
+		newmis.origin_y = self.origin_y + (random()* (self.maxs_y + self.mins_y)) * randorg;
+		newmis.origin_z = self.origin_z + (random()* (self.maxs_z + self.mins_z)) * randorg;		
+	}
 	setmodel (newmis, gibname);
 	setsize (newmis, '0 0 0', '0 0 0');
 	newmis.velocity = VelocityForDamage (dm);
@@ -1450,30 +1483,30 @@ void(string gibname, float dm, float makecool, float gibskin, float gibkgs, floa
 	newmis.frame = 0;
 	newmis.flags = 0;
 
-    #ifdef COOL_GIBS
-    if (makecool)
-    {
-        newmis.#coolflag = #STRFLAG_COOL;
-        newmis.classname = "gib";
-    }
-    #endif
+	#ifdef COOL_GIBS
+	if (makecool)
+	{
+		newmis.#coolflag = #STRFLAG_COOL;
+		newmis.classname = "gib";
+	}
+	#endif
 
-    if (gibskin)
-        newmis.skin = gibskin;
-    
-    if (gibkgs)
-    {
-        newmis.touch = gib_touch;
-        newmis.solid = #SOLID_TRIGGER;
-        newmis.has_fieldgen = gibkgs;
-        newmis.team_no = self.team_no;
-    }
-    #ifdef COOL_GIBS
-    #ifdef COOL_METAL_GIBS
-    else
-        newmis.solid = #SOLID_TRIGGER;
-    #endif
-    #endif
+	if (gibskin)
+		newmis.skin = gibskin;
+	
+	if (gibkgs)
+	{
+		newmis.touch = gib_touch;
+		newmis.solid = #SOLID_TRIGGER;
+		newmis.has_fieldgen = gibkgs;
+		newmis.team_no = self.team_no;
+	}
+	#ifdef COOL_GIBS
+	#ifdef COOL_METAL_GIBS
+	else
+		newmis.solid = #SOLID_TRIGGER;
+	#endif
+	#endif
 };
 
 /*
@@ -1481,10 +1514,10 @@ void(string gibname, float dm, float makecool, float gibskin, float gibkgs, floa
 Entity fields used for heads:
 -----------------------------
 
-.oldenemy   - Last person that kicked this head
-.t_length   - Last time this head was kicked
-.t_width    - First stop done?
-.message    - When "cool" is assigned to it, it will be pushed by explosions and trace attacks (if enabled)
+.oldenemy	- Last person that kicked this head
+.t_length	- Last time this head was kicked
+.t_width	- First stop done?
+.message	- When "cool" is assigned to it, it will be pushed by explosions and trace attacks (if enabled)
 
 */
 
@@ -1497,169 +1530,170 @@ void(entity player, float numheads) SetHeads;
 
 void() head_touch =
 {
-    if (self.velocity == '0 0 0') // stoped?
-    {
-        self.avelocity = '0 0 0';
-      
-        #ifdef KICKABLE_HEADS
-        self.t_width = #TRUE;
-        #endif
-    }
-        
-    if (other.classname == "player")
-    {
-        if (other.health <= 0)
-            return;
-        
-        if (other.playerclass == #PC_UNDEFINED) // Skip Observers
-            return;
-        
-        if (other.done_custom & #CUSTOM_BUILDING) // ppl customizing
-            return;
+	if (self.velocity == '0 0 0') // stoped?
+	{
+		self.avelocity = '0 0 0';
+	  
+		#ifdef KICKABLE_HEADS
+		self.t_width = #TRUE;
+		#endif
+	}
+		
+	if (other.classname == "player")
+	{
+		if (other.health <= 0)
+			return;
+		
+		if (other.playerclass == #PC_UNDEFINED) // Skip Observers
+			return;
+		
+		if (other.done_custom & #CUSTOM_BUILDING) // ppl customizing
+			return;
 
-        if (other.job & #JOB_WARLOCK) // Warlock collects this head
-        #ifndef WARLOCK_TEST
-        if (!Teammate(other.team_no,self.team_no)) // Only enemy heads can be picked up
-        #endif    
-        {
-            self.modelindex = modelindex_null;
-            self.touch = SUB_Null;
-            self.solid = #SOLID_NOT;
+		if (other.job & #JOB_WARLOCK) // Warlock collects this head
+		#ifndef WARLOCK_TEST
+		// Neo mode modication
+		if (!Teammate(other, self)) // Only enemy heads can be picked up
+		#endif	  
+		{
+			self.modelindex = modelindex_null;
+			self.touch = SUB_Null;
+			self.solid = #SOLID_NOT;
 
-            if (self.classname == "player")
-            {
-                sprint(other,#PRINT_HIGH,"You pick up ");
-                sprint(other,#PRINT_HIGH,self.netname);
-                sprint(other,#PRINT_HIGH,"'s head\n");
+			if (self.classname == "player")
+			{
+				sprint(other,#PRINT_HIGH,"You pick up ");
+				sprint(other,#PRINT_HIGH,self.netname);
+				sprint(other,#PRINT_HIGH,"'s head\n");
 
-                sprint(self,#PRINT_HIGH,other.netname);
-                sprint(self,#PRINT_HIGH," picks up your head!\n");
-            }
-            else
-                sprint(other,#PRINT_HIGH,"You pick up a head\n");
-            
-            GibPickSound(other);
-            stuffcmd(other,"bf\n");
+				sprint(self,#PRINT_HIGH,other.netname);
+				sprint(self,#PRINT_HIGH," picks up your head!\n");
+			}
+			else
+				sprint(other,#PRINT_HIGH,"You pick up a head\n");
+			
+			GibPickSound(other);
+			stuffcmd(other,"bf\n");
 
-            local float numheads;
-            numheads = GetHeads(other);
-            SetHeads(other,numheads+1);
+			local float numheads;
+			numheads = GetHeads(other);
+			SetHeads(other,numheads+1);
 
-            // Dont remove self because we r a player entity or a bodyque entry
+			// Dont remove self because we r a player entity or a bodyque entry
 
-            // Unless its an special head (see below)
-            if (self.classname == "headout")
-                dremove(self);
+			// Unless its an special head (see below)
+			if (self.classname == "headout")
+				dremove(self);
 
-            return;
-        }
+			return;
+		}
 
-        #ifdef KICKABLE_HEADS
-        if (!kickable_heads)
-            return;
+		#ifdef KICKABLE_HEADS
+		if (!kickable_heads)
+			return;
 
-        if (!self.t_width)
-            return;
-        
-        if (self.oldenemy == other) // we are the last person that kicked this head
-            if (self.t_length + #KICKHEAD_RATE_PERUSER > time) // too early for him?
-                return;
-        
-        if (self.t_length + #KICKHEAD_RATE > time) // too early?
-            return; // ok, do nothing, dont bounce or anything
+		if (!self.t_width)
+			return;
+		
+		if (self.oldenemy == other) // we are the last person that kicked this head
+			if (self.t_length + #KICKHEAD_RATE_PERUSER > time) // too early for him?
+				return;
+		
+		if (self.t_length + #KICKHEAD_RATE > time) // too early?
+			return; // ok, do nothing, dont bounce or anything
 
-        if (other.velocity == '0 0 0') // Dont kick if the player is not moving
-            return;
-        
-        self.t_length = time;
-        
-        // Do pain sound if a "living" head :)
-        if (self.classname == "player")
-        if (self.is_connected)
-        {            
-            // TODO: Make the following work!
-            // Put it in a pushable origin
-            /*local vector oldorig;
-            local float oldcont;
-            oldorig = self.origin;
-            oldcont = pointcontents(self.origin);
-            
-            if (fabs(self.origin_x - other.origin_x) > fabs(self.origin_y - other.origin_y))
-            {
-                if (self.origin_x < other.origin_x)
-                    self.origin_x = self.origin_x -( (  (other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
-                else
-                    self.origin_x = self.origin_x +( (  (other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
-            }
-            else
-            {
-                if (self.origin_x < other.origin_x)
-                    self.origin_y = self.origin_y -( (  (other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
-                else
-                    self.origin_y = self.origin_y +( (  (other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
-            }
+		if (other.velocity == '0 0 0') // Dont kick if the player is not moving
+			return;
+		
+		self.t_length = time;
+		
+		// Do pain sound if a "living" head :)
+		if (self.classname == "player")
+		if (self.is_connected)
+		{			 
+			// TODO: Make the following work!
+			// Put it in a pushable origin
+			/*local vector oldorig;
+			local float oldcont;
+			oldorig = self.origin;
+			oldcont = pointcontents(self.origin);
+			
+			if (fabs(self.origin_x - other.origin_x) > fabs(self.origin_y - other.origin_y))
+			{
+				if (self.origin_x < other.origin_x)
+					self.origin_x = self.origin_x -( (	(other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
+				else
+					self.origin_x = self.origin_x +( (	(other.absmax_x - other.absmin_x) - (self.absmax_x - other.absmin_x)  )+1);
+			}
+			else
+			{
+				if (self.origin_x < other.origin_x)
+					self.origin_y = self.origin_y -( (	(other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
+				else
+					self.origin_y = self.origin_y +( (	(other.absmax_y - other.absmin_y) - (self.absmax_y - other.absmin_y)  )+1);
+			}
 
-            // valid origin?
-            if ((pointcontents(self.origin) != oldcont)
-              ||(pointcontents(self.absmin + '1 1 1') != oldcont)
-              ||(pointcontents(self.absmax - '1 1 1') != oldcont))
-            {
-                self.origin = oldorig;
-                setorigin(self,self.origin);
-                return;
-            }*/
-            
-            // water pain sounds
-        	if (self.watertype == #CONTENT_WATER && self.waterlevel == 3)
-        	{
-        		DeathBubbles(1);
-        		if (random() > 0.5)
-        			sound (self, #CHAN_VOICE, "player/drown1.wav", 1, #ATTN_IDLE);
-        		else
-        			sound (self, #CHAN_VOICE, "player/drown2.wav", 1, #ATTN_IDLE);
-            }
-            else
-            {
-                local float		rs;
-                rs = rint((random() * 5) + 1);
+			// valid origin?
+			if ((pointcontents(self.origin) != oldcont)
+			  ||(pointcontents(self.absmin + '1 1 1') != oldcont)
+			  ||(pointcontents(self.absmax - '1 1 1') != oldcont))
+			{
+				self.origin = oldorig;
+				setorigin(self,self.origin);
+				return;
+			}*/
+			
+			// water pain sounds
+			if (self.watertype == #CONTENT_WATER && self.waterlevel == 3)
+			{
+				DeathBubbles(1);
+				if (random() > 0.5)
+					sound (self, #CHAN_VOICE, "player/drown1.wav", 1, #ATTN_IDLE);
+				else
+					sound (self, #CHAN_VOICE, "player/drown2.wav", 1, #ATTN_IDLE);
+			}
+			else
+			{
+				local float 	rs;
+				rs = rint((random() * 5) + 1);
 
-                self.noise = "";
-                if (rs == 1)
-                    self.noise = "player/pain1.wav";
-                else if (rs == 2)
-                    self.noise = "player/pain2.wav";
-                else if (rs == 3)
-                    self.noise = "player/pain3.wav";
-                else if (rs == 4)
-                    self.noise = "player/pain4.wav";
-                else if (rs == 5)
-                    self.noise = "player/pain5.wav";
-                else
-                    self.noise = "player/pain6.wav";
+				self.noise = "";
+				if (rs == 1)
+					self.noise = "player/pain1.wav";
+				else if (rs == 2)
+					self.noise = "player/pain2.wav";
+				else if (rs == 3)
+					self.noise = "player/pain3.wav";
+				else if (rs == 4)
+					self.noise = "player/pain4.wav";
+				else if (rs == 5)
+					self.noise = "player/pain5.wav";
+				else
+					self.noise = "player/pain6.wav";
 
-                sound (self, #CHAN_VOICE, self.noise, 1, #ATTN_IDLE);
-            }
+				sound (self, #CHAN_VOICE, self.noise, 1, #ATTN_IDLE);
+			}
 
-            sprint(self,#PRINT_MEDIUM,other.netname);
-            sprint(self,#PRINT_MEDIUM," kicks your head!\n");
+			sprint(self,#PRINT_MEDIUM,other.netname);
+			sprint(self,#PRINT_MEDIUM," kicks your head!\n");
 
-            sprint(other,#PRINT_MEDIUM,self.netname);
-            sprint(other,#PRINT_MEDIUM,"'s head is still alive!\n");
+			sprint(other,#PRINT_MEDIUM,self.netname);
+			sprint(other,#PRINT_MEDIUM,"'s head is still alive!\n");
 
-            self.t_length = time + #KICKHEAD_RATE_ALIVE;
-        }        
+			self.t_length = time + #KICKHEAD_RATE_ALIVE;
+		}		 
 
-        //ok, kick it out        
-        self.oldenemy = other;
-        makevectors (other.v_angle);
-        self.velocity = other.velocity * 1.5 + v_forward * 128 + '0 0 260' + '0 0 300'*random();  
-        self.flags = self.flags - (self.flags & #FL_ONGROUND);
-    	
-        self.avelocity = crandom() * '0 600 0';
+		//ok, kick it out		 
+		self.oldenemy = other;
+		makevectors (other.v_angle);
+		self.velocity = other.velocity * 1.5 + v_forward * 128 + '0 0 260' + '0 0 300'*random();  
+		self.flags = self.flags - (self.flags & #FL_ONGROUND);
+		
+		self.avelocity = crandom() * '0 600 0';
 
-        sound(self,#CHAN_BODY,"zombie/z_miss.wav",0.5, #ATTN_IDLE);
-        #endif
-    }    
+		sound(self,#CHAN_BODY,"zombie/z_miss.wav",0.5, #ATTN_IDLE);
+		#endif
+	}	 
 };
 
 void(string gibname, float dm) ThrowHead =
@@ -1671,27 +1705,27 @@ void(string gibname, float dm) ThrowHead =
 	self.movetype = #MOVETYPE_BOUNCE;
 	self.takedamage = #DAMAGE_NO;
 	//self.solid = #SOLID_NOT;
-    self.solid = #SOLID_TRIGGER; // OfN
+	self.solid = #SOLID_TRIGGER; // OfN
 	self.view_ofs = '0 0 8';
 	//setsize (self, '-16 -16 0', '16 16 56');
-    setsize (self, '-16 -16 0', '16 16 8');
-    self.velocity = VelocityForDamage (dm);
+	setsize (self, '-16 -16 0', '16 16 8');
+	self.velocity = VelocityForDamage (dm);
 	//self.origin_z = self.origin_z - 24;
-    self.flags = self.flags - (self.flags & #FL_ONGROUND);
+	self.flags = self.flags - (self.flags & #FL_ONGROUND);
 	self.avelocity = crandom() * '0 600 0';
 
-    //-OfN    
-    self.touch = head_touch;
+	//-OfN	  
+	self.touch = head_touch;
 
-    #ifdef COOL_GIBS
-    self.#coolflag = #STRFLAG_COOL;
-    #endif
+	#ifdef COOL_GIBS
+	self.#coolflag = #STRFLAG_COOL;
+	#endif
 
-    #ifdef KICKABLE_HEADS
-    self.t_width = #FALSE;
-    self.oldenemy = world;
-    self.t_length = time;
-    #endif
+	#ifdef KICKABLE_HEADS
+	self.t_width = #FALSE;
+	self.oldenemy = world;
+	self.t_length = time;
+	#endif
 };
 
 //==========================================================
@@ -1699,11 +1733,11 @@ void(string gibname, float dm) ThrowHead =
 
 void(string gibname, float dm) ThrowHeadOut =
 {
-    local entity thehead;
-    thehead = spawn();
-    
-    setmodel (thehead, gibname);
-    setorigin(thehead,self.origin);
+	local entity thehead;
+	thehead = spawn();
+	
+	setmodel (thehead, gibname);
+	setorigin(thehead,self.origin);
 	thehead.skin = 0;
 	thehead.frame = 0;
 	thehead.movetype = #MOVETYPE_BOUNCE;
@@ -1711,28 +1745,28 @@ void(string gibname, float dm) ThrowHeadOut =
 	thehead.solid = #SOLID_TRIGGER; // OfN
 	thehead.view_ofs = '0 0 8';
 	//setsize (thehead, '-16 -16 0', '16 16 56');
-    setsize (thehead, '-16 -16 0', '16 16 8');
-    thehead.velocity = VelocityForDamage (dm);
+	setsize (thehead, '-16 -16 0', '16 16 8');
+	thehead.velocity = VelocityForDamage (dm);
 	//thehead.origin_z = thehead.origin_z - 24;
-    thehead.flags = thehead.flags - (thehead.flags & #FL_ONGROUND);
+	thehead.flags = thehead.flags - (thehead.flags & #FL_ONGROUND);
 	thehead.avelocity = crandom() * '0 600 0';
 
-    //-OfN    
-    thehead.classname = "headout";
-    thehead.touch = head_touch;
-    thehead.think = SUB_Remove;
-    thehead.nextthink = time + #MIN_HEAD_TIME + (#MAX_HEAD_TIME - #MIN_HEAD_TIME) * random();
-    thehead.team_no = self.team_no;
+	//-OfN	  
+	thehead.classname = "headout";
+	thehead.touch = head_touch;
+	thehead.think = SUB_Remove;
+	thehead.nextthink = time + #MIN_HEAD_TIME + (#MAX_HEAD_TIME - #MIN_HEAD_TIME) * random();
+	thehead.team_no = self.team_no;
 
-    #ifdef COOL_GIBS
-    thehead.#coolflag = #STRFLAG_COOL;
-    #endif
+	#ifdef COOL_GIBS
+	thehead.#coolflag = #STRFLAG_COOL;
+	#endif
 
-    #ifdef KICKABLE_HEADS
-    thehead.t_width = #FALSE;
-    thehead.oldenemy = world;
-    thehead.t_length = time;
-    #endif
+	#ifdef KICKABLE_HEADS
+	thehead.t_width = #FALSE;
+	thehead.oldenemy = world;
+	thehead.t_length = time;
+	#endif
 };
 
 //=====================================================
@@ -1740,16 +1774,16 @@ void(string gibname, float dm) ThrowHeadOut =
 
 void() GibPlayerOut =
 {
-    if (random() < 0.5)
+	if (random() < 0.5)
 		sound (self, #CHAN_VOICE, "player/gib.wav", 1, #ATTN_NONE);
 	else
 		sound (self, #CHAN_VOICE, "player/udeath.wav", 1, #ATTN_NONE);
-    
-    ThrowHeadOut("progs/h_player.mdl",-40);
-    ThrowGib("progs/gib1.mdl",-40, #TRUE, 0,#GIB1_KGS, #FALSE);
-    ThrowGib("progs/gib2.mdl",-40, #TRUE, 0,#GIB2_KGS, #FALSE);
-    ThrowGib("progs/gib3.mdl",-40, #TRUE, 0,#GIB3_KGS, #FALSE);   
-    SpawnBloodEx(self.origin,0.75,9);
+	
+	ThrowHeadOut("progs/h_player.mdl",-40);
+	ThrowGib("progs/gib1.mdl",-40, #TRUE, 0,#GIB1_KGS, #FALSE);
+	ThrowGib("progs/gib2.mdl",-40, #TRUE, 0,#GIB2_KGS, #FALSE);
+	ThrowGib("progs/gib3.mdl",-40, #TRUE, 0,#GIB3_KGS, #FALSE);   
+	SpawnBloodEx(self.origin,0.75,9);
 };
 
 /*void(string gibname) HeadShotThrowHead =
@@ -1780,7 +1814,7 @@ void() GibPlayer =
   // Decapitation ------------------------------------------------------//
   /*if (headless == 1)
   {
-	if (deathmsg == #DMSG_SNIPERHEADSHOT) //- Ofn - I don't like this:  || deathmsg == #DMSG_BACKSTAB)
+	if (deathmsg == #DMSG_SNIPERHEADSHOT) //- Ofn - I don't like this:	|| deathmsg == #DMSG_BACKSTAB)
 	{
 		//if (deathmsg == #DMSG_SNIPERHEADSHOT)
 			HeadShotThrowHead("progs/h_player.mdl");
@@ -1789,19 +1823,19 @@ void() GibPlayer =
 
 		newmis = spawn();
 		newmis.solid = #SOLID_NOT;
-        newmis.movetype = #MOVETYPE_STEP;
+		newmis.movetype = #MOVETYPE_STEP;
 
-        newmis.angles = self.angles;
+		newmis.angles = self.angles;
 
-        setsize(newmis, '0 0 0', '0 0 0');
+		setsize(newmis, '0 0 0', '0 0 0');
 		setorigin(newmis, self.origin);   
 
-        newmis.colormap = self.colormap;
-//        newmis.color=self.color
+		newmis.colormap = self.colormap;
+//		  newmis.color=self.color
 		//newmis.skin = self.skin;
-        
-        setmodel(newmis, "progs/headless.mdl");
-		     		
+		
+		setmodel(newmis, "progs/headless.mdl");
+					
 		newmis.think = Headless_Think;
 		newmis.nextthink = time + 0.1;
 		if (self.current_weapon <= #WEAP_AXE)
@@ -1809,26 +1843,26 @@ void() GibPlayer =
 		else
 			newmis.frame = 8;
 
-        ThrowGib ("progs/zom_gib.mdl", self.health); //- lol, looks cool 
+		ThrowGib ("progs/zom_gib.mdl", self.health); //- lol, looks cool 
 	}
 	else
 	{
-    	ThrowHead ("progs/h_player.mdl", self.health);
+		ThrowHead ("progs/h_player.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-        ThrowGib ("progs/gib3.mdl", self.health); //-added
-        //ThrowGib ("progs/zom_gib.mdl", self.health); //-added
+		ThrowGib ("progs/gib3.mdl", self.health); //-added
+		//ThrowGib ("progs/zom_gib.mdl", self.health); //-added
 
 	}
   }
   else
   {*/
-   	ThrowHead ("progs/h_player.mdl", self.health);
+	ThrowHead ("progs/h_player.mdl", self.health);
 	ThrowGib ("progs/gib1.mdl", self.health, #TRUE, 0,#GIB1_KGS, #FALSE);
 	ThrowGib ("progs/gib2.mdl", self.health, #TRUE, 0,#GIB2_KGS, #FALSE);
 	ThrowGib ("progs/gib3.mdl", self.health, #TRUE, 0,#GIB3_KGS, #FALSE);
-    //ThrowGib ("progs/gib3.mdl", self.health); //-added
+	//ThrowGib ("progs/gib3.mdl", self.health); //-added
   //}
 
 	// Why do we need this? What are we doing that's clobbering _something_
@@ -1875,17 +1909,17 @@ void() GibPlayer =
 
 void() PlayerDead =
 {
-    self.weaponmodel="";
+	self.weaponmodel="";
 	self.view_ofs = '0 0 -8';
 	self.deadflag = #DEAD_DYING;
 	self.solid = #SOLID_NOT;
 	self.flags = self.flags - (self.flags & #FL_ONGROUND);
 	self.movetype = #MOVETYPE_TOSS;
-    SpawnBloodEx(self.origin,0.75,9);
+	SpawnBloodEx(self.origin,0.75,9);
 
-    // Reset Auras and runes
-    self.aura = 0;
-    //self.#runes = 0; // Not needed
+	// Reset Auras and runes
+	self.aura = 0;
+	//self.#runes = 0; // Not needed
 };
 
 void() PlayerDie =
@@ -1894,27 +1928,27 @@ void() PlayerDie =
 	local entity te;
 	//WK Stop orff
 	//sound (self, #CHAN_MUSIC, "items/r_item1.wav", 0.1, #ATTN_NORM);
-    sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
+	sound (self, #CHAN_MUSIC, "misc/null.wav", 0.1, #ATTN_NORM);
 	//WK Stop glows!
 	self.flags = self.flags - (self.flags & (#EF_BRIGHTLIGHT | #EF_DIMLIGHT));
-      self.effects = 0;
-    // make dead guy release hook (wedge)
-    if (self.hook_out)
-    {
-	    Reset_Grapple (self.hook);
-    	Attack_Finished(0.75);
-	    self.hook_out = #TRUE;	// PutClientInServer will reset this
-    }
+	  self.effects = 0;
+	// make dead guy release hook (wedge)
+	if (self.hook_out)
+	{
+		Reset_Grapple (self.hook);
+		Attack_Finished(0.75);
+		self.hook_out = #TRUE;	// PutClientInServer will reset this
+	}
 
-    self.items = self.items - (self.items &
-    (#IT_INVISIBILITY | #IT_INVULNERABILITY | #IT_SUIT | #IT_QUAD) );
-    self.invisible_finished = 0;    // don't die as eyes
-    self.invincible_finished = 0;
-    self.super_damage_finished = 0;
-    self.radsuit_finished = 0;
-    self.modelindex = modelindex_player;    // don't use eyes
+	self.items = self.items - (self.items &
+	(#IT_INVISIBILITY | #IT_INVULNERABILITY | #IT_SUIT | #IT_QUAD) );
+	self.invisible_finished = 0;	// don't die as eyes
+	self.invincible_finished = 0;
+	self.super_damage_finished = 0;
+	self.radsuit_finished = 0;
+	self.modelindex = modelindex_player;	// don't use eyes
 
-    // If infected, give the medic a frag
+	// If infected, give the medic a frag
 	finished = #TRUE;
 	if (self.tfstate & #TFSTATE_INFECTED && self == self.enemy)
 	{
@@ -1927,7 +1961,7 @@ void() PlayerDie =
 				logfrag(te.enemy, self);
 			#endif
 				te.enemy.real_frags = te.enemy.real_frags + 1;
-			 	if (!(toggleflags & #TFLAG_TEAMFRAGS))
+				if (!(toggleflags & #TFLAG_TEAMFRAGS))
 					te.enemy.frags = te.enemy.real_frags;
 				finished = #TRUE;
 			}
@@ -1940,13 +1974,13 @@ void() PlayerDie =
 	// Remove all the timer entities for this player
 	TeamFortress_RemoveTimers();
 
-    // Drop any runes he would carry
-    PlayerDropRunes(self);
+	// Drop any runes he would carry
+	PlayerDropRunes(self);
 
 	// Restore player's speed
 #ifdef RESTORE_DEAD_SPEEDS
 
-    stuffcmd(self,"cl_backspeed 1000\n");
+	stuffcmd(self,"cl_backspeed 1000\n");
 	stuffcmd(self,"cl_forwardspeed 1000\n");
 	stuffcmd(self,"cl_sidespeed 1000\n");
 	stuffcmd(self,"cl_movespeedkey 2\n");
@@ -1998,7 +2032,7 @@ void() PlayerDie =
 void() set_suicide_frame =
 {	// used by kill command and diconnect command (OfN suicide)
 	if (self.model != "progs/player.mdl")
-		return;	// allready gibbed
+		return; // allready gibbed
 
 // Was commented
 	//self.frame = $deatha11;
@@ -2009,17 +2043,17 @@ void() set_suicide_frame =
 // was comented
 
 	/* OfN <- commented by
-    setmodel(self, string_null);
+	setmodel(self, string_null);
 	setsize (self, #VEC_HULL_MIN, #VEC_HULL_MAX);*/
 };
 
 void() set_suicide_frame_disc =
 {	// used by kill command and diconnect command (OfN disconnect)
 	if (self.model != "progs/player.mdl")
-		return;	// allready gibbed
+		return; // allready gibbed
 
 /*	
-    self.frame = $deatha11;
+	self.frame = $deatha11;
 	self.solid = #SOLID_NOT;
 	self.movetype = #MOVETYPE_TOSS;
 	self.deadflag = #DEAD_DEAD;
@@ -2117,14 +2151,14 @@ void()	player_die_ax9	=	[	$axdeth9,	player_die_ax9	] {PlayerCorpse();};
 //===========================================================
 // Airgun player stuff
 
-void() player_airgun1   =[$rockatt1, player_airgun2  ] {self.weaponframe=1;};
-void() player_airgun2   =[$rockatt2, player_airgun3  ] {self.weaponframe=2;};
-void() player_airgun3   =[$rockatt3, player_airgun4  ] {self.weaponframe=3;};
-void() player_airgun4   =[$rockatt3, player_airgun5  ] {self.weaponframe=4;};
-void() player_airgun5   =[$rockatt4, player_airgun6  ] {self.weaponframe=5;};
-void() player_airgun6   =[$rockatt4, player_airgun7  ] {self.weaponframe=6;};
-void() player_airgun7   =[$rockatt5, player_airgun8  ] {self.weaponframe=7;};
-void() player_airgun8   =[$rockatt6, player_run  ] {self.weaponframe = 8;};
+void() player_airgun1	=[$rockatt1, player_airgun2  ] {self.weaponframe=1;};
+void() player_airgun2	=[$rockatt2, player_airgun3  ] {self.weaponframe=2;};
+void() player_airgun3	=[$rockatt3, player_airgun4  ] {self.weaponframe=3;};
+void() player_airgun4	=[$rockatt3, player_airgun5  ] {self.weaponframe=4;};
+void() player_airgun5	=[$rockatt4, player_airgun6  ] {self.weaponframe=5;};
+void() player_airgun6	=[$rockatt4, player_airgun7  ] {self.weaponframe=6;};
+void() player_airgun7	=[$rockatt5, player_airgun8  ] {self.weaponframe=7;};
+void() player_airgun8	=[$rockatt6, player_run  ] {self.weaponframe = 8;};
 void() player_failedairgun1   =[$nailatt1, player_failedairgun2  ] {self.weaponframe=6;};
 void() player_failedairgun2   =[$nailatt2, player_failedairgun3  ] {self.weaponframe=7;};
 void() player_failedairgun3   =[$nailatt2, player_run  ] {self.weaponframe=8;};
@@ -2134,35 +2168,35 @@ void() player_failedairgun3   =[$nailatt2, player_run  ] {self.weaponframe=8;};
 
 void() player_laser1   =[$nailatt1, player_laser2  ] 
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.attack_finished = time + 0.2;
-    self.weaponframe=1;
-    HIP_FireLaser(0);
+	self.attack_finished = time + 0.2;
+	self.weaponframe=1;
+	HIP_FireLaser(0);
 };
 void() player_laser2   =[$nailatt2, player_laser3  ] 
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.weaponframe=2;
+	self.weaponframe=2;
 };
 void() player_laser3   =[$nailatt2, player_laser4  ] 
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.attack_finished = time + 0.2;
-    self.weaponframe=4;
-    HIP_FireLaser(1);
+	self.attack_finished = time + 0.2;
+	self.weaponframe=4;
+	HIP_FireLaser(1);
 };
 void() player_laser4   =[$nailatt1, player_laser1  ] 
 {
-    if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
+	if (!self.button0 || intermission_running || self.tfstate & #TFSTATE_RELOADING)
 		{player_run ();return;}
 
-    self.weaponframe=5;
+	self.weaponframe=5;
 };
 
 //____________________________________________________//
