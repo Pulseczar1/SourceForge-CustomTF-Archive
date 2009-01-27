@@ -2975,14 +2975,16 @@ void() PlayerPreThink =
 
 	//BUNNY HOPPING CODE AND SPEED CAP
 	//WK 9/15/7. Cap overall player speed at 1600.
+	/*
 	tempspeed = vlen(self.velocity);
 	if (tempspeed > 1600) {
 		tempspeed = 1600 / tempspeed;
 		self.velocity = self.velocity * tempspeed;
 	}
+	*/
 	//WK 5-15-08 The bunny hop caps only apply while the player is on the ground or water or firing our hover boots
 	// Can't use custom_speed since it's only set on Custom PCs
-	if (self.flags & #FL_ONGROUND || self.waterlevel > 1 || (self.tf_items & #NIT_HOVER_BOOTS && self.button2)) {
+	//if (self.flags & #FL_ONGROUND || self.waterlevel > 1 || (self.tf_items & #NIT_HOVER_BOOTS && self.button2)) {
 /*		local string foobar;
 		tempspeed = vlen(self.velocity);
 		foobar = ftos(tempspeed);
@@ -2995,7 +2997,8 @@ void() PlayerPreThink =
 			sprint(self,#PRINT_HIGH,foobar);
 			sprint(self,#PRINT_HIGH,"\n");
 		}
-*/			
+*/		
+/*
 		//Cap bunny hopping at +100 on slow legs or for people with the flag
 		if (self.maxspeed <= 280 || (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT))) {
 			tempvel_x = self.velocity_x; //We only care about horizontal movement
@@ -3024,6 +3027,7 @@ void() PlayerPreThink =
 			}
 		}
 	}
+*/
 
 	// teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
