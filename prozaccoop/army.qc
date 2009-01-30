@@ -11,6 +11,32 @@
 
 #define ARMY_MAXFRAGS_PRESTIGE	   40
 
+// Gizmo - used for the grunty entity
+#define GRUNTY_MODE_FOLLOWOWNER		1
+#define GRUNTY_MODE_HOLDPOSITION		2
+#define GRUNTY_MODE_USEWAYPOINTS		3
+#define grunty_mode				penance_time
+
+#define GRUNTY_TACTICMODE_NORMAL		0
+#define GRUNTY_TACTICMODE_SEEK		1
+#define GRUNTY_TACTICMODE_STATIC		2
+#define grunty_tacticMode			is_malfunctioning
+
+#define GRUNTY_ENGAGEENEMY_NO			0
+#define GRUNTY_ENGAGEENEMY_YES		1
+#define grunty_engageEnemy			is_detpacking
+
+#define GRUNTY_ONOBSTACLE_JUMP		0
+#define GRUNTY_ONOBSTACLE_STOP		1
+#define GRUNTY_ONOBSTACLE_AUTO		2
+#define grunty_onObstacle			is_toffingadet
+
+#define GRUNTY_ATTACKRANGE_ANY		0
+#define GRUNTY_ATTACKRANGE_SMALL		1
+#define GRUNTY_ATTACKRANGE_MEDIUM		2
+#define GRUNTY_ATTACKRANGE_LARGE		3
+#define grunty_attackRange			delay_time
+
 /*================================================================================
 
 ARMY RATING/PRESTIGE IS CLACULATED WITH:
@@ -882,7 +908,8 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 	{
 		if (soul.enemy!=world)
 		{
-			if (visible2(soul,soul.enemy))
+			// Gizmo - we may be seeking out the enemy
+			if ( visible2( soul,soul.enemy ) || soul.#grunty_tacticMode == #GRUNTY_TACTICMODE_SEEK )
 			{
 				soul.penance_time = 1;
 

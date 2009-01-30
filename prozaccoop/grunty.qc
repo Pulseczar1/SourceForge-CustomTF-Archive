@@ -17,31 +17,6 @@
 
 #define GRUNTY_PAINTIME 			2
 
-#define GRUNTY_MODE_FOLLOWOWNER		1
-#define GRUNTY_MODE_HOLDPOSITION		2
-#define GRUNTY_MODE_USEWAYPOINTS		3
-#define grunty_mode				penance_time
-
-#define GRUNTY_TACTICMODE_NORMAL		0
-#define GRUNTY_TACTICMODE_SEEK		1
-#define GRUNTY_TACTICMODE_STATIC		2
-#define grunty_tacticMode			is_malfunctioning
-
-#define GRUNTY_ENGAGEENEMY_NO			0
-#define GRUNTY_ENGAGEENEMY_YES		1
-#define grunty_engageEnemy			is_detpacking
-
-#define GRUNTY_ONOBSTACLE_JUMP		0
-#define GRUNTY_ONOBSTACLE_STOP		1
-#define GRUNTY_ONOBSTACLE_AUTO		2
-#define grunty_onObstacle			is_toffingadet
-
-#define GRUNTY_ATTACKRANGE_ANY		0
-#define GRUNTY_ATTACKRANGE_SMALL		1
-#define GRUNTY_ATTACKRANGE_MEDIUM		2
-#define GRUNTY_ATTACKRANGE_LARGE		3
-#define grunty_attackRange			delay_time
-
 // Function Prototypes
 // Whenever a function is added within the grunty, add it up here
 
@@ -635,20 +610,67 @@ void() GruntyThink =
 	
 };
 
+/*
+==============
+IsValidGruntyTarget
+
+Gizmo - Made a function from the code in LookAroundGrunty(),
+and fixed up some pointless code that wasn't very efficient.
+==============
+*/
+float( entity gtarget, entity grunty ) IsValidGruntyTarget = {
+#ifdef MAD_MONSTERS
+	if ( gtarget.classname == "player" && IsSummon( grunty ) )
+		return #TRUE;
+#else
+	if ( gtarget.classname == "player" && !Teammate( gtarget.team_no, grunty.real_owner.team_no ) ) {
+		if ( gtarget.is_undercover ) {
+			if ( gtarget.cutf_items & #CUTF_JAMMER || !( grunty.tf_items & #NIT_SCANNER ) )
+				return #FALSE;
+		}
+		if ( gtarget.modelindex == modelindex_null ) {
+			if ( gtarget.cutf_items & #CUTF_JAMMER || !( grunty.tf_items & #NIT_SCANNER ) )
+				return #FALSE;
+		}
+		if ( gtarget.modelindex == modelindex_eyes ) {
+			if ( gtarget.cutf_items & #CUTF_JAMMER || !( grunty.tf_items & #NIT_SCANNER ) ) {
+				if ( random() < 2 - grunty.has_tesla * random() )
+					return #FALSE;
+			}
+		}
+
+		// Gizmo - used to be ( gtarget, grunty, 1, 0, 0, 0 ), but we already check visible before calling this
+		return Pharse_Client( gtarget, grunty, 0, 0, 0, 0 );		
+	}
+#endif
+
+	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+	else if ( IsMonster( gtarget ) && gtarget.health > 0 ) {
+		local float temp;
+
+		temp = GetTeam( gtarget );
+		if ( !Teammate( temp, grunty.real_owner.team_no ) )
+			return #TRUE;
+	} else if ( gtarget.classname == "grenade" && gtarget.netname == "land_mine" ) {
+		if ( !Teammate( gtarget.owner.team_no, grunty.real_owner.team_no ) )
+			return #TRUE;
+	} else if ( !Teammate( gtarget.team_no, grunty.real_owner.team_no ) ) { //  && gtarget.classname != "building_sentrygun_base"
+		if ( IsOffenseBuilding( gtarget ) ) // for teslas isoffensiveb only returns true if not cloaked
+			return #TRUE;			   
+	}
+
+	return #FALSE;
+};
+
 // LookAround for grunty
-entity (entity scanner) LookAroundGrunty =
-{
+entity( entity scanner ) LookAroundGrunty = {
 	local entity		client;
 //	local entity		list_client;
 //	local entity		list;
-	local float 		gotatarget;
 
 	//if (infokey(world,"ceasefire")=="on") //OfN
 	if (ceasefire)
 		return scanner;
-
-	// Gizmo - moved this out of the loop to increase performance (slightly but every little bit helps, and this function is called a lot)
-	gotatarget = 0;
 
 	client = findradius(scanner.origin, 2500);
 
@@ -660,7 +682,10 @@ entity (entity scanner) LookAroundGrunty =
 		if ( trace_ent == client )
 		if (client != scanner && visible2(client, scanner))
 		{
-			
+			// Gizmo - use this function instead of the code commented out below
+			if ( IsValidGruntyTarget( client, scanner ) )
+				return client;
+/*
 			#ifdef MAD_MONSTERS
 			
 			if (client.classname == "player" && IsSummon(scanner)) gotatarget = 1;
@@ -703,14 +728,17 @@ entity (entity scanner) LookAroundGrunty =
 			{ //  && client.classname != "building_sentrygun_base"
 				if (IsOffenseBuilding(client)) // for teslas isoffensiveb only returns true if not cloaked
 					gotatarget = 1; 			   
-			}	
-			
+			}
+*/
 		}
+/*
 		if (gotatarget)
 			return client;
+*/
 		
 		client = client.chain;
 	}
+
 	return scanner;
 };
 
@@ -774,9 +802,8 @@ void() GruntyScanTargets =
 		{
 			if (self.demon_one != world)
 			{
-				RemoveWaypoint(self.demon_one,self);
-				self.demon_one=world;
-
+				RemoveWaypoint(self.demon_one, self);
+				self.demon_one = world;
 			} //often =world
 			self.search_time = time + 3;
 			if (self.attack_finished <= time)
@@ -804,11 +831,6 @@ void() GruntyScanTargets =
 
 			if (self.demon_one == world) // if we don't have a enemy last seen marker
 			{
-				if (self.demon_one!=world)
-				{
-					RemoveWaypoint(self.demon_one,self);
-				}
-
 				self.demon_one = CreateWaypoint(self.enemy.origin - self.enemy.velocity * 0.05, #WAYPOINT_AI_LIFE, #WAYPOINT_TYPE_ENEMYLASTSEEN, self);
 				self.demon_one.goalentity = ReturnEasyWaypoint(self,self.demon_one);
 				self.goalentity = self.demon_one;
@@ -816,7 +838,7 @@ void() GruntyScanTargets =
 				//- OfN -
 				self.has_teleporter = 0;
 			}
-			if (self.search_time <= time) // we seeked enemy for GRUNTY_SEEKTIME already so...
+			else if (self.search_time <= time) // we seeked enemy for GRUNTY_SEEKTIME already so...
 			{
 				self.enemy = world;
 				self.goalentity = world;
@@ -1479,7 +1501,8 @@ void() GRun =
 		// ok, we're trying to get somewhere
 		// first look at where we are trying to go
 		// Version 1.0 of GruntyLead(tm)
-		if (self.enemy != world)
+		// Gizmo - he wasn't actually using his last seen enemy waypoint, I fixed it so he does; this was all that was needed...
+		if ( self.enemy != world && ( self.goalentity != self.demon_one || self.demon_one == world ) )
 		{
 			local vector pvel;
 
@@ -1976,6 +1999,12 @@ void(entity attacker, float damage) grunty_pain =
 //	  RPrint(self.real_owner, #PRINT_HIGH, "Grunty PAIN!\n");
 #endif
 
+	// Gizmo - if on seek mode and we don't have a target, then try to seek out whatever just hurt us
+	if ( self.#grunty_tacticMode == #GRUNTY_TACTICMODE_SEEK )
+	if ( self.enemy == world )
+	if ( IsValidGruntyTarget( attacker, self ) )
+		self.enemy = self.goalentity = attacker;
+
 	if (self.pain_finished > time)
 		return;
 
@@ -2024,11 +2053,15 @@ void() Waypoint_Touch =
 		return;
 
 	if (self.has_sensor == #WAYPOINT_TYPE_ENEMYLASTSEEN)
-	{		 
+	{
+		// Gizmo - if they're still not visible when we reach the waypoint, then forget about them
+		// Gizmo - no need to remove the waypoint or set grunty's demon_one to world, because that will be done by the grunty
+		other.search_time = 0;
+/*
 		if (self.real_owner.demon_one == self)
-		   self.real_owner.demon_one = world;	
-	   
+		   self.real_owner.demon_one = world;
 		dremove(self);
+*/
 		return;
 	}
 

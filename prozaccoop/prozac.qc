@@ -5,7 +5,7 @@
  ProZac Message Of The Day (MOTD) and un/related stuff :)
 =========================================================*/
 
-#define MSG_OFTEN_CUTFVERSION "Running progs version 1.0.8.0 Û1¯25¯2009Ý\n"
+#define MSG_OFTEN_CUTFVERSION "Running progs version 1.0.9.0 Û1¯30¯2009Ý\n"
 
 #define MSG_INFO "\nType ¢cmd help¢ to see additional client commands.\n"
 
@@ -13,9 +13,9 @@
 //WK #define MSG_CUTFVERSION   "ÐÒÏÚÁÃ CustomÔÆ ö•®”®OfN˜" //<-- 3.2.OfN6
 
 #ifdef COOP_MODE_ENHANCED
-#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ COOP VERSION 1.0.8.0 (1-25-09)"
+#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ COOP VERSION 1.0.9.0 (1-30-09)"
 #else
-#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ VERSION 1.0.8.0 (1-25-09)"
+#define MSG_CUTFVERSION		"ÐÒÏÚÁÃ CustomÔÆ VERSION 1.0.9.0 (1-30-09)"
 #endif
 
 #define MSG_INTRO  "Welcome to ÐÒÏÚÁÃ CustomÔÆ\na Quake ÔÆ MOD by ShakaUVM\nwww®telefragged®com¯shaka\nModified for COOP By Ôèå Çéúíï\n\nžžžžžžžžžžžžžžžžžžžžžžžžžžžžŸ\n\n"
