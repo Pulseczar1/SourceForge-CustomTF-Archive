@@ -1310,8 +1310,13 @@ void(float dist) ai_run =
 	self.show_hostile = time + 1;		// wake up other monsters
 
 // check knowledge of enemy
-	
-	enemy_vis = visible(self.enemy);
+
+	// Gizmo - make sure nothing is in the way (like teammates)
+	traceline( self.origin + self.view_ofs, self.enemy.origin + self.enemy.view_ofs, #TL_ANY_SOLID, self );
+	if ( trace_ent == self.enemy )
+		enemy_vis = visible(self.enemy);
+	else
+		enemy_vis = #FALSE;
 	if (enemy_vis)
 		self.search_time = time + 3;
 

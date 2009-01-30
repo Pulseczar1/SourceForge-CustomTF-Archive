@@ -24,18 +24,18 @@ void() RemoveTestEntity = {
 	remove( self );
 };
 
-
 /*
-	InSolid - checks if the entity is inside the world or another entity
+===============
+InSolid
 
-	FIXME: use this for validating spawn points too?
+Checks if the entity is inside the world or another entity.
+===============
 */
-
 float (entity ent) InSolid =
 {
-	local entity oself;
-	local vector oldownerorg, oldorg, neworg;
-	local float ret;
+	local entity	oself;
+	local vector	oldownerorg, oldorg, neworg;
+	local float		ret;
 
 /*
 	local float oldsolid;
