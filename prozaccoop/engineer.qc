@@ -958,6 +958,7 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 
 	// before we start building it, check it out
 	// check for validity of point
+	setmodel (newmis, newmis.mdl);
 	setsize (newmis, tmp1, tmp2);
 	setorigin (newmis, newmis.origin);
 	if (CheckArea(newmis, self) == #FALSE)
@@ -997,9 +998,6 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	newmis.movetype = #MOVETYPE_TOSS;	 
 
 	newmis.solid = #SOLID_BBOX;
-	setmodel (newmis, newmis.mdl);
-	setsize (newmis, tmp1, tmp2);
-	setorigin (newmis, newmis.origin);
 
 	if (objtobuild==#BUILD_TESLA)
 	{
