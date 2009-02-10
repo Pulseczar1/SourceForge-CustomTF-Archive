@@ -33,7 +33,7 @@ void() TeamFortress_Discard =
 			newmis.ammo_shells = self.ammo_shells;
 		if (!(self.weapons_carried & #WEAP_NAILGUN || self.weapons_carried & #WEAP_SNG || self.weapons_carried & #WEAP_LIGHT_ASSAULT || self.weapons_carried & #WEAP_RAILGUN || self.weapons_carried & #WEAP_TRANQ || self.weapons_carried & #WEAP_MAUSER)) //CH is it just me or are there not many nail weapons? //WK It's just you
 			newmis.ammo_nails = self.ammo_nails;
-		if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_GRENADE_LAUNCHER || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || self.job & #JOB_GUERILLA))
+		if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER || self.cutf2_items & #CUTF2_EXPLOSIVE_SHOT || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_GRENADE_LAUNCHER || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || self.job & #JOB_GUERILLA))
 			newmis.ammo_rockets = self.ammo_rockets;
 		//OfN old bug, WEAP_SUPERSHOTGUN if (!(self.cutf_items & #CUTF_CYBERAUG || self.cutf_items & #CUTF_HOLO || self.weapons_carried & #WEAP_LASERCANNON || self.weapons_carried & #WEAP_INCENDIARY || self.weapons_carried & #WEAP_LIGHTNING || self.weapons_carried & #WEAP_SUPER_SHOTGUN || self.weapons_carried & #WEAP_ASSAULT_CANNON || self.weapons_carried & #WEAP_DAEDALUS || (self.cutf_items & #CUTF_SENTRYGUN && self.weapons_carried & #WEAP_SPANNER) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TESLA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_SECURITY_CAMERA) || (self.weapons_carried & #WEAP_SPANNER && self.tf_items & #NIT_TELEPORTER)))
 		//done -  FIXME: Add fieldgens

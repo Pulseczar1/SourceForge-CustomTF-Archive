@@ -1884,6 +1884,7 @@ float		rj; 				// Rocket Jump Modifier
 .float last_push; //WK 4/27/7 Only allow one shove per 0.5 seconds.
 .vector last_frame_velocity; //WK 4/27/7 Holds the velocity from the previous frame
 .float last_frag_gren_time; //WK 6/27/7 Can only be frag grenaded once per second
+.float last_explosive_shot; //WK 2-2-09 Hold the last time an exp shot was fired
 
 // Armor Classes : Bitfields. Use the "armorclass" of armor for the Armor Type.
 
@@ -2268,9 +2269,10 @@ float agrTimeOfLastSound; // in seconds, what the timer was on last timer sound
 //#define AGR_WHEN_BLUE_SCORES_RETURN_FLAG
 // end AGR
 
+//======================================================================================================
 // Neo mode >
 // cvars - requires 'localinfo' to set these
-float neo;				// globar cvar, just on or off (requires 'localinfo neo 1' to be on)
+float neo;				// global cvar, just on or off (requires 'localinfo neo 1' to be on)
 float neo_base_dmg; 	// Neo's damage factor when there's 0 people in the game
 float neo_dmg_factor;	// how much damage factor increases with each player past playercount of 0
 float neo_base_res; 	// Neo's resistance factor when there's 0 people in the game
@@ -2281,7 +2283,17 @@ float neo_regen_factor; // how much regeneration factor increases with each play
 // globals
 entity neoLives;		 // is there currently a Neo? if so, who?
 float oldTeamplayValue;  // used in teamplay mode changing
+float lastNadeRegen;     // last time Neo had a grenade regenerated
+float lastDetRegen;      // last time Neo had a detpack (tossable or not) regenerated
+float neoDamageFactor;   // final damage factor (sorry about name redundancy)
+float neoResistFactor;   // final resist factor
+float neoRegenFactor;    // final regen factor
+
+// definitions
+#define WHOA_LIKELINESS 0.25 // how likely Neo is to say 'Whoa..'; set between 0 and 1
+							 // not a 'true' percentage; look at how it's used
 // < end Neo code
+//======================================================================================================
 
 // PZ - can't believe these globals didn't already exist.. created them for AGR mode.
 float playersOnTeam1;

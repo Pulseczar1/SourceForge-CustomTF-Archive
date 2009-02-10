@@ -230,7 +230,9 @@ void(entity targ, entity attacker) Killed =
 	self = targ;
 	
 	// don't let sbar look bad if a player
-	if (self.health < -99)
+	// modified for Neo mode: I don't want players limited to -99 health
+	// for really cool gib explosions.
+	if (self.health < -99 && !neo)
 		self.health = -99;		
 
 	// doors, triggers, etc // - ofn added sensor, it now calls clientobituary when dead

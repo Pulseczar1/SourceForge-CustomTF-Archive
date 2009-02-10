@@ -15,6 +15,8 @@
 
 */
 
+#define GRUNTY_PAINTIME 			2
+
 // Function Prototypes
 // Whenever a function is added within the grunty, add it up here
 
@@ -26,7 +28,7 @@ void () GruntyScanTargets;
 void () GruntyCheckFire;
 void (entity targ) GetRank;
 void () Grunty_Check_Frags;
-void (float angle, float dist) botmovedist;
+float (float angle, float dist) botmovedist;
 float () ReturnWeaponVelocity;
 void () GruntyPayThink;
 void () GruntyDrawPay;
@@ -36,6 +38,7 @@ void () GruntyDrawPay;
 // List all external functions used here
 float () isMelee;
 //entity (entity scanner) LookAround;
+float(entity thing) IsOwnedMonster;
 
 //=- OfN -=//
 void(entity sld, entity player, string msg, float priority) PrintFromSoldier;
@@ -493,6 +496,7 @@ void() grunty_nail3 = [$nailatt2, grunty_nail4]
 		if (self.ammo_nails < 1) PrintFromSoldier(self,self.real_owner,"i've run out of nails!\n",#PRINT_LOW);
 	}
 };
+float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon;
 void() grunty_nail4 = [$nailatt2, grunty_nail1] 
 {
 	GruntyThink(); GRun(); self.effects = self.effects - (self.effects & #EF_DIMLIGHT);
@@ -502,7 +506,10 @@ void() grunty_nail4 = [$nailatt2, grunty_nail1]
 	vis = visible(self.enemy);
 	dist = vlen(self.origin - self.enemy.origin);
 
-	if (!vis || self.ammo_nails < 1 || self.enemy.health <= 0 || dist < 200 || random() < 0.025)
+	// Gizmo - removed "dist < 200" from this, and added GruntyPickBestWeapon() check
+	// Gizmo - grunty can be limited on his weapon's use (defaults to all weapons allowed)
+	if (!vis || self.ammo_nails < 1 || self.enemy.health <= 0 || random() < 0.025
+		|| GruntyPickBestWeapon( self, self.#allowed_weapons, dist ) != #WEAP_NAILGUN )
 	{
 		self.walkframe = 0;
 		grunty_run();
@@ -542,8 +549,6 @@ vector () Grunty_LeadShot =
 	//lead_x = lead_x + (10 - random() * 20);
 	//lead_y = lead_y + (10 - random() * 20);
 	//------------------------------------//	self.view_ofs
-	
-	dir = normalize (loc - src);
 
 	traceline(src, targ, #TL_BSP_ONLY, self);
 	if (trace_fraction != 1.0)
@@ -554,9 +559,21 @@ vector () Grunty_LeadShot =
 	}
 	else
 	{
-		if (self.current_weapon == #WEAP_ROCKET_LAUNCHER && random() > 0.3)
-			loc_z = loc_z - self.enemy.maxs_z/2; 
-			//- OFN - makes grunty aim to the ground with RL sometimes, so evil! ^_^
+		//- OFN - makes grunty aim to the ground with RL sometimes, so evil! ^_^
+		if (self.current_weapon == #WEAP_ROCKET_LAUNCHER && random() > 0.3) {
+			// Gizmo - made a lot of changes to make him aim at feet better
+			if ( self.enemy.flags & #FL_ONGROUND ) {
+				loc_z = self.enemy.absmin_z;
+
+				// Gizmo - make sure their feet are actually visible
+				traceline( src, loc, #TL_ANY_SOLID, self );
+
+				// if feet aren't visible, aim back up
+				if ( trace_fraction != 1 )
+				if ( trace_ent != self.enemy )
+					loc_z = self.enemy.origin_z;
+			}
+		}
 	}
 
 	dir = normalize (loc - src);
@@ -594,110 +611,114 @@ void() GruntyThink =
 	
 };
 
-// LookAround for grunty
-entity (entity scanner) LookAroundGrunty =
-{
-	//if (infokey(world,"ceasefire")=="on") //OfN
-	if (ceasefire)
-		return scanner;
+/*
+==============
+IsValidGruntyTarget
 
-	
-	local entity		scanner;
+Gizmo - Made a function from the code in LookAroundGrunty(),
+and fixed up some pointless code that wasn't very efficient.
+==============
+*/
+float( entity gtarget, entity grunty ) IsValidGruntyTarget = {
+#ifdef MAD_MONSTERS
+	if ( gtarget.classname == "player" && IsSummon( grunty ) )
+		return #TRUE;
+#else
+	if ( gtarget.classname == "player" && !Teammate( gtarget, grunty.real_owner ) ) {
+		if ( gtarget.is_undercover ) {
+			if ( gtarget.cutf_items & #CUTF_JAMMER || !( grunty.tf_items & #NIT_SCANNER ) )
+				return #FALSE;
+		}
+		if ( gtarget.modelindex == modelindex_null ) {
+			if ( gtarget.cutf_items & #CUTF_JAMMER || !( grunty.tf_items & #NIT_SCANNER ) )
+				return #FALSE;
+		}
+		if ( gtarget.modelindex == modelindex_eyes ) {
+			if ( gtarget.cutf_items & #CUTF_JAMMER || !( grunty.tf_items & #NIT_SCANNER ) ) {
+				if ( random() < 2 - grunty.has_tesla * random() )
+					return #FALSE;
+			}
+		}
+
+		// Gizmo - used to be ( gtarget, grunty, 1, 0, 0, 0 ), but we already check visible before calling this
+		return Pharse_Client( gtarget, grunty, 0, 0, 0, 0 );		
+	}
+#endif
+
+	// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+	else if ( IsMonster( gtarget ) && gtarget.health > 0 ) {
+		if ( !Teammate( gtarget.real_owner, grunty.real_owner ) )
+			return #TRUE;
+	} else if ( gtarget.classname == "grenade" && gtarget.netname == "land_mine" ) {
+		if ( !Teammate( gtarget.owner, grunty.real_owner ) )
+			return #TRUE;
+	} else if ( !Teammate( gtarget, grunty.real_owner ) ) { //  && gtarget.classname != "building_sentrygun_base"
+		if ( IsOffenseBuilding( gtarget ) ) // for teslas isoffensiveb only returns true if not cloaked
+			return #TRUE;			   
+	}
+
+	return #FALSE;
+};
+
+// LookAround for grunty
+entity( entity scanner ) LookAroundGrunty = {
 	local entity		client;
 //	local entity		list_client;
 //	local entity		list;
-	local float 		gotatarget;
+
+	//if (infokey(world,"ceasefire")=="on") //OfN
+	if (ceasefire)
+		return scanner;
 
 	client = findradius(scanner.origin, 2500);
 
 	while (client)
 	{
-		gotatarget = 0;
-		
+		// Gizmo - added a traceline so he doesn't shoot through teammates
+		traceline( scanner.origin + '0 0 16', client.origin, #TL_ANY_SOLID, scanner );
+
+		if ( trace_ent == client )
 		if (client != scanner && visible2(client, scanner))
 		{
-			
-			#ifdef MAD_MONSTERS
-			
-			if (client.classname == "player" && IsMonsterNonArmy(scanner)) gotatarget = 1;
-			
-			#else
-			
-			// Neo mode modication
-			if (client.classname == "player" && !Teammate(client, scanner.real_owner))
-			{
-				gotatarget = Pharse_Client(client, scanner, 1, 0, 0, 0);
-
-				if (client.is_undercover)
-					if (client.cutf_items & #CUTF_JAMMER || !scanner.tf_items & #NIT_SCANNER)
-						gotatarget=0;
-				if (client.modelindex == modelindex_null)
-					if (client.cutf_items & #CUTF_JAMMER || !scanner.tf_items & #NIT_SCANNER)
-						gotatarget=0;
-				if (client.modelindex == modelindex_eyes)
-					if (client.cutf_items & #CUTF_JAMMER || !scanner.tf_items & #NIT_SCANNER)
-						if (random() < 2 - scanner.has_tesla * random())
-							gotatarget=0;		
-			}
-			
-			#endif
-
-			else if (IsMonster(client))
-			{
-				// Neo mode modication
-				if (!Teammate(client.real_owner, scanner.real_owner))
-					gotatarget = 1;
-			}
-			else if (client.classname == "grenade" && client.netname == "land_mine")
-			{
-				// Neo mode modication
-				if (!Teammate(client.owner, scanner.real_owner))
-					gotatarget = 1;
-			}
-			// Neo mode modication
-			else if (!Teammate(client, scanner.real_owner))
-			{ //  && client.classname != "building_sentrygun_base"
-				if (IsOffenseBuilding(client)) // for teslas isoffensiveb only returns true if not cloaked
-					gotatarget = 1; 			   
-			}	
-			
+			// Gizmo - use this function instead of the code commented out below
+			if ( IsValidGruntyTarget( client, scanner ) )
+				return client;
 		}
-		if (gotatarget)
-			return client;
 		
 		client = client.chain;
 	}
+
 	return scanner;
 };
 
 
 entity () GruntyPharse =
 {
-	local entity retarg;
 	local float r;
+
 	r = random();
 	
 	#ifdef MAD_GRUNTY
 
 	if (r < 0.30 && (visible(self.real_owner)) && self.real_owner.health > 0)
-		retarg = self.real_owner;
+		return self.real_owner;
 	
 	#else
 
 	//- ofn - lot of shit changed in lookaround to make them target well
 	if (r < 0.30)
-		retarg = LookAroundGrunty(self);
+		return LookAroundGrunty(self);
 	
 	#endif	  
 
-	return retarg;
+	return world;
 };
 
 void() GruntyScanTargets =
 {
 	local entity	targ; // our hapless foe
 	local string	st;
-	
+
 	if (self.enemy != world)
 		if (self.enemy.health <= 0 || !self.enemy.is_connected)
 		{
@@ -722,13 +743,16 @@ void() GruntyScanTargets =
 	{
 		local float vis;
 		vis = visible(self.enemy);
-		if (vis)
+
+		// Gizmo - added a traceline so he doesn't shoot through teammates
+		traceline( self.origin + '0 0 16', self.enemy.origin, #TL_ANY_SOLID, self );
+
+		if ( vis && trace_ent == self.enemy )
 		{
 			if (self.demon_one != world)
 			{
-				RemoveWaypoint(self.demon_one,self);
-				self.demon_one=world;
-
+				RemoveWaypoint(self.demon_one, self);
+				self.demon_one = world;
 			} //often =world
 			self.search_time = time + 3;
 			if (self.attack_finished <= time)
@@ -747,14 +771,15 @@ void() GruntyScanTargets =
 				return;
 			}
 			// tactic
-			
+
+			// Gizmo - if we're seeking out an enemy, check if another one is visible so we don't get lamed
+			targ=GruntyPharse();
+			if ( targ != self )
+			if ( targ != world )
+				self.search_time = 0;	// Gizmo - hack to reuse the code below
+
 			if (self.demon_one == world) // if we don't have a enemy last seen marker
 			{
-				if (self.demon_one!=world)
-				{
-					RemoveWaypoint(self.demon_one,self);
-				}
-
 				self.demon_one = CreateWaypoint(self.enemy.origin - self.enemy.velocity * 0.05, #WAYPOINT_AI_LIFE, #WAYPOINT_TYPE_ENEMYLASTSEEN, self);
 				self.demon_one.goalentity = ReturnEasyWaypoint(self,self.demon_one);
 				self.goalentity = self.demon_one;
@@ -762,7 +787,7 @@ void() GruntyScanTargets =
 				//- OfN -
 				self.has_teleporter = 0;
 			}
-			if (self.search_time <= time) // we seeked enemy for GRUNTY_SEEKTIME already so...
+			else if (self.search_time <= time) // we seeked enemy for GRUNTY_SEEKTIME already so...
 			{
 				self.enemy = world;
 				self.goalentity = world;
@@ -780,7 +805,7 @@ void() GruntyScanTargets =
 	else // otherwise look for a target
 	{
 		targ=GruntyPharse();
-		
+
 		if (targ == self)
 			return;
 		if (targ == world)
@@ -800,7 +825,7 @@ void() GruntyScanTargets =
 			}
 			return;
 		}
-		
+
 		if (self.super_time < time)
 		{
 			//local string targetstr;
@@ -809,21 +834,206 @@ void() GruntyScanTargets =
 			st = strcat("Target ",targ.netname);
 			st = strcat(st, " spotted!\n Engaging target...\n");
 			PrintFromSoldier(self,self.real_owner,st,#PRINT_HIGH);
-		   
+
 			//sprint(self.real_owner, #PRINT_HIGH, targ.netname);
 			//sprint(self.real_owner, #PRINT_HIGH, " spotted!\n Engaging target...\n");
 			self.super_time = time + 2.5;
 		}
-		
+
 		self.enemy = targ;
-		self.goalentity = self.enemy;
+		// Gizmo - check for static mode
+		if ( self.is_malfunctioning != 2 )
+			self.goalentity = self.enemy;
 		self.search_time = time + 3;
 	}
 };
 
+// Gizmo
+float( entity bot, float allowedweaps, float dist ) GruntyPickBestWeapon = {
+	local float enemySpeed;
+
+	// used for deciding which weapon to use
+	if ( bot.enemy.flags & #FL_ONGROUND && IsMonster( bot.enemy ) )
+		enemySpeed = 0;
+	else {
+		// Gizmo - this works, but I want the bot to ignore forward and backward enemy movement because only enemies strafing around the grunt matter
+		//enemySpeed = vlen( bot.enemy.velocity );
+		// Gizmo - NOTE: I don't think the previous v_* vectors need to be restored upon return
+		makevectors( bot.angles );
+		enemySpeed = bot.enemy.velocity * ( v_right + v_up );
+		enemySpeed = fabs( enemySpeed );
+	}
+
+	if ( dist < 64 ) {
+		// use the knife and super shotgun first
+		if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE && bot.cutf_items & #CUTF_KNIFE )
+			return #WEAP_AXE;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 150 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
+		if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE )
+			return #WEAP_AXE;
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// at this range we try them all
+		return 0;
+	} else if ( dist < 200 ) {
+		// use the super shotgun first
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 100 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+	} else if ( dist < 400 ) {
+		// use the rocket launcher first
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 50 && enemySpeed < 100 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+	} else if ( dist < 1100 ) {
+		// use the rocket launcher first
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 && enemySpeed < 100 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	} else if ( dist < 1400 ) {
+		// try the rocket launcher first
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 && random() > 0.75 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// opportunistic weapon usage
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 && enemySpeed < 75 )
+			return #WEAP_NAILGUN;
+
+		// standard weapon priority
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// this is probably out of the super shotgun range
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	} else if ( dist < 2000 ) {
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 && random() > 0.98 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// standard weapon priority
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// these weapons won't do much if anything at this range
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	} else {
+		// use the rocket launcher and nailgun randomly
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 && random() > 0.5 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// standard weapon priority
+		if ( bot.weapons_carried & #WEAP_NAILGUN && allowedweaps & #WEAP_NAILGUN
+			&& bot.ammo_nails > 0 )
+			return #WEAP_NAILGUN;
+		if ( bot.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER
+			&& bot.ammo_rockets > 0 )
+			return #WEAP_ROCKET_LAUNCHER;
+
+		// these weapons won't do much if anything at this range
+		if ( bot.weapons_carried & #WEAP_SHOTGUN && allowedweaps & #WEAP_SHOTGUN
+			&& bot.ammo_shells > 0 )
+			return #WEAP_SHOTGUN;
+		if ( bot.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN
+			&& bot.ammo_shells > 1 )
+			return #WEAP_SUPER_SHOTGUN;
+	}
+
+	// all we can use is an axe, oh well, it'll look funny and it'll let the owner know he's out of ammo
+	if ( bot.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE )
+		return #WEAP_AXE;
+	return 0;
+};
+
+
 void() GruntyCheckFire =
 {
-	local float dist, vis;
+	local float dist, vis, allowedweaps;
 
 	if (self.attack_finished > time)
 		return;
@@ -867,9 +1077,15 @@ void() GruntyCheckFire =
 	
 	dist = vlen(self.origin - self.enemy.origin);
 	self.weaponframe = 0;
-	
-	
-	if (dist < 64 && self.weapons_carried & #WEAP_AXE && self.cutf_items & #CUTF_KNIFE)
+
+	// Gizmo - grunty can be limited on his weapon's use (defaults to all weapons allowed)
+	allowedweaps = self.#allowed_weapons;
+
+	if ( !allowedweaps )
+		return;
+
+#ifdef NEVER_DEFINED
+	if (dist < 64 && self.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE && self.cutf_items & #CUTF_KNIFE)
 	{
 		self.current_weapon = #WEAP_AXE;
 		/*if (self.cutf_items & #CUTF_KNIFE)
@@ -883,7 +1099,7 @@ void() GruntyCheckFire =
 		#endif
 		return;
 	}
-	if (dist < 200 && self.weapons_carried & #WEAP_SUPER_SHOTGUN)
+	if (dist < 200 && self.weapons_carried & #WEAP_SUPER_SHOTGUN && allowedweaps & #WEAP_SUPER_SHOTGUN)
 	{
 		if (self.ammo_shells > 1)
 		{
@@ -898,7 +1114,7 @@ void() GruntyCheckFire =
 			return;
 		}
 	}
-	if (dist < 64 && self.weapons_carried & #WEAP_AXE)
+	if (dist < 64 && self.weapons_carried & #WEAP_AXE && allowedweaps & #WEAP_AXE)
 	{
 		self.current_weapon = #WEAP_AXE;
 		/*if (self.cutf_items & #CUTF_KNIFE)
@@ -912,7 +1128,7 @@ void() GruntyCheckFire =
 		#endif
 		return;
 	}						//was 800
-	if (dist > 200 && dist < 1100 && self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+	if (dist > 200 && dist < 1100 && self.weapons_carried & #WEAP_ROCKET_LAUNCHER && allowedweaps & #WEAP_ROCKET_LAUNCHER)
 	{
 		if (self.ammo_rockets > 1)
 		{
@@ -927,7 +1143,7 @@ void() GruntyCheckFire =
 			return;
 		}
 	}
-	if (dist < 1400 && self.weapons_carried & #WEAP_ROCKET_LAUNCHER && random() > 0.75)
+	if (dist < 1400 && self.weapons_carried & #WEAP_ROCKET_LAUNCHER && random() > 0.75 && allowedweaps & #WEAP_ROCKET_LAUNCHER)
 	{
 		if (self.ammo_rockets > 1)
 		{
@@ -939,7 +1155,7 @@ void() GruntyCheckFire =
 			return;
 		}
 	}
-	if (dist < 2000 && self.weapons_carried & #WEAP_ROCKET_LAUNCHER && self.ammo_rockets > 1 && random() > 0.98)
+	if (dist < 2000 && self.weapons_carried & #WEAP_ROCKET_LAUNCHER && self.ammo_rockets > 1 && random() > 0.98 && allowedweaps & #WEAP_ROCKET_LAUNCHER)
 	{
 		self.current_weapon = #WEAP_ROCKET_LAUNCHER;
 		//self.attack_finished = time + 0.8;
@@ -950,7 +1166,7 @@ void() GruntyCheckFire =
 	}
 
 	//- OfN 
-	if (dist < 400 && self.weapons_carried & #WEAP_SHOTGUN && self.ammo_shells > 0)
+	if (dist < 400 && self.weapons_carried & #WEAP_SHOTGUN && self.ammo_shells > 0 && allowedweaps & #WEAP_SHOTGUN)
 	{
 		//if (self.ammo_shells > 0)
 		//{
@@ -966,7 +1182,7 @@ void() GruntyCheckFire =
 			return;
 		//}
 	}
-	if (dist < 2000 && self.weapons_carried & #WEAP_NAILGUN && self.ammo_nails > 0)
+	if (dist < 2000 && self.weapons_carried & #WEAP_NAILGUN && self.ammo_nails > 0 && allowedweaps & #WEAP_NAILGUN)
 	{
 		//if (self.ammo_nails > 0)
 		//{
@@ -992,54 +1208,297 @@ void() GruntyCheckFire =
 		#endif	
 //		  RPrint("NONE\n");
 	}
+#endif
+
+	allowedweaps = GruntyPickBestWeapon( self, allowedweaps, dist );
+	if ( allowedweaps == #WEAP_AXE ) {
+		self.current_weapon = #WEAP_AXE;
+		Attack_Finished(0.5);
+		if (self.health > 0) self.think = grunty_axeatt;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to axe/knife...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_SHOTGUN ) {
+		self.current_weapon = #WEAP_SHOTGUN;
+		Attack_Finished(0.5);
+		W_FireShotgun();
+		if (self.health > 0) self.think = grunty_shotgun;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to shotgun...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_SUPER_SHOTGUN ) {
+		self.current_weapon = #WEAP_SUPER_SHOTGUN;
+		Attack_Finished(0.7);
+		W_FireSuperShotgun();
+		if (self.health > 0) self.think = grunty_shotgun;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to super shotgun...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_ROCKET_LAUNCHER ) {
+		self.current_weapon = #WEAP_ROCKET_LAUNCHER;
+		Attack_Finished(0.8);
+		W_FireRocket();
+		if (self.health > 0) self.think = grunty_rocket;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to rocket...\n");
+		#endif
+		return;
+	}
+	if ( allowedweaps == #WEAP_NAILGUN ) {
+		self.current_weapon = #WEAP_NAILGUN;
+		Attack_Finished(0.2);
+		if (self.health > 0) self.think = grunty_nail1;
+		#ifdef VERBOSE_GRUNTY
+		sprint(self.real_owner, #PRINT_HIGH, "Attempting to nail...\n");
+		#endif
+		return;
+	}
+
+	// nothing to shoot
+	self.effects = self.effects - (self.effects & #EF_DIMLIGHT);
+	if (self.health > 0) self.think = grunty_run;
+	#ifdef VERBOSE_GRUNTY
+	sprint(self.real_owner, #PRINT_HIGH, "GruntyCheckFire defaulting to none...\n");
+	#endif	
+};
+
+/*
+==============
+GruntyPickClosestVector
+
+Picks the closest vector to the vector specified.
+Simulates real player movement by limiting to forward,
+backward, strafe left, and strafe right like normal players.
+
+NOTE: makevectors must be called first
+==============
+*/
+vector( vector desired ) GruntyPickClosestVector = {
+	local vector	bestv, tempv;
+	local float		bestdot;
+
+	// flatten it out
+	desired_z = 0;
+	desired = normalize( desired );
+
+	// start with forward
+	bestv = v_forward;
+	bestdot = desired * v_forward;
+
+	tempv = v_forward * -1;
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = v_right;
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = v_right * -1;
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+
+	tempv = normalize( v_forward + v_right );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = normalize( v_forward + v_right * -1 );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = normalize( v_forward * -1 + v_right );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+	tempv = normalize( v_forward * -1 + v_right * -1 );
+	if ( desired * tempv > bestdot ) {
+		bestv = tempv;
+		bestdot = desired * tempv;
+	}
+
+	return bestv;
+};
+
+/*
+==============
+GruntyAutoObstacle
+
+Gizmo - This should only be called when the grunty
+is on the "auto" "on obstacle" mode.
+
+Returns 0 if the grunty should jump, returns 1
+if the grunty should stop (like when attacking an enemy),
+and returns 2 when the grunty should attempt to
+navigate to his goalentity (like monsters do).
+
+NOTE: makevectors must be called first
+==============
+*/
+float( entity g ) GruntyAutoObstacle = {
+	local vector	vtemp;
+	local float		zdif, vis, zdif2;
+
+	// we hit an obstacle with no enemy
+	if ( g.enemy == world ) {
+		// jump if we're not on valid ground
+		if ( !checkbottom( g ) )
+			return 0;
+
+		// FIXME: use absmin_z
+		zdif = ( g.goalentity.origin_z + g.goalentity.mins_z ) - ( g.origin_z + g.mins_z );
+
+		// check for visibility
+		traceline( g.origin + g.view_ofs, g.goalentity.origin + g.goalentity.view_ofs, #TL_ANY_SOLID, g );
+		if ( trace_inopen && trace_inwater )
+			vis = #FALSE;
+		else if ( trace_ent == g.goalentity || trace_fraction == 1 )
+			vis = #TRUE;
+		else
+			vis = #FALSE;
+
+		// if we're already navigating then use the vector facing our goalentity
+		if ( g.motd > time ) {
+			vtemp = g.goalentity.origin - g.origin;
+			vtemp_z = 0;
+			vtemp = normalize( vtemp );
+		} else
+			vtemp = v_forward;
+
+		traceline( g.origin + '0 0 -8', g.origin + '0 0 -8' + vtemp * 96, #TL_ANY_SOLID, g );
+
+		// goalentity is on a higher/lower level
+		if ( zdif && trace_fraction == 1 ) {		// only jump if we have a clear path infront of us and our goalentity is up/down somewhere
+			// don't jump if we've just got done attacking an enemy, so we don't jump in the wrong direction
+			if ( g.attack_finished - time > -1 )
+				return 2;
+
+			// check if it's safe to jump here
+			traceline( trace_endpos, trace_endpos + v_up * -8192, #TL_ANY_SOLID, g );
+
+			// don't jump into water/slime/lava
+			if ( trace_inopen && trace_inwater )
+				return 2;
+
+			zdif2 = ( g.goalentity.origin_z + g.goalentity.mins_z ) - trace_endpos_z;
+			traceline( trace_endpos, g.goalentity.origin, #TL_ANY_SOLID, g );
+
+			// if our goalentity isn't visible at the estimated landing position then don't jump
+			if ( trace_ent != g.goalentity && trace_fraction != 1 )
+				return 2;
+
+			// if our landing position is farther away z wise then don't jump
+			zdif2 = fabs( zdif2 );		// Gizmo - I've seen QC compiler/vm bugs when two functions calls are in the same expression
+			if ( zdif2 > fabs( zdif ) )
+				return 2;
+
+			return 0;
+		}
+		if ( zdif && trace_fraction != 1 ) {
+			// don't jump if we've just got done attacking an enemy, so we don't jump in the wrong direction
+			if ( g.attack_finished - time > -1 )
+				return 2;
+
+			if ( vis )
+				return 0;
+
+			return 2;
+		}
+		// we're perfectly even with our goalentity, assuming it's a ground based target
+		if ( !zdif )
+			return 2;
+		return 2;
+	}
+
+	// seek tactic mode
+	if ( g.is_malfunctioning == 1 ) {
+		// only allow navigating on seek mode if our enemy isn't visible
+		// don't ever jump on seek mode, to avoid being lured into water/slime/lava
+		if ( visible2( g.enemy, g ) )
+			return 1;
+		return 2;
+	}
+	// static tactic mode
+	if ( g.is_malfunctioning == 2 ) {
+		// always stop on static mode when attacking
+		return 1;
+	}
+
+	// default to stop
+	return 1;
 };
 
 void() GRun =
 {
-	local float dist;
-	local vector loc;
+	local float		dist;
+	local vector	loc;
+	local float		r;
 
-	// ok, we're trying to get somewhere
-	// first look at where we are trying to go
-	// Version 1.0 of GruntyLead(tm)
-	if (self.enemy != world)
-	{
-		local vector pvel;
-		
-		if (self.enemy.classname == "player")
-			pvel = self.enemy.velocity;
-		else if (self.enemy.classname == "monster_army")
+	// Gizmo - .motd is set to a future time to disallow ChangeYaw() while we're calling movetogoal()
+	if ( self.motd <= time || self.is_toffingadet != 2 ) {
+		// ok, we're trying to get somewhere
+		// first look at where we are trying to go
+		// Version 1.0 of GruntyLead(tm)
+		// Gizmo - he wasn't actually using his last seen enemy waypoint, I fixed it so he does; this was all that was needed...
+		if ( self.enemy != world && ( self.goalentity != self.demon_one || self.demon_one == world ) )
 		{
-			makevectors(self.enemy.angles);
-			pvel = self.enemy.velocity + v_forward * self.enemy.custom_speed * 20;
-		}
-		else
-			pvel = '0 0 0';
-		if (ReturnWeaponVelocity() == 99999999)
-			pvel = '0 0 0';
-		loc = self.enemy.origin + pvel * (vlen(self.enemy.origin - self.origin) / ReturnWeaponVelocity());
-		self.ideal_yaw = vectoyaw(loc - self.origin);
-		self.ideal_yaw = anglemod(self.ideal_yaw);
-	}
-	else
-	{
-		if (self.goalentity!=world) //- OfN - dont change yaw if we r not after a goal
-		{
-			self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
+			local vector pvel;
+
+			if (self.enemy.classname == "player")
+				pvel = self.enemy.velocity;
+			else if (self.enemy.classname == "monster_army")
+			{
+				makevectors(self.enemy.angles);
+				pvel = self.enemy.velocity + v_forward * self.enemy.custom_speed * 20;
+			}
+			else
+				pvel = '0 0 0';
+
+			if (ReturnWeaponVelocity() == 99999999)
+				pvel = '0 0 0';
+
+			loc = self.enemy.origin + pvel * (vlen(self.enemy.origin - self.origin) / ReturnWeaponVelocity());
+			self.ideal_yaw = vectoyaw(loc - self.origin);
 			self.ideal_yaw = anglemod(self.ideal_yaw);
 		}
+		else
+		{
+			if (self.goalentity!=world) //- OfN - dont change yaw if we r not after a goal
+			{
+				self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
+				self.ideal_yaw = anglemod(self.ideal_yaw);
+			}
+		}
+
+		ChangeYaw();
 	}
-	
-	ChangeYaw();
 
 	// makevectors sets the global vars v_forward, v_right and v_up
 	makevectors(self.angles);
 
 	dist = self.custom_speed;
-		
+
 	if (self.tfstate & #TFSTATE_TRANQUILISED)
 		dist = dist * (#AI_TRANQ_FACTOR_UP / #AI_TRANQ_FACTOR_DN); //Tranq
-	
+
+	// Gizmo - when on static mode, we want to face our enemy while moving towards our goalentity
+	if ( self.is_malfunctioning == 2 ) {
+		if ( self.goalentity != world )
+			botmovedist( vectoyaw( GruntyPickClosestVector( self.goalentity.origin - self.origin ) ), dist );
+		return;
+	}
+
 	/* - OfN -if (self.enemy.classname == "monster_shambler" || self.enemy.weapons_carried & #WEAP_ASSAULT_CANNON)
 		if (self.has_teleporter == 0)
 			self.has_teleporter = 3;*/
@@ -1050,11 +1509,17 @@ void() GRun =
 	// Test to see if we want to do an evasive maneuver
 	// If we're already doing a move, don't do another
 	if (self.has_teleporter == -1) // left dodge move
-		botmovedist(vectoyaw(v_right * -1), dist);// move left
-	
+	{
+		// Gizmo - if blocked while doing strafe do another move
+		if ( !botmovedist( vectoyaw( v_right * -1 ), dist ) )	// move left
+			self.has_teleporter = 0;
+	}
 	else if (self.has_teleporter == 1) // right dodge move
-		botmovedist(vectoyaw(v_right), dist); // move right
-	
+	{
+		// Gizmo - if blocked while doing strafe do another move
+		if ( !botmovedist( vectoyaw( v_right ), dist ) )	// move right
+			self.has_teleporter = 0;
+	}
 	else if (self.has_teleporter == 2) // jump!
 	{
 		if (self.flags & #FL_ONGROUND) // only jump if we're on the ground
@@ -1066,55 +1531,95 @@ void() GRun =
 		self.has_teleporter = 0; // don't jump
 	}
 	else if (self.has_teleporter == 3) //(backwards)// HE'S AFTER US, RUN!@#$ HE WILL KILL US ALL!!@
-		botmovedist(vectoyaw(v_forward), dist * -1); // flee, I tell you!
-	
+	{
+		if ( !botmovedist( vectoyaw( v_forward ), dist * -1 ) ) { // flee, I tell you!
+			// Gizmo - if he's blocked while trying to run backwards with preferred range, then strafe
+			if ( self.enemy != world ) {
+				// check if preferred range is set
+				if ( self.is_malfunctioning != 2 && self.delay_time ) {
+					if ( random() < 0.5 )
+						self.has_teleporter = 1;
+					else
+						self.has_teleporter = -1;
+				}
+			}
+		}
+	}
 	else if (self.has_teleporter == 0) // no evasive, standard move (forward)
 	{
-		//- OfN - force move to forward if we r going to a last seen enemy waypoint
-		if (self.goalentity == self.demon_one && self.demon_one!=world)
-		{
-			self.has_teleporter = 0;
-			botmovedist(vectoyaw(v_forward), dist); // move
-			return;
-		}
-
 		botmovedist(vectoyaw(v_forward), dist); // move
-		if (random() * 20 < 1 && self.enemy != world)				// if we get a score
-		{															// of one on a d20,
-			local float r;											// special
-			r = random();
-			if (r < 0.25)
-				self.has_teleporter = -1; // left
-			else if (r < 0.5)
-				self.has_teleporter = 1; // right
-			else if (r < 0.75)
-				self.has_teleporter = 2; // jump!
-			else
-				self.has_teleporter = 3; // italian style!
+
+		//- OfN - force move to forward if we r going to a last seen enemy waypoint
+		// Gizmo - removed the duplicate botmovedist() call and moved this after the main botmovedist() call
+		if ( self.goalentity == self.demon_one && self.demon_one != world )
+			return;
+
+		// Gizmo - modified this for preferred range
+		if ( self.enemy != world ) {
+			// check if preferred range is set and we need to stay within range
+			if ( self.is_malfunctioning != 2 && self.delay_time ) {
+				r = vlen( self.enemy.origin - self.origin );
+
+				if ( self.delay_time == 1 ) {
+					if ( r >= 200 ) {
+						self.has_teleporter = 0;
+						return;
+					}
+				} else if ( self.delay_time == 2 ) {
+					if ( r >= 1100 ) {
+						self.has_teleporter = 0;
+						return;
+					} else if ( r < 400 ) {
+						self.has_teleporter = 3;
+						return;
+					}
+				} else if ( self.delay_time == 3 ) {
+					if ( r < 800 ) {
+						self.has_teleporter = 3;
+						return;
+					}
+				}
+			}
+			if (random() * 20 < 1 ) {					// if we get a score of one on a d20, special
+				r = random();
+				if (r < 0.25)
+					self.has_teleporter = -1; // left
+				else if (r < 0.5)
+					self.has_teleporter = 1; // right
+				else if (r < 0.75)
+					self.has_teleporter = 2; // jump!
+				else
+					self.has_teleporter = 3; // italian style!
+			}
 		}
 	}
 };
 
-void (float angle, float dist) botmovedist =
-{ 
-	
-	local float success;
-//	local float suitable;
-	
+// Gizmo - changed return type to float
+float (float angle, float dist) botmovedist =
+{
+	local float		success;
+	local float		obstacleMode;
+
 	//- OfN - Don't annoy owner if following him! heh
 	#ifndef MAD_GRUNTY
 	if (self.goalentity==self.real_owner) //if in "follow me!" state...
 	{			
 		local float dist2;
-	
+
 		dist2 = vlen(self.origin - self.real_owner.origin);
-	
-		if (dist2<64)
+
+		// Gizmo - prevent grunties from cornering you in tight places
+		if ( dist2 < 40 )
+			dist = dist * -1;
+		else if (dist2 < 64)
 		{
-			stand_frames();
+			// Gizmo - only do stand frames if not in an attack
+			if ( self.attack_finished < time )
+				stand_frames();
 			self.has_cheated = time + 0.5;
 			walkmove(angle, 0);
-			return;
+			return #TRUE;
 		}
 	}///////////////////////////////*/
 	#endif
@@ -1122,12 +1627,32 @@ void (float angle, float dist) botmovedist =
 	/*if (pointcontents(self.origin) == #CONTENT_EMPTY) // We're in open air
 	{*/
 
-		success = walkmove(angle, dist);
-		
+		if ( self.motd > time && self.is_toffingadet == 2 ) {
+			success = #TRUE;
+			movetogoal( dist );
+
+			// Gizmo - check if we should still be navigating
+			if ( GruntyAutoObstacle( self ) == 2 ) {
+				// Gizmo - check if our path to our goal entity is still blocked
+				local vector	lastOrigin;
+				local float		tempYaw;
+
+				lastOrigin = self.origin;
+				tempYaw = vectoyaw( self.goalentity.origin - self.origin );
+
+				if ( !walkmove( tempYaw, dist ) )
+					self.motd = time + 1;
+				else
+					setorigin( self, lastOrigin );
+			} else
+				self.motd = 0;
+		} else
+			success = walkmove(angle, dist);
+
 		if (success) // We walked sucessfully, woohoo
 		{
 			self.has_cheated = time + 0.5;
-			return;
+			return #TRUE;
 		}
 		else // We just ran into something...
 		{
@@ -1135,28 +1660,64 @@ void (float angle, float dist) botmovedist =
 			{
 				self.has_cheated = time + 0.5;
 				if (self.attack_finished < time) stand_frames();
-				return;
+
+				// Gizmo - let owner know he's blocked
+				if (!self.enemy && self.super_time < time) {
+					PrintFromSoldier(self, self.real_owner, "Hey! I'm trapped over here!\n", #PRINT_MEDIUM);
+					self.super_time = time + 10;
+				}
+				return #FALSE;
 			}
-			
+
+			// Gizmo - decide what we should do
+			if ( !self.is_toffingadet )
+				obstacleMode = 0;
+			else
+				obstacleMode = GruntyAutoObstacle( self );
+
+			// Gizmo - let him accelerate in the air, he always instantly goes to 30 though if lower than that
+			if ( !obstacleMode ) // Gizmo - only air forward if we've decided to jump
+			if ( !( self.flags & #FL_ONGROUND ) && self.velocity_z < 40 && self.velocity_z > -10 ) {
+				local float addspeed;
+
+				// v_forward is the desired direction
+				makevectors( self.angles );
+				addspeed = 30 - self.velocity * v_forward;
+				if ( addspeed > 0 )
+					self.velocity = self.velocity + addspeed * v_forward;
+			}
+
 			if (self.has_cheated > time)
-				return;
+				return #FALSE;
 			self.has_teleporter = 0; // abort dodging
 			makevectors(self.angles);
 			// First, we'll see if jumping would be suitable
-			if (self.flags & #FL_ONGROUND) // don't bother if we aren't on the ground
-			{
-				traceline(self.origin + '0 0 20', self.origin + '0 0 20' + v_forward * 10, #TL_ANY_SOLID, self);
-				if (trace_fraction == 1.0)
+			if ( !obstacleMode ) { // Gizmo - only jump if we've decided to
+				if (self.flags & #FL_ONGROUND) // don't bother if we aren't on the ground
 				{
-					self.velocity = self.velocity + v_forward * self.custom_speed * 20;
-					self.velocity_z = self.velocity_z + 270;
-					//sound (self, #CHAN_BODY, "player/plyrjmp8.wav", 1, #ATTN_NORM);
-					sound (self, #CHAN_VOICE, "player/plyrjmp8.wav", 1, #ATTN_NORM);
-					self.has_cheated = time + 0.5;
-					return;
+					traceline(self.origin + '0 0 20', self.origin + '0 0 20' + v_forward * 10, #TL_ANY_SOLID, self);
+					if (trace_fraction == 1.0)
+					{
+						self.velocity = self.velocity + v_forward * self.custom_speed * 20;
+						self.velocity_z = self.velocity_z + 270;
+						//sound (self, #CHAN_BODY, "player/plyrjmp8.wav", 1, #ATTN_NORM);
+						sound (self, #CHAN_VOICE, "player/plyrjmp8.wav", 1, #ATTN_NORM);
+						self.has_cheated = time + 0.5;
+						return #FALSE;
+					}
 				}
+			} else if ( obstacleMode == 2 ) {
+				movetogoal( dist );
+				// Gizmo - disallow ChangeYaw() while we're wondering around
+				self.motd = time + 1;
 			}
+
+			// Gizmo - if we're not on valid ground then fall
+			if ( !checkbottom( self ) )
+				self.flags = self.flags - ( self.flags & #FL_ONGROUND );
 		}
+
+		return #FALSE;
 	/*}
 	else
 	{
@@ -1165,59 +1726,6 @@ void (float angle, float dist) botmovedist =
 			CheckWaterJump();
 	}*/
 
-};
-
-void () Grunty_StateInv =
-{
-	local string talk;
-	
-	talk = ftos(self.health);
-	sprint(self.real_owner, #PRINT_HIGH, "Your σομδιες has ");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	talk = ftos(self.max_health);
-	sprint(self.real_owner, #PRINT_HIGH, "―");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " θεαμτθ");
-	if (self.weapons_carried & #WEAP_AXE)
-		if (self.cutf_items & #CUTF_KNIFE)
-			sprint(self.real_owner, #PRINT_HIGH, ", a combat knife");
-		else
-			sprint(self.real_owner, #PRINT_HIGH, ", an axe");
-	if (self.weapons_carried & #WEAP_SHOTGUN)
-		sprint(self.real_owner, #PRINT_HIGH, ", a shotgun");
-	if (self.weapons_carried & #WEAP_NAILGUN)
-		sprint(self.real_owner, #PRINT_HIGH, ", a nailgun");
-	if (self.weapons_carried & #WEAP_SUPER_SHOTGUN)
-		sprint(self.real_owner, #PRINT_HIGH, ", a double barreled shotgun");
-	if (self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
-		sprint(self.real_owner, #PRINT_HIGH, ", a rocket launcher");
-	if (self.tf_items & #NIT_SCANNER)
-		sprint(self.real_owner, #PRINT_HIGH, ", a scanner");
-	talk = ftos(self.custom_speed * 20);
-	sprint(self.real_owner, #PRINT_HIGH, ", moves at speed ");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	talk = ftos(self.money);
-	sprint(self.real_owner, #PRINT_HIGH, " with $");
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, "\n");
-
-	sprint(self.real_owner, #PRINT_HIGH, "αννο: ");
-
-	talk = ftos(self.ammo_shells);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " shells, ");
-
-		talk = ftos(self.ammo_nails);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " nails and ");
-
-	/*	  talk = ftos(self.ammo_cells);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " cells\n");*/
-
-	talk = ftos(self.ammo_rockets);
-	sprint(self.real_owner, #PRINT_HIGH, talk);
-	sprint(self.real_owner, #PRINT_HIGH, " rockets\n");
 };
 
 /* ---------------------------------------------------------------------------------- */
@@ -1411,7 +1919,7 @@ void() ArmyDeathSound =
 
 // We'll include pain here
 
-void() grunty_pain1 = [$pain1, grunty_pain2] {PainSound();self.weaponframe=0;self.effects=0;};
+void() grunty_pain1 = [$pain1, grunty_pain2] {self.weaponframe=0;self.effects=0;};
 void() grunty_pain2 = [$pain2, grunty_pain3] {};
 void() grunty_pain3 = [$pain3, grunty_pain4] {};
 void() grunty_pain4 = [$pain4, grunty_pain5] {};
@@ -1419,10 +1927,9 @@ void() grunty_pain5 = [$pain5, grunty_pain6] {};
 void() grunty_pain6 = [$pain6, grunty_run] 
 {
 	self.walkframe = 0;
-	self.pain_finished = time + random()*1.5*(self.has_sensor/17);	
 };
 
-void() grunty_axepain1 =	[	$axpain1,	grunty_axepain2 ] {PainSound();self.weaponframe=0;self.effects=0;};
+void() grunty_axepain1 =	[	$axpain1,	grunty_axepain2 ] {self.weaponframe=0;self.effects=0;};
 void() grunty_axepain2 =	[	$axpain2,	grunty_axepain3 ] {};
 void() grunty_axepain3 =	[	$axpain3,	grunty_axepain4 ] {};
 void() grunty_axepain4 =	[	$axpain4,	grunty_axepain5 ] {};
@@ -1430,7 +1937,6 @@ void() grunty_axepain5 =	[	$axpain5,	grunty_axepain6 ] {};
 void() grunty_axepain6 =	[	$axpain6,	grunty_run		] 
 {
 	self.walkframe = 0; 									// - 1)/16);
-	self.pain_finished = time + random()*1.5*(self.has_sensor/17);	  
 };
 
 void(entity attacker, float damage) grunty_pain =
@@ -1442,12 +1948,28 @@ void(entity attacker, float damage) grunty_pain =
 //	  RPrint(self.real_owner, #PRINT_HIGH, "Grunty PAIN!\n");
 #endif
 
+	// Gizmo - if on seek mode and we don't have a target, then try to seek out whatever just hurt us
+	if ( self.#grunty_tacticMode == #GRUNTY_TACTICMODE_SEEK )
+	if ( self.enemy == world )
+	if ( IsValidGruntyTarget( attacker, self ) )
+		self.enemy = self.goalentity = attacker;
+
 	if (self.pain_finished > time)
 		return;
+
+	// Gizmo - always play pain sound if time; this used to be in pain1 and axpain1 frames
+	PainSound();
+	// Gizmo - this used to be at the end of each pain animation
+	self.pain_finished = time + random()*1.5*(self.has_sensor/17) + #GRUNTY_PAINTIME;
 	
 	//if (random()*40 > damage) // random()*40+40*((self.has_sensor-1)/16)
-	if (random()*50 + 60*((self.has_sensor - 1)/16) > damage)
-		return; 
+	// Gizmo - don't need this anymore
+//	if (random()*50 + 60*((self.has_sensor - 1)/16) > damage)
+//		return; 
+
+	// Gizmo - don't do pain frames if we're in mid battle or following something/someone
+	if ( self.enemy != world || self.goalentity != world )
+		return;
 
 	if (isMelee())
 		grunty_axepain1();
@@ -1480,11 +2002,15 @@ void() Waypoint_Touch =
 		return;
 
 	if (self.has_sensor == #WAYPOINT_TYPE_ENEMYLASTSEEN)
-	{		 
+	{
+		// Gizmo - if they're still not visible when we reach the waypoint, then forget about them
+		// Gizmo - no need to remove the waypoint or set grunty's demon_one to world, because that will be done by the grunty
+		other.search_time = 0;
+/*
 		if (self.real_owner.demon_one == self)
-		   self.real_owner.demon_one = world;	
-	   
+		   self.real_owner.demon_one = world;
 		dremove(self);
+*/
 		return;
 	}
 
@@ -1495,7 +2021,6 @@ void() Waypoint_Touch =
 
 	self.all_active = time + self.has_holo; // reset entity life time
 	//has_holo is the asigned life time in createwaypoint 
-
 
 	other.goalentity = self.goalentity; // Set grunty's movement target
 };
@@ -1517,26 +2042,34 @@ void() Waypoint_DoNothing = // A waypoint checks for redundancy
 
 	if (self.all_active < time) // if it wasnt touched for specified life-time remove it
 	{
-	   // FIXME: Do .goalentity clean up on other waypoints (using removewaypoint() instead?)
+		// Gizmo - make sure we don't remove the waypoint if the grunty only has one and is standing on it
+		if ( self.real_owner.#grunty_mode == #GRUNTY_MODE_USEWAYPOINTS )
+		if ( vlen( self.origin - self.real_owner.origin ) <= 96 ) {
+			self.all_active = time + self.has_holo;	// reset entity life time
+										// has_holo is the asigned life time in createwaypoint
+			return;
+		}
+		
+		// FIXME: Do .goalentity clean up on other waypoints (using removewaypoint() instead?)
 
-	   if (self.has_sensor == #WAYPOINT_TYPE_PRIMARY
-		&& self.real_owner.martyr_enemy == self)
-	   {
-		   self.real_owner.martyr_enemy = world;
-		   PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my primary waypoint sir!\n",#PRINT_HIGH);
-	   }
-	   else if (self.has_sensor == #WAYPOINT_TYPE_SECONDARY
-		&& self.real_owner.demon_two == self)
-	   {
-		   self.real_owner.demon_two = world;
-		   PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my secondary waypoint sir!\n",#PRINT_HIGH);
-	   }
-	   else if (self.has_sensor == #WAYPOINT_TYPE_ENEMYLASTSEEN
-		&& self.real_owner.demon_one == self)
-		   self.real_owner.demon_one = world;
+		if (self.has_sensor == #WAYPOINT_TYPE_PRIMARY
+			&& self.real_owner.martyr_enemy == self)
+		{
+			self.real_owner.martyr_enemy = world;
+			PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my primary waypoint sir!\n",#PRINT_HIGH);
+		}
+		else if (self.has_sensor == #WAYPOINT_TYPE_SECONDARY
+			&& self.real_owner.demon_two == self)
+		{
+			self.real_owner.demon_two = world;
+			PrintFromSoldier(self.real_owner,self.owner,"Hmmm.. I've forgotten my secondary waypoint sir!\n",#PRINT_HIGH);
+		}
+		else if (self.has_sensor == #WAYPOINT_TYPE_ENEMYLASTSEEN
+			&& self.real_owner.demon_one == self)
+			self.real_owner.demon_one = world;
 	   
-	   dremove(self);
-	   return;
+		dremove(self);
+		return;
 	}
 };
 
@@ -1723,7 +2256,7 @@ void () GruntyPayThink =
 		self.respawn_time = time + 20;
 	}
 	// Grunty is on a SHOPPING SPREE!
-	if (!self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+	if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER))
 		spendalloc = self.money * 0.2; // amount to spend on health/speed upgrades
 	else
 		spendalloc = self.money;
@@ -1751,7 +2284,9 @@ void () GruntyPayThink =
 	if (self.health < self.max_health && self.money >= #GRUNTY_COST_HEALTHPACK)
 	{
 		local float loops, bought;
-		bought=0;
+
+		loops = 0;
+		bought = 0;
 
 		while (loops < (0.75+(self.has_sensor/4)) && self.money >= #GRUNTY_COST_HEALTHPACK && self.max_health > self.health)
 		{
@@ -1803,7 +2338,7 @@ void () GruntyPayThink =
 	}
 	
 	// Consider buying a shotgun
-	if (!self.weapons_carried & #WEAP_SHOTGUN)
+	if (!(self.weapons_carried & #WEAP_SHOTGUN))
 		if (self.money >= #GRUNTY_COST_SHOTGUN)
 		{
 			r = random();
@@ -1816,7 +2351,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a knife
-	if (!self.cutf_items & #CUTF_KNIFE)
+	if (!(self.cutf_items & #CUTF_KNIFE))
 		if (self.money >= #GRUNTY_COST_KNIFE)
 		{
 			r = random();
@@ -1829,7 +2364,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a nailgun
-	if (!self.weapons_carried & #WEAP_NAILGUN)
+	if (!(self.weapons_carried & #WEAP_NAILGUN))
 		if (self.money >= #GRUNTY_COST_NAILGUN)
 		{
 			r = random();
@@ -1842,7 +2377,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a double barrel
-	if (!self.weapons_carried & #WEAP_SUPER_SHOTGUN)
+	if (!(self.weapons_carried & #WEAP_SUPER_SHOTGUN))
 		if (self.money >= #GRUNTY_COST_SUPER_SHOTGUN)
 		{
 			r = random();
@@ -1856,7 +2391,7 @@ void () GruntyPayThink =
 			}
 		}
 	// Consider buying a scanner
-	if (!self.tf_items & #NIT_SCANNER)
+	if (!(self.tf_items & #NIT_SCANNER))
 		if (self.money >= #GRUNTY_COST_SCANNER)
 		{
 			r = random();
@@ -1869,7 +2404,7 @@ void () GruntyPayThink =
 			}	
 		}
 	// Consider buying...a rocket launcher.
-	if (!self.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+	if (!(self.weapons_carried & #WEAP_ROCKET_LAUNCHER))
 		if (self.money >= #GRUNTY_COST_ROCKET_LAUNCHER)
 		{
 			r = random();
@@ -1981,8 +2516,9 @@ void() grunty_touch =
 {
 	if (self.health <= 0) // If we r dead, go away
 		return;
-	
+
 	local entity Bio;
+	local string tmps;
 
 	if (self.tfstate & #TFSTATE_INFECTED)
 	{
@@ -2000,11 +2536,10 @@ void() grunty_touch =
 				Bio.owner = other; //Person getting hurt
 				Bio.classname = "timer";
 				Bio.netname = "biotimer";
-				
+
 				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
 				other.infection_team_no = self.infection_team_no;
-				
-				local string tmps;
+
 				tmps = GetMonsterName(self);
 
 				sprint(other, #PRINT_MEDIUM, "You have been infected by the ");
@@ -2018,12 +2553,11 @@ void() grunty_touch =
 				teamsprint(other.team_no,other, " has been infected!\n");
 			}			 
 		}
-		else if (IsMonster(other))
+		else if (IsOwnedMonster(other))
 		{
 			if (!(other.tfstate & #TFSTATE_INFECTED))
 			{
 				// Report to owner
-				local string tmps;
 				tmps = GetMonsterName(other);
 				sprint(other.real_owner,#PRINT_HIGH,"Your ",tmps," ",other.netname," has been infected!\n");
 
@@ -2049,6 +2583,26 @@ void() grunty_touch =
 			}
 		}
 
+#ifdef COOP_MODE_ENHANCED
+		else if ( COOP_IsCoopMonster( other ) ) {
+			if ( !( other.tfstate & #TFSTATE_INFECTED ) ) {
+				// Update infection flag
+				other.tfstate = other.tfstate | #TFSTATE_INFECTED;
+
+				// Infect it!
+				Bio = spawn ();
+				Bio.classname = "timer";
+				Bio.classname = "biotimer";
+				Bio.nextthink = time + 2;
+				Bio.think = BioInfection_MonsterDecay;
+				Bio.owner = self;
+				Bio.enemy = other;
+
+				other.infection_team_no = self.infection_team_no;
+			}
+		}
+#endif
+
 		return; // Dont display funny messages if we r going to infect half of our own team =)
 	}
 	
@@ -2063,7 +2617,6 @@ void() grunty_touch =
 
 			self.has_holo=time+5;
 		}
-		// Neo mode modication
 		else if (Teammate(self.real_owner, other))
 		{
 			local float rnum;
@@ -2206,4 +2759,204 @@ void(entity sld) grunty_boundammo =
 	if (sld.ammo_cells > sld.maxammo_cells) sld.ammo_cells = sld.maxammo_cells;
 	if (sld.ammo_shells > sld.maxammo_shells) sld.ammo_shells = sld.maxammo_shells;
 	if (sld.ammo_rockets > sld.maxammo_rockets) sld.ammo_rockets = sld.maxammo_rockets;
+};
+
+//=====================================================================
+
+/*
+==============
+Grunty_GetTacticModeString
+==============
+*/
+string( entity g ) Grunty_GetTacticModeString = {
+	if ( g.#grunty_tacticMode == #GRUNTY_TACTICMODE_NORMAL )
+		return "normal";
+	if ( g.#grunty_tacticMode == #GRUNTY_TACTICMODE_SEEK )
+		return "seek";
+	return "static";
+};
+
+/*
+==============
+Grunty_GetEngageEnemyString
+==============
+*/
+string( entity g ) Grunty_GetEngageEnemyString = {
+	if ( g.#grunty_engageEnemy == #GRUNTY_ENGAGEENEMY_NO )
+		return "no";
+	return "yes";
+};
+
+/*
+==============
+Grunty_GetOnObstacleString
+==============
+*/
+string( entity g ) Grunty_GetOnObstacleString = {
+	if ( g.#grunty_onObstacle == #GRUNTY_ONOBSTACLE_JUMP )
+		return "jump";
+	if ( g.#grunty_onObstacle == #GRUNTY_ONOBSTACLE_STOP )
+		return "stop";
+	return "auto";
+};
+
+/*
+==============
+Grunty_GetAttackRangeString
+
+Returns an empty string if attack range doesn't apply with
+the current tactic mode.
+==============
+*/
+string( entity g ) Grunty_GetAttackRangeString = {
+	if ( g.#grunty_tacticMode == #GRUNTY_TACTICMODE_STATIC )
+		return "";
+
+	if ( g.#grunty_attackRange == #GRUNTY_ATTACKRANGE_ANY )
+		return "any";
+	if ( g.#grunty_attackRange == #GRUNTY_ATTACKRANGE_SMALL )
+		return "small";
+	if ( g.#grunty_attackRange == #GRUNTY_ATTACKRANGE_MEDIUM )
+		return "medium";
+	return "large";
+};
+
+/*
+==============
+Grunty_GetActionString
+
+printDest can be world.
+==============
+*/
+string( entity printDest, entity g ) Grunty_GetActionString = {
+	if ( g.#grunty_mode == #GRUNTY_MODE_HOLDPOSITION )
+		return "holding position";
+	if ( g.#grunty_mode == #GRUNTY_MODE_FOLLOWOWNER ) {
+		if ( printDest == g.real_owner )
+			return "following you";
+		return "following it's owner";
+	}
+	return "following waypoints";
+};
+
+/*
+==============
+Grunty_PrintDetails
+
+Gizmo - This used to be Grunty_StateInv(), I changed
+it up some because I needed a more generic version of it.
+==============
+*/
+void( entity printDest, entity g, float printLevel ) Grunty_PrintDetails = {
+	local string	talk;
+	
+	talk = ftos(g.health);
+	if ( printDest == g.real_owner )
+		sprint(printDest, #PRINT_HIGH, "Your σομδιες ", g.netname, " has ");
+	else
+		sprint(printDest, #PRINT_HIGH, "The σομδιες ", g.netname, " has ");
+	sprint(printDest, #PRINT_HIGH, talk);
+	talk = ftos(g.max_health);
+	sprint(printDest, #PRINT_HIGH, "―");
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " θεαμτθ");
+
+	// if we don't care about the inventory
+	if ( !printLevel ) {
+		if ( g.enemy != world ) {
+			talk = GetEnemyName( g.enemy );
+			sprint( printDest, #PRINT_HIGH, ", and is ατταγλιξη ", talk, "\n" );
+		} else {
+			talk = Grunty_GetActionString( printDest, g );
+			sprint( printDest, #PRINT_HIGH, ", and is ", talk, "\n" );
+		}
+		return;
+	}
+
+	if (g.weapons_carried & #WEAP_AXE)
+		if (g.cutf_items & #CUTF_KNIFE)
+			sprint(printDest, #PRINT_HIGH, ", a combat knife");
+		else
+			sprint(printDest, #PRINT_HIGH, ", an axe");
+	if (g.weapons_carried & #WEAP_SHOTGUN)
+		sprint(printDest, #PRINT_HIGH, ", a shotgun");
+	if (g.weapons_carried & #WEAP_NAILGUN)
+		sprint(printDest, #PRINT_HIGH, ", a nailgun");
+	if (g.weapons_carried & #WEAP_SUPER_SHOTGUN)
+		sprint(printDest, #PRINT_HIGH, ", a double barreled shotgun");
+	if (g.weapons_carried & #WEAP_ROCKET_LAUNCHER)
+		sprint(printDest, #PRINT_HIGH, ", a rocket launcher");
+	if (g.tf_items & #NIT_SCANNER)
+		sprint(printDest, #PRINT_HIGH, ", a scanner");
+	talk = ftos(g.custom_speed * 20);
+	sprint(printDest, #PRINT_HIGH, ", moves at speed ");
+	sprint(printDest, #PRINT_HIGH, talk);
+	talk = ftos(g.money);
+	sprint(printDest, #PRINT_HIGH, " with $");
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, ", and is ");
+
+	if ( g.enemy != world ) {
+		talk = GetEnemyName( g.enemy );
+		sprint( printDest, #PRINT_HIGH, "ατταγλιξη ", talk, "\n" );
+	} else {
+		talk = Grunty_GetActionString( printDest, g );
+		sprint( printDest, #PRINT_HIGH, talk, "\n" );
+	}
+
+	sprint(printDest, #PRINT_HIGH, "αννο: ");
+
+	talk = ftos(g.ammo_shells);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " shells, ");
+
+		talk = ftos(g.ammo_nails);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " nails and ");
+
+	/*	  talk = ftos(g.ammo_cells);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " cells\n");*/
+
+	talk = ftos(g.ammo_rockets);
+	sprint(printDest, #PRINT_HIGH, talk);
+	sprint(printDest, #PRINT_HIGH, " rockets\n");
+
+	if ( printLevel != 2 )
+		return;
+
+	// tactical stuff now
+	talk = Grunty_GetTacticModeString( g );
+	sprint( printDest, #PRINT_HIGH, "Ταγτιγ νοδε:", talk );
+
+	talk = Grunty_GetEngageEnemyString( g );
+	sprint( printDest, #PRINT_HIGH, " Εξηαηε εξενω:", talk );
+
+	talk = Grunty_GetOnObstacleString( g );
+	sprint( printDest, #PRINT_HIGH, " Οξ οβσταγμε:", talk );
+
+	talk = Grunty_GetAttackRangeString( g );
+	if ( talk != "" )
+		sprint( printDest, #PRINT_HIGH, " Ατταγλ ςαξηε:", talk );
+	sprint( printDest, #PRINT_HIGH, "\n" );
+
+/*
+	// allowed weapons
+	sprint( printDest, #PRINT_HIGH, " Allowed weapons: " );
+	if ( !g.#allowed_weapons )
+		sprint( printDest, #PRINT_HIGH, " None\n" );
+	else {
+		if ( g.#allowed_weapons & #WEAP_AXE )
+			sprint( printDest, #PRINT_HIGH, " Axe" );
+		if ( g.#allowed_weapons & #WEAP_SHOTGUN )
+			sprint( printDest, #PRINT_HIGH, " Shotgun" );
+		if ( g.#allowed_weapons & #WEAP_SUPER_SHOTGUN )
+			sprint( printDest, #PRINT_HIGH, " Super Shotgun" );
+		if ( g.#allowed_weapons & #WEAP_NAILGUN )
+			sprint( printDest, #PRINT_HIGH, " Nailgun" );
+		if ( g.#allowed_weapons & #WEAP_ROCKET_LAUNCHER )
+			sprint( printDest, #PRINT_HIGH, " Rocket Launcher" );
+	}
+	sprint( printDest, #PRINT_HIGH, "\n" );
+*/
 };

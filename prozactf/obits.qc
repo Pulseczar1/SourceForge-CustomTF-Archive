@@ -3262,7 +3262,6 @@ void(entity targ, entity attacker) ClientObituary =
 		else if (attacker.classname == "monster_demon1")
 		{
 			//custom_demon_name(attacker);
-			// Neo mode modication
 			if (Teammate(targ.real_owner, attacker.real_owner))
 			{
 				Give_Frags_Out(attacker, targ, -1, 0, 1, 1, 0);
@@ -3915,7 +3914,6 @@ void(entity targ, entity attacker) ClientObituary =
 			bprint (#PRINT_MEDIUM, attacker.netname);
 			bprint (#PRINT_MEDIUM, "\n");
 
-			// Neo mode modication
 			if (!Teammate(targ.real_owner, attacker))
 			{
 				if (targ.classname == "building_sentrygun" ||

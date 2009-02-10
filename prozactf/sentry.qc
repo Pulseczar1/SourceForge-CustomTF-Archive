@@ -382,7 +382,6 @@ float() Sentry_FindTarget =
 		{
 			gotone = #TRUE;
 
-			// Neo mode modication
 			if (Teammate(self.real_owner, te.real_owner))
 				gotone = #FALSE;
 			else if (!IsMonster(te))
@@ -449,7 +448,6 @@ float() Sentry_FindTarget =
 			
 			#ifndef HOLO_TEST
 
-			// Neo mode modication
 			if (Teammate(self.real_owner, te.real_owner))
 				gotone = #FALSE;
 			else 
@@ -942,7 +940,6 @@ void() Sentry_Touch =
 
 		if (other.job & #JOB_TKD) { //4/27/7 TKD people are so tough they can defeat point defense systems
 			//If it is an enemy building, we destroy it with a mighty karate chop!!
-			// Neo mode modication
 			if (!Teammate(self.real_owner, other) && other.last_boot_to_the_head < time)
 			{
 				sprint(other,#PRINT_HIGH,"You deliver a mighty karate chop to the sentry gun!\n");
@@ -954,7 +951,6 @@ void() Sentry_Touch =
 			return;
 		}
 		//TF_T_Damage (other, self, self.real_owner, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
-		// Neo mode modication
 		if (!Teammate(other, self.real_owner) && (other.is_undercover != 1)) // <== FIXME
 			TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 		return;
@@ -989,7 +985,6 @@ void() Sentry_Touch =
 		{
 			deathmsg = #DMSG_BUG_ZAPPER;
 			//TF_T_Damage (other, self, self.real_owner, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
-			// Neo mode modication
 			if (!Teammate(other.real_owner, self.real_owner))
 				TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 			Sentry_Die();

@@ -595,6 +595,13 @@ void() StartFrame =
 	// Attackers Go Red mode -PZ
 	if (agr) AGR_think();
 
+	// Neo Mode
+	if (neo) 
+	{
+		Neo_calcNeoFactors();
+		Neo_errorCheck();
+	}
+
 	framecount = framecount + 1;
 };
 

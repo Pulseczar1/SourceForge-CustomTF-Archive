@@ -296,7 +296,6 @@ void() ChaplanInspire = {
 		//- OfN - if (head.classname == "monster_demon1" || head.classname == "monster_shambler")
 		if (IsMonsterNonArmy(head))
 		{ //No short circuit evaluation, so...
-			  // Neo mode modication
 			  if (!Teammate(head.real_owner, self))
 			  { //...to avoid a crash from deref
 				/*
@@ -316,7 +315,6 @@ void() ChaplanInspire = {
 		}
 		else if (head.classname == "player" &&	//Person who is...
 			   head.health > 0 && // OfN Alive
-			   // Neo mode modication
 			   Teammate(head, self) && //Same Team
 			   head != self &&			//Not me
 			   !(head.is_undercover)  &&		//Not a spy
@@ -348,7 +346,6 @@ void() ChaplanInspire = {
 
 
 //Draws lightning bolts towards all the friendlies we're inspiring
-//entity(entity start, .string fld, string match) find = #18;
 void() ChaplanGuides = {
 	local entity head;
 	head = find(world,classname,"player");
@@ -1041,7 +1038,6 @@ void() HaulingTimer =
 				if (IsBuilding(self.oldenemy)) //Blow up only friendly buildings we're carrying
 				{
 					//bprint(#PRINT_HIGH,"Blow the build!\n");
-					// Neo mode modication
 					if (self.oldenemy.health > 0 && self.oldenemy.takedamage && Teammate(self.oldenemy.real_owner, self.owner))
 							TF_T_Damage(self.oldenemy, self.oldenemy, self.oldenemy, self.oldenemy.health + 20, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 				}
@@ -1147,7 +1143,6 @@ void() JobPsion =
 		dist = vlen(self.origin-head.origin);
 		traceline (self.origin, head.origin, #TL_BSP_ONLY, self);
 		if (trace_fraction == 1.0) { //Need full line of sight to target
-			// Neo mode modication
 			if (head.classname != "player" || (!Teammate(self, head) && head.takedamage && head.health > 0 && head.playerclass != #PC_UNDEFINED))
 			{
 				makevectors(self.v_angle);
@@ -1215,7 +1210,6 @@ void() JobPsion =
 						haul_target = head;
 						local float allowed;
 						allowed = 0;
-						// Neo mode modication
 						if (!Teammate(head.real_owner, self)) allowed = 1; //Moving enemy builds ok
 						if (infokey(head.real_owner,"psi") == "on") allowed = 1; //Moving allowed builds ok
 						if (self == head.real_owner) allowed = 1; //We can always move our own builds

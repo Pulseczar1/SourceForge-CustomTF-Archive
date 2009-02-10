@@ -1999,7 +1999,6 @@ void(float inp) Menu_EngineerFix_Dispenser_Input =
 		self.ammo_cells = self.ammo_cells + (#BUILD_COST_DISPENSER / 2);
 ///////////////////////////
 #ifdef QUAKE_WORLD
-		// Neo mode modication
 		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "dispenser");
 		}
@@ -2215,7 +2214,6 @@ void(float inp) Menu_EngineerFix_SentryGun_Input =
 		self.ammo_cells = self.ammo_cells + (#BUILD_COST_SENTRYGUN / 2) + (self.building.weapon * 25);
 
 #ifdef QUAKE_WORLD
-		// Neo mode modication
 		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "sentry gun");
 		}
@@ -2363,7 +2361,6 @@ void(float inp) Menu_EngineerFix_Sensor_Input =
 		self.building.real_owner.has_sensor = #FALSE;
 
 #ifdef QUAKE_WORLD
-		// Neo mode modication
 		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "motion sensor");
 		}
@@ -2423,7 +2420,6 @@ void(float inp) Menu_EngineerFix_Camera_Input =
 		self.building.real_owner.has_camera = #FALSE;
 
 #ifdef QUAKE_WORLD
-		// Neo mode modication
 		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "security camera");
 		}
@@ -2501,7 +2497,6 @@ void(float inp) Menu_EngineerFix_Teleporter_Input =
 		self.building.real_owner.has_teleporter = (self.building.real_owner.has_teleporter - 1);
 
 #ifdef QUAKE_WORLD
-		// Neo mode modication
 		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "teleporter");
 		}
@@ -2612,7 +2607,6 @@ void(float inp) Menu_EngineerFix_FieldGen_Input =
 		self.building.real_owner.has_fieldgen = (self.building.real_owner.has_fieldgen - 1);
 
 #ifdef QUAKE_WORLD
-		// Neo mode modication
 		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "field generator");
 		}
@@ -2862,7 +2856,6 @@ void() Menu_EngineerDismantle_Tesla =
 	self.building.real_owner.has_tesla = self.building.real_owner.has_tesla - (self.building.real_owner.has_tesla & self.building.dont_do_triggerwork);
 
 #ifdef QUAKE_WORLD
-		// Neo mode modication
 		if (Teammate(self.building.real_owner, self) && teamplay != 0 && self.building.real_owner != self) { //Boot em if they dismantle too many
 			Add_Building_Teamkill (self, "tesla");
 		}

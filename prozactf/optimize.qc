@@ -68,6 +68,91 @@ float () NormalTF =
 	return #TRUE;
 };
 
+//==============================================================
+// Gizmo - used to check if an entity is in anyway partially or completely inside anything solid
+
+entity	solidTestEntity;
+
+/*
+===============
+RemoveTestEntity
+
+Gizmo -
+This is just used to remove the test entity after
+half a second, to avoid create and removing a bunch
+of entities and causing the server's sv.num_edicts to
+increase a great deal.
+===============
+*/
+void() RemoveTestEntity = {
+	solidTestEntity = world;
+	remove( self );
+};
+
+/*
+===============
+InSolid
+
+Gizmo -
+Checks if the entity is inside the world or another entity.
+===============
+*/
+float( entity ent ) InSolid = {
+	local entity	oself;
+	local vector	oldownerorg, oldorg, neworg;
+	local float		ret;
+
+	// 2/28/08: since we can't use ent.owner as the owner for solidTestEntity.owner, link ent.owner out of the way
+	if ( ent.owner != world ) {
+		oldownerorg = ent.owner.origin;
+		ent.owner.origin_z = ent.owner.origin_z + ent.owner.maxs_z * 2;
+		setorigin( ent.owner, ent.owner.origin + '0 0 200' );
+	}
+
+	// don't spam a bunch of entity spawn() and remove() calls if this is called often
+	if ( !solidTestEntity ) {
+		solidTestEntity = spawn();
+		solidTestEntity.think = RemoveTestEntity;
+	}
+
+	solidTestEntity.nextthink = time + 0.6;
+
+	solidTestEntity.owner = ent;
+	solidTestEntity.solid = #SOLID_SLIDEBOX;
+	solidTestEntity.movetype = #MOVETYPE_STEP;
+	//solidTestEntity.flags = #FL_FLY;
+	solidTestEntity.flags = #FL_ONGROUND | #FL_PARTIALGROUND;
+	setsize (solidTestEntity, ent.mins, ent.maxs);
+	setorigin (solidTestEntity, ent.origin);
+
+// check if we're inside something
+	oself = self;
+	self = solidTestEntity;
+
+	oldorg = solidTestEntity.origin;
+	ret = walkmove (0, 0);
+	neworg = solidTestEntity.origin;
+	setorigin (solidTestEntity, oldorg);
+
+	if (oldorg != neworg && !droptofloor())
+		ret = #FALSE;
+
+	self = oself;
+
+	// set origin back to normal if needed
+	if ( ent.owner != world )
+		setorigin( ent.owner, oldownerorg );
+
+	// make sure the test entity can't interact with anything now
+	solidTestEntity.solid = #SOLID_NOT;
+	solidTestEntity.movetype = #MOVETYPE_NONE;
+	solidTestEntity.owner = world;
+
+	return !ret;
+};
+
+//==============================================================
+
 //checks client passed into and returns true if valid used for sents etc
 //entity looking at, entity thats looking, (0-1) checks visible, (0-range) checks range, (0-1) do special tesla checks, (0-1) should check for ceasefire
 float(entity targ, entity checker, float chkvis, float chkrng, float istesla, float chkcease) Pharse_Client =
@@ -91,7 +176,6 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 			return #FALSE;
 
 		if (teamplay) {
-				// Neo mode modication
 			if (Teammate(targ, checker)) {
 				if (istesla) {
 					if (!(checker.tf_items & #NIT_SECURITY_CAMERA)) //CH Cyto's idea

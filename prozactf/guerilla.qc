@@ -522,7 +522,6 @@ void() GuerillaExplode =
 					if (CanDamage (te, self))
 					if (te.health > 0)
 					if (te.playerclass != #PC_UNDEFINED)
-					// Neo mode modication
 					if (!Teammate(te, self.owner) || te == self.owner)
 					if (!(te.invincible_finished > time))
 					if (te.is_connected)
@@ -857,7 +856,6 @@ void() GuerillaTouch =
 	#ifdef MINES_IGNORE_TEAMMATETOUCH
 	if (other != self.owner)
 	if (other.classname == "player" || IsMonster(other))
-	// Neo mode modication
 	if (Teammate(self.owner, other))
 	if (other.health > 0)
 		return;

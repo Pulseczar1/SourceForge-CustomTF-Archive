@@ -1065,6 +1065,9 @@ void() GotoNextMap =
 	{
 		if (#AGR_ROTATION_OFF) // PZ - AGR off on map triggered by rotation
 			localcmd("localinfo agr \"\"\n");
+	
+		// PZ - make sure Neo mode is off on map rotation
+		localcmd("localinfo neo \"\"\n");
 
 		sl = infokey(world, "n");
 		nextlevel = stof(sl);
@@ -1458,6 +1461,7 @@ void() ClientKill =
 		bprint(#PRINT_HIGH, "Kill someone to become Neo!\n");
 		bprint(#PRINT_HIGH, "\n");
 		BroadcastSound("boss1/sight1.wav");
+		Neo_centerPrint();
 	}
 	// end Neo
 
@@ -2997,7 +3001,7 @@ void() PlayerPreThink =
 			sprint(self,#PRINT_HIGH,foobar);
 			sprint(self,#PRINT_HIGH,"\n");
 		}
-*/		
+*/			
 /*
 		//Cap bunny hopping at +100 on slow legs or for people with the flag
 		if (self.maxspeed <= 280 || (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT))) {
@@ -3640,6 +3644,7 @@ void() ClientDisconnect =
 		bprint(#PRINT_HIGH, "Kill someone to become Neo!\n");
 		bprint(#PRINT_HIGH, "\n");
 		BroadcastSound("boss1/sight1.wav");
+		Neo_centerPrint();
 	}
 	// end Neo
 
