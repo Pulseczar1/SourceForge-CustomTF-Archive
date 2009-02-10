@@ -254,9 +254,10 @@ void() player_touch =
 				if (other.last_push < time) {
 					//Push each self away, and up.
 					//5-15-08 TKDist bounce better now
+					//WK 2-2-09 Reduce upkick by a bit
 					self.velocity_x = 1.2 * other.last_frame_velocity_x;
 					self.velocity_y = 1.2 * other.last_frame_velocity_y;
-					self.velocity_z = other.last_frame_velocity_z + 200;
+					self.velocity_z = other.last_frame_velocity_z + 150;
 					other.velocity_x = -1.2 * other.last_frame_velocity_x;
 					other.velocity_y = -1.2 * other.last_frame_velocity_y;
 					other.velocity_z = other.last_frame_velocity_z;
@@ -438,7 +439,6 @@ void() player_touch =
 
 	if (other.classname == "player")
 	{
-		// Neo mode modication
 		if (Teammate(self, other))
 		{
 			v1 = vlen(other.velocity);
@@ -1334,6 +1334,10 @@ void() PlayerCorpse =
 	#endif
 };
 
+// PZ: If you use this function for anything other than gibs,
+// please take into account how it will work in Neo mode.
+// I don't want rocket jumps and such being changed, just
+// gib velocities. Thanks.
 vector(float dm) VelocityForDamage =
 {
 	local vector v;
@@ -1342,8 +1346,7 @@ vector(float dm) VelocityForDamage =
 	v_y = 100 * crandom();
 	v_z = 150 + 100 * random();//v_z = 200 + 100 * random(); // <-- ORiginal code
 	
-	// TODO: Make the calculation acceptable and more realistic/accurate
-	if (!neo) // Neo mode
+	if (!neo) // for Neo mode
 	{
 		if (dm > -50)
 		{
@@ -1428,7 +1431,6 @@ void() gib_touch =
 	//WK 6/27/7 We allow both cannibal and warlock on same gibs
 	if (other.classname == "player")
 	#ifndef WARLOCK_TEST
-		// Neo mode modication
 		if (!Teammate(other, self)) // Only enemy gibs can be picked up
 	#endif
 	if (other.job & #JOB_WARLOCK)
@@ -1552,7 +1554,6 @@ void() head_touch =
 
 		if (other.job & #JOB_WARLOCK) // Warlock collects this head
 		#ifndef WARLOCK_TEST
-		// Neo mode modication
 		if (!Teammate(other, self)) // Only enemy heads can be picked up
 		#endif	  
 		{

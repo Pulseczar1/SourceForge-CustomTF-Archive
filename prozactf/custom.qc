@@ -310,7 +310,7 @@ void() DropFromCustomClassGen =
 		self.maxammo_nails = 350;
 	  if (self.maxammo_shells > 300)
 		self.maxammo_shells = 300;
-	  if (self.maxammo_cells > #MAXAMMO_CELLS)
+	  if (self.maxammo_cells > #MAXAMMO_CELLS || self.weapons_carried & #WEAP_SPANNER) //WK 2-2-09 Aw, hell, just give engineers max cells already... =)
 		self.maxammo_cells = #MAXAMMO_CELLS;
 
 /* WK 1/7/7 We don't need all this complication
@@ -1436,6 +1436,17 @@ void(entity bastard,float threshold) createBastard =
 
 	if (bastard == world) return;
 
+	// Neo Mode
+	if (neo) if (neoLives == bastard)
+	{
+		Neo_removeNeo(bastard);
+		bprint(#PRINT_HIGH, "\n Îåï Íïäå \n");
+		bprint(#PRINT_HIGH, "Kill someone to become Neo!\n");
+		bprint(#PRINT_HIGH, "\n");
+		BroadcastSound("boss1/sight1.wav");
+		Neo_centerPrint();
+	}
+
 	if (bastard.penance_time > time) {
 		bastard.ff_count = bastard.ff_count - 1; //Dont count it
 		bastard.penance_time = time + 60; //Just reset the clock
@@ -1563,7 +1574,6 @@ void() Autoitem_think =
 				traceline (self.origin, head.origin, #TL_BSP_ONLY, self);
 				if (trace_fraction == 1.0) //Need full line of sight to target
 				{
-					// Neo mode modication
 					if ((head.job & #JOB_THIEF && head.job & (#JOB_FULL_HIDE | #JOB_ACTIVE)) && !Teammate(self, head))
 					{
 						//Zot the thief for 20 damage!!

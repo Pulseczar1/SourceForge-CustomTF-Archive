@@ -490,56 +490,11 @@ void() TeamFortress_EngineerBuild =
 };
 
 
+// Gizmo - make sure the size of the entity to be checked is set _before_ this is called
+// in normal TF they set the size afterwords
 float(entity obj, entity builder) CheckArea =
 {
-	local vector src, end;
-	local float pos;
-
-	// Check the origin
-	pos = pointcontents(obj.origin); 
-	if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) 
-		return #FALSE;
-
-	// Check the surrounding area
-	src_x = obj.origin_x + obj.maxs_x + 16;
-	src_y = obj.origin_y + obj.maxs_y + 16;
-	src_z = obj.origin_z + obj.maxs_z + 16;  // check upwards more
-
-	pos = pointcontents(src); 
-	if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) 
-		return #FALSE;
-
-	end_x = obj.origin_x + obj.mins_x - 16;
-	end_y = obj.origin_y + obj.mins_y - 16;
-	end_z = obj.origin_z + obj.mins_z - 16;
-	traceline (src, end, #TL_BSP_ONLY, obj);
-	if (trace_fraction != 1)
-		return #FALSE;
-
-	pos = pointcontents(end); 
-	if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) 
-		return #FALSE;
-
-	// extend the size a little
-	src_x = obj.origin_x + obj.mins_x - 16;
-	src_y = obj.origin_y + obj.maxs_y + 16;
-	src_z = obj.origin_z + obj.maxs_z + 16;
-
-	pos = pointcontents(src); 
-	if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) 
-		return #FALSE;
-
-	end_x = obj.origin_x + obj.maxs_x + 16;
-	end_y = obj.origin_y + obj.mins_y - 16;
-	end_z = obj.origin_z + obj.mins_z - 16; 	// check downwards less
-
-	traceline (src, end, #TL_BSP_ONLY, obj);
-
-	if (trace_fraction != 1)
-		return #FALSE;
-
-	pos = pointcontents(end); 
-	if (pos == #CONTENT_SOLID || pos == #CONTENT_SKY) 
+	if ( InSolid( obj ) )
 		return #FALSE;
 
 	// Trace a line from the player to the object too
@@ -547,8 +502,6 @@ float(entity obj, entity builder) CheckArea =
 
 	if (trace_fraction != 1)
 		return #FALSE;
-
-	// may add in more checks later
 
 	return #TRUE;
 };
@@ -792,6 +745,10 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	
 	// before we start building it, check it out
 	// check for validity of point
+	// Gizmo - moved these up here
+	setmodel (newmis, newmis.mdl);
+	setsize (newmis, tmp1, tmp2);
+	setorigin (newmis, newmis.origin);
 	if (CheckArea(newmis, self) == #FALSE)
 	{
 		sprint(self, #PRINT_HIGH, "Not enough room to build here\n");
@@ -832,13 +789,16 @@ void(float objtobuild, float devicenum) TeamFortress_Build =
 	newmis.movetype = #MOVETYPE_TOSS;	 
 
 	newmis.solid = #SOLID_BBOX;
-	setmodel (newmis, newmis.mdl);
-	setsize (newmis, tmp1, tmp2);
-	setorigin (newmis, newmis.origin);
 
 	if (objtobuild==#BUILD_TESLA)
 	{
-		if (neo) newmis.skin = 3; // for Neo mode
+		if (neo) // for Neo mode
+		{
+			if (neoLives != newmis.owner)
+				newmis.skin = 3;
+			else
+				newmis.skin = 1;
+		}
 		else
 		{
 			newmis.skin = self.team_no;
@@ -1032,7 +992,13 @@ void() TeamFortress_FinishedBuilding =
 		oldself.colormap = self.colormap;	// Set the Base Color
 		newmis.colormap = self.colormap;	// Set the Color
 
-		if (neo) newmis.skin = 3; // for Neo mode
+		if (neo) // for Neo mode
+		{	
+			if (neoLives != newmis.real_owner)
+				newmis.skin = 3;
+			else
+				newmis.skin = 0;
+		}
 		else newmis.skin = self.team_no - 1;
 
 		newmis.takedamage = #DAMAGE_AIM;
@@ -1601,7 +1567,6 @@ void(entity gun) Engineer_UseSentryGun =
 	//TODO: Add in pretty print of frag upgrades we have.
 
 	//WK 1/15/08 Auto-repair builds
-	// Neo mode modication
 	if (Teammate(self.building.real_owner, self)) {
 		healed = Engineer_RearmSentryGun();
 		healed = healed + Engineer_RepairSentryGun();
@@ -1618,7 +1583,6 @@ void(entity gun) Engineer_UseSentryGun =
 	self.menu_count = #MENU_REFRESH_RATE;
 
 	//dodgy
-	// Neo mode modication
 	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_SentryGun_Input(5);
 		return;
@@ -1730,7 +1694,6 @@ void(entity gun) Engineer_UseTesla =
 	sprint(self, #PRINT_HIGH, "\n");
 
 	//WK 1/15/08 Auto-repair builds
-	// Neo mode modication
 	if (Teammate(self.building.real_owner, self)) {
 		healed = Engineer_RepairTesla();
 
@@ -1746,7 +1709,6 @@ void(entity gun) Engineer_UseTesla =
 	self.menu_count = #MENU_REFRESH_RATE;
 
 	// dodgy
-	// Neo mode modication
 	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Tesla_Input(8);
 		return;
@@ -1789,7 +1751,6 @@ void(entity cam) Engineer_UseSensor =
 
 	self.building = cam;
 
-	// Neo mode modication
 	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Sensor_Input(3);
 		return;
@@ -1825,7 +1786,6 @@ void(entity cam) Engineer_UseCamera =
 
 	self.building = cam;
 
-	// Neo mode modication
 	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Camera_Input(3);
 		return;
@@ -1868,7 +1828,6 @@ void(entity tele) Engineer_UseTeleporter =
 
 	self.building = tele;
 
-	// Neo mode modication
 	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_Teleporter_Input(4);
 		return;

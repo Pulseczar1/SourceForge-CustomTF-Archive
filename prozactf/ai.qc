@@ -787,7 +787,6 @@ entity (entity scanner) LookAround =
 			
 			#else
 			
-			// Neo mode modication
 			if (client.classname == "player" && !Teammate(client, scanner.real_owner))
 			{
 				gotatarget = Pharse_Client(client, scanner, 1, 0, 0, 0);
@@ -811,32 +810,28 @@ entity (entity scanner) LookAround =
 
 			/*else if (client.classname == "monster_shambler")
 			{
-				// Neo mode modication
 				if (!Teammate(client.real_owner, scanner.real_owner))
 					gotatarget = 1;
 			}
 			else if (client.classname == "monster_wizard") //- OfN -
 			{
-				// Neo mode modication
 				if (!Teammate(client.real_owner, scanner.real_owner))
 					gotatarget = 1;
 			}
 			else if (client.classname == "monster_demon1")
 			{
-				// Neo mode modication
 				if (!Teammate(client.real_owner, scanner.real_owner))
 					gotatarget = 1;
 			}
 			else if (client.classname == "monster_army")
 			{
-				// Neo mode modication
 				if (!Teammate(client.real_owner, scanner.real_owner))
 					gotatarget = 1;
 			}*/
 
-			else if (IsMonster(client))
+			// Gizmo - stop monsters from getting a target, making their sound, and then deciding not to over and over again
+			else if (IsMonster(client) && client.health > 0)
 			{
-				// Neo mode modication
 				if (!Teammate(client.real_owner, scanner.real_owner))
 					gotatarget = 1;
 			}
@@ -846,11 +841,9 @@ entity (entity scanner) LookAround =
 			//--- GRUNTY STUFF ---
 			/*else if (client.classname == "grenade" && client.netname == "land_mine")
 			{
-				// Neo mode modication
 				if (!Teammate(client.owner, scanner.real_owner))
 					gotatarget = 1;
 			}
-			// Neo mode modication
 			else if (!Teammate(client, scanner.real_owner))
 			{ //  && client.classname != "building_sentrygun_base"
 				if (IsOffenseBuilding(client)) // for teslas isoffensiveb only returns true if not cloaked
@@ -1434,7 +1427,12 @@ void(float dist) ai_run =
 
 // check knowledge of enemy
 	
-	enemy_vis = visible(self.enemy);
+	// Gizmo - make sure nothing is in the way (like teammates)
+	traceline( self.origin + self.view_ofs, self.enemy.origin + self.enemy.view_ofs, #TL_ANY_SOLID, self );
+	if ( trace_ent == self.enemy )
+		enemy_vis = visible(self.enemy);
+	else
+		enemy_vis = #FALSE;
 	if (enemy_vis)
 		self.search_time = time + 3;
 
@@ -1516,7 +1514,6 @@ void(entity attacker) AI_CheckAttacker =
 	if (!IsMonster(attacker))
 		return;
 	
-	// Neo mode modication
 	if (Teammate(self.real_owner, attacker))
 		return;
 		   

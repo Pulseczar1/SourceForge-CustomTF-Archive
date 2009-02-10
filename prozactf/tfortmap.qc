@@ -2675,6 +2675,12 @@ void() tfgoal_touch =
 #endif
 		return;
 	}
+
+	// Neo mode: don't let Neo pick up resupply packs
+	// Let's hope this doesn't kill any neat map features..
+	// WK 2-2-09 Maybe it should just prevent gains from goals?
+	if (neo) if (other == neoLives)
+		return;
 	
 	// CTF Hack to make sure the key is in place.
 	// Temporary hack :)

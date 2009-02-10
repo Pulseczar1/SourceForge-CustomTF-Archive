@@ -210,7 +210,6 @@ void(float aur) AddAura =
 	}
 
 	#ifdef DONT_SET_AURA_TO_ENEMIES
-	// Neo mode modication
 	if (!Teammate(targ, self) && !UndercoverTeammate(targ, self)) // Teammates or spies allowed
 	{
 		sprint(self, #PRINT_HIGH, "You can't bestow auras onto enemies!\n");
@@ -343,7 +342,6 @@ void(float aur) AddAura =
 
 			sprint(targ, #PRINT_HIGH, self.netname, " bestows upon you an ", strung);
 
-			// Neo mode modication
 			if (!Teammate(self, targ))// && Teammate(self.team_no,targ.undercover_team)) // Spies
 			{
 				teamprefixsprintbi(targ.team_no,self,targ);
@@ -452,7 +450,6 @@ void() CrusaderAddInvisibility =
 		self.job_finished = time - amount;
 		targ.items = targ.items | #IT_INVISIBILITY;
 
-		// Neo mode modication
 		if (!Teammate(self, targ))// && Teammate(self.team_no,targ.undercover_team)) // Spies
 		{
 			teamprefixsprintbi(targ.team_no,self,targ);
@@ -503,7 +500,6 @@ void() CrusaderMassHeal =
 			if (!(te.done_custom & #CUSTOM_BUILDING)) // skip ppl customizing
 			if (te.playerclass != #PC_UNDEFINED) // skip observers
 			if (te.penance_time < time) // Don't let lame teamkillers take runes
-			// Neo mode modication
 			if (Teammate(te, self))
 				if (te.health < te.max_health)
 				{
@@ -518,7 +514,6 @@ void() CrusaderMassHeal =
 		}
 		else if (IsMonster(te))
 		{
-			// Neo mode modication
 			if (Teammate(te.real_owner, self))
 			{
 				te.health = te.health + 100;
@@ -565,14 +560,12 @@ void() CrusaderMassCure =
 	{
 		if (te.classname == "player")
 		{		
-			// Neo mode modication
 			if (Teammate(te, self))
 			if (te.has_disconnected == #FALSE)
 				CureAdverseEffects(self, te, te.origin);
 		}
 		else if (IsMonster(te))
 		{
-			// Neo mode modication
 			if (Teammate(te.real_owner, self))
 			if (te.health > 0)
 			if (te.tfstate & #TFSTATE_INFECTED)
@@ -616,7 +609,6 @@ void() CrusaderDispel =
 	te = findradius(self.origin, 1000);
 	while (te)
 	{
-		// Neo mode modication
 		if (!Teammate(self, te))
 			/*if (te.classname == "monster_demon1")
 				TF_T_Damage(te, self, self, 500, 0, #TF_TD_OTHER);

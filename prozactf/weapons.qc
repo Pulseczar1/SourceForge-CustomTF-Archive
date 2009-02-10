@@ -33,6 +33,7 @@ float() ReturnWeaponVelocity;
 vector() Grunty_LeadShot;
 void() superspike_touch;
 void() spike_touch;
+void(float type, float loops) MakeRocket;
 
 // TeamFortress Impulse Commands
 void() TeamFortress_ChangeClass;
@@ -535,7 +536,6 @@ void() W_FireSpanner =
 		{
 			if (trace_ent.classname == "player")
 			{
-				// Neo mode modication
 				if (Teammate(trace_ent, self) && (teamplay) || (coop))
 				{
 					healam = #WEAP_SPANNER_REPAIR;
@@ -641,7 +641,6 @@ void(float inAuto) W_FireMedikit =
 	{
 		if (trace_ent.classname == "player")
 		{
-			// Neo mode modication
 			if (Teammate(trace_ent, self) || coop)
 			{
 				healam = #WEAP_MEDIKIT_HEAL;
@@ -662,7 +661,6 @@ void(float inAuto) W_FireMedikit =
 					trace_ent.tfstate = trace_ent.tfstate - (trace_ent.tfstate & #TFSTATE_CONCUSSIONED); //WK 8/4/7 Flag fix
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
-					// Neo mode modication
 					if (!Teammate(self, te))
 					{
 						self.real_frags = self.real_frags + 1;
@@ -691,7 +689,6 @@ void(float inAuto) W_FireMedikit =
 						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your hallucinations\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						// Neo mode modication
 						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
@@ -726,7 +723,6 @@ void(float inAuto) W_FireMedikit =
 						sprint(trace_ent, #PRINT_HIGH, "you have been healed of your tranquilisation\n");
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						// Neo mode modication
 						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
@@ -759,7 +755,6 @@ void(float inAuto) W_FireMedikit =
 						stuffcmd(trace_ent, "v_cshift 0\n"); //WK -- /CH te -> trace_ent
 						stuffcmd(trace_ent, "r_norefresh 0;wait;echo;wait;echo;wait;echo;wait;echo\n"); //WK -- /CH te -> trace_ent
 
-						// Neo mode modication
 						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
@@ -796,7 +791,6 @@ void(float inAuto) W_FireMedikit =
 						sprint(self, #PRINT_HIGH, "You restore ", trace_ent.netname, "'s psionic normality\n");
 						
 						// Give the medic a frag for doing it, only if it was caused by an enemy
-						// Neo mode modication
 						if (!Teammate(self, te))
 						{
 							self.real_frags = self.real_frags + 1;
@@ -838,7 +832,6 @@ void(float inAuto) W_FireMedikit =
 
 						// Give the medic a frag for doing it, only if it was caused by an enemy
 						temp_e.team_no = trace_ent.infection_team_no; // for Neo mode (modified Teammate())
-						// Neo mode modication
 						if (!Teammate(temp_e, self))
 						{
 							self.real_frags = self.real_frags + 1;
@@ -957,7 +950,6 @@ void(float inAuto) W_FireMedikit =
 		}
 		else if (IsMonster(trace_ent))//- OfN - Monsters 
 		{
-			// Neo mode modication
 			if (Teammate(trace_ent.real_owner, self))
 			{
 				if (trace_ent.health < trace_ent.max_health)
@@ -1013,7 +1005,6 @@ void(float inAuto) W_FireMedikit =
 
 					// Give the medic a frag for doing it, only if it was caused by an enemy
 					temp_e.team_no = trace_ent.infection_team_no; // for Neo mode (modified Teammate())
-					// Neo mode modication
 					if (!Teammate(temp_e, self))
 					{
 						self.real_frags = self.real_frags + 1;
@@ -1593,69 +1584,25 @@ void(float shotcount, vector dir, vector spread, float dist) FireBullets =
 
 	//WK 6/1/7 Make our shells blow up in radius
 	//It is centered on direction from the last shot fired
-	if (self.cutf2_items & #CUTF2_EXPLOSIVE_SHOT && trace_fraction != 1.0) {
-		damage = damage * orig_shotcount; //Calculate the total damage done by this function
-		damage = damage * #CUTF2_EXPLOSIVE_SHOT_FACTOR; //Figure out how much we're going to explode for
-		if (self.current_weapon & #WEAP_ASSAULT_CANNON || self.current_weapon & #WEAP_LIGHT_ASSAULT)
-			damage = damage / 2; //Assault cannons explode for half effect
+	if (self.cutf2_items & #CUTF2_EXPLOSIVE_SHOT && time > self.last_explosive_shot) {
+		local float shots;
+		shots = 1; //Ammo cost
+		if (self.tf_items & #NIT_CLUSTER_ROCKETS)
+			shots = 3; //Main rocket + 2 cluster shots
+		if (self.ammo_rockets < shots) shots = self.ammo_rockets;
+		if (self.ammo_rockets < 1) self.ammo_rockets = 0;
+		if (shots <= 0) return;
 
-		st = ftos(damage);
-//		bprint(#PRINT_HIGH,"Damage: ");
-//		bprint(#PRINT_HIGH,st);
-//		bprint(#PRINT_HIGH,"\n");
-//		T_RadiusDamage(self, self, damage, world);
-//		T_RadiusFireDamage(trace_endpos, self, self, damage, 0.1); //Phosphorus Bullets do fire damage
+		//sound (self, #CHAN_WEAPON, "weapons/sgun1.wav", 1, #ATTN_NORM);
+		if (self.classname == "player")
+			KickPlayer(-2, self);
 
-		//Replaced the above with specific code, since the above doesn't do what we need.
-		local entity head;
-		head = findradius(trace_endpos, 100);
+		MakeRocket(#WEAP_SHOTGUN, shots);
 
-		while (head)
-		{
-			//WK Set off all land mines in blast radius
-			if (head.classname == "grenade" && head.netname == "land_mine")
-			{
-				head.think = GuerillaExplode;
-				head.nextthink = time + 0.1;
-			}
-			else if (head.takedamage)// && head.health > 0)
-			{
-				deathmsg = #DMSG_EXPLOSIVE_SHOT;
-				TF_T_Damage(head, self, self, damage, #TF_TD_NOKNOCK, #TF_TD_FIRE);
-				//TF_T_Damage(head, self, self, damage, 0, #TF_TD_FIRE);
-
-/* WK 8/4/7 We'll turn this off for now, since it seems to be causing the "falling to their death" obituary bug
-				// set 'em on fire
-				if (random() <= #CUTF2_EXPLOSIVE_SHOT_FIRE_CHANCE) //10% chance
-				{
-					other = head; 
-					Napalm_touch();
-					if (other.classname == "player")
-						stuffcmd(other, "bf\nbf\n");
-				}
-*/
-			}
-			head = head.chain;
-		}
-
-		// Push gibs and heads if enabled 
-		// (you may think this could be optimized by pushing the stuff in the loop above
-		// and its true, but doing the scan again lets the gibs/heads that just appeared to be
-		// pushed by its first explosion and thats cool) 
-		#ifdef COOL_GIBS	
-		CoolExplosion(self, damage,20);
-		#endif
-/* Turn off the beautiful spam. =(
-		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-//		WriteByte (#MSG_BROADCAST, #TE_TAREXPLOSION);
-		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
-		WriteCoord (#MSG_BROADCAST, trace_endpos_x);
-		WriteCoord (#MSG_BROADCAST, trace_endpos_y);
-		WriteCoord (#MSG_BROADCAST, trace_endpos_z);
-#ifdef QUAKE_WORLD
-		multicast (trace_endpos, #MULTICAST_PHS);
-#endif
-*/
+		if (self.tf_items & #NIT_CLUSTER_ROCKETS)
+			self.last_explosive_shot = time + 7; //Fire one per 7 secs
+		else
+			self.last_explosive_shot = time + 3; //Fire once per 3 secs
 	}
 };
 
@@ -2351,7 +2298,6 @@ void() Rocket_Track_Dot =
 							min_distance = -1; //Nothing can be closer than the flare
 						}
 					}
-					// Neo mode modication
 					else if ((head.takedamage && !Teammate(self.owner, head) && head.health > 0 && !head.is_undercover && !head.is_feigning))
 					{
 						/* Rules for heat seeking:
@@ -2468,8 +2414,9 @@ MakeRocket
 //All we need to handle is the code for depleting ammo outside this code.
 //Type is one of:
 //#WEAP_ROCKET_LAUNCHER 	Base Speed 900
-//#WEAP_DAEDALUS			Base Speed 500
+//#WEAP_DAEDALUS		Base Speed 500
 //#WEAP_INCENDIARY		Base Speed 650
+//#WEAP_SHOTGUN			Base Speed 1100, for #CUTF2_EXPLOSIVE_SHOTS...
 //Loops is the rocket count, anything over 1 is the number of bonus cluster shots to fire
 void(float type, float loops) MakeRocket =
 {
@@ -2500,6 +2447,7 @@ void(float type, float loops) MakeRocket =
 		//TODO: See if avelocity will work here
 		if (type == #WEAP_DAEDALUS) myspeed = 500;
 		else if (type == #WEAP_INCENDIARY) myspeed = 650;
+		else if (type == #WEAP_SHOTGUN) myspeed = 800;
 		else myspeed = 900; //Rockets
 
 		if (!loops)
@@ -2537,6 +2485,13 @@ void(float type, float loops) MakeRocket =
 			newmis.touch = T_IncendiaryTouch;
 			newmis.weapon = #DMSG_INCENDIARY;
 			setmodel (newmis, "progs/missile.mdl");
+		}
+		else if (type == #WEAP_SHOTGUN) { //WK 2-2-09 Explosive shot now rockets that can be dodged
+			newmis.touch = T_IncendiaryTouch;
+			newmis.weapon = #DMSG_EXPLOSIVE_SHOT;
+			setmodel (newmis, "progs/minimis.mdl");
+			newmis.avelocity = '60 60 0';
+			//newmis.movetype = #MOVETYPE_BOUNCE;
 		}
 		else { //Rockets
 			newmis.touch = T_MissileTouch;

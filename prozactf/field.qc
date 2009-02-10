@@ -469,11 +469,9 @@ float(entity tfield, entity who) Field_ItCanPass =
 		if (who.job & #JOB_TKD) //WK 4/27/7 TKD people are so tough they can walk through field gens!
 			return #TRUE;
 
-		// Neo mode modication
 		if (Teammate(who, tfield.real_owner)) // teammate
 			return #TRUE;
 		
-		// Neo mode modication
 		if (UndercoverTeammate(who, tfield.real_owner)) // spies disguised as our team
 		{
 			return #TRUE;
@@ -481,14 +479,12 @@ float(entity tfield, entity who) Field_ItCanPass =
 	}
 	else if (IsMonster(who))  // MONSTERS/ARMY
 	{
-		// Neo mode modication
 		if (Teammate(who.real_owner, tfield.real_owner)) // team monster
 			return #TRUE;
 	}
 	#ifdef GIBABLE_CORPSES
 	else if (who.#corpseflag == #STRFLAG_CORPSE) // CORPSES
 	{
-		// Neo mode modication
 		if (Teammate(who, tfield.real_owner)) // team corpse
 			return #TRUE;
 	}
@@ -517,11 +513,9 @@ float(entity tfield, entity who) Field_ShouldDamage =
 		if (who == tfield.real_owner) // field owner
 			return #FALSE;
 
-		// Neo mode modication
 		if (Teammate(who, tfield.real_owner)) // teammate
 			return #FALSE;
 
-		// Neo mode modication
 		if (UndercoverTeammate(who, tfield.real_owner)) // spies disguised as our team
 		{
 			return #FALSE;
@@ -529,14 +523,12 @@ float(entity tfield, entity who) Field_ShouldDamage =
 	}
 	else if (IsMonster(who))  // MONSTERS/ARMY
 	{
-		// Neo mode modication
 		if (Teammate(who.real_owner, tfield.real_owner)) // team monster
 			return #FALSE;
 	}
 	#ifdef GIBABLE_CORPSES
 	else if (who.#corpseflag == #STRFLAG_CORPSE) // CORPSES
 	{
-		// Neo mode modication
 		if (Teammate(who, tfield.real_owner)) // team corpse
 			return #FALSE;
 	}
@@ -1284,7 +1276,7 @@ void(entity field) Engineer_UseFieldGen =
 {
 	self.building = field;
 	
-	// Neo mode modication
+	// Neo mode modification
 	if (Teammate(self.building.real_owner, self) && self.building.is_malfunctioning & #SCREWUP_THREE)
 	{		 
 		sprint(self,#PRINT_HIGH,"Trapped field generator, have a nice day!\n");
@@ -1317,7 +1309,7 @@ void(entity field) Engineer_UseFieldGen =
 	self.menu_count = #MENU_REFRESH_RATE;
 
 	//dodgy
-	// Neo mode modication
+	// Neo mode modification
 	if (teamplay != 0 && !Teammate(self.building.real_owner, self)) {
 		Menu_EngineerFix_FieldGen_Input(4);
 		return;

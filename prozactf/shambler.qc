@@ -773,7 +773,6 @@ void() sham_xmas32 =[$magic8, sham_xmas33] {
 		if (te.is_connected)
 		if (te.health > 0)
 		#ifndef MAD_MONSTERS
-		// Neo mode modication
 		if (!Teammate(self, te))
 		#endif
 		if (!(te.job & #JOB_THIEF && (te.job & #JOB_ACTIVE || te.job & #JOB_FULL_HIDE)))

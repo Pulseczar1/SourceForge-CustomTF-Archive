@@ -500,7 +500,6 @@ void() OnPlayerFlame_touch =
 
 		if (other.classname == "player")
 		{
-			// Neo mode modication
 			if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other, self.owner))
 				return;
 
@@ -556,7 +555,6 @@ void() WorldFlame_touch =
 
 		if (other.classname == "player")
 		{
-			// Neo mode modication
 			if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other, self.owner))
 					return;
 			CenterPrint(other,"You are on fire!\n");
@@ -644,7 +642,6 @@ void() Flamer_stream_touch =
 	
 				if (other.classname == "player")
 			{
-				// Neo mode modication
 				if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other, self.owner))
 						return;
 
@@ -730,7 +727,6 @@ void() Napalm_touch =
 	
 			if (other.classname == "player")
 				{
-				// Neo mode modication
 				if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(other, self.owner))
 						return;
 
@@ -899,22 +895,28 @@ void() T_IncendiaryTouch =
 	{
 		if (head.takedamage && head.health > 0)
 		{
-			deathmsg = #DMSG_FLAME;
-			TF_T_Damage (head, self, self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+			//WK 2-2-09 Explosive shots now fire minor incendiary rockets
+			if (self.weapon == #DMSG_EXPLOSIVE_SHOT) {
+				deathmsg = #DMSG_EXPLOSIVE_SHOT;
+				TF_T_Damage (head, self, self.owner, 30, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+			}
+			else {
+				deathmsg = #DMSG_FLAME;
+				TF_T_Damage (head, self, self.owner, 15, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+				// set 'em on fire
+				other = head;  // i can't believe this works!
 
-			// set 'em on fire
-			other = head;  // i can't believe this works!
-
-			//Cluster shots shouldn't overburn them
-			if (!self.has_tesla) //Burn always if not cluster shot
-				Napalm_touch();
-			else if (!other.numflames) //Clusters light on fire only if they aren't burning
-				Napalm_touch();
+				//Cluster shots shouldn't overburn them
+				if (!self.has_tesla) //Burn always if not cluster shot
+					Napalm_touch();
+				else if (!other.numflames) //Clusters light on fire only if they aren't burning
+					Napalm_touch();
 			
-			if (other.classname == "player")
-				stuffcmd(other, "bf\nbf\n");
-			if (IsBuilding(other)) 
-				TF_T_Damage (head, self, self.owner, 35, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+				if (other.classname == "player")
+					stuffcmd(other, "bf\nbf\n");
+				if (IsBuilding(other)) 
+					TF_T_Damage (head, self, self.owner, 35, #TF_TD_NOTTEAM, #TF_TD_FIRE);
+			}
 		}
 		head = head.chain;
 	}

@@ -1,4 +1,4 @@
-// AGR.QC										  ver. March 11, 2008
+// AGR.QC									   ver. January 29, 2009
 // Author: Pulseczar
 //
 // Implementation of OneManClan's infamous Attackers Go Red CTF mode
@@ -82,29 +82,32 @@ void() AGR_think =
 
 				// check to see if the game should end because blue 
 				// doesn't have enough time to catch up to red in score
-				timeLeft = (timelimit - time) / 60;
-				timeAccumulated = (agr_minutes*60 - (timeToRewardBlue - time)) / 60;
-				timesBlueCanScore = (timeLeft + timeAccumulated) / agr_minutes;
-				timesBlueCanScore = floor(timesBlueCanScore);
-				amtBlueCanScore = timesBlueCanScore * agr_frags;
-
-				if (team1score + amtBlueCanScore < team2score)
+				if (timelimit != 0)
 				{
-					local float integer, fraction;
-					bprint(#PRINT_HIGH, "\n Red Wins The Game! \n");
-					bprint(#PRINT_HIGH, "Blue can't catch up to Red's score in the ");
-					integer = floor(timeLeft); fraction = timeLeft - integer;
-					fraction = fraction * 10; fraction = floor(fraction);
-					temp = ftos(integer); temp = colstr(temp, #COLSTR_NUMBER);
-					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, ".");
-					temp = ftos(fraction); temp = colstr(temp, #COLSTR_NUMBER);
-					bprint(#PRINT_HIGH, temp);
-					bprint(#PRINT_HIGH, "\nminutes remaining. Blue can only score ");
-					temp = ftos(amtBlueCanScore); temp = colstr(temp, #COLSTR_NUMBER);
-					bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, " points.\n");
-					bprint(#PRINT_HIGH, "\n");
-					BroadcastSound("boss2/pop2.wav");
-					NextLevel(); // end the map
+					timeLeft = (timelimit - time) / 60;
+					timeAccumulated = (agr_minutes*60 - (timeToRewardBlue - time)) / 60;
+					timesBlueCanScore = (timeLeft + timeAccumulated) / agr_minutes;
+					timesBlueCanScore = floor(timesBlueCanScore);
+					amtBlueCanScore = timesBlueCanScore * agr_frags;
+
+					if (team1score + amtBlueCanScore < team2score)
+					{
+						local float integer, fraction;
+						bprint(#PRINT_HIGH, "\n Red Wins The Game! \n");
+						bprint(#PRINT_HIGH, "Blue can't catch up to Red's score in the ");
+						integer = floor(timeLeft); fraction = timeLeft - integer;
+						fraction = fraction * 10; fraction = floor(fraction);
+						temp = ftos(integer); temp = colstr(temp, #COLSTR_NUMBER);
+						bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, ".");
+						temp = ftos(fraction); temp = colstr(temp, #COLSTR_NUMBER);
+						bprint(#PRINT_HIGH, temp);
+						bprint(#PRINT_HIGH, "\nminutes remaining. Blue can only score ");
+						temp = ftos(amtBlueCanScore); temp = colstr(temp, #COLSTR_NUMBER);
+						bprint(#PRINT_HIGH, temp); bprint(#PRINT_HIGH, " points.\n");
+						bprint(#PRINT_HIGH, "\n");
+						BroadcastSound("boss2/pop2.wav");
+						NextLevel(); // end the map
+					}
 				}
 			}
 			else if (prematch < time)
@@ -127,7 +130,8 @@ void() AGR_initialize =
 	agr = stof(st);
 	if (agr != 1) agr = 0; // has to be set to 1 to engage AGR
 
-	st = infokey(world, "force_agr"); //WK 5-15-08 Added command to force on AGR regardless of vote setting, for Phrosty
+	//WK 5-15-08 Added command to force on AGR regardless of vote setting, for Phrosty
+	st = infokey(world, "force_agr");
 	if (st == string_null) st = "0"; // sets default
 	force_agr = stof(st);
 	if (force_agr == 1) agr = 1; // Override AGR setting if 1

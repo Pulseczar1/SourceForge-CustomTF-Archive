@@ -11,6 +11,34 @@
 
 #define ARMY_MAXFRAGS_PRESTIGE	   40
 
+// Gizmo - used for the grunty entity
+#define allowed_weapons				wait				// weapons the grunt can use
+
+#define GRUNTY_MODE_FOLLOWOWNER		1
+#define GRUNTY_MODE_HOLDPOSITION		2
+#define GRUNTY_MODE_USEWAYPOINTS		3
+#define grunty_mode				penance_time
+
+#define GRUNTY_TACTICMODE_NORMAL		0
+#define GRUNTY_TACTICMODE_SEEK		1
+#define GRUNTY_TACTICMODE_STATIC		2
+#define grunty_tacticMode			is_malfunctioning
+
+#define GRUNTY_ENGAGEENEMY_NO			0
+#define GRUNTY_ENGAGEENEMY_YES		1
+#define grunty_engageEnemy			is_detpacking
+
+#define GRUNTY_ONOBSTACLE_JUMP		0
+#define GRUNTY_ONOBSTACLE_STOP		1
+#define GRUNTY_ONOBSTACLE_AUTO		2
+#define grunty_onObstacle			is_toffingadet
+
+#define GRUNTY_ATTACKRANGE_ANY		0
+#define GRUNTY_ATTACKRANGE_SMALL		1
+#define GRUNTY_ATTACKRANGE_MEDIUM		2
+#define GRUNTY_ATTACKRANGE_LARGE		3
+#define grunty_attackRange			delay_time
+
 /*================================================================================
 
 ARMY RATING/PRESTIGE IS CLACULATED WITH:
@@ -43,7 +71,7 @@ void(entity player) ArmyUpdateRating;
 void(entity player, float avg_score) AdjustArmyRating;
 
 // OfN moved files..
-void () Grunty_StateInv;
+void( entity dest, entity g, float printLevel ) Grunty_PrintDetails;
 void() grunty_stand;
 void() grunty_run;
 void() GruntyCheckFire;
@@ -64,13 +92,14 @@ void() JobArmy =
 {
 	if (self.current_menu == #MENU_ARMY)
 	{
-		if (self.job & #JOB_EXTRA1 || self.job & #JOB_EXTRA2)
-			Menu_Army_Input(7); // yeah hackish.. but does the job
-		else
-		{			 
-			if (self.demon_one)
+		// Gizmo - this should just always switch to the tactical menu to make impulse scripts easier
+//		if (self.job & #JOB_EXTRA1 || self.job & #JOB_EXTRA2)
+//			Menu_Army_Input(7); // yeah hackish.. but does the job
+//		else
+//		{			 
+//			if (self.demon_one)
 				Menu_Army_Input(6); // same comment :P
-		}
+//		}
 		
 		return;
 	}
@@ -81,6 +110,7 @@ void() JobArmy =
 
 void(entity soul, float currentsoul) Menu_Army1;
 void(entity soul, float currentsoul) Menu_Army2;
+void(entity soul, float currentsoul) Menu_Army3;
 
 void() Menu_Army =
 {
@@ -93,9 +123,11 @@ void() Menu_Army =
 	if (soul)
 	{
 		if (soul.is_haxxxoring == 1) 
-			Menu_Army2(soul, currentsoul); // tactical menu
+			Menu_Army2(soul, currentsoul);		// tactical menu
+		else if ( soul.is_haxxxoring == 2 )
+			Menu_Army3( soul, currentsoul );	// allowed weapons menu
 		else 
-			Menu_Army1(soul, currentsoul); // normal soldier menu
+			Menu_Army1(soul, currentsoul);		// normal soldier menu
 	}
 	else 
 		Menu_Army1(soul, currentsoul); // army tele menu
@@ -106,8 +138,10 @@ void(entity soul, float currentsoul) Menu_Army1 =
 	local float readytime,temp;
 	local string st,st2,st3;
 	local string st4, st5;
-
 	local float extras;
+
+	st2 = st3 = "";
+
 	extras = GetJobExtras(self);
 	   
 	if (soul)
@@ -116,21 +150,21 @@ void(entity soul, float currentsoul) Menu_Army1 =
 			st3 = "  .. Set ðòéíáòù waypoint    \n  .. Set óåãïîäáòù waypoint  ";
 		
 		else if (soul.martyr_enemy!=world && soul.demon_two==world && visible2(soul,soul.martyr_enemy))
-			st3 = " .. Set ðòéíáòù waypoint    \n  .. Set óåãïîäáòù waypoint  ";
+			st3 = " .. Set ðòéíáòù waypoint    \n  .. Set óåãïîäáòù waypoint  ";
 		else if (soul.martyr_enemy!=world && soul.demon_two==world)
 			st3 = "‹ .. Set ðòéíáòù waypoint    \n  .. Set óåãïîäáòù waypoint  ";
 
 		else if (soul.martyr_enemy==world && soul.demon_two!=world && visible2(soul,soul.demon_two))
-			st3 = "  .. Set ðòéíáòù waypoint    \n .. Set óåãïîäáòù waypoint  ";
+			st3 = "  .. Set ðòéíáòù waypoint    \n .. Set óåãïîäáòù waypoint  ";
 		else if (soul.martyr_enemy==world && soul.demon_two!=world)
 			st3 = "  .. Set ðòéíáòù waypoint    \n‹ .. Set óåãïîäáòù waypoint  ";
 		
 		else if (soul.martyr_enemy!=world && soul.demon_two!=world && visible2(soul,soul.demon_two) && visible2(soul,soul.martyr_enemy))
-			st3 = " .. Set ðòéíáòù waypoint    \n .. Set óåãïîäáòù waypoint  ";
+			st3 = " .. Set ðòéíáòù waypoint    \n .. Set óåãïîäáòù waypoint  ";
 		else if (soul.martyr_enemy!=world && soul.demon_two!=world && visible2(soul,soul.demon_two))
-			st3 = "‹ .. Set ðòéíáòù waypoint    \n .. Set óåãïîäáòù waypoint  ";
+			st3 = "‹ .. Set ðòéíáòù waypoint    \n .. Set óåãïîäáòù waypoint  ";
 		else if (soul.martyr_enemy!=world && soul.demon_two!=world && visible2(soul,soul.martyr_enemy))
-			st3 = " .. Set ðòéíáòù waypoint    \n‹ .. Set óåãïîäáòù waypoint  ";
+			st3 = " .. Set ðòéíáòù waypoint    \n‹ .. Set óåãïîäáòù waypoint  ";
 		else if (soul.martyr_enemy!=world && soul.demon_two!=world)
 			st3 = "‹ .. Set ðòéíáòù waypoint    \n‹ .. Set óåãïîäáòù waypoint  ";
 
@@ -159,20 +193,27 @@ void(entity soul, float currentsoul) Menu_Army1 =
 			else
 				st2 = strcat(st2,"                  \n\n");
 		}
-		
+
 		st4="\n.. Follow me¡            \n.. Stay there¡           \n.. Use your waypoints¡   ";
-		
+
 		if (soul.penance_time==1)
 			st4="\n* .. Follow me¡              \n.. Stay there¡           \n.. Use your waypoints¡   ";
 		else if (soul.penance_time==2)
 			st4="\n.. Follow me¡            \n* .. Stay there¡             \n.. Use your waypoints¡   ";
 		else if (soul.penance_time==3)
 			st4="\n.. Follow me¡            \n.. Stay there¡           \n* .. Use your waypoints¡     ";
-		
+
+#ifndef NO_GRUNTY_EMERGENCY_TELE
+		if (!extras)
+			st5 = "\n\n.. Ôáãôéãáì              \n\n®® Detonate soldier brain\n\n.. Emergency teleport    \n\n.. Îïôèéîç               \n";
+		else
+			st5 = "\n\n.. Ôáãôéãáì   .. Òåóåòöå\n\n®® Detonate soldier brain\n\n.. Emergency teleport    \n\n.. Îïôèéîç               \n";
+#else
 		if (!extras)
 			st5 = "\n\n.. Ôáãôéãáì              \n\n®® Detonate soldier brain\n\n.. Îïôèéîç               \n";
 		else
 			st5 = "\n\n.. Ôáãôéãáì   .. Òåóåòöå\n\n®® Detonate soldier brain\n\n.. Îïôèéîç               \n";
+#endif
 
 		CenterPrint7(self, soul.undercover_name, soul.netname,"\n\n", st2, st3,st4,st5);			 
 		return;
@@ -193,6 +234,10 @@ void(entity soul, float currentsoul) Menu_Army1 =
 		
 		if (!extras)
 		{
+			// Gizmo - does this fix the bug where it says in-use/ready for reserve when you don't have reserve?
+			// if ( self.delay_time > 0 )
+			if ( self.delay_time != -1 && self.delay_time != #FALSE )
+				self.delay_time = currentsoul + 1;
 			st3 = "Áãôéïî:                  \n\n";
 			st4 = ".. Îïôèéîç               \n\n";
 		}
@@ -326,11 +371,11 @@ void(entity soul, float currentsoul) Menu_Army1 =
 void(entity soul, float currentsoul) Menu_Army2 =
 {
 	local string st,st2,st3,st4,st5,st6,st7, tmp;
-
 	local float extras;
+
 	extras = GetJobExtras(self);
 
-	st3="";
+	st = st2 = st3 = st4 = st6 = "";
 
 	if (soul==world) // our sold was killed (this never gets executed?)
 	{
@@ -367,72 +412,63 @@ void(entity soul, float currentsoul) Menu_Army2 =
 			st2 = strcat("žŸ Óïìäéåò £³ Óôáôõó žŸ",st2);
 	}
 
-	st5=""; // this will be static range
-	
-   if (soul.is_malfunctioning==0)
-	{
-		if (soul.is_detpacking==0 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==0 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    jump  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    normal\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    jump  \n";
-	}
-	else if (soul.is_malfunctioning==1)
-	{
-		if (soul.is_detpacking==0 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==0 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    jump  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    seek  \n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    jump  \n";
-	}
-	else if (soul.is_malfunctioning==2)
-	{
-		if (soul.delay_time == 0)
-		   st5=".. Óôáôéã Òáîçå:   none  \n";		  
-		else if (soul.delay_time == 1)
-		   st5=".. Óôáôéã Òáîçå:   small \n";
-		else if (soul.delay_time == 2)
-		   st5=".. Óôáôéã Òáîçå:   medium\n";
-		else if (soul.delay_time == 3)
-		   st5=".. Óôáôéã Òáîçå:   large \n";
+	st5 = ""; // this will be preferred range
 
-		if (soul.is_detpacking==0 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==1)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    stop  \n";
-		else if (soul.is_detpacking==0 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   no    \n.. Ïî Ïâóôáãìå:    jump  \n";
-		else if (soul.is_detpacking==1 && soul.is_toffingadet==0)
-			st4="\n\n.. Ôáãôéã Íïäå:    static\n.. Åîçáçå Åîåíù:   yes   \n.. Ïî Ïâóôáãìå:    jump  \n";
+	// tactic mode option
+	if (soul.is_malfunctioning==0)
+		st4 = "\n\n.. Ôáãôéã Íïäå:    normal\n";
+	else if (soul.is_malfunctioning==1)
+		st4 = "\n\n.. Ôáãôéã Íïäå:    seek  \n";
+	else if (soul.is_malfunctioning==2)
+		st4 = "\n\n.. Ôáãôéã Íïäå:    static\n";
+
+	// engage enemy option
+	if ( soul.is_detpacking )
+		st4 = strcat( st4, ".. Åîçáçå Åîåíù:   yes   \n" );
+	else
+		st4 = strcat( st4, ".. Åîçáçå Åîåíù:   no    \n" );
+
+	// on obstacle option
+	if ( !soul.is_toffingadet )
+		st4 = strcat( st4, ".. Ïî Ïâóôáãìå:    jump  \n" );
+	else if ( soul.is_toffingadet == 1 )
+		st4 = strcat( st4, ".. Ïî Ïâóôáãìå:    stop  \n" );
+	else
+		st4 = strcat( st4, ".. Ïî Ïâóôáãìå:    auto  \n" );
+
+	// attack range option, don't allow on static since he only moves to goto waypoints or to follow his owner on that mode
+	if ( soul.is_malfunctioning != 2 ) {
+		if (soul.delay_time == 0)
+			st5 = ".. Áôôáãë Òáîçå:   any   \n";
+		else if (soul.delay_time == 1)
+			st5 = ".. Áôôáãë Òáîçå:   small \n";
+		else if (soul.delay_time == 2)
+			st5 = ".. Áôôáãë Òáîçå:   medium\n";
+		else if (soul.delay_time == 3)
+			st5 = ".. Áôôáãë Òáîçå:   large \n";
 	}
 	
 	if (!extras)
 	{
 		if (soul.all_active==0)
-			st6=".. Òåðïòôó:        all   \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        all   \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 		else if (soul.all_active==1) 
-			st6=".. Òåðïòôó:        most  \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        most  \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 		else if (soul.all_active==2) 
-			st6=".. Òåðïòôó:        some  \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        some  \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 		else if (soul.all_active==3) 
-			st6=".. Òåðïòôó:        none  \n\n.. Back to standard menu \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        none  \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Inventory             \n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 	}
 	else
 	{
 		if (soul.all_active==0)
-			st6=".. Òåðïòôó:        all   \n\n.. Back to standard menu \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        all   \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 		else if (soul.all_active==1) 
-			st6=".. Òåðïòôó:        most  \n\n.. Back to standard menu \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        most  \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 		else if (soul.all_active==2) 
-			st6=".. Òåðïòôó:        some  \n\n.. Back to standard menu \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        some  \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 		else if (soul.all_active==3) 
-			st6=".. Òåðïòôó:        none  \n\n.. Back to standard menu \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
+			st6=".. Òåðïòôó:        none  \n\n.. Back to standard menu \n\nš.. Allowed Weapons       \n\n.. Òåóåòöå  .. Inventory\n\n.. Îïôèéîç               \n\nÍáø ÈÐ: ";
 	}
 									 
 	st7=ftos(floor(soul.max_health));
@@ -443,8 +479,41 @@ void(entity soul, float currentsoul) Menu_Army2 =
 	CenterPrint7(self,st,st2,st3,st4,st5,st6,st7);
 };
 
+void( entity soul, float currentsoul ) Menu_Army3 = {
+	local string st1, st2, st3, st4, st5;
+
+	if ( soul == world ) {
+		ResetMenu ();
+		return;
+	}
+
+	if ( soul.#allowed_weapons & #WEAP_AXE )
+		st1 = "#CHAR_BOUGHT “.. Axe                  \n";
+	else
+		st1 = "  “.. Axe                  \n";
+	if ( soul.#allowed_weapons & #WEAP_SHOTGUN )
+		st2 = "#CHAR_BOUGHT ”.. Shotgun              \n";
+	else
+		st2 = "  ”.. Shotgun              \n";
+	if ( soul.#allowed_weapons & #WEAP_SUPER_SHOTGUN )
+		st3 = "#CHAR_BOUGHT •.. Super Shotgun        \n";
+	else
+		st3 = "  •.. Super Shotgun        \n";
+	if ( soul.#allowed_weapons & #WEAP_NAILGUN )
+		st4 = "#CHAR_BOUGHT –.. Nailgun              \n";
+	else
+		st4 = "  –.. Nailgun              \n";
+	if ( soul.#allowed_weapons & #WEAP_ROCKET_LAUNCHER )
+		st5 = "#CHAR_BOUGHT —.. Rocket Launcher      \n\n";
+	else
+		st5 = "  —.. Rocket Launcher      \n\n";
+
+	CenterPrint7( self, "žŸ Áììï÷åä ×åáðïîó žŸ\n\n", st1, st2, st3, st4, st5, "  ’.. Back to tactical menu" );
+};
+
 void(float inp, entity soul, float currentsoul) Menu_Army_Input1;
 void(float inp, entity soul, float currentsoul) Menu_Army_Input2;
+void(float inp, entity soul, float currentsoul) Menu_Army_Input3;
 
 void(float inp) Menu_Army_Input =
 {
@@ -458,11 +527,80 @@ void(float inp) Menu_Army_Input =
 	{
 		if (soul.is_haxxxoring == 1) 
 			Menu_Army_Input2(inp, soul, currentsoul);
+		else if ( soul.is_haxxxoring == 2 )
+			Menu_Army_Input3( inp, soul, currentsoul );
 		else 
 			Menu_Army_Input1(inp, soul, currentsoul);		 
 	}
 	else 
 		Menu_Army_Input1(inp, soul, currentsoul);
+};
+
+void( float inp, entity soul, float currentsoul ) Menu_Army_Input3 = {
+	if ( soul == world ) {
+		ResetMenu ();
+		self.impulse = 0;
+		return;
+	}
+
+	if ( inp == 1 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_AXE )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_AXE;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_AXE;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 2 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_SHOTGUN )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_SHOTGUN;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_SHOTGUN;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 3 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_SUPER_SHOTGUN )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_SUPER_SHOTGUN;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_SUPER_SHOTGUN;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 4 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_NAILGUN )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_NAILGUN;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_NAILGUN;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+	if ( inp == 5 ) {
+		self.impulse = 0;
+		if ( soul.#allowed_weapons & #WEAP_ROCKET_LAUNCHER )
+			soul.#allowed_weapons = soul.#allowed_weapons - #WEAP_ROCKET_LAUNCHER;
+		else
+			soul.#allowed_weapons = soul.#allowed_weapons + #WEAP_ROCKET_LAUNCHER;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
+
+	if ( inp == 10 ) {
+		self.impulse = 0;
+		soul.is_haxxxoring = 1;
+		Menu_Army2( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
+		return;
+	}
 };
 
 void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
@@ -480,7 +618,23 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 		soul.is_malfunctioning=soul.is_malfunctioning+1;
 
 		if (soul.is_malfunctioning > 2)
-		soul.is_malfunctioning=0;
+			soul.is_malfunctioning = 0;
+
+		if ( soul.enemy != world ) {
+			// Gizmo - check for static tactic mode
+			if ( soul.is_malfunctioning == 2 ) {
+				if ( soul.goalentity == soul.enemy ) {
+					if ( soul.penance_time == 1 )
+						soul.goalentity = soul.real_owner;
+					else if ( soul.penance_time == 3 )
+						soul.goalentity = ReturnEasyWaypoint( soul, soul );
+					else
+						soul.goalentity = world;
+				}
+			} else {
+				soul.goalentity = soul.enemy;
+			}
+		}
 
 		Menu_Army2(soul, currentsoul);
 		CuTFMenuSound(#MENUSOUND_BROWSE);
@@ -516,8 +670,9 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 	if (inp == 3) // jump or stop??
 	{
 		self.impulse = 0;
-		if (soul.is_toffingadet == 0) soul.is_toffingadet=1;
-		else soul.is_toffingadet=0;
+		soul.is_toffingadet = soul.is_toffingadet + 1;
+		if ( soul.is_toffingadet > 2 )
+			soul.is_toffingadet = 0;
 
 		Menu_Army2(soul, currentsoul);
 		CuTFMenuSound(#MENUSOUND_BROWSE);
@@ -525,17 +680,16 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 
 	if (inp == 4) 
 	{
-		if (soul.is_malfunctioning == 2) // static range, small mdeium or large
+		if (soul.is_malfunctioning != 2) // preferred range, none small medium or large
 		{
 			
 			soul.delay_time=soul.delay_time+1;
 
 			if (soul.delay_time > 3)
-			soul.delay_time=0;
+				soul.delay_time=0;
 
 			Menu_Army2(soul, currentsoul);
 			CuTFMenuSound(#MENUSOUND_BROWSE);
-			
 		}  
 
 		self.impulse = 0;
@@ -584,18 +738,22 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input2 =
 		return;
 	}
 
-	if (inp == 9) // Army info
-	{
-		ResetMenu();
-		local entity oself;
-		oself=self;
-		self=soul;
-		Grunty_StateInv();
-		self=oself;
+	// Gizmo - allowed weapons
+	if ( inp == 8 ) {
 		self.impulse = 0;
+		soul.is_haxxxoring = 2;
+		Menu_Army3( soul, currentsoul );
+		CuTFMenuSound( #MENUSOUND_BROWSE );
 		return;
 	}
 
+	if (inp == 9) // Army info
+	{
+		ResetMenu();
+		Grunty_PrintDetails( self, soul, 1 );
+		self.impulse = 0;
+		return;
+	}
 };
 
 void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
@@ -652,7 +810,8 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 	else if (inp == 8) // Kill it!
 	{
 		if (soul!=world)
-		{			 
+		{
+/*
 			if (soul.health < #MINHP_TOKILL_MONSTERS)
 			{
 				ResetMenu();
@@ -677,13 +836,13 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 			}
 			else
 			{
-				ResetMenu();
-				sprint(self,#PRINT_HIGH,"You detonate the micro-explosive implanted in his brain!\n");
-				KillSoul(self,soul.increase_team1);
-				teamprefixsprint(self.team_no, self);
-				teamsprint6(self,self.netname, " detonates his soldier ",soul.netname,"\n","","");
-				self.impulse = 0;
-			}
+*/
+			ResetMenu();
+			sprint(self,#PRINT_HIGH,"You detonate the micro-explosive implanted in his brain!\n");
+			KillSoul(self,soul.increase_team1);
+			teamprefixsprint(self.team_no, self);
+			teamsprint6(self,self.netname, " detonates his soldier ",soul.netname,"\n","","");
+			self.impulse = 0;
 		} 
 		return;
 	}
@@ -751,12 +910,22 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 	{
 		if (soul.enemy!=world)
 		{
-			if (visible2(soul,soul.enemy))
+			// Gizmo - we may be seeking out the enemy
+			if ( visible2( soul,soul.enemy ) || soul.#grunty_tacticMode == #GRUNTY_TACTICMODE_SEEK )
 			{
-				PrintFromSoldier(soul,self,"i'm fighting the enemy!\n",#PRINT_CHAT);
+				soul.penance_time = 1;
+
+				if ( soul.is_malfunctioning != 2 )
+					PrintFromSoldier( soul, self, "i'm fighting the enemy!\n", #PRINT_CHAT );
+				else {
+					if ( soul.goalentity != self ) {
+						soul.goalentity = self; 		
+						PrintFromSoldier( soul, self, "Ok!\n", #PRINT_HIGH );
+					} else
+						PrintFromSoldier( soul, self, "Already following you!\n", #PRINT_CHAT );
+				}
 				ResetMenu();
 				self.impulse=0;
-				soul.penance_time = 1;
 				return;
 			}			 
 		}
@@ -785,10 +954,16 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 		{
 			if (visible2(soul,soul.enemy))
 			{
-				PrintFromSoldier(soul,self,"i'm fighting the enemy!\n",#PRINT_CHAT);
+				soul.penance_time = 2;
+
+				if ( soul.is_malfunctioning != 2 )
+					PrintFromSoldier( soul, self, "i'm fighting the enemy!\n", #PRINT_CHAT );
+				else {
+					soul.goalentity = world;
+					PrintFromSoldier( soul, self, "Holding position...\n", #PRINT_HIGH );
+				}
 				ResetMenu();
 				self.impulse=0;
-				soul.penance_time = 2;
 				return;
 			}
 
@@ -813,10 +988,18 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 		{
 			if (visible2(soul,soul.enemy))
 			{
-				PrintFromSoldier(soul,self,"i'm fighting the enemy!\n",#PRINT_CHAT);
+				soul.penance_time = 3;
+
+				if ( soul.is_malfunctioning != 2 )
+					PrintFromSoldier( soul, self, "i'm fighting the enemy!\n", #PRINT_CHAT );
+				else {
+					soul.goalentity = ReturnEasyWaypoint( soul, soul );
+
+					if ( soul.goalentity != world )
+						PrintFromSoldier( soul, self, "Moving on!\n", #PRINT_HIGH );
+				}
 				ResetMenu();
 				self.impulse=0;
-				soul.penance_time = 3;
 				return;
 			}
 			soul.has_teleporter = 0;
@@ -846,6 +1029,49 @@ void(float inp, entity soul, float currentsoul) Menu_Army_Input1 =
 		CuTFMenuSound(#MENUSOUND_BROWSE);
 		return;
 	}
+#ifndef NO_GRUNTY_EMERGENCY_TELE
+	// Gizmo
+	else if ( inp == 9 ) {
+		ResetMenu();
+		self.impulse = 0;
+
+		if ( GetArmyTimer( self ) == world ) {
+			local vector oldorg;
+
+			makevectors( self.v_angle );
+			v_forward_z = 0;
+			v_forward = normalize( v_forward );
+
+			oldorg = soul.origin;
+			setorigin( soul, self.origin + v_forward * 64 );
+
+			soul.owner = self;
+			if ( !CheckArea( soul, self ) ) {
+				sprint( self, #PRINT_HIGH, "Not enough room to teleport soldier!\n" );
+				setorigin( soul, oldorg );
+				soul.owner = soul;
+				return;
+			}
+			soul.owner = soul;
+
+			spawn_tfog( oldorg );
+			spawn_tfog( soul.origin );
+
+			soul.velocity = v_forward * 640;
+			soul.angles = vectoangles( soul.velocity );
+			soul.flags = soul.flags - ( soul.flags & #FL_ONGROUND );	// don't let grunty get stuck in the air
+
+			self.delay_time = #FALSE; // needed for setarmytimer
+			SetArmyTimer( self, #FALSE ); // prepare reserve soldier
+		} else {
+			sprint( self, #PRINT_HIGH, "Army HQ Still " );
+			PrintArmyTime( self );
+			sprint( self, #PRINT_HIGH, " time left until next teleporting\n" );
+		}
+
+		return;
+	}
+#endif
 };
 
 
@@ -856,6 +1082,7 @@ float(float slot) TeleSoldier =
 	v_forward = normalize(v_forward) * 64;
 
 	newmis = spawn();
+	newmis.#allowed_weapons = #WEAP_AXE | #WEAP_SHOTGUN | #WEAP_SUPER_SHOTGUN | #WEAP_NAILGUN | #WEAP_ROCKET_LAUNCHER;
 	newmis.owner = newmis; //WK Self
 	newmis.real_owner = self;
 	
@@ -870,21 +1097,33 @@ float(float slot) TeleSoldier =
 	newmis.increase_team2 = GetNameType(self,newmis.increase_team1,#FALSE);
 	MakeMonsterName(newmis);
 	newmis.#monster_type = #MONSTER_ARMY;
- 
-	if (!CheckArea(newmis,self)) { //No room for el diablo
-		sprint(self,#PRINT_HIGH,"Not enough room to teleport soldier!\n");
-		newmis.think = SUB_Remove;
-		newmis.nextthink = time + 0.1;
-		return #FALSE;
-	}
-
-	spawn_tfog(newmis.origin);
 	
 	setmodel (newmis, "progs/grunty.mdl");
 	setsize (newmis, '-16 -16 -24', '16 16 32');
 
+	// Gizmo - this and spawn_tfog used to be above setmodel and setsize
+	newmis.owner = self;
+	if (!CheckArea(newmis,self)) { //No room for el diablo
+		sprint(self,#PRINT_HIGH,"Not enough room to teleport soldier!\n");
+		newmis.think = SUB_Remove;
+		newmis.nextthink = time + 0.1;
+
+		// Gizmo - don't let the soldier stay visible
+		setmodel( newmis, "" );
+		return #FALSE;
+	}
+	newmis.owner = newmis;
+
+	spawn_tfog(newmis.origin);
+
 	// for Neo mode
-	if (neo) newmis.skin = 3;
+	if (neo) 
+	{
+		if (newmis.real_owner != neoLives)
+			newmis.skin = 3;
+		else
+			newmis.skin = 0;			
+	}
 	else newmis.skin = self.team_no - 1;
 	
 	teamprefixsprint(self.team_no,self);
@@ -893,7 +1132,7 @@ float(float slot) TeleSoldier =
 	teamsprint(self.team_no,self,newmis.netname);
 	teamsprint(self.team_no,self,"\n");
 
-	self.job_finished = time + 1;	//Don't let em kill demon for 15 secs.
+	self.job_finished = time + 2;	//Don't let em kill demon for 15 secs.
 									// SB 15 is tight; 10
 									// 10 is tight; 5
 									// OfN 5 is tight; 3 ;)
@@ -905,7 +1144,7 @@ float(float slot) TeleSoldier =
 
 	newmis.movetype = #MOVETYPE_TOSS;
 	newmis.solid = #SOLID_SLIDEBOX;
-	newmis.takedamage = #DAMAGE_AIM;
+//	newmis.takedamage = #DAMAGE_AIM;	// Gizmo - this is done in walkmonster_start(), bad things could happen if this is set here
 	
 	newmis.health = #GRUNTY_HP;
 	newmis.has_tesla = 1; // SB level multiplier
@@ -949,8 +1188,9 @@ float(float slot) TeleSoldier =
 	newmis.last_saveme_sound = 0; // ? oh that
 	
 	newmis.touch = grunty_touch; //-OfN- 
-	newmis.has_holo = time+2; // touch messages delay
-	newmis.is_detpacking=1; //resets engage enemy to "yes"
+	newmis.has_holo = time+2;		// touch messages delay
+	newmis.is_detpacking=1;			// resets engage enemy to "yes"
+	newmis.is_toffingadet = 2;		// Gizmo - start with "auto" mode
 
 	if (slot == 0)
 		newmis.real_owner.demon_one = newmis;
@@ -1022,7 +1262,7 @@ void(entity player, float start) SetArmyTimer =
 		sprint(player,#PRINT_HIGH,"Army HQ Reinforcement soldier will be ready in ",st," minutes\n");
 
 #ifdef ARMY_TEST
-	newmis.nextthink = time + 10; 
+	newmis.nextthink = time + 1;
 #endif
 };
 

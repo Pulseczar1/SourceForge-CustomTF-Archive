@@ -45,7 +45,6 @@ void () Menu_Friend_Hax =
 		}
 	}*/
 
-	// Neo mode modication
 	if (Teammate(self.demon_two.real_owner, self))
 	{
 		if (self.demon_two.classname == "building_dispenser")
@@ -242,7 +241,6 @@ void () Menu_Enemy_Hax =
 		}
 	}
 
-	// Neo mode modication
 	if (!Teammate(self.demon_two.real_owner, self))
 	{
 		if (self.demon_two.classname == "building_dispenser")
@@ -367,14 +365,12 @@ void() SBFireInterface =
 
 	if (targ.classname == "player" && (targ.cutf_items & #CUTF_CYBERAUG))
 	{
-		// Neo mode modication
 		if (!Teammate(targ, self))
 		{
 			targ.is_malfunctioning = 1;
 			sprint(targ, #PRINT_HIGH, "Oh no! Your cybernetic augmentations are malfunctioning!\n");
 			sprint(self, #PRINT_HIGH, "You tamper with ", targ.netname, "'s cybernetic augmentations.\n");
 		}
-		// Neo mode modication
 		else if (Teammate(targ, self) && targ.is_malfunctioning)
 		{
 			targ.is_malfunctioning = 0;
@@ -384,21 +380,18 @@ void() SBFireInterface =
 	}
 	else if (IsBuilding(targ))
 	{
-		// Neo mode modication
 		if (!Teammate(targ.real_owner, self) && GetICELevel(targ)==1 && random() < 0.2)
 		{
 			sprint(self, #PRINT_HIGH, "This device has a level 1 ICE, it's not easy to hack!\n");
 			//sprint(targ.real_owner, #PRINT_HIGH,"Somebody tried to hack your stuff...\n");
 			return;
 		}
-		// Neo mode modication
 		if (!Teammate(targ.real_owner, self) && GetICELevel(targ)==2)
 		{
 			sprint(self, #PRINT_HIGH, "This device is hack-protected.\n");
 			sprint(targ.real_owner, #PRINT_HIGH,"Somebody just tried to hack your stuff...\n");
 			return;
 		}
-		// Neo mode modication
 		if (!Teammate(targ.real_owner, self) && GetICELevel(targ)==3)
 		{
 			sprint(self, #PRINT_HIGH, "This device is hack-protected with a level 3 ICE!\n");
@@ -415,7 +408,6 @@ void() SBFireInterface =
 
 		BackFlash(self,1);
 		
-		// Neo mode modication
 		if (!Teammate(targ.real_owner, self))
 		{
 			sprint(self, #PRINT_HIGH, "You make a few adjustments...\n");
@@ -553,7 +545,6 @@ void() SBFireInterface =
 				sprint(self, #PRINT_HIGH, "Your attempt at hacking fails.\n");
 			}
 		}
-		// Neo mode modication
 		else if (Teammate(targ, self) && hackThis == -1)
 		{
 			if (targ.is_malfunctioning)
@@ -604,7 +595,6 @@ void() SBFireInterface =
 				}
 			}
 		}
-		// Neo mode modication
 		else if (Teammate(targ, self))
 		{
 			//FRIENDLY IMPROVEMENTS
@@ -909,7 +899,6 @@ void(float input) InitiateInterface =
 	
 	te.has_camera = itob(input);
 	
-	// Neo mode modication
 	if (!Teammate(self.demon_two, self))
 	{			 
 		te.heat = ReturnHackDelay(self.demon_two, input);
@@ -1188,13 +1177,11 @@ float() CheckHaxxx =
 	{
 		retval = #TRUE;
 	}
-	// Neo mode modication
 	else if (Teammate(self.martyr_enemy, self.owner) && self.martyr_enemy.all_active & self.has_camera && self.has_camera != -1)
 	{
 		sprint (self.owner, #PRINT_HIGH, "Somebody improved that first.\n");
 		retval = #FALSE;
 	}
-	// Neo mode modication
 	else if (!Teammate(self.martyr_enemy, self.owner) && self.martyr_enemy.is_malfunctioning & self.has_camera)
 	{
 		sprint (self.owner, #PRINT_HIGH, "Somebody screwed that up first! heh\n");
@@ -1309,7 +1296,6 @@ void() JobHacker =
 	
 	if ( (IsBuilding(trace_ent) && trace_ent.classname != "building_sentrygun_base") || trace_ent.classname == "player")
 	{
-		// Neo mode modication
 		if (!Teammate(trace_ent, self))
 		{
 			if (trace_ent.is_malfunctioning == #SCREWUP_ONE + #SCREWUP_TWO + #SCREWUP_THREE + #SCREWUP_FOUR)
@@ -1359,7 +1345,6 @@ void() JobHacker =
 			sprint (self, #PRINT_HIGH, "\nTarget пчоет: "); 	   
 			sprint (self, #PRINT_HIGH, self.demon_two.real_owner.netname);
 			
-			// Neo mode modication
 			if (Teammate(self, self.demon_two))
 				sprint (self, #PRINT_HIGH, "\nFriendly device.\n");
 			else

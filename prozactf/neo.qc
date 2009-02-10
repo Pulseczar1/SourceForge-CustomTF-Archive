@@ -1,4 +1,4 @@
-// NEO.QC										 ver. March 19, 2008
+// NEO.QC									   ver. January 29, 2009
 // Author: Pulseczar
 //
 // Votable Neo Mode
@@ -9,11 +9,12 @@
 // to get a kill (starts in deathmatch mode) becomes Neo, and from
 // there on, every time a player kills Neo, the player becomes Neo.
 // Neo has the equivalent property of having all CustomTF runes at
-// once (triple damage, greater armor/resistance, regeneration, 
-// faster firing, and increased movement speed), though Neo's power
-// varies according to the number of players in the server.
+// once (triple damage, damage resistance, regeneration, faster
+// firing, and increased movement speed), though Neo's powers vary
+// according to the number of players in the server. However, the
+// speed rune does not scale according to the number of players.
 //
-// There're no flags in Neo mode. The sole objective is to be Neo
+// There are no flags in Neo mode. The sole objective is to be Neo
 // as much as you can and keep others from being Neo.
 // 
 // Using the 'inv' command will tell you what Neo's enhancement 
@@ -26,6 +27,8 @@
 // > If Neo kills himself or the environment kills him, he becomes
 //	 a Smith and the first player to kill another player becomes
 //	 Neo.
+// > Neo can't use resupply packs. Grenades and detpacks have been
+//   made to slowly regenerate along with the usual regeneration.
  
 // I tried to fit everything I could into this file. The things
 // that could not go here can be found by searching for 'Neo'.
@@ -37,26 +40,11 @@
 // Thanks to Major Major Major Major for most of the event messages.
 
 /*
-bugs:
-- grunt tried to attack enemy grunt's body or something
-   - not sure this is something that only happens with my changes
-
 to do:
 - how about making bots out of grunts to play with in Neo mode?
   - rip navigation code from Reaper bot or something?
-- make gibs accellerate according to damage
-  - still not quite satisfied with vel scaling for gibs
 - give multiple frags for killing Neo?
 - verify that teleporters work right (let everyone pass through)
-- make Neo's powers vary according to number of players
-  - movement speed and firing speed scaling are the only things not
-	implemented yet
-  - think about making enhancements calculated in one place and saved
-	in a global, so that one can be certain that info in 'inv' is
-	correct (also, it shortens the 'inv' function)
-- don't let Neo use packs, but let regen regen items like nades and
-  dets
-  - or maybe just don't let Neo pick up packs very often
 - check that when armor reaches 0 and regen adds more to it, that
   the armor actually works and isn't disabled by something when it
   hits 0
@@ -68,7 +56,7 @@ to do:
 //=================================================================
 
 // cvars - requires 'localinfo' to set these
-float neo;				// globar cvar, just on or off (requires 'localinfo neo 1' to be on)
+float neo;				// global cvar, just on or off (requires 'localinfo neo 1' to be on)
 float neo_base_dmg; 	// Neo's damage factor when there's 0 people in the game
 float neo_dmg_factor;	// how much damage factor increases with each player past playercount of 0
 float neo_base_res; 	// Neo's resistance factor when there's 0 people in the game
@@ -79,10 +67,18 @@ float neo_regen_factor; // how much regeneration factor increases with each play
 // globals
 entity neoLives;		 // is there currently a Neo? if so, who?
 float oldTeamplayValue;  // used in teamplay mode changing
+float lastNadeRegen;     // last time Neo had a grenade regenerated
+float lastDetRegen;      // last time Neo had a detpack (tossable or not) regenerated
+float neoDamageFactor;   // final damage factor (sorry about name redundancy)
+float neoResistFactor;   // final resist factor
+float neoRegenFactor;    // final regen factor
 
 // definitions
-
+#define WHOA_LIKELINESS 0.25 // how likely Neo is to say 'Whoa..'; set between 0 and 1
+							 // not a 'true' percentage; look at how it's used
 #endif
+
+#define CUTF_URL customtf.net/forum/
 
 //=================================================================
 // called by the localinfo key initializing function
@@ -112,9 +108,10 @@ void() Neo_initialize =
 		neo_dmg_factor = stof(st);
 
 		st = infokey(world, "neo_base_res");
-		if (st == string_null) st = "0.564"; // sets default
+		if (st == string_null) st = "0.8"; // sets default
 		neo_base_res = stof(st);
 
+		// currently not being used in resist calculation
 		st = infokey(world, "neo_res_factor");
 		if (st == string_null) st = "0.016"; // sets default
 		neo_res_factor = stof(st);
@@ -136,7 +133,7 @@ void() Neo_introducePlayer =
 	sprint(self, #PRINT_HIGH, " ŒÂÔ ÕÔ‰Â Enabled \n");
 	//DELETE this once out of 'test period'
 	local string temp; 
-	temp = colstr("This is a TEST version.\nPlease report bugs to customtf.sourceforge.net/forum.\n", #COLSTR_RED);
+	temp = colstr("This is a TEST version.\nPlease report bugs to #CUTF_URL.\n", #COLSTR_RED);
 	sprint(self, #PRINT_HIGH, temp);
 	//DELETE end
 	sprint(self, #PRINT_HIGH, "Welcome to the Matrix, Agent Smith.\n");
@@ -148,8 +145,42 @@ void() Neo_introducePlayer =
 	}
 	else
 		sprint(self, #PRINT_HIGH, "First player to kill another player becomes Neo.\n");
+
 	sprint(self, #PRINT_HIGH, "\n");
 	stuffcmd(self, "play boss1/sight1.wav\n");
+};
+//=================================================================
+// calculates global Neo factor values (for scaling Neo's power
+// according to number of players)
+//=================================================================
+void() Neo_calcNeoFactors =
+{
+	local float playerCount; 
+	playerCount = GetNoPlayers(#TRUE, #TRUE);
+
+	/**************************
+	  calculate damage factor
+	**************************/
+	neoDamageFactor = neo_base_dmg + (playerCount * neo_dmg_factor);
+
+	/******************************
+	  calculate resistance factor
+	  - simplified: neo_base_res * (1 - (playerCount / 32))
+	******************************/
+	neoResistFactor = 1 - (playerCount / 32);
+	neoResistFactor = neo_base_res * neoResistFactor; 
+	if (neoResistFactor < 0.05)
+		neoResistFactor = 0.05; // make sure he never ends up impossible to kill because of Resist
+
+	/********************************
+	  calculate regeneration factor
+	  - simplified: neo_base_regen + (playerCount * neo_regen_factor)
+	********************************/
+	neoRegenFactor = playerCount * (neo_regen_factor * 1000);
+	neoRegenFactor = (neo_base_regen * 1000) + neoRegenFactor; 
+	neoRegenFactor = neoRegenFactor / 1000;
+	// doing all the multiplying and dividing by 1000 because the server will
+	// round the float values, otherwise
 };
 //=================================================================
 // called in obits every time a player dies; handles death events
@@ -158,10 +189,11 @@ void(entity targ, entity attacker) Neo_deathThink =
 {
 	if (!neo) return;
 
-	local float rnum;
+	local float rnum, playerCount;
 	local entity oldSelf;
 	local entity realAttacker;
 
+	playerCount = GetNoPlayers(#FALSE, #FALSE);
 	rnum = random();
 
 	/*
@@ -206,7 +238,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 		self = oldSelf;
 		BroadcastSound("boss1/sight1.wav");
 		rnum = random();
-		if (rnum < 0.25)
+		if (rnum < (1 / playerCount) * #WHOA_LIKELINESS)
 			stuffcmd(realAttacker, "say Whoa..\n");
 		return;
 	}
@@ -233,6 +265,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 					bprint(#PRINT_HIGH, " Kill someone to become Neo!\n");
 					bprint(#PRINT_HIGH, "\n");
 					BroadcastSound("boss1/sight1.wav");
+					Neo_centerPrint();
 					return;
 				}
 				// a Smith killed Neo; make the Smith Neo
@@ -255,7 +288,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 					self = oldSelf;
 					BroadcastSound("boss1/sight1.wav");
 					rnum = random();
-					if (rnum < 0.25)
+					if (rnum < (1 / playerCount) * #WHOA_LIKELINESS)
 						stuffcmd(attacker, "say Whoa..\n");
 					return;
 				}
@@ -278,6 +311,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 					bprint(#PRINT_HIGH, "Kill someone to become Neo!\n");
 					bprint(#PRINT_HIGH, "\n");
 					BroadcastSound("boss1/sight1.wav");
+					Neo_centerPrint();
 					return;
 				}
 				// a Smith's building killed Neo; make the Smith Neo
@@ -295,7 +329,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 					self = oldSelf;
 					BroadcastSound("boss1/sight1.wav");
 					rnum = random();
-					if (rnum < 0.25)
+					if (rnum < (1 / playerCount) * #WHOA_LIKELINESS)
 						stuffcmd(attacker.real_owner, "say Whoa..\n");
 					return;
 				}
@@ -319,6 +353,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 					bprint(#PRINT_HIGH, "Kill someone to become Neo!\n");
 					bprint(#PRINT_HIGH, "\n");
 					BroadcastSound("boss1/sight1.wav");
+					Neo_centerPrint();
 					return;
 				}
 				// a Smith's summon killed Neo; make the Smith Neo
@@ -336,7 +371,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 					self = oldSelf;
 					BroadcastSound("boss1/sight1.wav");
 					rnum = random();
-					if (rnum < 0.25)
+					if (rnum < (1 / playerCount) * #WHOA_LIKELINESS)
 						stuffcmd(attacker.real_owner, "say Whoa..\n");
 					return;
 				}
@@ -360,6 +395,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 				bprint(#PRINT_HIGH, "No one is Neo. Kill someone to become Neo!\n");
 				bprint(#PRINT_HIGH, "\n");
 				BroadcastSound("boss1/sight1.wav");
+				Neo_centerPrint();
 				return;
 			}
 		}
@@ -368,7 +404,7 @@ void(entity targ, entity attacker) Neo_deathThink =
 		{
 			// just randomly cause Neo to say "Whoa.."
 			rnum = random();
-			if (rnum < 0.25)
+			if (rnum < (1 / playerCount) * #WHOA_LIKELINESS)
 				stuffcmd(attacker, "say Whoa..\n");
 		}
 	}
@@ -383,9 +419,31 @@ void(entity attacker) Neo_assignNeo =
 	// if a player is already Neo, remove Neo from that player
 	if (neoLives) Neo_removeNeo(neoLives);
 
+	// if player is dead when they become Neo, don't give them Neo status (no one will be Neo)
+	if (attacker.health <= 0 || attacker.deadflag != #DEAD_NO || attacker.penance_time > time
+		|| !attacker.is_connected)
+	{
+		bprint(#PRINT_HIGH, "\n ŒÂÔ ÕÔ‰Â \n");
+		bprint(#PRINT_HIGH, "Unfortunately, Neo ("); bprint(#PRINT_HIGH, attacker.netname); 
+		bprint(#PRINT_HIGH, ") was dead,\nor just not available. Kill someone to become Neo!\n");
+		bprint(#PRINT_HIGH, "\n");
+		Neo_centerPrint();
+		return;
+	}
+
+	// unthief [attacker] if he's thieving
+	if (attacker.job & #JOB_THIEF && (attacker.job & #JOB_ACTIVE || attacker.job & #JOB_FULL_HIDE))
+		RevealThief(attacker, #FALSE);
+
 	neoLives = attacker;
 	local string temp; temp = ftos(oldTeamplayValue);
 	cvar_set("teamplay", temp); // return the server to its 'actual' teamplay setting
+
+	// centerprint "YOU ARE NEO!"
+	temp =              "\n";
+	temp = strcat(temp, " Ÿœ’ ¡“≈ Œ≈œ° \n");
+	temp = strcat(temp, "\n");
+	CenterPrint(attacker, temp);
 
 	// put attacker on blue team alone
 	self = attacker;
@@ -412,7 +470,6 @@ void(entity attacker) Neo_assignNeo =
 	}
 	attacker.effects = attacker.effects | (#EF_BLUE | #EF_BRIGHTLIGHT);
 };
-
 //=================================================================
 // removes Neo status from [player]
 //=================================================================
@@ -434,7 +491,6 @@ void(entity player) Neo_removeNeo =
 	EndRunes();
 	player.effects = player.effects - (player.effects & (#EF_BRIGHTLIGHT | #EF_BLUE));
 };
-
 //=================================================================
 // find [player]'s possessions, and change the team of their 
 // possessions to [teamNumber]
@@ -449,7 +505,18 @@ void(entity player, float teamNumber) Neo_possessionsChangeTeam =
 	{
 		if (ent.flags & #FL_MACHINE) // is it a building?
 		if (ent.real_owner == player) // is it owned by [player]?
+		{
 			ent.team_no = teamNumber;
+			if (teamNumber == 1)
+			{
+				if (ent.classname == "building_sentrygun")
+					ent.skin = 0;
+				else
+					ent.skin = 1;
+			}
+			else
+				ent.skin = 3;
+		}
 		ent = nextent(ent);
 	}
 
@@ -460,7 +527,14 @@ void(entity player, float teamNumber) Neo_possessionsChangeTeam =
 		while (i < 3)
 		{
 			ent = GetSummon(player, i);
-			if (ent) ent.team_no = teamNumber;
+			if (ent)
+			{
+				ent.team_no = teamNumber;
+				if (teamNumber == 1)
+					ent.effects = ent.effects | (#EF_BRIGHTLIGHT | #EF_BLUE);
+				else
+					ent.effects = ent.effects - (ent.effects & (#EF_BRIGHTLIGHT | #EF_BLUE));
+			}
 			i = i + 1;
 		}
 	}
@@ -472,7 +546,13 @@ void(entity player, float teamNumber) Neo_possessionsChangeTeam =
 		while (ent)
 		{
 			if (ent.real_owner == player)
+			{
 				ent.team_no = teamNumber;
+				if (teamNumber == 1)
+					ent.skin = 0;
+				else
+					ent.skin = 3;
+			}
 			ent = find(ent, classname, "monster_army");
 		}
 	}
@@ -501,7 +581,6 @@ void(entity player, float teamNumber) Neo_possessionsChangeTeam =
 		}
 	}
 };
-
 //=================================================================
 // tests whether [a] and [b] are teammates (for Neo mode only)
 //=================================================================
@@ -553,41 +632,33 @@ float(entity a, entity b) Neo_teammate =
 	bprint(#PRINT_HIGH, "Error: Neo_teammate() had no answer\n");
 	return #FALSE;
 };
-
 //=================================================================
 // prints Neo's stats when 'inv' command is invoked
 //=================================================================
 void() Neo_invPrint =
 {
-	local float factor, integer, fraction; 
+	local float integer, fraction; 
 	local string temp;
 
 	sprint(self, #PRINT_HIGH, "\nŒÂÔßÛ ÛÙ·ÙÛ: ");
 	// damage
 	sprint(self, #PRINT_HIGH, "damage: x");
-	factor = GetDamageOutFactor(neoLives,neoLives);
-	integer = floor(factor); fraction = factor - integer; fraction = fraction * 10;
+	integer = floor(neoDamageFactor); fraction = neoDamageFactor - integer; fraction = fraction * 10;
 	fraction = floor(fraction); temp = ftos(integer); temp = colstr(temp, #COLSTR_NUMBER);
 	sprint(self, #PRINT_HIGH, temp); sprint(self, #PRINT_HIGH, "."); temp = ftos(fraction);
 	temp = colstr(temp, #COLSTR_NUMBER); sprint(self, #PRINT_HIGH, temp);
 	// resistance
 	sprint(self, #PRINT_HIGH, ", resist: /");
-	factor = GetDamageInFactor(neoLives);
-	integer = floor(factor); fraction = factor - integer; fraction = fraction * 1000;
+	integer = floor(neoResistFactor); fraction = neoResistFactor - integer; fraction = fraction * 1000;
 		// invert it, for people to read it more easily
-		factor = 1000 / fraction; integer = floor(factor); fraction = factor - integer; 
+		neoResistFactor = 1000 / fraction; integer = floor(neoResistFactor); fraction = neoResistFactor - integer; 
 		fraction = fraction * 100; fraction = floor(fraction);
 	temp = ftos(integer); temp = colstr(temp, #COLSTR_NUMBER); sprint(self, #PRINT_HIGH, temp);
 	sprint(self, #PRINT_HIGH, "."); temp = ftos(fraction); 
 	temp = colstr(temp, #COLSTR_NUMBER); sprint(self, #PRINT_HIGH, temp);
 	// regeneration
 	sprint(self, #PRINT_HIGH, ", regen: x");
-	local float playerCount;
-	playerCount = GetNoPlayers(#TRUE, #TRUE);
-	factor = playerCount * (neo_regen_factor * 1000);
-	factor = (neo_base_regen * 1000) + factor; 
-	factor = factor / 1000;
-	integer = floor(factor); fraction = factor - integer;
+	integer = floor(neoRegenFactor); fraction = neoRegenFactor - integer;
 	fraction = fraction * 100; fraction = floor(fraction); 
 	temp = ftos(integer); temp = colstr(temp, #COLSTR_NUMBER); sprint(self, #PRINT_HIGH, temp);
 	sprint(self, #PRINT_HIGH, "."); temp = ftos(fraction); 
@@ -596,4 +667,50 @@ void() Neo_invPrint =
 
 	// movement speed
 
+};
+//=================================================================
+// when there's no Neo, this function is used to centerprint the 
+// message to everyone, "THERE'S NO NEO! KILL SOMEONE TO BE NEO!"
+//=================================================================
+void() Neo_centerPrint =
+{
+	local entity player;
+	local string temp;
+
+	temp =              "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	temp = strcat(temp, "\n");
+	temp = strcat(temp, "     ‘»≈“≈‡” Œœ Œ≈œ°     \n");
+	temp = strcat(temp, " À…ÃÃ ”œÕ≈œŒ≈ ‘œ ¬≈ Œ≈œ° \n");
+	temp = strcat(temp, "\n");
+
+	player = find(world, classname, "player");
+	while (player)
+	{
+		CenterPrint(player, temp);
+		player = find(player, classname, "player");
+	}
+};
+
+#define NEO_ERROR_MESSAGE "Neo Mode error detected!\nPlease report bugs to #CUTF_URL.\n"
+
+//=================================================================
+// general error checking; broadcasts error messages to all players
+// if error is detected; called every frame in StartFrame()
+//=================================================================
+void() Neo_errorCheck =
+{
+	// TODO: devise a better system that doesn't spam messages to players
+
+	local float f_1;
+
+	if (neoLives)
+	{
+		// Neo should always have all four runes
+		f_1 = GetPlayerNoRunes(neoLives);
+		if (f_1 != 4)
+		{
+			bprint(#PRINT_HIGH, #NEO_ERROR_MESSAGE);
+			bprint(#PRINT_HIGH, "Error: Neo does not have all 4 runes.\n");
+		}
+	}
 };

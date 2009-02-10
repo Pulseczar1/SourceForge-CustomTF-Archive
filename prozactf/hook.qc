@@ -88,8 +88,7 @@ void () Grapple_Track =
 			return;
 		}
 
-//WK
-	  // Neo mode modication
+	//WK
 	  if (self.enemy.classname == "player" && Teammate(self.enemy, self.owner)) {
 		Reset_Grapple (self);
 		return;
@@ -108,6 +107,10 @@ void () Grapple_Track =
 		// for a hooked client. 
 		if (self.enemy.classname != "player")
 				self.velocity = self.enemy.velocity;
+		//WK 2-2-09
+		//We now can do this, since we record .last_velocity on players
+		if (self.enemy.classname == "player")
+			self.velocity = self.enemy.last_frame_velocity;
 
 		self.nextthink = time + 0.1;
 };

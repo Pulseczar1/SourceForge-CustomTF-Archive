@@ -256,7 +256,7 @@ void(float tno, entity ignore) teamprefixsprint =
 	temp_e.team_no = tno; // for Neo mode (modified Teammate())
 	while (te)
 	{
-		// Neo mode modication
+		// Neo mode modification
 		if (Teammate(te, temp_e) && te != ignore)
 			sprint(te, #PRINT_HIGH, "Teamç ");
 
@@ -282,7 +282,6 @@ void(float tno, entity ignore, entity ignore2) teamprefixsprintbi =
 	temp_e.team_no = tno; // for Neo mode (modified Teammate())
 	while (te)
 	{
-		// Neo mode modication
 		if (Teammate(te, temp_e) && te != ignore && te != ignore2)
 		{
 			sprint(te, #PRINT_HIGH, "Teamç ");
@@ -300,7 +299,6 @@ void(entity ignore, string st, string st2, string st3, string st4, string st5, s
 	te = find(world, classname, "player");
 	while (te)
 	{
-		// Neo mode modication
 		if (Teammate(te, ignore) && te != ignore)
 		{
 			sprint(te, #PRINT_HIGH, st);
@@ -325,7 +323,6 @@ void(entity ignore, entity ignore2, string st, string st2, string st3, string st
 	te = find(world, classname, "player");
 	while (te)
 	{
-		// Neo mode modication
 		if (Teammate(te, ignore) && te != ignore && te != ignore2)
 		{
 			sprint(te, #PRINT_HIGH, st);
@@ -863,7 +860,6 @@ void(vector where) spawnFOG =
 
 float() CheckEnemyDismantle =
 {
-	// Neo mode modication
 	if (Teammate(self.building.real_owner, self)) return #TRUE;
 
 	local string st;
@@ -1765,10 +1761,7 @@ float(entity attacker, entity targ) GetDamageOutFactor =
 			factor = #MAX_OUT_DMGFACTOR;
 	}
 	else if (neoLives == attacker)
-	{
-		local float playerCount; playerCount = GetNoPlayers(#TRUE, #TRUE);
-		factor = factor * ((playerCount * neo_dmg_factor) + neo_base_dmg);
-	}
+		factor = factor * neoDamageFactor;
 	// end Neo mod
 
 	return factor;
@@ -1799,15 +1792,10 @@ float(entity thing) GetDamageInFactor =
 	}
 	else if (neoLives == thing)
 	{
-		local float temp, playerCount;
-		playerCount = GetNoPlayers(#TRUE, #TRUE);
-		temp = playerCount * (neo_res_factor * 1000);
-		temp = (neo_base_res * 1000) - temp; 
-		factor = factor * temp; factor = factor / 1000;
-		// doing all the multiplying and dividing by 1000 because the server will
-		// round the float values when the subtraction is done
+		factor = factor * neoResistFactor;
+
 		if (factor < 0.05)
-			factor = 0.05;
+			factor = 0.05; // make sure he never ends up impossible to kill because of Resist
 	}
 
 	if (factor > 1) bprint(#PRINT_HIGH, "Error: GetDamageInFactor() result greater than 1\n");
@@ -3783,4 +3771,54 @@ void(entity client, float ammount) BackFlash =
 	tstr = strcat(tstr,"\n");
 
 	stuffcmd(client,tstr);
+};
+
+//==============================================================
+// Gizmo
+
+float(entity thing) IsOwnedMonster =
+{
+/*
+	if (thing.classname=="monster_shambler")
+		return #TRUE;
+	if (thing.classname=="monster_demon1")
+		return #TRUE;
+	if (thing.classname=="monster_wizard")
+		return #TRUE;
+	if (thing.classname=="monster_army")
+		return #TRUE;
+	if (thing.classname=="monster_fish")
+		return #TRUE;
+	if (thing.classname=="monster_gremlin")
+		return #TRUE;
+*/
+
+	if ( thing.flags & #FL_MONSTER )
+	if ( thing.real_owner != world )	// Gizmo - added this because not all monsters are pets
+		return #TRUE;
+
+	return #FALSE;
+};
+
+float(entity thing) IsSummon =
+{
+/*
+	if (thing.classname=="monster_shambler")
+		return #TRUE;
+	if (thing.classname=="monster_demon1")
+		return #TRUE;
+	if (thing.classname=="monster_wizard")
+		return #TRUE;
+	if (thing.classname=="monster_fish")
+		return #TRUE;
+	if (thing.classname=="monster_gremlin")
+		return #TRUE;
+*/
+
+	if ( thing.flags & #FL_MONSTER )
+	if ( thing.real_owner != world )	// Gizmo - added this because not all monsters are pets
+	if ( thing.classname != "monster_army" )
+		return #TRUE;
+	
+	return #FALSE;
 };

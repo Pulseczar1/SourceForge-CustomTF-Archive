@@ -734,7 +734,6 @@ void() Tesla_Touch =
 		Tesla_Die();
 		return;
 	}
-	// Neo mode modication
 	if (other.classname=="player" && !(self.tf_items & #NIT_TURRET) && (self.tf_items & #NIT_TESLA_CLOAKING) && self.no_grenades_2 < time && self.job == 1 && Teammate(self, other))
 	{
 		if (self.real_owner == other)
@@ -751,7 +750,6 @@ void() Tesla_Touch =
 		
 		if (IsMonster(other))
 		{
-			// Neo mode modication
 			if (!Teammate(other.real_owner, self.real_owner))
 			{
 				TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
@@ -763,7 +761,6 @@ void() Tesla_Touch =
 
 		if (other.job & #JOB_TKD) { //4/27/7 TKD people are so tough they can defeat point defense systems
 			//If it is an enemy building, we destroy it with a mighty karate chop!!
-			// Neo mode modication
 			if (!Teammate(self.real_owner, other) && other.last_boot_to_the_head < time)
 			{
 				sprint(other,#PRINT_HIGH,"You deliver a mighty karate chop to the sentry gun!\n");
@@ -776,7 +773,6 @@ void() Tesla_Touch =
 		}
 
 		//TF_T_Damage (other, self, self.real_owner, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
-		// Neo mode modication
 		if (!Teammate(other, self.real_owner) && (other.is_undercover != 1)) // <== FIXME
 			TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 		return;
@@ -851,7 +847,6 @@ void() Tesla_Touch =
 		{
 			deathmsg = #DMSG_BUG_ZAPPER;
 			//TF_T_Damage (other, self, self.real_owner, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
-			// Neo mode modication
 			if (!Teammate(other.real_owner, self.real_owner))
 				TF_T_Damage (other, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
 			//sprint(self.real_owner, #PRINT_HIGH, "The eagle has died.\n");
@@ -940,47 +935,39 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 			{
 				if (head.classname == "monster_demon1")
 				{
-					// Neo mode modication
 					if (!Teammate(head.real_owner, scanner))
 						gotatarget = 1;
 				}
 				else if (head.classname == "monster_army")
 				{
-					// Neo mode modication
 					if (!Teammate(head.real_owner, scanner))
 						gotatarget = 1;
 				}
 				else if (head.classname == "monster_shambler")
 				{
-					// Neo mode modication
 					if (!Teammate(head.real_owner, scanner))
 						gotatarget = 1;
 				}
 				else if (head.classname == "monster_wizard") //- OfN
 				{
-					// Neo mode modication
 					if (!Teammate(head.real_owner, scanner))
 						gotatarget = 1;
 				}
 				else if (head.classname == "monster_gremlin") //- OfN
 				{
-					// Neo mode modication
 					if (!Teammate(head.real_owner, scanner))
 						gotatarget = 1;
 				}
 				else if (head.classname == "monster_fish") //- OfN
 				{
-					// Neo mode modication
 					if (!Teammate(head.real_owner, scanner))
 						gotatarget = 1;
 				}
 				else if (head.classname == "grenade" && head.netname == "land_mine")
 				{
-					// Neo mode modication
 					if (!Teammate(head.owner, scanner))
 						gotatarget = 1;
 				}
-				// Neo mode modication
 				else if (!Teammate(head, scanner))
 				{
 					if (IsBuilding(head) && head.classname != "building_sentrygun_base")
@@ -1013,7 +1000,6 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 
 			#ifndef HOLO_TEST
 
-			// Neo mode modication
 			if (Teammate(scanner.real_owner, te.real_owner))
 				gotone = #FALSE;
 			else

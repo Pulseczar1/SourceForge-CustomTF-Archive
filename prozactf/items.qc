@@ -190,7 +190,6 @@ void() health_touch =
 	//- OfN team_no is now used for items!
 	if (self.team_no>0)
 	{
-		// Neo mode modication
 		if (!Teammate(other, self))
 			return;
 	}
@@ -352,7 +351,6 @@ void() armor_touch =
 	//- OfN team_no is now used for items!
 	if (self.team_no>0)
 	{
-		// Neo mode modication
 		if (!Teammate(other,self))
 			return;
 	}
@@ -1048,7 +1046,6 @@ void() ammo_touch =
 	//- OfN team_no is now used for items!
 	if (self.team_no>0)
 	{
-		// Neo mode modication
 		if (!Teammate(other, self))
 			return;
 	}
@@ -1610,7 +1607,6 @@ local float 	best;*/
 	//- OfN team_no is now used for items!
 	if (self.team_no>0)
 	{
-		// Neo mode modication
 		if (!Teammate(other, self))
 			return;
 	}

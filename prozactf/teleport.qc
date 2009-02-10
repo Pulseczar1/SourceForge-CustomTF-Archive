@@ -136,13 +136,11 @@ void() Teleporter_touch =
 float(entity targ) Teleporter_check_person =
 {
 	if (self.ammo_cells < #TELEPORTER_CELLS) {
-		// Neo mode modication
 		if (Teammate(targ, self)) //only to team member
 			CenterPrint(other, "This teleporter is out of power.\n");
 		return #FALSE;
 	}
 	if (self.real_owner.has_teleporter == 1) {
-		// Neo mode modication
 		if (Teammate(targ, self)) //only to team member
 			CenterPrint(other, "There is no other teleporter!\n");
 		return #FALSE;
@@ -186,12 +184,10 @@ float(entity targ) Teleporter_check_person =
 
 	if (teamplay)
 	{
-		// Neo mode modication
 		if (Teammate(targ, self))
 			return #TRUE;
 
 		temp_e.team_no = targ.undercover_team; // for Neo mode (modified Teammate())
-		// Neo mode modication
 		if (Teammate(temp_e, self))
 		{
 			return #TRUE;

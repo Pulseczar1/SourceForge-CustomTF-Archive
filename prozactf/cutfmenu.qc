@@ -754,7 +754,7 @@ void(float inp) Menu_ShotgunWeapon_Input =
 		}
 		if (inp == 6) {
 			BuyCuTF2(#COST_EXPLOSIVE_SHOT,#CUTF2_EXPLOSIVE_SHOT);
-			HelpString("Your shotgun shots explode on impact, dealing an extra «#CUTF2_EXPLOSIVE_SHOT_FACTOR of your total attack's damage in radius fire damage.");
+			HelpString("Once per 3 seconds, your shotgun will launch an explosive shell, which deals 30 fire damage in a radius on contact. All rocket upgrades apply to this shell.");
 			Menu_ShotgunWeapon();
 		}
 		if (inp == 8) {

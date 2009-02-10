@@ -43,7 +43,7 @@ void() DetonateAllGuns;
 void() TeamFortress_ChangeClass;
 void() TeamFortress_DisplayLegalClasses;
 void() TeamFortress_Inventory;
-void() Grunty_StateInv;
+void( entity printDest, entity g, float printLevel ) Grunty_PrintDetails;
 void() TeamFortress_ShowTF;
 void() TeamFortress_PrimeGrenade;
 void() TeamFortress_ThrowGrenade;
@@ -3841,7 +3841,6 @@ void() TeamFortress_DisplayDetectionItems =
 void() BioInfection_Decay =
 {
 	// Remove infections which can't hurt the owner
-	// Neo mode modication
 	if ((teamplay & #TEAMPLAY_NOEXPLOSIVE) && Teammate(self.owner, self.enemy))
 	{
 		self.owner.tfstate = self.owner.tfstate - (self.owner.tfstate & #TFSTATE_INFECTED);

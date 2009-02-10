@@ -67,6 +67,8 @@
 // Regeneration rune settings
 
 #define REGENRUNE_RATE			 0.5
+#define REGENRUNE_NADE_RATE      15   // only currently used in Neo mode
+#define REGENRUNE_DET_RATE       60   // only currently used in Neo mode
 #define REGENRUNE_HP_AMMOUNT	 2.25
 #define REGENRUNE_ARMOR_AMMOUNT  2.25
 #define REGENRUNE_AMMO_AMMOUNT	 1
@@ -923,14 +925,7 @@ void() RegenRuneTimer_think =
 	// begin Neo mod
 	// calculate regen multiplier for Neo mode scaling
 	local float neoFactor; neoFactor = 1;
-	if (neo)
-	{
-		local float playerCount;
-		playerCount = GetNoPlayers(#TRUE, #TRUE);
-		neoFactor = playerCount * (neo_regen_factor * 1000);
-		neoFactor = (neo_base_regen * 1000) + neoFactor; 
-		neoFactor = neoFactor / 1000;
-	}
+	if (neo) neoFactor = neoRegenFactor;
 
 	// Regenerate health
 	if (self.owner.health < self.owner.max_health) // Check
@@ -971,6 +966,76 @@ void() RegenRuneTimer_think =
 		self.owner.ammo_cells = self.owner.maxammo_cells;
 	else
 		self.owner.ammo_cells = self.owner.ammo_cells + (#REGENRUNE_AMMO_AMMOUNT * neoFactor);
+
+	// Neo Mode:
+	// Neo can't pick up resupply packs. So, we're going to allow him to regen grenades and detpacks.
+	if (neo)
+	{
+		local float maxAmmo, increase;
+
+		// Grenades
+		if (lastNadeRegen + (#REGENRUNE_NADE_RATE / neoFactor) <= time)
+		{
+			lastNadeRegen = time;
+			if (self.owner.tp_grenades_1 != #GR_TYPE_NONE)
+			{
+				maxAmmo = GetMaxGrens(self.owner, 1);
+				if (self.owner.no_grenades_1 + (#REGENRUNE_AMMO_AMMOUNT * neoFactor) > maxAmmo)
+					self.owner.no_grenades_1 = maxAmmo;
+				else
+				{
+					increase = #REGENRUNE_AMMO_AMMOUNT * neoFactor;
+					if (increase < 1) increase = 1;
+					else increase = floor(increase);
+					self.owner.no_grenades_1 = self.owner.no_grenades_1 + increase;
+				}
+			}
+			if (self.owner.tp_grenades_2 != #GR_TYPE_NONE)
+			{
+				maxAmmo = GetMaxGrens(self.owner, 2);
+				if (self.owner.no_grenades_2 + (#REGENRUNE_AMMO_AMMOUNT * neoFactor) > maxAmmo)
+					self.owner.no_grenades_2 = maxAmmo;
+				else
+				{
+					increase = #REGENRUNE_AMMO_AMMOUNT * neoFactor;
+					if (increase < 1) increase = 1;
+					else increase = floor(increase);
+					self.owner.no_grenades_2 = self.owner.no_grenades_2 + increase;
+				}
+			}
+		}
+		// Detpacks
+		if (lastDetRegen + (#REGENRUNE_DET_RATE / neoFactor) <= time)
+		{
+			lastDetRegen = time;
+			if (self.owner.cutf_items & #CUTF_DETPACK)
+			{
+				maxAmmo = self.owner.maxammo_detpack;
+				if (self.owner.ammo_detpack + (#REGENRUNE_AMMO_AMMOUNT * neoFactor) > maxAmmo)
+					self.owner.ammo_detpack = maxAmmo;
+				else
+				{
+					increase = #REGENRUNE_AMMO_AMMOUNT * neoFactor;
+					if (increase < 1) increase = 1;
+					else increase = floor(increase);
+					self.owner.ammo_detpack = self.owner.ammo_detpack + increase;
+				}
+			}
+			if (self.owner.cutf_items & #CUTF_TOSSABLEDET)
+			{
+				maxAmmo = self.owner.maxammo_detpack;
+				if (self.owner.ammo_c4det + (#REGENRUNE_AMMO_AMMOUNT * neoFactor) > maxAmmo)
+					self.owner.ammo_c4det = maxAmmo;
+				else
+				{
+					increase = #REGENRUNE_AMMO_AMMOUNT * neoFactor;
+					if (increase < 1) increase = 1;
+					else increase = floor(increase);
+					self.owner.ammo_c4det = self.owner.ammo_c4det + increase;
+				}
+			}
+		}
+	}
 
 	// Update current ammo if needed
 	if (self.owner.items & #IT_SHELLS)

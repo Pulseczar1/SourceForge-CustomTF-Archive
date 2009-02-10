@@ -595,7 +595,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 			{
 				/*if (list.classname == "monster_demon1" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -609,7 +608,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				}
 				else if (list.classname == "monster_army" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -623,7 +621,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				}
 				else if (list.classname == "monster_shambler" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -638,7 +635,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				//- OfN -
 				else if (list.classname == "monster_wizard" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -654,7 +650,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				{
 					if (list.health > 0)
 					{
-						// Neo mode modication
 						if (Teammate(list.real_owner, self))
 						{
 							scfr = scfr + 1;
@@ -690,7 +685,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				}
 				else if ((list.classname == "player" || list.classname == "building_sentrygun" || list.classname == "building_tesla" || list.classname == "building_teleporter") && list.health > 0 && !(list.cutf_items & #CUTF_JAMMER))
 				{
-					// Neo mode modication
 					if (Teammate(list, self))
 					{
 						scfr = scfr + 1;
@@ -718,7 +712,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				{
 					if (list.health > 0)
 					{
-						// Neo mode modication
 						if (Teammate(list.real_owner, self))
 						{
 							scfr = scfr + 1;
@@ -735,7 +728,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 
 				/*if (list.classname == "monster_demon1" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -749,7 +741,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				}
 				if (list.classname == "monster_army" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -763,7 +754,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				}
 				if (list.classname == "monster_shambler" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -778,7 +768,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				//- OfN -
 				if (list.classname == "monster_wizard" && list.health > 0) //Because they dont have teams
 				{
-					// Neo mode modication
 					if (Teammate(list.real_owner, self))
 					{
 						scfr = scfr + 1;
@@ -812,7 +801,6 @@ void(float scanrange,float inAuto) TeamFortress_Scan =
 				}
 				else if ((list.classname == "player" || list.classname == "building_sentrygun" || list.classname == "building_tesla" || list.classname == "building_teleporter") && list.health > 0 && !(list.cutf_items & #CUTF_JAMMER))
 				{
-					// Neo mode modication
 					if (Teammate(list, self))
 					{
 						scfr = scfr + 1;
@@ -987,10 +975,8 @@ float(entity scan, entity targ, float enemies, float friends) Scanner_Check_Play
 //CH ALL NEW CHECKS ABOVE THIS LINE
 		if (teamplay)
 		{
-			// Neo mode modication
 			if ( friends &&  Teammate(targ, scan) )
 				return #TRUE;
-			// Neo mode modication
 			if ( enemies && !Teammate(targ, scan) )
 				return #TRUE;
 		}
@@ -1026,10 +1012,8 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 				{
 					if (teamplay)
 					{
-						// Neo mode modication
 						if ( friends &&  Teammate(head, scanner) )
 							gotatarget = 1;
-						// Neo mode modication
 						if ( enemies && !Teammate(head, scanner) )
 							gotatarget = 1;
 					}
@@ -1040,10 +1024,8 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 				{
 					if (teamplay)
 					{
-						// Neo mode modication
 						if ( friends &&  Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
-						// Neo mode modication
 						if ( enemies && !Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
 					}
@@ -1054,10 +1036,8 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 				{
 					if (teamplay)
 					{
-						// Neo mode modication
 						if ( friends &&  Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
-						// Neo mode modication
 						if ( enemies && !Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
 					}
@@ -1068,10 +1048,8 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 				{
 					if (teamplay)
 					{
-						// Neo mode modication
 						if ( friends &&  Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
-						// Neo mode modication
 						if ( enemies && !Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
 					}
@@ -1083,10 +1061,8 @@ entity(entity scanner, float scanrange, float enemies, float friends) T_RadiusSc
 				{
 					if (teamplay)
 					{
-						// Neo mode modication
 						if ( friends &&  Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
-						// Neo mode modication
 						if ( enemies && !Teammate(head.real_owner, scanner) )
 							gotatarget = 1;
 					}
@@ -1208,7 +1184,6 @@ void() CaltropTouch =
 	
 	if (other.takedamage && other.classname == "player")
 	{
-		// Neo mode modication
 		if (Teammate(self.owner, other) && other != self.owner)
 			return;
 			

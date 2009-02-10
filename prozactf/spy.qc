@@ -1016,7 +1016,6 @@ void() T_TranqDartTouch =
 				timer.team_no = self.owner.team_no;
 			}
 		}
-		// Neo mode modication
 		if (other.classname == "player" && !(Teammate(other, self.owner) && (teamplay & (#TEAMPLAY_HALFDIRECT | #TEAMPLAY_NODIRECT))))
 		{
 			// If they're already tranquilised, just make it last longer

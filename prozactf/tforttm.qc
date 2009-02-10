@@ -85,13 +85,15 @@ float() TeamFortress_TeamPutPlayerInTeam =
 // Return the color for the team corresponding to the no passed in
 float(float tno) TeamFortress_TeamGetColor =
 {
-	// Neo mode
-	if (neo) return #WHITE;
-
 	if (tno == 1)
 		return #DARKBLUE;
 	if (tno == 2)
+	{
+		// Neo mode
+		if (neo) return #WHITE;
+
 		return #RED;
+	}
 	if (tno == 3)
 		return #YELLOW;
 	if (tno == 4)
@@ -111,7 +113,8 @@ void(float tno) TeamFortress_TeamSetColor =
 	}
 	if (tno == 2)
 	{
-		team2col = #RED;
+		if (neo) team2col = #WHITE; // Neo mode
+		else team2col = #RED;
 		return;
 	}
 	if (tno == 3)
@@ -1241,7 +1244,6 @@ float (entity targ, entity attacker, float damage) TeamEqualiseDamage =
 	if (targ.classname != "player" || attacker.classname != "player")
 		return damage;
 	
-	// Neo mode modication
 	if (Teammate(targ, attacker))
 		return damage;
 
@@ -1396,7 +1398,6 @@ float(float tno, entity ignore, string st) teamsprint =
 	while (te)
 	{
 		temp_e.team_no = tno; // for Neo mode (modified Teammate())
-		// Neo mode modication
 		if (Teammate(te, temp_e) && te != ignore)
 		{
 			sprint(te, #PRINT_HIGH, st);

@@ -35,7 +35,6 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 	if (targ.#runes & #RUNE_RESIS)
 		return #FALSE;
 	
-	// Neo mode modication
 	if (Teammate(targ, attacker) && targ != attacker)
 		return #FALSE;
 	
@@ -207,7 +206,6 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 			sprint(doc, #PRINT_HIGH, "You heal ", patient.netname, "'s concussion\n");
 		}
 		// Give the medic a frag for doing it, only if it was caused by an enemy
-		// Neo mode modication
 		if (!Teammate(doc, te))
 		{
 			doc.real_frags = doc.real_frags + 1;
@@ -240,7 +238,6 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 				sprint(doc, #PRINT_HIGH, "You halt ", patient.netname, "'s hallucinations\n");
 			}
 			// Give the medic a frag for doing it, only if it was caused by an enemy
-			// Neo mode modication
 			if (!Teammate(doc, te))
 			{
 				doc.real_frags = doc.real_frags + 1;
@@ -280,7 +277,6 @@ float(entity doc, entity patient, vector org) CureAdverseEffects =
 			}
 
 			// Give the medic a frag for doing it, only if it was caused by an enemy
-			// Neo mode modication
 			if (!Teammate(doc, te))
 			{
 				doc.real_frags = doc.real_frags + 1;

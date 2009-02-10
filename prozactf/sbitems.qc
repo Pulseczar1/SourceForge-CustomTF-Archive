@@ -167,7 +167,6 @@ void() TeamFortress_C4DetpackTouch =
 	if (self.weaponmode == 1)
 		return;
 
-	// Neo mode modication
 	if (Teammate(self.owner, other))
 		return;
 
