@@ -1,4 +1,5 @@
 // pushable stuff (code taken from nehahra+megatf coop
+// physics pushables by Urre
 
 float (entity Top, entity Bottom ) IsOnTopOf =
 {
@@ -98,6 +99,39 @@ void () func_pushable_hluse =
 	self.nextthink = time;
 };
 
+#ifdef PHYSICS
+// Half-Life pushables made into twig-objects
+void () func_pushable =
+{
+	setmodel (self, self.model);
+	setorigin (self, self.origin);
+	setsize(self, self.mins, self.maxs);
+	self.angles = '0 0 0';
+
+	self.relative_org = (self.maxs + self.mins)*0.5;
+	self.relative_forward = '1 0 0';
+	self.relative_left = '0 1 0';
+	self.relative_up = '0 0 1';
+
+	// the following lines should be defined in the map object, not in qc
+	self.netname = "hl-pushable";
+	self.physobj_stiction = 50;
+	self.physobj_friction = 0.08;
+	self.physobj_friction_water = 0.01;
+	self.physobj_bounce = 1;
+	self.physobj_buoyancy = 0.3;
+	self.physobj_mass = 15;
+
+	self.physobj_mass = max(1, self.physobj_mass);
+	self.mdl = self.model; // used by the spawning code
+
+	self.enemy = Dynamic_SubModelObject(self, self, self);
+	makevectors(self.angles);
+	Phys_ObjectCreate(self.enemy, self.relative_org, v_forward, v_right * -1, v_up, '0 0 0', 0);
+	self.model = ""; // invisible, could be removed instead if you like
+};
+// End Half-Life pushables
+#else
 void () func_pushable =
 {
 	//precache_sound ("wall/push.wav");			// ADDME: New or dynamic push sound
@@ -136,3 +170,4 @@ void () func_pushable =
 
 	self.hl_use = func_pushable_hluse;
 };
+#endif

@@ -888,6 +888,9 @@ void() PutClientInServer =
 #ifdef HALFLIFE
 	self.oldgravity = 1;
 #endif
+#ifdef PHYSICS
+	self.physobj_mass = 90;
+#endif
 
 	DecodeLevelParms ();
 	
@@ -1533,6 +1536,11 @@ void() PlayerPreThink =
 // if intermission is running what is the point of this?
 //	if (self.view_ofs == '0 0 0')
 //		return;
+
+#ifdef PHYSICS
+	tracebox(self.origin, self.mins, self.maxs, self.origin + self.velocity*frametime, FALSE, self);
+	Phys_Force(trace_ent, self, self.velocity, Clamp(self.origin + self.maxs, self.origin + self.mins, trace_ent.owner.origin), trace_plane_normal);
+#endif
 
 #ifdef HALFLIFE
 	//if (self.crouchflags & #CROUCH_ON) {	// player is crouching
