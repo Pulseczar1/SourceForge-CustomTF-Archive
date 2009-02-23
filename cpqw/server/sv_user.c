@@ -1407,6 +1407,8 @@ void SV_SetInfo_f (void)
 		myteam = KK_Team_No(host_client);
 		if (teams < 1 || teams > 4) playing_tf = 0;
 		if (strcmp(Info_ValueForKey(svs.info,"*gamedir"),"fortress")) playing_tf = 0;
+		// PZ: Don't alter the colors in Neo mode.
+		if (KK_Global_Float("neo")) playing_tf = 0;
 		chosen_color = atoi(Info_ValueForKey(host_client->userinfo, Cmd_Argv(1)));
 
 		//Right_color only gets set if we're resetting our color to where it should be
