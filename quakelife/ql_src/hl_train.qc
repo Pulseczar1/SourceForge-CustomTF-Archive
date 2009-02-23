@@ -163,6 +163,7 @@ void() func_tracktrain_find =
 			self.angles_y += 45;
 	}
 	
+#ifndef SVEN_COOP
 	if (cvar_string(self.globalname) != "" && cvar_string(self.globalname) != "0") {
 		//FIXME: train needs to find next track properly
 		
@@ -225,10 +226,13 @@ void() func_tracktrain_find =
 		//localcmd( " 0\n" );
 	}
 	else {
+#endif
 		endpos = targ.origin/* - ((self.mins+self.maxs)*.5)*/;
 		endpos_z += self.height;
 		setorigin(self, endpos);
+#ifndef SVEN_COOP
 	}
+#endif
 	
 	//setorigin(self, targ.origin - ((self.mins+self.maxs)*.5));
 	//self.origin_z += self.height;

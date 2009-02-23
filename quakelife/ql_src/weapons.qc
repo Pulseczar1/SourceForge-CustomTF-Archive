@@ -1215,9 +1215,15 @@ ImpulseCommands
 ============
 */
 void () parse_hl_crap;
+void (float do_mats, string s1, string s2) parse_hl_map;
+void (string s1, string s2, string s3) hl_swap_ents;
+void () hl_batch_convert;
 void() ImpulseCommands =
 {
 	local entity test;
+	local string mname;
+	mname = "c1a4b";
+	
 	switch (self.impulse) {
 	case 1 .. 8:
 		W_ChangeWeapon ();
@@ -1271,6 +1277,19 @@ void() ImpulseCommands =
 		break;
 	case 120:
 		FindUseEntity(self, 2);
+		break;
+	case 121:
+		parse_hl_map(1, mname, mname);
+		break;
+	case 122:
+		hl_swap_ents(mname,mname,mname);
+		break;
+	case 123:
+		_bprint(" no mats being parsed\n");
+		parse_hl_map(0, "toconv", "toconv");
+		break;
+	case 124:
+		hl_batch_convert();
 		break;
 #endif
 	}

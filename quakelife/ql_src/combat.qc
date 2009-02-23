@@ -21,7 +21,7 @@ explosions and melee attacks.
 float(entity targ, entity inflictor) CanDamage =
 {
 // bmodels need special checking because their origin is 0,0,0
-	if (targ.movetype == MOVETYPE_PUSH)
+	if (targ.movetype == MOVETYPE_PUSH || targ.classname == "hitmodel")
 	{
 		traceline(inflictor.origin, 0.5 * (targ.absmin + targ.absmax), TRUE, self);
 		if (trace_fraction == 1)
@@ -293,7 +293,7 @@ T_RadiusDamage
 void(entity inflictor, entity attacker, float damage, float radius, entity ignore, INTEGER mod) T_RadiusDamage =
 {
 	local   float   points;
-	local   entity  head;
+	local   entity  head, targ;
 	local   vector  org;
 
 	head = findradius(inflictor.origin, radius);
@@ -302,6 +302,7 @@ void(entity inflictor, entity attacker, float damage, float radius, entity ignor
 	{
 		if (head != ignore)
 		{
+			if (head.classname != "hitmodel")
 			if (head.takedamage)
 			{
 				org = head.origin + (head.mins + head.maxs)*0.5;
@@ -314,7 +315,10 @@ void(entity inflictor, entity attacker, float damage, float radius, entity ignor
 					points = points * 0.5;
 				if (points > 0)
 				{
-					if (CanDamage (head, inflictor))
+					targ = head;
+					if (head.owner.classname == "hitmodel")
+						targ = head.owner;
+					if (CanDamage (targ, inflictor))
 						T_Damage (head, inflictor, attacker, points, mod);
 				}
 			}
