@@ -368,10 +368,10 @@ int main(int argc, char **argv)
     for (int i = 0; i < MAX_FILE_QUEUE; i++)
         filequeue[i] = NULL;
     // Init to NULL parse queue array pointers
-    for (i = 0; i < MAX_PARSE_QUEUE; i++)
+    for (int i = 0; i < MAX_PARSE_QUEUE; i++)
         parsequeue[i] = NULL;
 	// Init to NULL pointers to defines
-	for (i = 0; i < MAX_DEFINES; i++)
+	for (int i = 0; i < MAX_DEFINES; i++)
 		deflist[i] = NULL;
 
     q_parsepos = 0;
@@ -672,7 +672,7 @@ int main(int argc, char **argv)
 
     int g;
     g = 0;
-    for (f = 1; f < q_filenum; f++)
+    for (int f = 1; f < q_filenum; f++)
     {
         if (filequeue[f]->compile)
         {
@@ -1608,7 +1608,7 @@ int GetKeywordType(int curpos)
     {
         numdef--; // cause isDefined returns the item + 1
 
-        for (z = 0; z < strlen(deflist[numdef]->value); z++)
+        for (unsigned int z = 0; z < strlen(deflist[numdef]->value); z++)
             WriteOutChar(deflist[numdef]->value[z]);
 
 		// Set the new state on define used
@@ -2126,13 +2126,13 @@ void ParseValue(char* tvalue)
     }
 
     // Remove comments
-    for (i=wherecomment; i < MAX_ST_SIZE; i++)
+    for (int i=wherecomment; i < MAX_ST_SIZE; i++)
         tvalue[i]=NULL;
 
     CleanStr(tvalue);        
 
     // Replace defines with their value
-    for (i=0; i < MAX_ST_SIZE - 1 && tvalue[i]!=NULL; i++)
+    for (int i=0; i < MAX_ST_SIZE - 1 && tvalue[i]!=NULL; i++)
     {
         if (tvalue[i]=='#') // found a keyword?
         {
