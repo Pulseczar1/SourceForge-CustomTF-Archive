@@ -720,7 +720,8 @@ void PR_PrintStatement (dstatement_t *s)
 {
 	int		i;
 
-	for (int opindex = 0 ; pr_opcodes[opindex].op != s->op ; opindex++);
+	int opindex;
+	for (opindex = 0 ; pr_opcodes[opindex].op != s->op ; opindex++);
 
 	printf ("%4i : %4i : %s ", (int)(s - statements), statement_linenums[s-statements], pr_opcodes[opindex].opname);
 	i = strlen(pr_opcodes[opindex].opname);
@@ -1284,7 +1285,7 @@ void CopyFiles (void)
 main
 ============
 */
-void main (int argc, char **argv)
+int main (int argc, char **argv)
 {
 	char	*src;
 	char	*src2;
@@ -1313,7 +1314,7 @@ void main (int argc, char **argv)
 		printf("\t/Od\teliminate duplicate defs\n");
 		printf("\t/Os\thash lookup in CopyString\n");
 		printf("\t/O2\tuse all optimizations\n");
-		return;
+		return 0;
 	}
 	
 	p = CheckParm ("-src");

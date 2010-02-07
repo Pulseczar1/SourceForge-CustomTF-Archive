@@ -1039,7 +1039,7 @@ void PR_ParseStatement (void)
 		PR_Statement(&pr_opcodes[OP_IFNOT], e, 0);
 		patch1 = &statements[numstatements-1];
 		PR_ParseStatement();
-		for (i = 0 ; i < numtemp ; i++)
+		for (int i = 0 ; i < numtemp ; i++)
 		{
 			statement_linenums[numstatements] = linenum[i];
 			statements[numstatements++] = temp[i];
