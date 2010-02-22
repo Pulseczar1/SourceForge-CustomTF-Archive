@@ -650,7 +650,9 @@ W_FireMedikit
 
 void(entity ignore, entity ignore2, string st, string st2, string st3, string st4, string st5, string st6) teamsprintbi;
 void(float tno, entity ignore, entity ignore2) teamprefixsprintbi;
+#ifndef NO_REVIVE
 float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive;
+#endif
 
 void(float inAuto) W_FireMedikit =
 {

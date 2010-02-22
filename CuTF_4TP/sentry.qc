@@ -712,6 +712,10 @@ float() Sentry_Fire =
 	local vector dir;
 	local vector miss_factor;
 
+	// PZ: sentries being carried, or flying through the air after being thrown, by ZGG, don't shoot, except in Coop
+	if (deathmatch && (self.pickedupby != world || (self.velocity != '0 0 0' && !self.flags & #FL_ONGROUND))) return #FALSE;
+	
+
 	//- OfN -
 	local vector soffset;
 	soffset = '0 0 0';

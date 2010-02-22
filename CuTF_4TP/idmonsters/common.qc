@@ -26,26 +26,6 @@ float( entity test ) COOP_IsCoopMonster = {
 	return #FALSE;
 };
 
-/*
-=============
-infront2
-
-returns 1 if the entity is in front (in sight) of check
-=============
-*/
-float( entity targ, entity check ) infront2 = {
-	local vector	vec;
-	local float		dot;
-	
-	makevectors( check.angles );
-	vec = normalize( targ.origin - check.origin );
-	dot = vec * v_forward;
-	
-	if ( dot > 0.3 )
-		return #TRUE;
-	return #FALSE;
-};
-
 //==============================================================================
 
 

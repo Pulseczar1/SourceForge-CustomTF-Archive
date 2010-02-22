@@ -77,7 +77,7 @@ void() TeamFortress_MOTD =
 //CH prints customTF version.  Edit in messages.qc
         PrintProzacIntro();
 
-        self.current_menu = #MENU_INTRO;
+        self.current_menu = #MENU_DEFAULT;
 		self.menu_count = #MENU_REFRESH_RATE;
    
 		self.motd = #MOTD_FINISHED;

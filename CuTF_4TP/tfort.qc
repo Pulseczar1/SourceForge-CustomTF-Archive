@@ -2943,18 +2943,28 @@ void() TeamFortress_RemoveTimers =
 				stuffcmd(self, "v_cshift 0\n");
 				stuffcmd(self, "r_norefresh 0;wait;echo;wait;echo;wait;echo;wait;echo\n");
 				dremove(te);
-				te = find(world, classname, "timer");
+				te = find(te, classname, "timer");
 			}
 			//WK Support for the curse timer
 			else if (te.netname == "bastardtimer")
 			{
 				if (self.is_connected == #FALSE)
 				{
-					dremove(te);
-					te = find(world, classname, "timer");
+					// Bastard Memory
+					// Only remove if the player has completed penance time. -Pulseczar
+					if (self.penance_time <= time)
+					{
+						delstr(te.t_s_h);
+						dremove(te);
+					}
+					// Otherwise, store their penance time in the bastard timer. -PZ
+					else
+					{
+						te.penance_time = self.penance_time;
+						te.owner = world;
+					}
 				}
-				else 
-					te = find(te, classname, "timer");
+				te = find(te, classname, "timer");
 			}
 			else if (te.netname == "alias") // Ignore alias timer
 			{
@@ -2964,7 +2974,7 @@ void() TeamFortress_RemoveTimers =
 			else
 			{
 				dremove(te);
-				te = find(world, classname, "timer");
+				te = find(te, classname, "timer");
 			}
 		}
 		else
@@ -3043,6 +3053,10 @@ void(float Suicided) TeamFortress_SetupRespawn =
 		restime = respawn_delay_time;
 	else 
 		restime = 0;
+
+	// PZ - respawn delay for blue players in AGR
+	if (agr && self.team_no == 1 && !restime)
+		restime = #AGR_BLUE_RESPAWN_DELAY;
 
 // Gizmo - remove respawn delay for coop, TODO: enable a toggleable amount in localinfo
 #ifdef COOP_MODE_ENHANCED

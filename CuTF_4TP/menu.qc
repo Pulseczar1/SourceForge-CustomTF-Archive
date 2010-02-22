@@ -690,6 +690,11 @@ void(float inp) Menu_Team_Input =
 		teamSet = TeamFortress_TeamSet(inp);		
 	else if (number_of_teams == 0 && inp <= #TM_MAX_NO)
 		teamSet = TeamFortress_TeamSet(inp);
+	else if (inp == 10) // PZ: press 0 to skip MOTD
+	{
+		self.motd = #MOTD_FINISHED - 2;
+		return;
+	}
 	else //- OfN
 	{
 		//ResetMenu();		
@@ -700,7 +705,7 @@ void(float inp) Menu_Team_Input =
 	// added teamSet for AGR code below -PZ
 	local entity ent;
 	local string temp;
-	if (teamSet) //Observers do not count against AGR limits
+	if (teamSet) // observers do not count against AGR limits
 	{
 		ent = find(world, classname, "voteent");
 		if (ent != world)
@@ -729,7 +734,8 @@ void(float inp) Menu_Team_Input =
 					ResetVoteEnt();
 				}
 			}
-		}	 
+		}
+		if (self.motd < #MOTD_FINISHED - 2) self.motd = #MOTD_FINISHED - 2; // PZ: kill MOTD once player has selected a team
 	}
 	// end AGR code
 

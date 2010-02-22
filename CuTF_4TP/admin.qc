@@ -1438,8 +1438,10 @@ float( entity te ) Admin_ValidEntityToKill = {
 		return #TRUE;
 	if ( te.classname == "player" )
 		return #TRUE;
+#ifdef COOP_MODE_ENHANCED
 	if ( COOP_IsCoopMonster( te ) )
 		return #TRUE;
+#endif
 
 	return #FALSE;
 };

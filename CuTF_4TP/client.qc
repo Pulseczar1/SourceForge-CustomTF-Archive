@@ -641,6 +641,15 @@ void() DecodeLevelParms =
 			toggleflags = toggleflags | #TFLAG_TEAMFRAGS;
 		else if (st == "off")
 			toggleflags = toggleflags - (toggleflags & #TFLAG_TEAMFRAGS);
+		// PZ - for AGR mode
+		if (agr)
+		{
+			if (agr_teamfrags)
+				toggleflags = toggleflags | #TFLAG_TEAMFRAGS;
+			else
+				toggleflags = toggleflags - (toggleflags & #TFLAG_TEAMFRAGS);
+		}
+		// end AGR mod
 
 		//WK JELLO WATER
 		st = infokey(world, "j");
@@ -1435,7 +1444,7 @@ void() respawn =
 			return;
 		}
 */		
-
+#ifdef COOP_MODE_ENHANCED
 	if (coop)
 	{
 		// Gizmo - if in coop 3, then do not allow respawning
@@ -1475,7 +1484,9 @@ void() respawn =
 			PutClientInServer ();
 		}
 	}
-	else if (deathmatch)
+	else
+#endif
+    if (deathmatch)
 	{
 		// make a copy of the dead body for appearances sake
 		CopyToBodyQue (self);
@@ -3050,6 +3061,40 @@ void() PlayerPreThink =
 			self.velocity_z = jello;
 	}
 
+	// PZ: added part of WK's BH restriction code (only affects glowers (flag carriers))
+	//WK 5-15-08 The bunny hop caps only apply while the player is on the ground or water or firing our hover boots
+	// Can't use custom_speed since it's only set on Custom PCs
+	local vector tempvel;
+	local float tempspeed;
+	if (self.flags & #FL_ONGROUND || self.waterlevel > 1 || (self.tf_items & #NIT_HOVER_BOOTS && self.button2)) {
+		/*local string foobar;
+		tempspeed = vlen(self.velocity);
+		foobar = ftos(tempspeed);
+		if (tempspeed > 100) {
+			sprint(self,#PRINT_HIGH,"Speed: ");
+			sprint(self,#PRINT_HIGH,foobar);
+			sprint(self,#PRINT_HIGH,"Maxspeed: ");
+			tempspeed = self.maxspeed;
+			foobar = ftos(tempspeed);
+			sprint(self,#PRINT_HIGH,foobar);
+			sprint(self,#PRINT_HIGH,"\n");
+		}*/
+			
+		// PZ: no Bunny Hopping for people with the flag (glowers)
+		if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) {
+			if (self.maxspeed < 0) self.maxspeed = 0;
+			tempvel_x = self.velocity_x; //We only care about horizontal movement
+			tempvel_y = self.velocity_y;
+			tempvel_z = 0;
+			tempspeed = vlen(tempvel);
+			if (tempspeed > self.maxspeed) {
+				tempspeed = self.maxspeed / tempspeed;
+				self.velocity_x = self.velocity_x * tempspeed; //Only slow down horizontal movement
+				self.velocity_y = self.velocity_y * tempspeed;
+			}
+		}
+	}
+
 	// teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
@@ -3512,8 +3557,9 @@ void() ClientConnect =
 	st = GetBracedClDesc(self);    
 	bprint (#PRINT_HIGH, self.netname," ",st," has joined the server\n");
 
-	// PZ - Attackers Go Red mode
-	if (agr) AGR_introducePlayer();
+	// PZ: make their team name and color blank when they join the server
+	stuffcmd(self, "team \"\"\n");
+	stuffcmd(self, "color \"0 0\"\n");
 	
 	//- OfN
 	self.admin_kick = world;
@@ -3822,6 +3868,25 @@ void() PlayerJoined =
 		{
 			RPrint("BUG: Unable check for resume of vote, GetSleepVote() failed!\n");
 		}		 
+	}
+	// Bastard Memory
+	// Is this player still serving curse time? -Pulseczar
+	local entity te;
+	local string IP;
+	IP = infokey(self, "ip");
+	te = find(world, netname, "bastardtimer");
+	while (te)
+	{
+		if (IP == te.t_s_h)
+		{
+			self.penance_time = te.penance_time;
+			te.owner = self;
+			makeImmune(self, time + 65);
+			bprint(#PRINT_HIGH, self.netname);
+			bprint(#PRINT_HIGH, " discovered that he/she can no longer escape Curse by reconnecting\n");
+			break;
+		}
+		te = find(te, netname, "bastardtimer");
 	}
 };
 
