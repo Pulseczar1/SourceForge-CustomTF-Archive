@@ -124,6 +124,7 @@ void() JobThief =
 	//local string st;
 
 	//PZ don't hide if we are looking down our scope.
+	// (lol.. I'm pretty sure I didn't make this comment. -real PZ)
 	local entity sniperdot;
 	sniperdot = find(world, classname, "timer");
 

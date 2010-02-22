@@ -2296,17 +2296,28 @@ float		rj; 				// Rocket Jump Modifier
 #define TFGS_DELAYED	4
 
 // Attackers Go Red mode -PZ
-float agr; // globar cvar, just on or off (requires 'localinfo agr 1' to be on)
-float agr_frags; // frags blue gets for successfully defending for agr_minutes minutes
-float agr_minutes; // number of minutes blue has to successfully defend in order to be 
-				   // rewarded frags
-float agr_vote_max; // PZ overrides default maximum number of players allowed to vote for AGR
-float timeToRewardBlue; // don't try to set it (it's set by functions)
-float agrTimerRunning; // boolean
-float agrTimeOfLastSound; // in seconds, what the timer was on last timer sound
-#define AGR_ROTATION_OFF #TRUE // on a map triggered by map rotation, AGR is never on
-#define AGR_VOTE_MAX 6 // PZ default maximum number of players allowed for an AGR vote (0 means no max)
-//#define AGR_WHEN_BLUE_SCORES_RETURN_FLAG
+// cvars - requires 'localinfo' to set these
+float agr;                        // globar cvar, just on or off (requires 'localinfo agr 1' to be on)
+float agr_frags;                  // frags blue gets for successfully defending for agr_minutes minutes
+float agr_minutes;                // number of minutes blue has to successfully defend in order to be 
+                                  // rewarded frags
+float agr_vote_max;               // overrides default maximum number of players allowed to vote for AGR
+float agr_teamfrags;              // overrides the serverinfo 'teamfrags' (or 't') var when AGR is active,
+                                  // which controls whether or not each players' frags are equal to their
+                                  // team's score
+// globals
+float timeToRewardBlue;           // don't try to set it (it's set by functions)
+float agrTimerRunning;            // boolean
+float agrTimeOfLastSound;         // in seconds, what the timer was on last timer sound
+float agrFlagRespawnWait;         // is flag currently waiting to spawn? (done after captures)
+
+#define AGR_ROTATION_OFF #TRUE    // on a map triggered by map rotation, AGR is never on
+#define AGR_VOTE_MAX 0            // default maximum number of players allowed for an AGR vote (0 means no max)
+#define AGR_BLUE_RESPAWN_DELAY 5  // how long blue has to wait to respawn 
+                                  // (to make up for time red has to travel to contested area)
+#define AGR_FLAG_RESPAWN_DELAY 15 // when red captures the flag, how long does it take the flag to respawn?
+// #define AGR_WHEN_BLUE_SCORES_RETURN_FLAG
+// end AGR
 
 // PZ - can't believe these globals didn't already exist.. created them for AGR mode.
 float playersOnTeam1;

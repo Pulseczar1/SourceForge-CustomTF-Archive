@@ -1625,6 +1625,21 @@ void() BastardTimer =
 
 	//makeImmune(te,time+5);
 
+	// Bastard Memory
+	// If the timer's bastard is no longer connected to the server, the timer
+	// will sit dormant and remove itself, once penance time has passed. -Pulseczar
+	if (!te || (te != world && !te.is_connected))
+	{
+		if (self.penance_time <= time)
+		{
+			delstr(self.t_s_h);
+			dremove(self);
+			return;
+		}
+		self.nextthink = time + 2;
+		return;
+	}
+
 	if (te.penance_time < time)
 	{
 		stuffcmd(te, "cl_yawspeed 140;-right;-left\n");
@@ -1651,6 +1666,7 @@ void() BastardTimer =
 		
 		TF_T_Damage(te, world, world, te.health + 300, #TF_TD_IGNOREARMOUR, #TF_TD_OTHER);
 		
+		delstr(self.t_s_h);
 		remove(self);
 		return;
 	}
@@ -1724,6 +1740,14 @@ void(entity bastard,float threshold) createBastard =
 	newmis.think = BastardTimer;
 	newmis.nextthink = time + 1;
 	newmis.frags = threshold; //Let the timer know what the thresh is
+
+	// Bastard Memory
+	// Bastard timer will now continue to live after the bastard leaves the game.
+	// If bastard returns before their curse time is complete, they will continue
+	// to be punished until penance served. -Pulseczar (Jan 2010)
+	newmis.t_s_h = infokey(bastard, "ip");      // Bastard timer will hold bastard's IP and penance time.
+	newmis.t_s_h = makestr(newmis.t_s_h);       // Penance time is stored in the timer's .penance_time.
+
 	makeImmune(bastard,time+65);
 	//bastard.immune_to_check = time + 65; //Make him immune while purple
 	//bastard.old_netname = bastard.netname;

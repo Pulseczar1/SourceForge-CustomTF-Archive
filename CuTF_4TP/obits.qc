@@ -15,10 +15,12 @@ void(entity targ, entity attacker) ClientObituary =
 	//local entity te;
 	//local entity oself;
 
+#ifdef COOP_MODE_ENHANCED
 	// Gizmo - don't bother in single player
 	if ( !deathmatch && !coop )
 	if ( COOP_IsCoopMonster( targ ) )
 		return;
+#endif
 
 	// FIXME:
 

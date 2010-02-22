@@ -413,6 +413,7 @@ void() worldspawn =
 	playersOnTeam1 = 0; playersOnTeam2 = 0;
 	playersOnTeam3 = 0; playersOnTeam4 = 0;
 	agrTimerRunning = 0; agrTimeOfLastSound = 0;
+	agrFlagRespawnWait = 0; timeToRewardBlue = 0;
 
 	//friends1_mask = stof(infokey(world,"friends1_mask"));
 	//friends2_mask = stof(infokey(world,"friends2_mask"));

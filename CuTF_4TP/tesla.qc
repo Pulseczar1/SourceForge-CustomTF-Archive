@@ -403,6 +403,8 @@ void() Tesla_FoundTarget =
 {
 	// Cannon Powerup Sound?
 	if (self.ammo_cells > self.#tesla_batterydrain)
+	// PZ: teslas being carried, or flying through the air after being thrown, by ZGG, don't shoot, except in Coop
+	if (!deathmatch || (!self.pickedupby && !self.velocity))
 		sound (self, #CHAN_VOICE, "weapons/guerset.wav", 1, #ATTN_NORM);
 
 	//Glow
@@ -497,7 +499,23 @@ float() Tesla_Fire =
 	// OfN - Psionized teslas don't shot
 	/*if (self.tfstate & #TFSTATE_PSIONIZED)
 		return #FALSE;*/
-	
+
+#ifdef 0
+// remove these prints when it's apparent that this is working fine -PZ
+bprint(#PRINT_HIGH, "pickedupby: ");
+if (self.pickedupby) 
+    bprint(#PRINT_HIGH, self.pickedupby.netname);
+else
+    bprint(#PRINT_HIGH, "NO ONE");
+bprint(#PRINT_HIGH, "; cells: ");
+local string tmp;
+tmp = ftos(self.ammo_cells);
+bprint(#PRINT_HIGH, tmp);
+bprint(#PRINT_HIGH, "\n");
+#endif
+	// PZ: teslas being carried, or flying through the air after being thrown, by ZGG, don't shoot, except in Coop
+	if (deathmatch && (self.pickedupby != world || (self.velocity != '0 0 0' && !self.flags & #FL_ONGROUND))) return #FALSE;	
+
 	if (self.tf_items & #NIT_TURRET)
 	{
 		below = '0 0 1';	// So as not to hit tesla.

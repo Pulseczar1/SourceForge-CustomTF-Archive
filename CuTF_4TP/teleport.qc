@@ -152,6 +152,9 @@ void() Teleporter_touch =
 //===============
 float(entity targ) Teleporter_check_person =
 {
+	// PZ: teleporters being carried, or flying through the air after being thrown, by ZGG, are inactive, except in Coop
+	if (deathmatch && (self.pickedupby != world || (self.velocity != '0 0 0' && !self.flags & #FL_ONGROUND))) return #FALSE;
+
 	if (self.ammo_cells < #TELEPORTER_CELLS) {
 		if (Teammate(targ.team_no, self.team_no)) //only to team member
 			CenterPrint(other, "This teleporter is out of power.\n");

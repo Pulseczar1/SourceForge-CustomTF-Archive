@@ -985,7 +985,7 @@ void(entity Goal, entity Player, entity AP, float addb) Apply_Results =
 						player = find(player, classname, "player");
 					}
 					BroadcastSound("boss2/pop2.wav");
-					AGR_resetTimer();
+					agrTimerRunning = 0;
 				}
 			}
 		}
@@ -2316,7 +2316,7 @@ void(entity Goal, entity AP, float addb) DoResults =
 				player = find(player, classname, "player");
 			}
 			BroadcastSound("boss2/pop2.wav");
-			AGR_resetTimer();
+			agrTimerRunning = 0;
 		}
 
 		//if (chris)
@@ -2775,7 +2775,7 @@ void() item_tfgoal_touch =
 
 	// Attackers Go Red mode -PZ
 	// don't let Red have flag if Blue has no players
-	if (agr) if (self.team_no == 2) if(!agrTimerRunning)
+	if (agr) if (self.team_no == 2) if (!agrTimerRunning)
 		return;
 
     //local string st;
@@ -3063,6 +3063,9 @@ void(float item) Update_team_with_flag_drop =
 // Return the Item to its starting point
 void() ReturnItem =
 {
+	if (agr && #AGR_FLAG_RESPAWN_DELAY) // PZ
+		agrFlagRespawnWait = #FALSE;
+
 	self.enemy.goal_state = #TFGS_INACTIVE;
 //CH sets solid type
 	if (self.enemy.goal_activation & #TFGI_GOAL_IS_SOLID)
@@ -3303,7 +3306,17 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer =
 			DelayReturn = spawn();
 			DelayReturn.enemy = Item;
 			DelayReturn.think = ReturnItem;
-			DelayReturn.nextthink = time + 0.5;
+			if (agr && #AGR_FLAG_RESPAWN_DELAY) // PZ
+			{
+				agrFlagRespawnWait = #TRUE;
+				DelayReturn.nextthink = time + #AGR_FLAG_RESPAWN_DELAY;
+				bprint(#PRINT_HIGH, "Flag will respawn in ");
+				local string tmp; tmp = ftos(#AGR_FLAG_RESPAWN_DELAY);
+				tmp = colstr(tmp, #COLSTR_NUMBER);
+				bprint(#PRINT_HIGH, tmp); bprint(#PRINT_HIGH, " seconds\n");
+			}
+			else
+				DelayReturn.nextthink = time + 0.5;
 /*
 			Item.origin = Item.oldorigin;
 			setorigin(Item, Item.origin);
