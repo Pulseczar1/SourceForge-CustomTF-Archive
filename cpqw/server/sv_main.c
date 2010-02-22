@@ -1381,12 +1381,26 @@ void SV_AddIP_f (void)
 {
 	int		i;
 	double		mins = 0.0;	// KK 
+	ipfilter_t tmpFilter; // PZ
 	
 	if (Cmd_Argc() != 2 && Cmd_Argc() != 3) {
 		Con_Printf ("usage: addip <ip> [minutes]\n"
 			    "  (minutes optional, default = 0 = permanent).\n");
 		return;
 	}
+
+	// PZ: don't duplicate any IP filters
+	for (i = 0; i < numipfilters; i++)
+	{
+		if (!StringToFilter(Cmd_Argv(1), &tmpFilter))
+			tmpFilter.compare = 0xffffffff;
+		if (ipfilters[i].compare == tmpFilter.compare)
+		{
+			Con_Printf("IP Filter %s is already in the IP Filter list\n", Cmd_Argv(1));
+			return;
+		}
+	}
+
 	for (i=0 ; i<numipfilters ; i++)
 		if (ipfilters[i].compare == 0xffffffff)
 			break;		// free spot
