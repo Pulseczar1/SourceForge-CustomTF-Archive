@@ -690,7 +690,7 @@ void(float inp) Menu_Team_Input =
 		teamSet = TeamFortress_TeamSet(inp);		
 	else if (number_of_teams == 0 && inp <= #TM_MAX_NO)
 		teamSet = TeamFortress_TeamSet(inp);
-	else if (inp == 10) // PZ: press 0 to skip MOTD
+	else if (inp == 10 && self.motd != #MOTD_FINISHED) // PZ: press 0 to skip MOTD
 	{
 		self.motd = #MOTD_FINISHED - 2;
 		return;
