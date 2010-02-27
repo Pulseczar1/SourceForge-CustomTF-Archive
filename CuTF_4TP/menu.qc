@@ -693,6 +693,7 @@ void(float inp) Menu_Team_Input =
 	else if (inp == 10 && self.motd != #MOTD_FINISHED) // PZ: press 0 to skip MOTD
 	{
 		self.motd = #MOTD_FINISHED - 2;
+		self.impulse = 0;
 		return;
 	}
 	else //- OfN

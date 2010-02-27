@@ -1099,7 +1099,11 @@ void() GotoNextMap =
 	nmap = infokey (world, "nmap");
 	localcmd ("localinfo nmap \"\"\n");
 
-	if (nextmap != mapname || nmap != string_null) {
+	// Gizmo - check if the samelevel cvar is set to 1
+	if ( cvar( "samelevel" ) == 1 ) {
+		changelevel( mapname );
+		already_chosen_map = #TRUE;
+	} else if (nextmap != mapname || nmap != string_null) {
 		if (nmap != string_null)
 			nextmap = nmap;
 
@@ -1107,6 +1111,9 @@ void() GotoNextMap =
 		CheckFailedMapChange ();
 		already_chosen_map = #TRUE;
 	}
+
+	if ( !already_chosen_map )
+		already_chosen_map = DoExtraCycle();
 
 	if (!already_chosen_map) {
 		if (#AGR_ROTATION_OFF) // PZ - AGR off on map triggered by rotation
@@ -1137,11 +1144,13 @@ void() GotoNextMap =
 		localcmd (".cfg\n");
 	}
 
+/*
 	// Gizmo - if the above didn't produce a serverinfo/localinfo nmap then default to start
 	if (!already_chosen_map && infokey(world, "nmap") != string_null)
 		already_chosen_map = DoExtraCycle ();
 	else if (!already_chosen_map && infokey(world, "nmap") == string_null)
 		changelevel ("start");
+*/
 
 	if (infokey(world, "n") == "0")
 		already_chosen_map = #FALSE;

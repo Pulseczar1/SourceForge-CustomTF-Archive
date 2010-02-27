@@ -391,7 +391,7 @@ void (entity pickuper, float toss) zg_drop =
 	}
 };
 
-
+//#define ZGG_DETPACK_RESTRICTION_TESTING
 void (entity pickuper) zg_pickup =
 {
 	local entity thinker;
@@ -404,6 +404,16 @@ void (entity pickuper) zg_pickup =
 	// make sure we're not already picking something up
 	if (pickuper.pickedupobject_hands != world)
 		return;
+
+#ifndef ZGG_DETPACK_RESTRICTION_TESTING
+
+	if (deathmatch && (trace_ent.classname == "detpack" || trace_ent.classname == "building_dispenser"))
+	{
+		sprint(pickuper, #PRINT_HIGH, "For the time being, can't pickup detpacks/dispensers at all.\n");
+		return;
+	}
+
+#endif
 
 	// setup pickuper and pickupee
 	pickuper._oldowner = pickuper.owner;			// *
@@ -427,6 +437,38 @@ void (entity pickuper) zg_pickup =
 
 
 	pickuper.pickedupobject_hands = trace_ent;
+
+#ifdef ZGG_DETPACK_RESTRICTION_TESTING
+
+ 	local float ran;
+
+	ran = random();
+
+sprint(pickuper, #PRINT_HIGH, "ran = ");
+local string tmp; tmp = ftos(ran);
+sprint(pickuper, #PRINT_HIGH, tmp); sprint(pickuper, #PRINT_HIGH, "\n");
+
+	if (deathmatch && trace_ent.classname == "detpack")
+	{
+		sprint(pickuper, #PRINT_HIGH, "Careful. Detpacks and zero gravity guns don't get along very well..\n");
+		// calc random number
+		if ((trace_ent.owner.team_no == pickuper.team_no && ran < #ZGG_FRIENDLY_DETPACK_EXPLODE_CHANCE) ||
+			(trace_ent.owner.team_no != pickuper.team_no && ran < #ZGG_ENEMY_DETPACK_EXPLODE_CHANCE))
+		{
+if (trace_ent.owner.team_no == pickuper.team_no)
+	sprint(pickuper, #PRINT_HIGH, "FRIENDLY DET: BEEEEEEEP!\n");
+else
+	sprint(pickuper, #PRINT_HIGH, "ENEMY DET: BEEEEEEEP!\n");
+			// beep error sound
+			sound(trace_ent, #CHAN_WEAPON, "sub/locked.wav", 1, #ATTN_NORM);
+			// explode 2 seconds later
+			if (trace_ent.nextthink > time + 2)
+				trace_ent.nextthink = time + 2;
+			trace_ent.linked_list.health = 0; // stop the detpack's timer
+		}
+	}
+
+#endif
 
 	// create the thinker
 	thinker = spawn ();

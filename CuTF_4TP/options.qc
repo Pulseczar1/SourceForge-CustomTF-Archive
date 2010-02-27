@@ -27,6 +27,9 @@ Defines for the compilable options within TF.
 //#define NO_ZEROGRAVGUN			// Gizmo - disables the Zero-Gravity Gun
 
 
+#define ZGG_FRIENDLY_DETPACK_EXPLODE_CHANCE 0.5
+#define ZGG_ENEMY_DETPACK_EXPLODE_CHANCE    0.1
+
 #define NET_SERVER
 //#define BOTS			// doesn't do anything yet
 //#define DEMO_STUFF
