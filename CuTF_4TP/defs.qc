@@ -1715,7 +1715,6 @@ float		rj; 				// Rocket Jump Modifier
 // Gizmo - fourth bitfield; for the more optional equipment page, and anything else that remotely fits into that category
 .float cutf_moreitems;					// cutfMoreItems
 #define CUTF_MI_FASTERROCKETS	1		// Gizmo - avirox's faster rocket mod
-#define CUTF_MI_NONSTICKYGRENS	2		// Gizmo - avirox's non-sticky grens
 #define CUTF_MI_FRIENDORFOE		4		// Gizmo - changes the crosshair to blue or red when looking at enemy or friend
 
 //Time to be invincible from the respawn guard

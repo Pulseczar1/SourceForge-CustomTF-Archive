@@ -20,7 +20,7 @@
 
 // Welcome to CustomTF For The People\nwhere the PLAYERS decide how the game is played!\n
 #define MSG_INTRO  "Welcome to CustomTF Ζος Τθε Πεοπμε\nwhere the ΠΜΑΩΕÒΣ decide\nhow the game is played!\n\nPlease give your input at:\n\nγυστοντζ®ξετ―ζοςυν\n\n\n\n"
-#define MSG_INTRO2 "Based on Τθε Ηιϊνο's Coop mod\nwhich is based on Prozac CuTF Classic\n\n" // \n\n
+#define MSG_INTRO2 "Based on Τθε Ηιϊνο's Coop mod\nwhich is based on Prozac CuTF Classic\n\nHosted by PhoenixLabs.org\n\n" // \n\n
 #define MSG_INTRO3 "\nPress '' to skip"
 //http:――kickme®to―customtf"
 

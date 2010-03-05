@@ -148,7 +148,6 @@ void(entity player) UpdateArmorItem;
 #define STR_CLUSTER 		   "Cluster Rockets "
 // PAGE 17 - More Equipment
 #define STR_FASTERROCKETS		"Faster Rockets  "
-#define STR_NONSTICKYGRENS		"Anti-Stick Grens"
 #define STR_FRIENDORFOE			"Friend or Foe   "
 
 #define STR_SELLEXTRAS		   "Sell stuff back "
@@ -284,7 +283,6 @@ void(entity player) UpdateArmorItem;
 #define COST_CLUSTER			3250
 // PAGE 17 - More Equipment
 #define COST_FASTERROCKETS		800
-#define COST_NONSTICKYGRENS		450
 #define COST_FRIENDORFOE		25
 
 // Leg settings (Speeds)
@@ -2482,14 +2480,12 @@ void() Menu_MoreOption =
 	if (self.tfstate & #TFSTATE_NOTENOUGHMONEY)
 		temp = colstr(temp,#COLSTR_RED);
 	
-	local string l1,l2,l3,l4, str;
+	local string l1,l2,l3,l4;
 
 	MenuResetCount();
 
 	l1 = ConstructMenuItemStr(1, #STR_FASTERROCKETS, #COST_FASTERROCKETS, self.cutf_moreitems, #CUTF_MI_FASTERROCKETS);
-	str = ConstructMenuItemStr(2, #STR_NONSTICKYGRENS, #COST_NONSTICKYGRENS, self.cutf_moreitems, #CUTF_MI_NONSTICKYGRENS);
-	l1 = strcat(l1, str);
-	l2 = ConstructMenuItemStr( 3, #STR_FRIENDORFOE, #COST_FRIENDORFOE, self.cutf_moreitems, #CUTF_MI_FRIENDORFOE );
+	l2 = ConstructMenuItemStr( 2, #STR_FRIENDORFOE, #COST_FRIENDORFOE, self.cutf_moreitems, #CUTF_MI_FRIENDORFOE );
 
 	l3 = "\n\n\n";
 
@@ -2521,23 +2517,7 @@ void(float inp) Menu_MoreOption_Input =
 			}
 
 			Menu_MoreOption ();
-		} else if (inp == 2) {
-			sprint (self, #PRINT_HIGH, "Sorry, non-sticky grenades are disabled till a serious bug/exploit is fixed!\n");
-			CuTFMenuSound (#MENUSOUND_WRONG);
-/*
-			if (self.cutf_moreitems & #CUTF_MI_NONSTICKYGRENS) {
-				PrintRefund (#COST_NONSTICKYGRENS);
-				self.cutf_moreitems = self.cutf_moreitems - #CUTF_MI_NONSTICKYGRENS;
-			} else if (self.money >= #COST_NONSTICKYGRENS) {
-				self.money = self.money - #COST_NONSTICKYGRENS;
-				self.cutf_moreitems = self.cutf_moreitems | #CUTF_MI_NONSTICKYGRENS;
-				PrintMoney ();
-			} else
-				PrintNotEnoughMoney (#COST_NONSTICKYGRENS);
-
-			Menu_MoreOption ();
-*/
-		} else if ( inp == 3 ) {
+		} else if ( inp == 2 ) {
 			if ( self.cutf_moreitems & #CUTF_MI_FRIENDORFOE ) {
 				PrintRefund( #COST_FRIENDORFOE );
 				self.cutf_moreitems = self.cutf_moreitems - #CUTF_MI_FRIENDORFOE;
