@@ -2111,6 +2111,7 @@ void() PutClientInServer =
 #endif
 	local float iszoom, oldclass;
 	local entity spot, te;
+	local string rjtmp;
 
 	DecodeLevelParms ();
 
@@ -2318,8 +2319,10 @@ void() PutClientInServer =
 
 #ifdef QUAKE_WORLD
 	// Set Rocket Jump Modifiers
-	if (stof(infokey(world, "rj")) != 0)
-		rj = stof(infokey(world, "rj"));
+	
+	rjtmp = infokey(world, "rj");
+	if (stof(rjtmp) != 0)
+		rj = stof(rjtmp);
 	else
 		rj = 1;
 #endif
