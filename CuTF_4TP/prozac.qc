@@ -34,7 +34,7 @@ void() PrintProzacMOTD =
     local string st2; 
     local float x;
 
-    st = "Celebrating “• years of CustomÔÆ!!\n\n";
+    st = "Celebrating “• years of CustomTF!!\n\n";
     
     if ((self.#cprint_fx & 3) == 3)
         st = colstr(st,#COLSTR_MIX1);
