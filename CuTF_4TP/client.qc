@@ -216,12 +216,13 @@ void() autoteam_think =
 //	if (chris)
 //		SetUpChrisRound();
 //	if (!chris)
-		PrematchBegin();
+		//PrematchBegin(); // PZ: no
 	
 	toggleflags = toggleflags | #TFLAG_AUTOTEAM;
 	dremove(self);
 };
 
+// PZ: This function actually ends the prematch. Go figure.
 void () PrematchBegin =
 {
 	if (prematch)
@@ -252,6 +253,7 @@ void () PrematchBegin =
 			other = find(other, classname, "grunty");
 		}*/
 	}
+	dremove(self); // PZ: removes timer entity that called this function
 	
 /*	if (chris)
 	{
@@ -688,8 +690,13 @@ void() DecodeLevelParms =
 		if (prematchtime) // if we have prematch
 		{
 			prematch = time + prematchtime; // set it
-			autoteam_time = prematchtime;
-			toggleflags = toggleflags | #TFLAG_AUTOTEAM;
+			// PZ: why require autoteam after prematch?? (no more)
+			//autoteam_time = prematchtime;
+			//toggleflags = toggleflags | #TFLAG_AUTOTEAM;
+			// PZ: for some reason, prematch was riding on autoteam code (no more)
+			ent = spawn();
+			ent.nextthink = time + prematchtime;
+			ent.think = PrematchBegin;
 		}
 		else
 			prematch = #FALSE; // otherwise, no prematch
