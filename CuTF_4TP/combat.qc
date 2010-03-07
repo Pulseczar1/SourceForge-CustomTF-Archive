@@ -706,11 +706,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 			#ifdef QUAKE_WORLD
 				// Increase kickback for smaller weapons
-				if ( (damage < 60) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname != targ.netname)) 
+				if ( (damage < 60) && ((attacker.classname == "player") && (targ.classname == "player")) && ( attacker.netname != targ.netname)) 
 					targ.velocity = targ.velocity + dir * damage * 11;
 				else                        
 					targ.velocity = targ.velocity + dir*damage*8;
-				if ( (rj > 1) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname == targ.netname)) 
+				if ( (rj > 1) && ((attacker.classname == "player") && (targ.classname == "player")) && ( attacker.netname == targ.netname)) 
 					targ.velocity = targ.velocity + dir * damage * rj;
 				if (targ.classname == "player" && targ.cutf_items & #CUTF_GYMNAST)
 					targ.velocity = targ.velocity + dir * damage * 4; //WK 1/7/7 Gymnast Nerf: 8
