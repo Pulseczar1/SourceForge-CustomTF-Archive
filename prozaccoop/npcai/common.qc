@@ -711,7 +711,7 @@ void() npcAi_SmoothFrame = {
 		self.yaw_speed = oldyaw;
 
 		// reset the goal back to it's original position
-		self.goalentity.origin = oldPos;
+		setorigin( self.goalentity, oldPos );
 
 		self.#npc_lastruntime = self.lastruntime;
 		self.#npc_attemptednextthink = self.nextthink = time + #NPC_LERPTIME;
