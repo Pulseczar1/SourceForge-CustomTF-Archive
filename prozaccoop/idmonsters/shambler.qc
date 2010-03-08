@@ -461,12 +461,13 @@ void() _sham_die =
 //============================================================================
 
 void() _ShamCheckAttack = {
-	if ( vlen( self.origin - self.#npc_lastEnemyOrigin ) < 120 )
+	if ( vlen( self.origin - self.#npc_lastEnemyOrigin ) < 120 ) {
 		_sham_melee();
+		return;
+	}
 
 	// missile attack
-	else
-		_sham_magic1();
+	_sham_magic1();
 
 	// make shamblers more aggressive against hwguys
 	if ( !( self.enemy.flags & #FL_CLIENT ) || self.enemy.current_weapon != #WEAP_ASSAULT_CANNON )
