@@ -301,9 +301,10 @@ void () zg_think =
 		}
 	}
 
-	// check if the pickuper is dead
-	if (pickuper.health <= 0 || (pickupee.takedamage && pickupee.health <= 0) || pickupee.model == "" || !pickuper.is_connected) {	// *
-		zg_drop (pickuper, #FALSE);
+	// check if the pickuper is dead or should otherwise drop what we have picked up
+	if ( pickuper.health <= 0 || ( pickupee.takedamage && pickupee.health <= 0 ) || pickupee.model == "" || !pickuper.is_connected
+		|| pickuper.is_feigning || pickuper.current_weapon != #WEAP_ZEROGRAVITY ) {	// *
+		zg_drop( pickuper, #FALSE );
 		return;
 	}
 

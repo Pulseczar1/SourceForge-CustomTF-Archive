@@ -444,7 +444,7 @@ float() Sentry_FindTarget =
 
 			r = GetTeam( te );
 
-			if ( !COOP_IsCoopMonster( te ) )
+			if ( !npcAi_IsCoopMonster( te ) )
 				gotone = #FALSE;
 			else if ( Teammate( self.real_owner.team_no, r ) )
 				gotone = #FALSE;

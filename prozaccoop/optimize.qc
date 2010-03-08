@@ -11,7 +11,7 @@ float (entity targ, entity check) visible2;
 float (entity targ, entity check) visible2x;
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage;
 #ifdef COOP_MODE_ENHANCED
-float( entity test ) COOP_IsCoopMonster;
+float( entity test ) npcAi_IsCoopMonster;
 #endif
 //checks client passed into and returns true if valid used for sents etc
 //entity looking at, entity thats looking, (0-1) checks visible, (0-range) checks range, (0-1) do special tesla checks, (0-1) should check for ceasefire
@@ -94,7 +94,7 @@ float(entity targ, entity checker, float chkvis, float chkrng, float istesla, fl
 			return #FALSE;
 #ifdef COOP_MODE_ENHANCED
 		// never check thief here if checker is a monster
-		if (targ.job & #JOB_THIEF && (targ.job & #JOB_ACTIVE || targ.job & #JOB_FULL_HIDE) && !COOP_IsCoopMonster( checker ))
+		if (targ.job & #JOB_THIEF && (targ.job & #JOB_ACTIVE || targ.job & #JOB_FULL_HIDE) && !npcAi_IsCoopMonster( checker ))
 #else
 		if (targ.job & #JOB_THIEF && (targ.job & #JOB_ACTIVE || targ.job & #JOB_FULL_HIDE))
 #endif

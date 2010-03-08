@@ -292,7 +292,7 @@ void(float aur) AddAura =
 	#endif
 
 #ifdef COOP_MODE_ENHANCED
-	if ( COOP_IsCoopMonster( targ ) ) {
+	if ( npcAi_IsCoopMonster( targ ) ) {
 		sprint( self, #PRINT_HIGH, "You cannot bestow an aura to this monster\n" );
 		return;
 	}
@@ -491,7 +491,7 @@ void() CrusaderAddInvisibility =
 
 #ifdef COOP_MODE_ENHANCED
 	// this shouldn't happen, so don't print out a warning... infact if this happens, it's a bug
-	if ( COOP_IsCoopMonster( targ ) )
+	if ( npcAi_IsCoopMonster( targ ) )
 		return;
 #endif
 
@@ -760,7 +760,7 @@ void() CrusaderDispel =
 				}
 			}
 #ifdef COOP_MODE_ENHANCED
-			else if ( COOP_IsCoopMonster( te ) ) {
+			else if ( npcAi_IsCoopMonster( te ) ) {
 				deathmsg = #DMSG_DISPEL;
 				TF_T_Damage( te, self, self, 100 + 400*random(), 0, #TF_TD_OTHER );
 			}

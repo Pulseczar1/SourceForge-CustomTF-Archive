@@ -260,13 +260,12 @@ void() finale_4 =
 
 //============================================================================
 
-void (entity attacker, float damage) nopain =
-{
+void( entity attacker, float damage ) nopain = {
 	self.health = #IDMON_OLDONE_HEALTH;
 
 	// if the telefrag didn't do enough damage, then force it to be telefragged
-	if (damage_attacker.classname == "teledeath" || damage_attacker.classname == "teledeath2")
-		finale_1 ();
+	if ( damage_attacker.classname == "teledeath" || damage_attacker.classname == "teledeath2" )
+		finale_1();
 };
 
 //============================================================================
@@ -320,5 +319,7 @@ void() monster_oldone =
 	
 	total_monsters = total_monsters + 1;
 };
+
+#undef IDMON_OLDONE_HEALTH
 
 #endif

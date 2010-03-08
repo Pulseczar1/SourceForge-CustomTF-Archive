@@ -48,7 +48,6 @@ void(vector p) boss_missile;
 
 void() boss_face =
 {
-	
 // go for another player if multi player
 	if (self.enemy.health <= 0 || random() < 0.02)
 	{
@@ -56,7 +55,7 @@ void() boss_face =
 		if (!self.enemy)
 			self.enemy = find(self.enemy, classname, "player");
 	}
-	COOP_Turn ();
+	npcAi_Turn ();
 };
 
 void() boss_rise1	=[	$rise1, boss_rise2 ] {
@@ -114,7 +113,14 @@ void() boss_idle27	=[	$walk27, boss_idle28 ] {boss_face();};
 void() boss_idle28	=[	$walk28, boss_idle29 ] {boss_face();};
 void() boss_idle29	=[	$walk29, boss_idle30 ] {boss_face();};
 void() boss_idle30	=[	$walk30, boss_idle31 ] {boss_face();};
-void() boss_idle31	=[	$walk31, boss_idle1 ] {boss_face();};
+void() boss_idle31	=[	$walk31, boss_idle1 ] {
+	boss_face();
+
+	// Gizmo - attack if we have a valid enemy
+	if ( self.enemy != world )
+	if ( self.enemy.health > 0 )
+		boss_missile1();
+};
 
 void() boss_missile1	=[	$attack1, boss_missile2 ] {boss_face();};
 void() boss_missile2	=[	$attack2, boss_missile3 ] {boss_face();};

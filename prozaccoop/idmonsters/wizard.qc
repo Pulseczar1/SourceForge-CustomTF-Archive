@@ -7,8 +7,9 @@
 #else
 
 
-#define IDMON_WIZARD_HEALTH		220
+#define IDMON_WIZARD_HEALTH			220
 #define IDMON_WIZARD_SPIKEDMG		60		// 150
+#define IDMON_WIZARD_SPIKEVELOCITY	600
 
 
 /*
@@ -95,61 +96,45 @@ void(entity missile, float mspeed, float accuracy) LaunchMissile =
 void() _wiz_run1;
 void() _wiz_side1;
 
+void() _Wiz_Missile;
+
 /*
 =================
 WizardCheckAttack
 =================
 */
-float()	_WizardCheckAttack =
-{
-	local entity	targ;
-	local float		chance;
+void()	_WizardCheckAttack = {
+	local float		chance, r;
 
-	if (!infront(self.enemy))
-		return #FALSE;
+	// make sure we're facing the right direction
+	if ( !FacingIdeal() )
+		return;		// not facing the right direction, wait until we are
 
-	enemy_range = range (self.enemy);
-	enemy_vis = visible (self.enemy);
-
-	if (time < self.attack_finished)
-		return #FALSE;
-	if (!enemy_vis)
-		return #FALSE;
-
-	if (enemy_range == #RANGE_FAR) {
-		if (self.attack_state != #AS_STRAIGHT) {
-			self.attack_state = #AS_STRAIGHT;
-		}
-		return #FALSE;
-	}
-		
-	targ = self.enemy;
+	r = npcAi_EnemyRange( self );
+	// don't attack if we're too far away
+	if ( r == #RANGE_FAR )
+		return;
 			
-	if (enemy_range == #RANGE_MELEE)
+	if ( r == #RANGE_MELEE )
 		chance = 0.9;
-	else if (enemy_range == #RANGE_NEAR)
+	else if ( r == #RANGE_NEAR )
 		chance = 0.6;
-	else if (enemy_range == #RANGE_MID)
+	else if ( r == #RANGE_MID )
 		chance = 0.2;
 	else
 		chance = 0;
 
-	if (random () < chance) {
-		self.attack_state = #AS_MISSILE;
-		return #TRUE;
+	if ( random() < chance ) {
+		_Wiz_Missile();
+		return;
 	}
 
-	if (enemy_range == #RANGE_MID) {
-		if (self.attack_state != #AS_STRAIGHT) {
-			self.attack_state = #AS_STRAIGHT;
-		}
+	// if we're not attacking this time, slide or get closer if we're too far out
+	if ( r == #RANGE_MID ) {
+		self.attack_state = #AS_STRAIGHT;
 	} else {
-		if (self.attack_state != #AS_SLIDING) {
-			self.attack_state = #AS_SLIDING;
-		}
+		self.attack_state = #AS_SLIDING;
 	}
-	
-	return #FALSE;
 };
 
 /*
@@ -157,9 +142,9 @@ float()	_WizardCheckAttack =
 WizardAttackFinished
 =================
 */
-float()	_WizardAttackFinished =
+void()	_WizardAttackFinished =
 {
-	if (enemy_range >= #RANGE_MID || !visible(self.enemy))
+	if ( npcAi_EnemyRange( self ) >= #RANGE_MID || !visible( self.enemy ) )
 	{
 		self.attack_state = #AS_STRAIGHT;
 		self.think = _wiz_run1;
@@ -210,45 +195,49 @@ void() wizspike_touch =
 };
 
 
-void() _Wiz_FastFire =
-{
+void() _Wiz_FastFire = {
 	local vector		vec;
-	local vector		dst;
 
-	if (self.owner.health > 0)
-	{
-		muzzleflash ();
+	if ( self.owner.health > 0 ) {
+		muzzleflash();
 
-		makevectors (self.enemy.angles);	
+#ifdef NEVER_DEFINED
+		local vector		dst;
+
+		makevectors (self.enemy.angles);
 		dst = self.enemy.origin - 13*self.movedir;
 	
 		vec = normalize(dst - self.origin);
+#endif
+		vec = npcAi_GetAttackVector( self.owner, self.origin );
 		sound (self, #CHAN_WEAPON, "wizard/wattack.wav", 1, #ATTN_NORM);
 
 
-		newmis = spawn ();
+		newmis = spawn();
 		newmis.movetype = #MOVETYPE_FLYMISSILE;
 		newmis.solid = #SOLID_BBOX;
 
-		newmis.angles = vectoangles(vec);
+		newmis.angles = vectoangles( vec );
 
 		newmis.touch = wizspike_touch;
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 6;
-		setorigin (newmis, self.origin);
+		setorigin( newmis, self.origin );
 
 //		newmis.velocity = vec * 2000;
-//		newmis.velocity = vec*600;
+		newmis.velocity = vec*#IDMON_WIZARD_SPIKEVELOCITY;
 
+#ifdef NEVER_DEFINED
 		// TODO: Gizmo - someday I want monsters to look at where they want to shoot, and just have weapons shoot via v_forward
 		LaunchMissile (newmis, 600, 0.1);
+#endif
 		newmis.owner = self.owner;
 		newmis.classname = "wizspike";
-		setmodel (newmis, "progs/w_spike.mdl");
-		setsize (newmis, #VEC_ORIGIN, #VEC_ORIGIN);		
+		setmodel( newmis, "progs/w_spike.mdl" );
+		setsize( newmis, #VEC_ORIGIN, #VEC_ORIGIN );		
 	}
 
-	remove (self);
+	remove( self );
 };
 
 
@@ -299,73 +288,78 @@ local float wr;
 	return;
 };
 
-void()	_wiz_stand1	=[	$hover1,		_wiz_stand2	] {COOP_Idle();};
+void()	_wiz_stand1	=[	$hover1,		_wiz_stand2	] {npcAi_Idle();};
 void()	_wiz_stand2	=[	$hover2,		_wiz_stand3	] {};
 void()	_wiz_stand3	=[	$hover3,		_wiz_stand4	] {};
 void()	_wiz_stand4	=[	$hover4,		_wiz_stand5	] {};
-void()	_wiz_stand5	=[	$hover5,		_wiz_stand6	] {COOP_Idle();};
+void()	_wiz_stand5	=[	$hover5,		_wiz_stand6	] {npcAi_Idle();};
 void()	_wiz_stand6	=[	$hover6,		_wiz_stand7	] {};
 void()	_wiz_stand7	=[	$hover7,		_wiz_stand8	] {};
 void()	_wiz_stand8	=[	$hover8,		_wiz_stand1	] {};
 
-void()	_wiz_walk1	=[	$hover1,		_wiz_walk2	] {COOP_Walk(8);
+void()	_wiz_walk1	=[	$hover1,		_wiz_walk2	] {npcAi_Walk(8);
 _Wiz_idlesound();};
-void()	_wiz_walk2	=[	$hover2,		_wiz_walk3	] {COOP_Walk(8);};
-void()	_wiz_walk3	=[	$hover3,		_wiz_walk4	] {COOP_Walk(8);};
-void()	_wiz_walk4	=[	$hover4,		_wiz_walk5	] {COOP_Walk(8);};
-void()	_wiz_walk5	=[	$hover5,		_wiz_walk6	] {COOP_Walk(8);};
-void()	_wiz_walk6	=[	$hover6,		_wiz_walk7	] {COOP_Walk(8);};
-void()	_wiz_walk7	=[	$hover7,		_wiz_walk8	] {COOP_Walk(8);};
-void()	_wiz_walk8	=[	$hover8,		_wiz_walk1	] {COOP_Walk(8);};
+void()	_wiz_walk2	=[	$hover2,		_wiz_walk3	] {npcAi_Walk(8);};
+void()	_wiz_walk3	=[	$hover3,		_wiz_walk4	] {npcAi_Walk(8);};
+void()	_wiz_walk4	=[	$hover4,		_wiz_walk5	] {npcAi_Walk(8);};
+void()	_wiz_walk5	=[	$hover5,		_wiz_walk6	] {npcAi_Walk(8);};
+void()	_wiz_walk6	=[	$hover6,		_wiz_walk7	] {npcAi_Walk(8);};
+void()	_wiz_walk7	=[	$hover7,		_wiz_walk8	] {npcAi_Walk(8);};
+void()	_wiz_walk8	=[	$hover8,		_wiz_walk1	] {npcAi_Walk(8);};
 
-void()	_wiz_side1	=[	$hover1,		_wiz_side2	] {COOP_Run(8);
+void()	_wiz_side1	=[	$hover1,		_wiz_side2	] {npcAi_Run(8);
 _Wiz_idlesound();};
-void()	_wiz_side2	=[	$hover2,		_wiz_side3	] {COOP_Run(8);};
-void()	_wiz_side3	=[	$hover3,		_wiz_side4	] {COOP_Run(8);};
-void()	_wiz_side4	=[	$hover4,		_wiz_side5	] {COOP_Run(8);};
-void()	_wiz_side5	=[	$hover5,		_wiz_side6	] {COOP_Run(8);};
-void()	_wiz_side6	=[	$hover6,		_wiz_side7	] {COOP_Run(8);};
-void()	_wiz_side7	=[	$hover7,		_wiz_side8	] {COOP_Run(8);};
-void()	_wiz_side8	=[	$hover8,		_wiz_side1	] {COOP_Run(8);};
+void()	_wiz_side2	=[	$hover2,		_wiz_side3	] {npcAi_Run(8);};
+void()	_wiz_side3	=[	$hover3,		_wiz_side4	] {npcAi_Run(8);};
+void()	_wiz_side4	=[	$hover4,		_wiz_side5	] {npcAi_Run(8);};
+void()	_wiz_side5	=[	$hover5,		_wiz_side6	] {npcAi_Run(8);};
+void()	_wiz_side6	=[	$hover6,		_wiz_side7	] {npcAi_Run(8);};
+void()	_wiz_side7	=[	$hover7,		_wiz_side8	] {npcAi_Run(8);};
+void()	_wiz_side8	=[	$hover8,		_wiz_side1	] {npcAi_Run(8);};
 
-void()	_wiz_run1	=[	$fly1,		_wiz_run2	] {COOP_Run(16);
+void()	_wiz_run1	=[	$fly1,		_wiz_run2	] {npcAi_Run(16);
 _Wiz_idlesound();
 };
-void()	_wiz_run2	=[	$fly2,		_wiz_run3	] {COOP_Run(16);};
-void()	_wiz_run3	=[	$fly3,		_wiz_run4	] {COOP_Run(16);};
-void()	_wiz_run4	=[	$fly4,		_wiz_run5	] {COOP_Run(16);};
-void()	_wiz_run5	=[	$fly5,		_wiz_run6	] {COOP_Run(16);};
-void()	_wiz_run6	=[	$fly6,		_wiz_run7	] {COOP_Run(16);};
-void()	_wiz_run7	=[	$fly7,		_wiz_run8	] {COOP_Run(16);};
-void()	_wiz_run8	=[	$fly8,		_wiz_run9	] {COOP_Run(16);};
-void()	_wiz_run9	=[	$fly9,		_wiz_run10	] {COOP_Run(16);};
-void()	_wiz_run10	=[	$fly10,		_wiz_run11	] {COOP_Run(16);};
-void()	_wiz_run11	=[	$fly11,		_wiz_run12	] {COOP_Run(16);};
-void()	_wiz_run12	=[	$fly12,		_wiz_run13	] {COOP_Run(16);};
-void()	_wiz_run13	=[	$fly13,		_wiz_run14	] {COOP_Run(16);};
-void()	_wiz_run14	=[	$fly14,		_wiz_run1	] {COOP_Run(16);};
+void()	_wiz_run2	=[	$fly2,		_wiz_run3	] {npcAi_Run(16);};
+void()	_wiz_run3	=[	$fly3,		_wiz_run4	] {npcAi_Run(16);};
+void()	_wiz_run4	=[	$fly4,		_wiz_run5	] {npcAi_Run(16);};
+void()	_wiz_run5	=[	$fly5,		_wiz_run6	] {npcAi_Run(16);};
+void()	_wiz_run6	=[	$fly6,		_wiz_run7	] {npcAi_Run(16);};
+void()	_wiz_run7	=[	$fly7,		_wiz_run8	] {npcAi_Run(16);};
+void()	_wiz_run8	=[	$fly8,		_wiz_run9	] {npcAi_Run(16);};
+void()	_wiz_run9	=[	$fly9,		_wiz_run10	] {npcAi_Run(16);};
+void()	_wiz_run10	=[	$fly10,		_wiz_run11	] {npcAi_Run(16);};
+void()	_wiz_run11	=[	$fly11,		_wiz_run12	] {npcAi_Run(16);};
+void()	_wiz_run12	=[	$fly12,		_wiz_run13	] {npcAi_Run(16);};
+void()	_wiz_run13	=[	$fly13,		_wiz_run14	] {npcAi_Run(16);};
+void()	_wiz_run14	=[	$fly14,		_wiz_run1	] {npcAi_Run(16);};
 
-void()	_wiz_fast1	=[	$magatt1,		_wiz_fast2	] {COOP_Turn();_Wiz_StartFast();};
-void()	_wiz_fast2	=[	$magatt2,		_wiz_fast3	] {COOP_Turn();};
-void()	_wiz_fast3	=[	$magatt3,		_wiz_fast4	] {COOP_Turn();};
-void()	_wiz_fast4	=[	$magatt4,		_wiz_fast5	] {COOP_Turn();};
-void()	_wiz_fast5	=[	$magatt5,		_wiz_fast6	] {COOP_Turn();};
-void()	_wiz_fast6	=[	$magatt6,		_wiz_fast7	] {COOP_Turn();};
-void()	_wiz_fast7	=[	$magatt5,		_wiz_fast8	] {COOP_Turn();};
-void()	_wiz_fast8	=[	$magatt4,		_wiz_fast9	] {COOP_Turn();};
-void()	_wiz_fast9	=[	$magatt3,		_wiz_fast10	] {COOP_Turn();};
-void()	_wiz_fast10	=[	$magatt2,		_wiz_run1	] {COOP_Turn();
+void()	_wiz_fast1	=[	$magatt1,		_wiz_fast2	] {
+	if ( !skill )
+		skill = 5;
+	npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );
+	_Wiz_StartFast();
+};
+void()	_wiz_fast2	=[	$magatt2,		_wiz_fast3	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast3	=[	$magatt3,		_wiz_fast4	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast4	=[	$magatt4,		_wiz_fast5	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast5	=[	$magatt5,		_wiz_fast6	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast6	=[	$magatt6,		_wiz_fast7	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast7	=[	$magatt5,		_wiz_fast8	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast8	=[	$magatt4,		_wiz_fast9	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast9	=[	$magatt3,		_wiz_fast10	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	_wiz_fast10	=[	$magatt2,		_wiz_run1	] {npcAi_Turn2( #IDMON_WIZARD_SPIKEVELOCITY + ( random() * 100 - 50 ) / skill );
 	local float r;
 
-	r = range (self.enemy);
+	r = npcAi_EnemyRange( self );
 
-	if (r <= #RANGE_MELEE)
+	if ( r <= #RANGE_MELEE )
 		Attack_Finished( 0.1 );
 	else if (r > #RANGE_NEAR)
 		Attack_Finished( 2 );
 	else
 		Attack_Finished( 0.5 );
-	_WizardAttackFinished ();
+	_WizardAttackFinished();
 };
 
 void()	_wiz_pain1	=[	$pain1,		_wiz_pain2	] {};
@@ -466,7 +460,7 @@ void() monster_wizard =
 	self.th_stand = _wiz_stand1;
 	self.th_walk = _wiz_walk1;
 	self.th_run = _wiz_run1;
-	self.th_missile = _Wiz_Missile;
+	self.th_missile = _WizardCheckAttack;
 	self.th_pain = _Wiz_Pain;
 	self.th_die = _wiz_die;
 
@@ -483,16 +477,19 @@ void() monster_wizard =
 
 	self.is_connected = #TRUE;
 
-	self.OnPreAttack = _WizardCheckAttack;
 	self.OnNoticeEnemy = _WizardOnSight;
 	self.#npc_speedfactor = 3;
 	self.#npc_spawnfunc = monster_wizard;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_spikemult = 1.2;
 	self.#npc_explosionmult = 1.2;
 		
 	coop_flymonster_start ();
 };
+
+#undef IDMON_WIZARD_HEALTH
+#undef IDMON_WIZARD_SPIKEDMG
+#undef IDMON_WIZARD_SPIKEVELOCITY
 
 #endif

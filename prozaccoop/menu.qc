@@ -2835,7 +2835,8 @@ void(float inp) Menu_EngineerFix_Tesla_Input =
 
 	if (inp <= 10 && inp >= 1)
 	{
-	if (self.building.real_owner != self && (inp < 7 || inp == 10) ) {
+	// Gizmo - if the owner doesn't have a spanner, allow teammate engineers to upgrade it
+	if ( self.building.real_owner.weapons_carried & #WEAP_SPANNER && self.building.real_owner != self && (inp < 7 || inp == 10) ) {
 		sprint(self,#PRINT_HIGH,"Sorry, only the owner can do that\n");
 		return;
 	}

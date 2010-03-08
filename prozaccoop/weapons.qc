@@ -347,7 +347,7 @@ void() W_FireAxe =
 		SpawnBlood (org, 20);
 
 #ifdef COOP_MODE_ENHANCED
-		if (!(self.cutf_items & #CUTF_KNIFE) || (trace_ent.classname != "player" && !COOP_IsCoopMonster( trace_ent )))
+		if (!(self.cutf_items & #CUTF_KNIFE) || (trace_ent.classname != "player" && !npcAi_IsCoopMonster( trace_ent )))
 #else
 		if (!(self.cutf_items & #CUTF_KNIFE) || trace_ent.classname != "player")
 #endif
@@ -650,7 +650,9 @@ W_FireMedikit
 
 void(entity ignore, entity ignore2, string st, string st2, string st3, string st4, string st5, string st6) teamsprintbi;
 void(float tno, entity ignore, entity ignore2) teamprefixsprintbi;
+#ifndef NO_REVIVE
 float( entity medic, entity deadPlayer, float reviveFlags ) MedicRevive;
+#endif
 
 void(float inAuto) W_FireMedikit =
 {
@@ -1082,7 +1084,7 @@ void(float inAuto) W_FireMedikit =
 
 				// Report to owner, only if first infection
 #ifdef COOP_MODE_ENHANCED
-				if (COOP_IsCoopMonster( tempTraceEnt ) && !(tempTraceEnt.tfstate & #TFSTATE_INFECTED)) {
+				if (npcAi_IsCoopMonster( tempTraceEnt ) && !(tempTraceEnt.tfstate & #TFSTATE_INFECTED)) {
 					// report to infecter
 					sprint (self, #PRINT_HIGH, "You infect ", tempTraceEnt.netname, "!\n");
 
@@ -1903,7 +1905,7 @@ void() W_FireSniperRifle =
 
 		}
 #ifdef COOP_MODE_ENHANCED
-		else if ( COOP_IsCoopMonster( trace_ent ) ) {
+		else if ( npcAi_IsCoopMonster( trace_ent ) ) {
 			f = trace_endpos - src;
 
 			g_x = trace_endpos_x;
@@ -6120,7 +6122,7 @@ void() HIP_LaserTouch =
 		spawn_touchblood (self.dmg);
 
 #ifdef COOP_MODE_ENHANCED
-		if ( !COOP_IsCoopMonster( other ) ) {
+		if ( !npcAi_IsCoopMonster( other ) ) {
 #endif
 			//- OfN laser hurts monsters a lot
 			if (IsSummon(other)) self.dmg = self.dmg * 2;

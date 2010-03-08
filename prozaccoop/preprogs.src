@@ -17,6 +17,7 @@ qw.qc
 debug.qc
 
 coop_defs.qc
+npcai/npcdefs.qc
 optimize.qc
 
 ofndefs.qc
@@ -109,8 +110,8 @@ runes.qc
 megatf.qc
 agr.qc
 
-idmonsters/coop_monsters.qc
-idmonsters/common.qc
+npcai/coop_monsters.qc
+npcai/common.qc
 idmonsters/soldier.qc
 idmonsters/dog.qc
 idmonsters/zombie.qc

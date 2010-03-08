@@ -39,61 +39,61 @@ $frame fly1 fly2 fly3 fly4
 
 $frame exp
 
-void()	tbaby_stand1	=[	$walk1,		tbaby_stand1	] {COOP_Idle();};
+void()	tbaby_stand1	=[	$walk1,		tbaby_stand1	] {npcAi_Idle();};
 
-void()	tbaby_hang1		=[	$walk1,		tbaby_hang1	] {COOP_Idle();};
+void()	tbaby_hang1		=[	$walk1,		tbaby_hang1	] {npcAi_Idle();};
 
-void()	tbaby_walk1	=[	$walk1,		tbaby_walk2	] {COOP_Turn();};
-void()	tbaby_walk2	=[	$walk2,		tbaby_walk3	] {COOP_Turn();};
-void()	tbaby_walk3	=[	$walk3,		tbaby_walk4	] {COOP_Turn();};
-void()	tbaby_walk4	=[	$walk4,		tbaby_walk5	] {COOP_Turn();};
-void()	tbaby_walk5	=[	$walk5,		tbaby_walk6	] {COOP_Turn();};
-void()	tbaby_walk6	=[	$walk6,		tbaby_walk7	] {COOP_Turn();};
-void()	tbaby_walk7	=[	$walk7,		tbaby_walk8	] {COOP_Turn();};
-void()	tbaby_walk8	=[	$walk8,		tbaby_walk9	] {COOP_Turn();};
-void()	tbaby_walk9	=[	$walk9,		tbaby_walk10	] {COOP_Turn();};
-void()	tbaby_walk10	=[	$walk10,		tbaby_walk11	] {COOP_Turn();};
-void()	tbaby_walk11	=[	$walk11,		tbaby_walk12	] {COOP_Walk(2);};
-void()	tbaby_walk12	=[	$walk12,		tbaby_walk13	] {COOP_Walk(2);};
-void()	tbaby_walk13	=[	$walk13,		tbaby_walk14	] {COOP_Walk(2);};
-void()	tbaby_walk14	=[	$walk14,		tbaby_walk15	] {COOP_Walk(2);};
-void()	tbaby_walk15	=[	$walk15,		tbaby_walk16	] {COOP_Walk(2);};
-void()	tbaby_walk16	=[	$walk16,		tbaby_walk17	] {COOP_Walk(2);};
-void()	tbaby_walk17	=[	$walk17,		tbaby_walk18	] {COOP_Walk(2);};
-void()	tbaby_walk18	=[	$walk18,		tbaby_walk19	] {COOP_Walk(2);};
-void()	tbaby_walk19	=[	$walk19,		tbaby_walk20	] {COOP_Walk(2);};
-void()	tbaby_walk20	=[	$walk20,		tbaby_walk21	] {COOP_Walk(2);};
-void()	tbaby_walk21	=[	$walk21,		tbaby_walk22	] {COOP_Walk(2);};
-void()	tbaby_walk22	=[	$walk22,		tbaby_walk23	] {COOP_Walk(2);};
-void()	tbaby_walk23	=[	$walk23,		tbaby_walk24	] {COOP_Walk(2);};
-void()	tbaby_walk24	=[	$walk24,		tbaby_walk25	] {COOP_Walk(2);};
-void()	tbaby_walk25	=[	$walk25,		tbaby_walk1	] {COOP_Walk(2);};
+void()	tbaby_walk1	=[	$walk1,		tbaby_walk2	] {npcAi_Turn();};
+void()	tbaby_walk2	=[	$walk2,		tbaby_walk3	] {npcAi_Turn();};
+void()	tbaby_walk3	=[	$walk3,		tbaby_walk4	] {npcAi_Turn();};
+void()	tbaby_walk4	=[	$walk4,		tbaby_walk5	] {npcAi_Turn();};
+void()	tbaby_walk5	=[	$walk5,		tbaby_walk6	] {npcAi_Turn();};
+void()	tbaby_walk6	=[	$walk6,		tbaby_walk7	] {npcAi_Turn();};
+void()	tbaby_walk7	=[	$walk7,		tbaby_walk8	] {npcAi_Turn();};
+void()	tbaby_walk8	=[	$walk8,		tbaby_walk9	] {npcAi_Turn();};
+void()	tbaby_walk9	=[	$walk9,		tbaby_walk10	] {npcAi_Turn();};
+void()	tbaby_walk10	=[	$walk10,		tbaby_walk11	] {npcAi_Turn();};
+void()	tbaby_walk11	=[	$walk11,		tbaby_walk12	] {npcAi_Walk(2);};
+void()	tbaby_walk12	=[	$walk12,		tbaby_walk13	] {npcAi_Walk(2);};
+void()	tbaby_walk13	=[	$walk13,		tbaby_walk14	] {npcAi_Walk(2);};
+void()	tbaby_walk14	=[	$walk14,		tbaby_walk15	] {npcAi_Walk(2);};
+void()	tbaby_walk15	=[	$walk15,		tbaby_walk16	] {npcAi_Walk(2);};
+void()	tbaby_walk16	=[	$walk16,		tbaby_walk17	] {npcAi_Walk(2);};
+void()	tbaby_walk17	=[	$walk17,		tbaby_walk18	] {npcAi_Walk(2);};
+void()	tbaby_walk18	=[	$walk18,		tbaby_walk19	] {npcAi_Walk(2);};
+void()	tbaby_walk19	=[	$walk19,		tbaby_walk20	] {npcAi_Walk(2);};
+void()	tbaby_walk20	=[	$walk20,		tbaby_walk21	] {npcAi_Walk(2);};
+void()	tbaby_walk21	=[	$walk21,		tbaby_walk22	] {npcAi_Walk(2);};
+void()	tbaby_walk22	=[	$walk22,		tbaby_walk23	] {npcAi_Walk(2);};
+void()	tbaby_walk23	=[	$walk23,		tbaby_walk24	] {npcAi_Walk(2);};
+void()	tbaby_walk24	=[	$walk24,		tbaby_walk25	] {npcAi_Walk(2);};
+void()	tbaby_walk25	=[	$walk25,		tbaby_walk1	] {npcAi_Walk(2);};
 
-void()	tbaby_run1	=[	$run1,		tbaby_run2	] {COOP_Turn();};
-void()	tbaby_run2	=[	$run2,		tbaby_run3	] {COOP_Turn();};
-void()	tbaby_run3	=[	$run3,		tbaby_run4	] {COOP_Turn();};
-void()	tbaby_run4	=[	$run4,		tbaby_run5	] {COOP_Turn();};
-void()	tbaby_run5	=[	$run5,		tbaby_run6	] {COOP_Turn();};
-void()	tbaby_run6	=[	$run6,		tbaby_run7	] {COOP_Turn();};
-void()	tbaby_run7	=[	$run7,		tbaby_run8	] {COOP_Turn();};
-void()	tbaby_run8	=[	$run8,		tbaby_run9	] {COOP_Turn();};
-void()	tbaby_run9	=[	$run9,		tbaby_run10	] {COOP_Turn();};
-void()	tbaby_run10	=[	$run10,		tbaby_run11	] {COOP_Turn();};
-void()	tbaby_run11	=[	$run11,		tbaby_run12	] {COOP_Run(2);};
-void()	tbaby_run12	=[	$run12,		tbaby_run13	] {COOP_Run(2);};
-void()	tbaby_run13	=[	$run13,		tbaby_run14	] {COOP_Run(2);};
-void()	tbaby_run14	=[	$run14,		tbaby_run15	] {COOP_Run(2);};
-void()	tbaby_run15	=[	$run15,		tbaby_run16	] {COOP_Run(2);};
-void()	tbaby_run16	=[	$run16,		tbaby_run17	] {COOP_Run(2);};
-void()	tbaby_run17	=[	$run17,		tbaby_run18	] {COOP_Run(2);};
-void()	tbaby_run18	=[	$run18,		tbaby_run19	] {COOP_Run(2);};
-void()	tbaby_run19	=[	$run19,		tbaby_run20	] {COOP_Run(2);};
-void()	tbaby_run20	=[	$run20,		tbaby_run21	] {COOP_Run(2);};
-void()	tbaby_run21	=[	$run21,		tbaby_run22	] {COOP_Run(2);};
-void()	tbaby_run22	=[	$run22,		tbaby_run23	] {COOP_Run(2);};
-void()	tbaby_run23	=[	$run23,		tbaby_run24	] {COOP_Run(2);};
-void()	tbaby_run24	=[	$run24,		tbaby_run25	] {COOP_Run(2);};
-void()	tbaby_run25	=[	$run25,		tbaby_run1	] {COOP_Run(2);};
+void()	tbaby_run1	=[	$run1,		tbaby_run2	] {npcAi_Turn();};
+void()	tbaby_run2	=[	$run2,		tbaby_run3	] {npcAi_Turn();};
+void()	tbaby_run3	=[	$run3,		tbaby_run4	] {npcAi_Turn();};
+void()	tbaby_run4	=[	$run4,		tbaby_run5	] {npcAi_Turn();};
+void()	tbaby_run5	=[	$run5,		tbaby_run6	] {npcAi_Turn();};
+void()	tbaby_run6	=[	$run6,		tbaby_run7	] {npcAi_Turn();};
+void()	tbaby_run7	=[	$run7,		tbaby_run8	] {npcAi_Turn();};
+void()	tbaby_run8	=[	$run8,		tbaby_run9	] {npcAi_Turn();};
+void()	tbaby_run9	=[	$run9,		tbaby_run10	] {npcAi_Turn();};
+void()	tbaby_run10	=[	$run10,		tbaby_run11	] {npcAi_Turn();};
+void()	tbaby_run11	=[	$run11,		tbaby_run12	] {npcAi_Run(2);};
+void()	tbaby_run12	=[	$run12,		tbaby_run13	] {npcAi_Run(2);};
+void()	tbaby_run13	=[	$run13,		tbaby_run14	] {npcAi_Run(2);};
+void()	tbaby_run14	=[	$run14,		tbaby_run15	] {npcAi_Run(2);};
+void()	tbaby_run15	=[	$run15,		tbaby_run16	] {npcAi_Run(2);};
+void()	tbaby_run16	=[	$run16,		tbaby_run17	] {npcAi_Run(2);};
+void()	tbaby_run17	=[	$run17,		tbaby_run18	] {npcAi_Run(2);};
+void()	tbaby_run18	=[	$run18,		tbaby_run19	] {npcAi_Run(2);};
+void()	tbaby_run19	=[	$run19,		tbaby_run20	] {npcAi_Run(2);};
+void()	tbaby_run20	=[	$run20,		tbaby_run21	] {npcAi_Run(2);};
+void()	tbaby_run21	=[	$run21,		tbaby_run22	] {npcAi_Run(2);};
+void()	tbaby_run22	=[	$run22,		tbaby_run23	] {npcAi_Run(2);};
+void()	tbaby_run23	=[	$run23,		tbaby_run24	] {npcAi_Run(2);};
+void()	tbaby_run24	=[	$run24,		tbaby_run25	] {npcAi_Run(2);};
+void()	tbaby_run25	=[	$run25,		tbaby_run1	] {npcAi_Run(2);};
 
 
 //============================================================================
@@ -139,6 +139,9 @@ void()	Tar_JumpTouch =
 	self.touch = SUB_Null;
 	self.think = tbaby_jump1;
 	self.nextthink = time + 0.1;
+
+	// Gizmo - run one attack frame to update our enemy
+	npcAi_Run( 0 );
 };
 
 void()	tbaby_jump5;
@@ -155,10 +158,10 @@ tbaby_jump5 ();
 }
 };
 
-void()	tbaby_jump1		=[	$jump1,	tbaby_jump2		] {COOP_Turn();};
-void()	tbaby_jump2		=[	$jump2,	tbaby_jump3		] {COOP_Turn();};
-void()	tbaby_jump3		=[	$jump3,	tbaby_jump4		] {COOP_Turn();};
-void()	tbaby_jump4		=[	$jump4,	tbaby_jump5		] {COOP_Turn();};
+void()	tbaby_jump1		=[	$jump1,	tbaby_jump2		] {npcAi_Turn();};
+void()	tbaby_jump2		=[	$jump2,	tbaby_jump3		] {npcAi_Turn();};
+void()	tbaby_jump3		=[	$jump3,	tbaby_jump4		] {npcAi_Turn();};
+void()	tbaby_jump4		=[	$jump4,	tbaby_jump5		] {npcAi_Turn();};
 void()	tbaby_jump5		=[	$jump5,	tbaby_jump6		]
 {	
 	self.movetype = #MOVETYPE_BOUNCE;
@@ -182,7 +185,7 @@ self.takedamage = #DAMAGE_NO;
 };
 void()	tbaby_die2	=[	$exp,		tbaby_run1	] 
 {
-	T_RadiusDamage (self, self, 120, world);
+	T_RadiusDamage( self, self, 120, world );
 
 	sound (self, #CHAN_VOICE, "blob/death1.wav", 1, #ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -205,6 +208,14 @@ float() TarbabyOnSight =
 	return #TRUE;
 };
 
+/*
+=============
+TarbabyMainAttack
+=============
+*/
+void() TarbabyMainAttack = {
+	tbaby_jump1();
+};
 
 /*QUAKED monster_tarbaby (1 0 0) (-16 -16 -24) (16 16 24) Ambush
 */
@@ -238,8 +249,7 @@ void() monster_tarbaby =
 	self.th_stand = tbaby_stand1;
 	self.th_walk = tbaby_walk1;
 	self.th_run = tbaby_run1;
-	self.th_missile = tbaby_jump1;
-	self.th_melee = tbaby_jump1;
+	self.th_missile = TarbabyMainAttack;
 	self.th_die = tbaby_die1;
 
 
@@ -255,11 +265,14 @@ void() monster_tarbaby =
 
 	self.OnNoticeEnemy = TarbabyOnSight;
 	self.#npc_spawnfunc = monster_tarbaby;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_explosionmult = 1.25;
 	
 	coop_walkmonster_start ();
 };
+
+#undef IDMON_TARBABY_HEALTH
+#undef IDMON_TARBABY_HITDMG
 
 #endif

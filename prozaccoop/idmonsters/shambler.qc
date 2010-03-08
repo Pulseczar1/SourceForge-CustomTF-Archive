@@ -79,49 +79,49 @@ void() _ShamHeal =
 	sound(self, #CHAN_ITEM, "items/r_item1.wav", 1, #ATTN_NORM);
 };
 
-void() _sham_stand1	=[	$stand1,	_sham_stand2	] {COOP_Idle();};
+void() _sham_stand1	=[	$stand1,	_sham_stand2	] {npcAi_Idle();};
 void() _sham_stand2	=[	$stand2,	_sham_stand3	] {};
 void() _sham_stand3	=[	$stand3,	_sham_stand4	] {};
 void() _sham_stand4	=[	$stand4,	_sham_stand5	] {};
 void() _sham_stand5	=[	$stand5,	_sham_stand6	] {};
-void() _sham_stand6	=[	$stand6,	_sham_stand7	] {COOP_Idle();};
+void() _sham_stand6	=[	$stand6,	_sham_stand7	] {npcAi_Idle();};
 void() _sham_stand7	=[	$stand7,	_sham_stand8	] {};
 void() _sham_stand8	=[	$stand8,	_sham_stand9	] {};
 void() _sham_stand9	=[	$stand9,	_sham_stand10] {};
 void() _sham_stand10	=[	$stand10,	_sham_stand11] {};
-void() _sham_stand11	=[	$stand11,	_sham_stand12] {COOP_Idle();};
+void() _sham_stand11	=[	$stand11,	_sham_stand12] {npcAi_Idle();};
 void() _sham_stand12	=[	$stand12,	_sham_stand13] {};
 void() _sham_stand13	=[	$stand13,	_sham_stand14] {};
 void() _sham_stand14	=[	$stand14,	_sham_stand15] {};
-void() _sham_stand15	=[	$stand15,	_sham_stand16] {COOP_Idle();};
+void() _sham_stand15	=[	$stand15,	_sham_stand16] {npcAi_Idle();};
 void() _sham_stand16	=[	$stand16,	_sham_stand17] {};
 void() _sham_stand17	=[	$stand17,	_sham_stand1	] {
 	_ShamHeal ();
 };
 
-void() _sham_walk1		=[      $walk1,        _sham_walk2 ] {COOP_Walk(10);};
-void() _sham_walk2       =[      $walk2,        _sham_walk3 ] {COOP_Walk(9);};
-void() _sham_walk3       =[      $walk3,        _sham_walk4 ] {COOP_Walk(9);};
-void() _sham_walk4       =[      $walk4,        _sham_walk5 ] {COOP_Walk(5);};
-void() _sham_walk5       =[      $walk5,        _sham_walk6 ] {COOP_Walk(6);};
-void() _sham_walk6       =[      $walk6,        _sham_walk7 ] {COOP_Walk(12);};
-void() _sham_walk7       =[      $walk7,        _sham_walk8 ] {COOP_Walk(8);};
-void() _sham_walk8       =[      $walk8,        _sham_walk9 ] {COOP_Walk(3);};
-void() _sham_walk9       =[      $walk9,        _sham_walk10] {COOP_Walk(13);};
-void() _sham_walk10      =[      $walk10,       _sham_walk11] {COOP_Walk(9);};
-void() _sham_walk11      =[      $walk11,       _sham_walk12] {COOP_Walk(7);};
-void() _sham_walk12      =[      $walk12,       _sham_walk1 ] {COOP_Walk(7);
+void() _sham_walk1		=[      $walk1,        _sham_walk2 ] {npcAi_Walk(10);};
+void() _sham_walk2       =[      $walk2,        _sham_walk3 ] {npcAi_Walk(9);};
+void() _sham_walk3       =[      $walk3,        _sham_walk4 ] {npcAi_Walk(9);};
+void() _sham_walk4       =[      $walk4,        _sham_walk5 ] {npcAi_Walk(5);};
+void() _sham_walk5       =[      $walk5,        _sham_walk6 ] {npcAi_Walk(6);};
+void() _sham_walk6       =[      $walk6,        _sham_walk7 ] {npcAi_Walk(12);};
+void() _sham_walk7       =[      $walk7,        _sham_walk8 ] {npcAi_Walk(8);};
+void() _sham_walk8       =[      $walk8,        _sham_walk9 ] {npcAi_Walk(3);};
+void() _sham_walk9       =[      $walk9,        _sham_walk10] {npcAi_Walk(13);};
+void() _sham_walk10      =[      $walk10,       _sham_walk11] {npcAi_Walk(9);};
+void() _sham_walk11      =[      $walk11,       _sham_walk12] {npcAi_Walk(7);};
+void() _sham_walk12      =[      $walk12,       _sham_walk1 ] {npcAi_Walk(7);
 	if (random() > 0.8)
 		sound (self, #CHAN_VOICE, "shambler/sidle.wav", 1, #ATTN_IDLE);
 	_ShamHeal ();
 };
 
 void() _sham_throw;
-void() _sham_run1       =[      $run1,        _sham_run2      ] {COOP_Run(20);};
-void() _sham_run2       =[      $run2,        _sham_run3      ] {COOP_Run(24);};
-void() _sham_run3       =[      $run3,        _sham_run4      ] {COOP_Run(20);};
-void() _sham_run4       =[      $run4,        _sham_run5      ] {COOP_Run(20);};
-void() _sham_run5       =[      $run5,        _sham_run6      ] {COOP_Run(24);};
+void() _sham_run1       =[      $run1,        _sham_run2      ] {npcAi_Run(20);};
+void() _sham_run2       =[      $run2,        _sham_run3      ] {npcAi_Run(24);};
+void() _sham_run3       =[      $run3,        _sham_run4      ] {npcAi_Run(20);};
+void() _sham_run4       =[      $run4,        _sham_run5      ] {npcAi_Run(20);};
+void() _sham_run5       =[      $run5,        _sham_run6      ] {npcAi_Run(24);};
 void() _sham_run6       =[      $run6,        _sham_run1      ] {
 if (random() > 0.8)
 	sound (self, #CHAN_VOICE, "shambler/sidle.wav", 1, #ATTN_IDLE);
@@ -149,100 +149,100 @@ if (random() > 0.8)
 	}
 
 	// only run if we're not wacking something out of the way
-	COOP_Run(20);
+	npcAi_Run(20);
 };
 
 void() _sham_smash1     =[      $smash1,       _sham_smash2    ] {
 sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
-ai_charge(2);};
-void() _sham_smash2     =[      $smash2,       _sham_smash3    ] {ai_charge(6);};
-void() _sham_smash3     =[      $smash3,       _sham_smash4    ] {ai_charge(6);};
-void() _sham_smash4     =[      $smash4,       _sham_smash5    ] {ai_charge(5);};
-void() _sham_smash5     =[      $smash5,       _sham_smash6    ] {ai_charge(4);};
-void() _sham_smash6     =[      $smash6,       _sham_smash7    ] {ai_charge(1);};
-void() _sham_smash7     =[      $smash7,       _sham_smash8    ] {ai_charge(0);};
-void() _sham_smash8     =[      $smash8,       _sham_smash9    ] {ai_charge(0);};
-void() _sham_smash9     =[      $smash9,       _sham_smash10   ] {ai_charge(0);};
+npcAi_Charge(2);};
+void() _sham_smash2     =[      $smash2,       _sham_smash3    ] {npcAi_Charge(6);};
+void() _sham_smash3     =[      $smash3,       _sham_smash4    ] {npcAi_Charge(6);};
+void() _sham_smash4     =[      $smash4,       _sham_smash5    ] {npcAi_Charge(5);};
+void() _sham_smash5     =[      $smash5,       _sham_smash6    ] {npcAi_Charge(4);};
+void() _sham_smash6     =[      $smash6,       _sham_smash7    ] {npcAi_Charge(1);};
+void() _sham_smash7     =[      $smash7,       _sham_smash8    ] {npcAi_Charge(0);};
+void() _sham_smash8     =[      $smash8,       _sham_smash9    ] {npcAi_Charge(0);};
+void() _sham_smash9     =[      $smash9,       _sham_smash10   ] {npcAi_Charge(0);};
 void() _sham_smash10    =[      $smash10,      _sham_smash11   ] {
-local vector	delta;
-local float 	ldmg;
+	local entity	head;
+	local float 	ldmg;
 
-	if (!self.enemy)
+	if ( !self.enemy )
 		return;
-	ai_charge(0);
+	npcAi_Charge( 0 );
 
-	delta = self.enemy.origin - self.origin;
+	// Gizmo - smash anything infront of us
+	head = npcAi_FindInfrontEnemies( world, self.origin, self.angles, 175 );
+	while ( head ) {
+		ldmg = ( random() + random() + random() ) * #IDMON_SHAMBLER_SMASHDMG;
+		TF_T_Damage( head, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE );
 
-	if (vlen(delta) > 175 || !visible(self.enemy))
-		return;
-	if (!CanDamage (self.enemy, self))
-		return;
-		
-	ldmg = (random() + random() + random()) * #IDMON_SHAMBLER_SMASHDMG;
-	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
-	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
+		sound( self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM );
 
-	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
-	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
+		SpawnMeatSpray( self.origin + v_forward*16, crandom() * 100 * v_right );
+		SpawnMeatSpray( self.origin + v_forward*16, crandom() * 100 * v_right );
+
+		head = npcAi_FindInfrontEnemies( head, self.origin, self.angles, 175 );
+	}
 };
-void() _sham_smash11    =[      $smash11,      _sham_smash12   ] {ai_charge(5);};
-void() _sham_smash12    =[      $smash12,      _sham_run1	   ] {ai_charge(4);};
+void() _sham_smash11    =[      $smash11,      _sham_smash12   ] {npcAi_Charge(5);};
+void() _sham_smash12    =[      $smash12,      _sham_run1	   ] {npcAi_Charge(4);};
 
 void() _sham_swingr1;
 
-void(float side) _ShamClaw =
-{
-local vector	delta;
-local float 	ldmg;
+void( float side ) _ShamClaw = {
+	local entity	head;
+	local float 	ldmg;
 
-	if (!self.enemy)
+	if ( !self.enemy )
 		return;
-	ai_charge(10);
+	npcAi_Charge( 10 );
 
-	delta = self.enemy.origin - self.origin;
+	// Gizmo - smash anything infront of us
+	head = npcAi_FindInfrontEnemies( world, self.origin, self.angles, 175 );
+	while ( head ) {
+		ldmg = ( random() + random() + random() ) * #IDMON_SHAMBLER_CLAWDMG;
+		TF_T_Damage( head, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE );
 
-	if (vlen(delta) > 175 || !visible(self.enemy))
-		return;
-		
-	ldmg = (random() + random() + random()) * #IDMON_SHAMBLER_CLAWDMG;
-	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
-	sound (self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM);
+		sound( self, #CHAN_VOICE, "shambler/smack.wav", 1, #ATTN_NORM );
 
-	if (side)
-	{
-		makevectors (self.angles);
-		SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
+		if ( side ) {
+			makevectors( self.angles );
+			SpawnMeatSpray( self.origin + v_forward*16, side * v_right );
+		}
+
+		head = npcAi_FindInfrontEnemies( head, self.origin, self.angles, 175 );
 	}
 };
 
 void() _sham_swingl1	=[      $swingl1,      _sham_swingl2   ] {
 sound (self, #CHAN_VOICE, "shambler/melee2.wav", 1, #ATTN_NORM);
-ai_charge(5);};
-void() _sham_swingl2 =[      $swingl2,      _sham_swingl3   ] {ai_charge(3);};
-void() _sham_swingl3 =[      $swingl3,      _sham_swingl4   ] {ai_charge(7);};
-void() _sham_swingl4 =[      $swingl4,      _sham_swingl5   ] {ai_charge(3);};
-void() _sham_swingl5 =[      $swingl5,      _sham_swingl6   ] {ai_charge(7);};
-void() _sham_swingl6 =[      $swingl6,      _sham_swingl7   ] {ai_charge(9);};
-void() _sham_swingl7 =[      $swingl7,      _sham_swingl8   ] {ai_charge(5); _ShamClaw(250);};
-void() _sham_swingl8 =[      $swingl8,      _sham_swingl9   ] {ai_charge(4);};
+npcAi_Charge(5);};
+void() _sham_swingl2 =[      $swingl2,      _sham_swingl3   ] {npcAi_Charge(3);};
+void() _sham_swingl3 =[      $swingl3,      _sham_swingl4   ] {npcAi_Charge(7);};
+void() _sham_swingl4 =[      $swingl4,      _sham_swingl5   ] {npcAi_Charge(3);};
+void() _sham_swingl5 =[      $swingl5,      _sham_swingl6   ] {npcAi_Charge(7);};
+void() _sham_swingl6 =[      $swingl6,      _sham_swingl7   ] {npcAi_Charge(9);};
+void() _sham_swingl7 =[      $swingl7,      _sham_swingl8   ] {npcAi_Charge(5); _ShamClaw(250);};
+void() _sham_swingl8 =[      $swingl8,      _sham_swingl9   ] {npcAi_Charge(4);};
 void() _sham_swingl9 =[      $swingl9,      _sham_run1  ] {
-ai_charge(8);
+npcAi_Charge(8);
 if (random()<0.5)
 	self.think = _sham_swingr1;
 };
 
 void() _sham_swingr1	=[      $swingr1,      _sham_swingr2   ] {
 sound (self, #CHAN_VOICE, "shambler/melee1.wav", 1, #ATTN_NORM);
-ai_charge(1);};
-void() _sham_swingr2	=[      $swingr2,      _sham_swingr3   ] {ai_charge(8);};
-void() _sham_swingr3 =[      $swingr3,      _sham_swingr4   ] {ai_charge(14);};
-void() _sham_swingr4 =[      $swingr4,      _sham_swingr5   ] {ai_charge(7);};
-void() _sham_swingr5 =[      $swingr5,      _sham_swingr6   ] {ai_charge(3);};
-void() _sham_swingr6 =[      $swingr6,      _sham_swingr7   ] {ai_charge(6);};
-void() _sham_swingr7 =[      $swingr7,      _sham_swingr8   ] {ai_charge(6); _ShamClaw(-250);};
-void() _sham_swingr8 =[      $swingr8,      _sham_swingr9   ] {ai_charge(3);};
-void() _sham_swingr9 =[      $swingr9,      _sham_run1  ] {ai_charge(1);
-ai_charge(10);
+npcAi_Charge(1);};
+void() _sham_swingr2	=[      $swingr2,      _sham_swingr3   ] {npcAi_Charge(8);};
+void() _sham_swingr3 =[      $swingr3,      _sham_swingr4   ] {npcAi_Charge(14);};
+void() _sham_swingr4 =[      $swingr4,      _sham_swingr5   ] {npcAi_Charge(7);};
+void() _sham_swingr5 =[      $swingr5,      _sham_swingr6   ] {npcAi_Charge(3);};
+void() _sham_swingr6 =[      $swingr6,      _sham_swingr7   ] {npcAi_Charge(6);};
+void() _sham_swingr7 =[      $swingr7,      _sham_swingr8   ] {npcAi_Charge(6); _ShamClaw(-250);};
+void() _sham_swingr8 =[      $swingr8,      _sham_swingr9   ] {npcAi_Charge(3);};
+void() _sham_swingr9 =[      $swingr9,      _sham_run1  ] {npcAi_Charge(1);
+npcAi_Charge(10);
 if (random()<0.5)
 	self.think = _sham_swingl1;
 };
@@ -328,17 +328,14 @@ void() _sham_throw =
 
 void() _CastLightning =
 {
-	local	vector	org, dir;
-	
+	local vector	org, dir;
+
 	muzzleflash ();
 
-	COOP_Turn ();
+	npcAi_Turn ();
 
 	org = self.origin + '0 0 40';
-
-//	dir = self.enemy.origin + '0 0 16' - org;
-	dir = (self.enemy.origin + self.#npc_enemyoffset) - org;
-	dir = normalize (dir);
+	dir = npcAi_GetAttackVector( self, org );
 
 	// self.origin or org?
 	traceline (org, org + dir*4096, #TRUE, self);
@@ -357,15 +354,15 @@ void() _CastLightning =
 	LightningDamage (org, trace_endpos, self, #IDMON_SHAMBLER_LIGHTNINGDMG);
 };
 
-void() _sham_magic1     =[      $magic1,       _sham_magic2    ] {COOP_Turn();
+void() _sham_magic1     =[      $magic1,       _sham_magic2    ] {npcAi_Turn();
 	sound (self, #CHAN_WEAPON, "shambler/sattck1.wav", 1, #ATTN_NORM);
 };
-void() _sham_magic2     =[      $magic2,       _sham_magic3    ] {COOP_Turn();};
-void() _sham_magic3     =[      $magic3,       _sham_magic4    ] {COOP_Turn();self.nextthink = self.nextthink + 0.2;
+void() _sham_magic2     =[      $magic2,       _sham_magic3    ] {npcAi_Turn();};
+void() _sham_magic3     =[      $magic3,       _sham_magic4    ] {npcAi_Turn();self.nextthink = self.nextthink + 0.2;
 local entity o;
 
 muzzleflash ();
-COOP_Turn();
+npcAi_Turn();
 self.owner = spawn();
 o = self.owner;
 setmodel (o, "progs/s_light.mdl");
@@ -463,42 +460,19 @@ void() _sham_die =
 
 //============================================================================
 
-float() _ShamCheckAttack =
-{
-	local vector	spot1, spot2;
-	local entity	targ;
+void() _ShamCheckAttack = {
+	if ( vlen( self.origin - self.#npc_lastEnemyOrigin ) < 120 )
+		_sham_melee();
 
-	enemy_range = range (self.enemy);
-//	enemy_vis = visible (self.enemy);
-	enemy_vis = #TRUE;
+	// missile attack
+	else
+		_sham_magic1();
 
-	if (enemy_range == #RANGE_MELEE)
-	{
-		self.attack_state = #AS_MELEE;
-		return #TRUE;
-	}
-
-	if (time < self.attack_finished)
-		return #FALSE;
-	
-//	if (!enemy_vis)
-//		return #FALSE;
-		
-	targ = self.enemy;
-
-	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
-
-	if (vlen(spot1 - spot2) > 4096)
-		return #FALSE;
-
-// missile attack
-		
-	self.attack_state = #AS_MISSILE;
 	// make shamblers more aggressive against hwguys
 	if ( !( self.enemy.flags & #FL_CLIENT ) || self.enemy.current_weapon != #WEAP_ASSAULT_CANNON )
 		Attack_Finished( 1 + 2*random() );
-	return #TRUE;
+	else
+		Attack_Finished( 0.1 );
 };
 
 //============================================================================
@@ -554,8 +528,7 @@ void() monster_shambler =
 	self.th_walk = _sham_walk1;
 	self.th_run = _sham_run1;
 	self.th_die = _sham_die;
-	self.th_melee = _sham_melee;
-	self.th_missile = _sham_magic1;
+	self.th_missile = _ShamCheckAttack;
 	self.th_pain = _sham_pain;
 
 
@@ -571,11 +544,10 @@ void() monster_shambler =
 
 	self.is_connected = #TRUE;
 
-	self.OnPreAttack = _ShamCheckAttack;
 	self.OnNoticeEnemy = _ShamOnSight;
 	self.#npc_speedfactor = 2.8;
 	self.#npc_spawnfunc = monster_shambler;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_bulletmult		= 0.80;
 	self.#npc_electricitymult	= 0.25;
@@ -584,5 +556,12 @@ void() monster_shambler =
 
 	coop_walkmonster_start();
 };
+
+#undef IDMON_SHAMBLER_HEALTH
+#undef IDMON_SHAMBLER_LIGHTNINGDMG
+#undef IDMON_SHAMBLER_CLAWDMG
+#undef IDMON_SHAMBLER_SMASHDMG
+
+#undef _sham_healtime
 
 #endif

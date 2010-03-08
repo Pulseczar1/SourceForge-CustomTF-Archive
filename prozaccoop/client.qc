@@ -1090,7 +1090,11 @@ void() GotoNextMap =
 	nmap = infokey (world, "nmap");
 	localcmd ("localinfo nmap \"\"\n");
 
-	if (nextmap != mapname || nmap != string_null) {
+	// Gizmo - check if the samelevel cvar is set to 1
+	if ( cvar( "samelevel" ) == 1 ) {
+		changelevel( mapname );
+		already_chosen_map = #TRUE;
+	} else if (nextmap != mapname || nmap != string_null) {
 		if (nmap != string_null)
 			nextmap = nmap;
 
@@ -1098,6 +1102,9 @@ void() GotoNextMap =
 		CheckFailedMapChange ();
 		already_chosen_map = #TRUE;
 	}
+
+	if ( !already_chosen_map )
+		already_chosen_map = DoExtraCycle();
 
 	if (!already_chosen_map) {
 		if (#AGR_ROTATION_OFF) // PZ - AGR off on map triggered by rotation
@@ -1128,11 +1135,13 @@ void() GotoNextMap =
 		localcmd (".cfg\n");
 	}
 
+/*
 	// Gizmo - if the above didn't produce a serverinfo/localinfo nmap then default to start
 	if (!already_chosen_map && infokey(world, "nmap") != string_null)
 		already_chosen_map = DoExtraCycle ();
 	else if (!already_chosen_map && infokey(world, "nmap") == string_null)
 		changelevel ("start");
+*/
 
 	if (infokey(world, "n") == "0")
 		already_chosen_map = #FALSE;
@@ -1436,6 +1445,7 @@ void() respawn =
 		}
 */		
 
+#ifdef COOP_MODE_ENHANCED
 	if (coop)
 	{
 		// Gizmo - if in coop 3, then do not allow respawning
@@ -1475,7 +1485,10 @@ void() respawn =
 			PutClientInServer ();
 		}
 	}
-	else if (deathmatch)
+	else
+#endif
+
+	if (deathmatch)
 	{
 		// make a copy of the dead body for appearances sake
 		CopyToBodyQue (self);
@@ -1613,6 +1626,7 @@ void() ClientKill =
 
 	self.health = -1;
 	self.th_die();
+	self.takedamage = #DAMAGE_NO;			// Gizmo - might be possible to get hurt before the deadflag is set to DEAD_RESPAWNABLE
 //	self.deadflag = #DEAD_RESPAWNABLE;		// Gizmo - commented this out, th_die() takes care of it
 	self.tfstate = self.tfstate | #TFSTATE_RESPAWN_READY;
 //	self.respawn_time = time;
@@ -3022,6 +3036,15 @@ void() PlayerPreThink =
 			self.job = self.job | #JOB_ACTIVE;
 		}
 	} */
+	// Gizmo
+	if ( self.job & #JOB_THIEF ) {
+		if ( self.job & #JOB_ACTIVE ) {
+			if ( self.effects & ( #EF_DIMLIGHT | #EF_BRIGHTLIGHT ) ) {
+				sprint( self, #PRINT_MEDIUM, "The glowing removes your ability to 'hide in the shadows'.\n" );
+				RevealThief( self, #FALSE );
+			}
+		}
+	}
 	
 	if (self.deadflag == #DEAD_DYING)
 		return; // dying, so do nothing
@@ -3432,7 +3455,9 @@ void() PlayerPostThink =
 		{
 			if (!(self.cutf_items & #CUTF_STEALTH)) { //WK Judo teaches falling... SB ceaf judo
 				self.deathtype = "falling";
-				T_Damage (self, world, world, 5); 
+				// Gizmo - falling no longer affects your armor
+//				T_Damage (self, world, world, 5); 
+				TF_T_Damage( self, world, world, 5, #TF_TD_IGNOREARMOUR, 0 );
 				sound (self, #CHAN_VOICE, "player/land2.wav", 1, #ATTN_NORM);
 			}
 		}

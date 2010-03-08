@@ -1,7 +1,7 @@
 /*
 	knight.qc
 
-	TODO: ai_melee_side, ai_charge, ai_charge_side, ai_melee
+	TODO: npcAi_MeleeSide, npcAi_Charge, npcAi_ChargeSide, npcAi_Melee
 */
 
 #ifndef COOP_MODE_ENHANCED
@@ -62,11 +62,11 @@ $frame death9 death10
 $frame deathb1 deathb2 deathb3 deathb4 deathb5 deathb6 deathb7 deathb8
 $frame deathb9 deathb10 deathb11
 
-void()	knight_stand1	=[	$stand1,	knight_stand2	] {COOP_Idle();};
+void()	knight_stand1	=[	$stand1,	knight_stand2	] {npcAi_Idle();};
 void()	knight_stand2	=[	$stand2,	knight_stand3	] {};
 void()	knight_stand3	=[	$stand3,	knight_stand4	] {};
 void()	knight_stand4	=[	$stand4,	knight_stand5	] {};
-void()	knight_stand5	=[	$stand5,	knight_stand6	] {COOP_Idle();};
+void()	knight_stand5	=[	$stand5,	knight_stand6	] {npcAi_Idle();};
 void()	knight_stand6	=[	$stand6,	knight_stand7	] {};
 void()	knight_stand7	=[	$stand7,	knight_stand8	] {};
 void()	knight_stand8	=[	$stand8,	knight_stand9	] {};
@@ -75,33 +75,33 @@ void()	knight_stand9	=[	$stand9,	knight_stand1	] {};
 void()	knight_walk1	=[	$walk1,		knight_walk2	] {
 if (random() < 0.2)
 	sound (self, #CHAN_VOICE, "knight/idle.wav", 1,  #ATTN_IDLE);
-COOP_Walk(3);};
-void()	knight_walk2	=[	$walk2,		knight_walk3	] {COOP_Walk(2);};
-void()	knight_walk3	=[	$walk3,		knight_walk4	] {COOP_Walk(3);};
-void()	knight_walk4	=[	$walk4,		knight_walk5	] {COOP_Walk(4);};
-void()	knight_walk5	=[	$walk5,		knight_walk6	] {COOP_Walk(3);};
-void()	knight_walk6	=[	$walk6,		knight_walk7	] {COOP_Walk(3);};
-void()	knight_walk7	=[	$walk7,		knight_walk8	] {COOP_Walk(3);};
-void()	knight_walk8	=[	$walk8,		knight_walk9	] {COOP_Walk(4);};
-void()	knight_walk9	=[	$walk9,		knight_walk10	] {COOP_Walk(3);};
-void()	knight_walk10	=[	$walk10,	knight_walk11	] {COOP_Walk(3);};
-void()	knight_walk11	=[	$walk11,	knight_walk12	] {COOP_Walk(2);};
-void()	knight_walk12	=[	$walk12,	knight_walk13	] {COOP_Walk(3);};
-void()	knight_walk13	=[	$walk13,	knight_walk14	] {COOP_Walk(4);};
-void()	knight_walk14	=[	$walk14,	knight_walk1	] {COOP_Walk(3);};
+npcAi_Walk(3);};
+void()	knight_walk2	=[	$walk2,		knight_walk3	] {npcAi_Walk(2);};
+void()	knight_walk3	=[	$walk3,		knight_walk4	] {npcAi_Walk(3);};
+void()	knight_walk4	=[	$walk4,		knight_walk5	] {npcAi_Walk(4);};
+void()	knight_walk5	=[	$walk5,		knight_walk6	] {npcAi_Walk(3);};
+void()	knight_walk6	=[	$walk6,		knight_walk7	] {npcAi_Walk(3);};
+void()	knight_walk7	=[	$walk7,		knight_walk8	] {npcAi_Walk(3);};
+void()	knight_walk8	=[	$walk8,		knight_walk9	] {npcAi_Walk(4);};
+void()	knight_walk9	=[	$walk9,		knight_walk10	] {npcAi_Walk(3);};
+void()	knight_walk10	=[	$walk10,	knight_walk11	] {npcAi_Walk(3);};
+void()	knight_walk11	=[	$walk11,	knight_walk12	] {npcAi_Walk(2);};
+void()	knight_walk12	=[	$walk12,	knight_walk13	] {npcAi_Walk(3);};
+void()	knight_walk13	=[	$walk13,	knight_walk14	] {npcAi_Walk(4);};
+void()	knight_walk14	=[	$walk14,	knight_walk1	] {npcAi_Walk(3);};
 
 
 void()	knight_run1	=[	$runb1,		knight_run2	] {
 if (random() < 0.2)
 	sound (self, #CHAN_VOICE, "knight/idle.wav", 1,  #ATTN_IDLE);
-COOP_Run(16);};
-void()	knight_run2	=[	$runb2,		knight_run3	] {COOP_Run(20);};
-void()	knight_run3	=[	$runb3,		knight_run4	] {COOP_Run(13);};
-void()	knight_run4	=[	$runb4,		knight_run5	] {COOP_Run(7);};
-void()	knight_run5	=[	$runb5,		knight_run6	] {COOP_Run(16);};
-void()	knight_run6	=[	$runb6,		knight_run7	] {COOP_Run(20);};
-void()	knight_run7	=[	$runb7,		knight_run8	] {COOP_Run(14);};
-void()	knight_run8	=[	$runb8,		knight_run1	] {COOP_Run(6);};
+npcAi_Run(16);};
+void()	knight_run2	=[	$runb2,		knight_run3	] {npcAi_Run(20);};
+void()	knight_run3	=[	$runb3,		knight_run4	] {npcAi_Run(13);};
+void()	knight_run4	=[	$runb4,		knight_run5	] {npcAi_Run(7);};
+void()	knight_run5	=[	$runb5,		knight_run6	] {npcAi_Run(16);};
+void()	knight_run6	=[	$runb6,		knight_run7	] {npcAi_Run(20);};
+void()	knight_run7	=[	$runb7,		knight_run8	] {npcAi_Run(14);};
+void()	knight_run8	=[	$runb8,		knight_run1	] {npcAi_Run(6);};
 
 
 void()	knight_runatk1	=[	$runattack1,		knight_runatk2	]
@@ -110,33 +110,33 @@ if (random() > 0.5)
 	sound (self, #CHAN_WEAPON, "knight/sword2.wav", 1, #ATTN_NORM);
 else
 	sound (self, #CHAN_WEAPON, "knight/sword1.wav", 1, #ATTN_NORM);
-ai_charge(20);
+npcAi_Charge(20);
 };
-void()	knight_runatk2	=[	$runattack2,	knight_runatk3	] {ai_charge_side();};
-void()	knight_runatk3	=[	$runattack3,	knight_runatk4	] {ai_charge_side();};
-void()	knight_runatk4	=[	$runattack4,	knight_runatk5	] {ai_charge_side();};
-void()	knight_runatk5	=[	$runattack5,	knight_runatk6	] {ai_melee_side();};
-void()	knight_runatk6	=[	$runattack6,	knight_runatk7	] {ai_melee_side();};
-void()	knight_runatk7	=[	$runattack7,	knight_runatk8	] {ai_melee_side();};
-void()	knight_runatk8	=[	$runattack8,	knight_runatk9	] {ai_melee_side();};
-void()	knight_runatk9	=[	$runattack9,	knight_runatk10	] {ai_melee_side();};
-void()	knight_runatk10	=[	$runattack10,	knight_runatk11	] {ai_charge_side();};
-void()	knight_runatk11	=[	$runattack11,	knight_run1	] {ai_charge(10);};
+void()	knight_runatk2	=[	$runattack2,	knight_runatk3	] {npcAi_ChargeSide();};
+void()	knight_runatk3	=[	$runattack3,	knight_runatk4	] {npcAi_ChargeSide();};
+void()	knight_runatk4	=[	$runattack4,	knight_runatk5	] {npcAi_ChargeSide();};
+void()	knight_runatk5	=[	$runattack5,	knight_runatk6	] {npcAi_MeleeSide();};
+void()	knight_runatk6	=[	$runattack6,	knight_runatk7	] {npcAi_MeleeSide();};
+void()	knight_runatk7	=[	$runattack7,	knight_runatk8	] {npcAi_MeleeSide();};
+void()	knight_runatk8	=[	$runattack8,	knight_runatk9	] {npcAi_MeleeSide();};
+void()	knight_runatk9	=[	$runattack9,	knight_runatk10	] {npcAi_MeleeSide();};
+void()	knight_runatk10	=[	$runattack10,	knight_runatk11	] {npcAi_ChargeSide();};
+void()	knight_runatk11	=[	$runattack11,	knight_run1	] {npcAi_Charge(10);};
 
 void()	knight_atk1	=[	$attackb1,		knight_atk2	]
 {
 sound (self, #CHAN_WEAPON, "knight/sword1.wav", 1, #ATTN_NORM);
-ai_charge(0);};
-void()	knight_atk2	=[	$attackb2,		knight_atk3	] {ai_charge(7);};
-void()	knight_atk3	=[	$attackb3,		knight_atk4	] {ai_charge(4);};
-void()	knight_atk4	=[	$attackb4,		knight_atk5	] {ai_charge(0);};
-void()	knight_atk5	=[	$attackb5,		knight_atk6	] {ai_charge(3);};
-void()	knight_atk6	=[	$attackb6,		knight_atk7	] {ai_charge(4); ai_melee();};
-void()	knight_atk7	=[	$attackb7,		knight_atk8	] {ai_charge(1); ai_melee();};
-void()	knight_atk8	=[	$attackb8,		knight_atk9	] {ai_charge(3);
-ai_melee();};
-void()	knight_atk9	=[	$attackb9,		knight_atk10] {ai_charge(1);};
-void()	knight_atk10=[	$attackb10,		knight_run1	] {ai_charge(5);};
+npcAi_Charge(0);};
+void()	knight_atk2	=[	$attackb2,		knight_atk3	] {npcAi_Charge(7);};
+void()	knight_atk3	=[	$attackb3,		knight_atk4	] {npcAi_Charge(4);};
+void()	knight_atk4	=[	$attackb4,		knight_atk5	] {npcAi_Charge(0);};
+void()	knight_atk5	=[	$attackb5,		knight_atk6	] {npcAi_Charge(3);};
+void()	knight_atk6	=[	$attackb6,		knight_atk7	] {npcAi_Charge(4); npcAi_Melee();};
+void()	knight_atk7	=[	$attackb7,		knight_atk8	] {npcAi_Charge(1); npcAi_Melee();};
+void()	knight_atk8	=[	$attackb8,		knight_atk9	] {npcAi_Charge(3);
+npcAi_Melee();};
+void()	knight_atk9	=[	$attackb9,		knight_atk10] {npcAi_Charge(1);};
+void()	knight_atk10=[	$attackb10,		knight_run1	] {npcAi_Charge(5);};
 
 //void()	knight_atk9	=[	$attack9,		knight_atk10	] {};
 //void()	knight_atk10	=[	$attack10,		knight_atk11	] {};
@@ -148,16 +148,16 @@ void()	knight_pain1	=[	$pain1,		knight_pain2	] {};
 void()	knight_pain2	=[	$pain2,		knight_pain3	] {};
 void()	knight_pain3	=[	$pain3,		knight_run1	] {};
 
-void()	knight_painb1	=[	$painb1,	knight_painb2	] {ai_painforward(0);};
-void()	knight_painb2	=[	$painb2,	knight_painb3	] {ai_painforward(3);};
+void()	knight_painb1	=[	$painb1,	knight_painb2	] {npcAi_PainForward(0);};
+void()	knight_painb2	=[	$painb2,	knight_painb3	] {npcAi_PainForward(3);};
 void()	knight_painb3	=[	$painb3,	knight_painb4	] {};
 void()	knight_painb4	=[	$painb4,	knight_painb5	] {};
-void()	knight_painb5	=[	$painb5,	knight_painb6	] {ai_painforward(2);};
-void()	knight_painb6	=[	$painb6,	knight_painb7	] {ai_painforward(4);};
-void()	knight_painb7	=[	$painb7,	knight_painb8	] {ai_painforward(2);};
-void()	knight_painb8	=[	$painb8,	knight_painb9	] {ai_painforward(5);};
-void()	knight_painb9	=[	$painb9,	knight_painb10	] {ai_painforward(5);};
-void()	knight_painb10	=[	$painb10,	knight_painb11	] {ai_painforward(0);};
+void()	knight_painb5	=[	$painb5,	knight_painb6	] {npcAi_PainForward(2);};
+void()	knight_painb6	=[	$painb6,	knight_painb7	] {npcAi_PainForward(4);};
+void()	knight_painb7	=[	$painb7,	knight_painb8	] {npcAi_PainForward(2);};
+void()	knight_painb8	=[	$painb8,	knight_painb9	] {npcAi_PainForward(5);};
+void()	knight_painb9	=[	$painb9,	knight_painb10	] {npcAi_PainForward(5);};
+void()	knight_painb10	=[	$painb10,	knight_painb11	] {npcAi_PainForward(0);};
 void()	knight_painb11	=[	$painb11,	knight_run1	] {};
 
 void(entity attacker, float damage)	knight_pain =
@@ -189,18 +189,18 @@ void(entity attacker, float damage)	knight_pain =
 
 //===========================================================================
 
-void()	knight_bow1	=[	$kneel1,		knight_bow2	] {COOP_Turn();};
-void()	knight_bow2	=[	$kneel2,		knight_bow3	] {COOP_Turn();};
-void()	knight_bow3	=[	$kneel3,		knight_bow4	] {COOP_Turn();};
-void()	knight_bow4	=[	$kneel4,		knight_bow5	] {COOP_Turn();};
+void()	knight_bow1	=[	$kneel1,		knight_bow2	] {npcAi_Turn();};
+void()	knight_bow2	=[	$kneel2,		knight_bow3	] {npcAi_Turn();};
+void()	knight_bow3	=[	$kneel3,		knight_bow4	] {npcAi_Turn();};
+void()	knight_bow4	=[	$kneel4,		knight_bow5	] {npcAi_Turn();};
 
-void()	knight_bow5	=[	$kneel5,		knight_bow5	] {COOP_Turn();};
+void()	knight_bow5	=[	$kneel5,		knight_bow5	] {npcAi_Turn();};
 
-void()	knight_bow6	=[	$kneel4,		knight_bow7	] {COOP_Turn();};
-void()	knight_bow7	=[	$kneel3,		knight_bow8	] {COOP_Turn();};
-void()	knight_bow8	=[	$kneel2,		knight_bow9	] {COOP_Turn();};
-void()	knight_bow9	=[	$kneel1,		knight_bow10	] {COOP_Turn();};
-void()	knight_bow10	=[	$walk1,		knight_walk1	] {COOP_Turn();};
+void()	knight_bow6	=[	$kneel4,		knight_bow7	] {npcAi_Turn();};
+void()	knight_bow7	=[	$kneel3,		knight_bow8	] {npcAi_Turn();};
+void()	knight_bow8	=[	$kneel2,		knight_bow9	] {npcAi_Turn();};
+void()	knight_bow9	=[	$kneel1,		knight_bow10	] {npcAi_Turn();};
+void()	knight_bow10	=[	$walk1,		knight_walk1	] {npcAi_Turn();};
 
 
 
@@ -253,33 +253,39 @@ void() knight_die =
 		knight_dieb1 ();
 };
 
-
-float() KnightPreAttack =
-{
-	local float		len;
-
-// decide if now is a good swing time
-	len = vlen(self.enemy.origin+self.enemy.view_ofs - (self.origin+self.view_ofs));
-
-/*
-	// TODO: make ai_charge_side and ai_melee_side for coop
-	if (len < 80)
-		knight_atk1 ();
-	else
-		knight_runatk1 ();
-*/
-	if (len < 80)
-		return #TRUE;
-
-	return #FALSE;
-};
-
 float() KnightOnSight =
 {
 	sound (self, #CHAN_VOICE, "knight/ksight.wav", 1, #ATTN_NORM);
 	return #TRUE;
 };
 
+/*
+=================
+KnightMainAttack
+=================
+*/
+void() KnightMainAttack = {
+	local float		len;
+
+	// make sure we're facing the right direction
+	if ( !FacingIdeal() )
+		return;		// not facing the right direction, wait until we are
+
+	// decide if now is a good swing time
+	len = vlen( self.#npc_lastEnemyOrigin + self.enemy.view_ofs - ( self.origin + self.view_ofs ) );
+
+/*
+	// TODO: make npcAi_ChargeSide and npcAi_MeleeSide for coop
+	if (len < 80)
+		knight_atk1 ();
+	else
+		knight_runatk1 ();
+*/
+	if ( len >= 80 )
+		return;
+
+	knight_atk1();
+};
 
 /*QUAKED monster_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
@@ -318,7 +324,7 @@ void() monster_knight =
 	self.th_stand = knight_stand1;
 	self.th_walk = knight_walk1;
 	self.th_run = knight_run1;
-	self.th_melee = knight_atk1;
+	self.th_missile = KnightMainAttack;
 	self.th_pain = knight_pain;
 	self.th_die = knight_die;
 
@@ -336,11 +342,10 @@ void() monster_knight =
 	self.is_connected = #TRUE;
 
 
-	self.OnPreAttack = KnightPreAttack;
 	self.OnNoticeEnemy = KnightOnSight;
 	self.#npc_speedfactor = 2;
 	self.#npc_spawnfunc = monster_knight;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_bulletmult = 0.80;
 	self.#npc_spikemult = 0.80;
@@ -349,5 +354,10 @@ void() monster_knight =
 	
 	coop_walkmonster_start ();
 };
+
+#undef IDMON_KNIGHT_HEALTH
+#undef IDMON_KNIGHT_ARMORVALUE
+#undef IDMON_KNIGHT_ARMORTYPE
+#undef IDMON_KNIGHT_SLASHDMG
 
 #endif

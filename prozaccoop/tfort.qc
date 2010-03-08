@@ -3934,7 +3934,7 @@ void() BioInfection_MonsterDecay =
 
 	//T_Damage(self.enemy, self, self.owner, drmg);
 #ifdef COOP_MODE_ENHANCED
-	if ( COOP_IsCoopMonster( self.enemy ) )
+	if ( npcAi_IsCoopMonster( self.enemy ) )
 		deathmsg = #DMSG_BIOWEAPON;
 #endif
 	TF_T_Damage(self.enemy, self, self.owner, drmg, #TF_TD_NOPAIN,0);

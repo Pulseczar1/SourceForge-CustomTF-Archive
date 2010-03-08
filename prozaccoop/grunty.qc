@@ -2635,7 +2635,7 @@ void() grunty_touch =
 		}
 
 #ifdef COOP_MODE_ENHANCED
-		else if ( COOP_IsCoopMonster( other ) ) {
+		else if ( npcAi_IsCoopMonster( other ) ) {
 			if ( !( other.tfstate & #TFSTATE_INFECTED ) ) {
 				// Update infection flag
 				other.tfstate = other.tfstate | #TFSTATE_INFECTED;

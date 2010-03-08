@@ -9,7 +9,7 @@
 	5) Running (at the end) - Don't think this one is needed anymore
 	6) Stand
 	7) precache (don't precache if server is already spawned) in spawn function
-	8) call void () COOP_SetLives; in Spawn function
+	8) call void () npcAi_SetLives; in Spawn function
 	9) setup spawndelay and spawnfunc in Spawn function
 
 	TODO: use tf_t_damage: TF_T_Damage (trace_ent, self, self, 30, #TF_TD_NOTTEAM, #TF_TD_OTHER);
@@ -73,11 +73,11 @@ SOLDIER CODE
 
 void() army_fire;
 
-void()	army_stand1	=[	$stand1,	army_stand2	] {COOP_Idle();};
+void()	army_stand1	=[	$stand1,	army_stand2	] {npcAi_Idle();};
 void()	army_stand2	=[	$stand2,	army_stand3	] {};
 void()	army_stand3	=[	$stand3,	army_stand4	] {};
 void()	army_stand4	=[	$stand4,	army_stand5	] {};
-void()	army_stand5	=[	$stand5,	army_stand6	] {COOP_Idle();};
+void()	army_stand5	=[	$stand5,	army_stand6	] {npcAi_Idle();};
 void()	army_stand6	=[	$stand6,	army_stand7	] {};
 void()	army_stand7	=[	$stand7,	army_stand8	] {};
 void()	army_stand8	=[	$stand8,	army_stand1	] {};
@@ -85,59 +85,55 @@ void()	army_stand8	=[	$stand8,	army_stand1	] {};
 void()	army_walk1	=[	$prowl_1,	army_walk2	] {
 if (random() < 0.2)
 	sound (self, #CHAN_VOICE, "soldier/idle.wav", 1, #ATTN_IDLE);
-COOP_Walk(1);};
-void()	army_walk2	=[	$prowl_2,	army_walk3	] {COOP_Walk(1);};
-void()	army_walk3	=[	$prowl_3,	army_walk4	] {COOP_Walk(1);};
-void()	army_walk4	=[	$prowl_4,	army_walk5	] {COOP_Walk(1);};
-void()	army_walk5	=[	$prowl_5,	army_walk6	] {COOP_Walk(2);};
-void()	army_walk6	=[	$prowl_6,	army_walk7	] {COOP_Walk(3);};
-void()	army_walk7	=[	$prowl_7,	army_walk8	] {COOP_Walk(4);};
-void()	army_walk8	=[	$prowl_8,	army_walk9	] {COOP_Walk(4);};
-void()	army_walk9	=[	$prowl_9,	army_walk10	] {COOP_Walk(2);};
-void()	army_walk10	=[	$prowl_10,	army_walk11	] {COOP_Walk(2);};
-void()	army_walk11	=[	$prowl_11,	army_walk12	] {COOP_Walk(2);};
-void()	army_walk12	=[	$prowl_12,	army_walk13	] {COOP_Walk(1);};
-void()	army_walk13	=[	$prowl_13,	army_walk14	] {COOP_Walk(0);};
-void()	army_walk14	=[	$prowl_14,	army_walk15	] {COOP_Walk(1);};
-void()	army_walk15	=[	$prowl_15,	army_walk16	] {COOP_Walk(1);};
-void()	army_walk16	=[	$prowl_16,	army_walk17	] {COOP_Walk(1);};
-void()	army_walk17	=[	$prowl_17,	army_walk18	] {COOP_Walk(3);};
-void()	army_walk18	=[	$prowl_18,	army_walk19	] {COOP_Walk(3);};
-void()	army_walk19	=[	$prowl_19,	army_walk20	] {COOP_Walk(3);};
-void()	army_walk20	=[	$prowl_20,	army_walk21	] {COOP_Walk(3);};
-void()	army_walk21	=[	$prowl_21,	army_walk22	] {COOP_Walk(2);};
-void()	army_walk22	=[	$prowl_22,	army_walk23	] {COOP_Walk(1);};
-void()	army_walk23	=[	$prowl_23,	army_walk24	] {COOP_Walk(1);};
-void()	army_walk24	=[	$prowl_24,	army_walk1	] {COOP_Walk(1);};
+npcAi_Walk(1);};
+void()	army_walk2	=[	$prowl_2,	army_walk3	] {npcAi_Walk(1);};
+void()	army_walk3	=[	$prowl_3,	army_walk4	] {npcAi_Walk(1);};
+void()	army_walk4	=[	$prowl_4,	army_walk5	] {npcAi_Walk(1);};
+void()	army_walk5	=[	$prowl_5,	army_walk6	] {npcAi_Walk(2);};
+void()	army_walk6	=[	$prowl_6,	army_walk7	] {npcAi_Walk(3);};
+void()	army_walk7	=[	$prowl_7,	army_walk8	] {npcAi_Walk(4);};
+void()	army_walk8	=[	$prowl_8,	army_walk9	] {npcAi_Walk(4);};
+void()	army_walk9	=[	$prowl_9,	army_walk10	] {npcAi_Walk(2);};
+void()	army_walk10	=[	$prowl_10,	army_walk11	] {npcAi_Walk(2);};
+void()	army_walk11	=[	$prowl_11,	army_walk12	] {npcAi_Walk(2);};
+void()	army_walk12	=[	$prowl_12,	army_walk13	] {npcAi_Walk(1);};
+void()	army_walk13	=[	$prowl_13,	army_walk14	] {npcAi_Walk(0);};
+void()	army_walk14	=[	$prowl_14,	army_walk15	] {npcAi_Walk(1);};
+void()	army_walk15	=[	$prowl_15,	army_walk16	] {npcAi_Walk(1);};
+void()	army_walk16	=[	$prowl_16,	army_walk17	] {npcAi_Walk(1);};
+void()	army_walk17	=[	$prowl_17,	army_walk18	] {npcAi_Walk(3);};
+void()	army_walk18	=[	$prowl_18,	army_walk19	] {npcAi_Walk(3);};
+void()	army_walk19	=[	$prowl_19,	army_walk20	] {npcAi_Walk(3);};
+void()	army_walk20	=[	$prowl_20,	army_walk21	] {npcAi_Walk(3);};
+void()	army_walk21	=[	$prowl_21,	army_walk22	] {npcAi_Walk(2);};
+void()	army_walk22	=[	$prowl_22,	army_walk23	] {npcAi_Walk(1);};
+void()	army_walk23	=[	$prowl_23,	army_walk24	] {npcAi_Walk(1);};
+void()	army_walk24	=[	$prowl_24,	army_walk1	] {npcAi_Walk(1);};
 
 void()	army_run1	=[	$run1,		army_run2	] {
 if (random() < 0.2)
 	sound (self, #CHAN_VOICE, "soldier/idle.wav", 1, #ATTN_IDLE);
-COOP_Run(11);};
-void()	army_run2	=[	$run2,		army_run3	] {COOP_Run(15);};
-void()	army_run3	=[	$run3,		army_run4	] {COOP_Run(10);};
-void()	army_run4	=[	$run4,		army_run5	] {COOP_Run(10);};
-void()	army_run5	=[	$run5,		army_run6	] {COOP_Run(8);};
-void()	army_run6	=[	$run6,		army_run7	] {COOP_Run(15);};
-void()	army_run7	=[	$run7,		army_run8	] {COOP_Run(10);};
-void()	army_run8	=[	$run8,		army_run1	] {COOP_Run(8);};
+npcAi_Run(11);};
+void()	army_run2	=[	$run2,		army_run3	] {npcAi_Run(15);};
+void()	army_run3	=[	$run3,		army_run4	] {npcAi_Run(10);};
+void()	army_run4	=[	$run4,		army_run5	] {npcAi_Run(10);};
+void()	army_run5	=[	$run5,		army_run6	] {npcAi_Run(8);};
+void()	army_run6	=[	$run6,		army_run7	] {npcAi_Run(15);};
+void()	army_run7	=[	$run7,		army_run8	] {npcAi_Run(10);};
+void()	army_run8	=[	$run8,		army_run1	] {npcAi_Run(8);};
 
 void()	army_atk1	=[	$shoot1,	army_atk2	] {
-//	if (COOP_SightBlocked(self, self.enemy)) {
-//		self.nextthink = time + 0.01;
-//		self.think = self.th_run;
-//	} else
-		COOP_Turn();
+		npcAi_Turn();
 };
-void()	army_atk2	=[	$shoot2,	army_atk3	] {COOP_Turn();};
-void()	army_atk3	=[	$shoot3,	army_atk4	] {COOP_Turn();};
-void()	army_atk4	=[	$shoot4,	army_atk5	] {COOP_Turn();};
-void()	army_atk5	=[	$shoot5,	army_atk6	] {COOP_Turn();army_fire();
+void()	army_atk2	=[	$shoot2,	army_atk3	] {npcAi_Turn();};
+void()	army_atk3	=[	$shoot3,	army_atk4	] {npcAi_Turn();};
+void()	army_atk4	=[	$shoot4,	army_atk5	] {npcAi_Turn();};
+void()	army_atk5	=[	$shoot5,	army_atk6	] {npcAi_Turn();army_fire();
 muzzleflash ();};
-void()	army_atk6	=[	$shoot6,	army_atk7	] {COOP_Turn();};
-void()	army_atk7	=[	$shoot7,	army_atk8	] {COOP_Turn();SUB_CheckRefire (army_atk1);};
-void()	army_atk8	=[	$shoot8,	army_atk9	] {COOP_Turn();};
-void()	army_atk9	=[	$shoot9,	army_run1	] {COOP_Turn();};
+void()	army_atk6	=[	$shoot6,	army_atk7	] {npcAi_Turn();};
+void()	army_atk7	=[	$shoot7,	army_atk8	] {npcAi_Turn();SUB_CheckRefire (army_atk1);};
+void()	army_atk8	=[	$shoot8,	army_atk9	] {npcAi_Turn();};
+void()	army_atk9	=[	$shoot9,	army_run1	] {npcAi_Turn();};
 
 
 void()	army_pain1	=[	$pain1,		army_pain2	] {};
@@ -145,11 +141,11 @@ void()	army_pain2	=[	$pain2,		army_pain3	] {};
 void()	army_pain3	=[	$pain3,		army_pain4	] {};
 void()	army_pain4	=[	$pain4,		army_pain5	] {};
 void()	army_pain5	=[	$pain5,		army_pain6	] {};
-void()	army_pain6	=[	$pain6,		army_run1	] {ai_pain(1);};
+void()	army_pain6	=[	$pain6,		army_run1	] {npcAi_Pain(1);};
 
 void()	army_painb1	=[	$painb1,	army_painb2	] {};
-void()	army_painb2	=[	$painb2,	army_painb3	] {ai_painforward(13);};
-void()	army_painb3	=[	$painb3,	army_painb4	] {ai_painforward(9);};
+void()	army_painb2	=[	$painb2,	army_painb3	] {npcAi_PainForward(13);};
+void()	army_painb3	=[	$painb3,	army_painb4	] {npcAi_PainForward(9);};
 void()	army_painb4	=[	$painb4,	army_painb5	] {};
 void()	army_painb5	=[	$painb5,	army_painb6	] {};
 void()	army_painb6	=[	$painb6,	army_painb7	] {};
@@ -158,22 +154,22 @@ void()	army_painb8	=[	$painb8,	army_painb9	] {};
 void()	army_painb9	=[	$painb9,	army_painb10] {};
 void()	army_painb10=[	$painb10,	army_painb11] {};
 void()	army_painb11=[	$painb11,	army_painb12] {};
-void()	army_painb12=[	$painb12,	army_painb13] {ai_pain(2);};
+void()	army_painb12=[	$painb12,	army_painb13] {npcAi_Pain(2);};
 void()	army_painb13=[	$painb13,	army_painb14] {};
 void()	army_painb14=[	$painb14,	army_run1	] {};
 
 void()	army_painc1	=[	$painc1,	army_painc2	] {};
-void()	army_painc2	=[	$painc2,	army_painc3	] {ai_pain(1);};
+void()	army_painc2	=[	$painc2,	army_painc3	] {npcAi_Pain(1);};
 void()	army_painc3	=[	$painc3,	army_painc4	] {};
 void()	army_painc4	=[	$painc4,	army_painc5	] {};
-void()	army_painc5	=[	$painc5,	army_painc6	] {ai_painforward(1);};
-void()	army_painc6	=[	$painc6,	army_painc7	] {ai_painforward(1);};
+void()	army_painc5	=[	$painc5,	army_painc6	] {npcAi_PainForward(1);};
+void()	army_painc6	=[	$painc6,	army_painc7	] {npcAi_PainForward(1);};
 void()	army_painc7	=[	$painc7,	army_painc8	] {};
-void()	army_painc8	=[	$painc8,	army_painc9	] {ai_pain(1);};
-void()	army_painc9	=[	$painc9,	army_painc10] {ai_painforward(4);};
-void()	army_painc10=[	$painc10,	army_painc11] {ai_painforward(3);};
-void()	army_painc11=[	$painc11,	army_painc12] {ai_painforward(6);};
-void()	army_painc12=[	$painc12,	army_painc13] {ai_painforward(8);};
+void()	army_painc8	=[	$painc8,	army_painc9	] {npcAi_Pain(1);};
+void()	army_painc9	=[	$painc9,	army_painc10] {npcAi_PainForward(4);};
+void()	army_painc10=[	$painc10,	army_painc11] {npcAi_PainForward(3);};
+void()	army_painc11=[	$painc11,	army_painc12] {npcAi_PainForward(6);};
+void()	army_painc12=[	$painc12,	army_painc13] {npcAi_PainForward(8);};
 void()	army_painc13=[	$painc13,	army_run1] {};
 
 void(entity attacker, float damage)	army_pain =
@@ -209,23 +205,24 @@ void(entity attacker, float damage)	army_pain =
 void() army_fire =
 {
 	local	vector	dir;
-	local	entity	en;
 	
-	COOP_Turn();
+	npcAi_Turn();
 	
 	sound (self, #CHAN_WEAPON, "soldier/sattck1.wav", 1, #ATTN_NORM);	
 
+#ifdef NEVER_DEFINED
 // fire somewhat behind the player, so a dodging player is harder to hit
 	en = self.enemy;
-	
-	dir = (en.origin + self.#npc_enemyoffset) - en.velocity*0.1;
+
+//	dir = (en.origin + self.#npc_enemyoffset) - en.velocity*0.1;
+	dir = self.#npc_lastEnemyOrigin - en.velocity * 0.1;
 	dir = normalize (dir - self.origin);
-	
-	// FIXME: distance, and possibly make damage multiplied by number of players?
+#endif
+
+	dir = npcAi_GetAttackVector( self, self.origin );
+
 	deathmsg = #DMSG_SHOTGUN;
 	FireBullets (#IDMON_GRUNT_SGUNBULLETS, dir, '0.11 0.11 0', 9999);
-
-	Attack_Finished( random() + 1 );
 };
 
 
@@ -243,12 +240,12 @@ void()	army_die9	=[	$death9,	army_die10	] {};
 void()	army_die10	=[	$death10,	army_die10	] {MonsterCorpse();};
 
 void()	army_cdie1	=[	$deathc1,	army_cdie2	] {};
-void()	army_cdie2	=[	$deathc2,	army_cdie3	] {ai_back(5);};
+void()	army_cdie2	=[	$deathc2,	army_cdie3	] {npcAi_Back(5);};
 void()	army_cdie3	=[	$deathc3,	army_cdie4	]
-{self.solid = #SOLID_NOT;self.ammo_shells = 15;DropBackpack();ai_back(4);};
-void()	army_cdie4	=[	$deathc4,	army_cdie5	] {ai_back(13);};
-void()	army_cdie5	=[	$deathc5,	army_cdie6	] {ai_back(3);};
-void()	army_cdie6	=[	$deathc6,	army_cdie7	] {ai_back(4);};
+{self.solid = #SOLID_NOT;self.ammo_shells = 15;DropBackpack();npcAi_Back(4);};
+void()	army_cdie4	=[	$deathc4,	army_cdie5	] {npcAi_Back(13);};
+void()	army_cdie5	=[	$deathc5,	army_cdie6	] {npcAi_Back(3);};
+void()	army_cdie6	=[	$deathc6,	army_cdie7	] {npcAi_Back(4);};
 void()	army_cdie7	=[	$deathc7,	army_cdie8	] {};
 void()	army_cdie8	=[	$deathc8,	army_cdie9	] {};
 void()	army_cdie9	=[	$deathc9,	army_cdie10	] {};
@@ -291,46 +288,19 @@ float() ArmyOnSight =
 _SoldierCheckAttack
 ============
 */
-float() _SoldierCheckAttack = {
-	local vector	spot1, spot2;	
-	local entity	targ;
-	local float		chance;
+void() _SoldierCheckAttack = {
+	local float	r;
 
-	targ = self.enemy;
+	// make sure we're facing the right direction
+	if ( !FacingIdeal() )
+		return;		// not facing the right direction, wait until we are
 
-// see if any entities are in the way of the shot
-	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+	army_atk1();
 
-	traceline( spot1, spot2, #TL_ANY_SOLID, self );
-
-	if ( trace_ent != targ )
-		return #FALSE;	// don't have a clear shot
-
-// missile attack
-	enemy_range = range( self.enemy );
-
-	if ( enemy_range == #RANGE_FAR )
-		return #FALSE;
-		
-	if ( enemy_range == #RANGE_MELEE )
-		chance = 0.9;
-	else if ( enemy_range == #RANGE_NEAR )
-		chance = 0.4;
-	else if ( enemy_range == #RANGE_MID )
-		chance = 0.05;
-	else
-		chance = 0;
-
-	if ( random() < chance ) {
-//		Attack_Finished( 1 + random() );
-		if ( random() < 0.3 )
-			self.lefty = !self.lefty;
-
-		return #TRUE;
-	}
-
-	return #FALSE;
+	// delay for a little random while
+	r = vlen( self.#npc_lastEnemyOrigin - self.origin );
+	if ( r > 96 )
+		Attack_Finished( random() + 1 );
 };
 
 
@@ -377,7 +347,7 @@ void() monster_army =
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
-	self.th_missile = army_atk1;
+	self.th_missile = _SoldierCheckAttack;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
 
@@ -395,9 +365,8 @@ void() monster_army =
 	self.is_connected = #TRUE;
 
 	self.OnNoticeEnemy = ArmyOnSight;
-	self.OnPreAttack = _SoldierCheckAttack;
 	self.#npc_spawnfunc = monster_army;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_bulletmult = 0.75;
 
@@ -406,5 +375,10 @@ void() monster_army =
 
 	coop_walkmonster_start ();
 };
+
+#undef IDMON_GRUNT_HEALTH
+#undef IDMON_GRUNT_SGUNBULLETS
+
+#undef IDMON_GRUNT_EXPAINTIME
 
 #endif

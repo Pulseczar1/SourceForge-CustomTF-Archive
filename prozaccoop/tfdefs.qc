@@ -88,7 +88,7 @@ void(vector v1, vector v2, vector bbox_mins, vector bbox_maxs, entity forent) tr
 /*
 	qc_droptofloor - allows drops that aren't bound to 256 down, though it cannot be negative
 */
-
+/*
 #define DROPDIST 256
 float(entity e, float dist, float nodrop) qc_droptofloor =
 {
@@ -133,6 +133,7 @@ float(entity e, float dist, float nodrop) qc_droptofloor =
 	self = oself;
 	return #FALSE;
 };
+*/
 
 
 #ifdef NEVER_DEFINED
@@ -224,7 +225,6 @@ void( entity e, string m ) setmodel = {
 
 //========================================================================
 
-#ifdef COOP_MODE_ENHANCED
 entity	headActiveSound;
 
 /*
@@ -280,8 +280,7 @@ void( entity e, float chan, string samp, float vol, float atten ) sound = {
 	else
 		return;
 
-	// only alert monsters in coop or single player, cause they don't exist in deathmatch usually
-	if ( deathmatch || atten != #ATTN_NORM )
+	if ( atten != #ATTN_NORM )
 		return;
 
 	// only allow one sound per player
@@ -311,4 +310,3 @@ void( entity e, float chan, string samp, float vol, float atten ) sound = {
 		headActiveSound = soundEnt;
 	}
 };
-#endif
