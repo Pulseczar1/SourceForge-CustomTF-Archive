@@ -1060,7 +1060,6 @@ void() SetCycleErrorCheck =
 
 	By Gizmo
 */
-
 void () fail_think =
 {
 	bprint (#PRINT_HIGH, "Map change failed! Defaulting to start...\n");
@@ -1074,6 +1073,20 @@ void () CheckFailedMapChange =
 {
 	newmis = spawn();
 	newmis.nextthink = time + 5;
+	newmis.think = fail_think;
+};
+
+/*
+==============
+CheckFailedIntermission
+
+Gizmo - make sure the intermission doesn't get stuck.
+==============
+*/
+void () CheckFailedIntermission =
+{
+	newmis = spawn();
+	newmis.nextthink = time + 10;
 	newmis.think = fail_think;
 };
 
@@ -1161,6 +1174,7 @@ void() ExitIntermission =
 	{
 		RPrint("Exit Intermission in Deathmatch.\n");
 		GotoNextMap ();
+		CheckFailedIntermission();
 		return;
 	}
 	
@@ -1243,6 +1257,7 @@ void() ExitIntermission =
 	RPrint("Exit Intermission.\n");
 	
 	GotoNextMap();
+	CheckFailedIntermission();
 };
 
 /*
@@ -1268,6 +1283,7 @@ void() IntermissionThink =
 		RPrint("Intermission think.\n");
 		triggered_cycle = #TRUE;
 		GotoNextMap();
+		CheckFailedIntermission();
 	}
 };
 
