@@ -676,7 +676,7 @@ void(float inAuto) TeamFortress_ID =
 		}
 
 #ifdef COOP_MODE_ENHANCED
-		else if ( COOP_IsCoopMonster( trace_ent ) ) {
+		else if ( npcAi_IsCoopMonster( trace_ent ) ) {
 			local string s1;
 			local string bullet, nail, exp, elec, fire, melee;
 			local string strong, weak;

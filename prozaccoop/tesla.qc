@@ -946,7 +946,7 @@ entity(entity scanner, float scanrange) Tesla_RadiusScan =
 
 #ifdef COOP_MODE_ENHANCED
 			// teslas always target coop monsters in coop mode, without improved targeter
-			else if (COOP_IsCoopMonster( head ) && head.health > 0 && head.takedamage) {
+			else if (npcAi_IsCoopMonster( head ) && head.health > 0 && head.takedamage) {
 				if ( !Teammate( head.team_no, scanner.team_no ) )
 					gotatarget = 1;
 			}

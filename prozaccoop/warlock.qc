@@ -2003,7 +2003,7 @@ void() MonsterTouch =
             }
         }
 #ifdef COOP_MODE_ENHANCED
-		else if ( COOP_IsCoopMonster( other ) ) {
+		else if ( npcAi_IsCoopMonster( other ) ) {
 			if (!(other.tfstate & #TFSTATE_INFECTED))
 			{
 				// Update infection flag
@@ -2552,7 +2552,7 @@ void(string gibname, float dm) ThrowMonsterHead =
 #ifdef COOP_MODE_ENHANCED
 	local float r;
 
-	if ( self.endtime > 0 && COOP_IsCoopMonster( self ) ) {
+	if ( self.endtime > 0 && npcAi_IsCoopMonster( self ) ) {
 		r = random();
 		if ( r < 0.5 )
 			r = 0.5 + random()*0.5;

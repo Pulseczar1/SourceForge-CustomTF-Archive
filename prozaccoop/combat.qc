@@ -67,7 +67,7 @@ void() monster_death_use =
 	if (!self.target)
 		return;
 #ifdef COOP_MODE_ENHANCED
-	if ( COOP_IsCoopMonster( self ) && !self.#npc_useTargetsOnRespawn )
+	if ( npcAi_IsCoopMonster( self ) && !self.#npc_useTargetsOnRespawn )
 		return;
 #endif
 
@@ -142,8 +142,8 @@ Killed
 ============
 */
 #ifdef COOP_MODE_ENHANCED
-void( entity e ) COOP_SetupRespawn;
-void( entity e ) COOP_MonsterDead;
+void( entity e ) npcAi_SetupRespawn;
+void( entity e ) npcAi_MonsterDead;
 #endif
 void(entity targ, entity attacker) Killed =
 {
@@ -246,7 +246,7 @@ void(entity targ, entity attacker) Killed =
 	if ((self.movetype == #MOVETYPE_PUSH || self.movetype == #MOVETYPE_NONE) && self.classname != "building_camera" && self.classname!="building_sensor") //CH stop bug.
 	{
 #ifdef COOP_MODE_ENHANCED
-		if ( !COOP_IsCoopMonster( self ) ) {
+		if ( !npcAi_IsCoopMonster( self ) ) {
 #endif
 			self.th_die ();
 			self = oself;
@@ -260,7 +260,7 @@ void(entity targ, entity attacker) Killed =
 
 	// bump the monster counter
 #ifdef COOP_MODE_ENHANCED
-	if ( self.flags & #FL_MONSTER && COOP_IsCoopMonster( self ) )
+	if ( self.flags & #FL_MONSTER && npcAi_IsCoopMonster( self ) )
 #else
 	if (self.flags & #FL_MONSTER)
 #endif
@@ -285,12 +285,12 @@ void(entity targ, entity attacker) Killed =
 
 #ifdef COOP_MODE_ENHANCED
 	// setup respawn
-	//void (float respawntime, void() spawn_func) COOP_SetupRespawn
-	if ( COOP_IsCoopMonster( self ) ) {
+	//void (float respawntime, void() spawn_func) npcAi_SetupRespawn
+	if ( npcAi_IsCoopMonster( self ) ) {
 		// make sure we call this before any cleanup is done
-		COOP_SetupRespawn( self );
+		npcAi_SetupRespawn( self );
 		// this is called to allow transparent monster AI without affecting the monster's actual code
-		COOP_MonsterDead( self );
+		npcAi_MonsterDead( self );
 	}
 #endif
 
@@ -346,9 +346,9 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 */
 
 #ifdef COOP_MODE_ENHANCED
-float (entity targ, entity attacker, float indmg, float attacktype) COOP_CalcEntityDamage;
-float (entity test) COOP_IsCoopMonster;
-void( entity attacker ) COOP_PrePain;
+float (entity targ, entity attacker, float indmg, float attacktype) npcAi_CalcEntityDamage;
+float (entity test) npcAi_IsCoopMonster;
+void( entity attacker ) npcAi_PrePain;
 #endif
 void(entity targ, entity inflictor, entity attacker, float damage, float T_flags, float T_AttackType) TF_T_Damage =
 {
@@ -381,7 +381,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 #ifdef COOP_MODE_ENHANCED
 	// certain monsters are weaker/stronger against certain types of attack
 	if ( !deathmatch )
-		damage = COOP_CalcEntityDamage (targ, attacker, damage, T_AttackType);
+		damage = npcAi_CalcEntityDamage (targ, attacker, damage, T_AttackType);
 #endif
 
 	//WK Set off land mines
@@ -705,12 +705,13 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 				dir = normalize(dir);
 
 			#ifdef QUAKE_WORLD
+				// Gizmo - replaced improper & with &&, was causing problems on QF (why? technically it should work...)
 				// Increase kickback for smaller weapons
-				if ( (damage < 60) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname != targ.netname)) 
+				if ( (damage < 60) && ((attacker.classname == "player") && (targ.classname == "player")) && ( attacker.netname != targ.netname)) 
 					targ.velocity = targ.velocity + dir * damage * 11;
 				else                        
 					targ.velocity = targ.velocity + dir*damage*8;
-				if ( (rj > 1) & ((attacker.classname == "player") & (targ.classname == "player")) & ( attacker.netname == targ.netname)) 
+				if ( (rj > 1) && ((attacker.classname == "player") && (targ.classname == "player")) && ( attacker.netname == targ.netname)) 
 					targ.velocity = targ.velocity + dir * damage * rj;
 				if (targ.classname == "player" && targ.cutf_items & #CUTF_GYMNAST)
 					targ.velocity = targ.velocity + dir * damage * 4; //WK 1/7/7 Gymnast Nerf: 8
@@ -843,8 +844,8 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 #ifdef COOP_MODE_ENHANCED
 	// Gizmo - call the default AI pain function
-	if ( COOP_IsCoopMonster( self ) )
-		COOP_PrePain( attacker );
+	if ( npcAi_IsCoopMonster( self ) )
+		npcAi_PrePain( attacker );
 #endif
 
 	if (self.th_pain)
@@ -853,7 +854,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float T_flags
 
 #ifdef COOP_MODE_ENHANCED
 		// Gizmo - prevent the monster lerping from getting messed up when pausing a bit for pain
-		if ( COOP_IsCoopMonster( self ) )
+		if ( npcAi_IsCoopMonster( self ) )
 			self.#npc_lastruntime = 0;
 #endif
 	}

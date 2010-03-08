@@ -91,7 +91,7 @@ float (entity thing) canairpush =
 
 #ifdef COOP_MODE_ENHANCED
 	// Gizmo - enable monster pushing
-	else if ( COOP_IsCoopMonster( thing ) && thing.monsterweight <= #MWEIGHT_MEDIUM )
+	else if ( npcAi_IsCoopMonster( thing ) && thing.monsterweight <= #MWEIGHT_MEDIUM )
 		return #TRUE;
 	else if ( thing.owner != world ) {
 		// Gizmo - push away vore spikes
@@ -102,7 +102,7 @@ float (entity thing) canairpush =
 			}
 		}
 		// Gizmo - enable pushing of all coop monster projectiles except enforcer lasers
-		else if ( COOP_IsCoopMonster( thing.owner ) ) {
+		else if ( npcAi_IsCoopMonster( thing.owner ) ) {
 			// can't push lasers
 			if ( thing.model != "progs/laser.mdl" )
 				return #TRUE;

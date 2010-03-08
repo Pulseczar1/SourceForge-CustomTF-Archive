@@ -82,7 +82,7 @@ float (entity targ, entity attacker, float prob, entity inflictor) BioInfect =
 			sprint (attacker, #PRINT_HIGH, "Your ", desc, " infects ", targ.netname, "!\n");
 
 #ifdef COOP_MODE_ENHANCED
-			if (!COOP_IsCoopMonster( targ )) {
+			if (!npcAi_IsCoopMonster( targ )) {
 #endif
 				sprint (targ, #PRINT_HIGH, "You have been infected by a biological ", desc, "!\n");
 

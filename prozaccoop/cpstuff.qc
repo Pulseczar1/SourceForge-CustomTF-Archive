@@ -477,6 +477,42 @@ void(entity player) UpdateCells =
 		player.currentammo = player.ammo_cells;
 };
 
+// Gizmo
+void() HoloEffect = {
+	if ( self.classname != "holo" )
+		return;
+	if ( self.attack_finished > time )
+		return;
+
+	self.attack_finished = time + 0.2;
+
+	// play the effect
+	spawnFOG( self.origin );
+	sound( self, #CHAN_WEAPON, "effects/crunch.wav", 0.5, #ATTN_NORM);
+	muzzleflash();
+};
+
+// Gizmo
+void( entity attacker, float damage ) HoloPain = {
+	HoloEffect();
+};
+
+// Gizmo
+void() HoloDie = {
+	sprint( self.owner, #PRINT_HIGH, "Your hologram was destroyed\n" );
+	RemoveHolo( self.owner );
+};
+
+// Gizmo
+void() HoloTouch = {
+	// don't make the effect against the owner or world
+	if ( other == world || other == self.owner )
+		return;
+	if ( other.solid == #SOLID_BSP )
+		return;
+	HoloEffect();
+};
+
 void(entity player) ActivateHolo =
 {
 	if (!(player.cutf_items & #CUTF_HOLO))
@@ -505,9 +541,11 @@ void(entity player) ActivateHolo =
 	}
 
 	newmis = spawn();
-	newmis.solid = #SOLID_NOT;
-	newmis.movetype = #MOVETYPE_NOCLIP;
-	newmis.origin = player.origin;
+	newmis.solid = #SOLID_TRIGGER;		// Gizmo - was SOLID_NOT
+	newmis.movetype = #MOVETYPE_TOSS;		// Gizmo - was MOVETYPE_NOCLILP
+	newmis.velocity = player.velocity;		// Gizmo
+	setorigin( newmis, player.origin );		// Gizmo
+	setsize( newmis, player.mins, player.maxs );
 	newmis.angles = player.angles;
 	newmis.colormap = player.colormap;
 	newmis.skin = player.skin;
@@ -517,12 +555,16 @@ void(entity player) ActivateHolo =
 	newmis.frame=player.frame;
 	newmis.nextthink = time + #HOLO_CYCLE_TIME; 
 	newmis.think = HoloThink;
-	newmis.effects = #EF_DIMLIGHT;
+//	newmis.effects = #EF_DIMLIGHT;		// Gizmo - makes it too obvious where it's only useful against sentry guns
 	player.ammo_cells = player.ammo_cells - #HOLO_POWER_COST;
 
 	newmis.has_holo = 1; // needed for targeting - has_holo goes to 0 b4 removed
 	newmis.team_no = player.team_no;
-	newmis.takedamage = #DAMAGE_NO;
+	newmis.takedamage = #DAMAGE_YES;		// Gizmo - was DAMAGE_NO
+	newmis.health = 600;				// Gizmo
+	newmis.th_pain = HoloPain;			// Gizmo
+	newmis.touch = HoloTouch;			// Gizmo
+	newmis.th_die = HoloDie;			// Gizmo
 	newmis.real_owner = player;
 	newmis.netname = "¿¿¿";
 	//newmis.health = 1; // needed for tesla?
@@ -767,7 +809,7 @@ string(entity themonster) GetMonsterName =
 		return "gremlin";
 
 #ifdef COOP_MODE_ENHANCED
-	if ( COOP_IsCoopMonster( themonster ) )
+	if ( npcAi_IsCoopMonster( themonster ) )
 		return themonster.netname;
 #endif
 	
@@ -2011,7 +2053,7 @@ float(entity player, float damage) HurtLegs =
 {
 #ifdef COOP_MODE_ENHANCED
 	// Gizmo - enabled leg damage for coop monsters
-	if ( COOP_IsCoopMonster( player ) ) {
+	if ( npcAi_IsCoopMonster( player ) ) {
 		if ( player.monsterflags & #MFLAG_NOLEGS || player.monsterflags & #MFLAG_NOLEGDAMAGE )
 			return 0;
 
@@ -3817,7 +3859,7 @@ void(entity corpse) GibCorpse =
 		ThrowGib ("progs/gib3.mdl", 0,#TRUE,0,#GIB3_KGS,#TRUE);
 	}
 #ifdef COOP_MODE_ENHANCED
-	else if ( COOP_IsCoopMonster( self ) ) {
+	else if ( npcAi_IsCoopMonster( self ) ) {
 		if ( self.mdl != string_null )
 			ThrowMonsterHead( self.mdl, 0 );
 
@@ -4084,4 +4126,26 @@ float( entity e ) GetTeam = {
 		return e.real_owner.team_no;
 
 	return e.team_no;
+};
+
+//=======================================================================
+
+/*
+===============
+infront2
+
+returns 1 if the entity is in front (in sight) of check
+===============
+*/
+float( entity targ, entity check ) infront2 = {
+	local vector	vec;
+	local float		dot;
+	
+	makevectors( check.angles );
+	vec = normalize( targ.origin - check.origin );
+	dot = vec * v_forward;
+	
+	if ( dot > 0.3 )
+		return #TRUE;
+	return #FALSE;
 };

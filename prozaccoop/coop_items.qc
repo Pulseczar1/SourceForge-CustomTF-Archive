@@ -75,7 +75,7 @@ void() monsterteam_touch = {
 		return;
 	if ( other.flags & #FL_CLIENT )
 		return;
-	if ( !COOP_IsCoopMonster( other ) )
+	if ( !npcAi_IsCoopMonster( other ) )
 		return;				// not a coop monster
 	if ( other.deadflag )
 		return;
@@ -165,7 +165,7 @@ void() monsterteam_use = {
 
 		te = find( world, targetname, self.event );
 		while ( te ) {
-			if ( ( te.deadflag == #DEAD_NO && COOP_IsCoopMonster( te ) ) || te.classname == "respawning monster" ) {
+			if ( ( te.deadflag == #DEAD_NO && npcAi_IsCoopMonster( te ) ) || te.classname == "respawning monster" ) {
 				if ( !( self.spawnflags & 2 ) || te != activator )
 				if ( !( self.spawnflags & 4 ) || te == activator )
 				if ( !self.team_no || te.team_no == self.team_no )
@@ -293,7 +293,7 @@ void() multi_touch_monster = {
 	if ( other.team_no != self.team_no )	// Gizmo - we don't use Teammate() here because the trigger may not want allied teams to touch
 		return;
 
-	if ( !COOP_IsCoopMonster( other ) )
+	if ( !npcAi_IsCoopMonster( other ) )
 		return;
 
 	if (other.health <= 0) // dead players out

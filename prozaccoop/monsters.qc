@@ -834,7 +834,7 @@ void() MonsterCorpse =
 #ifdef COOP_MODE_ENHANCED
 	local float r;
 
-	if ( self.endtime > 0 && COOP_IsCoopMonster( self ) ) {
+	if ( self.endtime > 0 && npcAi_IsCoopMonster( self ) ) {
 		r = random();
 		if ( r < 0.5 )
 			r = 0.5 + random()*0.5;

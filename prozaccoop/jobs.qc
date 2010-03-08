@@ -167,12 +167,11 @@ void() JobThief =
 	else { //Start hiding
 		//RJM - Can't hide while carrying flags.
 		//WK  - Allow them to go eyes invisible but not full hide
-		/*
+		// Gizmo - I don't think 'hiding in the shadows' while glowing makes sense anyways
 		if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) { 
 			sprint(self, #PRINT_HIGH, "Not while glowing, gimp.\n");
 			return;
 		}
-		*/
 		sprint(self,#PRINT_HIGH,"Εξτεςιξη σθαδοχσ...\n");
 		self.frame = 0;
 		self.weaponframe = 0;
@@ -662,7 +661,7 @@ void() JobJudoka =
 
 	temp = GetTeam( trace_ent );
 	temp = Teammate( temp, self.team_no );
-	if ( COOP_IsCoopMonster( trace_ent ) && !temp ) {
+	if ( npcAi_IsCoopMonster( trace_ent ) && !temp ) {
 		local float jdmg;
 
 		if (self.is_undercover) //Taking someone's weapon should give you away

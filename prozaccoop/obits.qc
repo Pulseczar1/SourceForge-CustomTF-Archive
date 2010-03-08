@@ -15,10 +15,12 @@ void(entity targ, entity attacker) ClientObituary =
 	//local entity te;
 	//local entity oself;
 
+#ifdef COOP_MODE_ENHANCED
 	// Gizmo - don't bother in single player
 	if ( !deathmatch && !coop )
-	if ( COOP_IsCoopMonster( targ ) )
+	if ( npcAi_IsCoopMonster( targ ) )
 		return;
+#endif
 
 	// FIXME:
 
@@ -34,7 +36,7 @@ void(entity targ, entity attacker) ClientObituary =
 	rnum = random();
 
 #ifdef COOP_MODE_ENHANCED
-	if ( targ.classname == "player" || COOP_IsCoopMonster( targ ) ) {
+	if ( targ.classname == "player" || npcAi_IsCoopMonster( targ ) ) {
 #else
 	if (targ.classname == "player") {
 #endif
@@ -1601,7 +1603,7 @@ void(entity targ, entity attacker) ClientObituary =
 						if (attacker.job & #JOB_WARLOCK)
 						{
 #ifdef COOP_MODE_ENHANCED
-							if ( COOP_IsCoopMonster( targ ) && targ.monsterflags & #MFLAG_NOHEART )
+							if ( npcAi_IsCoopMonster( targ ) && targ.monsterflags & #MFLAG_NOHEART )
 								deathstring = " was knife-murdered by ";
 							else
 #endif
@@ -1636,7 +1638,7 @@ void(entity targ, entity attacker) ClientObituary =
 						attacker.demon_blood = attacker.demon_blood + 1;*/
 
 #ifdef COOP_MODE_ENHANCED
-					if ( ( COOP_IsCoopMonster( targ ) && !( targ.monsterflags & #MFLAG_NOHEART ) ) || !COOP_IsCoopMonster( targ ) )
+					if ( ( npcAi_IsCoopMonster( targ ) && !( targ.monsterflags & #MFLAG_NOHEART ) ) || !npcAi_IsCoopMonster( targ ) )
 #endif
 						WarlockKnifeKill(attacker);
 				}
@@ -1846,7 +1848,7 @@ void(entity targ, entity attacker) ClientObituary =
 				else if (deathmsg == #DMSG_BACKSTAB)
 				{
 #ifdef COOP_MODE_ENHANCED
-					if (attacker.job & #JOB_WARLOCK && random() < 0.33 && ((COOP_IsCoopMonster( targ ) && !(targ.monsterflags & #MFLAG_NOHEART)) || !COOP_IsCoopMonster( targ )))
+					if (attacker.job & #JOB_WARLOCK && random() < 0.33 && ((npcAi_IsCoopMonster( targ ) && !(targ.monsterflags & #MFLAG_NOHEART)) || !npcAi_IsCoopMonster( targ )))
 #else
 					if (attacker.job & #JOB_WARLOCK && random() < 0.33)
 #endif
@@ -1877,7 +1879,7 @@ void(entity targ, entity attacker) ClientObituary =
 						attacker.demon_blood = attacker.demon_blood + 1;*/
 
 #ifdef COOP_MODE_ENHANCED
-					if ((COOP_IsCoopMonster( targ ) && !(targ.monsterflags & #MFLAG_NOHEART)) || !COOP_IsCoopMonster( targ ))
+					if ((npcAi_IsCoopMonster( targ ) && !(targ.monsterflags & #MFLAG_NOHEART)) || !npcAi_IsCoopMonster( targ ))
 #endif
 						WarlockKnifeKill(attacker);
 				}
@@ -2060,7 +2062,7 @@ void(entity targ, entity attacker) ClientObituary =
 			bprint (#PRINT_HIGH, targ.netname);
 #ifdef COOP_MODE_ENHANCED
 /*
-			if ( COOP_IsCoopMonster( targ ) ) {
+			if ( npcAi_IsCoopMonster( targ ) ) {
 				bprint (#PRINT_MEDIUM, " (");
 				bprint (#PRINT_MEDIUM, ftos(targ.frags));
 				bprint (#PRINT_MEDIUM, " frags)");
@@ -2070,7 +2072,7 @@ void(entity targ, entity attacker) ClientObituary =
 
 #ifdef COOP_MODE_ENHANCED
 			// Gizmo - moved this first for obvious reasons
-			if ( COOP_IsCoopMonster( attacker ) ) {
+			if ( npcAi_IsCoopMonster( attacker ) ) {
 				if (attacker == targ)
 					deathstring = " killed itself\n";
 				else if (attacker.classname == "idmonster_army")
@@ -2293,7 +2295,7 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 #ifdef COOP_MODE_ENHANCED
-		else if (attacker.classname == "player" || COOP_IsCoopMonster( attacker ))
+		else if (attacker.classname == "player" || npcAi_IsCoopMonster( attacker ))
 #else
 		else if (attacker.classname == "player")
 #endif
@@ -2617,7 +2619,7 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 #ifdef COOP_MODE_ENHANCED
-		else if (attacker.classname == "player" || COOP_IsCoopMonster( attacker ))
+		else if (attacker.classname == "player" || npcAi_IsCoopMonster( attacker ))
 #else
 		else if (attacker.classname == "player")
 #endif
@@ -2949,7 +2951,7 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 #ifdef COOP_MODE_ENHANCED
-		else if (attacker.classname == "player" || COOP_IsCoopMonster( attacker ))
+		else if (attacker.classname == "player" || npcAi_IsCoopMonster( attacker ))
 #else
 		else if (attacker.classname == "player")
 #endif
@@ -3261,7 +3263,7 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 #ifdef COOP_MODE_ENHANCED
-		if (attacker.classname == "player" || COOP_IsCoopMonster( attacker ))
+		if (attacker.classname == "player" || npcAi_IsCoopMonster( attacker ))
 #else
 		if (attacker.classname == "player")
 #endif
@@ -3597,7 +3599,7 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 #ifdef COOP_MODE_ENHANCED
-		if (attacker.classname == "player" || COOP_IsCoopMonster( attacker ))
+		if (attacker.classname == "player" || npcAi_IsCoopMonster( attacker ))
 #else
 		if (attacker.classname == "player")
 #endif
@@ -3920,7 +3922,7 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 #ifdef COOP_MODE_ENHANCED
-		if (attacker.classname == "player" || COOP_IsCoopMonster( attacker ))
+		if (attacker.classname == "player" || npcAi_IsCoopMonster( attacker ))
 #else
 		if (attacker.classname == "player")
 #endif
@@ -4341,7 +4343,7 @@ void(entity targ, entity attacker) ClientObituary =
 		}
 
 #ifdef COOP_MODE_ENHANCED
-		if (attacker.classname == "player" || COOP_IsCoopMonster( attacker ))
+		if (attacker.classname == "player" || npcAi_IsCoopMonster( attacker ))
 #else
 		if (attacker.classname == "player")
 #endif

@@ -217,7 +217,7 @@ void() PsionicTimer =
 			}
 
 #ifdef COOP_MODE_ENHANCED
-			else if ( COOP_IsCoopMonster( te ) ) {
+			else if ( npcAi_IsCoopMonster( te ) ) {
 				if ( random() < 0.5 )
 					sound( te, #CHAN_VOICE, "player/gasp1.wav", 1, #ATTN_NORM );
 				else
@@ -369,7 +369,7 @@ void() PsionicGrenadeExplode =
 		}
 
 #ifdef COOP_MODE_ENHANCED
-		else if ( COOP_IsCoopMonster( te ) ) {
+		else if ( npcAi_IsCoopMonster( te ) ) {
 			if ( te.health > 0 ) {
 				// report our success on hiting someone
 				sprint( self.owner, #PRINT_HIGH, "Your psionic ", desc, " affects ", te.netname, "!\n" );
@@ -1195,7 +1195,7 @@ void() CaltropTouch =
 		dremove(self);
 	}
 #ifdef COOP_MODE_ENHANCED
-	if ( other.takedamage && COOP_IsCoopMonster( other ) ) {
+	if ( other.takedamage && npcAi_IsCoopMonster( other ) ) {
 		if (Teammate(self.owner.team_no, other.team_no))
 			return;
 			

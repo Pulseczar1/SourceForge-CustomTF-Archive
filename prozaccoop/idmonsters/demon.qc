@@ -8,10 +8,11 @@
 
 
 #define IDMON_DEMON_HEALTH		700
-#define IDMON_DEMON_DMGIGNORE		200
-#define IDMON_DEMON_SLASHDMG		80
+#define IDMON_DEMON_DMGIGNORE	200
+#define IDMON_DEMON_SLASHDMG	80
 #define IDMON_DEMON_JUMPDMG		110
 #define IDMON_DEMON_JUMPVEL		800
+#define IDMON_DEMON_MELEERANGE	120
 
 
 /*
@@ -49,17 +50,17 @@ $frame attacka9 attacka10 attacka11 attacka12 attacka13 attacka14 attacka15
 
 void()	_Demon_JumpTouch;
 void(float side)	_Demon_Melee;
-float() _DemonCheckAttack;
+void() _DemonCheckAttack;
 
-void()	_demon1_stand1	=[	$stand1,	_demon1_stand2	] {COOP_Idle();};
+void()	_demon1_stand1	=[	$stand1,	_demon1_stand2	] {npcAi_Idle();};
 void()	_demon1_stand2	=[	$stand2,	_demon1_stand3	] {};
 void()	_demon1_stand3	=[	$stand3,	_demon1_stand4	] {};
 void()	_demon1_stand4	=[	$stand4,	_demon1_stand5	] {};
-void()	_demon1_stand5	=[	$stand5,	_demon1_stand6	] {COOP_Idle();};
+void()	_demon1_stand5	=[	$stand5,	_demon1_stand6	] {npcAi_Idle();};
 void()	_demon1_stand6	=[	$stand6,	_demon1_stand7	] {};
 void()	_demon1_stand7	=[	$stand7,	_demon1_stand8	] {};
 void()	_demon1_stand8	=[	$stand8,	_demon1_stand9	] {};
-void()	_demon1_stand9	=[	$stand9,	_demon1_stand10	] {COOP_Idle();};
+void()	_demon1_stand9	=[	$stand9,	_demon1_stand10	] {npcAi_Idle();};
 void()	_demon1_stand10	=[	$stand10,	_demon1_stand11	] {};
 void()	_demon1_stand11	=[	$stand11,	_demon1_stand12	] {};
 void()	_demon1_stand12	=[	$stand12,	_demon1_stand13	] {};
@@ -68,32 +69,32 @@ void()	_demon1_stand13	=[	$stand13,	_demon1_stand1	] {};
 void()	_demon1_walk1	=[	$walk1,		_demon1_walk2	] {
 if (random() < 0.2)
     sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
-COOP_Walk(8);
+npcAi_Walk(8);
 };
-void()	_demon1_walk2	=[	$walk2,		_demon1_walk3	] {COOP_Walk(6);};
-void()	_demon1_walk3	=[	$walk3,		_demon1_walk4	] {COOP_Walk(6);};
-void()	_demon1_walk4	=[	$walk4,		_demon1_walk5	] {COOP_Walk(7);};
-void()	_demon1_walk5	=[	$walk5,		_demon1_walk6	] {COOP_Walk(4);};
-void()	_demon1_walk6	=[	$walk6,		_demon1_walk7	] {COOP_Walk(6);};
-void()	_demon1_walk7	=[	$walk7,		_demon1_walk8	] {COOP_Walk(10);};
-void()	_demon1_walk8	=[	$walk8,		_demon1_walk1	] {COOP_Walk(10);};
+void()	_demon1_walk2	=[	$walk2,		_demon1_walk3	] {npcAi_Walk(6);};
+void()	_demon1_walk3	=[	$walk3,		_demon1_walk4	] {npcAi_Walk(6);};
+void()	_demon1_walk4	=[	$walk4,		_demon1_walk5	] {npcAi_Walk(7);};
+void()	_demon1_walk5	=[	$walk5,		_demon1_walk6	] {npcAi_Walk(4);};
+void()	_demon1_walk6	=[	$walk6,		_demon1_walk7	] {npcAi_Walk(6);};
+void()	_demon1_walk7	=[	$walk7,		_demon1_walk8	] {npcAi_Walk(10);};
+void()	_demon1_walk8	=[	$walk8,		_demon1_walk1	] {npcAi_Walk(10);};
 
 void()	_demon1_run1	=[	$run1,		_demon1_run2	] {
 if (random() < 0.2)
     sound (self, #CHAN_VOICE, "demon/idle1.wav", 1, #ATTN_IDLE);
-COOP_Run(20);};
-void()	_demon1_run2	=[	$run2,		_demon1_run3	] {COOP_Run(15);};
-void()	_demon1_run3	=[	$run3,		_demon1_run4	] {COOP_Run(36);};
-void()	_demon1_run4	=[	$run4,		_demon1_run5	] {COOP_Run(20);};
-void()	_demon1_run5	=[	$run5,		_demon1_run6	] {COOP_Run(15);};
-void()	_demon1_run6	=[	$run6,		_demon1_run1	] {COOP_Run(36);};
+npcAi_Run(20);};
+void()	_demon1_run2	=[	$run2,		_demon1_run3	] {npcAi_Run(15);};
+void()	_demon1_run3	=[	$run3,		_demon1_run4	] {npcAi_Run(36);};
+void()	_demon1_run4	=[	$run4,		_demon1_run5	] {npcAi_Run(20);};
+void()	_demon1_run5	=[	$run5,		_demon1_run6	] {npcAi_Run(15);};
+void()	_demon1_run6	=[	$run6,		_demon1_run1	] {npcAi_Run(36);};
 
-void()	_demon1_jump1	=[	$leap1,		_demon1_jump2	] {COOP_Turn();};
-void()	_demon1_jump2	=[	$leap2,		_demon1_jump3	] {COOP_Turn();};
-void()	_demon1_jump3	=[	$leap3,		_demon1_jump4	] {COOP_Turn();};
+void()	_demon1_jump1	=[	$leap1,		_demon1_jump2	] {npcAi_Turn2( #IDMON_DEMON_JUMPVEL );};
+void()	_demon1_jump2	=[	$leap2,		_demon1_jump3	] {npcAi_Turn2( #IDMON_DEMON_JUMPVEL );};
+void()	_demon1_jump3	=[	$leap3,		_demon1_jump4	] {npcAi_Turn2( #IDMON_DEMON_JUMPVEL );};
 void()	_demon1_jump4	=[	$leap4,		_demon1_jump5	]
 {
-	COOP_Turn();
+	npcAi_Turn2( #IDMON_DEMON_JUMPVEL );
 	
 	self.touch = _Demon_JumpTouch;
 	makevectors (self.angles);
@@ -118,21 +119,21 @@ Attack_Finished( random()*2 );
 };
 
 
-void()	_demon1_atta1	=[	$attacka1,		_demon1_atta2	] {ai_charge(4);};
-void()	_demon1_atta2	=[	$attacka2,		_demon1_atta3	] {ai_charge(0);};
-void()	_demon1_atta3	=[	$attacka3,		_demon1_atta4	] {ai_charge(0);};
-void()	_demon1_atta4	=[	$attacka4,		_demon1_atta5	] {ai_charge(1);};
-void()	_demon1_atta5	=[	$attacka5,		_demon1_atta6	] {ai_charge(2); _Demon_Melee(200);};
-void()	_demon1_atta6	=[	$attacka6,		_demon1_atta7	] {ai_charge(1);};
-void()	_demon1_atta7	=[	$attacka7,		_demon1_atta8	] {ai_charge(6);};
-void()	_demon1_atta8	=[	$attacka8,		_demon1_atta9	] {ai_charge(8);};
-void()	_demon1_atta9	=[	$attacka9,		_demon1_atta10] {ai_charge(4);};
-void()	_demon1_atta10	=[	$attacka10,		_demon1_atta11] {ai_charge(2);};
+void()	_demon1_atta1	=[	$attacka1,		_demon1_atta2	] {npcAi_Charge(4);};
+void()	_demon1_atta2	=[	$attacka2,		_demon1_atta3	] {npcAi_Charge(0);};
+void()	_demon1_atta3	=[	$attacka3,		_demon1_atta4	] {npcAi_Charge(0);};
+void()	_demon1_atta4	=[	$attacka4,		_demon1_atta5	] {npcAi_Charge(1);};
+void()	_demon1_atta5	=[	$attacka5,		_demon1_atta6	] {npcAi_Charge(2); _Demon_Melee(200);};
+void()	_demon1_atta6	=[	$attacka6,		_demon1_atta7	] {npcAi_Charge(1);};
+void()	_demon1_atta7	=[	$attacka7,		_demon1_atta8	] {npcAi_Charge(6);};
+void()	_demon1_atta8	=[	$attacka8,		_demon1_atta9	] {npcAi_Charge(8);};
+void()	_demon1_atta9	=[	$attacka9,		_demon1_atta10] {npcAi_Charge(4);};
+void()	_demon1_atta10	=[	$attacka10,		_demon1_atta11] {npcAi_Charge(2);};
 void()	_demon1_atta11	=[	$attacka11,		_demon1_atta12] {_Demon_Melee(-200);};
-void()	_demon1_atta12	=[	$attacka12,		_demon1_atta13] {ai_charge(5);};
-void()	_demon1_atta13	=[	$attacka13,		_demon1_atta14] {ai_charge(8);};
-void()	_demon1_atta14	=[	$attacka14,		_demon1_atta15] {ai_charge(4);};
-void()	_demon1_atta15	=[	$attacka15,		_demon1_run1] {ai_charge(4);};
+void()	_demon1_atta12	=[	$attacka12,		_demon1_atta13] {npcAi_Charge(5);};
+void()	_demon1_atta13	=[	$attacka13,		_demon1_atta14] {npcAi_Charge(8);};
+void()	_demon1_atta14	=[	$attacka14,		_demon1_atta15] {npcAi_Charge(4);};
+void()	_demon1_atta15	=[	$attacka15,		_demon1_run1] {npcAi_Charge(4);};
 
 void()	_demon1_pain1	=[	$pain1,		_demon1_pain2	] {};
 void()	_demon1_pain2	=[	$pain2,		_demon1_pain3	] {};
@@ -189,12 +190,6 @@ void() _demon_die =
 };
 
 
-void() _Demon_MeleeAttack =
-{
-	_demon1_atta1 ();
-};
-
-
 float() _Demon_OnSight =
 {
 	sound (self, #CHAN_VOICE, "demon/sight2.wav", 1, #ATTN_NORM);
@@ -239,13 +234,10 @@ void() monster_demon1 =
 	self.th_walk = _demon1_walk1;
 	self.th_run = _demon1_run1;
 	self.th_die = _demon_die;
-	self.th_melee = _Demon_MeleeAttack;		// one of two attacks
-	self.th_missile = _demon1_jump1;			// jump attack
+	self.th_missile = _DemonCheckAttack;
 	self.th_pain = _demon1_pain;
 
-
 	self.netname = "fiend";
-	//self.netname = COOP_GenerateMonsterName (self);
 
 	self.monsterweight = #MWEIGHT_MEDIUM;
 
@@ -256,10 +248,9 @@ void() monster_demon1 =
 
 	self.is_connected = #TRUE;
 
-	self.OnPreAttack = _DemonCheckAttack;
 	self.OnNoticeEnemy = _Demon_OnSight;
 	self.#npc_spawnfunc = monster_demon1;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_firemult = 1.25;
 		
@@ -282,13 +273,9 @@ CheckDemonMelee
 Returns TRUE if a melee attack would hit right now
 ==============
 */
-float()	_CheckDemonMelee =
-{
-	if (enemy_range == #RANGE_MELEE)
-	{	// FIXME: check canreach
-		self.attack_state = #AS_MELEE;
+float()	_CheckDemonMelee = {
+	if ( vlen( self.origin - self.#npc_lastEnemyOrigin ) < #IDMON_DEMON_MELEERANGE )
 		return #TRUE;
-	}
 	return #FALSE;
 };
 
@@ -300,18 +287,20 @@ CheckDemonJump
 */
 float()	_CheckDemonJump =
 {
-	local	vector	dist;
+	local	vector	dist, enemyOrg;
 	local	float	d;
 
-	if (self.origin_z + self.mins_z > self.enemy.origin_z + self.enemy.mins_z
+	enemyOrg = self.#npc_lastEnemyOrigin;
+
+	if (self.origin_z + self.mins_z > enemyOrg_z + self.enemy.mins_z
 	+ 0.75 * self.enemy.size_z)
 		return #FALSE;
 		
-	if (self.origin_z + self.maxs_z < self.enemy.origin_z + self.enemy.mins_z
+	if (self.origin_z + self.maxs_z < enemyOrg_z + self.enemy.mins_z
 	+ 0.25 * self.enemy.size_z)
 		return #FALSE;
 		
-	dist = self.enemy.origin - self.origin;
+	dist = enemyOrg - self.origin;
 	dist_z = 0;
 	
 	d = vlen(dist);
@@ -328,51 +317,54 @@ float()	_CheckDemonJump =
 	return #TRUE;
 };
 
-float()	_DemonCheckAttack =
-{
-	enemy_range = range (self.enemy);
-	
-// if close enough for slashing, go for it
-	if (_CheckDemonMelee ())
-	{
-		self.attack_state = #AS_MELEE;
-		return #TRUE;
+/*
+==============
+_DemonCheckAttack
+
+Main function called when we have a chance to attack the enemy.
+==============
+*/
+void() _DemonCheckAttack = {
+	// make sure we're facing the right direction
+	if ( !FacingIdeal() )
+		return;		// not facing the right direction, wait until we are
+
+	// if close enough for slashing, go for it
+	if ( _CheckDemonMelee() )
+		_demon1_atta1();
+
+	else if ( _CheckDemonJump() ) {
+		sound( self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM );
+		_demon1_jump1();
 	}
-	
-	if (_CheckDemonJump ())
-	{
-		self.attack_state = #AS_MISSILE;
-		sound (self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM);
-		return #TRUE;
-	}
-	
-	return #FALSE;
 };
 
 
 //===========================================================================
 
-void(float side)	_Demon_Melee =
-{
-	local	float	ldmg;
-	local vector	delta;
+void( float side ) _Demon_Melee = {
+	local float		ldmg;
+	local entity	head;
 	
-	COOP_Turn ();
-	walkmove (self.ideal_yaw, 12);	// allow a little closing
+	npcAi_Turn();
+	walkmove( self.ideal_yaw, 12 );	// allow a little closing
 
-	delta = self.enemy.origin - self.origin;
-
-	if (vlen(delta) > 100)
-		return;
+/*
 	if (!CanDamage (self.enemy, self))
 		return;
+*/
 
-	sound (self, #CHAN_WEAPON, "demon/dhit2.wav", 1, #ATTN_NORM);
-	ldmg = #IDMON_DEMON_SLASHDMG + 5*random();
-	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+	head = npcAi_FindInfrontEnemies( world, self.origin, self.angles, 100 );
+	while ( head ) {
+		sound( self, #CHAN_WEAPON, "demon/dhit2.wav", 1, #ATTN_NORM );
+		ldmg = #IDMON_DEMON_SLASHDMG + 5*random();
+		TF_T_Damage( head, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE );
 
-	makevectors (self.angles);
-	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
+		makevectors( self.angles );
+		SpawnMeatSpray( head.origin, side * v_right );
+
+		head = npcAi_FindInfrontEnemies( head, self.origin, self.angles, 100 );
+	}
 };
 
 
@@ -413,5 +405,13 @@ void()	_Demon_JumpTouch =
 	self.think = _demon1_jump11;
 	self.nextthink = time + 0.1;
 };
+
+// Gizmo - save macro space
+#undef IDMON_DEMON_HEALTH
+#undef IDMON_DEMON_DMGIGNORE
+#undef IDMON_DEMON_SLASHDMG
+#undef IDMON_DEMON_JUMPDMG
+#undef IDMON_DEMON_JUMPVEL
+#undef IDMON_DEMON_MELEERANGE
 
 #endif

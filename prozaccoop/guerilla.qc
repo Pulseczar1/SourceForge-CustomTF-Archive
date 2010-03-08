@@ -790,7 +790,7 @@ void() GuerillaThink = //Every second see if we have enemy nearby
 	head = findradius(self.origin,#GUERILLA_RADIUS);//OfN it was 150
 	while (head != world && !finished) {
 #ifdef COOP_MODE_ENHANCED
-		if (((head.classname == "player" && head.playerclass != #PC_UNDEFINED) || COOP_IsCoopMonster( head )) && head.health > 0) {
+		if (((head.classname == "player" && head.playerclass != #PC_UNDEFINED) || npcAi_IsCoopMonster( head )) && head.health > 0) {
 #else
 		if (head.classname == "player" && head.health > 0)
 		{

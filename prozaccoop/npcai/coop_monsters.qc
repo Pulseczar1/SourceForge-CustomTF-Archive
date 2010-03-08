@@ -1,12 +1,10 @@
-/*
-	coop_monsters.qc - standard functions for monsters
-*/
+// coop_monsters.qc - standard functions for monsters
 
 #ifndef COOP_MODE_ENHANCED
 #pragma DONT_COMPILE_THIS_FILE
 #else
 
-float( entity en, float check ) COOP_AttackTarget;
+float( entity en, float check ) npcAi_AttackTarget;
 
 
 /* ALL MONSTERS SHOULD BE 1 0 0 IN COLOR */
@@ -59,7 +57,7 @@ void() coop_monster_use =
 	
 // delay reaction so if the monster is teleported, its sound is still
 // heard
-	COOP_AttackTarget( activator, #TRUE );
+	npcAi_AttackTarget( activator, #TRUE );
 };
 
 /*
@@ -512,7 +510,7 @@ void() monster_spawner_use = {
 
 	// check if we're being used because of a monster death
 	// map monsters can have a monster_spawner as a target and things will work fine
-	if ( COOP_IsCoopMonster( other ) && other.enemy == activator && other.#npc_isCoopMonster == self.ammo_detpack ) {
+	if ( npcAi_IsCoopMonster( other ) && other.enemy == activator && other.#npc_isCoopMonster == self.ammo_detpack ) {
 		self.cnt = self.cnt - 1;
 
 		// since one died, the only way we can't spawn another one is

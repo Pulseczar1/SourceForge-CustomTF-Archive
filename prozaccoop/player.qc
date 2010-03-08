@@ -231,7 +231,7 @@ void() player_touch =
             }
         }
 #ifdef COOP_MODE_ENHANCED
-		else if ( COOP_IsCoopMonster( other ) ) {
+		else if ( npcAi_IsCoopMonster( other ) ) {
 			// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
 			if (!(other.tfstate & #TFSTATE_INFECTED))
 			{
@@ -1254,7 +1254,7 @@ void(string gibname, float dm, float makecool, float gibskin, float gibkgs, floa
 #ifdef COOP_MODE_ENHANCED
 	local float r;
 
-	if ( self.endtime > 0 && COOP_IsCoopMonster( self ) ) {
+	if ( self.endtime > 0 && npcAi_IsCoopMonster( self ) ) {
 		r = random();
 		if ( r < 0.5 )
 			r = 0.5 + random()*0.5;

@@ -2661,7 +2661,7 @@ void() tfgoal_touch =
 #ifdef COOP_MODE_ENHANCED
 	// Gizmo - if it's an info_tfgoal_monster, allow monsters to touch
 	if ( self.option2 ) {
-		if ( !COOP_IsCoopMonster( other ) )
+		if ( !npcAi_IsCoopMonster( other ) )
 			return;
 	} else {
 		if (other.classname != "player")

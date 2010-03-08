@@ -10,6 +10,7 @@
 
 #define IDMON_ENFORCER_HEALTH		300
 #define IDMON_ENFORCER_ZAPDMG		60
+#define IDMON_ENFORCER_ZAPVELOCITY	1200
 
 
 /*
@@ -86,8 +87,8 @@ void() _Laser_Touch =
 			other.show_hostile = time + 1;	// wake monsters up
 		}
 	}
-	
-	remove(self);	
+
+	remove(self);
 };
 
 void(vector org, vector vec) _LaunchLaser =
@@ -108,7 +109,7 @@ void(vector org, vector vec) _LaunchLaser =
 
 	setorigin (newmis, org);
 
-	newmis.velocity = vec * 1200;
+	newmis.velocity = vec * #IDMON_ENFORCER_ZAPVELOCITY;
 	newmis.angles = vectoangles(newmis.velocity);
 
 	newmis.nextthink = time + 5;
@@ -118,24 +119,24 @@ void(vector org, vector vec) _LaunchLaser =
 
 
 
-void() enforcer_fire =
-{
-	local vector org;
+void() enforcer_fire = {
+	local vector org, dir;
 
-	muzzleflash ();
-	makevectors (self.angles);
+	muzzleflash();
+	makevectors( self.angles );
 	
 	org = self.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';
+	dir = npcAi_GetAttackVector( self, org );
 
-	_LaunchLaser(org, (self.enemy.origin + self.#npc_enemyoffset) - org);
+	_LaunchLaser( org, dir );
 };
 
 //============================================================================
 
-void()	enf_stand1	=[	$stand1,	enf_stand2	] {COOP_Idle();};
+void()	enf_stand1	=[	$stand1,	enf_stand2	] {npcAi_Idle();};
 void()	enf_stand2	=[	$stand2,	enf_stand3	] {};
 void()	enf_stand3	=[	$stand3,	enf_stand4	] {};
-void()	enf_stand4	=[	$stand4,	enf_stand5	] {COOP_Idle();};
+void()	enf_stand4	=[	$stand4,	enf_stand5	] {npcAi_Idle();};
 void()	enf_stand5	=[	$stand5,	enf_stand6	] {};
 void()	enf_stand6	=[	$stand6,	enf_stand7	] {};
 void()	enf_stand7	=[	$stand7,	enf_stand1	] {};
@@ -143,49 +144,53 @@ void()	enf_stand7	=[	$stand7,	enf_stand1	] {};
 void()	enf_walk1	=[	$walk1 ,	enf_walk2	] {
 if (random() < 0.2)
 	sound (self, #CHAN_VOICE, "enforcer/idle1.wav", 1, #ATTN_IDLE);
-COOP_Walk(2);};
-void()	enf_walk2	=[	$walk2 ,	enf_walk3	] {COOP_Walk(4);};
-void()	enf_walk3	=[	$walk3 ,	enf_walk4	] {COOP_Walk(4);};
-void()	enf_walk4	=[	$walk4 ,	enf_walk5	] {COOP_Walk(3);};
-void()	enf_walk5	=[	$walk5 ,	enf_walk6	] {COOP_Walk(1);};
-void()	enf_walk6	=[	$walk6 ,	enf_walk7	] {COOP_Walk(2);};
-void()	enf_walk7	=[	$walk7 ,	enf_walk8	] {COOP_Walk(2);};
-void()	enf_walk8	=[	$walk8 ,	enf_walk9	] {COOP_Walk(1);};
-void()	enf_walk9	=[	$walk9 ,	enf_walk10	] {COOP_Walk(2);};
-void()	enf_walk10	=[	$walk10,	enf_walk11	] {COOP_Walk(4);};
-void()	enf_walk11	=[	$walk11,	enf_walk12	] {COOP_Walk(4);};
-void()	enf_walk12	=[	$walk12,	enf_walk13	] {COOP_Walk(1);};
-void()	enf_walk13	=[	$walk13,	enf_walk14	] {COOP_Walk(2);};
-void()	enf_walk14	=[	$walk14,	enf_walk15	] {COOP_Walk(3);};
-void()	enf_walk15	=[	$walk15,	enf_walk16	] {COOP_Walk(4);};
-void()	enf_walk16	=[	$walk16,	enf_walk1	] {COOP_Walk(2);};
+npcAi_Walk(2);};
+void()	enf_walk2	=[	$walk2 ,	enf_walk3	] {npcAi_Walk(4);};
+void()	enf_walk3	=[	$walk3 ,	enf_walk4	] {npcAi_Walk(4);};
+void()	enf_walk4	=[	$walk4 ,	enf_walk5	] {npcAi_Walk(3);};
+void()	enf_walk5	=[	$walk5 ,	enf_walk6	] {npcAi_Walk(1);};
+void()	enf_walk6	=[	$walk6 ,	enf_walk7	] {npcAi_Walk(2);};
+void()	enf_walk7	=[	$walk7 ,	enf_walk8	] {npcAi_Walk(2);};
+void()	enf_walk8	=[	$walk8 ,	enf_walk9	] {npcAi_Walk(1);};
+void()	enf_walk9	=[	$walk9 ,	enf_walk10	] {npcAi_Walk(2);};
+void()	enf_walk10	=[	$walk10,	enf_walk11	] {npcAi_Walk(4);};
+void()	enf_walk11	=[	$walk11,	enf_walk12	] {npcAi_Walk(4);};
+void()	enf_walk12	=[	$walk12,	enf_walk13	] {npcAi_Walk(1);};
+void()	enf_walk13	=[	$walk13,	enf_walk14	] {npcAi_Walk(2);};
+void()	enf_walk14	=[	$walk14,	enf_walk15	] {npcAi_Walk(3);};
+void()	enf_walk15	=[	$walk15,	enf_walk16	] {npcAi_Walk(4);};
+void()	enf_walk16	=[	$walk16,	enf_walk1	] {npcAi_Walk(2);};
 
 void()	enf_run1	=[	$run1  ,	enf_run2	] {
 if (random() < 0.2)
 	sound (self, #CHAN_VOICE, "enforcer/idle1.wav", 1, #ATTN_IDLE);
-COOP_Run(18);};
-void()	enf_run2	=[	$run2  ,	enf_run3	] {COOP_Run(14);};
-void()	enf_run3	=[	$run3  ,	enf_run4	] {COOP_Run(7);};
-void()	enf_run4	=[	$run4  ,	enf_run5	] {COOP_Run(12);};
-void()	enf_run5	=[	$run5  ,	enf_run6	] {COOP_Run(14);};
-void()	enf_run6	=[	$run6  ,	enf_run7	] {COOP_Run(14);};
-void()	enf_run7	=[	$run7  ,	enf_run8	] {COOP_Run(7);};
-void()	enf_run8	=[	$run8  ,	enf_run1	] {COOP_Run(11);};
+npcAi_Run(18);};
+void()	enf_run2	=[	$run2  ,	enf_run3	] {npcAi_Run(14);};
+void()	enf_run3	=[	$run3  ,	enf_run4	] {npcAi_Run(7);};
+void()	enf_run4	=[	$run4  ,	enf_run5	] {npcAi_Run(12);};
+void()	enf_run5	=[	$run5  ,	enf_run6	] {npcAi_Run(14);};
+void()	enf_run6	=[	$run6  ,	enf_run7	] {npcAi_Run(14);};
+void()	enf_run7	=[	$run7  ,	enf_run8	] {npcAi_Run(7);};
+void()	enf_run8	=[	$run8  ,	enf_run1	] {npcAi_Run(11);};
 
-void()	enf_atk1	=[	$attack1,	enf_atk2	] {COOP_Turn();};
-void()	enf_atk2	=[	$attack2,	enf_atk3	] {COOP_Turn();};
-void()	enf_atk3	=[	$attack3,	enf_atk4	] {COOP_Turn();};
-void()	enf_atk4	=[	$attack4,	enf_atk5	] {COOP_Turn();};
-void()	enf_atk5	=[	$attack5,	enf_atk6	] {COOP_Turn();};
+void()	enf_atk1	=[	$attack1,	enf_atk2	] {
+	if ( !skill )
+		skill = 5;
+	npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );
+};
+void()	enf_atk2	=[	$attack2,	enf_atk3	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk3	=[	$attack3,	enf_atk4	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk4	=[	$attack4,	enf_atk5	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk5	=[	$attack5,	enf_atk6	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
 void()	enf_atk6	=[	$attack6,	enf_atk7	] {enforcer_fire();};
-void()	enf_atk7	=[	$attack7,	enf_atk8	] {COOP_Turn();};
-void()	enf_atk8	=[	$attack8,	enf_atk9	] {COOP_Turn();};
-void()	enf_atk9	=[	$attack5,	enf_atk10	] {COOP_Turn();};
+void()	enf_atk7	=[	$attack7,	enf_atk8	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk8	=[	$attack8,	enf_atk9	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk9	=[	$attack5,	enf_atk10	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
 void()	enf_atk10	=[	$attack6,	enf_atk11	] {enforcer_fire();};
-void()	enf_atk11	=[	$attack7,	enf_atk12	] {COOP_Turn();};
-void()	enf_atk12	=[	$attack8,	enf_atk13	] {COOP_Turn();};
-void()	enf_atk13	=[	$attack9,	enf_atk14	] {COOP_Turn();};
-void()	enf_atk14	=[	$attack10,	enf_run1	] {COOP_Turn();
+void()	enf_atk11	=[	$attack7,	enf_atk12	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk12	=[	$attack8,	enf_atk13	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk13	=[	$attack9,	enf_atk14	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );};
+void()	enf_atk14	=[	$attack10,	enf_run1	] {npcAi_Turn2( #IDMON_ENFORCER_ZAPVELOCITY + ( random() * 100 - 50 ) / skill );
 SUB_CheckRefire (enf_atk1);
 	Attack_Finished( random()*2 );
 };
@@ -213,20 +218,20 @@ void()	enf_painc8	=[	$painc8,	enf_run1	] {};
 void()	enf_paind1	=[	$paind1,	enf_paind2	] {};
 void()	enf_paind2	=[	$paind2,	enf_paind3	] {};
 void()	enf_paind3	=[	$paind3,	enf_paind4	] {};
-void()	enf_paind4	=[	$paind4,	enf_paind5	] {ai_painforward(2);};
-void()	enf_paind5	=[	$paind5,	enf_paind6	] {ai_painforward(1);};
+void()	enf_paind4	=[	$paind4,	enf_paind5	] {npcAi_PainForward(2);};
+void()	enf_paind5	=[	$paind5,	enf_paind6	] {npcAi_PainForward(1);};
 void()	enf_paind6	=[	$paind6,	enf_paind7	] {};
 void()	enf_paind7	=[	$paind7,	enf_paind8	] {};
 void()	enf_paind8	=[	$paind8,	enf_paind9	] {};
 void()	enf_paind9	=[	$paind9,	enf_paind10	] {};
 void()	enf_paind10	=[	$paind10,	enf_paind11	] {};
-void()	enf_paind11	=[	$paind11,	enf_paind12	] {ai_painforward(1);};
-void()	enf_paind12	=[	$paind12,	enf_paind13	] {ai_painforward(1);};
-void()	enf_paind13	=[	$paind13,	enf_paind14	] {ai_painforward(1);};
+void()	enf_paind11	=[	$paind11,	enf_paind12	] {npcAi_PainForward(1);};
+void()	enf_paind12	=[	$paind12,	enf_paind13	] {npcAi_PainForward(1);};
+void()	enf_paind13	=[	$paind13,	enf_paind14	] {npcAi_PainForward(1);};
 void()	enf_paind14	=[	$paind14,	enf_paind15	] {};
 void()	enf_paind15	=[	$paind15,	enf_paind16	] {};
-void()	enf_paind16	=[	$paind16,	enf_paind17	] {ai_pain(1);};
-void()	enf_paind17	=[	$paind17,	enf_paind18	] {ai_pain(1);};
+void()	enf_paind16	=[	$paind16,	enf_paind17	] {npcAi_Pain(1);};
+void()	enf_paind17	=[	$paind17,	enf_paind18	] {npcAi_Pain(1);};
 void()	enf_paind18	=[	$paind18,	enf_paind19	] {};
 void()	enf_paind19	=[	$paind19,	enf_run1	] {};
 
@@ -275,15 +280,15 @@ void()	enf_die1	=[	$death1,	enf_die2	] {};
 void()	enf_die2	=[	$death2,	enf_die3	] {};
 void()	enf_die3	=[	$death3,	enf_die4	]
 {self.solid = #SOLID_NOT;self.ammo_cells = 30;DropBackpack();};
-void()	enf_die4	=[	$death4,	enf_die5	] {ai_forward(14);};
-void()	enf_die5	=[	$death5,	enf_die6	] {ai_forward(2);};
+void()	enf_die4	=[	$death4,	enf_die5	] {npcAi_Forward(14);};
+void()	enf_die5	=[	$death5,	enf_die6	] {npcAi_Forward(2);};
 void()	enf_die6	=[	$death6,	enf_die7	] {};
 void()	enf_die7	=[	$death7,	enf_die8	] {};
 void()	enf_die8	=[	$death8,	enf_die9	] {};
-void()	enf_die9	=[	$death9,	enf_die10	] {ai_forward(3);};
-void()	enf_die10	=[	$death10,	enf_die11	] {ai_forward(5);};
-void()	enf_die11	=[	$death11,	enf_die12	] {ai_forward(5);};
-void()	enf_die12	=[	$death12,	enf_die13	] {ai_forward(5);};
+void()	enf_die9	=[	$death9,	enf_die10	] {npcAi_Forward(3);};
+void()	enf_die10	=[	$death10,	enf_die11	] {npcAi_Forward(5);};
+void()	enf_die11	=[	$death11,	enf_die12	] {npcAi_Forward(5);};
+void()	enf_die12	=[	$death12,	enf_die13	] {npcAi_Forward(5);};
 void()	enf_die13	=[	$death13,	enf_die14	] {};
 void()	enf_die14	=[	$death14,	enf_die14	] {MonsterCorpse();};
 
@@ -344,6 +349,18 @@ float() EnforcerOnSight =
 	return #TRUE;
 };
 
+/*
+=================
+EnforcerMainAttack
+=================
+*/
+void() EnforcerMainAttack = {
+	// make sure we're facing the right direction
+	if ( !FacingIdeal() )
+		return;		// not facing the right direction, wait until we are
+
+	enf_atk1();
+};
 
 /*QUAKED monster_enforcer (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
@@ -388,7 +405,7 @@ void() monster_enforcer =
 	self.th_run = enf_run1;
 	self.th_pain = enf_pain;
 	self.th_die = enf_die;
-	self.th_missile = enf_atk1;
+	self.th_missile = EnforcerMainAttack;
 
 
 	self.netname = "enforcer";
@@ -405,7 +422,7 @@ void() monster_enforcer =
 
 	self.OnNoticeEnemy = EnforcerOnSight;
 	self.#npc_spawnfunc = monster_enforcer;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_electricitymult = 0.75;
 	self.#npc_firemult = 0.75;
@@ -415,5 +432,8 @@ void() monster_enforcer =
 
 	coop_walkmonster_start ();
 };
+
+#undef IDMON_ENFORCER_HEALTH
+#undef IDMON_ENFORCER_ZAPDMG
 
 #endif

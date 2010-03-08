@@ -33,100 +33,104 @@ $frame pain9
 
 void() coop_swimmonster_start;
 
-void() f_stand1  =[      $swim1, f_stand2 ] {COOP_Idle();};
+void() f_stand1  =[      $swim1, f_stand2 ] {npcAi_Idle();};
 void() f_stand2  =[      $swim2, f_stand3 ] {};
 void() f_stand3  =[      $swim3, f_stand4 ] {};
 void() f_stand4  =[      $swim4, f_stand5 ] {};
 void() f_stand5  =[      $swim5, f_stand6 ] {};
 void() f_stand6  =[      $swim6, f_stand7 ] {};
 void() f_stand7  =[      $swim7, f_stand8 ] {};
-void() f_stand8  =[      $swim8, f_stand9 ] {COOP_Idle();};
+void() f_stand8  =[      $swim8, f_stand9 ] {npcAi_Idle();};
 void() f_stand9  =[      $swim9, f_stand10  ] {};
 void() f_stand10 =[      $swim10, f_stand11 ] {};
 void() f_stand11 =[      $swim11, f_stand12 ] {};
 void() f_stand12 =[      $swim12, f_stand13 ] {};
 void() f_stand13 =[      $swim13, f_stand14 ] {};
-void() f_stand14 =[      $swim14, f_stand15 ] {COOP_Idle();};
+void() f_stand14 =[      $swim14, f_stand15 ] {npcAi_Idle();};
 void() f_stand15 =[      $swim15, f_stand16 ] {};
 void() f_stand16 =[      $swim16, f_stand17 ] {};
 void() f_stand17 =[      $swim17, f_stand18 ] {};
 void() f_stand18 =[      $swim18, f_stand1 ] {};
 
-void() f_walk1  =[      $swim1, f_walk2 ] {COOP_Walk(8);};
-void() f_walk2  =[      $swim2, f_walk3 ] {COOP_Walk(8);};
-void() f_walk3  =[      $swim3, f_walk4 ] {COOP_Walk(8);};
-void() f_walk4  =[      $swim4, f_walk5 ] {COOP_Walk(8);};
-void() f_walk5  =[      $swim5, f_walk6 ] {COOP_Walk(8);};
-void() f_walk6  =[      $swim6, f_walk7 ] {COOP_Walk(8);};
-void() f_walk7  =[      $swim7, f_walk8 ] {COOP_Walk(8);};
-void() f_walk8  =[      $swim8, f_walk9 ] {COOP_Walk(8);};
-void() f_walk9  =[      $swim9, f_walk10  ] {COOP_Walk(8);};
-void() f_walk10 =[      $swim10, f_walk11 ] {COOP_Walk(8);};
-void() f_walk11 =[      $swim11, f_walk12 ] {COOP_Walk(8);};
-void() f_walk12 =[      $swim12, f_walk13 ] {COOP_Walk(8);};
-void() f_walk13 =[      $swim13, f_walk14 ] {COOP_Walk(8);};
-void() f_walk14 =[      $swim14, f_walk15 ] {COOP_Walk(8);};
-void() f_walk15 =[      $swim15, f_walk16 ] {COOP_Walk(8);};
-void() f_walk16 =[      $swim16, f_walk17 ] {COOP_Walk(8);};
-void() f_walk17 =[      $swim17, f_walk18 ] {COOP_Walk(8);};
-void() f_walk18 =[      $swim18, f_walk1 ] {COOP_Walk(8);};
+void() f_walk1  =[      $swim1, f_walk2 ] {npcAi_Walk(8);};
+void() f_walk2  =[      $swim2, f_walk3 ] {npcAi_Walk(8);};
+void() f_walk3  =[      $swim3, f_walk4 ] {npcAi_Walk(8);};
+void() f_walk4  =[      $swim4, f_walk5 ] {npcAi_Walk(8);};
+void() f_walk5  =[      $swim5, f_walk6 ] {npcAi_Walk(8);};
+void() f_walk6  =[      $swim6, f_walk7 ] {npcAi_Walk(8);};
+void() f_walk7  =[      $swim7, f_walk8 ] {npcAi_Walk(8);};
+void() f_walk8  =[      $swim8, f_walk9 ] {npcAi_Walk(8);};
+void() f_walk9  =[      $swim9, f_walk10  ] {npcAi_Walk(8);};
+void() f_walk10 =[      $swim10, f_walk11 ] {npcAi_Walk(8);};
+void() f_walk11 =[      $swim11, f_walk12 ] {npcAi_Walk(8);};
+void() f_walk12 =[      $swim12, f_walk13 ] {npcAi_Walk(8);};
+void() f_walk13 =[      $swim13, f_walk14 ] {npcAi_Walk(8);};
+void() f_walk14 =[      $swim14, f_walk15 ] {npcAi_Walk(8);};
+void() f_walk15 =[      $swim15, f_walk16 ] {npcAi_Walk(8);};
+void() f_walk16 =[      $swim16, f_walk17 ] {npcAi_Walk(8);};
+void() f_walk17 =[      $swim17, f_walk18 ] {npcAi_Walk(8);};
+void() f_walk18 =[      $swim18, f_walk1 ] {npcAi_Walk(8);};
 
-void() f_run1  =[      $swim1, f_run2 ] {COOP_Run(12);
+void() f_run1  =[      $swim1, f_run2 ] {npcAi_Run(12);
 	if (random() < 0.5)
 		sound (self, #CHAN_VOICE, "fish/idle.wav", 1, #ATTN_NORM);
 };
-void() f_run2  =[      $swim3, f_run3 ] {COOP_Run(12);};
-void() f_run3  =[      $swim5, f_run4 ] {COOP_Run(12);};
-void() f_run4  =[      $swim7, f_run5 ] {COOP_Run(12);};
-void() f_run5  =[      $swim9, f_run6 ] {COOP_Run(12);};
-void() f_run6  =[      $swim11, f_run7 ] {COOP_Run(12);};
-void() f_run7  =[      $swim13, f_run8 ] {COOP_Run(12);};
-void() f_run8  =[      $swim15, f_run9 ] {COOP_Run(12);};
-void() f_run9  =[      $swim17, f_run1 ] {COOP_Run(12);
-	// if he's no longer in the water, forget about him
-	if (self.enemy.waterlevel < 2)
-		self.enemy = world;
+void() f_run2  =[      $swim3, f_run3 ] {npcAi_Run(12);};
+void() f_run3  =[      $swim5, f_run4 ] {npcAi_Run(12);};
+void() f_run4  =[      $swim7, f_run5 ] {npcAi_Run(12);};
+void() f_run5  =[      $swim9, f_run6 ] {npcAi_Run(12);};
+void() f_run6  =[      $swim11, f_run7 ] {npcAi_Run(12);};
+void() f_run7  =[      $swim13, f_run8 ] {npcAi_Run(12);};
+void() f_run8  =[      $swim15, f_run9 ] {npcAi_Run(12);};
+void() f_run9  =[      $swim17, f_run1 ] {npcAi_Run(12);
 };
 
-void() _fish_melee =
-{
-	local vector	delta;
+void() _fish_melee = {
+	local entity	en;
+	local vector	attackVec;
 	local float 	ldmg;
 
-	if (!self.enemy)
+	if ( !self.enemy )
 		return;		// removed before stroke
-		
-	delta = self.enemy.origin - self.origin;
 
-	if (vlen(delta) > 150)
+	attackVec = npcAi_GetAttackVector( self, self.origin );
+	traceline( self.origin, self.origin + attackVec*150, #TL_ANY_SOLID, self );
+
+	// CanDamage() will destroy trace_ent
+	en = trace_ent;
+
+	if ( !trace_ent )
+		return;
+	if ( !CanDamage( trace_ent, self ) )
 		return;
 		
-	sound (self, #CHAN_VOICE, "fish/bite.wav", 1, #ATTN_NORM);
+	sound( self, #CHAN_VOICE, "fish/bite.wav", 1, #ATTN_NORM );
 	ldmg = #IDMON_FISH_BITEDMG + random()*10;
-	TF_T_Damage (self.enemy, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE);
+	TF_T_Damage( en, self, self, ldmg, #TF_TD_NOTTEAM, #TF_TD_MELEE );
 };
 
-void() f_attack1        =[      $attack1,       f_attack2 ] {ai_charge(10);};
-void() f_attack2        =[      $attack2,       f_attack3 ] {ai_charge(10);};
+void() f_attack1        =[      $attack1,       f_attack2 ] {npcAi_Charge(10);};
+void() f_attack2        =[      $attack2,       f_attack3 ] {npcAi_Charge(10);};
 void() f_attack3        =[      $attack3,       f_attack4 ] {_fish_melee();};
-void() f_attack4        =[      $attack4,       f_attack5 ] {ai_charge(10);};
-void() f_attack5        =[      $attack5,       f_attack6 ] {ai_charge(10);};
-void() f_attack6        =[      $attack6,       f_attack7 ] {ai_charge(10);};
-void() f_attack7        =[      $attack7,       f_attack8 ] {ai_charge(10);};
-void() f_attack8        =[      $attack8,       f_attack9 ] {ai_charge(10);};
+void() f_attack4        =[      $attack4,       f_attack5 ] {npcAi_Charge(10);};
+void() f_attack5        =[      $attack5,       f_attack6 ] {npcAi_Charge(10);};
+void() f_attack6        =[      $attack6,       f_attack7 ] {npcAi_Charge(10);};
+void() f_attack7        =[      $attack7,       f_attack8 ] {npcAi_Charge(10);};
+void() f_attack8        =[      $attack8,       f_attack9 ] {npcAi_Charge(10);};
 void() f_attack9        =[      $attack9,       f_attack10] {_fish_melee();};
-void() f_attack10       =[      $attack10,      f_attack11] {ai_charge(10);};
-void() f_attack11       =[      $attack11,      f_attack12] {ai_charge(10);};
-void() f_attack12       =[      $attack12,      f_attack13] {ai_charge(10);};
-void() f_attack13       =[      $attack13,      f_attack14] {ai_charge(10);};
-void() f_attack14       =[      $attack14,      f_attack15] {ai_charge(10);};
+void() f_attack10       =[      $attack10,      f_attack11] {npcAi_Charge(10);};
+void() f_attack11       =[      $attack11,      f_attack12] {npcAi_Charge(10);};
+void() f_attack12       =[      $attack12,      f_attack13] {npcAi_Charge(10);};
+void() f_attack13       =[      $attack13,      f_attack14] {npcAi_Charge(10);};
+void() f_attack14       =[      $attack14,      f_attack15] {npcAi_Charge(10);};
 void() f_attack15       =[      $attack15,      f_attack16] {_fish_melee();};
-void() f_attack16       =[      $attack16,      f_attack17] {ai_charge(10);};
-void() f_attack17       =[      $attack17,      f_attack18] {ai_charge(10);};
-void() f_attack18       =[      $attack18,      f_run1    ] {ai_charge(10);};
+void() f_attack16       =[      $attack16,      f_attack17] {npcAi_Charge(10);};
+void() f_attack17       =[      $attack17,      f_attack18] {npcAi_Charge(10);};
+void() f_attack18       =[      $attack18,      f_run1    ] {npcAi_Charge(10);};
 
 void() f_death1 =[      $death1,        f_death2        ] {
-sound (self, #CHAN_VOICE, "fish/death.wav", 1, #ATTN_NORM);
+	self.solid = #SOLID_NOT;
+	sound (self, #CHAN_VOICE, "fish/death.wav", 1, #ATTN_NORM);
 };
 void() f_death2 =[      $death2,        f_death3        ] {};
 void() f_death3 =[      $death3,        f_death4        ] {};
@@ -147,21 +151,21 @@ void() f_death17 =[      $death17,       f_death18       ] {};
 void() f_death18 =[      $death18,       f_death19       ] {};
 void() f_death19 =[      $death19,       f_death20       ] {};
 void() f_death20 =[      $death20,       f_death21       ] {};
-void() f_death21 =[      $death21,       f_death21       ] {self.solid = #SOLID_NOT;MonsterCorpse();};
+void() f_death21 =[      $death21,       f_death21       ] {MonsterCorpse();};
 
 void() f_pain1  =[      $pain1, f_pain2 ] {};
-void() f_pain2  =[      $pain2, f_pain3 ] {ai_pain(6);};
-void() f_pain3  =[      $pain3, f_pain4 ] {ai_pain(6);};
-void() f_pain4  =[      $pain4, f_pain5 ] {ai_pain(6);};
-void() f_pain5  =[      $pain5, f_pain6 ] {ai_pain(6);};
-void() f_pain6  =[      $pain6, f_pain7 ] {ai_pain(6);};
-void() f_pain7  =[      $pain7, f_pain8 ] {ai_pain(6);};
-void() f_pain8  =[      $pain8, f_pain9 ] {ai_pain(6);};
-void() f_pain9  =[      $pain9, f_run1 ] {ai_pain(6);};
+void() f_pain2  =[      $pain2, f_pain3 ] {npcAi_Pain(6);};
+void() f_pain3  =[      $pain3, f_pain4 ] {npcAi_Pain(6);};
+void() f_pain4  =[      $pain4, f_pain5 ] {npcAi_Pain(6);};
+void() f_pain5  =[      $pain5, f_pain6 ] {npcAi_Pain(6);};
+void() f_pain6  =[      $pain6, f_pain7 ] {npcAi_Pain(6);};
+void() f_pain7  =[      $pain7, f_pain8 ] {npcAi_Pain(6);};
+void() f_pain8  =[      $pain8, f_pain9 ] {npcAi_Pain(6);};
+void() f_pain9  =[      $pain9, f_run1 ] {npcAi_Pain(6);};
 
 void(entity attacker, float damage)	_fish_pain =
 {
-// fish allways do pain frames
+// fish always do pain frames
 	f_pain1 ();
 };
 
@@ -175,6 +179,22 @@ float() _fish_noticeenemy =
 		return #FALSE;
 
 	return #TRUE;
+};
+
+/*
+================
+FishMainAttack
+================
+*/
+void() FishMainAttack = {
+	// make sure we're facing the right direction
+	if ( !FacingIdeal() )
+		return;		// not facing the right direction, wait until we are
+	// fish can only melee attack
+	if ( npcAi_EnemyRange( self ) != #RANGE_MELEE )
+		return;
+
+	f_attack1();
 };
 
 /*QUAKED monster_fish (1 0 0) (-16 -16 -24) (16 16 24) Ambush
@@ -210,7 +230,7 @@ void() monster_fish =
 	self.th_run = f_run1;
 	self.th_die = f_death1;
 	self.th_pain = _fish_pain;
-	self.th_melee = f_attack1;
+	self.th_missile = FishMainAttack;
 
 
 	self.netname = "fish";
@@ -228,12 +248,15 @@ void() monster_fish =
 	self.OnNoticeEnemy = _fish_noticeenemy;
 	self.#npc_speedfactor = 1.9;
 	self.#npc_spawnfunc = monster_fish;
-	COOP_SetLives ();
+	npcAi_SetLives ();
 
 	self.#npc_electricitymult = 2.6;
 	self.#npc_meleemult = 2;
 	
 	coop_swimmonster_start ();
 };
+
+#undef IDMON_FISH_HEALTH
+#undef IDMON_FISH_BITEDMG
 
 #endif

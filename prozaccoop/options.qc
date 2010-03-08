@@ -13,7 +13,6 @@ Defines for the compilable options within TF.
 
 // Gizmo - these are all the macros that can be used to compile for classic prozac
 // but a few minor things like vote code, bug fixes, end of game awards, no stock sniper caltrops (standard grenades instead), tesla power supply upgrade after health tinker, etc. are still included
-//#define NO_PREFAB_TESLA_UPGRADE		// Gizmo - no prefab upgraded teslas allowed (only 1/2/1 teslas will be allowed even with upgrade)
 #define CLASSIC_BUILD_HEALTHS			// Gizmo - engy builds have the health levels on classic prozac instead of the current
 //#define NO_GRUNTY_EMERGENCY_TELE		// Gizmo - players are not allowed to teleport an existing soldier to their location in trade for reseting the waiting soldier timer (counts as if they tele'd a new soldier)
 //#define NO_STOCK_DEMOMAN_HIGHJUMP		// Gizmo - the stock demoman doesn't start with highjump

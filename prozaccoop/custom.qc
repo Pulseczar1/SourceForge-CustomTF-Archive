@@ -1445,7 +1445,7 @@ void() KracGrenadeTouch =
 
 
 #ifdef COOP_MODE_ENHANCED
-float (entity test) COOP_IsCoopMonster;
+float (entity test) npcAi_IsCoopMonster;
 #endif
 
 void() KracGrenadeExplode =
@@ -1579,7 +1579,7 @@ void() KracGrenadeExplode =
 		}
 #ifdef COOP_MODE_ENHANCED
 		// Gizmo - enable kracs to work on monsters
-		else if (COOP_IsCoopMonster(te)) {
+		else if (npcAi_IsCoopMonster(te)) {
 			// code is just copied from above
 			damage = 200 - vlen(te.origin - self.origin);
 			if (damage > 200 || damage < 0) {
