@@ -325,15 +325,17 @@ Main function called when we have a chance to attack the enemy.
 ==============
 */
 void() _DemonCheckAttack = {
+	// if close enough for slashing, go for it
+	if ( _CheckDemonMelee() ) {
+		_demon1_atta1();
+		return;
+	}
+
 	// make sure we're facing the right direction
 	if ( !FacingIdeal() )
 		return;		// not facing the right direction, wait until we are
 
-	// if close enough for slashing, go for it
-	if ( _CheckDemonMelee() )
-		_demon1_atta1();
-
-	else if ( _CheckDemonJump() ) {
+	if ( _CheckDemonJump() ) {
 		sound( self, #CHAN_VOICE, "demon/djump.wav", 1, #ATTN_NORM );
 		_demon1_jump1();
 	}

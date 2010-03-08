@@ -312,14 +312,12 @@ float( entity us, entity test, float ignoreThiefs ) npcAi_IsValidTarget2 = {
 							// make sure we don't notice fully hidden thiefs that we aren't already attacking
 							if ( test.job & #JOB_FULL_HIDE )
 								return #FALSE;
-							if ( random() <= 0.4 )
-								return #TRUE;
 						}
 					}
 				}
-				if ( test.items & #IT_INVISIBILITY ) {
-					if ( random() <= 0.4 )
-						return #TRUE;
+				if ( test.items & #IT_INVISIBILITY && !( test.job & #JOB_THIEF && test.job & #JOB_ACTIVE ) ) {
+					if ( test != us.enemy && random() > 0.25 )
+						return #FALSE;
 				}
 				if ( !( test.flags & #FL_NOTARGET ) ) {
 					return #TRUE;
@@ -828,8 +826,27 @@ float( entity npc, entity en, float attackSpeed ) npcAi_UpdateEnemyPos = {
 			if ( !( en.job & #JOB_FULL_HIDE ) ) {
 				if ( !infront2( en, npc ) )
 					sightblocked = #TRUE;
-				else if ( random() > 0.4 )
-					sightblocked = #TRUE;
+				else {
+					local float	r;
+
+					r = vlen( en.origin - npc.origin );
+					if ( r >= 2000 ) {
+						if ( random() > 0.09 )
+							sightblocked = #TRUE;
+					} else if ( r >= 1500 ) {
+						if ( random() > 0.12 )
+							sightblocked = #TRUE;
+					} else if ( r >= 1000 ) {
+						if ( random() > 0.15 )
+							sightblocked = #TRUE;
+					} else if ( r >= 500 ) {
+						if ( random() > 0.2 )
+							sightblocked = #TRUE;
+					} else {
+						if ( random() > 0.4 )
+							sightblocked = #TRUE;
+					}
+				}
 			} else
 				sightblocked = #TRUE;
 
@@ -1151,9 +1168,7 @@ void( float dist ) npcAi_Run = {
 
 		if ( e != world && e != self.enemy )
 			npcAi_AttackTarget( e, #FALSE );
-		else if ( e == self.enemy ) {
-			npcAi_SetLastKnownEnemyPos( self, self.enemy, self.enemy.origin, 15 );
-		} else if ( random() > 0.80 ) {
+		else if ( random() > 0.80 ) {
 			// check if we can shoot blindly where they last were, in hopes for a lucky shot
 			if ( self.#npc_lastEnemyTime && self.#npc_lastEnemyTime > time ) {
 				// randomly adjust the blind shooting origin
