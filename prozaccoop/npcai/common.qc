@@ -964,8 +964,11 @@ Sets up the monster to start attacking it's enemy.
 ===============
 */
 float( entity en, float check ) npcAi_AttackTarget = {
-	local entity	lasten;
+	local entity	lasten, lasten2;
 	local float		ret;
+
+	// save last enemy
+	lasten2 = self.enemy;
 
 	// check if enemy is valid
 	if ( check ) {
@@ -995,10 +998,13 @@ float( entity en, float check ) npcAi_AttackTarget = {
 	} else
 		npcAi_SetLastKnownEnemyPos( self, en, en.origin, 15 );
 
-	self.nextthink = time + 0.1;
-	self.think = self.th_run;
+	// only do run frames if we're not already attacking it
+	if ( lasten2 != en ) {
+		self.nextthink = time + 0.1;
+		self.think = self.th_run;
+	}
 
-	self.ideal_yaw = vectoyaw( en.origin - self.origin );
+	self.ideal_yaw = vectoyaw( self.#npc_lastEnemyOrigin - self.origin );
 
 	return #TRUE;
 };
