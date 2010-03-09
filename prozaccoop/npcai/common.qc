@@ -272,6 +272,40 @@ float( entity start, entity end ) npcAi_FindShootOffset = {
 
 /*
 ===============
+npcAi_ShouldNoticeThief
+===============
+*/
+float( entity npc, entity thief ) npcAi_ShouldNoticeThief = {
+	local float	r;
+
+	if ( npc.#npc_thiefDetectTime > time )
+		return #FALSE;
+
+	npc.#npc_thiefDetectTime = time + 0.5;
+
+	r = vlen( thief.origin - npc.origin );
+	if ( r >= 2000 ) {
+		if ( random() >= 0.1 )
+			return #FALSE;
+	} else if ( r >= 1500 ) {
+		if ( random() >= 0.2 )
+			return #FALSE;
+	} else if ( r >= 1000 ) {
+		if ( random() >= 0.3 )
+			return #FALSE;
+	} else if ( r >= 500 ) {
+		if ( random() >= 0.5 )
+			return #FALSE;
+	} else {
+		if ( random() >= 0.6 )
+			return #FALSE;
+	}
+
+	return #TRUE;
+};
+
+/*
+===============
 npcAi_IsValidTarget2
 
 NOTE: health and takedamage are not checked by this function
@@ -279,7 +313,7 @@ NOTE: this will change trace_ent
 ===============
 */
 float( entity us, entity test, float ignoreThiefs ) npcAi_IsValidTarget2 = {
-	local float	r, testTeam;
+	local float	testTeam;
 
 	// if our target isn't solid then it's not a valid target
 	if ( test.solid == #SOLID_NOT )
@@ -300,17 +334,15 @@ float( entity us, entity test, float ignoreThiefs ) npcAi_IsValidTarget2 = {
 
 		// players
 		else if ( test.classname == "player" ) {
-			r = vlen( test.origin - us.origin );
-
 			// use Pharse_Client for client checking
 			if ( Pharse_Client( test, us, 0, 0, 0, 0 ) ) {
-				if ( r > 2048 && !visible2( test, us ) )
-					return #FALSE;
 				if ( !ignoreThiefs ) {
 					if ( test.job & #JOB_THIEF && test.job & #JOB_ACTIVE ) {
 						if ( test != us.enemy ) {
 							// make sure we don't notice fully hidden thiefs that we aren't already attacking
 							if ( test.job & #JOB_FULL_HIDE )
+								return #FALSE;
+							if ( !npcAi_ShouldNoticeThief( us, test ) )
 								return #FALSE;
 						}
 					}
@@ -826,27 +858,8 @@ float( entity npc, entity en, float attackSpeed ) npcAi_UpdateEnemyPos = {
 			if ( !( en.job & #JOB_FULL_HIDE ) ) {
 				if ( !infront2( en, npc ) )
 					sightblocked = #TRUE;
-				else {
-					local float	r;
-
-					r = vlen( en.origin - npc.origin );
-					if ( r >= 2000 ) {
-						if ( random() > 0.09 )
-							sightblocked = #TRUE;
-					} else if ( r >= 1500 ) {
-						if ( random() > 0.12 )
-							sightblocked = #TRUE;
-					} else if ( r >= 1000 ) {
-						if ( random() > 0.15 )
-							sightblocked = #TRUE;
-					} else if ( r >= 500 ) {
-						if ( random() > 0.2 )
-							sightblocked = #TRUE;
-					} else {
-						if ( random() > 0.4 )
-							sightblocked = #TRUE;
-					}
-				}
+				else
+					sightblocked = ( !npcAi_ShouldNoticeThief( npc, en ) );
 			} else
 				sightblocked = #TRUE;
 
@@ -974,7 +987,13 @@ float( entity en, float check ) npcAi_AttackTarget = {
 	self.goalentity = self.enemy = en;
 	// set his last known enemy position also
 	// IMPORTANT: this must happen AFTER the enemy is set, otherwise this will call npcAi_AttackTarget() again
-	npcAi_SetLastKnownEnemyPos( self, en, en.origin, 15 );
+	if ( en.classname == "player" && en.job & #JOB_THIEF && en.job & #JOB_ACTIVE ) {
+		if ( en.job & #JOB_FULL_HIDE )
+			npcAi_SetLastKnownEnemyPos( self, en, self.origin, 45 );		// we don't actually know where the attack came from
+		else
+			npcAi_SetLastKnownEnemyPos( self, en, en.origin, 45 );
+	} else
+		npcAi_SetLastKnownEnemyPos( self, en, en.origin, 15 );
 
 	self.nextthink = time + 0.1;
 	self.think = self.th_run;
@@ -1378,7 +1397,7 @@ void( entity attacker ) npcAi_PrePain = {
 
 	// the .think will get overridden but that's ok
 	if ( !self.enemy ) {
-		if ( npcAi_IsValidTarget( self, attacker ) )
+		if ( npcAi_IsValidTarget2( self, attacker, #TRUE ) )
 			npcAi_AttackTarget( attacker, #TRUE );
 
 		trace_ent = oldTraceEnt;
@@ -1388,12 +1407,12 @@ void( entity attacker ) npcAi_PrePain = {
 	// don't bother if our attacker is hurting us
 	if ( attacker == self.enemy ) {
 		// but make sure we update where our enemy is
-		npcAi_SetLastKnownEnemyPos( self, attacker, attacker.origin, 15 );
+		npcAi_AttackTarget( attacker, #FALSE );
 		return;
 	}
 
 	if ( !visible( self.enemy ) ) {
-		if ( npcAi_IsValidTarget( self, attacker ) )
+		if ( npcAi_IsValidTarget2( self, attacker, #TRUE ) )
 			npcAi_AttackTarget( attacker, #FALSE );
 
 		trace_ent = oldTraceEnt;
