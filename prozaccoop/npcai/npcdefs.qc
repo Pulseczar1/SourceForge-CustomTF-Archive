@@ -23,7 +23,7 @@
 #define npc_lastEnemyTime			lip				// time enemy was last spotted at npc_lastEnemyOrigin
 #define npc_isCoopMonster			nextpc			// used for determining a coop monster from a normal monster
 #define npc_useTargetsOnRespawn		StatusBarSize	// if true then monster should call SUB_UseTargets() again when he dies after respawning
-#define npc_thiefDetectTime			option2			// used to rate limit how often thiefs are scanned for
+#define npc_thiefDetectTime			option2			// used to rate limit how often thieves are scanned for
 
 // damage multipliers
 #define npc_bulletmult				money

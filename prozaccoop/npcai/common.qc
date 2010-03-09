@@ -312,7 +312,7 @@ NOTE: health and takedamage are not checked by this function
 NOTE: this will change trace_ent
 ===============
 */
-float( entity us, entity test, float ignoreThiefs ) npcAi_IsValidTarget2 = {
+float( entity us, entity test, float ignoreThieves ) npcAi_IsValidTarget2 = {
 	local float	testTeam;
 
 	// if our target isn't solid then it's not a valid target
@@ -336,10 +336,10 @@ float( entity us, entity test, float ignoreThiefs ) npcAi_IsValidTarget2 = {
 		else if ( test.classname == "player" ) {
 			// use Pharse_Client for client checking
 			if ( Pharse_Client( test, us, 0, 0, 0, 0 ) ) {
-				if ( !ignoreThiefs ) {
+				if ( !ignoreThieves ) {
 					if ( test.job & #JOB_THIEF && test.job & #JOB_ACTIVE ) {
 						if ( test != us.enemy ) {
-							// make sure we don't notice fully hidden thiefs that we aren't already attacking
+							// make sure we don't notice fully hidden thieves that we aren't already attacking
 							if ( test.job & #JOB_FULL_HIDE )
 								return #FALSE;
 							if ( !npcAi_ShouldNoticeThief( us, test ) )
@@ -373,7 +373,7 @@ float( entity us, entity test, float ignoreThiefs ) npcAi_IsValidTarget2 = {
 ===============
 npcAi_IsValidTarget
 
-Same as npcAi_IsValidTarget2(), except this one assumes you want to check for thiefs.
+Same as npcAi_IsValidTarget2(), except this one assumes you want to check for thieves.
 ===============
 */
 float( entity us, entity test ) npcAi_IsValidTarget = {
@@ -643,7 +643,7 @@ entity( entity scanner ) npcAi_FindTarget = {
 						priority = 1 - priority / 768;
 						if ( random() < priority ) {
 							if ( head.owner.takedamage && head.owner.health > 0 ) {
-								// when checking for sounds, thiefs act as normal players
+								// when checking for sounds, thieves act as normal players
 								if ( npcAi_IsValidTarget2( scanner, head.owner, #TRUE ) )
 									return head.owner;
 							}
@@ -879,7 +879,7 @@ float( entity npc, entity en, float attackSpeed ) npcAi_UpdateEnemyPos = {
 
 		predictedOrigin = npcAi_PredictOrigin( en, npc.origin, attackSpeed );
 
-		// mark this position as valid for around 10 seconds, longer for thiefs
+		// mark this position as valid for around 10 seconds, longer for thieves
 		if ( thiefSpotted )
 			npcAi_SetLastKnownEnemyPos( npc, en, predictedOrigin + npc.#npc_enemyoffset, 45 );
 		else
