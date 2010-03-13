@@ -475,6 +475,8 @@ void() JobMartyr =
 	martyr_time = #MARTYR_TIME; // don't need FORCED stuff since it's always automatic
 	
 	sprint(self,#PRINT_HIGH,"Beginning your suicide run...\n");
+	// PZ: give him a scream so that he's a little more noticable.. going to try the world-wide sound like sham death
+	sound(self, #CHAN_VOICE, "shaka/martyr.wav", 1, #ATTN_NONE);
 	self.items = self.items | #IT_INVULNERABILITY;
 	self.invincible_time = 1;
 	self.invincible_finished = time + martyr_time + 1; //Overlap so we can't die till end

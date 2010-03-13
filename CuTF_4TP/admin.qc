@@ -1,3 +1,4 @@
+
 /* 
 
 	Functions handling TeamFortress Administration for Net Servers
@@ -422,12 +423,14 @@ void(string cmd) Admin_Cmd =
         sprint(self,#PRINT_HIGH, "\" is executed for ");
         sprint(self, #PRINT_HIGH, self.admin_kick.netname);
         sprint(self, #PRINT_HIGH, "\n");
-        RPrint(self.netname);
-        RPrint(" executes '");
-        RPrint(cmd);
-        RPrint("' for client ");
-        RPrint(self.admin_kick.netname);
-        RPrint("\n");
+        bprint(#PRINT_HIGH, "Admin, "); // PZ: made the following prints broadcasted to all
+        bprint(#PRINT_HIGH, self.netname);
+        bprint(#PRINT_HIGH, ", executes the following command on ");
+        bprint(#PRINT_HIGH, self.admin_kick.netname);
+        bprint(#PRINT_HIGH, "'s client: \"");
+        bprint(#PRINT_HIGH, cmd);
+        bprint(#PRINT_HIGH, "\"\n");
+        BroadcastSound("doors/runeuse");
         #else
         sprint(self,#PRINT_HIGH, "Use of CMND's is not allowed.\n");
         #endif

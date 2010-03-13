@@ -17,6 +17,7 @@
 #define VOTE_NEXTMAP		2	// Gizmo - use VOTEMAP_ macros to determine the type of next or switchmap vote
 #define VOTE_SWITCHMAP		3
 #define VOTE_USEOBJECT		4	// Gizmo - similar to admin use
+#define VOTE_POLL			5	// PZ: generic player polling for admins
 
 // punish types
 #define PUNISH_NONE 		0
@@ -42,7 +43,7 @@
 
 // Settings defines
 
-#define VOTE_TIME			60
+#define VOTE_TIME			45 // PZ: 60 seemed really long
 #define VOTE_MIN_TIME		10
 #define VOTE_TIME_REFRESH	25
 #define VOTE_DELAY			240 // seconds to wait until another vote from same user is allowed
@@ -56,6 +57,7 @@
 #define VOTESNEEDED_MAP 	0.5
 #define VOTESNEEDED_NEXTMAP	0.5
 #define VOTESNEEDED_USE		0.5
+#define VOTESNEEDED_POLL	0.5
 
 //#define BAN_VOTED_TIME		0 // permanent ban
 #define BAN_VOTED_TIME		 60 // 60 minutes
@@ -104,6 +106,7 @@ For vote entity:
 .t_s_m				 - Permanent string with the name of user to be banned
 	(when map voting)
 .netname			 - Permanent string that is the name of map
+					 - PZ: for 'cmd admin poll <question>' netname is <question>
 
 ===============================================================================================*/
 
@@ -671,11 +674,13 @@ void() Player_VoteYes =
 	}
 
 	#ifndef VOTING_TEST
-	if (current_voteent.admin_kick == self)
+	// PZ: I don't see a reason to not allow them to vote. I made them automatically
+	// vote no to their own punishment.
+	/* if (current_voteent.admin_kick == self)
 	{
 		sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
 		return;
-	}
+	} */
 	else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
 	{
 		// FIXME: Allow the person to change their vote. -randomer 2006-02-24
@@ -723,11 +728,13 @@ void() Player_VoteNo =
 	}
 	
 	#ifndef VOTING_TEST
-	if (current_voteent.admin_kick == self)
+	// PZ: I don't see a reason to not allow them to vote. I made them automatically
+	// vote no to their own punishment.
+	/* if (current_voteent.admin_kick == self)
 	{
 		sprint(self,#PRINT_HIGH,"You are not allowed to vote!\n");
 		return;
-	}
+	} */
 	else if (self.owned_by == #VOTED_NO || self.owned_by == #VOTED_YES)
 	{
 		sprint(self,#PRINT_HIGH,"You already voted!\n");
@@ -826,8 +833,8 @@ void() ResetVoteEnt =
 {
 	if (current_voteent.classname == "voteent")
 	{
-		if ( IsMapVote() )
-			delstr( current_voteent.netname );
+		if (IsMapVote() || current_voteent.has_sentry == #VOTE_POLL)
+			delstr(current_voteent.netname);
 
 		if (current_voteent.dont_do_triggerwork)
 		{
@@ -891,6 +898,12 @@ void() StartPunishmentVote =
 		sprint(self,#PRINT_HIGH,"You can't vote still, join the game first!\n");
 		return;
 	}
+
+	if (self.admin_kick.admin_flag) // PZ: why was this never added?
+	{
+		sprint(self, #PRINT_HIGH, "You can't vote to punish admins!\n");
+		return;
+	}
 	
 	if (mutedtime(self))
 	{
@@ -923,6 +936,10 @@ void() StartPunishmentVote =
 	self.goal_no = time + #VOTE_DELAY;
 
 	self.owned_by = #VOTED_YES; // we already voted yes
+	// PZ: Don't know why players weren't being allowed to vote against punishment
+	// towards them. This fixes players in a 2 player game being able to ban one another
+	// automatically by just casting a vote.
+	voteent.admin_kick.owned_by = #VOTED_NO;
 
 	BroadcastSound("misc/medkey");
 
@@ -1149,6 +1166,7 @@ void(float nummap, string themap) StartVoteMap =
 	CheckVoting(#FALSE); // If we are the only player on server must check
 };
 
+// PZ: if you change this function, please bear in mind that VOTE_POLL's use this function
 void() VoteMap_Think =
 {
 	CheckVoting(#TRUE);
@@ -1164,6 +1182,76 @@ void() VoteMap_Think =
 
 	ResetVoteEnt();
 #endif
+};
+
+/*
+===============
+StartPoll - Pulseczar (PZ)
+
+Polls players on any given question, for admin to use poll result accordingly.
+Works just like normal votes, except it doesn't do anything after voting is over.
+
+Examples:
+    /cmd admin poll "Extend map time by 10 minutes?"
+    /cmd admin poll "Is OMC a douchebag?"
+===============
+*/
+void(string question) StartPoll =
+{
+	if (current_voteent != world)
+	{
+		sprint(self, #PRINT_HIGH, "Already running a vote!\n");
+		return;
+	}
+
+	local float n; 
+	n = strlen(question);
+	if (n > 30) // permanent strings are limited to 30 characters (want to up that)
+	{
+		sprint(self, #PRINT_HIGH, "Sorry. Poll questions are currently limited to 30 characters.\n");
+		return;
+	}
+
+	BackFlash(self, 1);
+		
+	local entity voteent;
+	local string str;
+
+	voteent = spawn();
+	voteent.netname = makestr(question);
+	voteent.think = VoteMap_Think; // PZ: we'll just use that function for right now
+	voteent.nextthink = time + #VOTE_TIME;
+	voteent.classname = "voteent";
+	voteent.owner = world; // ADDED
+
+	last_vote_starter = self.netname; // for AGR -PZ
+
+	CleanClientVotes();
+
+	voteent.all_active = 0; // in this case, vote starter doesn't count as affirmative vote
+                            // vote starter can also vote in poll
+	voteent.has_holo = 0;
+
+	voteent.has_sentry = #VOTE_POLL; // has_sentry is the generic vote type field
+
+	current_voteent = voteent;
+
+	current_voteent.dont_do_triggerwork = #FALSE; // player to be banned has left (false)
+
+	BroadcastSound("misc/medkey");
+
+	str = colstr(question, #COLSTR_RED);
+
+	bprint(#PRINT_HIGH,"Votingç Admin, ", self.netname);
+	bprint(#PRINT_HIGH,", begins poll: ");
+	bprint(#PRINT_HIGH, str);
+	bprint(#PRINT_HIGH,", type ¢VoteYes¢ or ¢VoteNo¢ to vote");
+	bprintVotesNeeded(0, 0);
+	bprint(#PRINT_HIGH, "\n");
+
+	ResetClientsMenu(); // reset menus on players/specs which are on MENU_PUNISH or MENU_VOTEMAP
+
+	CheckVoting(#FALSE); // If we are the only player on server must check
 };
 
 //=================================================================
@@ -1285,6 +1373,7 @@ void() ResetClientsMenu =
 /*
 =============
 VotePassed
+
 =============
 */
 float( float numFor, float numAgainst, float fraction ) VotePassed = {
@@ -1313,6 +1402,14 @@ float(float final) CheckVoting =
 		ResetVoteEnt();
 		return #TRUE;
 	}	 
+
+	if (current_voteent.admin_kick.admin_flag) // PZ
+	{
+		bprint(#PRINT_HIGH, "Votingç Ending vote. Punishment target logged in as admin.\n");
+		BroadcastSound("misc/runekey");
+		ResetVoteEnt();
+		return #TRUE;
+	}
 
 	local float num_for, num_against, num_total;
 	local entity te;
@@ -1747,6 +1844,41 @@ float(float final) CheckVoting =
 			ResetVoteEnt ();
 		}
 	}
+	// PZ: generic player polling
+	else if (current_voteent.has_sentry == #VOTE_POLL)
+	{
+		st = colstr(current_voteent.netname, #COLSTR_RED);
+
+		if (num_for > num_against)
+		{
+			bprint(#PRINT_HIGH, "Votingç Poll: ", st, "\nVotingç Players agreed\n");
+
+			BroadcastSound("misc/runekey");
+			ResetVoteEnt(); // removes current vote entity
+
+			return #TRUE;
+		}
+		else if (num_for < num_against)
+		{
+			bprint(#PRINT_HIGH, "Votingç Poll: ", st, "\nVotingç Players disagreed");
+			bprintVoteIssue();
+			bprint(#PRINT_HIGH, "\n");
+			
+			BroadcastSound("misc/runekey");
+			
+			ResetVoteEnt();
+		}
+		else
+		{
+			bprint(#PRINT_HIGH, "Votingç Poll: ", st, "\nVotingç Players were undecided");
+			bprintVoteIssue();
+			bprint(#PRINT_HIGH, "\n");
+			
+			BroadcastSound("misc/runekey");
+			
+			ResetVoteEnt();
+		}
+	}
 
 	return #FALSE;
 };
@@ -1820,6 +1952,8 @@ void( float num_for, float num_against ) bprintVotesNeeded = {
 		// Gizmo - use object voting
 		else if ( current_voteent.has_sentry == #VOTE_USEOBJECT )
 			fraction = #VOTESNEEDED_USE;
+		else if (current_voteent.has_sentry == #VOTE_POLL)
+			fraction = #VOTESNEEDED_POLL;
 
 		num_against = num_against + ( num_players - ( num_for + num_against ) ) * fraction;
 

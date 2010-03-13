@@ -199,6 +199,7 @@ void(string text) CmdMsg =
 	#define CMDHELP_ADMIN_CMND		24
 	#define CMDHELP_ADMIN_ENDGAME	25
 	#define CMDHELP_ADMIN_CHECK 	26
+	#define CMDHELP_ADMIN_POLL		27  // PZ: generic player polling
 
 // Voting
 #define CMDHELP_VOTE				32
@@ -320,14 +321,16 @@ void(float command) CmdHelp =
 		CmdHelpParse("EndGame","Ends the current map.\n","","");
 	else if (command == #CMDHELP_ADMIN_CHECK)
 		CmdHelpParse("Check","Prints information about the specified client.\n","","");
+	else if (command == #CMDHELP_ADMIN_POLL)
+		CmdHelpParse("Poll","Polls all players on any given yes or no question.\nSyntaxº cmd admin poll \"<question>\"\n","","");
 	else if (command == #CMDHELP_CHEATER)
 		CmdHelpParse("Cheater","Accuses given player of cheating, warning other users and logging it on server.\nSyntaxº cmd cheater (user) [\"Reasons for accusation\"]\n","","");
 	else if (command == #CMDHELP_VOTE)
 		CmdHelpParse("Vote","Commands for starting several kind of votes.\nAvaliable vote types are:\n",#CMDS_VOTE,"");
 	else if (command == #CMDHELP_MAP)
-		CmdHelpParse("Map","Starts voting for a switch to the specified map.\nSyntaxº cmd vote map (MapName) [agr|tf|coop|insane_coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
+		CmdHelpParse("Map","Starts voting for a switch to the specified map.\nSyntaxº cmd vote map (MapName) [agr|tf|coop|insane_coop]\nType áçò at the end for Attackers Go Red mode.\n","","");
 	else if (command == #CMDHELP_NEXTMAP)
-		CmdHelpParse("NextMap","Suggests the specified map as next map.\nSyntaxº cmd vote nextmap (MapName) [agr|tf|coop|insane_coop]\nType áçò at the end for Attackers Go Red mode.\n","",""); // PZ - added AGR
+		CmdHelpParse("NextMap","Suggests the specified map as next map.\nSyntaxº cmd vote nextmap (MapName) [agr|tf|coop|insane_coop]\nType áçò at the end for Attackers Go Red mode.\n","","");
 	else if (command == #CMDHELP_KICK)
 		CmdHelpParse("Kick","Proposes to kick the specified user from server.\nSyntaxº cmd vote kick (user)\n","","");
 	else if (command == #CMDHELP_CURSE)
@@ -1464,6 +1467,22 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 				Admin_Kill();
 				return #TRUE;
 			}
+			// PZ: generic player polling
+			else if (!strcasecmp(arg2, "poll"))
+			{
+				if (num_args < 3)
+				{
+					CmdHelp(#CMDHELP_ADMIN_POLL);
+					return #TRUE;
+				}
+				if (num_args > 3)
+				{
+					CmdMsg("Put your question text inside \"quotes like this\".\n");
+					return #TRUE;
+				}
+				StartPoll(arg3);
+				return #TRUE;
+			}
 		}
 
 		// non-valid admin command 
@@ -1660,6 +1679,11 @@ float(float num_args, string arg1, string arg2, string arg3, string arg4, string
 			else if (!strcasecmp(arg3,"cuff"))
 			{
 				CmdHelp(#CMDHELP_ADMIN_CUFF);
+				return #TRUE;
+			}
+			else if (!strcasecmp(arg3,"poll"))
+			{
+				CmdHelp(#CMDHELP_ADMIN_POLL);
 				return #TRUE;
 			}
 
