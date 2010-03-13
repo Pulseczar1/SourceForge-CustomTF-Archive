@@ -1897,7 +1897,7 @@ void(entity tele) Engineer_UseTeleporter =
 	self.building = tele;
 
 	if (teamplay != 0 && !Teammate(self.building.real_owner.team_no,self.team_no)) {
-		Menu_EngineerFix_Teleporter_Input(4);
+		Menu_EngineerFix_Teleporter_Input(8); // PZ: fixed bug; was 4
 		return;
 	}
 

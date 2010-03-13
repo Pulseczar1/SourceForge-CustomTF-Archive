@@ -2612,15 +2612,18 @@ void(float tno) ExplodeOldPipebomb =
 	local entity old;
 	local float index;
 
-	if (tno != 0)
+	if (!agr) // PZ: only remove the oldest in AGR
 	{
-		index = num_team_pipebombs(tno);
-		index = index - (#MAX_WORLD_PIPEBOMBS / number_of_teams);
+		if (tno != 0)
+		{
+			index = num_team_pipebombs(tno);
+			index = index - (#MAX_WORLD_PIPEBOMBS / number_of_teams);
+		}
+		else
+			index = num_world_pipebombs - #MAX_WORLD_PIPEBOMBS;
 	}
 	else
-	{
-		index = num_world_pipebombs - #MAX_WORLD_PIPEBOMBS;
-	}
+		index = 1;
 
 	old = find(world, classname, "pipebomb");
 	while (index > 0)
@@ -2747,7 +2750,16 @@ void() W_FireGrenade =
 		if (self.team_no != 0)
 		{
 			increment_team_pipebombs(self.team_no);
-			if (num_team_pipebombs(self.team_no) > (#MAX_WORLD_PIPEBOMBS / number_of_teams))
+			if (agr) // PZ: give blue more pipes in AGR (less pipes for red)
+			{
+				if (self.team_no == 1)
+					if (num_team_pipebombs(self.team_no) > (#MAX_WORLD_PIPEBOMBS / number_of_teams + 5))
+						ExplodeOldPipebomb(self.team_no);
+				if (self.team_no == 2)
+					if (num_team_pipebombs(self.team_no) > (#MAX_WORLD_PIPEBOMBS / number_of_teams - 5))
+						ExplodeOldPipebomb(self.team_no);
+			}
+			else if (num_team_pipebombs(self.team_no) > (#MAX_WORLD_PIPEBOMBS / number_of_teams))
 				ExplodeOldPipebomb(self.team_no);
 		}
 		else 
@@ -5133,13 +5145,14 @@ float() NoCooldownImpulseCommands =
 	//WK Don't allow bastards to do any commands
 	if (self.penance_time > time)
 		return 1;
-		
-	if (prematch >= time)
+	
+	// PZ: we're going to try allowing all commands during prematch	
+	/* if (prematch >= time)
 		if (self.impulse > 10 || self.impulse < 1)
 		{
 			self.impulse = 0;
 			return 1;
-		}
+		} */
 
 	// Uses the special skill of the player's job
 	if (self.impulse == #TF_SKILL) { UseJobSkill(); return 1; }

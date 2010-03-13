@@ -646,6 +646,7 @@ void() worldspawn =
 
 	precache_sound2("weapons/detpack.wav");
 	precache_sound2("sub/locked.wav");        // PZ: ZGG triggers detpack to explode sound
+	precache_sound2("shaka/martyr.wav");
 
 	precache_sound2("speech/saveme1.wav");	  // Saveme Sound
 	precache_sound2("speech/saveme2.wav");	  // Saveme Sound

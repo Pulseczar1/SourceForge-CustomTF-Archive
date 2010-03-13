@@ -377,7 +377,7 @@ void() TeamFortress_DetpackExplode =
 		deathmsg = #DMSG_DETPACK;
 		T_RadiusDamage (self, self.owner, #WEAP_DETPACK_SIZE, world);
 
-        sound(self, #CHAN_MISC, "weapons/detpack.wav", 1, #ATTN_NONE);
+		sound(self, #CHAN_MISC + #CHAN_NO_PHS_ADD, "weapons/detpack.wav", 1, #ATTN_NONE); // PZ: really make det sound world-wide
 
 		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
 		WriteByte (#MSG_BROADCAST, #TE_EXPLOSION);
