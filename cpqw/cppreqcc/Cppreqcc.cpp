@@ -2,6 +2,10 @@
 // cppreqcc.cpp            CPpreQCC 1.4 - Preprocessor for QuakeC //
 //----------------------------------------------------------------//
 // Written using borland C++ 5 by S.F.Grunwaldt aka OfteN[cp]     //
+//                                                                //
+// Pulseczar removed references to windows.h, fixed warnings,     //
+// standardized indentation, and fixed a few runtime errors,      //
+// including a string buffer overflow. (3/26/2010)                //
 //================================================================//
 // Currently compatible with Microsoft Visual C++ 6 (only?)
 
@@ -21,7 +25,6 @@ It has the same pragma's and behaves the same way, except:
 
 //================================================================*/
 
-#include <windows.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -31,211 +34,209 @@ It has the same pragma's and behaves the same way, except:
 
 char* defines_c[] =
 {
-// temporary entities
-"TE_SPIKE",
-"TE_SUPERSPIKE",
-"TE_GUNSHOT",
-"TE_EXPLOSION",
-"TE_TAREXPLOSION",
-"TE_WIZSPIKE",
-"TE_KNIGHTSPIKE",
-"TE_LAVASPLASH",
-"TE_TELEPORT",
-"TE_LIGHTNING1",
-"TE_LIGHTNING2",
-"TE_LIGHTNING3",
-"TE_BLOOD",
-"TE_LIGHTNINGBLOOD",
-// Sound Channel of entities
-"CHAN_AUTO",
-"CHAN_WEAPON",
-"CHAN_VOICE",
-"CHAN_ITEM",
-"CHAN_BODY",
-"CHAN_NO_PHS_ADD",
-// Sound Attenuation
-"ATTN_NONE",
-"ATTN_NORM",
-"ATTN_IDLE",
-"ATTN_STATIC",
-// Contents of level areas
-"CONTENT_EMPTY",
-"CONTENT_SOLID",
-"CONTENT_WATER",
-"CONTENT_SLIME",
-"CONTENT_LAVA",
-"CONTENT_SKY",
-// Entity light effects
-"EF_BRIGHTFIELD",
-"EF_MUZZLEFLASH",
-"EF_BRIGHTLIGHT",
-"EF_DIMLIGHT",
-"EF_FLAG1",
-"EF_FLAG2",
-"EF_BLUE",
-"EF_RED",
-// Existing Items
-"IT_AXE",
-"IT_SHOTGUN",
-"IT_SUPER_SHOTGUN",
-"IT_NAILGUN",
-"IT_SUPER_NAILGUN",
-"IT_GRENADE_LAUNCHER",
-"IT_ROCKET_LAUNCHER",
-"IT_LIGHTNING",
-"IT_EXTRA_WEAPON",
-"IT_SHELLS",
-"IT_NAILS",
-"IT_ROCKETS",
-"IT_CELLS",
-"IT_ARMOR1",
-"IT_ARMOR2",
-"IT_ARMOR3",
-"IT_SUPERHEALTH",
-"IT_KEY1",
-"IT_KEY2",
-"IT_INVISIBILITY",
-"IT_INVULNERABILITY",
-"IT_SUIT",
-"IT_QUAD",
-// Behavior of solid objects
-"SOLID_NOT",
-"SOLID_TRIGGER",
-"SOLID_BBOX",
-"SOLID_SLIDEBOX",
-"SOLID_BSP",
-// Type of movements
-"MOVETYPE_NONE",
-"MOVETYPE_ANGLENOCLIP",
-"MOVETYPE_ANGLECLIP",
-"MOVETYPE_WALK",
-"MOVETYPE_STEP",
-"MOVETYPE_FLY",
-"MOVETYPE_TOSS",
-"MOVETYPE_PUSH",
-"MOVETYPE_NOCLIP",
-"MOVETYPE_FLYMISSILE",
-"MOVETYPE_BOUNCE",
-"MOVETYPE_BOUNCEMISSILE",
-// Entity can solid take damage
-"DAMAGE_NO",
-"DAMAGE_YES",
-"DAMAGE_AIM",
-// Entity dead flag
-"DEAD_NO",
-"DEAD_DYING",
-"DEAD_DEAD",
-"DEAD_RESPAWNABLE",
-// Spawnflags
-"DOOR_START_OPEN",
-"SPAWN_CRUCIFIED",
-"PLAT_LOW_TRIGGER",
-"SPAWNFLAG_NOTOUCH",
-"SPAWNFLAG_NOMESSAGE",
-"PLAYER_ONLY",
-"SPAWNFLAG_SUPERSPIKE",
-"SECRET_OPEN_ONCE",
-"PUSH_ONCE",
-"WEAPON_SHOTGUN",
-"H_ROTTEN",
-"WEAPON_BIG2",
-"START_OFF",
-"SILENT",
-"SPAWNFLAG_LASER",
-"SECRET_1ST_LEFT",
-"WEAPON_ROCKET",
-"H_MEGA",
-"DOOR_DONT_LINK",
-"SECRET_1ST_DOWN",
-"WEAPON_SPIKES",
-"DOOR_GOLD_KEY",
-"SECRET_NO_SHOOT",
-"WEAPON_BIG",
-"DOOR_SILVER_KEY",
-"SECRET_YES_SHOOT",
-"DOOR_TOGGLE",
-"FL_FLY",
-"FL_SWIM",
-"FL_CLIENT",
-"FL_INWATER",
-"FL_MONSTER",
-"FL_GODMODE",
-"FL_NOTARGET",
-"FL_ITEM",
-"FL_ONGROUND",
-"FL_PARTIALGROUND",
-"FL_WATERJUMP",
-"FL_JUMPRELEASED",
-// Network Protocol
-"MSG_BROADCAST",
-"MSG_ONE",
-"MSG_ALL",
-"MSG_INIT",
-"MSG_MULTICAST",
-"PRINT_LOW",
-"PRINT_MEDIUM",
-"PRINT_HIGH",
-"PRINT_CHAT",
-"MULTICAST_ALL",
-"MULTICAST_PHS",
-"MULTICAST_PVS",
-"MULTICAST_ALL_R",
-"MULTICAST_PHS_R",
-"MULTICAST_PVS_R",
-"SVC_SETVIEWPORT",
-"SVC_SETANGLES",
-"SVC_TEMPENTITY",
-"SVC_KILLEDMONSTER",
-"SVC_FOUNDSECRET",
-"SVC_INTERMISSION",
-"SVC_FINALE",
-"SVC_CDTRACK",
-"SVC_SELLSCREEN",
-"SVC_UPDATE",
-"SVC_SMALLKICK",
-"SVC_BIGKICK",
-"SVC_MUZZLEFLASH",
-"TRUE",
-"FALSE",
-"RANGE_MELEE",
-"RANGE_NEAR",
-"RANGE_MID",
-"RANGE_FAR",
-"STATE_TOP",
-"STATE_BOTTOM",
-"STATE_UP",
-"STATE_DOWN",
-"VEC_ORIGIN",
-"VEC_HULL_MIN",
-"VEC_HULL_MAX",
-"VEC_HULL2_MIN",
-"VEC_HULL2_MAX",
-"UPDATE_GENERAL",
-"UPDATE_STATIC",
-"UPDATE_BINARY",
-"UPDATE_TEMP",
-"AS_STRAIGHT",
-"AS_SLIDING",
-"AS_MELEE",
-"AS_MISSILE",
-NULL};
+	// temporary entities
+	"TE_SPIKE",
+	"TE_SUPERSPIKE",
+	"TE_GUNSHOT",
+	"TE_EXPLOSION",
+	"TE_TAREXPLOSION",
+	"TE_WIZSPIKE",
+	"TE_KNIGHTSPIKE",
+	"TE_LAVASPLASH",
+	"TE_TELEPORT",
+	"TE_LIGHTNING1",
+	"TE_LIGHTNING2",
+	"TE_LIGHTNING3",
+	"TE_BLOOD",
+	"TE_LIGHTNINGBLOOD",
+	// Sound Channel of entities
+	"CHAN_AUTO",
+	"CHAN_WEAPON",
+	"CHAN_VOICE",
+	"CHAN_ITEM",
+	"CHAN_BODY",
+	"CHAN_NO_PHS_ADD",
+	// Sound Attenuation
+	"ATTN_NONE",
+	"ATTN_NORM",
+	"ATTN_IDLE",
+	"ATTN_STATIC",
+	// Contents of level areas
+	"CONTENT_EMPTY",
+	"CONTENT_SOLID",
+	"CONTENT_WATER",
+	"CONTENT_SLIME",
+	"CONTENT_LAVA",
+	"CONTENT_SKY",
+	// Entity light effects
+	"EF_BRIGHTFIELD",
+	"EF_MUZZLEFLASH",
+	"EF_BRIGHTLIGHT",
+	"EF_DIMLIGHT",
+	"EF_FLAG1",
+	"EF_FLAG2",
+	"EF_BLUE",
+	"EF_RED",
+	// Existing Items
+	"IT_AXE",
+	"IT_SHOTGUN",
+	"IT_SUPER_SHOTGUN",
+	"IT_NAILGUN",
+	"IT_SUPER_NAILGUN",
+	"IT_GRENADE_LAUNCHER",
+	"IT_ROCKET_LAUNCHER",
+	"IT_LIGHTNING",
+	"IT_EXTRA_WEAPON",
+	"IT_SHELLS",
+	"IT_NAILS",
+	"IT_ROCKETS",
+	"IT_CELLS",
+	"IT_ARMOR1",
+	"IT_ARMOR2",
+	"IT_ARMOR3",
+	"IT_SUPERHEALTH",
+	"IT_KEY1",
+	"IT_KEY2",
+	"IT_INVISIBILITY",
+	"IT_INVULNERABILITY",
+	"IT_SUIT",
+	"IT_QUAD",
+	// Behavior of solid objects
+	"SOLID_NOT",
+	"SOLID_TRIGGER",
+	"SOLID_BBOX",
+	"SOLID_SLIDEBOX",
+	"SOLID_BSP",
+	// Type of movements
+	"MOVETYPE_NONE",
+	"MOVETYPE_ANGLENOCLIP",
+	"MOVETYPE_ANGLECLIP",
+	"MOVETYPE_WALK",
+	"MOVETYPE_STEP",
+	"MOVETYPE_FLY",
+	"MOVETYPE_TOSS",
+	"MOVETYPE_PUSH",
+	"MOVETYPE_NOCLIP",
+	"MOVETYPE_FLYMISSILE",
+	"MOVETYPE_BOUNCE",
+	"MOVETYPE_BOUNCEMISSILE",
+	// Entity can solid take damage
+	"DAMAGE_NO",
+	"DAMAGE_YES",
+	"DAMAGE_AIM",
+	// Entity dead flag
+	"DEAD_NO",
+	"DEAD_DYING",
+	"DEAD_DEAD",
+	"DEAD_RESPAWNABLE",
+	// Spawnflags
+	"DOOR_START_OPEN",
+	"SPAWN_CRUCIFIED",
+	"PLAT_LOW_TRIGGER",
+	"SPAWNFLAG_NOTOUCH",
+	"SPAWNFLAG_NOMESSAGE",
+	"PLAYER_ONLY",
+	"SPAWNFLAG_SUPERSPIKE",
+	"SECRET_OPEN_ONCE",
+	"PUSH_ONCE",
+	"WEAPON_SHOTGUN",
+	"H_ROTTEN",
+	"WEAPON_BIG2",
+	"START_OFF",
+	"SILENT",
+	"SPAWNFLAG_LASER",
+	"SECRET_1ST_LEFT",
+	"WEAPON_ROCKET",
+	"H_MEGA",
+	"DOOR_DONT_LINK",
+	"SECRET_1ST_DOWN",
+	"WEAPON_SPIKES",
+	"DOOR_GOLD_KEY",
+	"SECRET_NO_SHOOT",
+	"WEAPON_BIG",
+	"DOOR_SILVER_KEY",
+	"SECRET_YES_SHOOT",
+	"DOOR_TOGGLE",
+	"FL_FLY",
+	"FL_SWIM",
+	"FL_CLIENT",
+	"FL_INWATER",
+	"FL_MONSTER",
+	"FL_GODMODE",
+	"FL_NOTARGET",
+	"FL_ITEM",
+	"FL_ONGROUND",
+	"FL_PARTIALGROUND",
+	"FL_WATERJUMP",
+	"FL_JUMPRELEASED",
+	// Network Protocol
+	"MSG_BROADCAST",
+	"MSG_ONE",
+	"MSG_ALL",
+	"MSG_INIT",
+	"MSG_MULTICAST",
+	"PRINT_LOW",
+	"PRINT_MEDIUM",
+	"PRINT_HIGH",
+	"PRINT_CHAT",
+	"MULTICAST_ALL",
+	"MULTICAST_PHS",
+	"MULTICAST_PVS",
+	"MULTICAST_ALL_R",
+	"MULTICAST_PHS_R",
+	"MULTICAST_PVS_R",
+	"SVC_SETVIEWPORT",
+	"SVC_SETANGLES",
+	"SVC_TEMPENTITY",
+	"SVC_KILLEDMONSTER",
+	"SVC_FOUNDSECRET",
+	"SVC_INTERMISSION",
+	"SVC_FINALE",
+	"SVC_CDTRACK",
+	"SVC_SELLSCREEN",
+	"SVC_UPDATE",
+	"SVC_SMALLKICK",
+	"SVC_BIGKICK",
+	"SVC_MUZZLEFLASH",
+	"TRUE",
+	"FALSE",
+	"RANGE_MELEE",
+	"RANGE_NEAR",
+	"RANGE_MID",
+	"RANGE_FAR",
+	"STATE_TOP",
+	"STATE_BOTTOM",
+	"STATE_UP",
+	"STATE_DOWN",
+	"VEC_ORIGIN",
+	"VEC_HULL_MIN",
+	"VEC_HULL_MAX",
+	"VEC_HULL2_MIN",
+	"VEC_HULL2_MAX",
+	"UPDATE_GENERAL",
+	"UPDATE_STATIC",
+	"UPDATE_BINARY",
+	"UPDATE_TEMP",
+	"AS_STRAIGHT",
+	"AS_SLIDING",
+	"AS_MELEE",
+	"AS_MISSILE",
+	NULL
+};
 
 
 //--------------------------------------------------------------//
 
-// CONSOLE APPLICATION HANDLE
-HANDLE hndOut;
-
-// FILE HANDLE
-HANDLE fhnd;
+FILE* inf;
+FILE* outf;
 
 char* memfile; // This will point to the current file placed in memory
 char* targetmem; // points to the memory containing the processed data
 
 // This will contain the size of the file currently open
-DWORD fsize;
-DWORD targetmempos;
-DWORD targetmemsize;
+unsigned int fsize;
+unsigned int targetmempos;
+unsigned int targetmemsize;
 
 unsigned int filecount; // counter for files included from current source code
 char curfile[MAX_ST_SIZE]; // filename of current file
@@ -252,10 +253,10 @@ unsigned int q_filenum; // the number of files on queue
 
 struct fileitem
 {
-    char filename[MAX_ST_SIZE]; // name of the file
-    char invoked_by[MAX_ST_SIZE]; // filename of the file where this one was included
-    int on_line; // line where it was invoked
-    bool compile; // should we compile this file?
+	char filename[MAX_ST_SIZE]; // name of the file
+	char invoked_by[MAX_ST_SIZE]; // filename of the file where this one was included
+	int on_line; // line where it was invoked
+	bool compile; // should we compile this file?
 };
 fileitem* filequeue[MAX_FILE_QUEUE]; // array of pointers to our queue of files to process
 
@@ -264,10 +265,10 @@ unsigned int q_parsenum; // the number of items on queue
 
 struct parseitem
 {
-    bool causes_parse; // the condition on this #IFDEF or #IFNDEF caused parsing? (excludes code?)
-    bool type; // it was an IFNDEF or IFDEF?
-    bool inversed; // are we in 'inversed' status after an ELSE ?
-    int on_line; // where this parsing condition occured on source code?
+	bool causes_parse; // the condition on this #IFDEF or #IFNDEF caused parsing? (excludes code?)
+	bool type; // it was an IFNDEF or IFDEF?
+	bool inversed; // are we in 'inversed' status after an ELSE ?
+	int on_line; // where this parsing condition occured on source code?
 };
 parseitem* parsequeue[MAX_PARSE_QUEUE]; // array of pointers to our parse queue
 
@@ -279,9 +280,9 @@ unsigned int gbyteswritten;
 
 struct defineitem
 {
-    char identifier[MAX_ST_SIZE]; // name of the define
-    bool is_defined; // if false, this define identifier was 'undefined' so we should ignore it
-    char value[MAX_ST_SIZE]; // the current value assigned to this define (string even for floats)
+	char identifier[MAX_ST_SIZE]; // name of the define
+	bool is_defined; // if false, this define identifier was 'undefined' so we should ignore it
+	char value[MAX_ST_SIZE]; // the current value assigned to this define (string even for floats)
 	bool is_used; // flag to determine if this define is ever used on code
 	char defined_by[MAX_ST_SIZE]; // filename where it was defined
 	int on_line; // line of quakeC code where this value was defined
@@ -305,7 +306,7 @@ unsigned int scan_offset;
 int curkeywtype;
 int curpragmatype;
 
-DWORD bytesread;
+unsigned int bytesread;
 
 char curident[MAX_ST_SIZE]; // tmpident
 char curvalue[MAX_ST_SIZE];
@@ -324,11 +325,12 @@ bool fastmode;
 
 int main(int argc, char **argv)
 {
-    // Get current tick for stats
-	startticks = GetTickCount();
+	// Get current tick for stats
+	// PZ: TODO Need GNU replacement
+	//startticks = GetTickCount();
 		
 	// Initialize stuff
-    char tstr[32]; // Temp string
+	char tstr[32]; // Temp string
 
 	fastmode = false;
 
@@ -342,124 +344,116 @@ int main(int argc, char **argv)
 			fastmode = true;
 	}
 
-    gdefscount = 0;
-    fdefscount = 0;
+	gdefscount = 0;
+	fdefscount = 0;
 
-    we_r_parsing = false;
-    we_r_lcomented = false;
-    we_r_bcomented = false;
+	we_r_parsing = false;
+	we_r_lcomented = false;
+	we_r_bcomented = false;
 
-    glinescount = 0;
-    flinescount = 0;
+	glinescount = 0;
+	flinescount = 0;
 
-    curfile[0] = NULL;
+	curfile[0] = '\0';
 
-    memfile = NULL;
-    targetmem = NULL;
+	memfile = NULL;
+	targetmem = NULL;
 
 	check_redefines = true;
-    keep_newlines = true;
+	keep_newlines = true;
 	check_unused = true;
 
 	gbytesread = 0;
 	gbyteswritten = 0;
 
-    // Init our file queue array pointers to NULL
-    for (int i = 0; i < MAX_FILE_QUEUE; i++)
-        filequeue[i] = NULL;
-    // Init to NULL parse queue array pointers
-    for (int i = 0; i < MAX_PARSE_QUEUE; i++)
-        parsequeue[i] = NULL;
+	// Init our file queue array pointers to NULL
+	for (int i = 0; i < MAX_FILE_QUEUE; i++)
+		filequeue[i] = NULL;
+	// Init to NULL parse queue array pointers
+	for (int i = 0; i < MAX_PARSE_QUEUE; i++)
+		parsequeue[i] = NULL;
 	// Init to NULL pointers to defines
 	for (int i = 0; i < MAX_DEFINES; i++)
 		deflist[i] = NULL;
 
-    q_parsepos = 0;
-    q_parsenum = 0;
+	q_parsepos = 0;
+	q_parsenum = 0;
 
-    q_filepos = 0;
-    q_filenum = 0;
+	q_filepos = 0;
+	q_filenum = 0;
 
-    scan_status = SCN_STATUS_IDLE;
-    // done - stuff ready
+	scan_status = SCN_STATUS_IDLE;
+	// done - stuff ready
 
-    // Get console app handle
-    hndOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	// Start-initialize message
+	PrintIt(ST_START);
 
-    // Check if it isn't valid
-    if (hndOut == INVALID_HANDLE_VALUE)
-    {
-        MessageBox(NULL,"CPpreQCC: Can't get a valid console handle!",ST_BOXERROR,NULL);
-        ExitProcess(1);
-    }
+	// Put 'preprogs' on queue of files to process
+	// PZ: allocate the string given to PutFileInQueue() because this string
+	// will need to be modified by CleanStr().
+	char preprogs[] = ST_PREPROGS_SRC;
+	PutFileInQueue(preprogs);
+	
+	//---------- FILE CYCLING LOOP -----------------//
+	for (unsigned int f=0; f<q_filenum; f++)
+	{
+		// Set current file string
+		strcpy(curfile,filequeue[q_filepos]->filename);
 
-	//SetConsoleTextAttribute(hndOut,FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+		// open the input file
+		inf = fopen(curfile, "rb");
+		// If failed to open, exit
+		if (!inf)
+		{
+			if (q_filepos == 0)
+				ErrorExit("Can't open 'preprogs.src' file!\n");
+			else
+			{
+				char tempstr[MAX_ST_SIZE+21];
+				tempstr[0] = '\0';
+				strcat(tempstr,"Can't open '");
+				strcat(tempstr,curfile);
+				strcat(tempstr,"' file!");
+				PrintSourceError(filequeue[q_filepos]->invoked_by,
+					filequeue[q_filepos]->on_line,
+					tempstr);
+			}
+		}
 
-    // Start-initialize message
-    PrintIt(ST_START);
-
-    // Put 'preprogs' on queue of files to process
-	PutFileInQueue(ST_PREPROGS_SRC);
-    
-    //---------- FILE CYCLING LOOP -----------------//
-    for (unsigned int f=0; f<q_filenum; f++)
-    {
-        // Set current file string
-        strcpy(curfile,filequeue[q_filepos]->filename);
-
-        // Get handle to file
-        fhnd = CreateFile(curfile,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,NULL,NULL);
-
-        // If failed to open, exit
-        if (fhnd == INVALID_HANDLE_VALUE)
-        {
-            if (q_filepos == 0)
-                ErrorExit("Can't open 'preprogs.src' file!\n");
-            else
-            {
-                char tempstr[MAX_ST_SIZE+21];
-                tempstr[0]=NULL;
-                strcat(tempstr,"Can't open '");
-                strcat(tempstr,curfile);
-                strcat(tempstr,"' file!");
-                PrintSourceError(filequeue[q_filepos]->invoked_by,
-                                 filequeue[q_filepos]->on_line,
-                                 tempstr);
-            }
-        }
-
-        // Get file size - FIXME: Won't work with 100gigabyte files and such :)
-        fsize = GetFileSize(fhnd,NULL);
+		// Get file size
+		fseek(inf, 0, SEEK_END);
+		fsize = ftell(inf);
+		fseek(inf, 0, SEEK_SET);
 
 		// Check if memory pointers are clean
 		if (memfile != NULL || targetmem != NULL)
 			ErrorExit("Memory error!\n");
 
-        // Allocate memory for source and output file
-        memfile = (char*)malloc(fsize + 2);
-        targetmem = (char*)malloc(fsize + 2); // Expanded with realloc by MAX_ST_SIZE byte increments if needed
-        if (memfile == NULL || targetmem == NULL)
-            ErrorExit("Failed memory allocation!\n");
+		// Allocate memory for source and output file
+		memfile = (char*)malloc(fsize + 2);
+		targetmem = (char*)malloc(fsize + 2); // Expanded with realloc by MAX_ST_SIZE byte increments if needed
+		if (memfile == NULL || targetmem == NULL)
+			ErrorExit("Failed memory allocation!\n");
+		
+		// LOAD FILE
+		if (!fread(memfile, 1, fsize, inf))
+		{
+			if (q_filepos == 0)
+				ErrorExit("Can't load 'preprogs.src' file!\n");
+			else
+			{
+				char tempstr[MAX_ST_SIZE+21];
+				tempstr[0] = '\0';
+				strcat(tempstr,"Can't load '");
+				strcat(tempstr,curfile);
+				strcat(tempstr,"' file!");
+				PrintSourceError(filequeue[q_filepos]->invoked_by,
+					 filequeue[q_filepos]->on_line,
+					 tempstr);
+			}
+		}
 
-        // LOAD FILE
-        if (ReadFile(fhnd,memfile,fsize,&bytesread,NULL) == 0)
-        {
-            if (q_filepos == 0)
-                ErrorExit("Can't load 'preprogs.src' file!\n");
-            else
-            {
-                char tempstr[MAX_ST_SIZE+21];
-                tempstr[0]=NULL;
-                strcat(tempstr,"Can't load '");
-                strcat(tempstr,curfile);
-                strcat(tempstr,"' file!");
-                PrintSourceError(filequeue[q_filepos]->invoked_by,
-                                 filequeue[q_filepos]->on_line,
-                                 tempstr);
-            }
-        }
-
-        // display load message		
+		// display load message		
 		if (fastmode)
 		{
 			PrintIt("parsing ");
@@ -482,53 +476,49 @@ int main(int argc, char **argv)
 		// Increase bytes read var
 		gbytesread += fsize;
 
-        // Prepare vars
-        targetmemsize = fsize;
-        targetmempos = 0; // our pos on the output memory stream to be the final file
-        scan_status = SCN_STATUS_IDLE;
-        scan_offset = 0;
-        curkeywtype = 0;
-        curpragmatype = 0;
-        flinescount = 0;
-        fdefscount = 0;
-        filecount = 0;
-        we_r_parsing = false;
-        we_r_lcomented = false;
-        we_r_bcomented = false;
-        quote_state = false;
-        parse_stack = 0;
+		// Prepare vars
+		targetmemsize = fsize;
+		targetmempos = 0; // our pos on the output memory stream to be the final file
+		scan_status = SCN_STATUS_IDLE;
+		scan_offset = 0;
+		curkeywtype = 0;
+		curpragmatype = 0;
+		flinescount = 0;
+		fdefscount = 0;
+		filecount = 0;
+		we_r_parsing = false;
+		we_r_lcomented = false;
+		we_r_bcomented = false;
+		quote_state = false;
+		parse_stack = 0;
 
-        // do it jimmy!
-        ProcessFile();
+		// do it jimmy!
+		ProcessFile();
 
-        // Perform cycle cleanup
-        if (memfile != NULL)
-        {
-            free(memfile);
-            memfile = NULL;
-        }
+		// Perform cycle cleanup
+		if (memfile != NULL)
+		{
+			free(memfile);
+			memfile = NULL;
+		}
 
-        // Close file
-        if (fhnd != INVALID_HANDLE_VALUE)
-        {
-            CloseHandle(fhnd);
-            fhnd = INVALID_HANDLE_VALUE;
-        }
+		// Close file
+		fclose(inf);
 
-        // display message
-        if (q_filepos == 0)
-        {
-            PrintIt("Pre-progs source (");
-            sprintf(tstr,"%d",q_filenum);
-            PrintIt(tstr);
-            PrintIt(" queued files) processed.\n");
-        }
-        else
-        {
-            if (!filequeue[q_filepos]->compile)
-            {
-                // display processed message
-                if (fastmode)
+		// display message
+		if (q_filepos == 0)
+		{
+			PrintIt("Pre-progs source (");
+			sprintf(tstr,"%d",q_filenum);
+			PrintIt(tstr);
+			PrintIt(" queued files) processed.\n");
+		}
+		else
+		{
+			if (!filequeue[q_filepos]->compile)
+			{
+				// display processed message
+				if (fastmode)
 				{
 					;//PrintIt(" done.\n");
 				}
@@ -549,57 +539,53 @@ int main(int argc, char **argv)
 					PrintIt(tstr);
 					PrintIt(" lines.\n");
 				}
-            }
-            else
-            {
-                ChangeFilename(curfile);
+			}
+			else
+			{
+				ChangeFilename(curfile);
 
-                fhnd = CreateFile(curfile,GENERIC_WRITE,NULL,NULL,CREATE_ALWAYS,NULL,NULL);
-                // If failed to open, exit
-                if (fhnd == INVALID_HANDLE_VALUE)
-                {
-                    if (q_filepos == 0)
-                        ErrorExit("Can't get a handle to write 'preprogs.src' file!\n");
-                    else
-                    {
-                        char tempstr[MAX_ST_SIZE+21];
-                        tempstr[0]=NULL;
-                        strcat(tempstr,"Can't get a handle to write '");
-                        strcat(tempstr,curfile);
-                        strcat(tempstr,"' file!");
-                        PrintSourceError(filequeue[q_filepos]->invoked_by,
-                                         filequeue[q_filepos]->on_line,
-                                         tempstr);
-                    }
-                }
+				outf = fopen(curfile, "wb");
+				// If failed to open, exit
+				if (!outf)
+				{
+					if (q_filepos == 0)
+						ErrorExit("Can't create/open 'preprogs.src'!\n");
+					else
+					{
+						char tempstr[MAX_ST_SIZE+21];
+						tempstr[0] = '\0';
+						strcat(tempstr,"Failed writing to file, '");
+						strcat(tempstr,curfile);
+						strcat(tempstr,"'!");
+						PrintSourceError(filequeue[q_filepos]->invoked_by,
+								filequeue[q_filepos]->on_line,
+								tempstr);
+					}
+				}
 
-                // WRITE FILE
-                if (WriteFile(fhnd,targetmem,targetmempos,&bytesread,NULL) == 0)
-                {
-                    if (q_filepos == 0)
-                        ErrorExit("Can't write 'preprogs.src' file!\n");
-                    else
-                    {
-                        char tempstr[MAX_ST_SIZE+21];
-                        tempstr[0]=NULL;
-                        strcat(tempstr,"Can't write '");
-                        strcat(tempstr,curfile);
-                        strcat(tempstr,"' file!");
-                        PrintSourceError(filequeue[q_filepos]->invoked_by,
-                                         filequeue[q_filepos]->on_line,
-                                         tempstr);
-                    }
-                }
+				// WRITE FILE
+				if (!fwrite(targetmem, 1, targetmempos, outf))
+				{
+					if (q_filepos == 0)
+						ErrorExit("Can't write 'preprogs.src' file!\n");
+					else
+					{
+						char tempstr[MAX_ST_SIZE+21];
+						tempstr[0] = '\0';
+						strcat(tempstr,"Can't write '");
+						strcat(tempstr,curfile);
+						strcat(tempstr,"' file!");
+						PrintSourceError(filequeue[q_filepos]->invoked_by,
+								filequeue[q_filepos]->on_line,
+								tempstr);
+					}
+				}
 
-                // Close file
-                if (fhnd != INVALID_HANDLE_VALUE)
-                {
-                    CloseHandle(fhnd);
-                    fhnd = INVALID_HANDLE_VALUE;
-                }
+				// Close file
+				fclose(outf);
 
-                // display written message
-                if (fastmode)
+				// display written message
+				if (fastmode)
 				{
 					;
 				}
@@ -622,95 +608,97 @@ int main(int argc, char **argv)
 				}
 
 				gbyteswritten += targetmempos;
-            }
+			}
 
-        }
+		}
 
-        // Clean targetmem
-        if (targetmem != NULL)
-        {
-            free(targetmem);
-            targetmem = NULL;
-        }
+		// Clean targetmem
+		if (targetmem != NULL)
+		{
+			free(targetmem);
+			targetmem = NULL;
+		}
 
-        q_filepos++;
-    }
-    //------ END OF FILE CYCLING LOOP -------//
+		q_filepos++;
+	}
+	//------ END OF FILE CYCLING LOOP -------//
 
 	// If enabled, check unused stuff
 	if (check_unused)
 		CheckUnused();
 
-    // Print global stats
-    PrintIt("------------ Preprocessor Results --------------\n");
-    sprintf(tstr,"%d",gdefscount);
-    PrintIt(tstr);
-    PrintIt(" defines, ");
-    sprintf(tstr,"%d",glinescount);
-    PrintIt(tstr);
-    PrintIt(" lines of code in ");
-    sprintf(tstr,"%d",q_filenum);
-    PrintIt(tstr);
-    PrintIt(" files.\n");
+	// Print global stats
+	PrintIt("------------ Preprocessor Results --------------\n");
+	sprintf(tstr,"%d",gdefscount);
+	PrintIt(tstr);
+	PrintIt(" defines, ");
+	sprintf(tstr,"%d",glinescount);
+	PrintIt(tstr);
+	PrintIt(" lines of code in ");
+	sprintf(tstr,"%d",q_filenum);
+	PrintIt(tstr);
+	PrintIt(" files.\n");
 
 	// Bytes read/written stats
-	sprintf(tstr,"%d bytes read and %d bytes written.\n",gbytesread,gbyteswritten);
-	PrintIt(tstr);
+	// PZ: fixed string overflow here that was causing a crash
+	char temp[128];
+	sprintf(temp, "%d bytes read and %d bytes written.\n", gbytesread, gbyteswritten);
+	PrintIt(temp);
 
-    // Write progs.src
-    fhnd = CreateFile("progs.src",GENERIC_WRITE,NULL,NULL,CREATE_ALWAYS,NULL,NULL);
+	// Write progs.src
+	outf = fopen("progs.src", "wb");
 
-    // If failed to open, exit
-    if (fhnd == INVALID_HANDLE_VALUE)
-        ErrorExit("Can't get a handle to write PROGS.SRC file!\n");
+	// If failed to open, exit
+	if (!outf)
+		ErrorExit("Can't open/create 'progs.src' for writing!\n");
 
-    // Writing PROGS.SRC !!
-    PrintIt("Writing \"progs.src\" ...\n");
+	// Writing PROGS.SRC !!
+	PrintIt("Writing \"progs.src\" ...\n");
 
-    // First line. Target progs filename
-    PrintFile("../prozac.dat\n");
+	// First line. Target progs filename
+	PrintFile(outf, "../prozac.dat\n");
 
-    int g;
-    g = 0;
-    for (int f = 1; f < q_filenum; f++)
-    {
-        if (filequeue[f]->compile)
-        {
-            ChangeFilename(filequeue[f]->filename);
+	int g;
+	g = 0;
+	for (int f = 1; f < q_filenum; f++)
+	{
+		if (filequeue[f]->compile)
+		{
+			ChangeFilename(filequeue[f]->filename);
 			CleanStr(filequeue[f]->filename);
-            PrintFile(filequeue[f]->filename);
-            PrintFile("\n");
-            g++;
-        }
-    }
+			PrintFile(outf, filequeue[f]->filename);
+			PrintFile(outf, "\n");
+			g++;
+		}
+	}
 
-    PrintIt("progs.src (");
-    sprintf(tstr,"%d",g);
-    PrintIt(tstr);
-    PrintIt(" files included) written.\n");
+	PrintIt("progs.src (");
+	sprintf(tstr,"%d",g);
+	PrintIt(tstr);
+	PrintIt(" files included) written.\n");
 
-    // Close file
-    if (fhnd != INVALID_HANDLE_VALUE)
-    {
-        CloseHandle(fhnd);
-        fhnd = INVALID_HANDLE_VALUE;
-    }
+	// Close file
+	fclose(outf);
 
-    // Get time elapsed
-	unsigned long endtime = GetTickCount();
+	// Get time elapsed
+	// PZ: TODO Need GNU replacement
+	//unsigned long endtime = GetTickCount();
 	
 	//..and print it
-	PrintIt("Time elapsed: ");
-	sprintf(tstr,"%.1f",float(endtime - startticks) /1000);
-	PrintIt(tstr);
-	PrintIt(" seconds.\n------------------------------------------------\n");
+	// PZ: Need GNU replacement
+	//PrintIt("Time elapsed: ");
+	//sprintf(tstr,"%.1f",float(endtime - startticks) /1000);
+	//PrintIt(tstr);
+	//PrintIt(" seconds.\n------------------------------------------------\n");
+	PrintIt("------------------------------------------------\n");
 
-    // Hopefully all is ok and job done... //
-    if (!fastmode)
+	// Hopefully all is ok and job done... //
+	if (!fastmode)
 		PrintIt(ST_SUCCESS);
 
-    PerformCleanUp();
-    return 0;
+	PerformCleanUp();
+
+	return 0;
 }
 
 //=================================================================================
@@ -718,465 +706,470 @@ int main(int argc, char **argv)
 
 void ProcessFile()
 {
-    unsigned int k;
+	unsigned int k;
 	unsigned int i;
 
 	// Process LOOP for each file
-    for (i=0; i<fsize; i++)
-    {
-        if (scan_status==SCN_STATUS_IDLE) // idle status, anything may come in
-        {
-            switch (memfile[i])
-            {
-                case '/':
+	for (i=0; i<fsize; i++)
+	{
+		if (scan_status==SCN_STATUS_IDLE) // idle status, anything may come in
+		{
+			switch (memfile[i])
+			{
+				case '/':
 
-                    if (i>0) // not on first char..
-                    {
-                        if (memfile[i-1]=='/') // and this is the second '/'..
-                            we_r_lcomented = true; // we are comented out for this line
-                        else if (memfile[i-1]=='*')
-                            we_r_bcomented = false; // we r not block comented anymore
-                    }
+					if (i>0) // not on first char..
+					{
+						if (memfile[i-1]=='/') // and this is the second '/'..
+							we_r_lcomented = true; // we are comented out for this line
+						else if (memfile[i-1]=='*')
+							we_r_bcomented = false; // we r not block comented anymore
+					}
 
-                    break;
+					break;
 
-                case '*':
+				case '*':
 
-                    if (i>0) // not on first char..
-                        if (memfile[i-1]=='/' && !we_r_lcomented) // we r not block comented and it was preceeded by a '/'
-                            we_r_bcomented = true; // we are comented out for this line
+					if (i>0) // not on first char..
+						if (memfile[i-1]=='/' && !we_r_lcomented) 
+							// we r not block comented and it was preceeded by a '/'
+							we_r_bcomented = true; // we are comented out for this line
 
-                    break;
+					break;
 
-                case '"':
+				case '"':
 
-                    if (!we_r_lcomented && !we_r_bcomented && !we_r_parsing)
-                        quote_state = !quote_state;
+					if (!we_r_lcomented && !we_r_bcomented && !we_r_parsing)
+						quote_state = !quote_state;
 
-                    break;
+					break;
 
-                case '#':
+				case '#':
 
-                    if (!we_r_lcomented && !we_r_bcomented) // if we arent comented out currently..
-                    {
-                        if (i+1 < fsize)
-                        {
-                            if (memfile[i+1]>=0x30 && memfile[i+1]<=0x39)
-                            {
-                                ; // its a built-in declaration, do nothing
-                            }
-                            else
-                            {
-                                scan_status = SCN_STATUS_KEYWORD; // change mode --->
-                                scan_offset = i + 1; // <----> save pos
-                            }
-                        }
-                    }
+					if (!we_r_lcomented && !we_r_bcomented) // if we arent comented out currently..
+					{
+						if (i+1 < fsize)
+						{
+							if (memfile[i+1]>=0x30 && memfile[i+1]<=0x39)
+							{
+								; // its a built-in declaration, do nothing
+							}
+							else
+							{
+								scan_status = SCN_STATUS_KEYWORD; // change mode --->
+								scan_offset = i + 1; // <----> save pos
+							}
+						}
+					}
 
-                    break;
-            }
-        }
-        else if (scan_status == SCN_STATUS_KEYWORD) // expecting a keyword or define identifier
-        {
-            switch (memfile[i])
-            {
-                case '!':
-                case '*':
-                case '+':
-                case '-':
-                case '=':
-                case ')':
-                case '(':
-                case '/':
-                case '.':
-                case ',':
-                case '<':
-                case '>':
-                case '{':
-                case '}':
-                case '"':
-                case '&':
-                case '|':
-                case ';': // separators, GET KEYWORD, if the directive wants data, return an ERROR
+					break;
+			}
+		}
+		else if (scan_status == SCN_STATUS_KEYWORD) // expecting a keyword or define identifier
+		{
+			switch (memfile[i])
+			{
+				case '!':
+				case '*':
+				case '+':
+				case '-':
+				case '=':
+				case ')':
+				case '(':
+				case '/':
+				case '.':
+				case ',':
+				case '<':
+				case '>':
+				case '{':
+				case '}':
+				case '"':
+				case '&':
+				case '|':
+				case ';': // separators, GET KEYWORD, if the directive wants data, return an ERROR
 
-                    if (scan_offset == i) // Empty keyword error
-                        PrintSourceError(curfile,flinescount,"#..? Directive or identifier expected.");
+					if (scan_offset == i) // Empty keyword error
+						PrintSourceError(curfile,flinescount,"#..? Directive or identifier expected.");
 
-                    curkeywtype = GetKeywordType(i);
+					curkeywtype = GetKeywordType(i);
 
-                    if (DirectiveWantsData(curkeywtype))
-						PrintSourceError(curfile,flinescount,"Illegal separator use in directive or identifier.");
+					if (DirectiveWantsData(curkeywtype))
+						PrintSourceError(curfile,flinescount,
+								"Illegal separator use in directive or identifier.");
 
-                    ExecuteDirective(i);                    
-                    break;
+					ExecuteDirective(i);                    
+					break;
 
-                case ' ': // Space or tab char, special separators
-                case 0x09: // GET KEYWORD, SET NEW STATUS
+				case ' ': // Space or tab char, special separators
+				case 0x09: // GET KEYWORD, SET NEW STATUS
 
-                    if (scan_offset == i) // Empty keyword error
-                        PrintSourceError(curfile,flinescount,"#..? Directive or identifier expected.");
+					if (scan_offset == i) // Empty keyword error
+						PrintSourceError(curfile,flinescount,"#..? Directive or identifier expected.");
 
-                    curkeywtype = GetKeywordType(i);
+					curkeywtype = GetKeywordType(i);
 
-                    ExecuteDirective(i); // UPDATES GLOBALS, STATUS, AND APPLY CHANGES (reads curkeywtype var)
-                    break;
+					ExecuteDirective(i); // UPDATES GLOBALS, STATUS, AND APPLY CHANGES (reads curkeywtype var)
+					break;
 
-                case 0x0D:
-                case 0x0A: // GET KEYWORD, IF VALUE NEEDED, RETURN ERROR
+				case 0x0D:
+				case 0x0A: // GET KEYWORD, IF VALUE NEEDED, RETURN ERROR
 
-                    if (scan_offset == i) // Empty keyword error
-                        PrintSourceError(curfile,flinescount,"#..? Directive or identifier expected.");
+					if (scan_offset == i) // Empty keyword error
+						PrintSourceError(curfile,flinescount,"#..? Directive or identifier expected.");
 
-                    curkeywtype = GetKeywordType(i);
+					curkeywtype = GetKeywordType(i);
 
-                    if (DirectiveWantsData(curkeywtype))
+					if (DirectiveWantsData(curkeywtype))
 						PrintSourceError(curfile,flinescount,"Unexpected end of line.");
 
-                    ExecuteDirective(i);
-                    break;
+					ExecuteDirective(i);
+					break;
 
-                case '#':
+				case '#':
 
-                    if (scan_offset == i) // consecutive #?
-                    {
-					    PrintSourceWarning(curfile,flinescount,"Consecutive '#'s. (results in a single char)");
+					if (scan_offset == i) // consecutive #?
+					{
+						PrintSourceWarning(curfile,flinescount,"Consecutive '#'s. (results in a single char)");
 						scan_status = SCN_STATUS_IDLE;
 					}
 					else
 						PrintSourceError(curfile,flinescount,"Invalid '#' char inside keyword.");
 
-                    break;
-            }
-        }
-        else if (scan_status == SCN_STATUS_PRAGMA) // expecting a pragma identifier
-        {
-            switch (memfile[i])
-            {
-                case '!':
-                case '*':
-                case '+':
-                case '-':
-                case '=':
-                case ')':
-                case '(':
-                case '/':
-                case '.':
-                case ',':
-                case '<':
-                case '>':
-                case '{':
-                case '}':
-                case '"':
-                case '&':
-                case '|':
-                case ';': // separators, illegal expecting a pragma, return an ERROR
+					break;
+			}
+		}
+		else if (scan_status == SCN_STATUS_PRAGMA) // expecting a pragma identifier
+		{
+			switch (memfile[i])
+			{
+				case '!':
+				case '*':
+				case '+':
+				case '-':
+				case '=':
+				case ')':
+				case '(':
+				case '/':
+				case '.':
+				case ',':
+				case '<':
+				case '>':
+				case '{':
+				case '}':
+				case '"':
+				case '&':
+				case '|':
+				case ';': // separators, illegal expecting a pragma, return an ERROR
 
-                    PrintSourceError(curfile,flinescount,"Pragma identifier expected.");
-                    break;
+					PrintSourceError(curfile,flinescount,"Pragma identifier expected.");
+					break;
 
-                case ' ': // Space or tab char, legal
-                case 0x09: // GET KEYWORD, SET NEW STATUS
+				case ' ': // Space or tab char, legal
+				case 0x09: // GET KEYWORD, SET NEW STATUS
 
-                    curpragmatype = GetPragmaType(i);
+					curpragmatype = GetPragmaType(i);
 
-                    // Unsupported pragma?
-                    if (curpragmatype == 0)
-                        PrintSourceError(curfile,flinescount,"Unknown/Unsupported pragma.");
+					// Unsupported pragma?
+					if (curpragmatype == 0)
+						PrintSourceError(curfile,flinescount,"Unknown/Unsupported pragma.");
 
-                    if (curpragmatype != PRAGMA_EMPTYSTILL) // if pragma wasnt empty..
-                        ExecutePragma(i); // UPDATES GLOBALS, STATUS, AND APPLY CHANGES (reads curkeywtype var)
+					if (curpragmatype != PRAGMA_EMPTYSTILL) // if pragma wasnt empty..
+						ExecutePragma(i); // UPDATES GLOBALS, STATUS, AND APPLY CHANGES (reads curkeywtype var)
 
-                    break;
+					break;
 
-                case 0x0D:
-                case 0x0A: // GET KEYWORD, IF VALUE NEEDED, RETURN ERROR
+				case 0x0D:
+				case 0x0A: // GET KEYWORD, IF VALUE NEEDED, RETURN ERROR
 
-                    if (scan_offset == i) // end of line just before PRAGMA
-                        PrintSourceError(curfile,flinescount,"Pragma identifier expected.");
+					if (scan_offset == i) // end of line just before PRAGMA
+						PrintSourceError(curfile,flinescount,"Pragma identifier expected.");
 
-                    curpragmatype = GetPragmaType(i);
+					curpragmatype = GetPragmaType(i);
 
-                    // Unsupported pragma?
-                    if (curpragmatype == 0)
-                        PrintSourceError(curfile,flinescount,"Unknown/Unsupported pragma.");
+					// Unsupported pragma?
+					if (curpragmatype == 0)
+						PrintSourceError(curfile,flinescount,"Unknown/Unsupported pragma.");
 
-                    if (curpragmatype != -1) // if pragma wasnt empty..
-                        ExecutePragma(i); // UPDATES GLOBALS, STATUS, AND APPLY CHANGES (reads curkeywtype var)
+					if (curpragmatype != -1) // if pragma wasnt empty..
+						ExecutePragma(i); // UPDATES GLOBALS, STATUS, AND APPLY CHANGES (reads curkeywtype var)
 
-                    break;
+					break;
 
-                case '#':
+				case '#':
 
-                    PrintSourceError(curfile,flinescount,"Invalid '#' char, pragma identifier expected.");
-                    break;
-            }
-        }
-        else if (scan_status == SCN_STATUS_VALUE) // watching for data for define, parse quotes? nope..
-        {
-            if (i - scan_offset > MAX_ST_SIZE - 1)
-                PrintSourceError(curfile,flinescount,"Value exceeds string char max (255)");
+					PrintSourceError(curfile,flinescount,"Invalid '#' char, pragma identifier expected.");
+					break;
+			}
+		}
+		else if (scan_status == SCN_STATUS_VALUE) // watching for data for define, parse quotes? nope..
+		{
+			if (i - scan_offset > MAX_ST_SIZE - 1)
+				PrintSourceError(curfile,flinescount,"Value exceeds string char max (255)");
 
-            switch (memfile[i])
-            {
-                case 0x0D:
-                case 0x0A:
+			switch (memfile[i])
+			{
+				case 0x0D:
+				case 0x0A:
 
-                    // Get current value string
-                    for (k = 0; k < (i - scan_offset); k++)
-                        curvalue[k] = memfile[scan_offset + k];
+					// Get current value string
+					for (k = 0; k < (i - scan_offset); k++)
+						curvalue[k] = memfile[scan_offset + k];
 
-                    if (IsNotEmpty(curvalue)!=0)
-                        PutDefineInList(curident,curvalue);
-                    else // Use a default value for our define, as VALUE is empty
-					    PutDefineInList(curident,"1\0");
+					if (IsNotEmpty(curvalue)!=0)
+						PutDefineInList(curident,curvalue);
+					else // Use a default value for our define, as VALUE is empty
+						PutDefineInList(curident,"1\0");
 
-                    scan_status = SCN_STATUS_IDLE;
-                    break;
-            }
-        }
-        else if (scan_status == SCN_STATUS_LIST) // we r inside an include list
-        {
-            if (i - scan_offset > MAX_ST_SIZE - 1)
-                PrintSourceError(curfile,flinescount,"Filename string exceeds char max (255)");
+					scan_status = SCN_STATUS_IDLE;
+					break;
+			}
+		}
+		else if (scan_status == SCN_STATUS_LIST) // we r inside an include list
+		{
+			if (i - scan_offset > MAX_ST_SIZE - 1)
+				PrintSourceError(curfile,flinescount,"Filename string exceeds char max (255)");
 
-            switch (memfile[i])
-            {
-                case 0x0D:
-                case 0x0A:
+			switch (memfile[i])
+			{
+				case 0x0D:
+				case 0x0A:
 
-                    // Get current filename string
-                    for (k = 0; k < (i - scan_offset); k++)
-                        curvalue[k] = memfile[scan_offset + k];
+					// Get current filename string
+					for (k = 0; k < (i - scan_offset); k++)
+						curvalue[k] = memfile[scan_offset + k];
 
-                    if (IsNotEmpty(curvalue)!=0)
-                    {
-                        PutFileInQueue(curvalue);
-                    }
+					if (IsNotEmpty(curvalue)!=0)
+					{
+						PutFileInQueue(curvalue);
+					}
 
-                    scan_offset = i + 1;
-                    memset(curvalue,NULL,MAX_ST_SIZE);
+					scan_offset = i + 1;
+					memset(curvalue,0,MAX_ST_SIZE);
 
-                    break;
+					break;
 
-                case '#':
+				case '#':
 
-                    // Check for end of list
-                    if (IsValidEndList(i))
-                    {
-                        i = i + 7; // update our pos, as we dont want ENDLIST to be written on output file
-                        scan_status = SCN_STATUS_IDLE;
-                    }
-                    else
-                        PrintSourceError(curfile,flinescount,"Directives not supported inside INCLUDELIST.");
+					// Check for end of list
+					if (IsValidEndList(i))
+					{
+						i = i + 7; // update our pos, as we dont want ENDLIST to be written on output file
+						scan_status = SCN_STATUS_IDLE;
+					}
+					else
+						PrintSourceError(curfile,flinescount,"Directives not supported inside INCLUDELIST.");
 
-                    break;
-            }
-        }
-        else if (scan_status == SCN_STATUS_DEFINE) // waiting a define identifier for a DEFINE, UNDEF, IFDEF, IFNDEF
-        {
-            if (i - scan_offset > MAX_ST_SIZE - 1)
-                PrintSourceError(curfile,flinescount,"Identifier exceeds string char max (255)");
+					break;
+			}
+		}
+		else if (scan_status == SCN_STATUS_DEFINE) 
+		// waiting a define identifier for a DEFINE, UNDEF, IFDEF, IFNDEF
+		{
+			if (i - scan_offset > MAX_ST_SIZE - 1)
+				PrintSourceError(curfile,flinescount,"Identifier exceeds string char max (255)");
 
-            switch (memfile[i])
-            {
-                case 0x0D:
-                case 0x0A:
+			switch (memfile[i])
+			{
+				case 0x0D:
+				case 0x0A:
 
-                    if (scan_offset == i) // end of line just before keyword
-                        PrintSourceError(curfile,flinescount,"Define identifier expected.");
+					if (scan_offset == i) // end of line just before keyword
+						PrintSourceError(curfile,flinescount,"Define identifier expected.");
 
-                    // Get current identifier string
-                    for (k = 0; k < (i - scan_offset); k++)
-                        curident[k] = memfile[scan_offset + k];
+					// Get current identifier string
+					for (k = 0; k < (i - scan_offset); k++)
+						curident[k] = memfile[scan_offset + k];
 
-                    if (IsNotEmpty(curident)!=0)
-                    {
-                        CleanStr(curident);
+					if (IsNotEmpty(curident)!=0)
+					{
+						CleanStr(curident);
 
-                        int numdefine = IsDefined(curident);
+						int numdefine = IsDefined(curident);
 
-                        switch (curkeywtype)
-                        {
-                            case DIRECTIVE_IFDEF:
+						char temp[] = "1\0"; // PZ
 
-                                // Add our new parsing item to queue
-                                if (numdefine == 0) // not defined
-                                   PutParseInQueue(PARSE_IFDEF, true);
-                                else // defined
+						switch (curkeywtype)
+						{
+							case DIRECTIVE_IFDEF:
+
+								// Add our new parsing item to queue
+								if (numdefine == 0) // not defined
+									PutParseInQueue(PARSE_IFDEF, true);
+								else // defined
 								{
-                                   PutParseInQueue(PARSE_IFDEF, false);
-								   deflist[numdefine -1]->is_used = true;
+									PutParseInQueue(PARSE_IFDEF, false);
+									deflist[numdefine -1]->is_used = true;
 								}
 
-                                scan_status = SCN_STATUS_IDLE;
+								scan_status = SCN_STATUS_IDLE;
 
-                                break;
+								break;
 
-                            case DIRECTIVE_IFNDEF:
+							case DIRECTIVE_IFNDEF:
 
-                                // Add our new parsing item to queue
-                                if (numdefine == 0) // not defined
-                                   PutParseInQueue(PARSE_IFNDEF, false);
-                                else // defined
-                                {
-								   PutParseInQueue(PARSE_IFNDEF, true);
-								   deflist[numdefine -1]->is_used = true;
-								}
-
-                                scan_status = SCN_STATUS_IDLE;
-
-                                break;
-
-                            case DIRECTIVE_UNDEF:
-
-                                if (numdefine == 0) // not defined
-                                   PrintSourceWarning(curfile,flinescount,"Nothing to undefine, not defined.");
-                                else // defined
-                                   UndefineItem(numdefine);
-
-                                scan_status = SCN_STATUS_IDLE;
-
-                                break;
-
-                            case DIRECTIVE_DEFINE:
-
-                                // Add our new define with a "1" default value
-								PutDefineInList(curident,"1\0");
-                                scan_status = SCN_STATUS_IDLE;
-                                break;
-
-                            default:
-
-                                ErrorExit("Invalid 'curkeywtype' in processfile() function!\n");
-
-                        }
-
-                        scan_status = SCN_STATUS_IDLE;
-                    }
-                    else // end of line and empty identifier
-                         PrintSourceError(curfile,flinescount,"Define identifier expected.");
-
-                    break;
-
-                case 0x09:
-                case ' ':
-
-                    // Get current identifier string
-                    for (k = 0; k < (i - scan_offset); k++)
-                        curident[k] = memfile[scan_offset + k];
-
-                    if (IsNotEmpty(curident)!=0)
-                    {
-                        CleanStr(curident);
-
-                        int numdefine = IsDefined(curident);
-
-                        switch (curkeywtype)
-                        {
-                            case DIRECTIVE_IFDEF:
-
-                                // Add our new parsing item to queue
-                                if (numdefine == 0) // not defined
-                                   PutParseInQueue(PARSE_IFDEF, true);
-                                else // defined
+								// Add our new parsing item to queue
+								if (numdefine == 0) // not defined
+									PutParseInQueue(PARSE_IFNDEF, false);
+								else // defined
 								{
-                                   PutParseInQueue(PARSE_IFDEF, false);
-								   deflist[numdefine -1]->is_used = true;
+									PutParseInQueue(PARSE_IFNDEF, true);
+									deflist[numdefine -1]->is_used = true;
 								}
 
-                                scan_status = SCN_STATUS_IDLE;
-                                break;
+								scan_status = SCN_STATUS_IDLE;
 
-                            case DIRECTIVE_IFNDEF:
+								break;
 
-                                // Add our new parsing item to queue
-                                if (numdefine == 0) // not defined
-                                   PutParseInQueue(PARSE_IFNDEF, false);
-                                else // defined
+							case DIRECTIVE_UNDEF:
+
+								if (numdefine == 0) // not defined
+									PrintSourceWarning(curfile,flinescount,"Nothing to undefine, not defined.");
+								else // defined
+									UndefineItem(numdefine);
+
+								scan_status = SCN_STATUS_IDLE;
+
+								break;
+
+							case DIRECTIVE_DEFINE:
+
+								// Add our new define with a "1" default value
+								// PZ: allocate the 2nd string given to PutDefineInList() because this string
+								// will need to be modified by CleanStr().
+								PutDefineInList(curident, temp);
+								scan_status = SCN_STATUS_IDLE;
+								break;
+
+								default:
+
+								ErrorExit("Invalid 'curkeywtype' in processfile() function!\n");
+						}
+
+						scan_status = SCN_STATUS_IDLE;
+					}
+					else // end of line and empty identifier
+						PrintSourceError(curfile,flinescount,"Define identifier expected.");
+
+					break;
+
+				case 0x09:
+				case ' ':
+
+					// Get current identifier string
+					for (k = 0; k < (i - scan_offset); k++)
+						curident[k] = memfile[scan_offset + k];
+
+					if (IsNotEmpty(curident)!=0)
+					{
+						CleanStr(curident);
+
+						int numdefine = IsDefined(curident);
+
+						switch (curkeywtype)
+						{
+							case DIRECTIVE_IFDEF:
+
+								// Add our new parsing item to queue
+								if (numdefine == 0) // not defined
+									PutParseInQueue(PARSE_IFDEF, true);
+								else // defined
 								{
-                                   PutParseInQueue(PARSE_IFNDEF, true);
-								   deflist[numdefine -1]->is_used = true;
+									PutParseInQueue(PARSE_IFDEF, false);
+									deflist[numdefine -1]->is_used = true;
 								}
 
-                                scan_status = SCN_STATUS_IDLE;
-                                break;
+								scan_status = SCN_STATUS_IDLE;
+								break;
 
-                            case DIRECTIVE_UNDEF:
+							case DIRECTIVE_IFNDEF:
 
-                                if (numdefine == 0) // not defined
-                                   PrintSourceWarning(curfile,flinescount,"Nothing to undefine, not defined.");
-                                else // defined
-                                   UndefineItem(numdefine);
+								// Add our new parsing item to queue
+								if (numdefine == 0) // not defined
+									PutParseInQueue(PARSE_IFNDEF, false);
+								else // defined
+								{
+									PutParseInQueue(PARSE_IFNDEF, true);
+									deflist[numdefine -1]->is_used = true;
+								}
 
-                                scan_status = SCN_STATUS_IDLE;
-                                break;
+								scan_status = SCN_STATUS_IDLE;
+								break;
 
-                            case DIRECTIVE_DEFINE:
+							case DIRECTIVE_UNDEF:
 
-                                scan_status = SCN_STATUS_VALUE; // we need the value string
-                                memset(curvalue,NULL,MAX_ST_SIZE);
-                                scan_offset = i + 1;
+								if (numdefine == 0) // not defined
+									PrintSourceWarning(curfile,flinescount,"Nothing to undefine, not defined.");
+								else // defined
+									UndefineItem(numdefine);
 
-                                break;
+								scan_status = SCN_STATUS_IDLE;
+								break;
 
-                            default:
+							case DIRECTIVE_DEFINE:
 
-                                ErrorExit("Invalid 'curkeywtype' in processfile() function!\n");
+								scan_status = SCN_STATUS_VALUE; // we need the value string
+								memset(curvalue,0,MAX_ST_SIZE);
+								scan_offset = i + 1;
 
-                        }
-                    }
-            }
-        }
+								break;
 
-        if ((scan_status == SCN_STATUS_IDLE && !we_r_parsing) || // If we r in idle status and not parsing
-            (memfile[i]==0x0A || memfile[i]==0x0D)) // or it is a line break, and keepnewlines pragma is on..
-        {
-            WriteOutChar(memfile[i]);
+							default:
 
-            if (memfile[i]==0x0D)
-            {
-                we_r_lcomented = false;
-                flinescount++;
-            }
-            else if (memfile[i]==0x0A)
-            {
-                we_r_lcomented = false;
+								ErrorExit("Invalid 'curkeywtype' in processfile() function!\n");
+						}
+					}
+			}
+		}
 
-                if (i>0) // not on first char..
-                    if (memfile[i-1]!=0x0D) // only counts a line break if we found a 0x0a first
-                    {
-                        flinescount++;
-                        glinescount++;
-                    }
-            }
-        }
-    }
+		if ((scan_status == SCN_STATUS_IDLE && !we_r_parsing) || // If we r in idle status and not parsing
+			(memfile[i]==0x0A || memfile[i]==0x0D)) // or it is a line break, and keepnewlines pragma is on..
+		{
+			WriteOutChar(memfile[i]);
 
-    // CHECK FOR ERRORS FINISHING
+			if (memfile[i]==0x0D)
+			{
+				we_r_lcomented = false;
+				flinescount++;
+			}
+			else if (memfile[i]==0x0A)
+			{
+				we_r_lcomented = false;
 
-    //- Parsing error -//
-    if (q_parsenum > 0)
-    {
-        if (parsequeue[q_parsenum-1]->type == PARSE_IFDEF)
-            PrintSourceError(curfile,parsequeue[q_parsenum-1]->on_line,"IFDEF without ENDIF");
-        else if (parsequeue[q_parsenum-1]->type == PARSE_IFNDEF)
-            PrintSourceError(curfile,parsequeue[q_parsenum-1]->on_line,"IFNDEF without ENDIF");
-    }
+				if (i>0) // not on first char..
+					if (memfile[i-1]!=0x0D) // only counts a line break if we found a 0x0a first
+					{
+						flinescount++;
+						glinescount++;
+					}
+			}
+		}
+	}
 
-    // If we are inside a list
-    if (scan_status == SCN_STATUS_LIST)
-        PrintSourceError(curfile,flinescount,"Not found ENDLIST for INCLUDELIST!");
+	// CHECK FOR ERRORS FINISHING
 
-    // Check for quoted state ending
-    if (quote_state)
-        PrintSourceWarning(curfile,flinescount,"File ends in quote state.");
+	//- Parsing error -//
+	if (q_parsenum > 0)
+	{
+		if (parsequeue[q_parsenum-1]->type == PARSE_IFDEF)
+			PrintSourceError(curfile,parsequeue[q_parsenum-1]->on_line,"IFDEF without ENDIF");
+		else if (parsequeue[q_parsenum-1]->type == PARSE_IFNDEF)
+			PrintSourceError(curfile,parsequeue[q_parsenum-1]->on_line,"IFNDEF without ENDIF");
+	}
 
-    // Check for block commented end
-    if (we_r_bcomented)
-        PrintSourceWarning(curfile,flinescount,"File ends block-commented.");
+	// If we are inside a list
+	if (scan_status == SCN_STATUS_LIST)
+		PrintSourceError(curfile,flinescount,"Not found ENDLIST for INCLUDELIST!");
 
-    // Update global line counter //
-    glinescount += flinescount;
+	// Check for quoted state ending
+	if (quote_state)
+		PrintSourceWarning(curfile,flinescount,"File ends in quote state.");
+
+	// Check for block commented end
+	if (we_r_bcomented)
+		PrintSourceWarning(curfile,flinescount,"File ends block-commented.");
+
+	// Update global line counter //
+	glinescount += flinescount;
 }
 
 //======================================================================
@@ -1184,11 +1177,11 @@ void ProcessFile()
 
 void WriteOutChar(char data)
 {
-    if (targetmempos >= targetmemsize) // Do we need more memory for output?
-        ExpandTargetMem();
+	if (targetmempos >= targetmemsize) // Do we need more memory for output?
+		ExpandTargetMem();
 
-    targetmem[targetmempos] = data;
-    targetmempos ++;
+	targetmem[targetmempos] = data;
+	targetmempos ++;
 }
 
 //==============================================
@@ -1196,26 +1189,15 @@ void WriteOutChar(char data)
 
 void PrintIt (char* what)
 {
-    DWORD cWritten;
-
-    if (!WriteFile(hndOut,what,strlen(what),&cWritten,NULL))
-    {
-        MessageBox(NULL,"Can't write to standard output",ST_BOXERROR,NULL);
-        ExitProcess(3);
-    }
+	printf(what);
 }
 
 //===============================================
 // Puts the given text into the current file
 
-void PrintFile (char* what)
+void PrintFile (FILE* file, char* what)
 {
-    DWORD cWritten;
-
-    if (!WriteFile(fhnd,what,strlen(what),&cWritten,NULL))
-    {
-        ErrorExit("Error writing PROGS.SRC file!");
-    }
+	fprintf(file, what);
 }
 
 //==================================================================
@@ -1223,19 +1205,19 @@ void PrintFile (char* what)
 
 void PrintSourceWarning (char* thefile, int theline, char* what)
 {
-    if (fastmode) return;
+	if (fastmode) return;
 	
 	theline++;
 
-    char tempstr[20];
-    sprintf(tempstr,"%d",theline);
+	char tempstr[20];
+	sprintf(tempstr,"%d",theline);
 
-    PrintIt(thefile);
-    PrintIt(":");
-    PrintIt(tempstr);
-    PrintIt(":WARNING! ");
-    PrintIt(what);
-    PrintIt("\n");
+	PrintIt(thefile);
+	PrintIt(":");
+	PrintIt(tempstr);
+	PrintIt(":WARNING! ");
+	PrintIt(what);
+	PrintIt("\n");
 }
 
 //=======================================================================
@@ -1243,19 +1225,19 @@ void PrintSourceWarning (char* thefile, int theline, char* what)
 
 void PrintSourceInfo (char* thefile, int theline, char* what)
 {
-    if (fastmode) return;
+	if (fastmode) return;
 	
 	theline++;
 
-    char tempstr[20];
-    sprintf(tempstr,"%d",theline);
+	char tempstr[20];
+	sprintf(tempstr,"%d",theline);
 
-    PrintIt(thefile);
-    PrintIt(":");
-    PrintIt(tempstr);
-    PrintIt(":INFO ");
-    PrintIt(what);
-    PrintIt("\n");
+	PrintIt(thefile);
+	PrintIt(":");
+	PrintIt(tempstr);
+	PrintIt(":INFO ");
+	PrintIt(what);
+	PrintIt("\n");
 }
 
 //===================================================================
@@ -1263,19 +1245,19 @@ void PrintSourceInfo (char* thefile, int theline, char* what)
 
 void PrintSourceError (char* thefile, int theline, char* what)
 {
-    theline++;
+	theline++;
 
-    char tempstr[20];
-    sprintf(tempstr,"%d",theline);
+	char tempstr[20];
+	sprintf(tempstr,"%d",theline);
 
-    PrintIt(thefile);
-    PrintIt(":");
-    PrintIt(tempstr);
-    PrintIt(":ERROR! ");
-    PrintIt(what);
-    PrintIt("\n");
+	PrintIt(thefile);
+	PrintIt(":");
+	PrintIt(tempstr);
+	PrintIt(":ERROR! ");
+	PrintIt(what);
+	PrintIt("\n");
 
-    SourceErrorExit(); // Exits the program
+	SourceErrorExit(); // Exits the program
 }
 
 //===================================================================
@@ -1283,11 +1265,13 @@ void PrintSourceError (char* thefile, int theline, char* what)
 
 void ExpandTargetMem()
 {
-    targetmem = (char*)realloc(targetmem, targetmemsize + MAX_ST_SIZE); // we need 128 more as max, as value strings can become 127 chars + NULL
-    if (targetmem == NULL)
-        ErrorExit("Error expanding memory for output file!\n");
+	// we need 128 more as max, as value strings can become 127 chars + NULL
+	targetmem = (char*)realloc(targetmem, targetmemsize + MAX_ST_SIZE);
 
-    targetmemsize = targetmemsize + MAX_ST_SIZE;
+	if (targetmem == NULL)
+		ErrorExit("Error expanding memory for output file!\n");
+
+	targetmemsize = targetmemsize + MAX_ST_SIZE;
 }
 
 //===========================================================================
@@ -1295,10 +1279,10 @@ void ExpandTargetMem()
 
 void ErrorExit(char *msg)
 {
-    PrintIt("PROGRAM ERROR! ");
-    PrintIt(msg);
-    PerformCleanUp();
-    ExitProcess(2);
+	PrintIt("PROGRAM ERROR! ");
+	PrintIt(msg);
+	PerformCleanUp();
+	exit(2);
 }
 
 //==================================================================
@@ -1306,9 +1290,9 @@ void ErrorExit(char *msg)
 
 void SourceErrorExit()
 {
-    PrintIt("Can't continue, error found.\n");
-    PerformCleanUp();
-    ExitProcess(1);
+	PrintIt("Can't continue, error found.\n");
+	PerformCleanUp();
+	exit(1);
 }
 
 //============================================================
@@ -1316,38 +1300,38 @@ void SourceErrorExit()
 
 void PerformCleanUp ()
 {
-    unsigned int i;
+	unsigned int i;
 
 	// file clean-up?
-    if (fhnd != INVALID_HANDLE_VALUE)
-        CloseHandle(fhnd);
+	if (inf)  fclose(inf);
+	if (outf) fclose(outf);
 
-    // Is our file buffer clean?
-    if (memfile != NULL)
-        free(memfile);
-    if (targetmem != NULL)
-        free(targetmem);
+	// Is our file buffer clean?
+	if (memfile != NULL)
+		free(memfile);
+	if (targetmem != NULL)
+		free(targetmem);
 
-    // Free our file queue items
-    for (i = 0; i < MAX_FILE_QUEUE && i < q_filenum; i++)
-    {
-        if (filequeue[i]!=NULL)
-            delete filequeue[i];
-    }
+	// Free our file queue items
+	for (i = 0; i < MAX_FILE_QUEUE && i < q_filenum; i++)
+	{
+		if (filequeue[i]!=NULL)
+			delete filequeue[i];
+	}
 
-    // Free our parse queue items
-    for (i = 0; i < MAX_PARSE_QUEUE && i < q_parsenum; i++)
-    {
-        if (parsequeue[i]!=NULL)
-            delete parsequeue[i];
-    }
+	// Free our parse queue items
+	for (i = 0; i < MAX_PARSE_QUEUE && i < q_parsenum; i++)
+	{
+		if (parsequeue[i]!=NULL)
+			delete parsequeue[i];
+	}
 
 	// Free our define list
-    for (i = 0; i < MAX_DEFINES && i < gdefscount; i++)
-    {
-        if (deflist[i]!=NULL)
-            delete deflist[i];
-    }
+	for (i = 0; i < MAX_DEFINES && i < gdefscount; i++)
+	{
+		if (deflist[i]!=NULL)
+			delete deflist[i];
+	}
 }
 
 //=================================================================
@@ -1355,57 +1339,57 @@ void PerformCleanUp ()
 
 void PutFileInQueue(char *fname)
 {
-    // Clean filename to add
-    CleanStr(fname);
+	// Clean filename to add
+	CleanStr(fname);
 
-    // Is this file already on queue?
-    bool alreadyin = false;
+	// Is this file already on queue?
+	bool alreadyin = false;
 
-    // Search for this file in queue
-    for (unsigned int s=0; s < q_filenum; s++)
-    {
-        if (strcmp(fname,filequeue[s]->filename)==0)
-            alreadyin = true;
-    }
+	// Search for this file in queue
+	for (unsigned int s=0; s < q_filenum; s++)
+	{
+		if (strcmp(fname,filequeue[s]->filename)==0)
+			alreadyin = true;
+	}
 
-    // Report warning, and exit function, if file was in queue
-    if (alreadyin)
-    {
-        char tmpstr[MAX_ST_SIZE+28];
-        memset(tmpstr,NULL,MAX_ST_SIZE+28);
-        strcat(tmpstr,"Attempt to add \"");
-        strcat(tmpstr,fname);
-        strcat(tmpstr,"\" to file queue again!");
-        PrintSourceWarning(curfile,flinescount,tmpstr);
-        return;
-    }
+	// Report warning, and exit function, if file was in queue
+	if (alreadyin)
+	{
+		char tmpstr[MAX_ST_SIZE+28];
+		memset(tmpstr,0,MAX_ST_SIZE+28);
+		strcat(tmpstr,"Attempt to add \"");
+		strcat(tmpstr,fname);
+		strcat(tmpstr,"\" to file queue again!");
+		PrintSourceWarning(curfile,flinescount,tmpstr);
+		return;
+	}
 
-    // Create new item
-    filequeue[q_filenum] = new fileitem;
+	// Create new item
+	filequeue[q_filenum] = new fileitem;
 
-    // check for memory error..
-    if (filequeue[q_filenum] == NULL)
-        ErrorExit("Memory error on 'PutFileInQueue()' function!\n");
+	// check for memory error..
+	if (filequeue[q_filenum] == NULL)
+		ErrorExit("Memory error on 'PutFileInQueue()' function!\n");
 
-    // set all string field chars to NULL
-    for (int i = 0; i < MAX_ST_SIZE; i++)
-    {
-        filequeue[q_filenum]->filename[i] = NULL;
-        filequeue[q_filenum]->invoked_by[i] = NULL;
-    }
+	// set all string field chars to NULL
+	for (int i = 0; i < MAX_ST_SIZE; i++)
+	{
+		filequeue[q_filenum]->filename[i] = '\0';
+		filequeue[q_filenum]->invoked_by[i] = '\0';
+	}
 
-    // apply fields
-    strcpy(filequeue[q_filenum]->filename, fname);
-    strcpy(filequeue[q_filenum]->invoked_by, curfile); // current file beeing processed
-    filequeue[q_filenum]->on_line = flinescount; // current line beeing processed
-    filequeue[q_filenum]->compile = true;
-    // item ready
+	// apply fields
+	strcpy(filequeue[q_filenum]->filename, fname);
+	strcpy(filequeue[q_filenum]->invoked_by, curfile); // current file beeing processed
+	filequeue[q_filenum]->on_line = flinescount; // current line beeing processed
+	filequeue[q_filenum]->compile = true;
+	// item ready
 
-    q_filenum++; // we added a file to the queue!
-    filecount++; // files added from the current source file
+	q_filenum++; // we added a file to the queue!
+	filecount++; // files added from the current source file
 
-    if (q_filenum >= MAX_FILE_QUEUE) // we reached max?
-        ErrorExit("Maximum file queue reached! (256 files max)\n");
+	if (q_filenum >= MAX_FILE_QUEUE) // we reached max?
+		ErrorExit("Maximum file queue reached! (256 files max)\n");
 
 }
 
@@ -1414,59 +1398,59 @@ void PutFileInQueue(char *fname)
 
 void PutDefineInList(char* ident, char* value)
 {
-    // clean up strings
-    CleanStr(ident);
-    CleanStr(value);
+	// clean up strings
+	CleanStr(ident);
+	CleanStr(value);
 
-    // Check for redefines
-    defineitem* theitem;
-    int numdefine = IsInDefList(ident); // is it in defines list? (even if udefined)
+	// Check for redefines
+	defineitem* theitem;
+	int numdefine = IsInDefList(ident); // is it in defines list? (even if udefined)
 
-    if (numdefine == 0) // Not defined, we need a new one
-    {
-        deflist[gdefscount] = new defineitem; // Allocate our new item in memory
-        theitem = deflist[gdefscount];
+	if (numdefine == 0) // Not defined, we need a new one
+	{
+		deflist[gdefscount] = new defineitem; // Allocate our new item in memory
+		theitem = deflist[gdefscount];
 
 		//set our initial define state
-		memset(theitem->defined_by,NULL,MAX_ST_SIZE);
+		memset(theitem->defined_by,0,MAX_ST_SIZE);
 		strcpy(theitem->defined_by,curfile);
 		theitem->is_used = false;
 		theitem->on_line = flinescount;
 
 		gdefscount++; // we added an IFDEF or IFNDEF to the parse queue!
-    }
-    else
-    {   // we got a match, make the pointer go for it
-        theitem = deflist[numdefine - 1]; // IsDefined does a return++
+	}
+	else
+	{   // we got a match, make the pointer go for it
+		theitem = deflist[numdefine - 1]; // IsDefined does a return++
 
 		// report redefinition warning, if enabled
 		if (check_redefines)
 			PrintSourceWarning(curfile,flinescount,"Value for identifier redefined.");
-    }
+	}
 
-    // check for memory error or wrong pointer..
-    if (theitem == NULL)
-        ErrorExit("Memory error or wrong pointer operation on 'PutDefineInList()' function!\n");
+	// check for memory error or wrong pointer..
+	if (theitem == NULL)
+		ErrorExit("Memory error or wrong pointer operation on 'PutDefineInList()' function!\n");
 
-    // set all string field chars to NULL
-    for (unsigned int l = 0; l < MAX_ST_SIZE; l++)
-    {
-        theitem->value[l] = NULL;
-        theitem->identifier[l] = NULL;
-    }
+	// set all string field chars to NULL
+	for (unsigned int l = 0; l < MAX_ST_SIZE; l++)
+	{
+		theitem->value[l] = '\0';
+		theitem->identifier[l] = '\0';
+	}
 
-    ParseValue(value);
+	ParseValue(value);
 
-    // apply fields
-    theitem->is_defined = true;
-    strcpy(theitem->identifier,ident);
-    strcpy(theitem->value,value);
-    // item ready    
+	// apply fields
+	theitem->is_defined = true;
+	strcpy(theitem->identifier,ident);
+	strcpy(theitem->value,value);
+	// item ready    
 
-    if (gdefscount >= MAX_DEFINES)
-        ErrorExit("Max number of defines reached!");
+	if (gdefscount >= MAX_DEFINES)
+		ErrorExit("Max number of defines reached!");
 
-    fdefscount++; // increase file defs counter too!
+	fdefscount++; // increase file defs counter too!
 }
 
 //======================================================================================
@@ -1474,15 +1458,15 @@ void PutDefineInList(char* ident, char* value)
 
 void UndefineItem(unsigned int numdefine)
 {
-    numdefine--; // compensate IsDefined return++;
+	numdefine--; // compensate IsDefined return++;
 
-    if (numdefine >= gdefscount)
-        ErrorExit("Define location is beyond array in 'undefineItem()' function.\n");
+	if (numdefine >= gdefscount)
+		ErrorExit("Define location is beyond array in 'undefineItem()' function.\n");
 
-    if (deflist[numdefine]->is_defined == false)
-        PrintSourceWarning(curfile,flinescount,"Already undefined.");
+	if (deflist[numdefine]->is_defined == false)
+		PrintSourceWarning(curfile,flinescount,"Already undefined.");
 
-    deflist[numdefine]->is_defined = false;
+	deflist[numdefine]->is_defined = false;
 
 	deflist[numdefine]->is_used = true; // TODO: make this better
 }
@@ -1492,26 +1476,27 @@ void UndefineItem(unsigned int numdefine)
 
 void PutParseInQueue(bool type, bool causes_parse)
 {
-    parsequeue[q_parsenum] = new parseitem;
+	parsequeue[q_parsenum] = new parseitem;
 
-    // check for memory error..
-    if (parsequeue[q_parsenum] == NULL)
-        ErrorExit("Memory error on 'PutParseInQueue()' function!\n");
+	// check for memory error..
+	if (parsequeue[q_parsenum] == NULL)
+		ErrorExit("Memory error on 'PutParseInQueue()' function!\n");
 
-    // apply fields
-    parsequeue[q_parsenum]->type = type; // IFDEF or IFNDEF (for error reporting purposses only)
-    parsequeue[q_parsenum]->causes_parse = causes_parse; // does it make to exclude source code?
-    parsequeue[q_parsenum]->inversed = false; // this is set to TRUE if an ELSE is found
-    parsequeue[q_parsenum]->on_line = flinescount; // current line beeing processed
-    // item ready
+	// apply fields
+	parsequeue[q_parsenum]->type = type; // IFDEF or IFNDEF (for error reporting purposses only)
+	parsequeue[q_parsenum]->causes_parse = causes_parse; // does it make to exclude source code?
+	parsequeue[q_parsenum]->inversed = false; // this is set to TRUE if an ELSE is found
+	parsequeue[q_parsenum]->on_line = flinescount; // current line beeing processed
+	// item ready
 
-    q_parsenum++; // we added an IFDEF or IFNDEF to the parse queue!
+	q_parsenum++; // we added an IFDEF or IFNDEF to the parse queue!
 
-    if (q_parsenum >= MAX_PARSE_QUEUE) // we reached max?
-        PrintSourceError(curfile,flinescount,"Maximum parse depht reached! (16 consecutive IFDEF/IFNDEF's max)");
+	if (q_parsenum >= MAX_PARSE_QUEUE) // we reached max?
+		PrintSourceError(curfile,flinescount,
+				"Maximum parse depht reached! (16 consecutive IFDEF/IFNDEF's max)");
 
-    // Update globals for parsing here
-    we_r_parsing = causes_parse; // DONE?
+	// Update globals for parsing here
+	we_r_parsing = causes_parse; // DONE?
 }
 
 //===================================================================================================
@@ -1519,16 +1504,16 @@ void PutParseInQueue(bool type, bool causes_parse)
 
 void InvertParseItem()
 {
-    // Check errors
-    if (q_parsenum <= 0) // ELSE without an IFDEF or IFNDEF?
-       PrintSourceError(curfile,flinescount,"ELSE without IFDEF/IFNDEF");
+	// Check errors
+	if (q_parsenum <= 0) // ELSE without an IFDEF or IFNDEF?
+		PrintSourceError(curfile,flinescount,"ELSE without IFDEF/IFNDEF");
 
-    if (parsequeue[q_parsenum - 1]->inversed == true) // already inversed (DOUBLE ELSE)
-        PrintSourceError(curfile,flinescount,"Consecutive ELSE");
+	if (parsequeue[q_parsenum - 1]->inversed == true) // already inversed (DOUBLE ELSE)
+		PrintSourceError(curfile,flinescount,"Consecutive ELSE");
 
-    // Ok, update status and queue item..
-    we_r_parsing = !we_r_parsing; // invert current status
-    parsequeue[q_parsenum - 1]->inversed = true;
+	// Ok, update status and queue item..
+	we_r_parsing = !we_r_parsing; // invert current status
+	parsequeue[q_parsenum - 1]->inversed = true;
 }
 
 //===================================================================================================
@@ -1537,26 +1522,27 @@ void InvertParseItem()
 
 void ResolveParseItem()
 {
-    // Exit on error
-    if (q_parsenum < 1)
-        PrintSourceError(curfile,flinescount,"ENDIF without IFDEF/IFNDEF");
+	// Exit on error
+	if (q_parsenum < 1)
+		PrintSourceError(curfile,flinescount,"ENDIF without IFDEF/IFNDEF");
 
-    delete parsequeue[q_parsenum - 1]; // remove from memory
-    parsequeue[q_parsenum - 1] = NULL; // resets pointer
+	if (parsequeue[q_parsenum - 1])
+		delete parsequeue[q_parsenum - 1]; // remove from memory
+	parsequeue[q_parsenum - 1] = NULL; // resets pointer
 
-    q_parsenum--; // we resolved an IFDEF or IFNDEF from the parse queue!
+	q_parsenum--; // we resolved an IFDEF or IFNDEF from the parse queue!
 
-    if (q_parsenum <= 0) // we are not under any IFDEF or IFNDEF! cool!! :)
-    {
-        we_r_parsing = false;
-    }
-    else // we went a step below in our parsing queue
-    {
-        if (parsequeue[q_parsenum - 1]->inversed) // are we inversed with an ELSE ?
-            we_r_parsing = !(parsequeue[q_parsenum - 1]->causes_parse);
-        else
-            we_r_parsing = parsequeue[q_parsenum - 1]->causes_parse;
-    }
+	if (q_parsenum <= 0) // we are not under any IFDEF or IFNDEF! cool!! :)
+	{
+		we_r_parsing = false;
+	}
+	else // we went a step below in our parsing queue
+	{
+		if (parsequeue[q_parsenum - 1]->inversed) // are we inversed with an ELSE ?
+			we_r_parsing = !(parsequeue[q_parsenum - 1]->causes_parse);
+		else
+			we_r_parsing = parsequeue[q_parsenum - 1]->causes_parse;
+	}
 }
 
 //========================================================================================================
@@ -1564,77 +1550,78 @@ void ResolveParseItem()
 
 int GetKeywordType(int curpos)
 {
-    if ((curpos - scan_offset) > MAX_ST_SIZE - 1)
-        PrintSourceError(curfile,flinescount,"Keyword too long! (max 255 chars)");
+	if ((curpos - scan_offset) > MAX_ST_SIZE - 1)
+		PrintSourceError(curfile,flinescount,"Keyword too long! (max 255 chars)");
 
-    char tkey[MAX_ST_SIZE];
-    memset(tkey, NULL, MAX_ST_SIZE); // Fill it all with NULL
+	char tkey[MAX_ST_SIZE];
+	memset(tkey, 0, MAX_ST_SIZE); // Fill it all with NULL
 
-    // Create the NULL-terminated string, with the supposed keyword in
-    for (unsigned int z=0; z < (curpos - scan_offset); z++)
-    {
-        tkey[z] = memfile[scan_offset + z];
-    }
+	// Create the NULL-terminated string, with the supposed keyword in
+	for (unsigned int z=0; z < (curpos - scan_offset); z++)
+	{
+		tkey[z] = memfile[scan_offset + z];
+	}
 
-    CleanStr(tkey);
+	CleanStr(tkey);
 
-    int type =GetDirectiveType(tkey);
+	int type =GetDirectiveType(tkey);
 
-    if (we_r_parsing && type == DIRECTIVE_IDENT)
-        return type;
+	if (we_r_parsing && type == DIRECTIVE_IDENT)
+		return type;
 
-    if (we_r_parsing && type != DIRECTIVE_ENDIF && type != DIRECTIVE_ELSE && type != DIRECTIVE_IFDEF && type != DIRECTIVE_IFNDEF)
-        return DIRECTIVE_IDENT;
+	if (we_r_parsing && type != DIRECTIVE_ENDIF && type != DIRECTIVE_ELSE &&
+		type != DIRECTIVE_IFDEF && type != DIRECTIVE_IFNDEF)
+	return DIRECTIVE_IDENT;
 
-    if (type != DIRECTIVE_IDENT)
-        return type;
+	if (type != DIRECTIVE_IDENT)
+		return type;
 
-    // not a directive...
+	// not a directive...
 
-    // so should be a defined value, lets search for it and write out to output if so
-    int numdef = IsDefined(tkey);
+	// so should be a defined value, lets search for it and write out to output if so
+	int numdef = IsDefined(tkey);
 
-    if (numdef == 0) // not on defines list
-    {
-        char tempstr[MAX_ST_SIZE + 35];
-        tempstr[0] = NULL;
-        strcat(tempstr,"Unknown identifier, \"");
-        strcat(tempstr,tkey);
-        strcat(tempstr,"\" not defined!");
+	if (numdef == 0) // not on defines list
+	{
+		char tempstr[MAX_ST_SIZE + 35];
+		tempstr[0] = '\0';
+		strcat(tempstr,"Unknown identifier, \"");
+		strcat(tempstr,tkey);
+		strcat(tempstr,"\" not defined!");
 
-        PrintSourceError(curfile,flinescount,tempstr);
-    }
-    else // its a define, output real value to memtarget
-    {
-        numdef--; // cause isDefined returns the item + 1
+		PrintSourceError(curfile,flinescount,tempstr);
+	}
+	else // its a define, output real value to memtarget
+	{
+		numdef--; // cause isDefined returns the item + 1
 
-        for (unsigned int z = 0; z < strlen(deflist[numdef]->value); z++)
-            WriteOutChar(deflist[numdef]->value[z]);
+		for (unsigned int z = 0; z < strlen(deflist[numdef]->value); z++)
+			WriteOutChar(deflist[numdef]->value[z]);
 
 		// Set the new state on define used
 		deflist[numdef]->is_used = true;
-    }
+	}
 
-    return DIRECTIVE_IDENT;
+	return DIRECTIVE_IDENT;
 }
 
 bool DirectiveWantsData(int tkeyw)
 {
-    switch (tkeyw)
-    {
-        case DIRECTIVE_IFDEF:
-        case DIRECTIVE_IFNDEF:
-        case DIRECTIVE_UNDEF:
-        case DIRECTIVE_INCLUDE:
-        case DIRECTIVE_DEFINE:
-        case DIRECTIVE_PRAGMA:
+	switch (tkeyw)
+	{
+		case DIRECTIVE_IFDEF:
+		case DIRECTIVE_IFNDEF:
+		case DIRECTIVE_UNDEF:
+		case DIRECTIVE_INCLUDE:
+		case DIRECTIVE_DEFINE:
+		case DIRECTIVE_PRAGMA:
 
-            return true;
+			return true;
 
-        default:
+		default:
 
-            return false;
-    }
+			return false;
+	}
 }
 
 
@@ -1643,37 +1630,37 @@ bool DirectiveWantsData(int tkeyw)
 
 int GetPragmaType(int curpos)
 {
-    if ((curpos - scan_offset) > MAX_ST_SIZE - 1)
-        PrintSourceError(curfile,flinescount,"Pragma identifier way too long! (max 255 chars)");
+	if ((curpos - scan_offset) > MAX_ST_SIZE - 1)
+		PrintSourceError(curfile,flinescount,"Pragma identifier way too long! (max 255 chars)");
 
-    char tkey[MAX_ST_SIZE];
-    memset(tkey, NULL, MAX_ST_SIZE); // Fill it all with NULL
+	char tkey[MAX_ST_SIZE];
+	memset(tkey, 0, MAX_ST_SIZE); // Fill it all with NULL
 
-    // Create the NULL-terminated string, with the supposed pragma in
-    for (unsigned int z=0; z < (curpos - scan_offset); z++)
-    {
-        tkey[z] = memfile[scan_offset + z];
-    }
+	// Create the NULL-terminated string, with the supposed pragma in
+	for (unsigned int z=0; z < (curpos - scan_offset); z++)
+	{
+		tkey[z] = memfile[scan_offset + z];
+	}
 
-    // Check if current string is empty still
-    if (IsNotEmpty(tkey)==0)
-        return PRAGMA_EMPTYSTILL;
+	// Check if current string is empty still
+	if (IsNotEmpty(tkey)==0)
+		return PRAGMA_EMPTYSTILL;
 
-    // Clean spaces and tabs between directive and pragma identifier
-    CleanStr(tkey);
+	// Clean spaces and tabs between directive and pragma identifier
+	CleanStr(tkey);
 
-    //- START STRING COMPARISONS TO GET TYPE OF PRAGMA -//
-    if (strlen(tkey) == strlen(ST_PRAGMA_COMPILE))
-    {
-        if (strcmp(tkey,ST_PRAGMA_COMPILE)==0)
-            return PRAGMA_COMPILE;
-    }
+	//- START STRING COMPARISONS TO GET TYPE OF PRAGMA -//
+	if (strlen(tkey) == strlen(ST_PRAGMA_COMPILE))
+	{
+		if (strcmp(tkey,ST_PRAGMA_COMPILE)==0)
+			return PRAGMA_COMPILE;
+	}
 
-    if (strlen(tkey) == strlen(ST_PRAGMA_NOCOMPILE))
-    {
-        if (strcmp(tkey,ST_PRAGMA_NOCOMPILE)==0)
-            return PRAGMA_NOCOMPILE;
-    }
+	if (strlen(tkey) == strlen(ST_PRAGMA_NOCOMPILE))
+	{
+		if (strcmp(tkey,ST_PRAGMA_NOCOMPILE)==0)
+			return PRAGMA_NOCOMPILE;
+	}
 
 	if (strlen(tkey) == strlen(ST_PRAGMA_CHECKREDEFS_ON))
 	{
@@ -1699,35 +1686,34 @@ int GetPragmaType(int curpos)
 			return PRAGMA_CHECKUNUSED_OFF;
 	}
 	
+	/*else if (strlen(tkey) == strlen(ST_PRAGMA_PROGSSRC))
+	{
+	if (memcmp(tkey,ST_PRAGMA_PROGSSRC,strlen(ST_PRAGMA_PROGSSRC) == 0)) // same string
+		return PRAGMA_PROGSSRC;
+	}
+	else if (strlen(tkey) == strlen(ST_PRAGMA_PROGSDAT))
+	{
+	if (memcmp(tkey,ST_PRAGMA_PROGSDAT,strlen(ST_PRAGMA_PROGSDAT) == 0)) // same string
+		return PRAGMA_PROGSDAT;
+	} */
 
-    /*else if (strlen(tkey) == strlen(ST_PRAGMA_PROGSSRC))
-    {
-        if (memcmp(tkey,ST_PRAGMA_PROGSSRC,strlen(ST_PRAGMA_PROGSSRC) == 0)) // same string
-            return PRAGMA_PROGSSRC;
-    }
-    else if (strlen(tkey) == strlen(ST_PRAGMA_PROGSDAT))
-    {
-        if (memcmp(tkey,ST_PRAGMA_PROGSDAT,strlen(ST_PRAGMA_PROGSDAT) == 0)) // same string
-            return PRAGMA_PROGSDAT;
-    } */
-
-    // not a supported pragma...
-    return PRAGMA_UNSUPPORTED;
+	// not a supported pragma...
+	return PRAGMA_UNSUPPORTED;
 }
 
 /*bool PragmaWantsData(int tkeyw)
 {
-    switch (tkeyw)
-    {
-        case PRAGMA_PROGSDAT:
-        case PRAGMA_PROGSSRC:
+	switch (tkeyw)
+	{
+	case PRAGMA_PROGSDAT:
+	case PRAGMA_PROGSSRC:
 
-            return true;
+		return true;
 
-        default:
+	default:
 
-            return false;
-    }
+		return false;
+	}
 }*/
 
 //=========================================================================================
@@ -1736,22 +1722,22 @@ int GetPragmaType(int curpos)
 
 void ExecutePragma(int curpos)
 {
-    switch (curpragmatype)
-    {
-        // PRAGMAS THAT DOESNT REQUIRE ANY PARAM - THEY DO SOMETHING BY THEIRSELVES //
-        case PRAGMA_COMPILE:
+	switch (curpragmatype)
+	{
+		// PRAGMAS THAT DOESNT REQUIRE ANY PARAM - THEY DO SOMETHING BY THEIRSELVES //
+		case PRAGMA_COMPILE:
 
-            filequeue[q_filepos]->compile=true;
-            scan_status = SCN_STATUS_IDLE;
-            PrintSourceInfo(curfile,flinescount,"File marked to COMPILE");
+			filequeue[q_filepos]->compile=true;
+			scan_status = SCN_STATUS_IDLE;
+			PrintSourceInfo(curfile,flinescount,"File marked to COMPILE");
 			break;
 
-        case PRAGMA_NOCOMPILE:
+		case PRAGMA_NOCOMPILE:
 
-            filequeue[q_filepos]->compile=false;
-            scan_status = SCN_STATUS_IDLE;
+			filequeue[q_filepos]->compile=false;
+			scan_status = SCN_STATUS_IDLE;
 			PrintSourceInfo(curfile,flinescount,"File marked to NOT COMPILE");
-            break;
+			break;
 
 		case PRAGMA_CHECKREDEFS_ON:
 
@@ -1781,17 +1767,17 @@ void ExecutePragma(int curpos)
 			scan_status = SCN_STATUS_IDLE;
 			break;
 
-        // Require a quoted string (filename)
-        //case PRAGMA_PROGSSRC:
-        //case PRAGMA_PROGSDAT:
+		// Require a quoted string (filename)
+		//case PRAGMA_PROGSSRC:
+		//case PRAGMA_PROGSDAT:
 
-        //    scan_status = SCN_STATUS_VALUE;
-        //    break;
+		//    scan_status = SCN_STATUS_VALUE;
+		//    break;
 
-        default:
+		default:
 
-            ErrorExit("Unknown PRAGMA in 'ExecutePragma()' function!\n");
-    }
+			ErrorExit("Unknown PRAGMA in 'ExecutePragma()' function!\n");
+	}
 }
 
 //================================================================================
@@ -1800,47 +1786,45 @@ void ExecutePragma(int curpos)
 
 unsigned int IsDefined(char* ident)
 {
-    // Clean empty limits on string edges
-    CleanStr(ident);
+	// Clean empty limits on string edges
+	CleanStr(ident);
 
-    // Is there any defined values?
-    if (gdefscount <= 0)
-        return 0;// nope, so.. not defined
+	// Is there any defined values?
+	if (gdefscount <= 0)
+		return 0;// nope, so.. not defined
 
-    // See all defines for a matching one:
-    for (unsigned int d = 0; d < gdefscount; d++)
-    {
-        if (deflist[d] == NULL)
-        ; // FIXME: why the fuck this??
-        else
-        if (deflist[d]->is_defined) // if we rnt undefined
-            if (strcmp(deflist[d]->identifier,ident) == 0) // matches string
-               return d + 1;
-    }
+	// See all defines for a matching one:
+	for (unsigned int d = 0; d < gdefscount; d++)
+	{
+		if (deflist[d] == NULL)
+			; // FIXME: why the fuck this??
+		else if (deflist[d]->is_defined) // if we rnt undefined
+			if (strcmp(deflist[d]->identifier,ident) == 0) // matches string
+				return d + 1;
+	}
 
-    return 0;
+	return 0;
 }
 
 unsigned int IsInDefList(char* ident)
 {
-    // Clean empty limits on string edges
-    CleanStr(ident);
+	// Clean empty limits on string edges
+	CleanStr(ident);
 
-    // Is there any defined values?
-    if (gdefscount <= 0)
-        return 0;// nope, so.. not defined
+	// Is there any defined values?
+	if (gdefscount <= 0)
+		return 0;// nope, so.. not defined
 
-    // See all defines for a matching one:
-    for (unsigned int d = 0; d < gdefscount; d++)
-    {
-        if (deflist[d] == NULL)
-        ; // FIXME:
-        else
-        if (strcmp(deflist[d]->identifier,ident) == 0) // matches string
-           return d + 1;
-    }
+	// See all defines for a matching one:
+	for (unsigned int d = 0; d < gdefscount; d++)
+	{
+		if (deflist[d] == NULL)
+			; // FIXME:
+		else if (strcmp(deflist[d]->identifier,ident) == 0) // matches string
+			return d + 1;
+	}
 
-    return 0;
+	return 0;
 }
 
 //=========================================================================================
@@ -1849,119 +1833,119 @@ unsigned int IsInDefList(char* ident)
 
 void ExecuteDirective(int curpos)
 {
-    switch (curkeywtype)
-    {
-        // DIRECTIVES THAT DOESNT REQUIRE ANY PARAM - THEY DO SOMETHING BY THEIRSELVES //
-        case DIRECTIVE_ENDIF:
+	switch (curkeywtype)
+	{
+		// DIRECTIVES THAT DOESNT REQUIRE ANY PARAM - THEY DO SOMETHING BY THEIRSELVES //
+		case DIRECTIVE_ENDIF:
 
-            if (parse_stack > 0)
-            {
-                parse_stack--;
-                scan_status = SCN_STATUS_IDLE;
-                return;
-            }
+			if (parse_stack > 0)
+			{
+				parse_stack--;
+				scan_status = SCN_STATUS_IDLE;
+				return;
+			}
 
-            ResolveParseItem();
-            scan_status = SCN_STATUS_IDLE;
-            break;
+			ResolveParseItem();
+			scan_status = SCN_STATUS_IDLE;
+			break;
 
-        case DIRECTIVE_ELSE:
+		case DIRECTIVE_ELSE:
 
-            if (parse_stack > 0)
-            {
-                scan_status = SCN_STATUS_IDLE;
-                return;
-            }
+			if (parse_stack > 0)
+			{
+				scan_status = SCN_STATUS_IDLE;
+				return;
+			}
 
-            InvertParseItem();
-            scan_status = SCN_STATUS_IDLE;
-            break;
+			InvertParseItem();
+			scan_status = SCN_STATUS_IDLE;
+			break;
 
-        case DIRECTIVE_INCLUDELIST:
+		case DIRECTIVE_INCLUDELIST:
 
-            //TODO: Make directives on includelist possible
-            /*if (scan_status == SCN_STATUS_LIST)
-                PrintSourceError(curfile,flinescount,"Already on a INCLUDELIST!");*/
+			//TODO: Make directives on includelist possible
+			/*if (scan_status == SCN_STATUS_LIST)
+			PrintSourceError(curfile,flinescount,"Already on a INCLUDELIST!");*/
 
 			PrintSourceInfo(curfile,flinescount,"Include list found");
 
-            scan_status = SCN_STATUS_LIST;
-            memset(curvalue,NULL,MAX_ST_SIZE);
-            scan_offset = curpos + 1;
-            break;
+			scan_status = SCN_STATUS_LIST;
+			memset(curvalue,0,MAX_ST_SIZE);
+			scan_offset = curpos + 1;
+			break;
 
-        case DIRECTIVE_ENDLIST:
+		case DIRECTIVE_ENDLIST:
 
-            // Error cause endlist is checked in another place
-            PrintSourceError(curfile,flinescount,"ENDLIST without INCLUDELIST");
-            scan_status = SCN_STATUS_IDLE;
-            break;
+			// Error cause endlist is checked in another place
+			PrintSourceError(curfile,flinescount,"ENDLIST without INCLUDELIST");
+			scan_status = SCN_STATUS_IDLE;
+			break;
 
-        // DIRECTIVES THAT REQUIRE SOME KIND OF DATA - UPDATE STATUS //
-        case DIRECTIVE_IFDEF:
+		// DIRECTIVES THAT REQUIRE SOME KIND OF DATA - UPDATE STATUS //
+		case DIRECTIVE_IFDEF:
 
-            if (we_r_parsing)
-            {
-                parse_stack++;
-                scan_status = SCN_STATUS_IDLE;
-                return;
-            }
+			if (we_r_parsing)
+			{
+				parse_stack++;
+				scan_status = SCN_STATUS_IDLE;
+				return;
+			}
 
-            memset(curident,NULL,MAX_ST_SIZE); // Reset our identifier string
-            scan_status = SCN_STATUS_DEFINE;
-            scan_offset = curpos + 1;
-            break;
+			memset(curident,0,MAX_ST_SIZE); // Reset our identifier string
+			scan_status = SCN_STATUS_DEFINE;
+			scan_offset = curpos + 1;
+			break;
 
-        case DIRECTIVE_IFNDEF:
+		case DIRECTIVE_IFNDEF:
 
-            if (we_r_parsing)
-            {
-                parse_stack++;
-                return;
-            }
+			if (we_r_parsing)
+			{
+				parse_stack++;
+				return;
+			}
 
-            memset(curident,NULL,MAX_ST_SIZE); // Reset our identifier string
-            scan_status = SCN_STATUS_DEFINE;
-            scan_offset = curpos + 1;
-            break;
+			memset(curident,0,MAX_ST_SIZE); // Reset our identifier string
+			scan_status = SCN_STATUS_DEFINE;
+			scan_offset = curpos + 1;
+			break;
 
-        case DIRECTIVE_DEFINE:
+		case DIRECTIVE_DEFINE:
 
-            memset(curident,NULL,MAX_ST_SIZE); // Reset our identifier string
-            scan_status = SCN_STATUS_DEFINE;
-            scan_offset = curpos + 1;
-            break;
+			memset(curident,0,MAX_ST_SIZE); // Reset our identifier string
+			scan_status = SCN_STATUS_DEFINE;
+			scan_offset = curpos + 1;
+			break;
 
-        case DIRECTIVE_UNDEF:
+		case DIRECTIVE_UNDEF:
 
-            memset(curident,NULL,MAX_ST_SIZE); // Reset our identifier string
-            scan_status = SCN_STATUS_DEFINE;
-            scan_offset = curpos + 1;
-            break;
+			memset(curident,0,MAX_ST_SIZE); // Reset our identifier string
+			scan_status = SCN_STATUS_DEFINE;
+			scan_offset = curpos + 1;
+			break;
 
-        /*case DIRECTIVE_INCLUDE:
+		/*case DIRECTIVE_INCLUDE:
 
-            memset(tmpident,null);
-            scan_status = SCN_STATUS_VALUE;
-            scan_offset = curpos + 1;
-            break;*/
+			memset(tmpident,null);
+			scan_status = SCN_STATUS_VALUE;
+			scan_offset = curpos + 1;
+			break;*/
 
-        case DIRECTIVE_PRAGMA:
+		case DIRECTIVE_PRAGMA:
 
-            scan_status = SCN_STATUS_PRAGMA;
-            scan_offset = curpos + 1;
-            break;
+			scan_status = SCN_STATUS_PRAGMA;
+			scan_offset = curpos + 1;
+			break;
 
-        case DIRECTIVE_IDENT:
+		case DIRECTIVE_IDENT:
 
-            // we've just replaced a define, we should restore status
-            scan_status = SCN_STATUS_IDLE;
-            break;
+			// we've just replaced a define, we should restore status
+			scan_status = SCN_STATUS_IDLE;
+			break;
 
-        default:
+		default:
 
-            ErrorExit("Unknown directive in 'ExecuteDirective()' function!\n");
-    }
+			ErrorExit("Unknown directive in 'ExecuteDirective()' function!\n");
+	}
 }
 
 //======================================================================================
@@ -2004,16 +1988,16 @@ bool CharIsSeparator(char tchar)
 	if (tchar == '\"')
 		return true;
 
-    return false;
+	return false;
 }
 /*
 // new line chars
 bool CharIsNewLine(char tchar)
 {
-    if (tchar == 0x0D || tchar == 0x0A)
-        return true;
+	if (tchar == 0x0D || tchar == 0x0A)
+		return true;
 
-    return false;
+	return false;
 }*/
 
 //======================================================================
@@ -2021,17 +2005,17 @@ bool CharIsNewLine(char tchar)
 
 int IsNotEmpty(char* tstr)
 {
-    if (strlen(tstr) == 0) return 0;
+	if (strlen(tstr) == 0) return 0;
 
-    int numvalid = 0; // valid chars on string
+	int numvalid = 0; // valid chars on string
 
-    for (unsigned int i=0; i < strlen(tstr); i++)
-    {
-        if (tstr[i]!=' ' && tstr[i]!=0x09 && tstr[i]!=0x0A && tstr[i]!=0x0D)
-            numvalid++;
-    }
+	for (unsigned int i=0; i < strlen(tstr); i++)
+	{
+		if (tstr[i]!=' ' && tstr[i]!=0x09 && tstr[i]!=0x0A && tstr[i]!=0x0D)
+			numvalid++;
+	}
 
-    return numvalid;
+	return numvalid;
 }
 
 //==========================================================================
@@ -2045,23 +2029,23 @@ void CleanStr(char* tstr)
 		return;
 
 	char tempstr[MAX_ST_SIZE];
-    memset(tempstr,NULL,MAX_ST_SIZE);
+	memset(tempstr,0,MAX_ST_SIZE);
 	
 	unsigned int pos1 = 0;
-    unsigned int pos2 = len;
-    
-    // get starting pos
-    while (IsEmptyChar(tstr[pos1]) && pos1 < MAX_ST_SIZE - 1)
-        pos1++;
-    
-    // get final pos
-    while ((IsEmptyChar(tstr[pos2]) || tstr[pos2]== NULL) && pos2 > 0)
-        pos2--;
-    
-    // Parse string into limits 
-    for (unsigned int a=pos1; a < pos2 + 1; a++)
-        tempstr[a - pos1] = tstr[a];
-    
+	unsigned int pos2 = len;
+	
+	// get starting pos
+	while (IsEmptyChar(tstr[pos1]) && pos1 < MAX_ST_SIZE - 1)
+		pos1++;
+	
+	// get final pos
+	while ((IsEmptyChar(tstr[pos2]) || tstr[pos2]== '\0') && pos2 > 0)
+		pos2--;
+	
+	// Parse string into limits 
+	for (unsigned int a=pos1; a < pos2 + 1; a++)
+		tempstr[a - pos1] = tstr[a];
+	
 	strcpy(tstr,tempstr);
 }
 
@@ -2070,26 +2054,26 @@ void CleanStr(char* tstr)
 
 bool IsValidEndList(unsigned int curpos)
 {
-    // check for errors
-    if (curpos + 1 + 7 > fsize) // if check goes beyond file..
-        return false;
+	// check for errors
+	if (curpos + 1 + 7 > fsize) // if check goes beyond file..
+		return false;
 
-    char thestr[8];
+	char thestr[8];
 
-    // Make the input string on memfile
-    for (int i=0; i < 7; i++)
-    {
-        thestr[i] = memfile[curpos + 1 + i];
-    }
+	// Make the input string on memfile
+	for (int i=0; i < 7; i++)
+	{
+		thestr[i] = memfile[curpos + 1 + i];
+	}
 
-    // make it null-terminated
-    thestr[7] = NULL;
+	// make it null-terminated
+	thestr[7] = '\0';
 
-    // String matches?
-    if (strcmp(thestr,ST_DIR_ENDLIST)==0)
-        return true;
-    else
-        return false;
+	// String matches?
+	if (strcmp(thestr,ST_DIR_ENDLIST)==0)
+		return true;
+	else
+		return false;
 }
 
 //=============================================================================
@@ -2097,10 +2081,10 @@ bool IsValidEndList(unsigned int curpos)
 
 bool IsEmptyChar(char tchar)
 {
-    if (tchar == 0x09 || tchar == 0x0D || tchar == 0x0A || tchar == ' ')
-        return true;
+	if (tchar == 0x09 || tchar == 0x0D || tchar == 0x0A || tchar == ' ')
+		return true;
 
-    return false;
+	return false;
 }
 
 //=======================================================================================
@@ -2108,103 +2092,102 @@ bool IsEmptyChar(char tchar)
 
 void ParseValue(char* tvalue)
 {
-    int wherecomment = 999; // no where
+	int wherecomment = 999; // no where
 
-    char finalstr[MAX_ST_SIZE*2];
-    memset(finalstr,NULL,MAX_ST_SIZE*2);
+	char finalstr[MAX_ST_SIZE*2];
+	memset(finalstr,0,MAX_ST_SIZE*2);
 
-    // find begining of comments
-    bool done = false;
-    for (int i=0; i < MAX_ST_SIZE - 1 && !done; i++)
-    {
-        if (tvalue[i]=='/')
-            if (tvalue[i+1]=='/')
-            {
-                wherecomment = i;
-                done = true;
-            }
-    }
+	// find begining of comments
+	bool done = false;
+	for (int i=0; i < MAX_ST_SIZE - 1 && !done; i++)
+	{
+		if (tvalue[i]=='/')
+			if (tvalue[i+1]=='/')
+			{
+				wherecomment = i;
+				done = true;
+			}
+	}
 
-    // Remove comments
-    for (int i=wherecomment; i < MAX_ST_SIZE; i++)
-        tvalue[i]=NULL;
+	// Remove comments
+	for (int i=wherecomment; i < MAX_ST_SIZE; i++)
+		tvalue[i] = '\0';
 
-    CleanStr(tvalue);        
+	CleanStr(tvalue);        
 
-    // Replace defines with their value
-    for (int i=0; i < MAX_ST_SIZE - 1 && tvalue[i]!=NULL; i++)
-    {
-        if (tvalue[i]=='#') // found a keyword?
-        {
-
-            // get the end of keyword
-            int z;
-            for (z=i+1; true; z++)
-            {
+	// Replace defines with their value
+	for (int i=0; i < MAX_ST_SIZE - 1 && tvalue[i]!='\0'; i++)
+	{
+		if (tvalue[i]=='#') // found a keyword?
+		{
+			// get the end of keyword
+			int z;
+			for (z=i+1; true; z++)
+			{
 				if (IsEmptyChar(tvalue[z]) != false)
 					break;
 				if (CharIsSeparator(tvalue[z]) != false)
 					break;
-				if (tvalue[z]==NULL)
+				if (tvalue[z]=='\0')
 					break;
 				if (z >= MAX_ST_SIZE - i -1)
 					break;
-                if (tvalue[z]=='#')
-                    PrintSourceError(curfile,flinescount,"Illegal use of '#' char.");
-            }
+				if (tvalue[z]=='#')
+					PrintSourceError(curfile,flinescount,"Illegal use of '#' char.");
+			}
 
-            // z-- FIXME: wtf
-            z--;
+			// z-- FIXME: wtf
+			z--;
 
-            // Check errors
-            if (z == i + 1) // empty keyword
-                PrintSourceError(curfile,flinescount,"Empty keyword on define value.");
+			// Check errors
+			if (z == i + 1) // empty keyword
+				PrintSourceError(curfile,flinescount,"Empty keyword on define value.");
 
-            // get the identifier string
-            char ident[MAX_ST_SIZE];
-            memset(ident,NULL,MAX_ST_SIZE);
-            int x;
-            for (x=i+1; x<(z+1); x++)
-                ident[x-i-1] = tvalue[x];
+			// get the identifier string
+			char ident[MAX_ST_SIZE];
+			memset(ident,0,MAX_ST_SIZE);
+			int x;
+			for (x=i+1; x<(z+1); x++)
+				ident[x-i-1] = tvalue[x];
 
-            // make sure it isnt a reserved word
-            if (GetDirectiveType(ident)!=DIRECTIVE_IDENT)
-                PrintSourceError(curfile,flinescount,"Illegal use of preprocessor reserved word.");
+			// make sure it isnt a reserved word
+			if (GetDirectiveType(ident)!=DIRECTIVE_IDENT)
+				PrintSourceError(curfile,flinescount,"Illegal use of preprocessor reserved word.");
 
-            // Update main char loop position
-            i = i + strlen(ident);
+			// Update main char loop position
+			i = i + strlen(ident);
 
-            int numdef = IsDefined(ident);
-            if (numdef == 0)
-            {
-                PrintSourceError(curfile,flinescount,"Undefined symbol as define value.");
-            }
-            else // Add it to our final string
-            {
-                // set to true the is_used flag
+			int numdef = IsDefined(ident);
+			if (numdef == 0)
+			{
+				PrintSourceError(curfile,flinescount,"Undefined symbol as define value.");
+			}
+			else // Add it to our final string
+			{
+				// set to true the is_used flag
 				deflist[numdef-1]->is_used = true;
 
 				strcat(finalstr,deflist[numdef-1]->value);
-                if (strlen(finalstr) >= MAX_ST_SIZE - 1)
-                    PrintSourceError(curfile,flinescount,"Resulting string value exceeds char limit! (255)");
-            }
-        }
-        else
-        {
-            char tmpstr[2];
-            tmpstr[0]=tvalue[i];
-            tmpstr[1]=NULL;
-            strcat(finalstr,tmpstr);
+				if (strlen(finalstr) >= MAX_ST_SIZE - 1)
+					PrintSourceError(curfile,flinescount,"Resulting string value exceeds char limit! (255)");
+			}
+		}
+		else
+		{
+			char tmpstr[2];
+			tmpstr[0]=tvalue[i];
+			tmpstr[1]='\0';
+			strcat(finalstr,tmpstr);
 
-            // Exceeds string limit max?
-            if (strlen(finalstr) >= MAX_ST_SIZE - 1)
-                PrintSourceError(curfile,flinescount,"Resulting string value exceeds char limit! (255)");
-        }
-    }
+			// Exceeds string limit max?
+			if (strlen(finalstr) >= MAX_ST_SIZE - 1)
+				PrintSourceError(curfile,flinescount,"Resulting string value exceeds char limit! (255)");
+		}
+	}
 
-    CleanStr(finalstr);
+	CleanStr(finalstr);
 
-    strcpy(tvalue, finalstr);
+	strcpy(tvalue, finalstr);
 }
 
 //===================================================================================================
@@ -2212,68 +2195,68 @@ void ParseValue(char* tvalue)
 
 int GetDirectiveType(char* tkey)
 {
-    //- START STRING COMPARISONS TO GET TYPE OF DIRECTIVE -//
-    if (strlen(tkey) == strlen(ST_DIR_IFDEF))
-    {
-        if (strcmp(tkey,ST_DIR_IFDEF)==0)
-            return DIRECTIVE_IFDEF;
-    }
+	//- START STRING COMPARISONS TO GET TYPE OF DIRECTIVE -//
+	if (strlen(tkey) == strlen(ST_DIR_IFDEF))
+	{
+		if (strcmp(tkey,ST_DIR_IFDEF)==0)
+			return DIRECTIVE_IFDEF;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_IFNDEF))
-    {
-        if (strcmp(tkey,ST_DIR_IFNDEF)==0)
-            return DIRECTIVE_IFNDEF;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_IFNDEF))
+	{
+		if (strcmp(tkey,ST_DIR_IFNDEF)==0)
+			return DIRECTIVE_IFNDEF;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_ELSE))
-    {
-        if (strcmp(tkey,ST_DIR_ELSE)==0)
-            return DIRECTIVE_ELSE;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_ELSE))
+	{
+		if (strcmp(tkey,ST_DIR_ELSE)==0)
+			return DIRECTIVE_ELSE;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_ENDIF))
-    {
-        if (strcmp(tkey,ST_DIR_ENDIF)==0)
-            return DIRECTIVE_ENDIF;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_ENDIF))
+	{
+		if (strcmp(tkey,ST_DIR_ENDIF)==0)
+			return DIRECTIVE_ENDIF;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_DEFINE))
-    {
-        if (strcmp(tkey,ST_DIR_DEFINE)==0)
-            return DIRECTIVE_DEFINE;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_DEFINE))
+	{
+		if (strcmp(tkey,ST_DIR_DEFINE)==0)
+			return DIRECTIVE_DEFINE;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_UNDEF))
-    {
-        if (strcmp(tkey,ST_DIR_UNDEF)==0)
-            return DIRECTIVE_UNDEF;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_UNDEF))
+	{
+		if (strcmp(tkey,ST_DIR_UNDEF)==0)
+			return DIRECTIVE_UNDEF;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_PRAGMA))
-    {
-        if (strcmp(tkey,ST_DIR_PRAGMA)==0)
-            return DIRECTIVE_PRAGMA;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_PRAGMA))
+	{
+		if (strcmp(tkey,ST_DIR_PRAGMA)==0)
+			return DIRECTIVE_PRAGMA;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_INCLUDELIST))
-    {
-        if (strcmp(tkey,ST_DIR_INCLUDELIST)==0)
-            return DIRECTIVE_INCLUDELIST;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_INCLUDELIST))
+	{
+		if (strcmp(tkey,ST_DIR_INCLUDELIST)==0)
+			return DIRECTIVE_INCLUDELIST;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_ENDLIST))
-    {
-        if (strcmp(tkey,ST_DIR_ENDLIST)==0)
-            return DIRECTIVE_ENDLIST;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_ENDLIST))
+	{
+		if (strcmp(tkey,ST_DIR_ENDLIST)==0)
+			return DIRECTIVE_ENDLIST;
+	}
 
-    if (strlen(tkey) == strlen(ST_DIR_INCLUDE))
-    {
-        if (strcmp(tkey,ST_DIR_INCLUDE)==0)
-            return DIRECTIVE_INCLUDE;
-    }
+	if (strlen(tkey) == strlen(ST_DIR_INCLUDE))
+	{
+		if (strcmp(tkey,ST_DIR_INCLUDE)==0)
+			return DIRECTIVE_INCLUDE;
+	}
 
-    return DIRECTIVE_IDENT;
+	return DIRECTIVE_IDENT;
 }
 
 //========================================================================
@@ -2281,18 +2264,18 @@ int GetDirectiveType(char* tkey)
 
 void ChangeFilename(char *fname)
 {
-    char tmpname[MAX_ST_SIZE];
-    int i;
+	char tmpname[MAX_ST_SIZE];
+	int i;
 	
-	memset(tmpname,NULL,MAX_ST_SIZE);
-	    
-    for (i=0; i < MAX_ST_SIZE - 1 && fname[i]!='.'; i++)
-        tmpname[i] = fname[i];
+	memset(tmpname,0,MAX_ST_SIZE);
+		
+	for (i=0; i < MAX_ST_SIZE - 1 && fname[i]!='.'; i++)
+		tmpname[i] = fname[i];
 
-    tmpname[i]=NULL;
-    strcat(tmpname,".qcp\0");
+	tmpname[i]='\0';
+	strcat(tmpname,".qcp\0");
 
-	strcpy(fname,tmpname);    
+	strcpy(fname,tmpname);
 }
 
 //========================================================================
@@ -2329,7 +2312,7 @@ void CheckUnused()
 
 			if (z!=999999)
 			{
-				tstr[0] = NULL;
+				tstr[0] = '\0';
 				strcpy(tstr,"Definition \"");
 				strcat(tstr,deflist[i]->identifier);
 				strcat(tstr,"\" is never used");
