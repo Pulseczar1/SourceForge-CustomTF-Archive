@@ -40,7 +40,7 @@ bool IsEmptyChar(char tchar);
 int GetDirectiveType(char* tkey);
 void ParseValue(char* tvalue);
 void ChangeFilename(char *fname);
-void PrintFile (char* what);
+void PrintFile (FILE*, char*);
 void CheckUnused();
 
 // String messages
@@ -57,7 +57,7 @@ void CheckUnused();
 #define MAX_FILE_QUEUE    256// max files to process
 #define MAX_PARSE_QUEUE    16// max depth of consecutive IFDEF or IFNDEFS
 #define MAX_ST_SIZE       256// maximum string size
-#define MAX_DEFINES      2048
+#define MAX_DEFINES      4096 // PZ: doubled it
 
 // line Scan status flags
 #define SCN_STATUS_IDLE         0//write output, searching for anything
