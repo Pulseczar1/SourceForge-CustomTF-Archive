@@ -167,11 +167,13 @@ void() JobThief =
 	else { //Start hiding
 		//RJM - Can't hide while carrying flags.
 		//WK  - Allow them to go eyes invisible but not full hide
+/*
 		// Gizmo - I don't think 'hiding in the shadows' while glowing makes sense anyways
 		if (self.effects & (#EF_DIMLIGHT | #EF_BRIGHTLIGHT)) { 
 			sprint(self, #PRINT_HIGH, "Not while glowing, gimp.\n");
 			return;
 		}
+*/
 		sprint(self,#PRINT_HIGH,"Εξτεςιξη σθαδοχσ...\n");
 		self.frame = 0;
 		self.weaponframe = 0;
@@ -253,6 +255,18 @@ void() JobWarlock =
 	{
 		Menu_Demon_Input(7);
 		return;
+	}
+
+	// Gizmo - if we're looking at one of our summons, switch to it's menu
+	if ( GetJobExtras( self ) ) {
+		traceline( self.origin, self.origin + v_forward*4096, #TL_ANY_SOLID, self );
+
+		if ( trace_ent ) {
+			if ( trace_ent.real_owner == self && IsOwnedMonster( trace_ent ) && IsSummon( trace_ent ) ) {
+				SetCurrentSoul( self, trace_ent.increase_team1 );
+				sprint( self, #PRINT_HIGH, "Warlock menu set to ", trace_ent.netname, "\n" );
+			}
+		}
 	}
 
 	self.current_menu = #MENU_DEMON;

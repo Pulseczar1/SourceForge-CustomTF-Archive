@@ -17,6 +17,9 @@ float(entity player) RestoreOriginalItems;
 string(float ver) ver_ftos;
 void() InitMegaTF;
 
+// Gizmo - for npc lerp code
+float	max_lerping_npcs;
+
 //====================================================================//
 // Initialize stuff, localinfos etc...								  //
 // This is called on worldspawn and with the Admin infos command	  //
@@ -226,6 +229,14 @@ void (float startup) UpdateInfos =
 		custom_money = numba;
 	else
 		custom_money = #DEFAULT_MONEY;
+
+	// Gizmo - for npc ai lerping code, maximum number of npcs/monsters that can be lerping at the same time, to prevent CPU lag
+	st = infokey( world, "max_lerping_npcs" );
+	if ( st == string_null )
+		st = "20";
+	max_lerping_npcs = stof( st );
+	if ( max_lerping_npcs < 0 )
+		max_lerping_npcs = 0;
 
 	if (startup) // Map startup?
 	{

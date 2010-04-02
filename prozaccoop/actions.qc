@@ -164,11 +164,13 @@ void() TeamFortress_SaveMe =
 	}
 };
 
-#ifdef COOP_MODE_ENHANCED
 /*
-	ConstructString - Gizmo - made this function to make things easier
-*/
+=============
+ConstructString
 
+Gizmo - made this function to make things easier.
+=============
+*/
 string (string s1, string s2, string s3, string s4, string s5, string s6, string s7, string s8) ConstructString =
 {
 	local string ls;
@@ -207,7 +209,6 @@ string (string s1, string s2, string s3, string s4, string s5, string s6, string
 
 	return ls;
 };
-#endif
 
 //=========================================================================
 // ID's the player in your sights, and if you're a medic or engineer,

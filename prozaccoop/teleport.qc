@@ -192,10 +192,17 @@ float(entity targ) Teleporter_check_person =
 		CenterPrint(targ, "Civilian + Teleporter = No, NFC!\n");
 		return #FALSE;
 	}
+	// Gizmo - changed this to allow teleport while glowing, but not while holding a tfgoal
+	if ( targ.#goals_attached ) {
+		CenterPrint( targ, "Can't use teleporter while carrying\nitems or flags!\n" );
+		return #FALSE;
+	}
+/*
 	if (targ.effects & (#EF_BRIGHTLIGHT | #EF_DIMLIGHT | #EF_BRIGHTFIELD)) {//no flag for you!
 		CenterPrint(targ, "Can't use teleporter while glowing!\n");
 		return #FALSE;
 	}
+*/
 
 //ALL NEW CHECKS _MUST_ BE ABOVE THIS LINE
 	if (teamplay)

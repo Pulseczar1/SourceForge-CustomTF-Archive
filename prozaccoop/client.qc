@@ -3052,6 +3052,7 @@ void() PlayerPreThink =
 			self.job = self.job | #JOB_ACTIVE;
 		}
 	} */
+/*
 	// Gizmo
 	if ( self.job & #JOB_THIEF ) {
 		if ( self.job & #JOB_ACTIVE ) {
@@ -3061,6 +3062,7 @@ void() PlayerPreThink =
 			}
 		}
 	}
+*/
 	
 	if (self.deadflag == #DEAD_DYING)
 		return; // dying, so do nothing
@@ -3166,7 +3168,7 @@ void() CheckPowerups =
 	//WK And while being inspired by chaplan
 	if (self.done_custom & #CUSTOM_BUILDING || //We are building a custom class
 		  self.playerclass == #PC_UNDEFINED || //Or we're in observer mode
-		 (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE) || //Or we are fully hiding thieves
+		 (self.job & #JOB_THIEF && self.job & #JOB_FULL_HIDE && !self.#goals_attached ) || //Or we are fully hiding thieves	// Gizmo - and we don't have a tfgoal attached
 	   //(self.tfstate & #TFSTATE_INSPIRED && !(self.job & #JOB_CHAPLAN)) || //ofN comented by
 	   self.aura == #AURA_INVIS) //- OfN
 	{

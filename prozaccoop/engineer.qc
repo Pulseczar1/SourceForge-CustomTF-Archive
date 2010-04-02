@@ -1617,38 +1617,45 @@ void(entity disp) Engineer_UseDispenser =
 
 //=========================================================================
 // Engineer has used a Spanner on the SentryGun
-void(entity gun) Engineer_UseSentryGun =
-{
-	local entity dist_checker;
+
+// Gizmo
+void( entity printDest, entity gun ) Engineer_PrintSentryDetails = {
 	local string st;
 
 	// Print the gun's details
-	sprint(self, #PRINT_HIGH, "Ìוצול ");
+	sprint(printDest, #PRINT_HIGH, "Ìוצול ");
 	st = Return_Colored_Num(gun.weapon);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, " Sentry Gun has ");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, " Sentry Gun has ");
 	st = ftos(gun.health);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, "¯");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, "¯");
 	st = ftos(gun.max_health);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, " טובלפט, ");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, " טובלפט, ");
 	st = ftos(gun.ammo_shells);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, " ףטוללף");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, " ףטוללף");
 	if (gun.weapon == 3)
 	{
 		st = ftos(gun.ammo_rockets);
-		sprint(self, #PRINT_HIGH, ", ");
-		sprint(self, #PRINT_HIGH, st);
-		sprint(self, #PRINT_HIGH, " עןדכופף");
+		sprint(printDest, #PRINT_HIGH, ", ");
+		sprint(printDest, #PRINT_HIGH, st);
+		sprint(printDest, #PRINT_HIGH, " עןדכופף");
 	}
-	sprint(self, #PRINT_HIGH, "\n");
+	sprint(printDest, #PRINT_HIGH, "\n");
 
-	sprint(self, #PRINT_HIGH, "Sentry Gun ÆÒÁÇÓ: "); //CH Displays kills of sent
+	sprint(printDest, #PRINT_HIGH, "Sentry Gun ÆÒÁÇÓ: "); //CH Displays kills of sent
 		st = ftos(gun.frags);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, "\n");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, "\n");
+};
+
+void(entity gun) Engineer_UseSentryGun =
+{
+	local entity dist_checker;
+
+	Engineer_PrintSentryDetails( self, gun );
 
 	// Pop up the menu
 	self.current_menu = #MENU_ENGINEER_FIX_SENTRYGUN;
@@ -1680,85 +1687,127 @@ void(entity gun) Engineer_UseSentryGun =
 
 ////////////////////////////////////////////////
 // Engineer has used a Spanner on the Tesla
-void(entity gun) Engineer_UseTesla =
-{
-	local entity dist_checker;
+
+// Gizmo
+void( entity printDest, entity gun ) Engineer_PrintTeslaDetails = {
 	local string st;
 
 	// Print the gun's details
-	sprint(self, #PRINT_HIGH, "Èובלפט:");
+	sprint(printDest, #PRINT_HIGH, "Èובלפט:");
 	st = ftos(gun.health);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, "¯");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, "¯");
 	st = ftos(gun.max_health);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, " Ãוללף:");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, " Ãוללף:");
 	st = ftos(gun.ammo_cells);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, "¯");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, "¯");
 	st = ftos(gun.maxammo_cells);
-	sprint(self, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, st);
 	st = ftos(gun.has_sentry);
-	sprint(self, #PRINT_HIGH, " Îןעםבל Ups Left:");
-	sprint(self, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, " Îןעםבל Ups Left:");
+	sprint(printDest, #PRINT_HIGH, st);
 	st = ftos(gun.has_tesla);
-	sprint(self, #PRINT_HIGH, " Íיףד Ups Left:");
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, "\n");
+	sprint(printDest, #PRINT_HIGH, " Íיףד Ups Left:");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, "\n");
 
-	sprint(self, #PRINT_HIGH, "Öןלפבחו:");
+	sprint(printDest, #PRINT_HIGH, "Öןלפבחו:");
 	st = ftos(gun.ammo_shells);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, " Áםנועבחו:");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, " Áםנועבחו:");
 	st = ftos(gun.ammo_nails);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, " Ðןקוע Óץננלש:");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, " Ðןקוע Óץננלש:");
 	st = ftos(gun.ammo_rockets);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, "\n");
-	if (gun.tf_items) {
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, "\n");
+
+	// Gizmo - added gun.#tesla_*** checks
+	if (gun.tf_items || gun.#tesla_upgrades || gun.#tesla_battery_overcharge || gun.#tesla_chain_lightning) {
 		local float num;
 		num = 0;
 		if (gun.tf_items & #NIT_TURRET) {
-			sprint(self, #PRINT_HIGH, "TeslaTurret(tm). ");
+			sprint(printDest, #PRINT_HIGH, "TeslaTurret(tm). ");
 			num = num + 1;
 		}
 		if (gun.tf_items & #NIT_SCANNER) {
-			sprint(self, #PRINT_HIGH, "Improved Targeter. ");
+			sprint(printDest, #PRINT_HIGH, "Improved Targeter. ");
 			num = num + 1;
 		}
 		if (gun.tf_items & #NIT_AUTOID) {
-			sprint(self, #PRINT_HIGH, "Spy Detector. ");
+			sprint(printDest, #PRINT_HIGH, "Spy Detector. ");
 			num = num + 1;
 		}
 		if (gun.tf_items & #NIT_KEVLAR) {
-			sprint(self, #PRINT_HIGH, "Kevlar Armor. ");
+			sprint(printDest, #PRINT_HIGH, "Kevlar Armor. ");
 			num = num + 1;
 		}
 		if (gun.tf_items & #NIT_BLAST) {
-			sprint(self, #PRINT_HIGH, "Blast Armor. ");
+			sprint(printDest, #PRINT_HIGH, "Blast Armor. ");
 			num = num + 1;
 		}
 		if (gun.tf_items & #NIT_ASBESTOS) {
-			sprint(self, #PRINT_HIGH, "Asbestos Armor. ");
+			sprint(printDest, #PRINT_HIGH, "Asbestos Armor. ");
 			num = num + 1;
 		}
 		if (gun.tf_items & #NIT_TELEPORTER) {
-			sprint(self, #PRINT_HIGH, "Upgrades from frags. ");
+			sprint(printDest, #PRINT_HIGH, "Upgrades from frags. ");
 			num = num + 1;
 		}
 		if (gun.tf_items & #NIT_TESLA_CLOAKING) {
-			sprint(self, #PRINT_HIGH, "Cloaking Device. ");
+			sprint(printDest, #PRINT_HIGH, "Cloaking Device. ");
 			num = num + 1;
 		}
+
+		// Gizmo
+		if ( gun.#tesla_upgrades & #TESLA_UPGRADE_NANOBOTS ) {
+			sprint( printDest, #PRINT_HIGH, "Nano Bots. " );
+			num = num + 1;
+		}
+		if ( gun.#tesla_upgrades & #TESLA_UPGRADE_SOLARPANEL ) {
+			sprint( printDest, #PRINT_HIGH, "Solar Panel. " );
+			num = num + 1;
+		}
+		if ( gun.#tesla_upgrades & #TESLA_UPGRADE_HEALINGFIELD ) {
+			sprint( printDest, #PRINT_HIGH, "Healing Field. " );
+			num = num + 1;
+		}
+		if ( gun.#tesla_upgrades & #TESLA_UPGRADE_PROXYDEFENSE ) {
+			sprint( printDest, #PRINT_HIGH, "Proximity Defense System. " );
+			num = num + 1;
+		}
+		if ( gun.#tesla_battery_overcharge ) {
+			st = ftos( gun.#tesla_battery_overcharge );
+			sprint( printDest, #PRINT_HIGH, "Battery Overcharge Level " );
+			sprint( printDest, #PRINT_HIGH, st );
+			sprint( printDest, #PRINT_HIGH, ". " );
+			num = num + 1;
+		}
+		if ( gun.#tesla_chain_lightning ) {
+			st = ftos( gun.#tesla_chain_lightning );
+			sprint( printDest, #PRINT_HIGH, "Chain Lightning Level " );
+			sprint( printDest, #PRINT_HIGH, st );
+			sprint( printDest, #PRINT_HIGH, ". " );
+			num = num + 1;
+		}
+
 		if (num != 0)
-			sprint(self, #PRINT_HIGH, "\n");
+			sprint(printDest, #PRINT_HIGH, "\n");
 	}
 
-	sprint(self, #PRINT_HIGH, "Tesla Sentry ÆÒÁÇÓ: "); //CH Displays kills of tesla
+	sprint(printDest, #PRINT_HIGH, "Tesla Sentry ÆÒÁÇÓ: "); //CH Displays kills of tesla
 		st = ftos(gun.frags);
-	sprint(self, #PRINT_HIGH, st);
-	sprint(self, #PRINT_HIGH, "\n");
+	sprint(printDest, #PRINT_HIGH, st);
+	sprint(printDest, #PRINT_HIGH, "\n");
+};
+
+void(entity gun) Engineer_UseTesla =
+{
+	local entity dist_checker;
+
+	Engineer_PrintTeslaDetails( self, gun );
 
 	// Pop up the menu
 	self.current_menu = #MENU_ENGINEER_FIX_TESLA;

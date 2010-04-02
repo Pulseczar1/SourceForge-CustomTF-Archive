@@ -102,6 +102,18 @@ void() JobArmy =
 		return;
 	}
 
+	// Gizmo - if we're looking at one of our grunts, switch to it's menu
+	if ( GetJobExtras( self ) ) {
+		traceline( self.origin, self.origin + v_forward*4096, #TL_ANY_SOLID, self );
+
+		if ( trace_ent ) {
+			if ( trace_ent.real_owner == self && IsOwnedMonster( trace_ent ) && !IsSummon( trace_ent ) ) {
+				SetCurrentSoul( self, trace_ent.increase_team1 );
+				sprint( self, #PRINT_HIGH, "Army menu set to ", trace_ent.netname, "\n" );
+			}
+		}
+	}
+
 	self.current_menu = #MENU_ARMY;
 	self.menu_count = #MENU_REFRESH_RATE;	
 };

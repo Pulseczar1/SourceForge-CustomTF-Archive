@@ -675,6 +675,9 @@ NPC MOVEMENT LERPING
 #define NPC_LERPTIME			0.031
 //#define NPC_SMOOTHTURNING					// can be disabled to decrease cpu usage
 
+float	currentLerpingNPCS;
+float	lastLerpingTime;					// since there's no way to have an accurate npc lerping count (since any monster could be removed while lerping) we count it in 100ms intervals
+
 /*
 ===============
 npcAi_SmoothFrame
@@ -691,7 +694,6 @@ void() npcAi_SmoothFrame = {
 		// FIXME: is it ok to call #npc_oldthink directly here?
 		self.nextthink = time;
 		self.think = self.#npc_oldthink;
-		self.#npc_lastruntime = 0;
 		return;
 	}
 
@@ -703,13 +705,13 @@ void() npcAi_SmoothFrame = {
 
 #ifndef NPC_SMOOTHTURNING
 		// adjust the NPC's angles at .yaw_speed one time
-		oldyaw = self.angles_y;
+//		oldyaw = self.angles_y;
 		oldPos = self.goalentity.origin;
 		self.goalentity.origin = self.#npc_lastEnemyOrigin;
 		movetogoal( 0 );
 		self.#npc_smoothDestYaw = self.angles_y;
-		self.angles_y = oldyaw;
-		self.goalentity.origin = oldPos;
+//		self.angles_y = oldyaw;
+		setorigin( self.goalentity, oldPos );
 #endif
 		return;
 	}
@@ -724,21 +726,26 @@ void() npcAi_SmoothFrame = {
 		self.yaw_speed = ( oldyaw / #NPC_FRAMETIME ) * ( self.lastruntime - self.#npc_lastruntime );
 #else
 		oldyaw = self.yaw_speed;
-		oldIdeal = self.ideal_yaw;
-		self.yaw_speed = ( oldyaw / #NPC_FRAMETIME ) * ( self.lastruntime - self.#npc_lastruntime );
-		self.ideal_yaw = self.#npc_smoothDestYaw;
-		ChangeYaw();
+//		oldIdeal = self.ideal_yaw;
+//		self.yaw_speed = ( oldyaw / #NPC_FRAMETIME ) * ( self.lastruntime - self.#npc_lastruntime );
+//		self.ideal_yaw = self.#npc_smoothDestYaw;
+//		ChangeYaw();
 		self.yaw_speed = 0;
-		self.ideal_yaw = oldIdeal;
+//		self.ideal_yaw = oldIdeal;
 #endif
 		// move to the last known position of the enemy
 		oldPos = self.goalentity.origin;
 		self.goalentity.origin = self.#npc_lastEnemyOrigin;
 
+		// this is the only way to get ChangeYaw() called by movetogoal() to do an early out
+		oldIdeal = self.angles_y;
+		self.angles_y = self.ideal_yaw;
 		// move to the last known position
 		movetogoal( movedist );
 		// reset yaw speed back to normal
 		self.yaw_speed = oldyaw;
+		// reset yaw angle back to normal
+		self.angles_y = oldIdeal;
 
 		// reset the goal back to it's original position
 		setorigin( self.goalentity, oldPos );
@@ -765,6 +772,17 @@ void( float dist ) npcAi_WalkSmooth = {
 	if ( !dist )
 		return;
 
+	// check if it's time to reset the lerping count
+	if ( lastLerpingTime + 0.1 <= time ) {
+		currentLerpingNPCS = 0;
+		lastLerpingTime = time;
+	}
+	// make sure we haven't reached our maximum lerping limit
+	if ( currentLerpingNPCS >= max_lerping_npcs ) {
+		movetogoal( dist );
+		return;
+	}
+
 	// save old stuff
 	self.#npc_oldthink = self.think;
 	self.#npc_smoothtime = time + #NPC_FRAMETIME;
@@ -783,6 +801,9 @@ void( float dist ) npcAi_WalkSmooth = {
 	// set our origin and angles back to the original
 //	setorigin( self, oldOrigin );
 //	self.angles = oldAngles;
+
+	// increase the current lerping npcs
+	currentLerpingNPCS = currentLerpingNPCS + 1;
 
 	// set think function
 	self.think = npcAi_SmoothFrame;
