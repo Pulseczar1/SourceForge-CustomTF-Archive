@@ -1,19 +1,19 @@
-/*
-	tfdefs.qc - to keep defs.qc a little cleaner, place teamfortress specific defs.qc stuff in here instead
-*/
+// tfdefs.qc - to keep defs.qc a little cleaner, place teamfortress specific defs.qc stuff in here instead
+
 
 //
 // globals
 //
-float	server_spawned;								// TRUE if server is spawned and ready to go
+float	server_spawned;									// TRUE if server is spawned and ready to go
 
 //
 // player only fields
 //
-#define team_damage_dealt			cnt				// total amount of team damage this player has dealt
-#define enemy_damage_dealt			volume			// total amount of damage done to enemies only
+#define team_damage_dealt			cnt					// total amount of team damage this player has dealt
+#define enemy_damage_dealt			volume				// total amount of damage done to enemies only
 #define damage_taken				distance			// player that took the most amount of damage from enemies
-#define teleporter_teamkiller			trigger_field		// a teammate that teleported us into lava (requires teleporter.qc, client.qc: PlayerPostThink(), and obits.qc)
+#define teleporter_teamkiller		trigger_field		// a teammate that teleported us into lava (requires teleporter.qc, client.qc: PlayerPostThink(), and obits.qc)
+#define goals_attached				remove_spawnpoint	// number of goals attached to this player (like a flag)
 
 //
 // grunty.qc
@@ -21,16 +21,34 @@ float	server_spawned;								// TRUE if server is spawned and ready to go
 #define allowed_weapons				wait				// weapons the grunt can use
 
 //
+// tesla fields
+//
+#define tesla_upgrades				activate_group_no	// holds the expensive tesla upgrades
+#define tesla_recharge_time			remove_spawngroup	// time when tesla can heal/recharge itself
+#define tesla_battery_overcharge	restore_goal_no		// the level
+#define tesla_chain_lightning		remove_item_group	// the level
+
+//
+// tesla constants
+//
+#define TESLA_UPGRADE_NANOBOTS		1
+#define TESLA_UPGRADE_SOLARPANEL	2
+#define TESLA_UPGRADE_HEALINGFIELD	4
+#define TESLA_UPGRADE_PROXYDEFENSE	8
+
+//
 // prototypes
 //
 float( entity ent ) InSolid;
 float( entity e ) GetTeam;
+float( entity thing ) IsOwnedMonster;
+string( string s1, string s2, string s3, string s4, string s5, string s6, string s7, string s8 ) ConstructString;
 
 //
 // MedicRevive() flags
 //
-#define REVIVE_PRINTMSGS				1			// display messages to the medic and dead player
-#define REVIVE_MEDIKITAMMO			2				// medikit ammo required
+#define REVIVE_PRINTMSGS			1					// display messages to the medic and dead player
+#define REVIVE_MEDIKITAMMO			2					// medikit ammo required
 
 //=======================================================================
 

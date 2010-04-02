@@ -83,6 +83,9 @@ float(float checkIP, float noIdlers) GetNoPlayers;
 #define MENU_CUSTOM_MIN 				36
 #define MENU_CUSTOM_MAX 				52
 
+// Gizmo - more engineer menus
+#define MENU_ENGINEER_FIX_TESLA3		53
+
 
 // Gizmo - no need to search for "MENU_OPTION" anymore, just change the above min/max macros
 //If we extend this, search for "MENU_OPTION" below
@@ -141,6 +144,7 @@ void() Menu_EngineerFix_Dispenser;
 void() Menu_EngineerFix_SentryGun;
 void() Menu_EngineerFix_Tesla;
 void() Menu_EngineerFix_Tesla2;
+void() Menu_EngineerFix_Tesla3;							// Gizmo
 void() Menu_EngineerFix_Camera;
 void() Menu_EngineerFix_Sensor;
 void() Menu_EngineerFix_Teleporter;
@@ -150,6 +154,7 @@ void(float inp) Menu_EngineerFix_Dispenser_Input;
 void(float inp) Menu_EngineerFix_SentryGun_Input;
 void(float inp) Menu_EngineerFix_Tesla_Input;
 void(float inp) Menu_EngineerFix_Tesla_Input2;
+void(float inp) Menu_EngineerFix_Tesla_Input3;			// Gizmo
 void(float inp) Menu_EngineerFix_Camera_Input;
 void(float inp) Menu_EngineerFix_Sensor_Input;
 void(float inp) Menu_EngineerFix_Teleporter_Input;
@@ -437,6 +442,10 @@ void() Player_Menu =
 	else if (self.current_menu == #MENU_ENGINEER_FIX_TESLA2)
 	{
 		Menu_EngineerFix_Tesla2();
+	}
+	else if (self.current_menu == #MENU_ENGINEER_FIX_TESLA3)
+	{
+		Menu_EngineerFix_Tesla3();
 	}
 	else if (self.current_menu == #MENU_ENGINEER_FIX_CAMERA)
 	{
@@ -970,6 +979,8 @@ void(float inp) Menu_Input =
 		Menu_EngineerFix_Tesla_Input(inp);
 	else if (self.current_menu == #MENU_ENGINEER_FIX_TESLA2)
 		Menu_EngineerFix_Tesla_Input2(inp);
+	else if (self.current_menu == #MENU_ENGINEER_FIX_TESLA3)
+		Menu_EngineerFix_Tesla_Input3(inp);								// Gizmo
 	else if (self.current_menu == #MENU_ENGINEER_FIX_SENTRYGUN)
 		Menu_EngineerFix_SentryGun_Input(inp);
 	else if (self.current_menu == #MENU_ENGINEER_FIX_CAMERA)
@@ -3078,8 +3089,8 @@ void(float inp) Menu_EngineerFix_Tesla_Input2 =
 //	}
 	if (inp == 10) {
 		self.impulse = 0;
-		Menu_EngineerFix_Tesla();
-		self.current_menu = #MENU_ENGINEER_FIX_TESLA;
+		Menu_EngineerFix_Tesla3();
+		self.current_menu = #MENU_ENGINEER_FIX_TESLA3;
 		CuTFMenuSound(#MENUSOUND_BROWSE);
 	}
 
@@ -3101,6 +3112,225 @@ void(float inp) Menu_EngineerFix_Tesla_Input2 =
 
 		W_SetCurrentAmmo();
 	}
+	}
+};
+
+// Gizmo
+float( float level ) Tesla_GetOverchargeUps = {
+	if ( !level )
+		return 0;
+	if ( level <= 1 )
+		return 10;
+	if ( level <= 2 )
+		return 20;
+	if ( level <= 3 )
+		return 40;
+	if ( level <= 4 )
+		return 80;
+	return 99;
+};
+float( float level ) Tesla_GetChainLightningUps = {
+	if ( !level )
+		return 0;
+	if ( level <= 1 )
+		return 10;
+	if ( level <= 2 )
+		return 20;
+	if ( level <= 3 )
+		return 40;
+	if ( level <= 4 )
+		return 80;
+	return 99;
+};
+
+void() Menu_EngineerFix_Tesla3 =
+{
+	local string l1, l2, l3, l4;
+	local string batteryUps, chainUps;
+	local string batteryLevel, chainLevel;
+
+	batteryUps = ftos( Tesla_GetOverchargeUps( self.building.#tesla_battery_overcharge + 1 ) );
+	chainUps = ftos( Tesla_GetChainLightningUps( self.building.#tesla_chain_lightning + 1 ) );
+	batteryLevel = ftos( self.building.#tesla_battery_overcharge + 1 );
+	batteryLevel = padstr( batteryLevel, 2 );
+	chainLevel = ftos( self.building.#tesla_chain_lightning + 1 );
+	chainLevel = padstr( chainLevel, 2 );
+
+	l1 = Return_Colored_Num(self.building.has_sentry);
+//	l2 = " .. Battery Overcharge        ­ 10u\n .. Chain Lighting            ­ 10u\n .. Proximity Defense System  ­ 20u\n .. Solar Panel               ­ 20u\n .. Nano Bots                 ­ 35u\n .. Healing Field             ­ 40u\n.. Repair and Recharge           \n.. Dismantle                     \n.. Îïôèéîç                       \n\n.. Normal Upgrades\n";
+
+	l2 = ConstructString( " .. Battery Overcharge ¼", batteryLevel, "©   ­ ", batteryUps, "u\n", string_null, string_null, string_null );
+	l3 = ConstructString( " .. Chain Lightning ¼", chainLevel, "©      ­ ", chainUps, "u\n", string_null, string_null, string_null );
+	l4 = " .. Proximity Defense System  ­ 20u\n .. Solar Panel               ­ 20u\n .. Nano Bots                 ­ 35u\n .. Healing Field             ­ 40u\n.. Repair and Recharge           \n.. Dismantle                     \n.. Îïôèéîç                       \n\n.. Normal Upgrades\n";
+	CenterPrint6( self, "Tesla Íïäéæéãáôéïî Ìáâ: ",l1, " Upgrades Left\n\nžžžžžžŸ Normal Tesla Upgrades žžžžžžŸ\n\n", l2, l3, l4 );
+};
+void(float inp) Menu_EngineerFix_Tesla_Input3 =
+{
+	local float HPfactor, num, AMMOfactor;
+
+	if (self.classname != "player" || self.building == world)
+		return;
+
+	if (inp <= 10 && inp >= 1) {
+		// battery overcharge
+		if ( inp == 1 ) {
+			if ( self.building.has_sentry >= Tesla_GetOverchargeUps( self.building.#tesla_battery_overcharge + 1 ) && self.ammo_cells >= 100 ) {
+				// remove the upgrades required
+				self.building.has_sentry = self.building.has_sentry - Tesla_GetOverchargeUps( self.building.#tesla_battery_overcharge + 1 );
+				// change the required amount for next time
+				self.building.#tesla_battery_overcharge = self.building.#tesla_battery_overcharge + 1;
+				self.ammo_cells = self.ammo_cells - 100;
+
+				if (self.building.all_active & #IMPROVED_THREE)
+					HPfactor=2; 	// TODO: add macros for this and armor levels in defs.qc
+				else
+					HPfactor=1;
+
+				if (self.building.all_active & #IMPROVED_ONE)
+					AMMOfactor=2;	// TODO: and this too!
+				else
+					AMMOfactor=1;
+
+				num = self.building.health / self.building.max_health;
+
+				self.building.max_health = floor( self.building.max_health + 50 * HPfactor );
+
+				self.building.maxammo_cells = self.building.maxammo_cells + 50 * AMMOfactor;
+				self.building.ammo_cells = self.building.maxammo_cells;
+
+				self.building.health = self.building.max_health * num;
+			} else {
+				if ( self.ammo_cells < 100 )
+					sprint( self, #PRINT_HIGH, "You need more cells to upgrade the tesla\n" );
+				else
+					sprint( self, #PRINT_HIGH, "You do not have enough upgrades to improve the tesla\n" );
+			}
+		}
+
+		// chain lightning
+		else if ( inp == 2 ) {
+			if ( self.building.has_sentry >= Tesla_GetChainLightningUps( self.building.#tesla_chain_lightning + 1 ) && self.ammo_cells >= 100 ) {
+				// remove the upgrades required
+				self.building.has_sentry = self.building.has_sentry - Tesla_GetChainLightningUps( self.building.#tesla_chain_lightning + 1 );
+				// change the required amount for next time
+				self.building.#tesla_chain_lightning = self.building.#tesla_chain_lightning + 1;
+				self.ammo_cells = self.ammo_cells - 100;
+			} else {
+				if ( self.ammo_cells < 100 )
+					sprint( self, #PRINT_HIGH, "You need more cells to upgrade the tesla\n" );
+				else
+					sprint( self, #PRINT_HIGH, "You do not have enough upgrades to improve the tesla\n" );
+			}
+		}
+
+		// proximity defense system
+		else if ( inp == 3 ) {
+			if ( self.building.#tesla_upgrades & #TESLA_UPGRADE_PROXYDEFENSE )
+				sprint( self, #PRINT_HIGH, "The Tesla already has the proximity defense system upgrade\n" );
+			else {
+				if ( self.building.has_sentry >= 20 && self.ammo_cells >= 100 ) {
+					self.building.has_sentry = self.building.has_sentry - 20;
+					self.ammo_cells = self.ammo_cells - 100;
+
+					self.building.#tesla_upgrades = self.building.#tesla_upgrades | #TESLA_UPGRADE_PROXYDEFENSE;
+				} else {
+					if ( self.ammo_cells < 100 )
+						sprint( self, #PRINT_HIGH, "You need more cells to upgrade the tesla\n" );
+					else
+						sprint( self, #PRINT_HIGH, "You do not have enough upgrades to improve the tesla\n" );
+				}
+			}
+		}
+
+		// solar panel
+		else if ( inp == 4 ) {
+			if ( self.building.#tesla_upgrades & #TESLA_UPGRADE_SOLARPANEL )
+				sprint( self, #PRINT_HIGH, "The Tesla already has the solar panel upgrade\n" );
+			else {
+				if ( self.building.has_sentry >= 20 && self.ammo_cells >= 100 ) {
+					self.building.has_sentry = self.building.has_sentry - 20;
+					self.ammo_cells = self.ammo_cells - 100;
+
+					self.building.#tesla_upgrades = self.building.#tesla_upgrades | #TESLA_UPGRADE_SOLARPANEL;
+				} else {
+					if ( self.ammo_cells < 100 )
+						sprint( self, #PRINT_HIGH, "You need more cells to upgrade the tesla\n" );
+					else
+						sprint( self, #PRINT_HIGH, "You do not have enough upgrades to improve the tesla\n" );
+				}
+			}
+		}
+
+		// nano bots
+		else if ( inp == 5 ) {
+			if ( self.building.#tesla_upgrades & #TESLA_UPGRADE_NANOBOTS )
+				sprint( self, #PRINT_HIGH, "The Tesla already has the nano bot upgrade\n" );
+			else {
+				if ( self.building.has_sentry >= 35 && self.ammo_cells >= 100 ) {
+					self.building.has_sentry = self.building.has_sentry - 35;
+					self.ammo_cells = self.ammo_cells - 100;
+
+					self.building.#tesla_upgrades = self.building.#tesla_upgrades | #TESLA_UPGRADE_NANOBOTS;
+				} else {
+					if ( self.ammo_cells < 100 )
+						sprint( self, #PRINT_HIGH, "You need more cells to upgrade the tesla\n" );
+					else
+						sprint( self, #PRINT_HIGH, "You do not have enough upgrades to improve the tesla\n" );
+				}
+			}
+		}
+
+		// healing field
+		else if ( inp == 6 ) {
+			if ( self.building.#tesla_upgrades & #TESLA_UPGRADE_HEALINGFIELD )
+				sprint( self, #PRINT_HIGH, "The Tesla already has the healing field upgrade\n" );
+			else {
+				if ( self.building.has_sentry >= 40 && self.ammo_cells >= 100 ) {
+					self.building.has_sentry = self.building.has_sentry - 40;
+					self.ammo_cells = self.ammo_cells - 100;
+
+					self.building.#tesla_upgrades = self.building.#tesla_upgrades | #TESLA_UPGRADE_HEALINGFIELD;
+				} else {
+					if ( self.ammo_cells < 100 )
+						sprint( self, #PRINT_HIGH, "You need more cells to upgrade the tesla\n" );
+					else
+						sprint( self, #PRINT_HIGH, "You do not have enough upgrades to improve the tesla\n" );
+				}
+			}
+		}
+
+		else if (inp == 7) {
+			Menu_EngineerRepair_Tesla();
+		}
+		else if (inp == 8) {
+			Menu_EngineerDismantle_Tesla();
+		}
+//		else if (inp == 9) {
+//		}
+		else if ( inp == 10 ) {
+			self.impulse = 0;
+			Menu_EngineerFix_Tesla();
+			self.current_menu = #MENU_ENGINEER_FIX_TESLA;
+			CuTFMenuSound(#MENUSOUND_BROWSE);
+		}
+
+		if ( inp >= 1 && inp <= 9 ) {
+			ResetMenu();		
+			self.impulse = 0;
+
+			if (self.ammo_cells < 0) self.ammo_cells = 0;
+
+			bound_other_ammo(self);
+
+			if (self.armorvalue == 0)
+			{
+				self.armortype = 0; // lost all armor
+				self.armorclass = 0; // lost special armor
+				self.items = self.items - (self.items & (#IT_ARMOR1 | #IT_ARMOR2 | #IT_ARMOR3));
+			}
+
+			W_SetCurrentAmmo();
+		}
 	}
 };
 

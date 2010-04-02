@@ -2919,6 +2919,10 @@ void(entity Item, entity AP, entity Goal) tfgoalitem_GiveToPlayer =
 	RPrint("\n");
 #endif
 
+	// Gizmo - update the player's tfgoal attached count
+	if ( AP.classname == "player" )
+		AP.#goals_attached = AP.#goals_attached + 1;
+
 	Item.owner = AP;
 	// Remove it from the map
 	if (Item.mdl != string_null)
@@ -3217,6 +3221,12 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer =
 	RPrint("\n");
 */
 
+	// Gizmo - update the player's tfgoal attached count
+	if ( AP != world && AP.classname == "player" ) {
+		if ( AP.#goals_attached )
+			AP.#goals_attached = AP.#goals_attached - 1;
+	}
+
 	// Return it to the starting point if the flag is set
 	if (method == 0 || method == 2)		// Dropped by a dying player
 	{
@@ -3247,7 +3257,7 @@ void(entity Item, entity AP, float method) tfgoalitem_RemoveFromPlayer =
 
 			te = find(te, classname, "player");
 		}
-	
+
 		// Drop it if the flag is set
 		if (Item.goal_activation & #TFGI_RETURN_DROP)
 		{

@@ -79,6 +79,7 @@ void() Tesla_Idle;
 void() Tesla_Touch;
 
 float() ReturnTeslaDelay;
+float( entity scanner, entity head ) Tesla_IsValidTarget;
 entity(entity scanner, float scanrange) Tesla_RadiusScan;
 
 // OfN
@@ -190,6 +191,17 @@ void() Tesla_Check_Frags =
 			self.has_teleporter = 15;
 		}
 	}
+
+	// Gizmo - keep giving more upgrades past the normal limit
+	else if ( self.has_teleporter > 14 ) {
+		if ( self.has_teleporter != self.frags ) {
+			self.has_teleporter = self.frags;
+
+			// every 3 frags you get a new upgrade after 100
+			if ( self.frags / 3 == floor( self.frags / 3 ) )
+				Tesla_Add_Rand_Upgrade( self, self.real_owner );
+		}
+	}
 };
 void() Tesla_Lose_Glow =
 {
@@ -289,6 +301,63 @@ void() TeslaThink =
 	#endif
 	
 	self.nextthink = time + 0.05;
+
+	if ( self.#tesla_recharge_time <= time ) {
+		// Gizmo - nano bot upgrade
+		if ( self.#tesla_upgrades & #TESLA_UPGRADE_NANOBOTS ) {
+			if ( self.health < self.max_health && self.ammo_cells >= 1 ) {
+				self.health = self.health + 2;
+				self.ammo_cells = self.ammo_cells - 1;
+
+				if ( self.health > self.max_health )
+					self.health = self.max_health;
+			}
+		}
+		// Gizmo - solar panel upgrade
+		if ( self.#tesla_upgrades & #TESLA_UPGRADE_SOLARPANEL ) {
+			if ( self.ammo_cells < self.maxammo_cells ) {
+				self.ammo_cells = self.ammo_cells + 1;
+
+				if ( self.ammo_cells > self.maxammo_cells )
+					self.ammo_cells = self.maxammo_cells;
+			}
+		}
+
+		// Gizmo - check for healing field
+		if ( self.#tesla_upgrades & #TESLA_UPGRADE_HEALINGFIELD ) {
+			local entity	head;
+			local float		healedOne;
+
+			if ( self.ammo_cells >= 2 ) {
+				healedOne = #FALSE;
+
+				head = findradius( self.origin, 192 );
+				while ( head ) {
+					if ( Teammate( self.real_owner.team_no, head.team_no ) ) {
+						if ( head.health > 0 && head.health < head.max_health ) {
+							if ( head.classname == "player" || IsOwnedMonster( head ) ) {
+								local float	healAmount;
+
+								sound( head, #CHAN_WEAPON, "items/r_item1.wav", 1, #ATTN_NORM );
+								SpawnBlood( head.origin, 20 );
+								healAmount = 9 + rint( random() * 2 );
+								T_Heal( head, healAmount, #FALSE );
+
+								healedOne = #TRUE;
+							}
+						}
+					}
+
+					head = head.chain;
+				}
+
+				if ( healedOne )
+					self.ammo_cells = self.ammo_cells - 2;
+			}
+		}
+
+		self.#tesla_recharge_time = time + 1;
+	}
 
 	// Restore velocity if flying and stoped
 	if (self.is_haxxxoring)
@@ -421,6 +490,38 @@ void(entity attacker, float damage) Tesla_Pain =
 	self.real_owner.StatusRefreshTime = time + 0.2;
 //CH special sbar  for eng.
 	self.real_owner.StatusBarScreen = 4;
+
+	// Gizmo
+	if ( self.#tesla_upgrades & #TESLA_UPGRADE_PROXYDEFENSE ) {
+		if ( attacker.classname == "player" || IsMonster( attacker ) ) {
+			if ( !Teammate( self.real_owner.team_no, attacker.team_no ) && vlen( self.origin - attacker.origin ) <= 128 ) {
+				deathmsg = #DMSG_BUG_ZAPPER;
+
+				sound( self, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM );
+
+				attacker.flags = attacker.flags - ( attacker.flags & #FL_ONGROUND );
+				attacker.velocity_z = attacker.velocity_z + 200;
+				attacker.velocity = attacker.velocity + normalize( attacker.origin - self.origin ) * 600;
+
+				// Gizmo - allow non demons and non army soldiers to be affected (coop monsters)
+				if ( IsMonster( attacker ) ) {
+					local float temp;
+
+					temp = GetTeam( attacker );
+					if ( !Teammate( temp, self.real_owner.team_no ) ) {
+						TF_T_Damage( attacker, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY );
+						return;
+					}
+					
+					return;
+				}
+
+				if ( !Teammate( attacker.team_no, self.real_owner.team_no ) && attacker.is_undercover != 1 )
+					TF_T_Damage( attacker, self, self, 400, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY );
+				return;
+			}
+		}
+	}
 };
 
 void() Tesla_Die =
@@ -493,6 +594,11 @@ float() Tesla_Fire =
 	local float damage;
 	local float cheater;
 	local vector below;
+	local entity head;		// Gizmo
+	// Gizmo - new locals
+	local entity	startEnt, destEnt;
+	local float		numJumps;
+	local float		drain;
 
 	// OfN - Psionized teslas don't shot
 	/*if (self.tfstate & #TFSTATE_PSIONIZED)
@@ -636,80 +742,126 @@ float() Tesla_Fire =
 
 	MuzzleFlash(self);
 
- // OfN - Check for force field
-	local float shoulddmg;
-	shoulddmg = #TRUE;
+	// Gizmo - changed this part to allow the bolt to 'jump' to different targets if the upgrade is present
+	startEnt = self;
+	destEnt = self.enemy;
+	numJumps = self.#tesla_chain_lightning;		// number of jumps equals our level
+	damage = 0;
+	drain = self.#tesla_batterydrain;
 
-	traceline (self.origin, self.enemy.origin, #TL_ANY_SOLID, self);
-
-	if (trace_ent.classname == "force_field")
-	{
-		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-		WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
-		WriteEntity (#MSG_BROADCAST, self);
-		WriteCoord (#MSG_BROADCAST, self.origin_x);
-		WriteCoord (#MSG_BROADCAST, self.origin_y);
-		if (self.tf_items & #NIT_TURRET)
-			WriteCoord (#MSG_BROADCAST, self.origin_z + 10);
-		else
-			WriteCoord (#MSG_BROADCAST, self.origin_z + 30);		
-		WriteCoord (#MSG_BROADCAST, trace_endpos_x);
-		WriteCoord (#MSG_BROADCAST, trace_endpos_y);
-		WriteCoord (#MSG_BROADCAST, trace_endpos_z);
-	#ifdef QUAKE_WORLD
-		multicast (self.origin, #MULTICAST_PHS);
-	#endif
-		
-		shoulddmg = #FALSE;
-
-		FieldEvent(trace_ent,trace_endpos,trace_ent);
-		//FieldExplosion(trace_ent,trace_endpos,trace_ent);
-		//PutFieldWork(trace_ent);
-	}
-	else
-	{
-		WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
-		WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
-		WriteEntity (#MSG_BROADCAST, self);
-		WriteCoord (#MSG_BROADCAST, self.origin_x);
-		WriteCoord (#MSG_BROADCAST, self.origin_y);
-		if (self.tf_items & #NIT_TURRET)
-			WriteCoord (#MSG_BROADCAST, self.origin_z + 10);
-		else
-			WriteCoord (#MSG_BROADCAST, self.origin_z + 30);
-		WriteCoord (#MSG_BROADCAST, self.enemy.origin_x);
-		WriteCoord (#MSG_BROADCAST, self.enemy.origin_y);
-		WriteCoord (#MSG_BROADCAST, self.enemy.origin_z);
-	#ifdef QUAKE_WORLD
-		multicast (self.origin, #MULTICAST_PHS);
-	#endif
-	}
-
+	// Gizmo - moved this up here
 	sound (self, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM);
-	if (vlen(self.enemy.origin - self.origin) >= 800 && shoulddmg) //Only play end sound if far away
-		sound (self.enemy, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM); //CH at start and end of arc
 
-	/*if (self.#tesla_amps == 0) damage = 40;
-	if (self.#tesla_amps == 1) damage = 80;
-	if (self.#tesla_amps == 2) damage = 160;
-	if (self.#tesla_amps == 3) damage = 320;*/
+	do {
+	 // OfN - Check for force field
+		local float shoulddmg;
+		shoulddmg = #TRUE;
 
-	if (self.#tesla_amps <= 0)
-		damage = 40;
-	else if (self.#tesla_amps == 1)
-		damage = 80;
-	else if (self.#tesla_amps == 2)
-		damage = 130;
-	else
-		damage = 240;
+		traceline (startEnt.origin, destEnt.origin, #TL_ANY_SOLID, startEnt);
 
-	if (self.all_active & #IMPROVED_FOUR) damage = damage * 1.15; //- OfN - Improved circuit hack - was 1.2 - TOO LOW NOW?
+		if (trace_ent.classname == "force_field")
+		{
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
+			WriteEntity (#MSG_BROADCAST, startEnt);
+			WriteCoord (#MSG_BROADCAST, startEnt.origin_x);
+			WriteCoord (#MSG_BROADCAST, startEnt.origin_y);
+			if ( startEnt == self ) {
+				if (self.tf_items & #NIT_TURRET)
+					WriteCoord (#MSG_BROADCAST, startEnt.origin_z + 10);
+				else
+					WriteCoord (#MSG_BROADCAST, startEnt.origin_z + 30);
+			} else
+				WriteCoord (#MSG_BROADCAST, startEnt.origin_z);
+			WriteCoord (#MSG_BROADCAST, trace_endpos_x);
+			WriteCoord (#MSG_BROADCAST, trace_endpos_y);
+			WriteCoord (#MSG_BROADCAST, trace_endpos_z);
+		#ifdef QUAKE_WORLD
+			multicast (startEnt.origin, #MULTICAST_PHS);
+		#endif
+			
+			shoulddmg = #FALSE;
 
-	if (self.is_malfunctioning & #SCREWUP_TWO) damage = 1;
-	//TF_T_Damage (self.enemy, self, self.real_owner, damage, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
-	
-	if (shoulddmg)
-		TF_T_Damage (self.enemy, self, self, damage, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
+			FieldEvent(trace_ent,trace_endpos,trace_ent);
+			//FieldExplosion(trace_ent,trace_endpos,trace_ent);
+			//PutFieldWork(trace_ent);
+
+			// Gizmo - field generators stop the bolts jumping
+			numJumps = 0;
+		}
+		else
+		{
+			WriteByte (#MSG_BROADCAST, #SVC_TEMPENTITY);
+			WriteByte (#MSG_BROADCAST, #TE_LIGHTNING2);
+			WriteEntity (#MSG_BROADCAST, startEnt);
+			WriteCoord (#MSG_BROADCAST, startEnt.origin_x);
+			WriteCoord (#MSG_BROADCAST, startEnt.origin_y);
+			if ( startEnt == self ) {
+				if (self.tf_items & #NIT_TURRET)
+					WriteCoord (#MSG_BROADCAST, startEnt.origin_z + 10);
+				else
+					WriteCoord (#MSG_BROADCAST, startEnt.origin_z + 30);
+			} else
+				WriteCoord (#MSG_BROADCAST, startEnt.origin_z);
+			WriteCoord (#MSG_BROADCAST, destEnt.origin_x);
+			WriteCoord (#MSG_BROADCAST, destEnt.origin_y);
+			WriteCoord (#MSG_BROADCAST, destEnt.origin_z);
+		#ifdef QUAKE_WORLD
+			multicast (startEnt.origin, #MULTICAST_PHS);
+		#endif
+		}
+
+		if (vlen(destEnt.origin - self.origin) >= 800 && shoulddmg) //Only play end sound if far away
+			sound (destEnt, #CHAN_WEAPON, "weapons/lhit.wav", 1, #ATTN_NORM); //CH at start and end of arc
+
+		/*if (self.#tesla_amps == 0) damage = 40;
+		if (self.#tesla_amps == 1) damage = 80;
+		if (self.#tesla_amps == 2) damage = 160;
+		if (self.#tesla_amps == 3) damage = 320;*/
+
+		if ( !damage ) {
+			if (self.#tesla_amps <= 0)
+				damage = 40;
+			else if (self.#tesla_amps == 1)
+				damage = 80;
+			else if (self.#tesla_amps == 2)
+				damage = 130;
+			else
+				damage = 240;
+		} else
+			damage = damage * 0.75;
+
+		if (self.all_active & #IMPROVED_FOUR) damage = damage * 1.15; //- OfN - Improved circuit hack - was 1.2 - TOO LOW NOW?
+
+		if (self.is_malfunctioning & #SCREWUP_TWO) damage = 1;
+		//TF_T_Damage (self.enemy, self, self.real_owner, damage, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
+		
+		if (shoulddmg)
+			TF_T_Damage (destEnt, self, self, damage, #TF_TD_NOTTEAM, #TF_TD_ELECTRICITY);
+
+		// go to the next target
+		numJumps = numJumps - 1;
+		maxrange = maxrange - vlen( startEnt.origin - destEnt.origin );
+		if ( numJumps >= 0 && maxrange > 0 ) {
+			// make sure we have enough cells
+			drain = drain * 0.75;
+			if ( self.ammo_cells >= drain ) {
+				head = findradius( destEnt.origin, maxrange );
+				while ( head != world && ( head == startEnt || head == destEnt || !Tesla_IsValidTarget( self, head ) ) ) {
+					head = head.chain;
+				}
+
+				if ( head ) {
+					startEnt = destEnt;
+					destEnt = head;
+				} else
+					numJumps = -1;
+
+				self.ammo_cells = self.ammo_cells - rint( drain );
+			} else
+				numJumps = -1;
+		}
+	} while ( numJumps >= 0 && maxrange > 0 );
 
 	//self.nextthink = time + ReturnTeslaDelay();
 	//self.has_holo = time + ReturnTeslaDelay(); //?? wTF
@@ -921,56 +1073,63 @@ float() ReturnTeslaDelay =
 // Returns a list of players within a radius around the origin, like findradius,
 // except that some parsing of the list can be done based on the parameters passed in.
 // Make sure you check that the return value is not NULL before using it.
+float( entity scanner, entity head ) Tesla_IsValidTarget = {
+	local float	gotatarget;
+
+	gotatarget = 0;
+
+	if (/*vlen(head.origin - scanner.origin) <= scanrange && */head != scanner && visible2(head,scanner)) {
+	//RPrint("TeslaScan()\n");
+		//RPrint(head.classname); RPrint("\n");
+		
+		if (head.classname == "player" && head.health > 0)
+		#ifdef MAD_TESLA
+			gotatarget = 1;
+		#else
+			gotatarget = Pharse_Client(head, scanner, 1, 0, 1, 1);
+		#endif
+
+#ifdef COOP_MODE_ENHANCED
+		// teslas always target coop monsters in coop mode, without improved targeter
+		else if (npcAi_IsCoopMonster( head ) && head.health > 0 && head.takedamage) {
+			if ( !Teammate( head.team_no, scanner.team_no ) )
+				gotatarget = 1;
+		}
+#endif
+		else if (scanner.tf_items & #NIT_SCANNER && scanner.team_no > 0) //Improved targeter targets monsters and soldiers
+		{
+			if ( IsOwnedMonster( head ) ) {
+				if ( head.health > 0 )		// Gizmo
+				if ( !Teammate( head.real_owner.team_no, scanner.team_no ) )
+					gotatarget = 1;
+			}
+			else if (head.classname == "grenade" && head.netname == "land_mine")
+			{
+				if (!Teammate(head.owner.team_no, scanner.team_no))
+					gotatarget = 1;
+			} 
+			else if (!Teammate(head.team_no,scanner.team_no))
+			{
+				if (IsBuilding(head) && head.classname != "building_sentrygun_base")
+					gotatarget = 1;
+			}
+		}		
+	}				// ADDED
+	if (gotatarget && visible2(scanner,head))
+		return #TRUE;
+	return #FALSE;
+};
 entity(entity scanner, float scanrange) Tesla_RadiusScan =
 {
 	local entity head;
 	/*local entity list_head;
 	local entity list;*/
-	local float gotatarget;    
+//	local float gotatarget;    
 
 	head = findradius(scanner.origin, scanrange);
 
 	while (head) {
-		gotatarget = 0;
-
-		if (/*vlen(head.origin - scanner.origin) <= scanrange && */head != scanner && visible2(head,scanner)) {
-		//RPrint("TeslaScan()\n");
-			//RPrint(head.classname); RPrint("\n");
-			
-			if (head.classname == "player" && head.health > 0)
-			#ifdef MAD_TESLA
-				gotatarget = 1;
-			#else
-				gotatarget = Pharse_Client(head, scanner, 1, 0, 1, 1);
-			#endif
-
-#ifdef COOP_MODE_ENHANCED
-			// teslas always target coop monsters in coop mode, without improved targeter
-			else if (npcAi_IsCoopMonster( head ) && head.health > 0 && head.takedamage) {
-				if ( !Teammate( head.team_no, scanner.team_no ) )
-					gotatarget = 1;
-			}
-#endif
-			else if (scanner.tf_items & #NIT_SCANNER && scanner.team_no > 0) //Improved targeter targets monsters and soldiers
-			{
-				if ( IsOwnedMonster( head ) ) {
-					if ( head.health > 0 )		// Gizmo
-					if ( !Teammate( head.real_owner.team_no, scanner.team_no ) )
-						gotatarget = 1;
-				}
-				else if (head.classname == "grenade" && head.netname == "land_mine")
-				{
-					if (!Teammate(head.owner.team_no, scanner.team_no))
-						gotatarget = 1;
-				} 
-				else if (!Teammate(head.team_no,scanner.team_no))
-				{
-					if (IsBuilding(head) && head.classname != "building_sentrygun_base")
-						gotatarget = 1;
-				}
-			}		
-		}				// ADDED
-		if (gotatarget && visible2(scanner,head))
+		if ( Tesla_IsValidTarget( scanner, head ) )
 			return head;
 
 		head = head.chain;
