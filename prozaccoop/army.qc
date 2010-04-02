@@ -104,6 +104,7 @@ void() JobArmy =
 
 	// Gizmo - if we're looking at one of our grunts, switch to it's menu
 	if ( GetJobExtras( self ) ) {
+		makevectors( self.v_angle );
 		traceline( self.origin, self.origin + v_forward*4096, #TL_ANY_SOLID, self );
 
 		if ( trace_ent ) {
