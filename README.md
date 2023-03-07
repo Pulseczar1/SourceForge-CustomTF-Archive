@@ -28,7 +28,7 @@ This is the CustomTF Improvement Project's progs code. I was the person who orig
 Branches of various code for development by various people
 
 ### megatf united
-MegaTF United code (but empty for some reason)
+MegaTF United code, but empty for some reason. I guess that's why GitHub didn't import that directory.
 
 ### megatf2006
 Appears to be a version of MegaTF that was forked from TF 2003, which was a port to C from QuakeC, by [sd] angel.
